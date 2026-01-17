@@ -9,8 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { SignatureCanvas } from '@/components/ui/signature-canvas';
 import { toast } from 'sonner';
-import { ArrowRightLeft, Plus, Loader2, Check, X, Clock, User, FileText, Download, ArrowLeft, CalendarDays, Sparkles, Edit2, Eye, Trash2 } from 'lucide-react';
+import { ArrowRightLeft, Plus, Loader2, Check, X, Clock, User, FileText, Download, ArrowLeft, CalendarDays, Sparkles, Edit2, Eye, Trash2, PenTool } from 'lucide-react';
 import { format, parseISO, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
@@ -82,6 +83,10 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
   const [customDate, setCustomDate] = useState<Date | undefined>();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [unitName, setUnitName] = useState('');
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [requesterSignature, setRequesterSignature] = useState<string>('');
+  const [targetSignature, setTargetSignature] = useState<string>('');
+  const [signatureType, setSignatureType] = useState<'requester' | 'target'>('requester');
   
   const { showNotification, playTacticalSound } = usePushNotifications();
 
@@ -972,36 +977,101 @@ Documento gerado automaticamente pelo PlantãoPro
         </DialogContent>
       </Dialog>
 
-      {/* Document Preview Dialog */}
-      <Dialog open={showDocumentPreview} onOpenChange={setShowDocumentPreview}>
-        <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[80vh]">
+      {/* Document Preview Dialog with Digital Signature */}
+      <Dialog open={showDocumentPreview} onOpenChange={(open) => { 
+        if (!open) { 
+          setRequesterSignature(''); 
+          setTargetSignature(''); 
+        } 
+        setShowDocumentPreview(open); 
+      }}>
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-white">
               <FileText className="h-5 w-5 text-amber-400" />
               Documento de Permuta
             </DialogTitle>
             <DialogDescription className="text-slate-400">
-              Visualização do requerimento formal de permuta de plantão
+              Visualização do requerimento formal com assinatura digital
             </DialogDescription>
           </DialogHeader>
           {previewRequest && (
             <div className="space-y-4">
-              <div className="bg-slate-900/50 border border-slate-600/50 rounded-lg p-4 max-h-[50vh] overflow-y-auto">
-                <pre className="text-xs text-slate-300 whitespace-pre-wrap font-mono">
+              <div className="bg-slate-900/50 border border-slate-600/50 rounded-lg p-3 max-h-[30vh] overflow-y-auto">
+                <pre className="text-[10px] text-slate-300 whitespace-pre-wrap font-mono leading-relaxed">
                   {generateFormalDocument(previewRequest)}
                 </pre>
               </div>
-              <div className="flex items-center justify-between">
+              
+              {/* Digital Signatures Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-sm font-medium text-amber-400">
+                  <PenTool className="h-4 w-4" />
+                  Assinaturas Digitais
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Requester Signature */}
+                  <div className="space-y-2">
+                    <div className="text-xs text-slate-400 font-medium">
+                      Agente Solicitante: {previewRequest.requester?.name}
+                    </div>
+                    {requesterSignature ? (
+                      <div className="border-2 border-green-500/30 rounded-lg p-2 bg-white">
+                        <img src={requesterSignature} alt="Assinatura Solicitante" className="max-h-20 mx-auto" />
+                        <div className="text-[10px] text-center text-green-600 mt-1">✓ Assinado</div>
+                      </div>
+                    ) : previewRequest.requester_id === agentId ? (
+                      <SignatureCanvas
+                        label=""
+                        width={250}
+                        height={80}
+                        onSave={(sig) => setRequesterSignature(sig)}
+                      />
+                    ) : (
+                      <div className="border-2 border-dashed border-slate-500 rounded-lg p-4 text-center">
+                        <span className="text-xs text-slate-500 italic">Aguardando assinatura</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Target Signature */}
+                  <div className="space-y-2">
+                    <div className="text-xs text-slate-400 font-medium">
+                      Agente Solicitado: {previewRequest.target?.name}
+                    </div>
+                    {targetSignature ? (
+                      <div className="border-2 border-green-500/30 rounded-lg p-2 bg-white">
+                        <img src={targetSignature} alt="Assinatura Solicitado" className="max-h-20 mx-auto" />
+                        <div className="text-[10px] text-center text-green-600 mt-1">✓ Assinado</div>
+                      </div>
+                    ) : previewRequest.target_id === agentId ? (
+                      <SignatureCanvas
+                        label=""
+                        width={250}
+                        height={80}
+                        onSave={(sig) => setTargetSignature(sig)}
+                      />
+                    ) : (
+                      <div className="border-2 border-dashed border-slate-500 rounded-lg p-4 text-center">
+                        <span className="text-xs text-slate-500 italic">Aguardando assinatura</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between pt-2">
                 <Badge className={previewRequest.status === 'accepted' ? 'bg-green-500/20 text-green-400' : previewRequest.status === 'pending' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}>
                   {previewRequest.status === 'accepted' ? 'Aceita' : previewRequest.status === 'pending' ? 'Pendente' : 'Recusada'}
                 </Badge>
                 <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => setShowDocumentPreview(false)} className="border-slate-600 text-slate-300">
+                  <Button variant="outline" size="sm" onClick={() => setShowDocumentPreview(false)} className="border-slate-600 text-slate-300">
                     <ArrowLeft className="h-4 w-4 mr-1.5" />
                     Voltar
                   </Button>
                   {previewRequest.status === 'accepted' && (
-                    <Button onClick={() => { exportFormalDocument(previewRequest); setShowDocumentPreview(false); }} className="bg-green-500 hover:bg-green-600 text-white">
+                    <Button size="sm" onClick={() => { exportFormalDocument(previewRequest); setShowDocumentPreview(false); }} className="bg-green-500 hover:bg-green-600 text-white">
                       <Download className="h-4 w-4 mr-1.5" />
                       Exportar
                     </Button>

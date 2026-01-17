@@ -27,7 +27,19 @@ export function usePWAInstall() {
       // Check for standalone mode (installed PWA)
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
       const isIOSStandalone = (window.navigator as any).standalone === true;
-      setIsInstalled(isStandalone || isIOSStandalone);
+      // Also check URL params for PWA mode
+      const isPWAMode = window.location.search.includes('pwa=1');
+      // Check localStorage for persistent installed state
+      const wasInstalled = localStorage.getItem('pwa_installed') === 'true';
+      
+      const installed = isStandalone || isIOSStandalone || isPWAMode || wasInstalled;
+      
+      // Persist installed state
+      if (installed && !wasInstalled) {
+        localStorage.setItem('pwa_installed', 'true');
+      }
+      
+      setIsInstalled(installed);
     };
 
     // Check if iOS
@@ -54,6 +66,8 @@ export function usePWAInstall() {
       setIsInstalled(true);
       setIsInstallable(false);
       setDeferredPrompt(null);
+      // Persist installed state
+      localStorage.setItem('pwa_installed', 'true');
       console.log('PWA was installed');
     };
 
