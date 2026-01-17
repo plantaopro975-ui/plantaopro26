@@ -20,7 +20,6 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Save, Clock, DollarSign } from 'lucide-react';
-import { NumberStepper } from '@/components/ui/number-stepper';
 import { formatCPF, formatPhone, formatMatricula, getMatriculaNumbers } from '@/lib/validators';
 import { UnsavedChangesDialog } from '@/components/UnsavedChangesDialog';
 
@@ -289,7 +288,7 @@ export function EditAgentDialog({ agent, open, onOpenChange, onSuccess }: EditAg
               </Select>
             </div>
 
-            {/* BH Settings - Admin Only */}
+            {/* BH Settings - Edição Livre */}
             <div className="col-span-2 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 space-y-4">
               <div className="flex items-center gap-2 text-amber-400 font-medium">
                 <Clock className="h-4 w-4" />
@@ -298,35 +297,37 @@ export function EditAgentDialog({ agent, open, onOpenChange, onSuccess }: EditAg
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1">
+                  <Label className="flex items-center gap-1 text-sm">
                     <Clock className="h-3 w-3" />
                     Limite de Horas
                   </Label>
-                  <NumberStepper
-                    value={parseFloat(formData.bh_limit) || 70}
-                    onChange={(val) => setFormData({ ...formData, bh_limit: val.toString() })}
+                  <Input
+                    type="number"
+                    value={formData.bh_limit}
+                    onChange={(e) => setFormData({ ...formData, bh_limit: e.target.value })}
+                    placeholder="70"
                     min={1}
-                    max={200}
-                    step={5}
-                    suffix="h"
+                    max={500}
+                    className="bg-input"
                   />
-                  <p className="text-xs text-muted-foreground">Máximo de horas acumuladas</p>
+                  <p className="text-xs text-muted-foreground">Máximo acumulado (h)</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1">
+                  <Label className="flex items-center gap-1 text-sm">
                     <DollarSign className="h-3 w-3" />
-                    Valor por Hora (R$)
+                    Valor/Hora (R$)
                   </Label>
-                  <NumberStepper
-                    value={parseFloat(formData.bh_hourly_rate) || 15}
-                    onChange={(val) => setFormData({ ...formData, bh_hourly_rate: val.toString() })}
+                  <Input
+                    type="number"
+                    value={formData.bh_hourly_rate}
+                    onChange={(e) => setFormData({ ...formData, bh_hourly_rate: e.target.value })}
+                    placeholder="15.75"
                     min={0.01}
-                    max={500}
-                    step={0.5}
-                    suffix=""
+                    step={0.01}
+                    className="bg-input"
                   />
-                  <p className="text-xs text-muted-foreground">Valor pago por hora extra</p>
+                  <p className="text-xs text-muted-foreground">Valor por hora extra</p>
                 </div>
               </div>
             </div>

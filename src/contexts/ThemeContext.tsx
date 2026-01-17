@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { Shield, Cpu, Sun, Monitor, Flame, Snowflake } from 'lucide-react';
+import { Shield, Cpu, Sun, Monitor, Flame, Snowflake, Target, Zap, Radio, Crosshair } from 'lucide-react';
 
 // Reduced to 4 unique themes + system + light
 export type ThemeType = 'tactical' | 'cyber' | 'crimson' | 'arctic' | 'light' | 'system';
@@ -10,6 +10,13 @@ export interface ThemeConfig {
   description: string;
   icon: typeof Shield;
   emoji: string;
+  fontFamily: string;
+  teamIcons: {
+    ALFA: typeof Shield;
+    BRAVO: typeof Shield;
+    CHARLIE: typeof Shield;
+    DELTA: typeof Shield;
+  };
   colors: {
     primary: string;
     primaryForeground: string;
@@ -51,6 +58,13 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     description: 'Operações táticas com cores âmbar intenso',
     icon: Shield,
     emoji: '🎯',
+    fontFamily: "'Orbitron', 'Rajdhani', sans-serif",
+    teamIcons: {
+      ALFA: Shield,
+      BRAVO: Target,
+      CHARLIE: Crosshair,
+      DELTA: Radio,
+    },
     colors: {
       primary: '38 92% 50%',
       primaryForeground: '222 47% 6%',
@@ -83,6 +97,13 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     description: 'Futurista com neon ciano e rosa',
     icon: Cpu,
     emoji: '💻',
+    fontFamily: "'Share Tech Mono', 'JetBrains Mono', monospace",
+    teamIcons: {
+      ALFA: Cpu,
+      BRAVO: Zap,
+      CHARLIE: Radio,
+      DELTA: Target,
+    },
     colors: {
       primary: '187 85% 53%',
       primaryForeground: '222 47% 6%',
@@ -115,6 +136,13 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     description: 'Vermelho operacional de elite',
     icon: Flame,
     emoji: '🔥',
+    fontFamily: "'Teko', 'Bebas Neue', sans-serif",
+    teamIcons: {
+      ALFA: Flame,
+      BRAVO: Shield,
+      CHARLIE: Target,
+      DELTA: Crosshair,
+    },
     colors: {
       primary: '0 84% 55%',
       primaryForeground: '210 40% 98%',
@@ -147,6 +175,13 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     description: 'Gelo e precisão operacional',
     icon: Snowflake,
     emoji: '❄️',
+    fontFamily: "'Exo 2', 'Roboto Condensed', sans-serif",
+    teamIcons: {
+      ALFA: Snowflake,
+      BRAVO: Radio,
+      CHARLIE: Shield,
+      DELTA: Zap,
+    },
     colors: {
       primary: '200 95% 48%',
       primaryForeground: '222 47% 6%',
@@ -179,6 +214,13 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     description: 'Tema claro profissional',
     icon: Sun,
     emoji: '☀️',
+    fontFamily: "'Inter', 'Segoe UI', sans-serif",
+    teamIcons: {
+      ALFA: Shield,
+      BRAVO: Target,
+      CHARLIE: Radio,
+      DELTA: Zap,
+    },
     colors: {
       primary: '217 91% 45%',
       primaryForeground: '0 0% 100%',
@@ -211,6 +253,13 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     description: 'Segue preferência do sistema',
     icon: Monitor,
     emoji: '🖥️',
+    fontFamily: "'Rajdhani', 'Orbitron', sans-serif",
+    teamIcons: {
+      ALFA: Shield,
+      BRAVO: Target,
+      CHARLIE: Crosshair,
+      DELTA: Radio,
+    },
     colors: {
       primary: '38 92% 50%',
       primaryForeground: '222 47% 6%',
@@ -309,6 +358,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--sidebar-border', config.colors.border);
     root.style.setProperty('--sidebar-ring', config.colors.primary);
     
+    // Aplicar fonte específica do tema
+    root.style.setProperty('--font-theme', config.fontFamily);
+    document.body.style.fontFamily = config.fontFamily;
+    
     root.style.setProperty('--gradient-primary', 
       `linear-gradient(135deg, hsl(${config.colors.gradientFrom}) 0%, hsl(${config.colors.gradientTo}) 100%)`
     );
@@ -323,7 +376,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       );
     }
     
+    // Remove todas as classes de tema anteriores
     root.classList.remove('light-theme', 'nightops-theme', 'tactical-theme', 'cyber-theme', 'crimson-theme', 'arctic-theme');
+    
+    // Aplica nova classe de tema
+    root.setAttribute('data-theme', resolvedTheme);
     
     if (config.colors.isLight) {
       root.classList.add('light-theme');

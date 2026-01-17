@@ -47,7 +47,7 @@ import {
   Shield, Users, Loader2, Activity, LogOut, Calendar, MapPin, Search, 
   ArrowRightLeft, Pencil, KeyRound, Check, Clock, Ban, UserPlus, 
   FileText, Send, CreditCard, Eye, Lock, Unlock, RefreshCw, 
-  Trash2, MessageSquare, DollarSign, History, UserX, Building2
+  Trash2, MessageSquare, DollarSign, History, UserX, Building2, Wallet
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -62,6 +62,8 @@ import { DeleteUserDialog } from '@/components/admin/DeleteUserDialog';
 import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { CredentialsViewer } from '@/components/admin/CredentialsViewer';
 import { PasswordRequestsManager } from '@/components/admin/PasswordRequestsManager';
+import { AgentBHManagement } from '@/components/admin/AgentBHManagement';
+import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
 
@@ -590,14 +592,16 @@ export default function Master() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 sm:grid-cols-8">
+          <TabsList className="grid w-full grid-cols-5 sm:grid-cols-10">
             <TabsTrigger value="overview">Unidades</TabsTrigger>
             <TabsTrigger value="agents">Agentes</TabsTrigger>
             <TabsTrigger value="credentials">Credenciais</TabsTrigger>
             <TabsTrigger value="password-requests">Senhas</TabsTrigger>
             <TabsTrigger value="licenses">Licenças</TabsTrigger>
+            <TabsTrigger value="bh-management">B.Horas</TabsTrigger>
+            <TabsTrigger value="swaps">Trocas</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
-            <TabsTrigger value="transfers">Transferências</TabsTrigger>
+            <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
           </TabsList>
 
@@ -1168,6 +1172,16 @@ export default function Master() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* BH Management Tab */}
+          <TabsContent value="bh-management" className="space-y-6 mt-6">
+            <AgentBHManagement />
+          </TabsContent>
+
+          {/* Swaps Management Tab */}
+          <TabsContent value="swaps" className="space-y-6 mt-6">
+            <SwapManagementPanel />
           </TabsContent>
         </Tabs>
 
