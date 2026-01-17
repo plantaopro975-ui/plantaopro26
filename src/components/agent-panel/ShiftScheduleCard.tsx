@@ -3,15 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { ShiftMiniCalendar } from '@/components/agent-panel/ShiftMiniCalendar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { ShiftMiniCalendar, SimpleDatePicker } from '@/components/agent-panel/ShiftMiniCalendar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, AlertTriangle, Palmtree, ChevronDown, ChevronUp, WifiOff } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, AlertTriangle, Palmtree, ChevronDown, ChevronUp, WifiOff, Settings2 } from 'lucide-react';
 import { format, parseISO, isToday, isBefore, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useOfflineCache, useNetworkStatus } from '@/hooks/useOfflineCache';
@@ -39,6 +38,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
   const [isFromCache, setIsFromCache] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
   const [firstShiftDate, setFirstShiftDate] = useState<Date | undefined>();
+  const [configMonth, setConfigMonth] = useState(new Date());
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [selectedShift, setSelectedShift] = useState<AgentShift | null>(null);
@@ -255,39 +255,36 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
                     </>
                   ) : (
                     <>
-                      <RefreshCw className="h-4 w-4 mr-1" />
-                      Reconfigurar
+                      <Settings2 className="h-4 w-4 mr-1" />
+                      Config
                     </>
                   )}
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-slate-800 border-slate-700">
+              <DialogContent className="bg-slate-900 border-slate-700 max-w-sm">
                 <DialogHeader>
-                  <DialogTitle>Configurar Escala de Plantões</DialogTitle>
+                  <DialogTitle className="flex items-center gap-2">
+                    <CalendarIcon className="h-5 w-5 text-amber-500" />
+                    Configurar Escala
+                  </DialogTitle>
+                  <DialogDescription>
+                    Selecione a data do seu primeiro plantão (padrão 24h + 72h de descanso).
+                  </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <p className="text-sm text-slate-400">
-                    Selecione a data do seu primeiro plantão. O sistema irá gerar automaticamente 
-                    os próximos plantões seguindo o padrão <strong className="text-amber-400">24h de serviço + 72h de descanso</strong>.
-                  </p>
-                  
-                  <div className="space-y-2">
-                    <Label>Data do Primeiro Plantão</Label>
-                    <Calendar
-                      mode="single"
-                      selected={firstShiftDate}
-                      onSelect={setFirstShiftDate}
-                      locale={ptBR}
-                      className="rounded-md border border-slate-600 bg-slate-700/50"
-                    />
-                  </div>
+                <div className="space-y-4 pt-2">
+                  <SimpleDatePicker
+                    month={configMonth}
+                    onMonthChange={setConfigMonth}
+                    selected={firstShiftDate}
+                    onSelect={setFirstShiftDate}
+                  />
 
                   {firstShiftDate && (
                     <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-                      <p className="text-sm text-amber-400">
-                        <strong>Primeiro plantão:</strong> {format(firstShiftDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                      <p className="text-sm text-amber-400 font-medium">
+                        Primeiro plantão: {format(firstShiftDate, "dd/MM/yyyy (EEEE)", { locale: ptBR })}
                       </p>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-[11px] text-slate-400 mt-1">
                         Serão gerados plantões para os próximos 6 meses
                       </p>
                     </div>
@@ -296,7 +293,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
                   <Button 
                     onClick={generateShifts} 
                     disabled={!firstShiftDate || isGenerating}
-                    className="w-full bg-amber-500 hover:bg-amber-600 text-black"
+                    className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold"
                   >
                     {isGenerating ? (
                       <>
@@ -328,9 +325,22 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
           </div>
         ) : (
           <>
-            {/* Mini Month Grid (replaces DayPicker to stop blinking on some devices) */}
-            <div className="bg-slate-700/30 rounded-lg p-2 overflow-hidden">
+            {/* Compact upcoming shifts row + full calendar toggle */}
+            <ShiftMiniCalendar
+              variant="compact"
+              month={selectedMonth}
+              onMonthChange={setSelectedMonth}
+              shifts={shifts.map((s) => ({ id: s.id, shift_date: format(parseISO(s.shift_date), 'yyyy-MM-dd') }))}
+              onDayWithShiftClick={(shiftId) => {
+                const shift = shifts.find((s) => s.id === shiftId);
+                if (shift) handleShiftClick(shift);
+              }}
+            />
+
+            {/* Full Month Grid (stable, no DayPicker) */}
+            <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
               <ShiftMiniCalendar
+                variant="grid"
                 month={selectedMonth}
                 onMonthChange={setSelectedMonth}
                 shifts={shifts.map((s) => ({ id: s.id, shift_date: format(parseISO(s.shift_date), 'yyyy-MM-dd') }))}
@@ -481,13 +491,12 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
               {editStatus === 'missed' && (
                 <div className="space-y-2">
                   <Label>Data de Compensação (opcional)</Label>
-                  <Calendar
-                    mode="single"
+                  <SimpleDatePicker
+                    month={compensationDate ?? new Date()}
+                    onMonthChange={(m) => setCompensationDate(m)}
                     selected={compensationDate}
                     onSelect={setCompensationDate}
-                    locale={ptBR}
-                    disabled={(date) => isBefore(date, new Date())}
-                    className="rounded-md border border-slate-600 bg-slate-700/50"
+                    className="bg-slate-800"
                   />
                 </div>
               )}
