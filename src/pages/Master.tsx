@@ -64,6 +64,7 @@ import { CredentialsViewer } from '@/components/admin/CredentialsViewer';
 import { PasswordRequestsManager } from '@/components/admin/PasswordRequestsManager';
 import { AgentBHManagement } from '@/components/admin/AgentBHManagement';
 import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
+import { LicenseFinanceControl } from '@/components/admin/LicenseFinanceControl';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
 
@@ -597,7 +598,14 @@ export default function Master() {
             <TabsTrigger value="agents">Agentes</TabsTrigger>
             <TabsTrigger value="credentials">Credenciais</TabsTrigger>
             <TabsTrigger value="password-requests">Senhas</TabsTrigger>
-            <TabsTrigger value="licenses">Licenças</TabsTrigger>
+            <TabsTrigger value="licenses" className="relative">
+              Licenças
+              {stats.expiredLicenses > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center animate-pulse">
+                  {stats.expiredLicenses}
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="bh-management">B.Horas</TabsTrigger>
             <TabsTrigger value="swaps">Trocas</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
@@ -923,119 +931,9 @@ export default function Master() {
             <PasswordRequestsManager />
           </TabsContent>
 
-          {/* Licenses Tab */}
-          <TabsContent value="licenses" className="space-y-4 mt-6">
-            <div className="flex items-center gap-4">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500">
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Renovar Todas Expiradas ({stats.expiredLicenses})
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Renovar Todas as Licenças Expiradas?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Esta ação renovará {stats.expiredLicenses} licenças expiradas por mais 30 dias.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleBulkRenewLicenses}>Renovar Todas</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-
-            <Card className="glass glass-border shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                  Controle de Licenças
-                </CardTitle>
-                <CardDescription>
-                  Gerenciamento de licenças e cobranças
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border">
-                      <TableHead>Agente</TableHead>
-                      <TableHead>CPF</TableHead>
-                      <TableHead>Unidade</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Expira em</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {agents.map((agent) => {
-                      const licenseStatus = agent.license_status || 'active';
-                      const isLicenseExpired = agent.license_expires_at && new Date(agent.license_expires_at) < new Date();
-                      const effectiveLicense = isLicenseExpired ? 'expired' : licenseStatus;
-                      
-                      return (
-                        <TableRow key={agent.id} className="border-border">
-                          <TableCell className="font-medium">{agent.name}</TableCell>
-                          <TableCell className="font-mono text-sm">
-                            {agent.cpf ? formatCPF(agent.cpf) : '-'}
-                          </TableCell>
-                          <TableCell>{agent.unit?.name || '-'}</TableCell>
-                          <TableCell>
-                            <Badge 
-                              className={cn(
-                                'flex items-center gap-1 w-fit',
-                                effectiveLicense === 'active' && 'bg-green-500/20 text-green-400 border-green-500/30',
-                                effectiveLicense === 'expired' && 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-                                effectiveLicense === 'blocked' && 'bg-destructive/20 text-destructive border-destructive/30',
-                                effectiveLicense === 'pending' && 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                              )}
-                            >
-                              {effectiveLicense === 'active' && <Check className="h-3 w-3" />}
-                              {effectiveLicense === 'expired' && <Clock className="h-3 w-3" />}
-                              {effectiveLicense === 'blocked' && <Ban className="h-3 w-3" />}
-                              {effectiveLicense === 'pending' && <Clock className="h-3 w-3" />}
-                              {effectiveLicense === 'active' && 'Ativo'}
-                              {effectiveLicense === 'expired' && 'Expirado'}
-                              {effectiveLicense === 'blocked' && 'Bloqueado'}
-                              {effectiveLicense === 'pending' && 'Pendente'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {agent.license_expires_at ? (
-                              <span className={cn(
-                                isLicenseExpired && 'text-red-400'
-                              )}>
-                                {format(new Date(agent.license_expires_at), 'dd/MM/yyyy')}
-                              </span>
-                            ) : '-'}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center justify-end gap-1">
-                              <LicenseManagementDialog
-                                agentId={agent.id}
-                                agentName={agent.name}
-                                currentStatus={agent.license_status || 'active'}
-                                currentExpiry={agent.license_expires_at}
-                                currentNotes={agent.license_notes}
-                                onSuccess={fetchData}
-                                trigger={
-                                  <Button variant="ghost" size="icon" className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10">
-                                    <KeyRound className="h-4 w-4" />
-                                  </Button>
-                                }
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+          {/* Licenses & Finance Tab */}
+          <TabsContent value="licenses" className="mt-6">
+            <LicenseFinanceControl />
           </TabsContent>
 
           {/* Logs Tab */}
