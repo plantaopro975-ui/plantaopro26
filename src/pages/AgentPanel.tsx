@@ -11,6 +11,7 @@ import { useBHReminder } from '@/hooks/useBHReminder';
 import { useBHReminderHour } from '@/components/agent-panel/BHReminderSettings';
 import { TeamMembersCard } from '@/components/agent-panel/TeamMembersCard';
 import { ProfessionalShiftTimer } from '@/components/agent-panel/ProfessionalShiftTimer';
+import { AgentBriefingPanel } from '@/components/agent-panel/AgentBriefingPanel';
 import { BHTracker } from '@/components/agent-panel/BHTracker';
 import { ShiftScheduleCard } from '@/components/agent-panel/ShiftScheduleCard';
 import { ChatPanel } from '@/components/agent-panel/ChatPanel';
@@ -420,6 +421,9 @@ export default function AgentPanel() {
                 </div>
               </div>
             </div>
+
+            {/* Briefing Operacional - sempre visível */}
+            <AgentBriefingPanel agentId={agent.id} />
 
             {/* Main Tabs - Professional Control Panel */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">

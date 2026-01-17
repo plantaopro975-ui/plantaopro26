@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,11 +10,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, AlertTriangle, Palmtree, ChevronDown, ChevronUp, WifiOff, Wifi } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, AlertTriangle, Palmtree, ChevronDown, ChevronUp, WifiOff } from 'lucide-react';
 import { format, parseISO, isToday, isBefore, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useOfflineCache, useNetworkStatus } from '@/hooks/useOfflineCache';
-import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 interface ShiftScheduleCardProps {
   agentId: string;
@@ -37,7 +36,6 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
   const [shifts, setShifts] = useState<AgentShift[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFromCache, setIsFromCache] = useState(false);
-  const [lastSync, setLastSync] = useState<Date | null>(null);
   const [showConfig, setShowConfig] = useState(false);
   const [firstShiftDate, setFirstShiftDate] = useState<Date | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -71,7 +69,6 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
         if (!error && data) {
           setShifts(data as AgentShift[]);
           setIsFromCache(false);
-          setLastSync(new Date());
           cache.saveToCache(data as AgentShift[]);
           setIsLoading(false);
           return;
@@ -83,7 +80,6 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
       if (cachedData) {
         setShifts(cachedData);
         setIsFromCache(true);
-        setLastSync(cache.getCacheTimestamp());
       }
     } catch (error) {
       console.error('Error fetching shifts:', error);
@@ -92,7 +88,6 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
       if (cachedData) {
         setShifts(cachedData);
         setIsFromCache(true);
-        setLastSync(cache.getCacheTimestamp());
       }
     } finally {
       setIsLoading(false);
@@ -186,9 +181,21 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
     }
   };
 
-  const getShiftDates = () => {
-    return shifts.map(s => parseISO(s.shift_date));
-  };
+  const shiftDates = useMemo(() => shifts.map((s) => parseISO(s.shift_date)), [shifts]);
+
+  const calendarModifiers = useMemo(() => ({
+    shift: shiftDates,
+  }), [shiftDates]);
+
+  const calendarModifiersStyles = useMemo(() => ({
+    shift: {
+      backgroundColor: 'hsl(var(--primary) / 0.18)',
+      color: 'hsl(var(--primary))',
+      fontWeight: 'bold' as const,
+      borderRadius: '9999px',
+    },
+  }), []);
+
 
   const getStatusInfo = (status: string) => {
     switch (status) {
@@ -320,34 +327,27 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
           </div>
         ) : (
           <>
-            {/* Mini Calendar View */}
-            <div className="bg-slate-700/30 rounded-lg p-2">
+            {/* Mini Calendar View (compact + stable props to avoid flicker) */}
+            <div className="bg-slate-700/30 rounded-lg p-2 overflow-hidden">
               <Calendar
                 mode="single"
                 selected={undefined}
                 month={selectedMonth}
                 onMonthChange={setSelectedMonth}
                 locale={ptBR}
-                modifiers={{
-                  shift: getShiftDates(),
-                  today: [new Date()]
-                }}
-                modifiersStyles={{
-                  shift: {
-                    backgroundColor: 'rgba(245, 158, 11, 0.3)',
-                    color: '#fbbf24',
-                    fontWeight: 'bold',
-                    borderRadius: '50%'
-                  }
-                }}
+                modifiers={calendarModifiers}
+                modifiersStyles={calendarModifiersStyles}
                 className="rounded-md"
+                classNames={{
+                  head_cell: "text-muted-foreground rounded-md w-7 md:w-8 font-normal text-[0.65rem] md:text-[0.7rem] flex-shrink-0",
+                  cell: "h-7 w-7 md:h-8 md:w-8 text-center text-[0.7rem] md:text-xs p-0 relative flex-shrink-0 [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                  day: "h-7 w-7 md:h-8 md:w-8 p-0 font-normal aria-selected:opacity-100 text-[0.7rem] md:text-xs",
+                }}
                 onDayClick={(date) => {
-                  const shift = shifts.find(s => 
+                  const shift = shifts.find((s) =>
                     format(parseISO(s.shift_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
                   );
-                  if (shift) {
-                    handleShiftClick(shift);
-                  }
+                  if (shift) handleShiftClick(shift);
                 }}
               />
             </div>
@@ -396,9 +396,8 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
                 {upcomingShifts.map((shift) => {
                   const shiftDate = parseISO(shift.shift_date);
                   const isTodayShift = isToday(shiftDate);
-                  const statusInfo = getStatusInfo(shift.status);
                   
-                    return (
+                  return (
                       <div
                         key={shift.id}
                         onClick={() => handleShiftClick(shift)}
