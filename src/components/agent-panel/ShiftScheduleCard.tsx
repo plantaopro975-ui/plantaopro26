@@ -354,26 +354,22 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
 
         <CollapsibleContent>
           <CardContent className="p-3 space-y-3">
-        {isLoading ? (
-          <div className="flex items-center justify-center py-6">
-            <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
-          </div>
-        ) : shifts.length === 0 ? (
-          <div className="flex items-center justify-center py-6">
-            <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
-          </div>
-        ) : shifts.length === 0 ? (
-          <div className="text-center py-5">
-            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-2">
-              <CalendarIcon className="h-6 w-6 text-slate-600" />
-            </div>
-            <p className="text-sm text-slate-400">Sem plantões configurados</p>
-            <p className="text-[10px] text-slate-500 mt-1">
-              Clique em <Settings2 className="inline h-3 w-3" /> para configurar
-            </p>
-          </div>
-        ) : (
-          <>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-6">
+                <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
+              </div>
+            ) : shifts.length === 0 ? (
+              <div className="text-center py-5">
+                <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-2">
+                  <CalendarIcon className="h-6 w-6 text-slate-600" />
+                </div>
+                <p className="text-sm text-slate-400">Sem plantões configurados</p>
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Clique em <Settings2 className="inline h-3 w-3" /> para configurar
+                </p>
+              </div>
+            ) : (
+              <>
             {/* Upcoming Shifts - New Timeline Design */}
             <div>
               <div className="flex items-center gap-2 mb-2">

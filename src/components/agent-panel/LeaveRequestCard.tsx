@@ -69,6 +69,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const [leaveDescription, setLeaveDescription] = useState('');
   const [activeTab, setActiveTab] = useState('minhas');
 
+  const [selectedTeamDate, setSelectedTeamDate] = useState<Date | undefined>();
+
   useEffect(() => {
     fetchLeaves();
     if (agentTeam && agentUnitId) {
@@ -330,70 +332,171 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           </TabsContent>
 
           <TabsContent value="equipe" className="space-y-4 mt-4">
-            {/* Team Calendar */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium text-slate-300">Folgas da Equipe (próximos 30 dias)</span>
-              </div>
-              <div className="bg-slate-700/30 rounded-lg p-2">
-                <Calendar
-                  mode="single"
-                  selected={undefined}
-                  month={selectedMonth}
-                  onMonthChange={setSelectedMonth}
-                  locale={ptBR}
-                  modifiers={{ teamLeave: teamLeaveDates }}
-                  modifiersStyles={{
-                    teamLeave: {
-                      backgroundColor: 'rgba(59, 130, 246, 0.3)',
-                      color: '#60a5fa',
-                      fontWeight: 'bold',
-                      borderRadius: '50%'
-                    }
-                  }}
-                  className="rounded-md pointer-events-auto"
-                />
-              </div>
-              <div className="flex items-center gap-4 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500/50" />
-                  <span className="text-slate-400">Colegas de folga</span>
-                </div>
-              </div>
-            </div>
+            {(() => {
+              const today = startOfDay(new Date());
+              const isInRange = (leave: AgentLeave, d: Date) => {
+                const start = startOfDay(parseISO(leave.start_date));
+                const end = startOfDay(parseISO(leave.end_date));
+                return d >= start && d <= end;
+              };
 
-            {/* Team Leaves List */}
-            {teamLeaves.length === 0 ? (
-              <div className="text-center py-4">
-                <p className="text-slate-400 text-sm">Nenhuma folga programada pela equipe nos próximos 30 dias.</p>
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {teamLeaves.map((leave) => (
-                  <div
-                    key={leave.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 border border-slate-600/50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${leaveTypeLabels[leave.leave_type]?.color || 'bg-slate-600'}`}>
-                        {leaveTypeLabels[leave.leave_type]?.icon || <Star className="h-4 w-4" />}
+              const teamToday = teamLeaves.filter((l) => isInRange(l, today));
+              const selectedDay = selectedTeamDate ? startOfDay(selectedTeamDate) : null;
+              const teamSelectedDay = selectedDay ? teamLeaves.filter((l) => isInRange(l, selectedDay)) : [];
+
+              return (
+                <>
+                  {/* Destaque: hoje */}
+                  <div className="p-3 rounded-xl bg-slate-800/60 border border-blue-500/20">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-medium text-slate-200">
+                          Quem está de folga hoje
+                        </span>
                       </div>
-                      <div>
-                        <p className="font-medium text-white">{leave.agent_name}</p>
-                        <p className="text-sm text-slate-400">
-                          {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type} • {format(parseISO(leave.start_date), "dd/MM", { locale: ptBR })}
-                          {leave.start_date !== leave.end_date && ` - ${format(parseISO(leave.end_date), "dd/MM", { locale: ptBR })}`}
-                        </p>
+                      <Badge variant="outline" className="text-xs border-blue-500/30 text-blue-300">
+                        {format(today, 'dd/MM', { locale: ptBR })}
+                      </Badge>
+                    </div>
+
+                    {teamToday.length === 0 ? (
+                      <p className="text-xs text-slate-400 mt-2">Nenhum colega de folga hoje.</p>
+                    ) : (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {teamToday.map((leave) => (
+                          <div
+                            key={leave.id}
+                            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-700/40 border border-slate-600/40"
+                          >
+                            <span className="text-xs font-semibold text-white">{(leave as any).agent_name}</span>
+                            <Badge variant="outline" className={leaveTypeLabels[leave.leave_type]?.color || ''}>
+                              {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Team Calendar */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-medium text-slate-300">Folgas da Equipe (próximos 30 dias)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {selectedTeamDate && (
+                          <Badge variant="outline" className="text-xs border-slate-600 text-slate-300">
+                            {format(selectedTeamDate, 'dd/MM', { locale: ptBR })}
+                          </Badge>
+                        )}
+                        {selectedTeamDate && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 px-2 text-slate-400 hover:text-slate-200"
+                            onClick={() => setSelectedTeamDate(undefined)}
+                          >
+                            Limpar
+                          </Button>
+                        )}
                       </div>
                     </div>
-                    <Badge variant="outline" className={statusLabels[leave.status]?.color || ''}>
-                      {statusLabels[leave.status]?.label || leave.status}
-                    </Badge>
+                    <div className="bg-slate-700/30 rounded-lg p-2">
+                      <Calendar
+                        mode="single"
+                        selected={selectedTeamDate}
+                        month={selectedMonth}
+                        onMonthChange={setSelectedMonth}
+                        onSelect={setSelectedTeamDate}
+                        locale={ptBR}
+                        modifiers={{ teamLeave: teamLeaveDates }}
+                        modifiersStyles={{
+                          teamLeave: {
+                            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                            color: '#60a5fa',
+                            fontWeight: 'bold',
+                            borderRadius: '50%'
+                          }
+                        }}
+                        className="rounded-md pointer-events-auto"
+                      />
+                    </div>
+                    <div className="flex items-center gap-4 text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-blue-500/50" />
+                        <span className="text-slate-400">Colegas de folga</span>
+                      </div>
+                      <span className="text-slate-500">Toque em um dia para ver quem sai</span>
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
+
+                  {/* Team Leaves List */}
+                  {selectedDay ? (
+                    teamSelectedDay.length === 0 ? (
+                      <div className="text-center py-3">
+                        <p className="text-slate-400 text-sm">Ninguém de folga nesta data.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 max-h-48 overflow-y-auto">
+                        {teamSelectedDay.map((leave) => (
+                          <div
+                            key={leave.id}
+                            className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 border border-slate-600/50"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`p-2 rounded-lg ${leaveTypeLabels[leave.leave_type]?.color || 'bg-slate-600'}`}>
+                                {leaveTypeLabels[leave.leave_type]?.icon || <Star className="h-4 w-4" />}
+                              </div>
+                              <div>
+                                <p className="font-medium text-white">{leave.agent_name}</p>
+                                <p className="text-sm text-slate-400">
+                                  {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge variant="outline" className={statusLabels[leave.status]?.color || ''}>
+                              {statusLabels[leave.status]?.label || leave.status}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  ) : teamLeaves.length === 0 ? (
+                    <div className="text-center py-4">
+                      <p className="text-slate-400 text-sm">Nenhuma folga programada pela equipe nos próximos 30 dias.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {teamLeaves.map((leave) => (
+                        <div
+                          key={leave.id}
+                          className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 border border-slate-600/50"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-lg ${leaveTypeLabels[leave.leave_type]?.color || 'bg-slate-600'}`}>
+                              {leaveTypeLabels[leave.leave_type]?.icon || <Star className="h-4 w-4" />}
+                            </div>
+                            <div>
+                              <p className="font-medium text-white">{leave.agent_name}</p>
+                              <p className="text-sm text-slate-400">
+                                {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type} • {format(parseISO(leave.start_date), "dd/MM", { locale: ptBR })}
+                                {leave.start_date !== leave.end_date && ` - ${format(parseISO(leave.end_date), "dd/MM", { locale: ptBR })}`}
+                              </p>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className={statusLabels[leave.status]?.color || ''}>
+                            {statusLabels[leave.status]?.label || leave.status}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </TabsContent>
         </Tabs>
       </CardContent>
