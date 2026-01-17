@@ -318,12 +318,16 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
                 )} />
               </div>
               
-              {/* Description */}
+              {/* War Name / Codename */}
               <p className={cn(
-                "hidden md:block text-xs lg:text-sm text-center font-medium mb-2 md:mb-3 max-w-full line-clamp-2 transition-colors duration-300",
-                subTextColor
+                "hidden md:block text-[10px] lg:text-xs text-center font-bold uppercase tracking-widest mb-2 md:mb-3 max-w-full transition-colors duration-300",
+                subTextColor,
+                "opacity-80"
               )}>
-                Equipe {team} - Operações Táticas
+                {team === 'ALFA' && 'GUARDIÃO SUPREMO'}
+                {team === 'BRAVO' && 'FORÇA TÁTICA'}
+                {team === 'CHARLIE' && 'SENTINELA'}
+                {team === 'DELTA' && 'OPERAÇÃO SIGMA'}
               </p>
               
               {/* Access button - Theme styled */}

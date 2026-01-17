@@ -28,7 +28,13 @@ export function PWAInstallPrompt() {
   const [showIOSDialog, setShowIOSDialog] = useState(false);
 
   useEffect(() => {
-    // Show banner after a short delay if installable
+    // Never show banner if already installed
+    if (isInstalled) {
+      setShowBanner(false);
+      return;
+    }
+    
+    // Show banner after a short delay if installable and not installed
     if (isInstallable || (isIOS && !isInstalled)) {
       const timer = setTimeout(() => {
         setShowBanner(true);
