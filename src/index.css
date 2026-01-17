@@ -539,6 +539,17 @@
   }
 }
 
+@keyframes shine {
+  0%, 100% {
+    opacity: 0;
+    transform: translateX(-100%) rotate(45deg);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateX(100%) rotate(45deg);
+  }
+}
+
 @keyframes radar {
   0% {
     transform: rotate(0deg);
