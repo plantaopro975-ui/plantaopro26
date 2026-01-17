@@ -1,4 +1,4 @@
-import { AlertTriangle, X, ShieldAlert, Lock } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,92 +21,61 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
   const config = {
     error: {
       icon: AlertTriangle,
-      iconBg: 'bg-red-500/20',
+      iconBg: 'bg-red-500/15',
       iconColor: 'text-red-400',
-      borderColor: 'border-red-500/50',
-      glowColor: 'shadow-red-500/20',
-      gradientFrom: 'from-red-950/90',
-      gradientTo: 'to-slate-950',
+      borderColor: 'border-red-500/40',
+      btnBg: 'bg-red-600 hover:bg-red-500',
     },
     warning: {
       icon: ShieldAlert,
-      iconBg: 'bg-amber-500/20',
+      iconBg: 'bg-amber-500/15',
       iconColor: 'text-amber-400',
-      borderColor: 'border-amber-500/50',
-      glowColor: 'shadow-amber-500/20',
-      gradientFrom: 'from-amber-950/90',
-      gradientTo: 'to-slate-950',
+      borderColor: 'border-amber-500/40',
+      btnBg: 'bg-amber-600 hover:bg-amber-500',
     },
     auth: {
       icon: Lock,
-      iconBg: 'bg-rose-500/20',
+      iconBg: 'bg-rose-500/15',
       iconColor: 'text-rose-400',
-      borderColor: 'border-rose-500/50',
-      glowColor: 'shadow-rose-500/20',
-      gradientFrom: 'from-rose-950/90',
-      gradientTo: 'to-slate-950',
+      borderColor: 'border-rose-500/40',
+      btnBg: 'bg-rose-600 hover:bg-rose-500',
     },
   };
 
-  const { icon: Icon, iconBg, iconColor, borderColor, glowColor, gradientFrom, gradientTo } = config[type];
+  const { icon: Icon, iconBg, iconColor, borderColor, btnBg } = config[type];
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent 
         className={cn(
-          "sm:max-w-md border-2 shadow-2xl",
-          borderColor,
-          glowColor,
-          `bg-gradient-to-br ${gradientFrom} via-slate-900 ${gradientTo}`
+          "sm:max-w-xs p-4 gap-3 border bg-slate-900/95 backdrop-blur-sm",
+          borderColor
         )}
       >
-        <DialogHeader className="space-y-4">
-          {/* Animated Icon Container */}
-          <div className="mx-auto relative">
-            <div className={cn(
-              "w-20 h-20 rounded-2xl flex items-center justify-center",
-              iconBg,
-              "animate-[pulse_2s_ease-in-out_infinite]"
-            )}>
-              <Icon className={cn("w-10 h-10", iconColor)} />
+        <DialogHeader className="space-y-2">
+          <div className="flex items-center gap-3">
+            <div className={cn("p-2 rounded-lg shrink-0", iconBg)}>
+              <Icon className={cn("w-5 h-5", iconColor)} />
             </div>
-            {/* Pulse rings */}
-            <div className={cn(
-              "absolute inset-0 rounded-2xl border-2 animate-ping opacity-30",
-              borderColor
-            )} />
+            <DialogTitle className="text-base font-semibold text-foreground text-left">
+              {title}
+            </DialogTitle>
           </div>
           
-          <DialogTitle className="text-center text-xl font-bold text-foreground">
-            {title}
-          </DialogTitle>
-          
-          <DialogDescription className="text-center text-base text-muted-foreground leading-relaxed px-4">
+          <DialogDescription className="text-sm text-muted-foreground leading-relaxed pl-11">
             {message}
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex flex-col gap-3 pt-4">
+        <div className="flex justify-end pt-1">
           <Button
             onClick={onClose}
-            className={cn(
-              "w-full py-5 text-base font-bold transition-all duration-200",
-              type === 'error' && "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white",
-              type === 'warning' && "bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white",
-              type === 'auth' && "bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white"
-            )}
+            size="sm"
+            className={cn("text-white font-medium", btnBg)}
           >
-            Entendido
+            OK
           </Button>
         </div>
-        
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-        >
-          <X className="h-4 w-4" />
-        </button>
       </DialogContent>
     </Dialog>
   );
