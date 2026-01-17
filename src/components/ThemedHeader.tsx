@@ -3,9 +3,10 @@ import { useTheme, themes } from '@/contexts/ThemeContext';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { cn } from '@/lib/utils';
 import { 
-  Shield, Cpu, Sun, Snowflake, Flame, Monitor, Volume2, VolumeX,
-  Radio, Wifi, Activity, Zap, Target, Crosshair, Clock, Calendar,
-  Users, Check, ChevronDown, Palette, Lock, Signal
+  Shield, Cpu, Snowflake, Flame, Volume2, VolumeX,
+  Radio, Activity, Zap, Target, Crosshair, Clock,
+  Check, ChevronDown, Hexagon, Triangle, Diamond, Circle,
+  Sparkles, Gauge, Heart, Eye, Waves, Star
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -30,8 +31,7 @@ const headerStyles = {
     glow: 'shadow-amber-500/20',
     statusBg: 'bg-amber-500/10 border-amber-500/40',
     statusText: 'text-amber-400',
-    centerWidget: 'tactical-radar',
-    operationalText: 'MODO TÁTICO',
+    operationalText: 'TÁTICO',
   },
   cyber: {
     bg: 'from-cyan-950/95 via-slate-900/98 to-fuchsia-950/95',
@@ -40,8 +40,7 @@ const headerStyles = {
     glow: 'shadow-cyan-500/20',
     statusBg: 'bg-cyan-500/10 border-cyan-500/40',
     statusText: 'text-cyan-400',
-    centerWidget: 'cyber-pulse',
-    operationalText: 'NEURAL LINK',
+    operationalText: 'CYBER',
   },
   crimson: {
     bg: 'from-red-950/95 via-slate-900/98 to-red-950/95',
@@ -50,8 +49,7 @@ const headerStyles = {
     glow: 'shadow-red-500/20',
     statusBg: 'bg-red-500/10 border-red-500/40',
     statusText: 'text-red-400',
-    centerWidget: 'fire-pulse',
-    operationalText: 'ALERTA MÁXIMO',
+    operationalText: 'ALERTA',
   },
   arctic: {
     bg: 'from-sky-950/95 via-slate-900/98 to-sky-950/95',
@@ -60,8 +58,7 @@ const headerStyles = {
     glow: 'shadow-sky-400/20',
     statusBg: 'bg-sky-500/10 border-sky-400/40',
     statusText: 'text-sky-300',
-    centerWidget: 'ice-crystal',
-    operationalText: 'MODO ÁRTICO',
+    operationalText: 'ÁRTICO',
   },
   light: {
     bg: 'from-slate-100/98 via-white/98 to-slate-100/98',
@@ -70,8 +67,7 @@ const headerStyles = {
     glow: 'shadow-slate-400/20',
     statusBg: 'bg-emerald-500/10 border-emerald-500/40',
     statusText: 'text-emerald-600',
-    centerWidget: 'clean-status',
-    operationalText: 'SISTEMA ATIVO',
+    operationalText: 'ATIVO',
   },
   system: {
     bg: 'from-slate-900/95 via-slate-800/98 to-slate-900/95',
@@ -80,24 +76,24 @@ const headerStyles = {
     glow: 'shadow-primary/20',
     statusBg: 'bg-primary/10 border-primary/40',
     statusText: 'text-primary',
-    centerWidget: 'auto-detect',
-    operationalText: 'AUTO SISTEMA',
+    operationalText: 'AUTO',
   },
 };
 
 // Team-specific messages
 const teamMessages = {
-  ALFA: { text: 'FORÇA ALFA', icon: Shield, color: 'text-red-400' },
-  BRAVO: { text: 'BRAVO TEAM', icon: Target, color: 'text-blue-400' },
-  CHARLIE: { text: 'CHARLIE OPS', icon: Crosshair, color: 'text-green-400' },
-  DELTA: { text: 'DELTA FORCE', icon: Radio, color: 'text-amber-400' },
+  ALFA: { text: 'ALFA', icon: Shield, color: 'text-red-400' },
+  BRAVO: { text: 'BRAVO', icon: Target, color: 'text-blue-400' },
+  CHARLIE: { text: 'CHARLIE', icon: Crosshair, color: 'text-green-400' },
+  DELTA: { text: 'DELTA', icon: Radio, color: 'text-amber-400' },
 };
 
-export function ThemedHeader({ selectedTeam, onThemeOpen }: ThemedHeaderProps) {
+export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
   const { theme, setTheme, themeConfig, resolvedTheme } = useTheme();
   const { playSound, isSoundEnabled, toggleSound } = useSoundEffects();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+  const [pulseState, setPulseState] = useState(0);
   
   const effectiveTheme = theme === 'system' ? (resolvedTheme as keyof typeof headerStyles) : theme;
   const style = headerStyles[effectiveTheme] || headerStyles.tactical;
@@ -106,6 +102,11 @@ export function ThemedHeader({ selectedTeam, onThemeOpen }: ThemedHeaderProps) {
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const pulse = setInterval(() => setPulseState(p => (p + 1) % 100), 50);
+    return () => clearInterval(pulse);
   }, []);
 
   const availableThemes = Object.values(themes).filter(t => 
@@ -118,98 +119,174 @@ export function ThemedHeader({ selectedTeam, onThemeOpen }: ThemedHeaderProps) {
     setIsThemeDropdownOpen(false);
   };
 
-  // Render center widget based on theme
+  // Unique center widget for each theme
   const renderCenterWidget = () => {
-    switch (style.centerWidget) {
-      case 'tactical-radar':
+    switch (effectiveTheme) {
+      case 'tactical':
+        // Military-style gauge meter
         return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/5 border border-amber-500/30">
-            <div className="relative w-8 h-8">
-              <div className="absolute inset-0 rounded-full border-2 border-amber-500/40" />
-              <div className="absolute inset-1 rounded-full border border-amber-500/20" />
-              <div 
-                className="absolute inset-0 rounded-full"
-                style={{ 
-                  background: 'conic-gradient(from 0deg, transparent, rgba(251, 191, 36, 0.5) 30deg, transparent 60deg)',
-                  animation: 'spin 2s linear infinite'
-                }}
-              />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-amber-900/30 to-amber-800/20 border border-amber-500/30">
+            <div className="flex items-center gap-1">
+              <Gauge className="h-5 w-5 text-amber-400" />
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <div 
+                    key={i}
+                    className={cn(
+                      "w-1.5 h-4 rounded-sm transition-all duration-300",
+                      i < 4 ? "bg-amber-400" : "bg-amber-400/30"
+                    )}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[9px] text-amber-400/60 uppercase tracking-wider">Status</span>
-              <span className="text-xs font-bold text-amber-400">OPERACIONAL</span>
+            <div className="h-4 w-px bg-amber-500/30" />
+            <div className="flex items-center gap-1.5">
+              <Shield className="h-4 w-4 text-amber-300" />
+              <span className="text-[10px] font-bold text-amber-300 tracking-wider">PRONTO</span>
             </div>
           </div>
         );
       
-      case 'cyber-pulse':
+      case 'cyber':
+        // Digital matrix display
         return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-cyan-500/5 border border-cyan-500/30">
-            <div className="relative flex items-center gap-0.5">
-              {[...Array(7)].map((_, i) => (
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-cyan-900/30 via-fuchsia-900/20 to-cyan-900/30 border border-cyan-500/30">
+            <div className="flex items-center gap-1">
+              <Cpu className="h-5 w-5 text-cyan-400" />
+              <div className="grid grid-cols-4 gap-0.5">
+                {[...Array(8)].map((_, i) => (
+                  <div 
+                    key={i}
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-sm transition-all",
+                      (pulseState + i) % 4 === 0 ? "bg-fuchsia-400" : "bg-cyan-400/60"
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="font-mono text-[10px] text-cyan-300">
+              <span className="text-fuchsia-400">0x</span>
+              {Math.floor(pulseState).toString(16).toUpperCase().padStart(2, '0')}
+              <span className="text-cyan-400/50">F</span>
+            </div>
+          </div>
+        );
+      
+      case 'crimson':
+        // Alert heartbeat monitor
+        return (
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-red-900/40 to-red-800/20 border border-red-500/40">
+            <Heart className={cn("h-5 w-5 text-red-400", pulseState % 20 < 5 && "scale-110")} />
+            <div className="flex items-end gap-px h-5">
+              {[2, 5, 3, 8, 4, 6, 3, 7, 2].map((h, i) => (
                 <div 
                   key={i}
-                  className="w-1 bg-cyan-400 rounded-full"
+                  className="w-1 bg-red-400 rounded-t-sm transition-all duration-100"
                   style={{ 
-                    height: `${Math.random() * 12 + 8}px`,
-                    animation: `pulse 0.5s ease-in-out ${i * 0.1}s infinite alternate`,
-                    opacity: 0.6 + (i * 0.05)
+                    height: `${Math.abs(Math.sin((pulseState + i * 10) * 0.1)) * h + 4}px`,
+                    opacity: 0.5 + Math.abs(Math.sin((pulseState + i * 10) * 0.1)) * 0.5
                   }}
                 />
               ))}
             </div>
-            <div className="flex flex-col">
-              <span className="text-[9px] text-cyan-400/60 uppercase tracking-wider font-mono">Network</span>
-              <span className="text-xs font-bold text-cyan-400 font-mono">ONLINE</span>
+            <div className="text-[10px] font-bold text-red-300 tabular-nums">
+              {72 + Math.floor(Math.sin(pulseState * 0.1) * 8)} BPM
             </div>
           </div>
         );
       
-      case 'fire-pulse':
+      case 'arctic':
+        // Ice crystal formation
         return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-500/5 border border-red-500/30">
-            <Flame className="h-6 w-6 text-red-400 animate-pulse" />
-            <div className="flex flex-col">
-              <span className="text-[9px] text-red-400/60 uppercase tracking-wider">Modo</span>
-              <span className="text-xs font-bold text-red-400">COMBATE</span>
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-sky-900/30 to-sky-800/20 border border-sky-400/30">
+            <div className="relative">
+              <Snowflake className="h-6 w-6 text-sky-300" style={{ transform: `rotate(${pulseState * 2}deg)` }} />
+              <div className="absolute -inset-1 rounded-full bg-sky-400/10 animate-pulse" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-[9px] text-sky-400/60 uppercase">Temp</span>
+              <span className="text-sm font-bold text-sky-200 tabular-nums">
+                -{(18 + Math.floor(Math.sin(pulseState * 0.05) * 3)).toFixed(0)}°C
+              </span>
+            </div>
+            <Waves className="h-4 w-4 text-sky-300/60" />
+          </div>
+        );
+      
+      case 'light':
+        // Clean productivity status
+        return (
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-50 to-slate-50 border border-slate-200">
+            <div className="flex items-center gap-1.5">
+              <div className="relative">
+                <Activity className="h-5 w-5 text-emerald-600" />
+                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              </div>
+              <span className="text-xs font-semibold text-slate-700">Sistema Estável</span>
+            </div>
+            <div className="h-4 w-px bg-slate-300" />
+            <div className="flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+              <span className="text-[10px] text-slate-500">100%</span>
             </div>
           </div>
         );
       
-      case 'ice-crystal':
+      default: // system
+        // Auto-detect visualization
         return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sky-500/5 border border-sky-400/30">
-            <Snowflake className="h-6 w-6 text-sky-300 animate-spin" style={{ animationDuration: '4s' }} />
-            <div className="flex flex-col">
-              <span className="text-[9px] text-sky-300/60 uppercase tracking-wider">Temp</span>
-              <span className="text-xs font-bold text-sky-300">ESTÁVEL</span>
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/30">
+            <Eye className="h-5 w-5 text-primary" />
+            <div className="flex gap-1">
+              {['T', 'C', 'A'].map((letter, i) => (
+                <span 
+                  key={letter}
+                  className={cn(
+                    "w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold transition-all",
+                    pulseState % 3 === i 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-primary/20 text-primary/60"
+                  )}
+                >
+                  {letter}
+                </span>
+              ))}
             </div>
-          </div>
-        );
-      
-      case 'clean-status':
-        return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-200/80 border border-slate-300">
-            <Activity className="h-5 w-5 text-emerald-600" />
-            <div className="flex flex-col">
-              <span className="text-[9px] text-slate-500 uppercase tracking-wider">Sistema</span>
-              <span className="text-xs font-bold text-slate-700">ATIVO</span>
-            </div>
-          </div>
-        );
-      
-      default:
-        return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/5 border border-primary/30">
-            <Signal className="h-5 w-5 text-primary animate-pulse" />
-            <div className="flex flex-col">
-              <span className="text-[9px] text-primary/60 uppercase tracking-wider">Auto</span>
-              <span className="text-xs font-bold text-primary">DETECTADO</span>
-            </div>
+            <Sparkles className="h-4 w-4 text-primary/60" />
           </div>
         );
     }
+  };
+
+  // Theme-specific left status indicator
+  const renderStatusIndicator = () => {
+    const icons = {
+      tactical: <Hexagon className="h-4 w-4" />,
+      cyber: <Diamond className="h-4 w-4" />,
+      crimson: <Triangle className="h-4 w-4" />,
+      arctic: <Circle className="h-4 w-4" />,
+      light: <Star className="h-4 w-4" />,
+      system: <Zap className="h-4 w-4" />,
+    };
+
+    return (
+      <div className={cn(
+        "flex items-center gap-2 px-3 py-1.5 rounded-lg border shadow-lg",
+        style.statusBg, style.glow
+      )}>
+        <div className={cn("relative", style.statusText)}>
+          {icons[effectiveTheme] || icons.tactical}
+          <div className="absolute inset-0 animate-ping opacity-30">
+            {icons[effectiveTheme] || icons.tactical}
+          </div>
+        </div>
+        <span className={cn("text-[10px] font-bold uppercase tracking-wider", style.statusText)}>
+          {style.operationalText}
+        </span>
+      </div>
+    );
   };
 
   return (
@@ -220,29 +297,9 @@ export function ThemedHeader({ selectedTeam, onThemeOpen }: ThemedHeaderProps) {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between gap-2">
           
-          {/* Left: Status & Team Indicator */}
+          {/* Left: Status Indicator */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Live Status Indicator */}
-            <div className={cn(
-              "flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border shadow-lg",
-              style.statusBg, style.glow
-            )}>
-              <div className="relative w-5 h-5 sm:w-6 sm:h-6">
-                <div className={cn("absolute inset-0 rounded-full border", style.border.replace('border-', 'border-'))} style={{ borderColor: 'currentColor', opacity: 0.3 }} />
-                <div 
-                  className="absolute inset-0 rounded-full"
-                  style={{ 
-                    background: `conic-gradient(from 0deg, transparent, currentColor 30deg, transparent 60deg)`,
-                    animation: 'spin 2s linear infinite',
-                    opacity: 0.5
-                  }} 
-                />
-                <div className={cn("absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shadow-[0_0_8px_currentColor]", style.statusText.replace('text-', 'bg-'))} />
-              </div>
-              <span className={cn("text-[9px] sm:text-[11px] font-bold uppercase tracking-wider", style.statusText)}>
-                {style.operationalText}
-              </span>
-            </div>
+            {renderStatusIndicator()}
             
             {/* Team Badge (if selected) */}
             {teamConfig && (
@@ -256,7 +313,7 @@ export function ThemedHeader({ selectedTeam, onThemeOpen }: ThemedHeaderProps) {
             )}
           </div>
           
-          {/* Center: Theme-specific Widget */}
+          {/* Center: Unique Theme Widget */}
           <div className="hidden sm:flex">
             {renderCenterWidget()}
           </div>
@@ -321,31 +378,16 @@ export function ThemedHeader({ selectedTeam, onThemeOpen }: ThemedHeaderProps) {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            {/* Themed Clock */}
+            {/* Compact Clock */}
             <div className={cn(
-              "flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border-2 shadow-lg backdrop-blur-sm",
+              "flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg border shadow-lg backdrop-blur-sm",
               "bg-card/80",
-              style.border, style.glow
+              style.border
             )}>
-              <div className="relative flex items-center justify-center w-5 h-5">
-                <div className={cn("absolute inset-0 rounded-full border", style.border)} />
-                <div 
-                  className="absolute inset-0 rounded-full"
-                  style={{ 
-                    background: `conic-gradient(from 0deg, transparent, hsl(var(--primary) / 0.4) 30deg, transparent 60deg)`,
-                    animation: 'spin 2s linear infinite'
-                  }}
-                />
-                <Clock className="h-3 w-3 text-primary" />
-              </div>
-              <div className="flex items-baseline gap-0.5">
-                <span className={cn("text-sm sm:text-base font-mono font-black tracking-wider tabular-nums", style.accent)}>
-                  {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                </span>
-                <span className={cn("text-[8px] sm:text-[10px] font-mono opacity-60", style.accent)}>
-                  :{String(currentTime.getSeconds()).padStart(2, '0')}
-                </span>
-              </div>
+              <Clock className="h-3.5 w-3.5 text-primary" />
+              <span className={cn("text-sm font-mono font-bold tracking-wider tabular-nums", style.accent)}>
+                {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+              </span>
             </div>
           </div>
         </div>
