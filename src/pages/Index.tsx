@@ -49,6 +49,7 @@ import { ThemeSelector } from '@/components/ThemeSelector';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { ParticleBackground } from '@/components/ParticleBackground';
+import { ErrorDialog } from '@/components/ErrorDialog';
 
 
 interface Unit {
@@ -117,6 +118,14 @@ export default function Index() {
   const [calculatedAge, setCalculatedAge] = useState<number | null>(null);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const [pendingCloseAction, setPendingCloseAction] = useState<(() => void) | null>(null);
+  
+  // Error dialog state
+  const [errorDialog, setErrorDialog] = useState<{
+    open: boolean;
+    title: string;
+    message: string;
+    type: 'error' | 'warning' | 'auth';
+  }>({ open: false, title: '', message: '', type: 'auth' });
   
   // Real-time CPF validation state
   const [cpfValidation, setCpfValidation] = useState<{
@@ -602,12 +611,13 @@ export default function Index() {
     const { error } = await signIn(authEmail, loginPassword);
     
     if (error) {
-      toast({
-        title: 'Erro ao entrar',
-        description: error.message === 'Invalid login credentials' 
-          ? 'CPF ou senha incorretos' 
-          : error.message,
-        variant: 'destructive',
+      setErrorDialog({
+        open: true,
+        title: 'Falha na Autenticação',
+        message: error.message === 'Invalid login credentials' 
+          ? 'CPF ou senha incorretos. Verifique suas credenciais e tente novamente.' 
+          : error.message || 'Não foi possível autenticar. Tente novamente.',
+        type: 'auth',
       });
     } else {
       // Save credentials if enabled
@@ -974,60 +984,66 @@ export default function Index() {
       </section>
 
 
-      {/* Footer - Themed Compact */}
-      <footer className="py-1 sm:py-1.5 px-2 sm:px-4 bg-card/95 backdrop-blur-sm border-t border-primary/20 relative z-20 shrink-0">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-1">
-          {/* Left: Branding + Audio */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary/70" />
+      {/* Footer - Clean & Themed */}
+      <footer className="py-1.5 sm:py-2 px-3 sm:px-4 bg-card/95 backdrop-blur-sm border-t border-primary/20 relative z-20 shrink-0">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          {/* Left: Copyright + Audio */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary/60" />
               <span className="text-[9px] sm:text-[10px] font-medium">© {new Date().getFullYear()}</span>
+              <span className="hidden sm:inline text-[10px] font-bold text-primary">
+                FRANC D'NIS
+              </span>
             </div>
-            <span className="hidden sm:inline text-[10px] font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              FRANC D'NIS
-            </span>
             <HomeAudioPlayer />
           </div>
           
-          {/* Center: Developer Credit - Desktop only */}
-          <div className="hidden lg:flex items-center">
-            <DeveloperFooter variant="transparent" />
+          {/* Center: Version Badge (desktop) */}
+          <div className="hidden md:flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/30">
+              <Radio className="h-3 w-3 text-green-500 animate-pulse" />
+              <span className="text-[10px] font-bold text-primary tracking-wide">v2.6</span>
+            </div>
+            <div className="text-[9px] text-muted-foreground font-medium tracking-wider">
+              FEIJÓ/AC
+            </div>
           </div>
           
-          {/* Right: Actions - Compact */}
-          <div className="flex items-center gap-0.5">
+          {/* Right: Actions */}
+          <div className="flex items-center gap-1">
             <button
               onClick={() => setShowAboutDialog(true)}
-              className="p-1 sm:p-1.5 text-slate-500 hover:text-primary rounded transition-colors"
+              className="p-1.5 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-colors"
               title="Sobre"
             >
-              <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <Info className="h-4 w-4" />
             </button>
             
             {getSavedCredentials().length > 0 && (
               <button
                 onClick={() => setShowCredentialsManager(true)}
-                className="p-1 sm:p-1.5 text-slate-500 hover:text-amber-400 rounded transition-colors"
+                className="p-1.5 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-colors"
                 title="Credenciais"
               >
-                <KeyRound className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <KeyRound className="h-4 w-4" />
               </button>
             )}
             
             <button
               onClick={() => navigate('/auth')}
-              className="p-1 sm:p-1.5 text-slate-500 hover:text-cyan-400 rounded transition-colors"
+              className="p-1.5 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-colors"
               title="Login Admin"
             >
-              <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <Mail className="h-4 w-4" />
             </button>
             
             <button
               onClick={() => setShowMasterLogin(true)}
-              className="p-1 sm:p-1.5 text-slate-500 hover:text-red-400 rounded transition-colors"
+              className="p-1.5 text-muted-foreground hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors"
               title="Master"
             >
-              <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <Lock className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -1035,9 +1051,9 @@ export default function Index() {
 
       {/* CPF Check Dialog - Professional */}
       <Dialog open={showCpfCheck} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-primary/40 max-w-md shadow-2xl shadow-primary/10">
-          <DialogHeader className="pb-4 border-b border-slate-700/50">
-            <DialogTitle className="flex items-center gap-3 text-xl sm:text-2xl font-bold text-white">
+        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border-2 border-primary/40 max-w-md shadow-2xl shadow-primary/10">
+          <DialogHeader className="pb-4 border-b border-border/50">
+            <DialogTitle className="flex items-center gap-3 text-xl sm:text-2xl font-bold text-foreground">
               {currentTeamConfig && (
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/40">
                   <currentTeamConfig.icon className={`h-6 w-6 sm:h-7 sm:w-7 ${currentTeamConfig.color}`} />
@@ -1045,7 +1061,7 @@ export default function Index() {
               )}
               <span>Equipe {selectedTeam}</span>
             </DialogTitle>
-            <DialogDescription className="text-base text-slate-400 mt-2">
+            <DialogDescription className="text-base text-muted-foreground mt-2">
               Digite seu CPF para verificar seu cadastro no sistema
             </DialogDescription>
           </DialogHeader>
@@ -1716,6 +1732,15 @@ export default function Index() {
           </ScrollArea>
         </DialogContent>
       </Dialog>
+
+      {/* Error Dialog - Professional */}
+      <ErrorDialog
+        open={errorDialog.open}
+        onClose={() => setErrorDialog(prev => ({ ...prev, open: false }))}
+        title={errorDialog.title}
+        message={errorDialog.message}
+        type={errorDialog.type}
+      />
       </div>
     </>
   );
