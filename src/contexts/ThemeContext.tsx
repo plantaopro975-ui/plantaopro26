@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { Shield, Crosshair, Cpu, Award, Sun, Monitor, Flame, Snowflake, Radar, Eye, Moon } from 'lucide-react';
+import { Shield, Cpu, Sun, Monitor, Flame, Snowflake } from 'lucide-react';
 
-export type ThemeType = 'tactical' | 'military' | 'cyber' | 'classic' | 'light' | 'system' | 'crimson' | 'arctic' | 'stealth' | 'sentinel' | 'nightops';
+// Reduced to 4 unique themes + system + light
+export type ThemeType = 'tactical' | 'cyber' | 'crimson' | 'arctic' | 'light' | 'system';
 
 export interface ThemeConfig {
   id: ThemeType;
@@ -28,9 +29,14 @@ export interface ThemeConfig {
     particleColor: string;
     scanlineOpacity: number;
   };
+  cardStyle: {
+    gradient: string;
+    border: string;
+    shadow: string;
+    hoverShadow: string;
+  };
 }
 
-// Helper to detect system preference
 const getSystemTheme = (): 'light' | 'tactical' => {
   if (typeof window !== 'undefined' && window.matchMedia) {
     return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'tactical';
@@ -42,105 +48,65 @@ export const themes: Record<ThemeType, ThemeConfig> = {
   tactical: {
     id: 'tactical',
     name: 'Tático',
-    description: 'Operações táticas com cores âmbar',
-    icon: Crosshair,
+    description: 'Operações táticas com cores âmbar intenso',
+    icon: Shield,
     emoji: '🎯',
     colors: {
       primary: '38 92% 50%',
       primaryForeground: '222 47% 6%',
-      accent: '38 92% 50%',
-      background: '222 47% 6%',
-      card: '222 47% 8%',
-      border: '222 30% 18%',
+      accent: '25 95% 53%',
+      background: '222 47% 4%',
+      card: '222 47% 6%',
+      border: '38 50% 20%',
       gradientFrom: '38 92% 50%',
       gradientTo: '25 95% 53%',
       foreground: '210 40% 98%',
-      muted: '222 30% 12%',
-      mutedForeground: '215 20% 55%',
+      muted: '222 30% 10%',
+      mutedForeground: '38 30% 60%',
       isLight: false,
     },
     effects: {
-      glowIntensity: 'medium',
-      particleColor: 'rgba(251, 191, 36, 0.6)',
-      scanlineOpacity: 0.03,
-    },
-  },
-  military: {
-    id: 'military',
-    name: 'Militar',
-    description: 'Estilo militar verde oliva',
-    icon: Shield,
-    emoji: '🪖',
-    colors: {
-      primary: '142 76% 36%',
-      primaryForeground: '210 40% 98%',
-      accent: '142 76% 36%',
-      background: '160 30% 6%',
-      card: '160 30% 8%',
-      border: '160 20% 18%',
-      gradientFrom: '142 76% 36%',
-      gradientTo: '120 60% 30%',
-      foreground: '210 40% 98%',
-      muted: '160 20% 12%',
-      mutedForeground: '160 15% 55%',
-      isLight: false,
-    },
-    effects: {
-      glowIntensity: 'low',
-      particleColor: 'rgba(34, 197, 94, 0.5)',
+      glowIntensity: 'high',
+      particleColor: 'rgba(251, 191, 36, 0.8)',
       scanlineOpacity: 0.05,
+    },
+    cardStyle: {
+      gradient: 'from-amber-950/90 via-orange-950/80 to-slate-950/95',
+      border: 'border-amber-500/40',
+      shadow: 'shadow-amber-500/20',
+      hoverShadow: 'hover:shadow-amber-400/40',
     },
   },
   cyber: {
     id: 'cyber',
     name: 'Cyber',
-    description: 'Futurista com cores neon',
+    description: 'Futurista com neon ciano e rosa',
     icon: Cpu,
     emoji: '💻',
     colors: {
       primary: '187 85% 53%',
       primaryForeground: '222 47% 6%',
-      accent: '280 85% 60%',
-      background: '240 20% 5%',
-      card: '240 20% 8%',
-      border: '240 15% 18%',
+      accent: '290 85% 60%',
+      background: '240 25% 3%',
+      card: '240 25% 5%',
+      border: '187 50% 20%',
       gradientFrom: '187 85% 53%',
-      gradientTo: '280 85% 60%',
+      gradientTo: '290 85% 60%',
       foreground: '210 40% 98%',
-      muted: '240 15% 12%',
-      mutedForeground: '240 10% 55%',
+      muted: '240 20% 10%',
+      mutedForeground: '187 40% 60%',
       isLight: false,
     },
     effects: {
       glowIntensity: 'high',
-      particleColor: 'rgba(6, 182, 212, 0.7)',
-      scanlineOpacity: 0.08,
+      particleColor: 'rgba(6, 182, 212, 0.8)',
+      scanlineOpacity: 0.1,
     },
-  },
-  classic: {
-    id: 'classic',
-    name: 'Clássico',
-    description: 'Azul institucional profissional',
-    icon: Award,
-    emoji: '🛡️',
-    colors: {
-      primary: '217 91% 50%',
-      primaryForeground: '210 40% 98%',
-      accent: '217 91% 60%',
-      background: '222 47% 6%',
-      card: '222 47% 8%',
-      border: '217 30% 18%',
-      gradientFrom: '217 91% 50%',
-      gradientTo: '200 85% 45%',
-      foreground: '210 40% 98%',
-      muted: '222 30% 12%',
-      mutedForeground: '217 20% 55%',
-      isLight: false,
-    },
-    effects: {
-      glowIntensity: 'medium',
-      particleColor: 'rgba(59, 130, 246, 0.5)',
-      scanlineOpacity: 0.02,
+    cardStyle: {
+      gradient: 'from-cyan-950/90 via-purple-950/80 to-slate-950/95',
+      border: 'border-cyan-500/40',
+      shadow: 'shadow-cyan-500/20',
+      hoverShadow: 'hover:shadow-cyan-400/40',
     },
   },
   crimson: {
@@ -150,127 +116,61 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     icon: Flame,
     emoji: '🔥',
     colors: {
-      primary: '0 84% 50%',
+      primary: '0 84% 55%',
       primaryForeground: '210 40% 98%',
       accent: '15 90% 55%',
-      background: '0 20% 5%',
-      card: '0 20% 8%',
-      border: '0 15% 18%',
-      gradientFrom: '0 84% 50%',
-      gradientTo: '15 90% 45%',
+      background: '0 30% 4%',
+      card: '0 30% 6%',
+      border: '0 50% 20%',
+      gradientFrom: '0 84% 55%',
+      gradientTo: '20 90% 50%',
       foreground: '210 40% 98%',
-      muted: '0 15% 12%',
-      mutedForeground: '0 10% 55%',
+      muted: '0 25% 10%',
+      mutedForeground: '0 40% 60%',
       isLight: false,
     },
     effects: {
       glowIntensity: 'high',
-      particleColor: 'rgba(239, 68, 68, 0.6)',
-      scanlineOpacity: 0.04,
+      particleColor: 'rgba(239, 68, 68, 0.8)',
+      scanlineOpacity: 0.06,
+    },
+    cardStyle: {
+      gradient: 'from-red-950/90 via-orange-950/80 to-slate-950/95',
+      border: 'border-red-500/40',
+      shadow: 'shadow-red-500/20',
+      hoverShadow: 'hover:shadow-red-400/40',
     },
   },
   arctic: {
     id: 'arctic',
     name: 'Ártico',
-    description: 'Operações frias e precisas',
+    description: 'Gelo e precisão operacional',
     icon: Snowflake,
     emoji: '❄️',
     colors: {
       primary: '200 95% 48%',
       primaryForeground: '222 47% 6%',
       accent: '180 85% 50%',
-      background: '210 25% 8%',
-      card: '210 25% 10%',
-      border: '210 20% 20%',
+      background: '210 35% 4%',
+      card: '210 35% 6%',
+      border: '200 50% 20%',
       gradientFrom: '200 95% 48%',
       gradientTo: '180 85% 45%',
       foreground: '210 40% 98%',
-      muted: '210 20% 14%',
-      mutedForeground: '210 15% 55%',
+      muted: '210 25% 10%',
+      mutedForeground: '200 40% 60%',
       isLight: false,
     },
     effects: {
       glowIntensity: 'medium',
-      particleColor: 'rgba(56, 189, 248, 0.5)',
-      scanlineOpacity: 0.02,
+      particleColor: 'rgba(56, 189, 248, 0.7)',
+      scanlineOpacity: 0.03,
     },
-  },
-  stealth: {
-    id: 'stealth',
-    name: 'Furtivo',
-    description: 'Operações cobertas noturnas',
-    icon: Eye,
-    emoji: '🌑',
-    colors: {
-      primary: '270 50% 45%',
-      primaryForeground: '210 40% 98%',
-      accent: '280 60% 55%',
-      background: '270 15% 4%',
-      card: '270 15% 7%',
-      border: '270 12% 15%',
-      gradientFrom: '270 50% 45%',
-      gradientTo: '280 60% 40%',
-      foreground: '270 10% 90%',
-      muted: '270 12% 10%',
-      mutedForeground: '270 8% 50%',
-      isLight: false,
-    },
-    effects: {
-      glowIntensity: 'low',
-      particleColor: 'rgba(139, 92, 246, 0.4)',
-      scanlineOpacity: 0.06,
-    },
-  },
-  sentinel: {
-    id: 'sentinel',
-    name: 'Sentinela',
-    description: 'Vigilância com radar verde',
-    icon: Radar,
-    emoji: '📡',
-    colors: {
-      primary: '120 100% 35%',
-      primaryForeground: '0 0% 5%',
-      accent: '140 80% 40%',
-      background: '120 20% 4%',
-      card: '120 20% 6%',
-      border: '120 15% 14%',
-      gradientFrom: '120 100% 35%',
-      gradientTo: '140 80% 30%',
-      foreground: '120 50% 90%',
-      muted: '120 15% 10%',
-      mutedForeground: '120 10% 50%',
-      isLight: false,
-    },
-    effects: {
-      glowIntensity: 'high',
-      particleColor: 'rgba(34, 197, 94, 0.7)',
-      scanlineOpacity: 0.1,
-    },
-  },
-  nightops: {
-    id: 'nightops',
-    name: 'Ops Noturnas',
-    description: 'Ultra escuro para operações noturnas',
-    icon: Moon,
-    emoji: '🌙',
-    colors: {
-      primary: '0 0% 85%',
-      primaryForeground: '0 0% 3%',
-      accent: '220 10% 50%',
-      background: '0 0% 2%',
-      card: '0 0% 4%',
-      border: '0 0% 10%',
-      gradientFrom: '0 0% 85%',
-      gradientTo: '220 10% 60%',
-      foreground: '0 0% 75%',
-      muted: '0 0% 6%',
-      mutedForeground: '0 0% 45%',
-      isLight: false,
-    },
-    effects: {
-      glowIntensity: 'low',
-      particleColor: 'rgba(120, 120, 120, 0.2)',
-      scanlineOpacity: 0.02,
+    cardStyle: {
+      gradient: 'from-sky-950/90 via-cyan-950/80 to-slate-950/95',
+      border: 'border-sky-500/40',
+      shadow: 'shadow-sky-500/20',
+      hoverShadow: 'hover:shadow-sky-400/40',
     },
   },
   light: {
@@ -280,14 +180,14 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     icon: Sun,
     emoji: '☀️',
     colors: {
-      primary: '217 91% 40%',
+      primary: '217 91% 45%',
       primaryForeground: '0 0% 100%',
-      accent: '217 91% 45%',
+      accent: '217 91% 50%',
       background: '210 40% 98%',
       card: '0 0% 100%',
-      border: '214 32% 80%',
-      gradientFrom: '217 91% 40%',
-      gradientTo: '200 85% 45%',
+      border: '214 32% 85%',
+      gradientFrom: '217 91% 45%',
+      gradientTo: '200 85% 50%',
       foreground: '222 47% 11%',
       muted: '210 40% 94%',
       mutedForeground: '215 25% 35%',
@@ -297,6 +197,12 @@ export const themes: Record<ThemeType, ThemeConfig> = {
       glowIntensity: 'low',
       particleColor: 'rgba(59, 130, 246, 0.3)',
       scanlineOpacity: 0,
+    },
+    cardStyle: {
+      gradient: 'from-blue-50 via-slate-50 to-white',
+      border: 'border-blue-200',
+      shadow: 'shadow-blue-500/10',
+      hoverShadow: 'hover:shadow-blue-500/20',
     },
   },
   system: {
@@ -309,20 +215,26 @@ export const themes: Record<ThemeType, ThemeConfig> = {
       primary: '38 92% 50%',
       primaryForeground: '222 47% 6%',
       accent: '38 92% 50%',
-      background: '222 47% 6%',
-      card: '222 47% 8%',
-      border: '222 30% 18%',
+      background: '222 47% 4%',
+      card: '222 47% 6%',
+      border: '38 50% 20%',
       gradientFrom: '38 92% 50%',
       gradientTo: '25 95% 53%',
       foreground: '210 40% 98%',
-      muted: '222 30% 12%',
-      mutedForeground: '215 20% 55%',
+      muted: '222 30% 10%',
+      mutedForeground: '38 30% 60%',
       isLight: false,
     },
     effects: {
       glowIntensity: 'medium',
       particleColor: 'rgba(251, 191, 36, 0.6)',
       scanlineOpacity: 0.03,
+    },
+    cardStyle: {
+      gradient: 'from-amber-950/90 via-orange-950/80 to-slate-950/95',
+      border: 'border-amber-500/40',
+      shadow: 'shadow-amber-500/20',
+      hoverShadow: 'hover:shadow-amber-400/40',
     },
   },
 };
@@ -338,13 +250,16 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeType>(() => {
-    const saved = localStorage.getItem('plantaopro-theme');
-    return (saved as ThemeType) || 'tactical';
+    const saved = localStorage.getItem('plantaopro-theme') as ThemeType;
+    // If saved theme no longer exists, fallback to tactical
+    if (saved && themes[saved]) {
+      return saved;
+    }
+    return 'tactical';
   });
 
   const [systemTheme, setSystemTheme] = useState<'light' | 'tactical'>(getSystemTheme);
 
-  // Listen for system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
     
@@ -361,18 +276,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('plantaopro-theme', newTheme);
   }, []);
 
-  // Resolve 'system' to actual theme
   const resolvedTheme: Exclude<ThemeType, 'system'> = theme === 'system' ? systemTheme : theme;
-
-  // Get the actual config to apply
   const activeConfig = themes[resolvedTheme];
 
-  // Apply theme CSS variables
   useEffect(() => {
     const config = activeConfig;
     const root = document.documentElement;
     
-    // Core colors
     root.style.setProperty('--primary', config.colors.primary);
     root.style.setProperty('--primary-foreground', config.colors.primaryForeground);
     root.style.setProperty('--accent', config.colors.accent);
@@ -386,14 +296,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--muted', config.colors.muted);
     root.style.setProperty('--muted-foreground', config.colors.mutedForeground);
     root.style.setProperty('--border', config.colors.border);
-    root.style.setProperty('--input', config.colors.isLight ? config.colors.muted : config.colors.muted);
+    root.style.setProperty('--input', config.colors.muted);
     root.style.setProperty('--ring', config.colors.primary);
-    
-    // Secondary colors
     root.style.setProperty('--secondary', config.colors.muted);
     root.style.setProperty('--secondary-foreground', config.colors.foreground);
-    
-    // Sidebar colors
     root.style.setProperty('--sidebar-background', config.colors.isLight ? config.colors.card : config.colors.background);
     root.style.setProperty('--sidebar-foreground', config.colors.isLight ? config.colors.mutedForeground : config.colors.foreground);
     root.style.setProperty('--sidebar-primary', config.colors.primary);
@@ -403,12 +309,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--sidebar-border', config.colors.border);
     root.style.setProperty('--sidebar-ring', config.colors.primary);
     
-    // Update gradient
     root.style.setProperty('--gradient-primary', 
       `linear-gradient(135deg, hsl(${config.colors.gradientFrom}) 0%, hsl(${config.colors.gradientTo}) 100%)`
     );
     
-    // Update gradient dark for light theme
     if (config.colors.isLight) {
       root.style.setProperty('--gradient-dark', 
         `linear-gradient(180deg, hsl(${config.colors.background}) 0%, hsl(210 40% 96%) 100%)`
@@ -419,20 +323,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       );
     }
     
-    // Add/remove theme classes
-    root.classList.remove('light-theme', 'nightops-theme');
+    root.classList.remove('light-theme', 'nightops-theme', 'tactical-theme', 'cyber-theme', 'crimson-theme', 'arctic-theme');
     
     if (config.colors.isLight) {
       root.classList.add('light-theme');
       root.classList.remove('dark');
-    } else if (resolvedTheme === 'nightops') {
-      root.classList.add('nightops-theme', 'dark');
     } else {
-      root.classList.add('dark');
+      root.classList.add('dark', `${resolvedTheme}-theme`);
     }
-  }, [activeConfig]);
+  }, [activeConfig, resolvedTheme]);
 
-  // For display purposes, use the stored theme but provide resolved config
   const displayConfig = theme === 'system' ? themes.system : themes[theme];
 
   return (

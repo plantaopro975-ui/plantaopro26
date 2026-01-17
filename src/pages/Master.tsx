@@ -59,6 +59,7 @@ import { EditUnitDialog } from '@/components/admin/EditUnitDialog';
 import { DeleteAgentDialog } from '@/components/admin/DeleteAgentDialog';
 import { LicenseManagementDialog } from '@/components/admin/LicenseManagementDialog';
 import { DeleteUserDialog } from '@/components/admin/DeleteUserDialog';
+import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
 
@@ -841,6 +842,10 @@ export default function Master() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center justify-end gap-1">
+                              <AgentPasswordManager
+                                agent={agent}
+                                onSuccess={fetchData}
+                              />
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -865,6 +870,7 @@ export default function Master() {
                                 title={agent.is_active ? 'Desativar' : 'Ativar'}
                               >
                                 {agent.is_active ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
+                              </Button>
                               </Button>
                               <Button
                                 variant="ghost"

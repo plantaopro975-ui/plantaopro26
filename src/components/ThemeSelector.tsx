@@ -12,10 +12,14 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
   const { theme, setTheme } = useTheme();
   const { playSound, isSoundEnabled, toggleSound } = useSoundEffects();
 
+  // Only show the 4 main themes + system + light
+  const availableThemes = Object.values(themes).filter(t => 
+    ['tactical', 'cyber', 'crimson', 'arctic', 'light', 'system'].includes(t.id)
+  );
+
   const handleSelect = (themeId: ThemeType) => {
     playSound('theme-change');
     setTheme(themeId);
-    // Auto-close after theme selection
     setTimeout(() => {
       onSelect?.();
     }, 150);
@@ -42,7 +46,7 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
   if (compact) {
     return (
       <div className="flex items-center gap-3 flex-wrap">
-        {Object.values(themes).map((t) => {
+        {availableThemes.map((t) => {
           const Icon = t.icon;
           return (
             <button
@@ -86,7 +90,7 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
           </div>
           <div>
             <p className="text-base font-bold text-foreground">Tema Visual</p>
-            <p className="text-sm text-muted-foreground">Escolha seu estilo operacional</p>
+            <p className="text-sm text-muted-foreground">4 temas únicos disponíveis</p>
           </div>
         </div>
         <button
@@ -104,9 +108,9 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
         </button>
       </div>
       
-      {/* Theme Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        {Object.values(themes).map((t) => {
+      {/* Theme Grid - 2 columns for cleaner look */}
+      <div className="grid grid-cols-2 gap-4">
+        {availableThemes.map((t) => {
           const Icon = t.icon;
           const isSelected = theme === t.id;
           
@@ -115,7 +119,7 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
               key={t.id}
               onClick={() => handleSelect(t.id)}
               className={cn(
-                "relative p-5 rounded-2xl border-3 transition-all duration-300 text-left group overflow-hidden",
+                "relative p-4 rounded-2xl border-3 transition-all duration-300 text-left group overflow-hidden",
                 "bg-gradient-to-br from-slate-800/90 via-slate-800/70 to-slate-900/90",
                 isSelected
                   ? "border-primary shadow-xl shadow-primary/25 scale-[1.02]"
@@ -124,8 +128,8 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
             >
               {/* Selected indicator */}
               {isSelected && (
-                <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/50">
-                  <Check className="h-4 w-4 text-primary-foreground" />
+                <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/50">
+                  <Check className="h-3.5 w-3.5 text-primary-foreground" />
                 </div>
               )}
               
@@ -138,48 +142,43 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
               )}
               
               {/* Icon and name */}
-              <div className="flex items-center gap-4 mb-3 relative">
+              <div className="flex items-center gap-3 mb-2 relative">
                 <div 
                   className={cn(
-                    "w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300",
+                    "w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300",
                     isSelected ? "scale-110" : "group-hover:scale-105"
                   )}
                   style={{ background: `linear-gradient(135deg, hsl(${t.colors.gradientFrom}) 0%, hsl(${t.colors.gradientTo}) 100%)` }}
                 >
-                  <Icon className="h-7 w-7 text-white drop-shadow-lg" />
+                  <Icon className="h-6 w-6 text-white drop-shadow-lg" />
                 </div>
-                <span className={cn(
-                  "text-lg font-bold transition-colors",
-                  isSelected ? "text-primary" : "text-foreground"
-                )}>
-                  {t.name}
-                </span>
+                <div>
+                  <span className={cn(
+                    "text-base font-bold transition-colors block",
+                    isSelected ? "text-primary" : "text-foreground"
+                  )}>
+                    {t.name}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{t.emoji}</span>
+                </div>
               </div>
               
               {/* Description */}
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-4 relative">{t.description}</p>
+              <p className="text-xs text-muted-foreground line-clamp-1 relative">{t.description}</p>
               
               {/* Color preview */}
-              <div className="flex gap-2 relative">
+              <div className="flex gap-1.5 mt-3 relative">
                 <div 
-                  className="w-7 h-7 rounded-full border-2 border-slate-600/50 shadow-md transition-transform group-hover:scale-110"
+                  className="w-5 h-5 rounded-full border-2 border-slate-600/50 shadow-md"
                   style={{ background: `hsl(${t.colors.primary})` }}
-                  title="Cor primária"
                 />
                 <div 
-                  className="w-7 h-7 rounded-full border-2 border-slate-600/50 shadow-md transition-transform group-hover:scale-110"
+                  className="w-5 h-5 rounded-full border-2 border-slate-600/50 shadow-md"
                   style={{ background: `hsl(${t.colors.accent})` }}
-                  title="Cor de destaque"
                 />
                 <div 
-                  className="w-7 h-7 rounded-full border-2 border-slate-600/50 shadow-md transition-transform group-hover:scale-110"
+                  className="w-5 h-5 rounded-full border-2 border-slate-600/50 shadow-md"
                   style={{ background: `hsl(${t.colors.background})` }}
-                  title="Fundo"
-                />
-                <div 
-                  className="w-7 h-7 rounded-full border-2 border-slate-600/50 shadow-md transition-transform group-hover:scale-110"
-                  style={{ background: `hsl(${t.colors.card})` }}
-                  title="Card"
                 />
               </div>
             </button>
