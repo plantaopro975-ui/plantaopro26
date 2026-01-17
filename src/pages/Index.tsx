@@ -1126,7 +1126,7 @@ export default function Index() {
 
       {/* Login Dialog - Professional */}
       <Dialog open={showLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-emerald-500/40 max-w-md shadow-2xl shadow-emerald-500/10">
+        <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-emerald-500/40 w-[95vw] max-w-md shadow-2xl shadow-emerald-500/10 max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-4 border-b border-slate-700/50">
             <DialogTitle className="flex items-center gap-3 text-xl sm:text-2xl font-bold text-white">
               {currentTeamConfig && (
@@ -1226,7 +1226,7 @@ export default function Index() {
 
       {/* Registration Dialog - Professional */}
       <Dialog open={showRegistration} onOpenChange={(open) => !open && safeCloseRegistration()}>
-        <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-cyan-500/40 max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl shadow-cyan-500/10">
+        <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-cyan-500/40 w-[95vw] max-w-xl max-h-[85vh] overflow-y-auto shadow-2xl shadow-cyan-500/10 p-4 sm:p-6">
           <DialogHeader className="pb-4 border-b border-slate-700/50">
             <DialogTitle className="flex items-center gap-3 text-xl sm:text-2xl font-bold text-white">
               {currentTeamConfig && (
@@ -1274,7 +1274,7 @@ export default function Index() {
             </div>
             
             {/* CPF e Matrícula */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label className="text-base font-semibold text-slate-300">CPF *</Label>
                 <div className="relative">
@@ -1399,7 +1399,7 @@ export default function Index() {
             )}
 
             {/* Data de Nascimento e Telefone - Profissional */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label className="text-base font-semibold text-slate-300 flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-cyan-400" />
@@ -1435,7 +1435,7 @@ export default function Index() {
             </div>
 
             {/* Senha - Profissional */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label className="text-base font-semibold text-slate-300 flex items-center gap-2">
                   <Lock className="h-4 w-4 text-cyan-400" />
