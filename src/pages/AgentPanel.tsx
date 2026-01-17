@@ -36,8 +36,9 @@ import { DiagnosticReportButton } from '@/components/DiagnosticReportButton';
 import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { WelcomeTrialDialog, shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
+import { PasswordChangeRequest } from '@/components/agent-panel/PasswordChangeRequest';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, LogOut, Home, WifiOff, RefreshCw, Droplet, Radar, Gift, Shield, Zap } from 'lucide-react';
+import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, LogOut, Home, WifiOff, RefreshCw, Droplet, Radar, Gift, Shield, Zap, Key } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -627,6 +628,23 @@ export default function AgentPanel() {
                       <div className="flex flex-wrap gap-3">
                         <DiagnosticReportButton />
                         <SafeModeToggle variant="compact" />
+                      </div>
+                    </div>
+
+                    {/* Password & Security Section */}
+                    <div className="bg-gradient-to-br from-purple-900/30 to-slate-900/80 border-2 border-purple-500/30 rounded-2xl p-5 md:p-6 space-y-4 shadow-lg">
+                      <h3 className="font-semibold text-base md:text-lg flex items-center gap-2 text-slate-200">
+                        <Key className="h-5 w-5 text-purple-400" />
+                        Segurança da Conta
+                      </h3>
+                      <p className="text-sm text-slate-400">
+                        Para alterar sua senha, envie uma solicitação ao administrador.
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        <PasswordChangeRequest 
+                          agentId={agent.id} 
+                          agentName={agent.name} 
+                        />
                       </div>
                     </div>
                   </div>

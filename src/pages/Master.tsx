@@ -60,6 +60,8 @@ import { DeleteAgentDialog } from '@/components/admin/DeleteAgentDialog';
 import { LicenseManagementDialog } from '@/components/admin/LicenseManagementDialog';
 import { DeleteUserDialog } from '@/components/admin/DeleteUserDialog';
 import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
+import { CredentialsViewer } from '@/components/admin/CredentialsViewer';
+import { PasswordRequestsManager } from '@/components/admin/PasswordRequestsManager';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
 
@@ -588,9 +590,11 @@ export default function Master() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-4 sm:grid-cols-8">
             <TabsTrigger value="overview">Unidades</TabsTrigger>
             <TabsTrigger value="agents">Agentes</TabsTrigger>
+            <TabsTrigger value="credentials">Credenciais</TabsTrigger>
+            <TabsTrigger value="password-requests">Senhas</TabsTrigger>
             <TabsTrigger value="licenses">Licenças</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transferências</TabsTrigger>
@@ -903,6 +907,16 @@ export default function Master() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Credentials Tab */}
+          <TabsContent value="credentials" className="space-y-4 mt-6">
+            <CredentialsViewer />
+          </TabsContent>
+
+          {/* Password Requests Tab */}
+          <TabsContent value="password-requests" className="space-y-4 mt-6">
+            <PasswordRequestsManager />
           </TabsContent>
 
           {/* Licenses Tab */}
