@@ -13,7 +13,7 @@ import {
   formatCPF
 } from '@/lib/validators';
 import { SavedCredentials, saveCredential, getAutoLoginCredential } from '@/components/auth/SavedCredentials';
-import loginBackground from '@/assets/login-background.jpg';
+import logoShield from '@/assets/logo-shield.png';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { checkOfflineLicense, isOnline } from '@/hooks/useOfflineLicenseCache';
 
@@ -598,21 +598,24 @@ export default function Auth() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Login Background Image */}
+      {/* Dark tactical background with texture */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${loginBackground})` }}
+        className="absolute inset-0 opacity-30"
+        style={{ 
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
       />
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/80 to-slate-900/70" />
+      {/* Radial glow behind logo */}
+      <div className="absolute inset-0 bg-gradient-radial from-blue-900/20 via-transparent to-transparent" />
       
       {/* Back to Home Button - Fixed Position */}
       <div className="absolute top-4 left-4 z-20">
@@ -620,7 +623,7 @@ export default function Auth() {
           variant="ghost"
           size="sm"
           onClick={() => navigate('/')}
-          className="text-slate-400 hover:text-white hover:bg-slate-800/50 gap-2"
+          className="text-slate-400 hover:text-white hover:bg-slate-800/50 gap-2 border border-slate-700/50"
         >
           <ArrowLeft className="h-4 w-4" />
           <span className="hidden sm:inline">Voltar</span>
@@ -628,20 +631,26 @@ export default function Auth() {
         </Button>
       </div>
 
-      <div className="w-full max-w-lg animate-fade-in relative z-10">
-        {/* Security Badge */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg shadow-amber-500/30 mb-4 border-4 border-amber-400/50">
-            <Shield className="h-10 w-10 text-slate-900" />
+      <div className="w-full max-w-md animate-fade-in relative z-10">
+        {/* Logo Shield - Professional */}
+        <div className="text-center mb-6">
+          <div className="relative inline-block">
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-40 h-auto mx-auto drop-shadow-[0_0_40px_rgba(59,130,246,0.4)] animate-[pulse-glow_3s_ease-in-out_infinite]"
+            />
+            {/* Subtle shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent animate-[shine_4s_ease-in-out_infinite] rounded-full" />
           </div>
-          <h1 className="text-3xl font-bold text-white">SEGURANÇA PÚBLICA</h1>
-          <p className="text-amber-400 font-semibold mt-1 text-xl">Plantão Pro App</p>
-          <p className="text-slate-400 text-sm mt-2">Sistema Integrado de Gestão de Escalas</p>
+          <p className="text-slate-400 text-sm mt-4 tracking-widest uppercase">
+            Sistema de Escalas Operacionais
+          </p>
         </div>
 
-        <Card className="bg-slate-800/80 backdrop-blur-xl border-slate-700 shadow-2xl">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="flex items-center justify-center gap-2 text-white">
+        <Card className="bg-slate-900/80 backdrop-blur-xl border-slate-700/60 shadow-2xl shadow-blue-900/20">
+          <CardHeader className="text-center pb-4 pt-5">
+            <CardTitle className="flex items-center justify-center gap-2 text-white text-lg">
               {isMasterLogin ? (
                 <>
                   <BadgeCheck className="h-5 w-5 text-amber-500" />
@@ -649,7 +658,7 @@ export default function Auth() {
                 </>
               ) : (
                 <>
-                  <Lock className="h-5 w-5 text-amber-500" />
+                  <Lock className="h-5 w-5 text-blue-400" />
                   Acesso ao Sistema
                 </>
               )}
@@ -657,7 +666,7 @@ export default function Auth() {
             <CardDescription className="text-slate-400">
               {isMasterLogin 
                 ? 'Área restrita para administrador'
-                : 'Entre com seu CPF ou Email para continuar'
+                : 'Entre com seu CPF ou Email'
               }
             </CardDescription>
           </CardHeader>
@@ -690,7 +699,7 @@ export default function Auth() {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold"
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg shadow-blue-900/40"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -708,7 +717,7 @@ export default function Auth() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className="w-full text-slate-400 hover:text-white hover:bg-slate-700"
+                  className="w-full text-slate-400 hover:text-white hover:bg-slate-700/50"
                   onClick={() => setIsMasterLogin(false)}
                 >
                   Voltar ao login normal
@@ -718,12 +727,12 @@ export default function Auth() {
               <div className="space-y-4">
                 {/* Login Method Tabs */}
                 <Tabs value={loginMethod} onValueChange={(v) => setLoginMethod(v as 'cpf' | 'email')} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 bg-slate-700/50">
-                    <TabsTrigger value="cpf" className="data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900">
+                  <TabsList className="grid w-full grid-cols-2 bg-slate-800/80 border border-slate-700/50">
+                    <TabsTrigger value="cpf" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                       <KeyRound className="h-4 w-4 mr-2" />
                       CPF
                     </TabsTrigger>
-                    <TabsTrigger value="email" className="data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900">
+                    <TabsTrigger value="email" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                       <Mail className="h-4 w-4 mr-2" />
                       Email
                     </TabsTrigger>
@@ -731,11 +740,11 @@ export default function Auth() {
                   
                   <TabsContent value="cpf" className="space-y-4 mt-4">
                     {/* Info Box for CPF Login */}
-                    <div className="p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+                    <div className="p-3 bg-blue-900/20 rounded-lg border border-blue-700/40">
                       <div className="flex items-start gap-2 text-sm">
-                        <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-slate-400">
-                          Use seu <strong className="text-amber-400">CPF</strong> como usuário e a <strong className="text-amber-400">senha que você criou</strong> no cadastro.
+                        <Shield className="h-4 w-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                        <p className="text-slate-300">
+                          Use seu <strong className="text-blue-400">CPF</strong> como usuário e a <strong className="text-blue-400">senha que você criou</strong> no cadastro.
                         </p>
                       </div>
                     </div>
@@ -751,7 +760,7 @@ export default function Auth() {
                           onChange={(e) => handleLoginCPFChange(e.target.value)}
                           required
                           maxLength={14}
-                          className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
+                          className="bg-slate-800/80 border-slate-600 text-white placeholder:text-slate-500 focus:border-blue-500/60"
                         />
                         {errors.cpf && (
                           <p className="text-sm text-red-400">{errors.cpf}</p>
@@ -786,7 +795,7 @@ export default function Auth() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500 pr-10"
+                            className="bg-slate-800/80 border-slate-600 text-white placeholder:text-slate-500 pr-10 focus:border-blue-500/60"
                           />
                           <button
                             type="button"
@@ -817,7 +826,7 @@ export default function Auth() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold"
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg shadow-blue-900/30"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
@@ -834,11 +843,11 @@ export default function Auth() {
                   
                   <TabsContent value="email" className="space-y-4 mt-4">
                     {/* Info Box for Email Login */}
-                    <div className="p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+                    <div className="p-3 bg-blue-900/20 rounded-lg border border-blue-700/40">
                       <div className="flex items-start gap-2 text-sm">
-                        <Mail className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-slate-400">
-                          Login por <strong className="text-amber-400">email</strong> para administradores e usuários cadastrados.
+                        <Mail className="h-4 w-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                        <p className="text-slate-300">
+                          Login por <strong className="text-blue-400">email</strong> para administradores e usuários cadastrados.
                         </p>
                       </div>
                     </div>
@@ -853,7 +862,7 @@ export default function Auth() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
-                          className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
+                          className="bg-slate-800/80 border-slate-600 text-white placeholder:text-slate-500 focus:border-blue-500/60"
                         />
                         {errors.email && (
                           <p className="text-sm text-red-400">{errors.email}</p>
@@ -869,7 +878,7 @@ export default function Auth() {
                             value={emailPassword}
                             onChange={(e) => setEmailPassword(e.target.value)}
                             required
-                            className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500 pr-10"
+                            className="bg-slate-800/80 border-slate-600 text-white placeholder:text-slate-500 pr-10 focus:border-blue-500/60"
                           />
                           <button
                             type="button"
@@ -886,7 +895,7 @@ export default function Auth() {
                       
                       <Button 
                         type="submit" 
-                        className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold"
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg shadow-blue-900/30"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
@@ -903,35 +912,27 @@ export default function Auth() {
                 </Tabs>
 
                 {/* Info for admins */}
-                <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/30 mt-4">
-                  <p className="text-xs text-amber-400 text-center">
-                    <strong>Administradores:</strong> Use a aba "Email" para login com francdenisbr@gmail.com
+                <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mt-4">
+                  <p className="text-xs text-slate-400 text-center">
+                    🔒 Administradores podem acessar pelo email cadastrado ou{' '}
+                    <button
+                      type="button"
+                      onClick={() => setIsMasterLogin(true)}
+                      className="text-blue-400 hover:text-blue-300 font-semibold"
+                    >
+                      login master
+                    </button>
                   </p>
                 </div>
               </div>
             )}
-            
-            {!isMasterLogin && (
-              <div className="mt-6 pt-4 border-t border-slate-700">
-                <Button
-                  variant="ghost"
-                  className="w-full text-slate-400 hover:text-amber-500 hover:bg-slate-700"
-                  onClick={() => setIsMasterLogin(true)}
-                >
-                  <BadgeCheck className="mr-2 h-4 w-4" />
-                  Acesso Administrador Master
-                </Button>
-              </div>
-            )}
           </CardContent>
         </Card>
-
-        {/* Developer Credit */}
-        <div className="text-center mt-6">
-          <p className="text-xs text-slate-400">
-            Desenvolvido por <span className="text-amber-500 font-semibold">Franc D'nis</span>
-          </p>
-          <p className="text-[10px] text-slate-500 mt-0.5">Feijó, Acre • © {new Date().getFullYear()} PlantãoPro</p>
+        
+        {/* Footer */}
+        <div className="text-center mt-6 text-slate-500 text-xs">
+          <p>© {new Date().getFullYear()} FRANC D'NIS • Feijó/AC</p>
+          <p className="mt-1 text-slate-600">v2.6</p>
         </div>
       </div>
     </div>

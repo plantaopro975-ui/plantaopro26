@@ -50,6 +50,7 @@ import { getThemeAssets } from '@/lib/themeAssets';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
 import { ThemedHeader } from '@/components/ThemedHeader';
+import logoShield from '@/assets/logo-shield.png';
 
 
 interface Unit {
@@ -1066,34 +1067,40 @@ export default function Index() {
         </DialogContent>
       </Dialog>
 
-      {/* Login Dialog - Professional */}
+      {/* Login Dialog - Professional with Shield Logo */}
       <Dialog open={showLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-emerald-500/40 w-[95vw] max-w-md shadow-2xl shadow-emerald-500/10 max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-600/40 w-[95vw] max-w-md shadow-2xl shadow-blue-900/20 max-h-[90vh] overflow-y-auto">
+          {/* Logo Header */}
+          <div className="text-center py-4">
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-24 h-auto mx-auto drop-shadow-[0_0_30px_rgba(59,130,246,0.4)]"
+            />
+          </div>
+          
           <DialogHeader className="pb-4 border-b border-slate-700/50">
-            <DialogTitle className="flex items-center gap-3 text-xl sm:text-2xl font-bold text-white">
+            <DialogTitle className="flex items-center justify-center gap-3 text-xl font-bold text-white">
               {currentTeamConfig && (
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/30 to-emerald-500/10 border border-emerald-500/40">
-                  <currentTeamConfig.icon className={`h-6 w-6 sm:h-7 sm:w-7 ${currentTeamConfig.color}`} />
+                <div className="p-2 rounded-xl bg-gradient-to-br from-blue-600/30 to-blue-600/10 border border-blue-500/40">
+                  <currentTeamConfig.icon className={`h-5 w-5 ${currentTeamConfig.color}`} />
                 </div>
               )}
-              <div>
-                <span className="block">Login - Equipe {selectedTeam}</span>
-                <span className="text-sm font-normal text-emerald-400">Acesso Autenticado</span>
-              </div>
+              <span>Equipe {selectedTeam}</span>
             </DialogTitle>
-            <DialogDescription className="text-base text-slate-400 mt-2">
-              CPF encontrado! Entre com sua senha para acessar o sistema.
+            <DialogDescription className="text-sm text-slate-400 mt-2 text-center">
+              Acesso autenticado • Digite sua senha
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleLogin} className="space-y-5 pt-4" data-login-form="true">
+          <form onSubmit={handleLogin} className="space-y-4 pt-4" data-login-form="true">
             <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">CPF</Label>
+              <Label className="text-sm font-semibold text-slate-300">CPF</Label>
               <Input
                 value={loginCpf}
                 onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
                 placeholder="000.000.000-00"
-                className="bg-slate-800/80 border-2 border-slate-600 text-white text-lg py-5 font-mono tracking-wider"
+                className="bg-slate-800/80 border border-slate-600 text-white text-lg py-5 font-mono tracking-wider focus:border-blue-500/60"
                 maxLength={14}
                 disabled
               />
@@ -1101,14 +1108,14 @@ export default function Index() {
             </div>
             
             <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">Senha</Label>
+              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="bg-slate-800/80 border-2 border-slate-600 text-white text-lg py-5 pr-14 focus:border-emerald-500/60 transition-colors"
+                  className="bg-slate-800/80 border border-slate-600 text-white text-lg py-5 pr-14 focus:border-blue-500/60 transition-colors"
                 />
                 <Button
                   type="button"
@@ -1145,7 +1152,7 @@ export default function Index() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-lg py-6 shadow-lg shadow-emerald-500/30 transition-all duration-300"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-lg py-6 shadow-lg shadow-blue-900/40 transition-all duration-300"
             >
               {isSubmitting ? (
                 <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Entrando...</>
@@ -1430,39 +1437,48 @@ export default function Index() {
         </DialogContent>
       </Dialog>
 
-      {/* Master Admin Login Dialog */}
+      {/* Master Admin Login Dialog - Professional with Shield Logo */}
       <Dialog open={showMasterLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-slate-900 border-amber-500/30 max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-amber-400">
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-amber-500/40 max-w-md shadow-2xl shadow-amber-900/20">
+          {/* Logo Header */}
+          <div className="text-center py-4">
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-24 h-auto mx-auto drop-shadow-[0_0_30px_rgba(245,158,11,0.4)]"
+            />
+          </div>
+          
+          <DialogHeader className="pb-4 border-b border-slate-700/50">
+            <DialogTitle className="flex items-center justify-center gap-2 text-xl font-bold text-amber-400">
               <Lock className="h-5 w-5" />
-              Acesso Administrativo
+              Acesso Master
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-sm text-slate-400 text-center">
               Área restrita para administradores do sistema
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleMasterLogin} className="space-y-4 pt-2">
+          <form onSubmit={handleMasterLogin} className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label className="text-slate-300">Usuário</Label>
+              <Label className="text-sm font-semibold text-slate-300">Usuário</Label>
               <Input
                 value={masterUsername}
                 onChange={(e) => setMasterUsername(e.target.value)}
                 placeholder="Digite o usuário"
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className="bg-slate-800/80 border border-slate-600 text-white focus:border-amber-500/60"
               />
             </div>
             
             <div className="space-y-2">
-              <Label className="text-slate-300">Senha</Label>
+              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={masterPassword}
                   onChange={(e) => setMasterPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="bg-slate-800/50 border-slate-700 text-white pr-10"
+                  className="bg-slate-800/80 border border-slate-600 text-white pr-10 focus:border-amber-500/60"
                 />
                 <Button
                   type="button"
@@ -1479,7 +1495,7 @@ export default function Index() {
             <Button
               type="submit"
               disabled={isSubmitting || !masterUsername || !masterPassword}
-              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold"
+              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold shadow-lg shadow-amber-900/30"
             >
               {isSubmitting ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Autenticando...</>
@@ -1504,9 +1520,11 @@ export default function Index() {
             <div className="p-6">
               <DialogHeader className="mb-6">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="p-3 rounded-xl bg-primary/10">
-                    <Shield className="h-8 w-8 text-primary" />
-                  </div>
+                  <img 
+                    src={logoShield} 
+                    alt="Plantão Pro" 
+                    className="w-28 h-auto drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                  />
                 </div>
                 <DialogTitle className="text-center text-2xl font-bold text-foreground">
                   PlantãoPro
