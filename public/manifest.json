@@ -30,5 +30,27 @@
   ],
   "categories": ["productivity", "business"],
   "lang": "pt-BR",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "shortcuts": [
+    {
+      "name": "Meus Plantões",
+      "short_name": "Plantões",
+      "description": "Ver meus plantões",
+      "url": "/agent-panel?tab=plantoes&pwa=1",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Banco de Horas",
+      "short_name": "BH",
+      "description": "Gerenciar banco de horas",
+      "url": "/agent-panel?tab=bh&pwa=1",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
 }

@@ -24,17 +24,27 @@ export function HomeAudioPlayer({ className }: HomeAudioPlayerProps) {
       // They need to click play again
     }
   }, []);
+
+  // Available tracks
+  const tracks = [
+    '/audio/plantao1.mp3',
+    '/audio/plantao2.mp3',
+    '/audio/plantao-pro.mp3',
+    '/audio/vigilancia-urbana.mp3',
+    '/audio/vigilancia-urbana-1.mp3'
+  ];
+  const currentTrackRef = useRef(0);
   
   // Create audio element
   useEffect(() => {
-    audioRef.current = new Audio('/audio/plantao1.mp3');
-    audioRef.current.loop = true;
+    audioRef.current = new Audio(tracks[0]);
     audioRef.current.volume = 0.5;
     
     audioRef.current.addEventListener('ended', () => {
-      // Switch to second track when first ends
+      // Switch to next track when current ends
       if (audioRef.current) {
-        audioRef.current.src = '/audio/plantao2.mp3';
+        currentTrackRef.current = (currentTrackRef.current + 1) % tracks.length;
+        audioRef.current.src = tracks[currentTrackRef.current];
         audioRef.current.play();
       }
     });
