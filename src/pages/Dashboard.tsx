@@ -10,7 +10,7 @@ import { Header } from '@/components/layout/Header';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { ShiftTracker } from '@/components/agent-panel/ShiftTracker';
 import { AgentUpcomingCard } from '@/components/agent-panel/AgentUpcomingCard';
-import { ShiftCalendar } from '@/components/dashboard/ShiftCalendar';
+
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { OvertimeChart } from '@/components/dashboard/OvertimeChart';
 import { TeamShiftsPanel } from '@/components/dashboard/TeamShiftsPanel';
@@ -430,14 +430,9 @@ export default function Dashboard() {
             </div>
 
             {/* Compact Charts and Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-              <div className="lg:col-span-2">
-                <ShiftCalendar />
-              </div>
-              <div className="space-y-3">
-                <RecentActivity />
-                {agent?.unit_id && <UnitInfoCard unitId={agent.unit_id} />}
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              <RecentActivity />
+              {agent?.unit_id && <UnitInfoCard unitId={agent.unit_id} />}
             </div>
 
             {/* Team Shifts Panel - Admin only */}
