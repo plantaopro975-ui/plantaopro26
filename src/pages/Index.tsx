@@ -902,11 +902,21 @@ export default function Index() {
               >
                 <Palette className="h-4 w-4 text-primary" />
               </button>
-              <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-slate-800/70 border border-slate-600/50 shadow-md">
-                <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary animate-pulse" />
-                <span className="text-xs sm:text-sm font-mono font-bold text-primary tracking-wider">
-                  {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                </span>
+              <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-slate-800/80 border border-primary/40 shadow-lg shadow-primary/10">
+                <div className="relative">
+                  <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                  <div className="absolute inset-0 text-primary animate-ping opacity-30">
+                    <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-sm sm:text-base font-mono font-black text-primary tracking-wider tabular-nums">
+                    {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                  <span className="text-[8px] sm:text-[10px] font-mono text-primary/60 animate-pulse">
+                    :{String(new Date().getSeconds()).padStart(2, '0')}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
