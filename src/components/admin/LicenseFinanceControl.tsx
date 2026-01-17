@@ -32,7 +32,7 @@ import {
 import { 
   AlertTriangle, Clock, DollarSign, CreditCard, Search, RefreshCw, 
   CheckCircle2, XCircle, Calendar, TrendingUp, Wallet, Bell, 
-  User, Filter, Download, Send, Shield, AlertCircle
+  User, Filter, Download, Send, Shield, AlertCircle, Mail, MessageSquare
 } from 'lucide-react';
 import { format, differenceInDays, addMonths, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -89,6 +89,9 @@ export function LicenseFinanceControl() {
   const [paymentMethod, setPaymentMethod] = useState('pix');
   const [paymentNotes, setPaymentNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  
+  // Notification state
+  const [sendingNotifications, setSendingNotifications] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -261,7 +264,30 @@ export function LicenseFinanceControl() {
     }
   };
 
-  const getDaysUntilExpiry = (expiresAt: string | null): number | null => {
+  const handleSendNotifications = async (daysBeforeExpiry: number = 7) => {
+    setSendingNotifications(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-license-expiry-notification', {
+        body: { daysBeforeExpiry, notificationType: 'email' }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: '📧 Notificações Enviadas',
+        description: `${data.notificationsSent} notificação(ões) enviada(s) com sucesso.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Erro ao enviar notificações',
+        description: error.message || 'Tente novamente.',
+        variant: 'destructive',
+      });
+    } finally {
+      setSendingNotifications(false);
+    }
+  };
+
     if (!expiresAt) return null;
     const expiryDate = parseISO(expiresAt);
     return differenceInDays(expiryDate, new Date());
@@ -354,16 +380,32 @@ export function LicenseFinanceControl() {
                   Existem agentes com licenças vencidas que precisam de renovação imediata.
                 </p>
               </div>
-              <Button 
-                variant="destructive" 
-                size="sm"
-                onClick={() => {
-                  setFilterStatus('expired');
-                  setActiveSubTab('agents');
-                }}
-              >
-                Ver Expirados
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10"
+                  onClick={() => handleSendNotifications(7)}
+                  disabled={sendingNotifications}
+                >
+                  {sendingNotifications ? (
+                    <RefreshCw className="h-4 w-4 animate-spin mr-1" />
+                  ) : (
+                    <Mail className="h-4 w-4 mr-1" />
+                  )}
+                  Notificar
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => {
+                    setFilterStatus('expired');
+                    setActiveSubTab('agents');
+                  }}
+                >
+                  Ver Expirados
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
