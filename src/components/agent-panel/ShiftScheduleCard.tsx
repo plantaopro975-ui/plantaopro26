@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ShiftMiniCalendar, SimpleDatePicker } from '@/components/agent-panel/ShiftMiniCalendar';
+import { SimpleDatePicker } from '@/components/agent-panel/ShiftMiniCalendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,7 +40,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
   const [firstShiftDate, setFirstShiftDate] = useState<Date | undefined>();
   const [configMonth, setConfigMonth] = useState(new Date());
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  
   const [selectedShift, setSelectedShift] = useState<AgentShift | null>(null);
   const [showShiftDialog, setShowShiftDialog] = useState(false);
   const [editStatus, setEditStatus] = useState<string>('');
@@ -325,38 +325,67 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
           </div>
         ) : (
           <>
-            {/* Compact upcoming shifts row + full calendar toggle */}
-            <ShiftMiniCalendar
-              variant="compact"
-              month={selectedMonth}
-              onMonthChange={setSelectedMonth}
-              shifts={shifts.map((s) => ({ id: s.id, shift_date: format(parseISO(s.shift_date), 'yyyy-MM-dd') }))}
-              onDayWithShiftClick={(shiftId) => {
-                const shift = shifts.find((s) => s.id === shiftId);
-                if (shift) handleShiftClick(shift);
-              }}
-            />
-
-            {/* Full Month Grid (stable, no DayPicker) */}
-            <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
-              <ShiftMiniCalendar
-                variant="grid"
-                month={selectedMonth}
-                onMonthChange={setSelectedMonth}
-                shifts={shifts.map((s) => ({ id: s.id, shift_date: format(parseISO(s.shift_date), 'yyyy-MM-dd') }))}
-                onDayWithShiftClick={(shiftId) => {
-                  const shift = shifts.find((s) => s.id === shiftId);
-                  if (shift) handleShiftClick(shift);
-                }}
-              />
+            {/* Upcoming Shifts List */}
+            <div>
+              <h4 className="text-sm font-medium text-slate-300 mb-2">Próximos Plantões</h4>
+              <div className="space-y-2">
+                {upcomingShifts.length === 0 ? (
+                  <p className="text-sm text-slate-500 py-2">Nenhum plantão agendado.</p>
+                ) : (
+                  upcomingShifts.map((shift) => {
+                    const shiftDate = parseISO(shift.shift_date);
+                    const isTodayShift = isToday(shiftDate);
+                    
+                    return (
+                      <div
+                        key={shift.id}
+                        onClick={() => handleShiftClick(shift)}
+                        className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
+                          isTodayShift
+                            ? 'bg-green-500/25 border-2 border-green-500/40'
+                            : shift.is_vacation 
+                              ? 'bg-purple-500/25 border-2 border-purple-500/40'
+                              : 'bg-slate-700/40 border border-slate-600/50 hover:bg-slate-700/60'
+                        }`}
+                      >
+                        <div>
+                          <p className={`font-medium text-sm ${isTodayShift ? 'text-green-400' : shift.is_vacation ? 'text-purple-400' : 'text-white'}`}>
+                            {format(shiftDate, "EEEE", { locale: ptBR })}
+                          </p>
+                          <p className="text-xs text-slate-400">
+                            {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}
+                          </p>
+                        </div>
+                        <div className="text-right flex items-center gap-2">
+                          {shift.is_vacation && (
+                            <Palmtree className="h-4 w-4 text-purple-400" />
+                          )}
+                          <Badge
+                            variant="outline"
+                            className={`text-xs ${isTodayShift
+                              ? 'text-green-400 border-green-500/50'
+                              : 'text-amber-400 border-amber-500/50'
+                            }`}
+                          >
+                            {shift.start_time}
+                          </Badge>
+                          {isTodayShift && (
+                            <Badge className="bg-green-500 text-white text-[10px]">Hoje</Badge>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
 
-            {/* Past Shifts - Recently Completed */}
+            {/* Past Shifts - Compact */}
             {pastShifts.length > 0 && (
               <div>
-                <h4 className="text-sm font-medium text-slate-300 mb-2">Plantões Recentes</h4>
-                <div className="space-y-2">
-                  {pastShifts.map((shift) => {
+                <h4 className="text-sm font-medium text-slate-300 mb-2">Recentes</h4>
+                <div className="space-y-1.5">
+                  {pastShifts.slice(0, 3).map((shift) => {
                     const shiftDate = parseISO(shift.shift_date);
                     const statusInfo = getStatusInfo(shift.status);
                     const StatusIcon = statusInfo.icon;
@@ -365,20 +394,15 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
                       <div
                         key={shift.id}
                         onClick={() => handleShiftClick(shift)}
-                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer ${statusInfo.color} border border-slate-700/50`}
+                        className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${statusInfo.color} border border-slate-700/50 hover:opacity-90 transition-all`}
                       >
-                        <div className="flex items-center gap-3">
-                          <StatusIcon className={`h-4 w-4 ${statusInfo.textColor}`} />
-                          <div>
-                            <p className={`font-medium ${statusInfo.textColor}`}>
-                              {format(shiftDate, "EEEE", { locale: ptBR })}
-                            </p>
-                            <p className="text-sm text-slate-400">
-                              {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}
-                            </p>
-                          </div>
+                        <div className="flex items-center gap-2">
+                          <StatusIcon className={`h-3.5 w-3.5 ${statusInfo.textColor}`} />
+                          <span className={`text-xs font-medium ${statusInfo.textColor}`}>
+                            {format(shiftDate, "dd/MM", { locale: ptBR })}
+                          </span>
                         </div>
-                        <Badge variant="outline" className={`${statusInfo.textColor} border-current`}>
+                        <Badge variant="outline" className={`text-[10px] ${statusInfo.textColor} border-current`}>
                           {statusInfo.label}
                         </Badge>
                       </div>
@@ -388,75 +412,19 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
               </div>
             )}
 
-            {/* Upcoming Shifts List */}
-            <div>
-              <h4 className="text-sm font-medium text-slate-300 mb-2">Próximos Plantões</h4>
-              <div className="space-y-2">
-                {upcomingShifts.map((shift) => {
-                  const shiftDate = parseISO(shift.shift_date);
-                  const isTodayShift = isToday(shiftDate);
-                  
-                  return (
-                      <div
-                        key={shift.id}
-                        onClick={() => handleShiftClick(shift)}
-                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer ${
-                          isTodayShift
-                            ? 'bg-green-500/25 border-2 border-green-500/40'
-                            : shift.is_vacation 
-                              ? 'bg-purple-500/25 border-2 border-purple-500/40'
-                              : 'bg-slate-700/40 border border-slate-600/50'
-                        }`}
-                      >
-                      <div>
-                        <p className={`font-medium ${isTodayShift ? 'text-green-400' : shift.is_vacation ? 'text-purple-400' : 'text-white'}`}>
-                          {format(shiftDate, "EEEE", { locale: ptBR })}
-                        </p>
-                        <p className="text-sm text-slate-400">
-                          {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}
-                        </p>
-                      </div>
-                      <div className="text-right flex items-center gap-2">
-                        {shift.is_vacation && (
-                          <Palmtree className="h-4 w-4 text-purple-400" />
-                        )}
-                        <Badge
-                          variant="outline"
-                          className={isTodayShift
-                            ? 'text-green-400 border-green-500/50'
-                            : 'text-amber-400 border-amber-500/50'
-                          }
-                        >
-                          {shift.start_time}
-                        </Badge>
-                        {isTodayShift && (
-                          <p className="text-xs text-green-400">Hoje</p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Legend */}
-            <div className="flex flex-wrap items-center gap-4 pt-2 border-t border-slate-700">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-amber-500/50" />
-                <span className="text-xs text-slate-400">Agendado</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500/50" />
-                <span className="text-xs text-slate-400">Cumprido</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                <span className="text-xs text-slate-400">Falta</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-purple-500/50" />
-                <span className="text-xs text-slate-400">Férias</span>
-              </div>
+            {/* Compact Legend */}
+            <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-700/50">
+              {[
+                { color: 'bg-amber-500/50', label: 'Agendado' },
+                { color: 'bg-green-500/50', label: 'Cumprido' },
+                { color: 'bg-red-500/50', label: 'Falta' },
+                { color: 'bg-purple-500/50', label: 'Férias' },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-1.5">
+                  <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                  <span className="text-[10px] text-slate-500">{item.label}</span>
+                </div>
+              ))}
             </div>
           </>
         )}
