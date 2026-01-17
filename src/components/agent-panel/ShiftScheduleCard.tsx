@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,12 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, AlertTriangle, Palmtree, ChevronDown, ChevronUp, WifiOff, Settings2 } from 'lucide-react';
-import { format, parseISO, isToday, isBefore, startOfDay } from 'date-fns';
+import { Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, AlertTriangle, Palmtree, WifiOff, Settings2, Circle, Clock } from 'lucide-react';
+import { format, parseISO, isToday, isBefore, startOfDay, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useOfflineCache, useNetworkStatus } from '@/hooks/useOfflineCache';
 
 interface ShiftScheduleCardProps {
   agentId: string;
@@ -32,6 +30,32 @@ interface AgentShift {
   completed_at: string | null;
 }
 
+const CACHE_KEY_PREFIX = 'shifts_cache_';
+const CACHE_EXPIRY_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+function getFromCache(agentId: string): AgentShift[] | null {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY_PREFIX + agentId);
+    if (!cached) return null;
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp > CACHE_EXPIRY_MS) {
+      localStorage.removeItem(CACHE_KEY_PREFIX + agentId);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function saveToCache(agentId: string, data: AgentShift[]) {
+  try {
+    localStorage.setItem(CACHE_KEY_PREFIX + agentId, JSON.stringify({ data, timestamp: Date.now() }));
+  } catch {
+    // Ignore cache errors
+  }
+}
+
 export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
   const [shifts, setShifts] = useState<AgentShift[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,20 +71,19 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
   const [editNotes, setEditNotes] = useState<string>('');
   const [compensationDate, setCompensationDate] = useState<Date | undefined>();
   const [isSaving, setIsSaving] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
 
-  const { isOnline } = useNetworkStatus();
-  const cache = useOfflineCache<AgentShift[]>({
-    cacheKey: `shifts_${agentId}`,
-    expirationMinutes: 120,
-  });
+  const hasFetched = useRef(false);
+  const agentIdRef = useRef(agentId);
 
-  const fetchShifts = useCallback(async () => {
-    try {
+  // Fetch shifts only once on mount
+  useEffect(() => {
+    if (hasFetched.current && agentIdRef.current === agentId) return;
+    hasFetched.current = true;
+    agentIdRef.current = agentId;
+
+    const fetchShifts = async () => {
       setIsLoading(true);
-
-      // Try network first if online
-      if (isOnline) {
+      try {
         const { data, error } = await supabase
           .from('agent_shifts')
           .select('*')
@@ -70,45 +93,46 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
         if (!error && data) {
           setShifts(data as AgentShift[]);
           setIsFromCache(false);
-          cache.saveToCache(data as AgentShift[]);
-          setIsLoading(false);
-          return;
+          saveToCache(agentId, data as AgentShift[]);
+        } else {
+          // Fallback to cache
+          const cached = getFromCache(agentId);
+          if (cached) {
+            setShifts(cached);
+            setIsFromCache(true);
+          }
         }
+      } catch {
+        const cached = getFromCache(agentId);
+        if (cached) {
+          setShifts(cached);
+          setIsFromCache(true);
+        }
+      } finally {
+        setIsLoading(false);
       }
-
-      // Fallback to cache
-      const cachedData = cache.getFromCache();
-      if (cachedData) {
-        setShifts(cachedData);
-        setIsFromCache(true);
-      }
-    } catch (error) {
-      console.error('Error fetching shifts:', error);
-      // Try cache on error
-      const cachedData = cache.getFromCache();
-      if (cachedData) {
-        setShifts(cachedData);
-        setIsFromCache(true);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [agentId, isOnline, cache]);
-
-  useEffect(() => {
-    fetchShifts();
-  }, [fetchShifts]);
-
-  // Sync when coming back online
-  useEffect(() => {
-    const handleBackOnline = () => {
-      console.log('[ShiftSchedule] Back online, syncing...');
-      fetchShifts();
     };
 
-    window.addEventListener('app:back-online', handleBackOnline);
-    return () => window.removeEventListener('app:back-online', handleBackOnline);
-  }, [fetchShifts]);
+    fetchShifts();
+  }, [agentId]);
+
+  const refetchShifts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('agent_shifts')
+        .select('*')
+        .eq('agent_id', agentId)
+        .order('shift_date', { ascending: true });
+
+      if (!error && data) {
+        setShifts(data as AgentShift[]);
+        setIsFromCache(false);
+        saveToCache(agentId, data as AgentShift[]);
+      }
+    } catch {
+      // Silent fail
+    }
+  };
 
   const generateShifts = async () => {
     if (!firstShiftDate) {
@@ -129,7 +153,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
 
       toast.success(`${data} plantões gerados com sucesso!`);
       setShowConfig(false);
-      fetchShifts();
+      refetchShifts();
     } catch (error) {
       console.error('Error generating shifts:', error);
       toast.error('Erro ao gerar plantões');
@@ -152,7 +176,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
     try {
       setIsSaving(true);
       
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         status: editStatus,
         notes: editNotes || null,
         compensation_date: compensationDate ? format(compensationDate, 'yyyy-MM-dd') : null,
@@ -173,7 +197,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
 
       toast.success('Plantão atualizado com sucesso!');
       setShowShiftDialog(false);
-      fetchShifts();
+      refetchShifts();
     } catch (error) {
       console.error('Error updating shift:', error);
       toast.error('Erro ao atualizar plantão');
@@ -182,329 +206,326 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
     }
   };
 
-  const shiftDates = useMemo(() => shifts.map((s) => parseISO(s.shift_date)), [shifts]);
-
-  const calendarModifiers = useMemo(() => ({
-    shift: shiftDates,
-  }), [shiftDates]);
-
-  const calendarModifiersStyles = useMemo(() => ({
-    shift: {
-      backgroundColor: 'hsl(var(--primary) / 0.18)',
-      color: 'hsl(var(--primary))',
-      fontWeight: 'bold' as const,
-      borderRadius: '9999px',
-    },
-  }), []);
-
-
   const getStatusInfo = (status: string) => {
     switch (status) {
       case 'completed':
-        return { color: 'bg-green-500/30', icon: Check, label: 'Cumprido', textColor: 'text-green-400' };
+        return { color: 'bg-emerald-500/20', icon: Check, label: 'Cumprido', textColor: 'text-emerald-400', dotColor: 'bg-emerald-500' };
       case 'missed':
-        return { color: 'bg-red-500/30', icon: X, label: 'Faltou', textColor: 'text-red-400' };
+        return { color: 'bg-red-500/20', icon: X, label: 'Faltou', textColor: 'text-red-400', dotColor: 'bg-red-500' };
       case 'compensated':
-        return { color: 'bg-blue-500/30', icon: RefreshCw, label: 'Compensado', textColor: 'text-blue-400' };
+        return { color: 'bg-blue-500/20', icon: RefreshCw, label: 'Compensado', textColor: 'text-blue-400', dotColor: 'bg-blue-500' };
       case 'vacation':
-        return { color: 'bg-purple-500/30', icon: Palmtree, label: 'Férias', textColor: 'text-purple-400' };
+        return { color: 'bg-purple-500/20', icon: Palmtree, label: 'Férias', textColor: 'text-purple-400', dotColor: 'bg-purple-500' };
       default:
-        return { color: 'bg-amber-500/30', icon: AlertTriangle, label: 'Agendado', textColor: 'text-amber-400' };
+        return { color: 'bg-amber-500/20', icon: Circle, label: 'Agendado', textColor: 'text-amber-400', dotColor: 'bg-amber-500' };
     }
   };
 
-  const upcomingShifts = shifts
-    .filter(s => parseISO(s.shift_date) >= startOfDay(new Date()))
-    .slice(0, 5);
+  const upcomingShifts = useMemo(() => 
+    shifts
+      .filter(s => parseISO(s.shift_date) >= startOfDay(new Date()))
+      .slice(0, 6),
+    [shifts]
+  );
 
-  const pastShifts = shifts
-    .filter(s => isBefore(parseISO(s.shift_date), startOfDay(new Date())))
-    .slice(-5)
-    .reverse();
+  const pastShifts = useMemo(() => 
+    shifts
+      .filter(s => isBefore(parseISO(s.shift_date), startOfDay(new Date())))
+      .slice(-4)
+      .reverse(),
+    [shifts]
+  );
 
   return (
-    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-      <Card className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-2 border-slate-700/60 shadow-xl">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CollapsibleTrigger className="flex-1">
-              <CardTitle className="flex items-center gap-3 text-xl cursor-pointer hover:opacity-80 transition-all duration-200">
-                <CalendarIcon className="h-6 w-6 text-amber-500 drop-shadow-lg" />
-                <span className="font-bold">Escala de Plantões</span>
-                {/* Offline indicator */}
-                {isFromCache && (
-                  <span className="flex items-center gap-1 text-amber-400 text-[10px] font-normal">
-                    <WifiOff className="h-3 w-3" />
-                    offline
-                  </span>
-                )}
-                {isExpanded ? (
-                  <ChevronUp className="h-4 w-4 text-muted-foreground ml-auto" />
+    <Card className="bg-slate-900/95 border border-slate-700/80 shadow-lg overflow-hidden">
+      {/* Header - Simplified */}
+      <CardHeader className="py-3 px-4 border-b border-slate-700/50 bg-slate-800/50">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-100">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+              <CalendarIcon className="h-4 w-4 text-white" />
+            </div>
+            <span>Meus Plantões</span>
+            {isFromCache && (
+              <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-amber-500/50 text-amber-400">
+                <WifiOff className="h-2.5 w-2.5 mr-1" />
+                offline
+              </Badge>
+            )}
+          </CardTitle>
+          
+          <Dialog open={showConfig} onOpenChange={setShowConfig}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 px-2 text-slate-400 hover:text-amber-400 hover:bg-slate-700/50"
+              >
+                {shifts.length === 0 ? (
+                  <Plus className="h-4 w-4" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground ml-auto" />
+                  <Settings2 className="h-4 w-4" />
                 )}
-              </CardTitle>
-            </CollapsibleTrigger>
-            <Dialog open={showConfig} onOpenChange={setShowConfig}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10 ml-2">
-                  {shifts.length === 0 ? (
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-slate-900 border-slate-700 max-w-xs">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-base">
+                  <CalendarIcon className="h-4 w-4 text-amber-500" />
+                  Configurar Escala
+                </DialogTitle>
+                <DialogDescription className="text-xs">
+                  Selecione o primeiro plantão (24h + 72h folga).
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3 pt-2">
+                <SimpleDatePicker
+                  month={configMonth}
+                  onMonthChange={setConfigMonth}
+                  selected={firstShiftDate}
+                  onSelect={setFirstShiftDate}
+                />
+
+                {firstShiftDate && (
+                  <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                    <p className="text-xs text-amber-400 font-medium">
+                      {format(firstShiftDate, "dd/MM/yyyy (EEEE)", { locale: ptBR })}
+                    </p>
+                  </div>
+                )}
+                
+                <Button 
+                  onClick={generateShifts} 
+                  disabled={!firstShiftDate || isGenerating}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-9"
+                >
+                  {isGenerating ? (
                     <>
-                      <Plus className="h-4 w-4 mr-1" />
-                      Configurar
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Gerando...
                     </>
                   ) : (
-                    <>
-                      <Settings2 className="h-4 w-4 mr-1" />
-                      Config
-                    </>
+                    'Gerar Escala'
                   )}
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-slate-900 border-slate-700 max-w-sm">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    <CalendarIcon className="h-5 w-5 text-amber-500" />
-                    Configurar Escala
-                  </DialogTitle>
-                  <DialogDescription>
-                    Selecione a data do seu primeiro plantão (padrão 24h + 72h de descanso).
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 pt-2">
-                  <SimpleDatePicker
-                    month={configMonth}
-                    onMonthChange={setConfigMonth}
-                    selected={firstShiftDate}
-                    onSelect={setFirstShiftDate}
-                  />
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </CardHeader>
 
-                  {firstShiftDate && (
-                    <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-                      <p className="text-sm text-amber-400 font-medium">
-                        Primeiro plantão: {format(firstShiftDate, "dd/MM/yyyy (EEEE)", { locale: ptBR })}
-                      </p>
-                      <p className="text-[11px] text-slate-400 mt-1">
-                        Serão gerados plantões para os próximos 6 meses
-                      </p>
-                    </div>
-                  )}
-                  
-                  <Button 
-                    onClick={generateShifts} 
-                    disabled={!firstShiftDate || isGenerating}
-                    className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Gerando...
-                      </>
-                    ) : (
-                      'Gerar Escala'
-                    )}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardHeader>
-        <CollapsibleContent>
-          <CardContent className="space-y-4 pt-0">
+      <CardContent className="p-3 space-y-3">
         {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
           </div>
         ) : shifts.length === 0 ? (
-          <div className="text-center py-6">
-            <CalendarIcon className="h-12 w-12 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-400">Nenhum plantão configurado.</p>
-            <p className="text-xs text-slate-500 mt-1">
-              Clique em "Configurar" para definir sua escala.
+          <div className="text-center py-5">
+            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-2">
+              <CalendarIcon className="h-6 w-6 text-slate-600" />
+            </div>
+            <p className="text-sm text-slate-400">Sem plantões configurados</p>
+            <p className="text-[10px] text-slate-500 mt-1">
+              Clique em <Settings2 className="inline h-3 w-3" /> para configurar
             </p>
           </div>
         ) : (
           <>
-            {/* Upcoming Shifts List */}
+            {/* Upcoming Shifts - New Timeline Design */}
             <div>
-              <h4 className="text-sm font-medium text-slate-300 mb-2">Próximos Plantões</h4>
-              <div className="space-y-2">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="h-3.5 w-3.5 text-amber-500" />
+                <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Próximos</h4>
+              </div>
+              
+              <div className="space-y-1.5">
                 {upcomingShifts.length === 0 ? (
-                  <p className="text-sm text-slate-500 py-2">Nenhum plantão agendado.</p>
+                  <p className="text-xs text-slate-500 py-2">Nenhum plantão agendado.</p>
                 ) : (
                   upcomingShifts.map((shift) => {
                     const shiftDate = parseISO(shift.shift_date);
                     const isTodayShift = isToday(shiftDate);
+                    const daysUntil = differenceInDays(shiftDate, startOfDay(new Date()));
                     
                     return (
-                      <div
+                      <button
                         key={shift.id}
                         onClick={() => handleShiftClick(shift)}
-                        className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
+                        className={`w-full flex items-center gap-3 p-2.5 rounded-lg text-left transition-colors ${
                           isTodayShift
-                            ? 'bg-green-500/25 border-2 border-green-500/40'
+                            ? 'bg-emerald-500/15 border border-emerald-500/40'
                             : shift.is_vacation 
-                              ? 'bg-purple-500/25 border-2 border-purple-500/40'
-                              : 'bg-slate-700/40 border border-slate-600/50 hover:bg-slate-700/60'
+                              ? 'bg-purple-500/10 border border-purple-500/30'
+                              : 'bg-slate-800/60 border border-slate-700/50 hover:bg-slate-800'
                         }`}
                       >
-                        <div>
-                          <p className={`font-medium text-sm ${isTodayShift ? 'text-green-400' : shift.is_vacation ? 'text-purple-400' : 'text-white'}`}>
-                            {format(shiftDate, "EEEE", { locale: ptBR })}
-                          </p>
-                          <p className="text-xs text-slate-400">
-                            {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}
-                          </p>
+                        {/* Visual Marker - Dot/Ring */}
+                        <div className="relative flex-shrink-0">
+                          <div className={`w-3 h-3 rounded-full ${
+                            isTodayShift 
+                              ? 'bg-emerald-500 ring-2 ring-emerald-400/50' 
+                              : shift.is_vacation 
+                                ? 'bg-purple-500'
+                                : 'bg-amber-500/80'
+                          }`} />
+                          {isTodayShift && (
+                            <div className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-50" />
+                          )}
                         </div>
-                        <div className="text-right flex items-center gap-2">
+
+                        {/* Date Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-sm font-semibold capitalize ${
+                              isTodayShift ? 'text-emerald-400' : shift.is_vacation ? 'text-purple-400' : 'text-slate-200'
+                            }`}>
+                              {isTodayShift ? 'HOJE' : format(shiftDate, "EEE", { locale: ptBR })}
+                            </span>
+                            <span className="text-xs text-slate-500">
+                              {format(shiftDate, "dd/MM", { locale: ptBR })}
+                            </span>
+                          </div>
+                          {!isTodayShift && daysUntil > 0 && (
+                            <span className="text-[10px] text-slate-500">
+                              em {daysUntil} dia{daysUntil > 1 ? 's' : ''}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Time & Icons */}
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
                           {shift.is_vacation && (
-                            <Palmtree className="h-4 w-4 text-purple-400" />
+                            <Palmtree className="h-3.5 w-3.5 text-purple-400" />
                           )}
                           <Badge
                             variant="outline"
-                            className={`text-xs ${isTodayShift
-                              ? 'text-green-400 border-green-500/50'
-                              : 'text-amber-400 border-amber-500/50'
+                            className={`text-[10px] px-1.5 py-0 font-mono ${
+                              isTodayShift
+                                ? 'text-emerald-400 border-emerald-500/50'
+                                : 'text-amber-400 border-amber-500/50'
                             }`}
                           >
-                            {shift.start_time}
+                            {shift.start_time?.slice(0, 5) || '07:00'}
                           </Badge>
-                          {isTodayShift && (
-                            <Badge className="bg-green-500 text-white text-[10px]">Hoje</Badge>
-                          )}
                         </div>
-                      </div>
+                      </button>
                     );
                   })
                 )}
               </div>
             </div>
 
-            {/* Past Shifts - Compact */}
+            {/* Past Shifts - Compact List */}
             {pastShifts.length > 0 && (
-              <div>
-                <h4 className="text-sm font-medium text-slate-300 mb-2">Recentes</h4>
-                <div className="space-y-1.5">
-                  {pastShifts.slice(0, 3).map((shift) => {
+              <div className="pt-2 border-t border-slate-700/50">
+                <h4 className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">Recentes</h4>
+                <div className="flex flex-wrap gap-1">
+                  {pastShifts.map((shift) => {
                     const shiftDate = parseISO(shift.shift_date);
                     const statusInfo = getStatusInfo(shift.status);
-                    const StatusIcon = statusInfo.icon;
                     
                     return (
-                      <div
+                      <button
                         key={shift.id}
                         onClick={() => handleShiftClick(shift)}
-                        className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${statusInfo.color} border border-slate-700/50 hover:opacity-90 transition-all`}
+                        className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium ${statusInfo.color} ${statusInfo.textColor} hover:opacity-80 transition-opacity`}
                       >
-                        <div className="flex items-center gap-2">
-                          <StatusIcon className={`h-3.5 w-3.5 ${statusInfo.textColor}`} />
-                          <span className={`text-xs font-medium ${statusInfo.textColor}`}>
-                            {format(shiftDate, "dd/MM", { locale: ptBR })}
-                          </span>
-                        </div>
-                        <Badge variant="outline" className={`text-[10px] ${statusInfo.textColor} border-current`}>
-                          {statusInfo.label}
-                        </Badge>
-                      </div>
+                        <div className={`w-1.5 h-1.5 rounded-full ${statusInfo.dotColor}`} />
+                        {format(shiftDate, "dd/MM", { locale: ptBR })}
+                      </button>
                     );
                   })}
                 </div>
               </div>
             )}
 
-            {/* Compact Legend */}
-            <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-700/50">
+            {/* Legend - Ultra Compact */}
+            <div className="flex items-center justify-center gap-3 pt-1">
               {[
-                { color: 'bg-amber-500/50', label: 'Agendado' },
-                { color: 'bg-green-500/50', label: 'Cumprido' },
-                { color: 'bg-red-500/50', label: 'Falta' },
-                { color: 'bg-purple-500/50', label: 'Férias' },
+                { dot: 'bg-amber-500', label: 'Agendado' },
+                { dot: 'bg-emerald-500', label: 'Cumprido' },
+                { dot: 'bg-red-500', label: 'Falta' },
               ].map((item) => (
-                <div key={item.label} className="flex items-center gap-1.5">
-                  <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                  <span className="text-[10px] text-slate-500">{item.label}</span>
+                <div key={item.label} className="flex items-center gap-1">
+                  <div className={`w-1.5 h-1.5 rounded-full ${item.dot}`} />
+                  <span className="text-[9px] text-slate-500">{item.label}</span>
                 </div>
               ))}
             </div>
           </>
         )}
-          </CardContent>
-        </CollapsibleContent>
+      </CardContent>
 
-        {/* Shift Edit Dialog */}
-        <Dialog open={showShiftDialog} onOpenChange={setShowShiftDialog}>
-          <DialogContent className="bg-slate-800 border-slate-700">
-            <DialogHeader>
-              <DialogTitle>
-                Plantão - {selectedShift && format(parseISO(selectedShift.shift_date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <Label>Status do Plantão</Label>
-                <Select value={editStatus} onValueChange={setEditStatus}>
-                  <SelectTrigger className="bg-slate-700 border-slate-600">
-                    <SelectValue placeholder="Selecione o status" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700">
-                    <SelectItem value="scheduled">Agendado</SelectItem>
-                    <SelectItem value="completed">Cumprido</SelectItem>
-                    <SelectItem value="missed">Faltou</SelectItem>
-                    <SelectItem value="compensated">Compensado</SelectItem>
-                    <SelectItem value="vacation">Férias</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+      {/* Shift Edit Dialog */}
+      <Dialog open={showShiftDialog} onOpenChange={setShowShiftDialog}>
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-xs">
+          <DialogHeader>
+            <DialogTitle className="text-sm">
+              {selectedShift && format(parseISO(selectedShift.shift_date), "dd 'de' MMMM", { locale: ptBR })}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-400">
+              Atualize o status deste plantão
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 pt-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Status</Label>
+              <Select value={editStatus} onValueChange={setEditStatus}>
+                <SelectTrigger className="bg-slate-800 border-slate-700 h-9 text-sm">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectItem value="scheduled">Agendado</SelectItem>
+                  <SelectItem value="completed">Cumprido</SelectItem>
+                  <SelectItem value="missed">Faltou</SelectItem>
+                  <SelectItem value="compensated">Compensado</SelectItem>
+                  <SelectItem value="vacation">Férias</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              {editStatus === 'missed' && (
-                <div className="space-y-2">
-                  <Label>Data de Compensação (opcional)</Label>
-                  <SimpleDatePicker
-                    month={compensationDate ?? new Date()}
-                    onMonthChange={(m) => setCompensationDate(m)}
-                    selected={compensationDate}
-                    onSelect={setCompensationDate}
-                    className="bg-slate-800"
-                  />
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label>Observações</Label>
-                <Textarea
-                  value={editNotes}
-                  onChange={(e) => setEditNotes(e.target.value)}
-                  placeholder="Descreva o que aconteceu, motivo da falta, etc."
-                  className="bg-slate-700 border-slate-600 min-h-[100px]"
+            {editStatus === 'missed' && (
+              <div className="space-y-1.5">
+                <Label className="text-xs">Compensação</Label>
+                <SimpleDatePicker
+                  month={compensationDate ?? new Date()}
+                  onMonthChange={(m) => setCompensationDate(m)}
+                  selected={compensationDate}
+                  onSelect={setCompensationDate}
                 />
               </div>
+            )}
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">Observações</Label>
+              <Textarea
+                value={editNotes}
+                onChange={(e) => setEditNotes(e.target.value)}
+                placeholder="Motivo, ocorrência..."
+                className="bg-slate-800 border-slate-700 min-h-[60px] text-sm"
+              />
             </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowShiftDialog(false)}
-                className="border-slate-600"
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleSaveShift}
-                disabled={isSaving}
-                className="bg-amber-500 hover:bg-amber-600 text-black"
-              >
-                {isSaving ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Salvando...
-                  </>
-                ) : (
-                  'Salvar'
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </Card>
-    </Collapsible>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowShiftDialog(false)}
+              className="h-8"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleSaveShift}
+              disabled={isSaving}
+              size="sm"
+              className="bg-amber-500 hover:bg-amber-600 text-black h-8"
+            >
+              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Card>
   );
 }
