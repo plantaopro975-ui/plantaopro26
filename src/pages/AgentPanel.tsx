@@ -9,6 +9,7 @@ import { useLicenseExpiryNotification } from '@/hooks/useLicenseExpiryNotificati
 import { useShiftNotifications } from '@/hooks/useShiftNotifications';
 import { useBHReminder } from '@/hooks/useBHReminder';
 import { useBHReminderHour } from '@/components/agent-panel/BHReminderSettings';
+import { useAlarmNotifications } from '@/hooks/useAlarmNotifications';
 import { TeamMembersCard } from '@/components/agent-panel/TeamMembersCard';
 import { ProfessionalShiftTimer } from '@/components/agent-panel/ProfessionalShiftTimer';
 import { OnDutyOverlay } from '@/components/agent-panel/OnDutyOverlay';
@@ -39,8 +40,10 @@ import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { WelcomeTrialDialog, shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
 import { PasswordChangeRequest } from '@/components/agent-panel/PasswordChangeRequest';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
+import { useNetworkStatus } from '@/hooks/useOfflineCache';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, LogOut, Home, WifiOff, RefreshCw, Droplet, Radar, Gift, Shield, Zap, Key } from 'lucide-react';
+import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, LogOut, Home, WifiOff, RefreshCw, Droplet, Radar, Gift, Shield, Zap, Key, Bell } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -96,7 +99,6 @@ export default function AgentPanel() {
   const [activeTab, setActiveTab] = useState('equipe');
   const [hasShifts, setHasShifts] = useState(true);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
-
   // Check for first access or daily welcome
   useEffect(() => {
     if (!agent?.name) return;
@@ -182,6 +184,13 @@ export default function AgentPanel() {
     agentId: agent?.id || '',
     enabled: !!agent?.id,
     reminderHour: bhReminderHour, // Use saved preference
+  });
+
+  // Alarm notifications for shifts
+  useAlarmNotifications({
+    agentId: agent?.id || '',
+    enabled: !!agent?.id,
+    alarmBeforeMinutes: 60, // 1 hour before shift
   });
 
   useEffect(() => {
@@ -290,9 +299,9 @@ export default function AgentPanel() {
       {/* Session Monitor Banner - Visual session status */}
       <SessionMonitorBanner />
 
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-        <main className={`flex-1 p-4 md:p-8 lg:p-10 overflow-y-auto overflow-x-hidden pb-safe ${showLicenseWarning ? 'pt-28' : ''}`}>
-          <div className="max-w-7xl mx-auto space-y-4 md:space-y-8 animate-fade-in">
+      <div className="flex-1 flex flex-col h-[100dvh] overflow-hidden touch-pan-y">
+        <main className={`flex-1 p-3 md:p-6 lg:p-8 overflow-y-auto overflow-x-hidden overscroll-contain ${showLicenseWarning ? 'pt-28' : ''}`}>
+          <div className="max-w-7xl mx-auto space-y-3 md:space-y-6 animate-fade-in">
             {/* Professional Header Bar */}
             <div className="bg-gradient-to-r from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border-2 border-amber-500/40 shadow-2xl backdrop-blur-md overflow-hidden">
               <div className="flex items-center justify-between p-2 md:p-3">
@@ -332,13 +341,15 @@ export default function AgentPanel() {
                   {/* Real-Time Clock */}
                   <RealTimeClock />
                   
-                  {/* Online Status */}
-                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/50 shadow-lg shadow-green-500/10">
+                  {/* Online/Offline Status */}
+                  <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full ${isOnline ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/50' : 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50'} shadow-lg`}>
                     <div className="relative">
-                      <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-green-400 to-emerald-500" />
-                      <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-400 animate-ping opacity-50" />
+                      <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-amber-400 to-orange-500'}`} />
+                      {isOnline && <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-400 animate-ping opacity-50" />}
                     </div>
-                    <span className="text-[10px] md:text-xs font-bold text-green-400 uppercase tracking-wider hidden md:inline">Online</span>
+                    <span className={`text-[10px] md:text-xs font-bold uppercase tracking-wider hidden md:inline ${isOnline ? 'text-green-400' : 'text-amber-400'}`}>
+                      {isOnline ? 'Online' : 'Offline'}
+                    </span>
                   </div>
                   
                   {/* Role Badge */}
@@ -536,9 +547,9 @@ export default function AgentPanel() {
                 onComplete={checkAgentShifts}
               />
 
-              <TabsContent value="equipe" className="space-y-4 animate-fade-in">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-                  <div className="lg:col-span-3">
+              <TabsContent value="equipe" className="space-y-3 md:space-y-4 animate-fade-in">
+                <div className="grid grid-cols-1 xl:grid-cols-4 gap-3 md:gap-4">
+                  <div className="xl:col-span-3">
                     <TeamMembersCard 
                       unitId={agent.unit_id} 
                       team={agent.team} 
@@ -547,7 +558,7 @@ export default function AgentPanel() {
                       unitName={agent.unit?.name}
                     />
                   </div>
-                  <div className="lg:col-span-1 space-y-4">
+                  <div className="xl:col-span-1 grid grid-cols-2 xl:grid-cols-1 gap-3 md:gap-4">
                     <TacticalRadar 
                       unitId={agent.unit_id || undefined}
                       compact={true}
@@ -561,11 +572,11 @@ export default function AgentPanel() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="plantoes" className="space-y-4 animate-fade-in">
+              <TabsContent value="plantoes" className="space-y-3 md:space-y-4 animate-fade-in">
                 {/* Next Shift Countdown - Top Priority */}
                 <NextShiftCountdown agentId={agent.id} />
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
                   <ProfessionalShiftTimer agentId={agent.id} />
                   <ShiftScheduleCard agentId={agent.id} />
                 </div>
@@ -611,8 +622,8 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="config" className="space-y-5 md:space-y-6 animate-fade-in">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 md:gap-6">
+              <TabsContent value="config" className="space-y-4 md:space-y-5 animate-fade-in">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-5">
                   <AgentSettingsCard
                     agentId={agent.id}
                     agentName={agent.name}
@@ -620,35 +631,35 @@ export default function AgentPanel() {
                     currentAvatarUrl={(agent as any).avatar_url}
                     onUpdate={() => window.location.reload()}
                   />
-                  <div className="space-y-5 md:space-y-6">
+                  <div className="space-y-4 md:space-y-5">
                     <NotificationSettings />
                     <BHReminderSettings agentId={agent.id} />
                     
                     {/* Diagnostic Tools Section */}
-                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-slate-600/50 rounded-2xl p-5 md:p-6 space-y-4 shadow-lg">
-                      <h3 className="font-semibold text-base md:text-lg flex items-center gap-2 text-slate-200">
-                        <Settings className="h-5 w-5 text-amber-400" />
+                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-slate-600/50 rounded-2xl p-4 md:p-5 space-y-3 shadow-lg">
+                      <h3 className="font-semibold text-sm md:text-base flex items-center gap-2 text-slate-200">
+                        <Settings className="h-4 w-4 md:h-5 md:w-5 text-amber-400" />
                         Ferramentas de Diagnóstico
                       </h3>
-                      <p className="text-sm text-slate-400">
-                        Use estas ferramentas para resolver problemas de conexão ou sessão.
+                      <p className="text-xs md:text-sm text-slate-400">
+                        Resolva problemas de conexão ou sessão.
                       </p>
-                      <div className="flex flex-wrap gap-3">
+                      <div className="flex flex-wrap gap-2">
                         <DiagnosticReportButton />
                         <SafeModeToggle variant="compact" />
                       </div>
                     </div>
 
                     {/* Password & Security Section */}
-                    <div className="bg-gradient-to-br from-purple-900/30 to-slate-900/80 border-2 border-purple-500/30 rounded-2xl p-5 md:p-6 space-y-4 shadow-lg">
-                      <h3 className="font-semibold text-base md:text-lg flex items-center gap-2 text-slate-200">
-                        <Key className="h-5 w-5 text-purple-400" />
+                    <div className="bg-gradient-to-br from-purple-900/30 to-slate-900/80 border-2 border-purple-500/30 rounded-2xl p-4 md:p-5 space-y-3 shadow-lg">
+                      <h3 className="font-semibold text-sm md:text-base flex items-center gap-2 text-slate-200">
+                        <Key className="h-4 w-4 md:h-5 md:w-5 text-purple-400" />
                         Segurança da Conta
                       </h3>
-                      <p className="text-sm text-slate-400">
-                        Para alterar sua senha, envie uma solicitação ao administrador.
+                      <p className="text-xs md:text-sm text-slate-400">
+                        Altere sua senha via solicitação.
                       </p>
-                      <div className="flex flex-wrap gap-3">
+                      <div className="flex flex-wrap gap-2">
                         <PasswordChangeRequest 
                           agentId={agent.id} 
                           agentName={agent.name} 
@@ -661,10 +672,9 @@ export default function AgentPanel() {
               </TabsContent>
             </Tabs>
 
-            {/* Footer Credits */}
-            <div className="text-center text-xs text-muted-foreground pt-4 border-t border-border/30">
-              <p>Desenvolvido por <span className="text-primary font-semibold">Franc D'nis</span></p>
-              <p className="text-[10px] text-muted-foreground/60 mt-0.5">Feijó, Acre • © {new Date().getFullYear()} PlantãoPro</p>
+            {/* Footer Credits - Compact */}
+            <div className="text-center text-[10px] md:text-xs text-muted-foreground py-2 border-t border-border/30">
+              <p>Desenvolvido por <span className="text-primary font-semibold">Franc D'nis</span> • Feijó, Acre</p>
             </div>
           </div>
         </main>

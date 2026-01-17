@@ -458,19 +458,127 @@ Data de geração: ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
 `;
   };
 
-  // Export formal document
-  const exportFormalDocument = (request: SwapRequest) => {
+  // Export formal document as PDF
+  const exportFormalDocumentPDF = async (request: SwapRequest) => {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      
+      const now = new Date();
+      const requesterShiftDate = request.requester_shift?.shift_date 
+        ? parseISO(request.requester_shift.shift_date)
+        : null;
+      const targetShiftDate = request.target_shift?.shift_date
+        ? parseISO(request.target_shift.shift_date)
+        : null;
+      
+      // Header
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('REQUERIMENTO DE PERMUTA DE PLANTÃO', 105, 20, { align: 'center' });
+      
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.text('AO DIRETOR DA UNIDADE SOCIOEDUCATIVA', 105, 30, { align: 'center' });
+      doc.text('Instituto Socioeducativo do Acre – ISE/AC', 105, 36, { align: 'center' });
+      
+      // Section 1 - Identification
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('1. IDENTIFICAÇÃO DOS AGENTES', 14, 50);
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('AGENTE SOLICITANTE (Requerente)', 14, 60);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Nome Completo: ${request.requester?.name || '___'}`, 14, 68);
+      doc.text(`Matrícula: ${request.requester?.matricula || '___'}`, 14, 74);
+      doc.text(`CPF: ${request.requester?.cpf || '___'}`, 14, 80);
+      doc.text(`Unidade: ${unitName || '___'}`, 14, 86);
+      doc.text(`Plantão: ${requesterShiftDate ? format(requesterShiftDate, 'dd/MM/yyyy', { locale: ptBR }) : '__/__/____'} às 07h`, 14, 92);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('AGENTE SOLICITADO', 14, 104);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Nome Completo: ${request.target?.name || '___'}`, 14, 112);
+      doc.text(`Matrícula: ${request.target?.matricula || '___'}`, 14, 118);
+      doc.text(`CPF: ${request.target?.cpf || '___'}`, 14, 124);
+      doc.text(`Plantão: ${targetShiftDate ? format(targetShiftDate, 'dd/MM/yyyy', { locale: ptBR }) : '__/__/____'} às 07h`, 14, 130);
+      
+      // Section 2 - Object
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('2. OBJETO DO REQUERIMENTO', 14, 145);
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      const objectText = doc.splitTextToSize(
+        'Os agentes acima identificados solicitam, de comum acordo, a permuta de plantão. A permuta refere-se a plantão de 24 horas.',
+        180
+      );
+      doc.text(objectText, 14, 153);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('MOTIVO:', 14, 168);
+      doc.setFont('helvetica', 'normal');
+      const motivo = doc.splitTextToSize(request.reason || 'Não informado', 180);
+      doc.text(motivo, 14, 176);
+      
+      // Section 3 - Signatures
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('6. ASSINATURAS', 14, 200);
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Agente Solicitante: ___________________________________', 14, 212);
+      doc.text('Agente Solicitado: ___________________________________', 14, 226);
+      doc.text('Diretor(a): ___________________________________________', 14, 240);
+      doc.text(`Data: __/__/${now.getFullYear()}`, 14, 254);
+      
+      // Footer
+      doc.setFontSize(8);
+      doc.text(`Documento gerado pelo PlantãoPro - ID: ${request.id.slice(0, 8)}`, 105, 280, { align: 'center' });
+      doc.text(`Status: ${request.status === 'accepted' ? 'ACEITA' : 'PENDENTE'} | ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`, 105, 285, { align: 'center' });
+      
+      doc.save(`requerimento_permuta_${request.id.slice(0, 8)}_${format(now, 'yyyy-MM-dd')}.pdf`);
+      toast.success('PDF exportado com sucesso!');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Erro ao gerar PDF');
+    }
+  };
+
+  // Export as DOCX (plain text format for Word compatibility)
+  const exportFormalDocumentDOCX = (request: SwapRequest) => {
     const content = generateFormalDocument(request);
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([content], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `requerimento_permuta_${request.id.slice(0, 8)}_${format(new Date(), 'yyyy-MM-dd')}.txt`;
+    link.download = `requerimento_permuta_${request.id.slice(0, 8)}_${format(new Date(), 'yyyy-MM-dd')}.docx`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    toast.success('Documento de permuta exportado!');
+    toast.success('Documento exportado!');
+  };
+
+  // State for export format selection
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'docx'>('pdf');
+  const [exportingRequestId, setExportingRequestId] = useState<string | null>(null);
+
+  // Export formal document with format selection
+  const exportFormalDocument = async (request: SwapRequest) => {
+    setExportingRequestId(request.id);
+    if (exportFormat === 'pdf') {
+      await exportFormalDocumentPDF(request);
+    } else {
+      exportFormalDocumentDOCX(request);
+    }
+    setExportingRequestId(null);
   };
 
   const respondToRequest = async (requestId: string, status: 'accepted' | 'rejected') => {
@@ -1061,21 +1169,44 @@ Documento gerado automaticamente pelo PlantãoPro
                 </div>
               </div>
               
-              <div className="flex items-center justify-between pt-2">
-                <Badge className={previewRequest.status === 'accepted' ? 'bg-green-500/20 text-green-400' : previewRequest.status === 'pending' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}>
-                  {previewRequest.status === 'accepted' ? 'Aceita' : previewRequest.status === 'pending' ? 'Pendente' : 'Recusada'}
-                </Badge>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setShowDocumentPreview(false)} className="border-slate-600 text-slate-300">
-                    <ArrowLeft className="h-4 w-4 mr-1.5" />
-                    Voltar
-                  </Button>
-                  {previewRequest.status === 'accepted' && (
-                    <Button size="sm" onClick={() => { exportFormalDocument(previewRequest); setShowDocumentPreview(false); }} className="bg-green-500 hover:bg-green-600 text-white">
-                      <Download className="h-4 w-4 mr-1.5" />
-                      Exportar
+              <div className="flex flex-col gap-3 pt-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-400">Formato:</span>
+                  <Select value={exportFormat} onValueChange={(v) => setExportFormat(v as 'pdf' | 'docx')}>
+                    <SelectTrigger className="w-24 h-8 text-xs bg-slate-700 border-slate-600">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-700 border-slate-600">
+                      <SelectItem value="pdf">PDF</SelectItem>
+                      <SelectItem value="docx">DOCX</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Badge className={previewRequest.status === 'accepted' ? 'bg-green-500/20 text-green-400' : previewRequest.status === 'pending' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}>
+                    {previewRequest.status === 'accepted' ? 'Aceita' : previewRequest.status === 'pending' ? 'Pendente' : 'Recusada'}
+                  </Badge>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setShowDocumentPreview(false)} className="border-slate-600 text-slate-300">
+                      <ArrowLeft className="h-4 w-4 mr-1.5" />
+                      Voltar
                     </Button>
-                  )}
+                    {previewRequest.status === 'accepted' && (
+                      <Button 
+                        size="sm" 
+                        onClick={() => { exportFormalDocument(previewRequest); }} 
+                        disabled={exportingRequestId === previewRequest.id}
+                        className="bg-green-500 hover:bg-green-600 text-white"
+                      >
+                        {exportingRequestId === previewRequest.id ? (
+                          <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                        ) : (
+                          <Download className="h-4 w-4 mr-1.5" />
+                        )}
+                        Exportar {exportFormat.toUpperCase()}
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
