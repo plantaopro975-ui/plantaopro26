@@ -47,9 +47,20 @@ export const formatMatricula = (value: string): string => {
     .replace(/(\d{3})(\d)/, '$1.$2');
 };
 
-// Get raw matricula numbers
+// Get raw matricula numbers (exactly 8 digits)
 export const getMatriculaNumbers = (value: string): string => {
   return value.replace(/\D/g, '').slice(0, 8);
+};
+
+// Validate matricula - must be exactly 8 digits when provided
+export const validateMatricula = (value: string): { valid: boolean; message?: string } => {
+  if (!value) return { valid: true }; // Optional field
+  const numbers = value.replace(/\D/g, '');
+  if (numbers.length === 0) return { valid: true }; // Empty is valid
+  if (numbers.length !== 8) {
+    return { valid: false, message: 'Matrícula deve ter 8 dígitos' };
+  }
+  return { valid: true };
 };
 
 // Format birth date: DD-MM-YYYY

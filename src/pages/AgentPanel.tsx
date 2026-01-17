@@ -403,33 +403,19 @@ export default function AgentPanel() {
                     </Tooltip>
                   </TooltipProvider>
                   
-                  {/* Exit Button - Highly Visible */}
-                  <TooltipProvider>
-                    <Tooltip delayDuration={200}>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          onClick={async () => {
-                            await supabase.auth.signOut();
-                            navigate('/');
-                          }}
-                          className="flex items-center gap-2 bg-gradient-to-r from-red-600/20 to-red-500/10 border-2 border-red-500/60 text-red-400 hover:bg-red-500/30 hover:text-red-300 hover:border-red-400 h-10 px-4 transition-all duration-200 hover:scale-105 shadow-lg shadow-red-500/20"
-                        >
-                          <LogOut className="h-4 w-4 md:h-5 md:w-5" />
-                          <span className="text-sm font-semibold tracking-wide">SAIR</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent 
-                        side="bottom" 
-                        className="bg-red-600 text-white border-red-500 px-3 py-2 font-semibold shadow-lg shadow-red-500/30"
-                      >
-                        <div className="flex items-center gap-2">
-                          <LogOut className="h-3.5 w-3.5" />
-                          <span>Sair e voltar para Tela Inicial</span>
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  {/* Exit Button - Highly Visible in Header */}
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={async () => {
+                      await supabase.auth.signOut();
+                      navigate('/');
+                    }}
+                    className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white border border-red-400/50 h-9 md:h-10 px-3 md:px-4 shadow-lg shadow-red-500/30 transition-all duration-200 hover:scale-105"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span className="text-xs md:text-sm font-bold tracking-wide hidden sm:inline">SAIR</span>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -659,19 +645,13 @@ export default function AgentPanel() {
       </div>
     </ThemedPanelBackground>
 
-    {/* Fixed Exit Button - Always Visible at Bottom */}
-    <div className="fixed bottom-4 right-4 z-50">
-      <Button
-        onClick={async () => {
-          await supabase.auth.signOut();
-          navigate('/');
-        }}
-        className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white border-2 border-red-400/50 h-12 px-5 rounded-xl shadow-2xl shadow-red-500/40 transition-all duration-200 hover:scale-105 animate-pulse hover:animate-none"
-      >
-        <LogOut className="h-5 w-5" />
-        <span className="text-sm font-bold tracking-wide uppercase">Sair</span>
-      </Button>
-    </div>
+    {/* Welcome Trial Dialog */}
+    {showWelcomeDialog && agent && (
+      <WelcomeTrialDialog 
+        agentName={agent.name} 
+        onClose={() => setShowWelcomeDialog(false)} 
+      />
+    )}
 
     {/* Welcome Trial Dialog */}
     {showWelcomeDialog && agent && (
