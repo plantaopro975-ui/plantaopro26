@@ -1,9 +1,8 @@
 import { useState, useRef, MouseEvent, useCallback } from 'react';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme, themes } from '@/contexts/ThemeContext';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { cn } from '@/lib/utils';
 import { Radio, Star } from 'lucide-react';
-import { getThemeAssets } from '@/lib/themeAssets';
 import { teamPosters, teamColors } from '@/lib/teamAssets';
 
 interface ThemedTeamCardProps {
@@ -49,20 +48,14 @@ function use3DTilt() {
 
 export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
   const { playSound } = useSoundEffects();
-  const { theme, resolvedTheme } = useTheme();
+  const { theme, resolvedTheme, themeConfig } = useTheme();
   const { ref, transform, glare, handleMouseMove, handleMouseLeave } = use3DTilt();
   const hasPlayedHover = useRef(false);
   
-  const themeAssets = getThemeAssets(theme, resolvedTheme);
+  // Obter ícone específico do tema para a equipe
+  const activeTheme = themes[resolvedTheme];
   const teamKey = team as 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
-  const Icon = themeAssets.teamIcons[teamKey];
-  const colors = themeAssets.teamColors[teamKey];
-  const descriptions = themeAssets.teamDescriptions[teamKey];
-  
-  // Extract color name from class like "text-blue-400" -> "blue"
-  const colorMatch = colors.color.match(/text-(\w+)-/);
-  const colorName = colorMatch ? colorMatch[1] : 'blue';
-  const gradient = `from-${colorName}-500 via-${colorName}-600 to-${colorName}-800`;
+  const TeamIcon = activeTheme.teamIcons[teamKey];
 
   const handleClick = () => {
     playSound('card-select');
@@ -207,7 +200,7 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
               
               {/* Description - Hidden on mobile, visible on larger screens */}
               <p className="hidden md:block text-white/90 text-xs lg:text-sm text-center font-medium mb-2 md:mb-3 max-w-full line-clamp-2 group-hover:text-white transition-colors duration-300">
-                {descriptions.description}
+                Equipe {team} - Operações Táticas
               </p>
               
               {/* Access button - Tactical style */}
