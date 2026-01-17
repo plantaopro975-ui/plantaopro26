@@ -396,10 +396,10 @@ export default function Index() {
       errors.cpf = 'CPF inválido';
     }
     
-    // Matrícula is optional at registration - validated only if provided
+    // Matrícula is optional at registration - validated only if provided (8 digits)
     const matriculaNumbers = formData.matricula.replace(/\D/g, '');
-    if (matriculaNumbers && matriculaNumbers.length !== 9) {
-      errors.matricula = 'Matrícula deve ter 9 dígitos';
+    if (matriculaNumbers && matriculaNumbers.length !== 8) {
+      errors.matricula = 'Matrícula deve ter 8 dígitos';
     }
     
     if (!formData.unit_id) {
@@ -1335,10 +1335,11 @@ export default function Index() {
                 <Input
                   value={formData.matricula}
                   onChange={(e) => setFormData({ ...formData, matricula: formatMatricula(e.target.value) })}
-                  placeholder="000.000.000 (Opcional)"
+                  placeholder="000.000.00 (8 dígitos)"
                   className="bg-slate-800/80 border-2 border-slate-600 text-white text-base py-5 focus:border-cyan-500/60 transition-colors"
-                  maxLength={11}
+                  maxLength={10}
                 />
+                <p className="text-xs text-slate-500">Opcional - 8 dígitos</p>
                 {regErrors.matricula && <p className="text-sm text-red-400 font-medium">{regErrors.matricula}</p>}
               </div>
             </div>

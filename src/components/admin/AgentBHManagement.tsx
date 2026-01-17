@@ -541,11 +541,15 @@ export function AgentBHManagement({ onDataChange }: Props) {
             <div className="space-y-2">
               <Label className="text-slate-300">Novo Saldo (horas)</Label>
               <Input
-                type="number"
-                step="0.5"
+                type="text"
+                inputMode="decimal"
                 placeholder="Ex: 24.5"
                 value={newBalance}
-                onChange={(e) => setNewBalance(e.target.value)}
+                onChange={(e) => {
+                  // Allow only valid decimal input
+                  const value = e.target.value.replace(/[^0-9.,\-]/g, '').replace(',', '.');
+                  setNewBalance(value);
+                }}
                 className="bg-slate-700/50 border-slate-600 text-lg font-mono"
               />
               <p className="text-xs text-slate-500">
@@ -560,11 +564,14 @@ export function AgentBHManagement({ onDataChange }: Props) {
                   Valor por Hora (R$)
                 </Label>
                 <Input
-                  type="number"
-                  step="0.01"
+                  type="text"
+                  inputMode="decimal"
                   placeholder="Ex: 15.75"
                   value={editHourlyRate}
-                  onChange={(e) => setEditHourlyRate(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9.,]/g, '').replace(',', '.');
+                    setEditHourlyRate(value);
+                  }}
                   className="bg-slate-700/50 border-slate-600 font-mono"
                 />
               </div>
@@ -574,11 +581,14 @@ export function AgentBHManagement({ onDataChange }: Props) {
                   Limite de Horas
                 </Label>
                 <Input
-                  type="number"
-                  step="1"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="Ex: 70"
                   value={editBhLimit}
-                  onChange={(e) => setEditBhLimit(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setEditBhLimit(value);
+                  }}
                   className="bg-slate-700/50 border-slate-600 font-mono"
                 />
               </div>
