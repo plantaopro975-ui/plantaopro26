@@ -1021,17 +1021,15 @@ Documento gerado automaticamente pelo PlantãoPro
                         </button>
                       )}
                       
-                      {/* Export button - only for accepted */}
-                      {request.status === 'accepted' && (
-                        <button 
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); exportFormalDocument(request); }} 
-                          className="h-8 w-8 flex items-center justify-center rounded-md text-green-400 hover:text-white hover:bg-green-600 transition-colors cursor-pointer" 
-                          title="Exportar documento"
-                        >
-                          <Download className="h-4 w-4" />
-                        </button>
-                      )}
+                      {/* Export button - available for all statuses */}
+                      <button 
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); showPreview(request); }} 
+                        className="h-8 w-8 flex items-center justify-center rounded-md text-green-400 hover:text-white hover:bg-green-600 transition-colors cursor-pointer" 
+                        title="Exportar PDF"
+                      >
+                        <Download className="h-4 w-4" />
+                      </button>
                       
                       {getStatusBadge(request.status)}
                     </div>
@@ -1221,21 +1219,31 @@ Documento gerado automaticamente pelo PlantãoPro
                       <ArrowLeft className="h-4 w-4 mr-1.5" />
                       Voltar
                     </Button>
-                    {previewRequest.status === 'accepted' && (
+                    {/* Edit button for pending requests */}
+                    {previewRequest.status === 'pending' && previewRequest.requester_id === agentId && (
                       <Button 
                         size="sm" 
-                        onClick={() => { exportFormalDocument(previewRequest); }} 
-                        disabled={exportingRequestId === previewRequest.id}
-                        className="bg-green-500 hover:bg-green-600 text-white"
+                        variant="outline"
+                        onClick={() => { setShowDocumentPreview(false); openEditDialog(previewRequest); }} 
+                        className="border-blue-500/50 text-blue-400 hover:bg-blue-500/20"
                       >
-                        {exportingRequestId === previewRequest.id ? (
-                          <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
-                        ) : (
-                          <Download className="h-4 w-4 mr-1.5" />
-                        )}
-                        Exportar {exportFormat.toUpperCase()}
+                        <Edit2 className="h-4 w-4 mr-1.5" />
+                        Editar
                       </Button>
                     )}
+                    <Button 
+                      size="sm" 
+                      onClick={() => { exportFormalDocument(previewRequest); }} 
+                      disabled={exportingRequestId === previewRequest.id}
+                      className="bg-green-500 hover:bg-green-600 text-white"
+                    >
+                      {exportingRequestId === previewRequest.id ? (
+                        <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                      ) : (
+                        <Download className="h-4 w-4 mr-1.5" />
+                      )}
+                      Exportar {exportFormat.toUpperCase()}
+                    </Button>
                   </div>
                 </div>
               </div>
