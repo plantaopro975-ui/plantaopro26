@@ -257,9 +257,12 @@ function BHEvolutionChart({ entries, hourlyRate }: { entries: OvertimeEntry[]; h
 import React from 'react';
 
 export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrackerProps) {
+  // NOTE: `balance` keeps the historical total (all-time). UI + limits are now per-fortnight (quinzena).
   const [balance, setBalance] = useState(0);
   const [hourlyRate, setHourlyRate] = useState(15.75);
-  const [bhLimit, setBhLimit] = useState(70);
+  const [bhLimitLegacy, setBhLimitLegacy] = useState(70);
+  const [bhLimit1st, setBhLimit1st] = useState<number | null>(null);
+  const [bhLimit2nd, setBhLimit2nd] = useState<number | null>(null);
   const [entries, setEntries] = useState<OvertimeEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -399,19 +402,23 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     try {
       setIsLoading(true);
       
-      // Fetch agent's hourly rate, limit, and future months config
+      // Fetch agent's hourly rate, limits (per fortnight), and future months config
        const { data: agentData } = await (supabase as any)
          .from('agents')
-         .select('bh_hourly_rate, bh_limit, bh_future_months_allowed')
+         .select('bh_hourly_rate, bh_limit, bh_limit_1st, bh_limit_2nd, bh_future_months_allowed')
          .eq('id', agentId)
          .maybeSingle();
+
+      const legacyLimit = agentData?.bh_limit ? Number(agentData.bh_limit) : 70;
 
       if (agentData?.bh_hourly_rate) {
         setHourlyRate(Number(agentData.bh_hourly_rate));
       }
-      if (agentData?.bh_limit) {
-        setBhLimit(Number(agentData.bh_limit));
-      }
+
+      setBhLimitLegacy(legacyLimit);
+      setBhLimit1st(agentData?.bh_limit_1st !== undefined && agentData?.bh_limit_1st !== null ? Number(agentData.bh_limit_1st) : legacyLimit);
+      setBhLimit2nd(agentData?.bh_limit_2nd !== undefined && agentData?.bh_limit_2nd !== null ? Number(agentData.bh_limit_2nd) : legacyLimit);
+
       if (agentData?.bh_future_months_allowed !== undefined) {
         setBhFutureMonthsAllowed(Number(agentData.bh_future_months_allowed) || 0);
       }
@@ -467,25 +474,29 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     }
   };
 
+  const getFortnightLimitForDate = (date: Date) => {
+    const fortnight = date.getDate() <= 15 ? 1 : 2;
+    const l1 = bhLimit1st ?? bhLimitLegacy;
+    const l2 = bhLimit2nd ?? bhLimitLegacy;
+    return fortnight === 1 ? l1 : l2;
+  };
+
   const checkAlerts = (entries: OvertimeEntry[]) => {
     if (!alertsEnabled) return;
 
+    // Alert is per current fortnight (quinzena), not the sum of both.
     const today = startOfDay(new Date());
-    const alertDate = addDays(today, alertDaysBefore);
-    
-    // Check for entries that will expire soon (within 90 days typically)
-    const totalBalance = entries.reduce((acc, entry) => {
-      return entry.operation_type === 'credit'
-        ? acc + Number(entry.hours)
-        : acc - Number(entry.hours);
-    }, 0);
+    const limit = getFortnightLimitForDate(today);
+    const currentFortnightBalance = getFortnightBalanceForDate(today);
 
-    // If balance is high, show alert
-    if (totalBalance >= bhLimit * 0.9) {
-      toast.warning(`Atenção: Seu banco de horas está em ${totalBalance.toFixed(1)}h (${((totalBalance / bhLimit) * 100).toFixed(0)}% do limite)`, {
-        duration: 5000,
-        icon: <Bell className="h-4 w-4 text-amber-400" />
-      });
+    if (limit > 0 && currentFortnightBalance >= limit * 0.9) {
+      toast.warning(
+        `Atenção: Sua quinzena está em ${currentFortnightBalance.toFixed(1)}h (${((currentFortnightBalance / limit) * 100).toFixed(0)}% do limite)`,
+        {
+          duration: 5000,
+          icon: <Bell className="h-4 w-4 text-amber-400" />,
+        }
+      );
     }
   };
 
@@ -616,7 +627,8 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
   const canAddHours = (date: Date, hours: number) => {
     const fortnightBalance = getFortnightBalanceForDate(date);
-    return fortnightBalance + hours <= bhLimit;
+    const limit = getFortnightLimitForDate(date);
+    return fortnightBalance + hours <= limit;
   };
 
   const handleConfirmBH = async () => {
@@ -630,7 +642,8 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
     if (!canAddHours(selectedDate, hours)) {
       const fortnightBalance = getFortnightBalanceForDate(selectedDate);
-      toast.error(`Adicionar ${hours}h excederia o limite de ${bhLimit}h desta quinzena (atual: ${fortnightBalance.toFixed(1)}h)`);
+      const limit = getFortnightLimitForDate(selectedDate);
+      toast.error(`Adicionar ${hours}h excederia o limite de ${limit}h desta quinzena (atual: ${fortnightBalance.toFixed(1)}h)`);
       return;
     }
 
@@ -683,7 +696,8 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     // Check if new value would exceed limit
     const hoursDiff = newHours - editingEntry.hours;
     if (editingEntry.operation_type === 'credit' && !canAddHours(parseBHDate(editingEntry) ?? new Date(editingEntry.created_at), hoursDiff)) {
-      toast.error(`Esta alteração excederia o limite de ${bhLimit}h desta quinzena`);
+      const limit = getFortnightLimitForDate(parseBHDate(editingEntry) ?? new Date(editingEntry.created_at));
+      toast.error(`Esta alteração excederia o limite de ${limit}h desta quinzena`);
       return;
     }
 
@@ -755,11 +769,13 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     }
   };
 
-  // Calculate value and progress
-  const totalValue = balance * hourlyRate;
-  const progressPercent = Math.min((balance / bhLimit) * 100, 100);
-  const isNearLimit = balance >= bhLimit * 0.8;
-  const isAtLimit = balance >= bhLimit;
+  // Calculate value and progress (CURRENT fortnight only)
+  const currentFortnightBalance = getFortnightBalanceForDate(new Date());
+  const currentFortnightLimit = getFortnightLimitForDate(new Date());
+  const totalValue = currentFortnightBalance * hourlyRate;
+  const progressPercent = currentFortnightLimit > 0 ? Math.min((currentFortnightBalance / currentFortnightLimit) * 100, 100) : 0;
+  const isNearLimit = currentFortnightLimit > 0 && currentFortnightBalance >= currentFortnightLimit * 0.8;
+  const isAtLimit = currentFortnightLimit > 0 && currentFortnightBalance >= currentFortnightLimit;
 
   if (isLoading) {
     return (
@@ -815,7 +831,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           {/* Balance Header - Compact */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setIsExpanded(true)}>
             <div className={`relative p-2.5 md:p-3 rounded-xl transition-all duration-300 ${
-              balance < 0 
+              currentFortnightBalance < 0 
                 ? 'bg-red-500/20 ring-2 ring-red-500/40' 
                 : isAtLimit 
                   ? 'bg-red-500/20 ring-2 ring-red-500/40'
@@ -823,18 +839,18 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                     ? 'bg-amber-500/20 ring-2 ring-amber-500/40'
                     : 'bg-green-500/20 ring-2 ring-green-500/40'
             }`}>
-              {balance >= 0 ? (
+              {currentFortnightBalance >= 0 ? (
                 <TrendingUp className={`h-5 w-5 md:h-6 md:w-6 ${isAtLimit ? 'text-red-400' : isNearLimit ? 'text-amber-400' : 'text-green-400'}`} />
               ) : (
                 <TrendingDown className="h-5 w-5 md:h-6 md:w-6 text-red-400" />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] md:text-xs text-slate-300 font-semibold uppercase tracking-wide">Banco de Horas</p>
+              <p className="text-[10px] md:text-xs text-slate-300 font-semibold uppercase tracking-wide">Banco de Horas • {fortnightInfo.label}</p>
               <p className={`text-xl md:text-2xl font-black ${
-                balance < 0 ? 'text-red-400' : isAtLimit ? 'text-red-400' : isNearLimit ? 'text-amber-400' : 'text-green-400'
+                currentFortnightBalance < 0 ? 'text-red-400' : isAtLimit ? 'text-red-400' : isNearLimit ? 'text-amber-400' : 'text-green-400'
               }`}>
-                {balance >= 0 ? '+' : ''}{balance.toFixed(1)}h
+                {currentFortnightBalance >= 0 ? '+' : ''}{currentFortnightBalance.toFixed(1)}h
               </p>
             </div>
             <div className={`text-right px-3 py-1.5 rounded-xl border ${
@@ -851,7 +867,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           {/* Progress Bar - Compact */}
           <div className="space-y-1 cursor-pointer" onClick={() => setIsExpanded(true)}>
             <div className="flex items-center justify-between text-[10px] md:text-xs">
-              <span className="text-slate-400 font-medium">{balance.toFixed(1)} / {bhLimit}h</span>
+              <span className="text-slate-400 font-medium">{currentFortnightBalance.toFixed(1)} / {currentFortnightLimit}h</span>
               <span className={`font-bold ${isNearLimit ? 'text-amber-400' : isAtLimit ? 'text-red-400' : 'text-green-400'}`}>
                 {progressPercent.toFixed(0)}%
               </span>
@@ -995,9 +1011,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
         {/* Progress Bar */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-400">Limite: {bhLimit}h</span>
+            <span className="text-slate-400">Limite ({fortnightInfo.label}): {currentFortnightLimit}h</span>
             <span className={`font-medium ${isNearLimit ? 'text-amber-400' : 'text-slate-300'}`}>
-              {balance.toFixed(1)} / {bhLimit}h
+              {currentFortnightBalance.toFixed(1)} / {currentFortnightLimit}h
             </span>
           </div>
           <Progress 
@@ -1740,13 +1756,13 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                     </div>
                   </div>
                   
-                  {useCustomHours ? (
+                    {useCustomHours ? (
                     <div className="flex justify-center">
                       <NumberStepper
                         value={parseFloat(customHours) || 0.5}
                         onChange={(val) => setCustomHours(val.toString())}
                         min={0.5}
-                        max={bhLimit - balance}
+                        max={Math.max(0, currentFortnightLimit - currentFortnightBalance)}
                         step={0.5}
                         size="lg"
                         suffix="h"
@@ -1808,7 +1824,10 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                       Turno: <span className="text-amber-400 font-medium">{DEFAULT_SHIFT_OPTIONS.find(p => p.value === selectedPeriod)?.label}</span>
                     </p>
                     <p className="text-sm text-slate-400">
-                      Novo saldo: <span className="text-green-400 font-bold">{(balance + getEffectiveHours()).toFixed(1)}h</span>
+                      Novo saldo (na quinzena):{' '}
+                      <span className="text-green-400 font-bold">
+                        {(getFortnightBalanceForDate(selectedDate ?? new Date()) + getEffectiveHours()).toFixed(1)}h
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -1816,7 +1835,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                 {selectedDate && !canAddHours(selectedDate, getEffectiveHours()) && getEffectiveHours() > 0 && (
                   <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
                     <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-                    <span>Esta quantidade excede o limite de {bhLimit}h</span>
+                    <span>Esta quantidade excede o limite de {getFortnightLimitForDate(selectedDate ?? new Date())}h</span>
                   </div>
                 )}
               </div>

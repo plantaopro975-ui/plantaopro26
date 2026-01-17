@@ -1,54 +1,89 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bell, Calendar, Clock, AlertCircle, Check, Loader2 } from 'lucide-react';
+import { Bell, Calendar, Clock, AlertCircle, Check, Loader2, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 interface NotificationsPanelProps {
   agentId: string;
 }
 
-interface AlertItem {
+type SourceTable = 'shift_alerts' | 'notifications';
+
+interface UnifiedItem {
   id: string;
-  alert_type: string;
+  type: string;
   title: string;
   message: string;
   is_read: boolean;
   created_at: string;
+  source: SourceTable;
 }
 
 export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
-  const [alerts, setAlerts] = useState<AlertItem[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { isEnabled, showNotification } = usePushNotifications();
+  const [items, setItems] = useState<UnifiedItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!agentId) return;
-    fetchAlerts();
-    const cleanup = subscribeToAlerts();
+    fetchAll();
+    const cleanup = subscribe();
     return cleanup;
   }, [agentId]);
 
-  const fetchAlerts = async () => {
+  const unreadCount = useMemo(() => items.filter((n) => !n.is_read).length, [items]);
+
+  const fetchAll = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('shift_alerts')
-        .select('id, alert_type, title, message, is_read, created_at')
-        .eq('agent_id', agentId)
-        .order('created_at', { ascending: false })
-        .limit(20);
 
-      if (error) throw error;
+      const [shiftRes, notifRes] = await Promise.all([
+        supabase
+          .from('shift_alerts')
+          .select('id, alert_type, title, message, is_read, created_at')
+          .eq('agent_id', agentId)
+          .order('created_at', { ascending: false })
+          .limit(20),
+        supabase
+          .from('notifications')
+          .select('id, type, title, content, is_read, created_at')
+          .eq('agent_id', agentId)
+          .order('created_at', { ascending: false })
+          .limit(20),
+      ]);
 
-      const items = (data || []) as AlertItem[];
-      setAlerts(items);
-      setUnreadCount(items.filter(n => !n.is_read).length);
+      const shiftItems: UnifiedItem[] = ((shiftRes.data || []) as any[]).map((a) => ({
+        id: a.id,
+        type: a.alert_type,
+        title: a.title,
+        message: a.message ?? '',
+        is_read: !!a.is_read,
+        created_at: a.created_at,
+        source: 'shift_alerts',
+      }));
+
+      const notifItems: UnifiedItem[] = ((notifRes.data || []) as any[]).map((n) => ({
+        id: n.id,
+        type: n.type,
+        title: n.title,
+        message: n.content ?? '',
+        is_read: !!n.is_read,
+        created_at: n.created_at,
+        source: 'notifications',
+      }));
+
+      const merged = [...shiftItems, ...notifItems].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      setItems(merged.slice(0, 30));
     } catch (error) {
       console.error('Error fetching alerts:', error);
     } finally {
@@ -56,43 +91,78 @@ export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
     }
   };
 
-  const subscribeToAlerts = () => {
-    const channel = supabase
+  const subscribe = () => {
+    const ch1 = supabase
       .channel(`shift_alerts-${agentId}`)
       .on(
         'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'shift_alerts',
-          filter: `agent_id=eq.${agentId}`
-        },
+        { event: 'INSERT', schema: 'public', table: 'shift_alerts', filter: `agent_id=eq.${agentId}` },
         (payload) => {
-          const newAlert = payload.new as AlertItem;
-          setAlerts(prev => [newAlert, ...prev]);
-          setUnreadCount(prev => prev + 1);
+          const a: any = payload.new;
+          const newItem: UnifiedItem = {
+            id: a.id,
+            type: a.alert_type,
+            title: a.title,
+            message: a.message ?? '',
+            is_read: !!a.is_read,
+            created_at: a.created_at,
+            source: 'shift_alerts',
+          };
+          setItems((prev) => [newItem, ...prev].slice(0, 30));
+        }
+      )
+      .subscribe();
+
+    const ch2 = supabase
+      .channel(`notifications-${agentId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `agent_id=eq.${agentId}` },
+        async (payload) => {
+          const n: any = payload.new;
+          const newItem: UnifiedItem = {
+            id: n.id,
+            type: n.type,
+            title: n.title,
+            message: n.content ?? '',
+            is_read: !!n.is_read,
+            created_at: n.created_at,
+            source: 'notifications',
+          };
+
+          setItems((prev) => [newItem, ...prev].slice(0, 30));
+
+          // Requested: push notification when a teammate registers an approved leave
+          if (n.type === 'leave' && isEnabled) {
+            await showNotification({
+              title: n.title,
+              body: n.content ?? 'Folga registrada na equipe.',
+              tag: `leave-${n.id}`,
+              requireInteraction: false,
+              soundType: 'alert',
+            });
+          }
         }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(ch1);
+      supabase.removeChannel(ch2);
     };
   };
 
-  const markAsRead = async (id: string) => {
+  const markAsRead = async (item: UnifiedItem) => {
     try {
-      const { error } = await supabase
-        .from('shift_alerts')
-        .update({ is_read: true })
-        .eq('id', id);
+      if (item.source === 'shift_alerts') {
+        const { error } = await supabase.from('shift_alerts').update({ is_read: true }).eq('id', item.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', item.id);
+        if (error) throw error;
+      }
 
-      if (error) throw error;
-
-      setAlerts(prev =>
-        prev.map(n => n.id === id ? { ...n, is_read: true } : n)
-      );
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      setItems((prev) => prev.map((n) => (n.id === item.id && n.source === item.source ? { ...n, is_read: true } : n)));
     } catch (error) {
       console.error('Error marking alert as read:', error);
     }
@@ -100,16 +170,14 @@ export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
 
   const markAllAsRead = async () => {
     try {
-      const { error } = await supabase
-        .from('shift_alerts')
-        .update({ is_read: true })
-        .eq('agent_id', agentId)
-        .eq('is_read', false);
+      const [e1, e2] = await Promise.all([
+        supabase.from('shift_alerts').update({ is_read: true }).eq('agent_id', agentId).eq('is_read', false),
+        supabase.from('notifications').update({ is_read: true }).eq('agent_id', agentId).eq('is_read', false),
+      ]);
+      if (e1.error) throw e1.error;
+      if (e2.error) throw e2.error;
 
-      if (error) throw error;
-
-      setAlerts(prev => prev.map(n => ({ ...n, is_read: true })));
-      setUnreadCount(0);
+      setItems((prev) => prev.map((n) => ({ ...n, is_read: true })));
     } catch (error) {
       console.error('Error marking all as read:', error);
     }
@@ -123,6 +191,8 @@ export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
       case 'bh_reminder':
       case 'bh':
         return <Clock className="h-4 w-4 text-amber-400" />;
+      case 'leave':
+        return <Users className="h-4 w-4 text-blue-400" />;
       case 'conflict':
       case 'alert':
         return <AlertCircle className="h-4 w-4 text-red-400" />;
@@ -143,11 +213,8 @@ export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent 
-        className="w-80 p-0 bg-slate-800 border-slate-700" 
-        align="end"
-        sideOffset={8}
-      >
+
+      <PopoverContent className="w-80 p-0 bg-slate-800 border-slate-700" align="end" sideOffset={8}>
         <div className="flex items-center justify-between p-3 border-b border-slate-700">
           <h4 className="font-semibold text-white">Notificações</h4>
           {unreadCount > 0 && (
@@ -168,43 +235,31 @@ export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
             </div>
-          ) : alerts.length === 0 ? (
+          ) : items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-slate-400">
               <Bell className="h-8 w-8 mb-2 opacity-50" />
               <p className="text-sm">Nenhuma notificação</p>
             </div>
           ) : (
             <div className="divide-y divide-slate-700">
-              {alerts.map((alert) => (
+              {items.map((item) => (
                 <div
-                  key={alert.id}
-                  onClick={() => !alert.is_read && markAsRead(alert.id)}
-                  className={`p-3 hover:bg-slate-700/50 cursor-pointer transition-colors ${
-                    !alert.is_read ? 'bg-slate-700/30' : ''
-                  }`}
+                  key={`${item.source}:${item.id}`}
+                  onClick={() => !item.is_read && markAsRead(item)}
+                  className={`p-3 hover:bg-slate-700/50 cursor-pointer transition-colors ${!item.is_read ? 'bg-slate-700/30' : ''}`}
                 >
                   <div className="flex gap-3">
-                    <div className="flex-shrink-0 mt-0.5">
-                      {getAlertIcon(alert.alert_type)}
-                    </div>
+                    <div className="flex-shrink-0 mt-0.5">{getAlertIcon(item.type)}</div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className={`text-sm font-medium truncate ${
-                          alert.is_read ? 'text-slate-300' : 'text-white'
-                        }`}>
-                          {alert.title}
-                        </p>
-                        {!alert.is_read && (
-                          <div className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
-                        )}
+                        <p className={`text-sm font-medium truncate ${item.is_read ? 'text-slate-300' : 'text-white'}`}>{item.title}</p>
+                        {!item.is_read && <div className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />}
                       </div>
-                      {alert.message && (
-                        <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">
-                          {alert.message}
-                        </p>
+                      {item.message && (
+                        <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{item.message}</p>
                       )}
                       <p className="text-xs text-slate-500 mt-1">
-                        {format(new Date(alert.created_at), "dd/MM HH:mm", { locale: ptBR })}
+                        {format(new Date(item.created_at), 'dd/MM HH:mm', { locale: ptBR })}
                       </p>
                     </div>
                   </div>
