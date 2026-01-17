@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
+import { ShiftMiniCalendar } from '@/components/agent-panel/ShiftMiniCalendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -327,26 +328,14 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
           </div>
         ) : (
           <>
-            {/* Mini Calendar View (compact + stable props to avoid flicker) */}
+            {/* Mini Month Grid (replaces DayPicker to stop blinking on some devices) */}
             <div className="bg-slate-700/30 rounded-lg p-2 overflow-hidden">
-              <Calendar
-                mode="single"
-                selected={undefined}
+              <ShiftMiniCalendar
                 month={selectedMonth}
                 onMonthChange={setSelectedMonth}
-                locale={ptBR}
-                modifiers={calendarModifiers}
-                modifiersStyles={calendarModifiersStyles}
-                className="rounded-md"
-                classNames={{
-                  head_cell: "text-muted-foreground rounded-md w-7 md:w-8 font-normal text-[0.65rem] md:text-[0.7rem] flex-shrink-0",
-                  cell: "h-7 w-7 md:h-8 md:w-8 text-center text-[0.7rem] md:text-xs p-0 relative flex-shrink-0 [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                  day: "h-7 w-7 md:h-8 md:w-8 p-0 font-normal aria-selected:opacity-100 text-[0.7rem] md:text-xs",
-                }}
-                onDayClick={(date) => {
-                  const shift = shifts.find((s) =>
-                    format(parseISO(s.shift_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
-                  );
+                shifts={shifts.map((s) => ({ id: s.id, shift_date: format(parseISO(s.shift_date), 'yyyy-MM-dd') }))}
+                onDayWithShiftClick={(shiftId) => {
+                  const shift = shifts.find((s) => s.id === shiftId);
                   if (shift) handleShiftClick(shift);
                 }}
               />

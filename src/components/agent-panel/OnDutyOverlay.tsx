@@ -33,6 +33,8 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [timeElapsed, setTimeElapsed] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [nextCountdown, setNextCountdown] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
+  const [nextSecondsLeft, setNextSecondsLeft] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -57,9 +59,12 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
       if (currentShift && isOnDuty) {
         updateTimeRemaining(currentShift);
       }
+      if (nextShift && !isOnDuty) {
+        updateNextCountdown(nextShift);
+      }
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentShift, isOnDuty]);
+  }, [currentShift, isOnDuty, nextShift]);
 
   const fetchShiftData = async () => {
     try {
@@ -148,6 +153,28 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
   };
 
   const formatUnit = (value: number) => value.toString().padStart(2, '0');
+
+  const updateNextCountdown = (shift: Shift) => {
+    const now = new Date();
+    const shiftDate = parseISO(shift.shift_date);
+    const [startHour, startMin] = shift.start_time.split(':').map(Number);
+    const shiftStart = new Date(shiftDate);
+    shiftStart.setHours(startHour, startMin, 0);
+
+    const secondsLeft = differenceInSeconds(shiftStart, now);
+    setNextSecondsLeft(secondsLeft);
+
+    // Only show countdown when within 24h and not negative
+    if (secondsLeft <= 24 * 60 * 60 && secondsLeft >= 0) {
+      const h = Math.floor(secondsLeft / 3600);
+      const m = Math.floor((secondsLeft % 3600) / 60);
+      const s = Math.floor(secondsLeft % 60);
+      setNextCountdown({ hours: h, minutes: m, seconds: s });
+      return;
+    }
+
+    setNextCountdown(null);
+  };
 
   if (isLoading) return null;
 
@@ -347,12 +374,19 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
 
   // FULL OVERLAY - Next Shift (not on duty)
   if (!isOnDuty && nextShift) {
+    const isSoon = nextSecondsLeft !== null && nextSecondsLeft <= 24 * 60 * 60 && nextSecondsLeft >= 0;
+
     return (
       <div className="relative mb-4 animate-fade-in">
-        <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-slate-900/90 via-amber-900/20 to-slate-900/90 p-4 backdrop-blur-md shadow-xl">
+        <div className={cn(
+          "rounded-2xl border-2 p-4 backdrop-blur-md shadow-xl",
+          isSoon
+            ? "border-amber-500/60 bg-gradient-to-r from-slate-900/90 via-amber-900/25 to-slate-900/90"
+            : "border-amber-500/40 bg-gradient-to-r from-slate-900/90 via-amber-900/20 to-slate-900/90"
+        )}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-amber-500/20 shadow-lg">
+              <div className={cn("p-2.5 rounded-xl shadow-lg", isSoon ? "bg-amber-500/25" : "bg-amber-500/20")}>
                 <Calendar className="h-5 w-5 text-amber-400" />
               </div>
               <div>
@@ -363,9 +397,18 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
                 <p className="text-xs text-slate-300">
                   Início às <span className="font-bold text-white">{nextShift.start_time}</span>
                 </p>
+
+                {nextCountdown && (
+                  <div className="mt-2 inline-flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-2.5 py-1">
+                    <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
+                    <span className="text-[10px] font-semibold text-amber-300 tracking-wider">
+                      FALTAM {formatUnit(nextCountdown.hours)}:{formatUnit(nextCountdown.minutes)}:{formatUnit(nextCountdown.seconds)}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
-            
+
             <Button
               variant="ghost"
               size="icon"

@@ -14,7 +14,7 @@ import { Clock, TrendingUp, TrendingDown, DollarSign, Loader2, History, AlertTri
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { NumberStepper } from '@/components/ui/number-stepper';
-import { format, endOfDay, isAfter, addDays, isBefore, startOfDay, startOfMonth, endOfMonth, getDate, subMonths, addMonths } from 'date-fns';
+import { format, endOfDay, isAfter, addDays, isBefore, startOfDay, startOfMonth, endOfMonth, getDate, subMonths, addMonths, isSameMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
@@ -291,6 +291,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   
   // State for expanded view in compact mode
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Fortnight quick view / edit dialog (current month)
+  const [fortnightDialog, setFortnightDialog] = useState<1 | 2 | null>(null);
   
   // Push notifications hook
   const { isEnabled: pushEnabled, isSupported: pushSupported, requestPermission, showNotification } = usePushNotifications();
@@ -397,11 +400,11 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
       setIsLoading(true);
       
       // Fetch agent's hourly rate, limit, and future months config
-      const { data: agentData } = await (supabase as any)
-        .from('agents')
-        .select('bh_hourly_rate, bh_limit, bh_future_months_allowed')
-        .eq('id', agentId)
-        .single();
+       const { data: agentData } = await (supabase as any)
+         .from('agents')
+         .select('bh_hourly_rate, bh_limit, bh_future_months_allowed')
+         .eq('id', agentId)
+         .maybeSingle();
 
       if (agentData?.bh_hourly_rate) {
         setHourlyRate(Number(agentData.bh_hourly_rate));
@@ -486,6 +489,34 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     }
   };
 
+  // Parse BH date from description (source of truth for quinzenas)
+  const parseBHDate = (entry: OvertimeEntry): Date | null => {
+    if (!entry.description) return null;
+    const match = entry.description.match(/BH - (\d{2})\/(\d{2})\/(\d{4})/);
+    if (!match) return null;
+    const [, day, month, year] = match;
+    const d = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  const getFortnightNumber = (date: Date) => (date.getDate() <= 15 ? 1 : 2);
+
+  const getFortnightBalanceForDate = (date: Date) => {
+    // Independent per-month/per-fortnight balance (does NOT mix quinzenas)
+    const targetMonth = date.getMonth();
+    const targetYear = date.getFullYear();
+    const fortnight = getFortnightNumber(date);
+
+    return entries
+      .filter((e) => {
+        const d = parseBHDate(e);
+        if (!d) return false;
+        if (d.getMonth() !== targetMonth || d.getFullYear() !== targetYear) return false;
+        return fortnight === 1 ? d.getDate() <= 15 : d.getDate() >= 16;
+      })
+      .reduce((acc, e) => (e.operation_type === 'credit' ? acc + Number(e.hours) : acc - Number(e.hours)), 0);
+  };
+
   // Check if a date is in a closed fortnight (quinzena)
   // UPDATED: Allow editing any day of the current month (both fortnights)
   // Only block previous months (unless admin)
@@ -501,7 +532,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
     // Previous years are always closed
     if (dateYear < todayYear) return true;
-    
+
     // Previous months are closed
     if (dateYear === todayYear && dateMonth < todayMonth) return true;
 
@@ -514,18 +545,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   const canEditEntry = (entry: OvertimeEntry) => {
     // Admins can always edit
     if (isAdmin) return true;
-    
-    // Try to extract date from description
-    if (entry.description) {
-      const match = entry.description.match(/BH - (\d{2})\/(\d{2})\/(\d{4})/);
-      if (match) {
-        const [, day, month, year] = match;
-        const entryDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        return !isInClosedFortnight(entryDate);
-      }
-    }
-    // Fallback to created_at
-    return !isInClosedFortnight(new Date(entry.created_at));
+
+    const d = parseBHDate(entry) ?? new Date(entry.created_at);
+    return !isInClosedFortnight(d);
   };
 
   // Get current fortnight info
@@ -534,20 +556,20 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     const day = today.getDate();
     const month = today.toLocaleString('pt-BR', { month: 'long' });
     const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-    
+
     if (day <= 15) {
       return {
         label: '1ª Quinzena',
         range: `01 a 15 de ${month}`,
         startDay: 1,
-        endDay: 15
+        endDay: 15,
       };
     } else {
       return {
         label: '2ª Quinzena',
         range: `16 a ${lastDay} de ${month}`,
         startDay: 16,
-        endDay: lastDay
+        endDay: lastDay,
       };
     }
   };
@@ -592,8 +614,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     return selectedHours;
   };
 
-  const canAddHours = (hours: number) => {
-    return balance + hours <= bhLimit;
+  const canAddHours = (date: Date, hours: number) => {
+    const fortnightBalance = getFortnightBalanceForDate(date);
+    return fortnightBalance + hours <= bhLimit;
   };
 
   const handleConfirmBH = async () => {
@@ -605,8 +628,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
       return;
     }
 
-    if (!canAddHours(hours)) {
-      toast.error(`Adicionar ${hours}h excederia o limite de ${bhLimit}h`);
+    if (!canAddHours(selectedDate, hours)) {
+      const fortnightBalance = getFortnightBalanceForDate(selectedDate);
+      toast.error(`Adicionar ${hours}h excederia o limite de ${bhLimit}h desta quinzena (atual: ${fortnightBalance.toFixed(1)}h)`);
       return;
     }
 
@@ -658,8 +682,8 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
     // Check if new value would exceed limit
     const hoursDiff = newHours - editingEntry.hours;
-    if (editingEntry.operation_type === 'credit' && !canAddHours(hoursDiff)) {
-      toast.error(`Esta alteração excederia o limite de ${bhLimit}h`);
+    if (editingEntry.operation_type === 'credit' && !canAddHours(parseBHDate(editingEntry) ?? new Date(editingEntry.created_at), hoursDiff)) {
+      toast.error(`Esta alteração excederia o limite de ${bhLimit}h desta quinzena`);
       return;
     }
 
@@ -973,11 +997,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
               return (
                 <div
-                  onClick={() => {
-                    // Âncora na 1ª quinzena (dia 1) para facilitar navegação
-                    setSelectedDate(new Date(today.getFullYear(), today.getMonth(), 1));
-                    toast.info('Selecione um dia no calendário abaixo para registrar/editar BH');
-                  }}
+                   onClick={() => {
+                     setFortnightDialog(1);
+                   }}
                   className="p-3 rounded-lg border-2 transition-all cursor-pointer bg-blue-500/20 border-blue-500/50 ring-2 ring-blue-500/30 hover:bg-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -1032,11 +1054,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
               return (
                 <div
-                  onClick={() => {
-                    // Âncora na 2ª quinzena (dia 16) para facilitar navegação
-                    setSelectedDate(new Date(today.getFullYear(), today.getMonth(), 16));
-                    toast.info('Selecione um dia no calendário abaixo para registrar/editar BH');
-                  }}
+                   onClick={() => {
+                     setFortnightDialog(2);
+                   }}
                   className="p-3 rounded-lg border-2 transition-all cursor-pointer bg-purple-500/20 border-purple-500/50 ring-2 ring-purple-500/30 hover:bg-purple-500/30 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -1175,6 +1195,77 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
             </div>
           );
         })()}
+
+        {/* Fortnight Quick View / Edit */}
+        <Dialog open={fortnightDialog !== null} onOpenChange={(open) => !open && setFortnightDialog(null)}>
+          <DialogContent className="bg-slate-900 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-amber-500" />
+                {fortnightDialog === 1 ? '1ª Quinzena (01-15)' : '2ª Quinzena (16+)' }
+              </DialogTitle>
+              <DialogDescription>
+                Toque em um dia para editar; para registrar, use o calendário abaixo.
+              </DialogDescription>
+            </DialogHeader>
+
+            {(() => {
+              const base = selectedMonth;
+              const monthStart = startOfMonth(base);
+              const monthLabel = format(base, 'MMMM yyyy', { locale: ptBR });
+              const list = entries
+                .map((e) => ({ e, d: parseBHDate(e) }))
+                .filter(({ d }) => d && isSameMonth(d, monthStart))
+                .filter(({ d }) => (fortnightDialog === 1 ? (d!.getDate() <= 15) : (d!.getDate() >= 16)))
+                .sort((a, b) => (a.d!.getTime() - b.d!.getTime()));
+
+              const total = list.reduce((acc, { e }) => (e.operation_type === 'credit' ? acc + Number(e.hours) : acc - Number(e.hours)), 0);
+
+              return (
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
+                    <p className="text-xs text-slate-300">
+                      Resumo de <span className="font-semibold capitalize">{monthLabel}</span>
+                    </p>
+                    <p className="text-lg font-black text-amber-300">{total.toFixed(1)}h</p>
+                    <p className="text-[11px] text-slate-400">⚠️ Quinzena independente (não soma com a outra)</p>
+                  </div>
+
+                  <div className="space-y-2 max-h-[40vh] overflow-auto pr-1">
+                    {list.length === 0 ? (
+                      <p className="text-sm text-slate-500 text-center py-6">Sem registros nesta quinzena.</p>
+                    ) : (
+                      list.map(({ e, d }) => (
+                        <button
+                          key={e.id}
+                          type="button"
+                          onClick={() => {
+                            setEditingEntry(e);
+                            setEditHours(e.hours.toString());
+                            setShowEditDialog(true);
+                            setFortnightDialog(null);
+                          }}
+                          className="w-full flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/40 p-3 text-left hover:bg-slate-800/60"
+                        >
+                          <div>
+                            <p className="text-sm font-semibold text-slate-200">
+                              Dia {format(d!, 'dd/MM', { locale: ptBR })}
+                            </p>
+                            <p className="text-[11px] text-slate-400 truncate max-w-[220px]">{e.description ?? ''}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-black text-emerald-300">+{Number(e.hours).toFixed(1)}h</p>
+                            <p className="text-[10px] text-slate-500">Editar</p>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+          </DialogContent>
+        </Dialog>
 
         {/* Monthly Summary by Fortnight */}
         <MonthlySummary entries={entries} selectedMonth={selectedMonth} hourlyRate={hourlyRate} />
@@ -1626,7 +1717,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                       className="grid grid-cols-4 gap-2"
                     >
                       {HOUR_OPTIONS.map((option) => {
-                        const canAdd = canAddHours(option.value);
+                        const canAdd = canAddHours(selectedDate ?? new Date(), option.value);
                         return (
                           <div key={option.value}>
                             <RadioGroupItem
@@ -1680,7 +1771,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                   </div>
                 </div>
 
-                {!canAddHours(getEffectiveHours()) && getEffectiveHours() > 0 && (
+                {selectedDate && !canAddHours(selectedDate, getEffectiveHours()) && getEffectiveHours() > 0 && (
                   <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
                     <AlertTriangle className="h-4 w-4 flex-shrink-0" />
                     <span>Esta quantidade excede o limite de {bhLimit}h</span>
@@ -1700,7 +1791,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
             </Button>
             <Button
               onClick={handleConfirmBH}
-              disabled={isAdding || !canAddHours(getEffectiveHours()) || getEffectiveHours() <= 0}
+              disabled={isAdding || (selectedDate ? !canAddHours(selectedDate, getEffectiveHours()) : true) || getEffectiveHours() <= 0}
               className="bg-green-500 hover:bg-green-600 text-white"
             >
               {isAdding ? (
