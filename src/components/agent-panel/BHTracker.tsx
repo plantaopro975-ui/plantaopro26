@@ -778,14 +778,42 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     const isFirstFortnight = todayDay <= 15;
     const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
 
+    // Check if today already has BH
+    const todayStr = format(today, 'dd/MM/yyyy');
+    const todayHasBH = bhDates.some(d => 
+      d.getDate() === today.getDate() && 
+      d.getMonth() === today.getMonth() && 
+      d.getFullYear() === today.getFullYear()
+    );
+
+    const handleQuickRegisterToday = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (todayHasBH) {
+        // Edit existing entry
+        const existingEntry = entries.find(entry => entry.description?.includes(`BH - ${todayStr}`));
+        if (existingEntry) {
+          setEditingEntry(existingEntry);
+          setEditHours(existingEntry.hours.toString());
+          setShowEditDialog(true);
+          toast.info(`Editando BH do dia ${todayStr}`);
+        }
+        return;
+      }
+      setSelectedDate(today);
+      setSelectedHours(12);
+      setUseCustomHours(false);
+      setCustomHours('');
+      setSelectedPeriod('day');
+      setShowConfirmDialog(true);
+    };
+
     return (
       <Card 
-        className="card-night-green bg-gradient-to-br from-[hsl(222,60%,4%)] via-[hsl(222,55%,6%)] to-[hsl(142,40%,8%)] border-2 border-green-500/40 transition-all duration-300 hover:border-green-400/60 cursor-pointer hover:scale-[1.02] active:scale-[0.99]"
-        onClick={() => setIsExpanded(true)}
+        className="card-night-green bg-gradient-to-br from-[hsl(222,60%,4%)] via-[hsl(222,55%,6%)] to-[hsl(142,40%,8%)] border-2 border-green-500/40 transition-all duration-300 hover:border-green-400/60"
       >
         <CardContent className="p-3 md:p-4 space-y-3">
           {/* Balance Header - Compact */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setIsExpanded(true)}>
             <div className={`relative p-2.5 md:p-3 rounded-xl transition-all duration-300 ${
               balance < 0 
                 ? 'bg-red-500/20 ring-2 ring-red-500/40' 
@@ -821,7 +849,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           </div>
 
           {/* Progress Bar - Compact */}
-          <div className="space-y-1">
+          <div className="space-y-1 cursor-pointer" onClick={() => setIsExpanded(true)}>
             <div className="flex items-center justify-between text-[10px] md:text-xs">
               <span className="text-slate-400 font-medium">{balance.toFixed(1)} / {bhLimit}h</span>
               <span className={`font-bold ${isNearLimit ? 'text-amber-400' : isAtLimit ? 'text-red-400' : 'text-green-400'}`}>
@@ -834,7 +862,20 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
             />
           </div>
 
-          {/* Compact Fortnight Indicators + Click hint */}
+          {/* Quick Register Today Button */}
+          <Button
+            onClick={handleQuickRegisterToday}
+            className={`w-full h-10 font-bold text-sm ${
+              todayHasBH 
+                ? 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white'
+                : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white'
+            }`}
+          >
+            <CalendarPlus className="h-4 w-4 mr-2" />
+            {todayHasBH ? `Editar BH de Hoje (${todayStr})` : `Registrar HOJE (${todayStr})`}
+          </Button>
+
+          {/* Compact Fortnight Indicators */}
           <div className="flex items-center justify-between pt-2 border-t border-slate-700/50">
             <div className="flex items-center gap-1.5">
               <Shield className="h-3 w-3 text-amber-400" />
@@ -849,8 +890,11 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                   2ª
                 </Badge>
               </div>
-              <Badge className="text-[8px] py-0 px-1.5 bg-green-500/20 text-green-300 border-green-500/30">
-                Toque para registrar
+              <Badge 
+                className="text-[8px] py-0 px-1.5 bg-slate-700/50 text-slate-400 border-slate-600/30 cursor-pointer hover:bg-slate-600/50"
+                onClick={() => setIsExpanded(true)}
+              >
+                Ver calendário
               </Badge>
             </div>
           </div>

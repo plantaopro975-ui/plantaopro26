@@ -6,8 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Users, Crown, Shield, User, Loader2, Droplet, Phone, Cake, ChevronDown, ChevronUp, Settings } from 'lucide-react';
-import { isSameDay, addDays, parseISO } from 'date-fns';
+import { Users, Crown, Shield, User, Loader2, Droplet, Phone, Cake, ChevronDown, ChevronUp, Settings, Palmtree, Star, Stethoscope, GraduationCap } from 'lucide-react';
+import { isSameDay, addDays, parseISO, format, startOfDay, isAfter, isBefore } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { toast } from '@/hooks/use-toast';
 import { TeamMemberDialog } from './TeamMemberDialog';
 import { TeamUnlinkDialog } from '@/components/agents/TeamUnlinkDialog';
@@ -27,6 +28,16 @@ interface TeamMember {
   email: string | null;
 }
 
+interface TeamLeave {
+  id: string;
+  agent_id: string;
+  agent_name: string;
+  leave_type: string;
+  start_date: string;
+  end_date: string;
+  status: string;
+}
+
 interface Agent {
   id: string;
   name: string;
@@ -43,8 +54,16 @@ interface TeamMembersCardProps {
   unitName?: string;
 }
 
+const leaveTypeInfo: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
+  vacation: { label: 'Férias', icon: <Palmtree className="h-3 w-3" />, color: 'text-green-400 bg-green-500/20' },
+  medical: { label: 'Licença', icon: <Stethoscope className="h-3 w-3" />, color: 'text-red-400 bg-red-500/20' },
+  special: { label: 'Folga', icon: <Star className="h-3 w-3" />, color: 'text-amber-400 bg-amber-500/20' },
+  training: { label: 'Treinamento', icon: <GraduationCap className="h-3 w-3" />, color: 'text-blue-400 bg-blue-500/20' },
+};
+
 export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName, unitName }: TeamMembersCardProps) {
   const [members, setMembers] = useState<TeamMember[]>([]);
+  const [teamLeaves, setTeamLeaves] = useState<TeamLeave[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [birthdayAlerts, setBirthdayAlerts] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(true);
@@ -56,6 +75,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
   useEffect(() => {
     if (unitId && team) {
       fetchTeamMembers();
+      fetchTeamLeaves();
     }
   }, [unitId, team]);
 
@@ -80,6 +100,47 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
       console.error('Error fetching team members:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchTeamLeaves = async () => {
+    if (!unitId || !team) return;
+    
+    try {
+      // First get team member IDs
+      const { data: teamMembers, error: teamError } = await supabase
+        .from('agents')
+        .select('id, name')
+        .eq('unit_id', unitId)
+        .eq('team', team)
+        .eq('is_active', true);
+
+      if (teamError) throw teamError;
+      if (!teamMembers || teamMembers.length === 0) return;
+
+      const memberIds = teamMembers.map(m => m.id);
+      const today = format(new Date(), 'yyyy-MM-dd');
+      const sevenDaysLater = format(addDays(new Date(), 7), 'yyyy-MM-dd');
+      
+      // Get leaves for the next 7 days
+      const { data: leavesData, error: leavesError } = await (supabase as any)
+        .from('agent_leaves')
+        .select('*')
+        .in('agent_id', memberIds)
+        .gte('end_date', today)
+        .lte('start_date', sevenDaysLater)
+        .order('start_date', { ascending: true });
+
+      if (leavesError) throw leavesError;
+
+      const leavesWithNames = (leavesData || []).map((leave: any) => {
+        const member = teamMembers.find(m => m.id === leave.agent_id);
+        return { ...leave, agent_name: member?.name || 'Agente' };
+      });
+
+      setTeamLeaves(leavesWithNames);
+    } catch (error) {
+      console.error('Error fetching team leaves:', error);
     }
   };
 
@@ -247,10 +308,83 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
           </CardHeader>
 
           <CollapsibleContent>
-            <CardContent className="pt-1 px-3 pb-3">
+            <CardContent className="pt-1 px-3 pb-3 space-y-3">
+              {/* Team Leaves Today Section */}
+              {(() => {
+                const today = startOfDay(new Date());
+                const leavesToday = teamLeaves.filter(l => {
+                  const start = startOfDay(parseISO(l.start_date));
+                  const end = startOfDay(parseISO(l.end_date));
+                  return today >= start && today <= end;
+                });
+
+                const upcomingLeaves = teamLeaves.filter(l => {
+                  const start = startOfDay(parseISO(l.start_date));
+                  return start > today;
+                });
+
+                if (leavesToday.length > 0 || upcomingLeaves.length > 0) {
+                  return (
+                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/25">
+                      {leavesToday.length > 0 && (
+                        <div className="mb-2">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <Palmtree className="h-3.5 w-3.5 text-purple-400" />
+                            <span className="text-[11px] font-semibold text-purple-300">De folga hoje:</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {leavesToday.map(leave => {
+                              const info = leaveTypeInfo[leave.leave_type] || leaveTypeInfo.special;
+                              return (
+                                <Badge 
+                                  key={leave.id}
+                                  className={`text-[10px] ${info.color} border-0 px-2 py-0.5`}
+                                >
+                                  {info.icon}
+                                  <span className="ml-1">{leave.agent_name.split(' ')[0]}</span>
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      {upcomingLeaves.length > 0 && (
+                        <div>
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <Star className="h-3 w-3 text-blue-400" />
+                            <span className="text-[10px] font-medium text-blue-300">Próximos 7 dias:</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {upcomingLeaves.slice(0, 4).map(leave => {
+                              const info = leaveTypeInfo[leave.leave_type] || leaveTypeInfo.special;
+                              return (
+                                <div 
+                                  key={leave.id}
+                                  className="text-[9px] px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-300 flex items-center gap-1"
+                                >
+                                  {info.icon}
+                                  <span>{leave.agent_name.split(' ')[0]}</span>
+                                  <span className="text-slate-500">
+                                    {format(parseISO(leave.start_date), 'dd/MM', { locale: ptBR })}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                            {upcomingLeaves.length > 4 && (
+                              <span className="text-[9px] text-slate-500 px-1">+{upcomingLeaves.length - 4} mais</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               {/* Birthday Alerts - Compact */}
               {birthdayAlerts.length > 0 && (
-                <div className="mb-2 p-2 bg-gradient-to-r from-pink-500/15 to-purple-500/15 rounded-lg border border-pink-500/25">
+                <div className="p-2 bg-gradient-to-r from-pink-500/15 to-purple-500/15 rounded-lg border border-pink-500/25">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <Cake className="h-3 w-3 text-pink-400 shrink-0" />
                     {birthdayAlerts.map((alert, index) => (
