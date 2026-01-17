@@ -288,6 +288,7 @@ export function LicenseFinanceControl() {
     }
   };
 
+  const getDaysUntilExpiry = (expiresAt: string | null): number | null => {
     if (!expiresAt) return null;
     const expiryDate = parseISO(expiresAt);
     return differenceInDays(expiryDate, new Date());
