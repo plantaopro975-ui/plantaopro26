@@ -89,6 +89,8 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
   const [signatureType, setSignatureType] = useState<'requester' | 'target'>('requester');
   const [exportFormat, setExportFormat] = useState<'pdf' | 'docx'>('pdf');
   const [exportingRequestId, setExportingRequestId] = useState<string | null>(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelingRequestId, setCancelingRequestId] = useState<string | null>(null);
   
   const { showNotification, playTacticalSound } = usePushNotifications();
 
@@ -330,17 +332,27 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
     setShowEditDialog(true);
   };
 
+  // Open cancel confirmation dialog
+  const openCancelConfirm = (requestId: string) => {
+    setCancelingRequestId(requestId);
+    setShowCancelConfirm(true);
+  };
+
   // Cancel a pending swap request
-  const cancelSwapRequest = async (requestId: string) => {
+  const cancelSwapRequest = async () => {
+    if (!cancelingRequestId) return;
+    
     try {
       const { error } = await (supabase as any)
         .from('shift_swaps')
         .delete()
-        .eq('id', requestId);
+        .eq('id', cancelingRequestId);
 
       if (error) throw error;
 
       toast.success('Solicitação de permuta cancelada!');
+      setShowCancelConfirm(false);
+      setCancelingRequestId(null);
       fetchData();
     } catch (error) {
       console.error('Error canceling swap:', error);
@@ -989,7 +1001,7 @@ Documento gerado automaticamente pelo PlantãoPro
                       
                       {/* Cancel button - only for pending and requester */}
                       {request.status === 'pending' && request.requester_id === agentId && (
-                        <Button size="sm" variant="ghost" onClick={() => cancelSwapRequest(request.id)} className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10" title="Cancelar">
+                        <Button size="sm" variant="ghost" onClick={() => openCancelConfirm(request.id)} className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10" title="Cancelar">
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       )}
@@ -1209,6 +1221,30 @@ Documento gerado automaticamente pelo PlantãoPro
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel Confirmation Dialog */}
+      <Dialog open={showCancelConfirm} onOpenChange={(open) => { if (!open) setCancelingRequestId(null); setShowCancelConfirm(open); }}>
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-white">
+              <Trash2 className="h-5 w-5 text-red-400" />
+              Cancelar Permuta
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Tem certeza que deseja cancelar esta solicitação de permuta? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 pt-4">
+            <Button variant="outline" onClick={() => { setShowCancelConfirm(false); setCancelingRequestId(null); }} className="border-slate-600 text-slate-300">
+              Voltar
+            </Button>
+            <Button onClick={cancelSwapRequest} className="bg-red-500 hover:bg-red-600 text-white">
+              <Trash2 className="h-4 w-4 mr-1.5" />
+              Confirmar Cancelamento
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </Card>
