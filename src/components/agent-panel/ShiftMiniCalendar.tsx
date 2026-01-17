@@ -256,20 +256,25 @@ export function SimpleDatePicker({
   const selectedKey = selected ? format(selected, "yyyy-MM-dd") : null;
 
   return (
-    <div className={cn("rounded-lg border border-slate-600 bg-slate-800/70 p-3", className)}>
+    <div
+      className={cn(
+        "rounded-lg border border-slate-600 bg-slate-800/70 p-2 md:p-3",
+        className,
+      )}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-2">
         <Button
           type="button"
           variant="ghost"
           size="icon"
           onClick={handlePrev}
-          className="h-8 w-8 text-slate-400 hover:text-white"
+          className="h-7 w-7 md:h-8 md:w-8 text-slate-400 hover:text-white"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
 
-        <span className="text-sm font-bold tracking-wide text-slate-100 capitalize">
+        <span className="text-xs md:text-sm font-bold tracking-wide text-slate-100 capitalize">
           {format(month, "MMMM yyyy", { locale: ptBR })}
         </span>
 
@@ -278,23 +283,23 @@ export function SimpleDatePicker({
           variant="ghost"
           size="icon"
           onClick={handleNext}
-          className="h-8 w-8 text-slate-400 hover:text-white"
+          className="h-7 w-7 md:h-8 md:w-8 text-slate-400 hover:text-white"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
 
       {/* Weekday labels */}
-      <div className="grid grid-cols-7 gap-1 mb-1">
+      <div className="grid grid-cols-7 gap-0.5 mb-1">
         {weekDays.map((w, i) => (
-          <div key={i} className="text-center text-[10px] font-bold text-slate-400">
+          <div key={i} className="text-center text-[9px] md:text-[10px] font-bold text-slate-400">
             {w}
           </div>
         ))}
       </div>
 
       {/* Day cells */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-0.5">
         {days.map((d) => {
           const key = format(d, "yyyy-MM-dd");
           const inMonth = isSameMonth(d, monthStart);
@@ -307,12 +312,12 @@ export function SimpleDatePicker({
               type="button"
               onClick={() => onSelect(d)}
               className={cn(
-                "h-8 w-full rounded-md text-xs font-semibold tabular-nums transition-all",
+                "h-7 md:h-8 w-full rounded-md text-[11px] md:text-xs font-semibold tabular-nums transition-all",
                 !inMonth && "opacity-30",
                 today && !isSelected && "ring-1 ring-amber-400/60",
                 isSelected
                   ? "bg-amber-500 text-black font-black shadow-lg shadow-amber-500/30"
-                  : "bg-slate-700/50 text-slate-200 hover:bg-slate-600/70"
+                  : "bg-slate-700/50 text-slate-200 hover:bg-slate-600/70",
               )}
             >
               {format(d, "d")}
