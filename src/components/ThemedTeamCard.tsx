@@ -191,24 +191,13 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
           {/* Content - Bottom aligned, compact on mobile */}
           <div className="absolute inset-x-0 bottom-0 p-2 sm:p-4 md:p-5 lg:p-6 z-10">
             <div className="flex flex-col items-center">
-              {/* Icon with team color - Simplified for mobile */}
-              <div 
-                className="w-10 h-10 sm:w-14 sm:h-14 md:w-18 md:h-18 lg:w-22 lg:h-22 xl:w-24 xl:h-24 rounded-full flex items-center justify-center mb-1.5 sm:mb-3 shadow-xl group-hover:scale-110 transition-transform duration-300 border-2 md:border-3 border-white/50"
-                style={{ 
-                  backgroundColor: teamColors[team as keyof typeof teamColors]?.primary,
-                  boxShadow: `0 0 20px ${teamColors[team as keyof typeof teamColors]?.glow}`,
-                }}
-              >
-                <Icon className="h-5 w-5 sm:h-7 sm:w-7 md:h-9 md:w-9 lg:h-11 lg:w-11 xl:h-12 xl:w-12 text-white drop-shadow-lg" />
-              </div>
-              
-              {/* Team name */}
+              {/* Team name - Clean without icon overlay */}
               <div className="flex items-center gap-1 sm:gap-2 mb-1.5 sm:mb-3">
                 <Star className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 text-white/80 shrink-0" />
                 <h3 
-                  className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black tracking-[0.08em] sm:tracking-[0.15em] text-white drop-shadow-lg"
+                  className="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black tracking-[0.08em] sm:tracking-[0.15em] text-white drop-shadow-lg"
                   style={{ 
-                    textShadow: `0 2px 8px ${teamColors[team as keyof typeof teamColors]?.glow}`,
+                    textShadow: `0 2px 12px ${teamColors[team as keyof typeof teamColors]?.glow}`,
                   }}
                 >
                   {team}
@@ -221,12 +210,15 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
                 {descriptions.description}
               </p>
               
-              {/* Access button - Simplified */}
+              {/* Access button - Tactical style */}
               <div 
-                className="flex items-center justify-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded-md sm:rounded-lg md:rounded-xl bg-black/70 backdrop-blur-sm border-2 transition-transform duration-200 group-hover:scale-105"
-                style={{ borderColor: teamColors[team as keyof typeof teamColors]?.primary }}
+                className="tactical-btn flex items-center justify-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded-md sm:rounded-lg md:rounded-xl bg-black/80 backdrop-blur-sm border-2 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
+                style={{ 
+                  borderColor: teamColors[team as keyof typeof teamColors]?.primary,
+                  boxShadow: `0 0 15px ${teamColors[team as keyof typeof teamColors]?.glow}40`
+                }}
               >
-                <Radio className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-green-400 shrink-0" />
+                <Radio className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-green-400 shrink-0 animate-pulse" />
                 <span className="text-[10px] sm:text-sm md:text-base font-bold text-white tracking-wider uppercase">
                   ACESSAR
                 </span>
