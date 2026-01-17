@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Volume2, VolumeX, Play, Pause } from 'lucide-react';
+import { Volume2, VolumeX, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 
 interface HomeAudioPlayerProps {
   className?: string;
@@ -13,18 +13,8 @@ export function HomeAudioPlayer({ className }: HomeAudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState(0);
   
-  // Load user preference on mount
-  useEffect(() => {
-    const savedPreference = localStorage.getItem(AUDIO_PREFERENCE_KEY);
-    // Default is OFF - audio only plays when user explicitly enables it
-    if (savedPreference === 'true') {
-      // User previously enabled audio - but don't auto-play
-      // They need to click play again
-    }
-  }, []);
-
   // Available tracks
   const tracks = [
     '/audio/plantao1.mp3',
@@ -33,7 +23,6 @@ export function HomeAudioPlayer({ className }: HomeAudioPlayerProps) {
     '/audio/vigilancia-urbana.mp3',
     '/audio/vigilancia-urbana-1.mp3'
   ];
-  const currentTrackRef = useRef(0);
   
   // Create audio element
   useEffect(() => {
@@ -43,8 +32,9 @@ export function HomeAudioPlayer({ className }: HomeAudioPlayerProps) {
     audioRef.current.addEventListener('ended', () => {
       // Switch to next track when current ends
       if (audioRef.current) {
-        currentTrackRef.current = (currentTrackRef.current + 1) % tracks.length;
-        audioRef.current.src = tracks[currentTrackRef.current];
+        const nextTrack = (currentTrack + 1) % tracks.length;
+        setCurrentTrack(nextTrack);
+        audioRef.current.src = tracks[nextTrack];
         audioRef.current.play();
       }
     });
@@ -57,6 +47,21 @@ export function HomeAudioPlayer({ className }: HomeAudioPlayerProps) {
     };
   }, []);
   
+  const changeTrack = (direction: 'next' | 'prev') => {
+    if (!audioRef.current) return;
+    
+    const newTrack = direction === 'next' 
+      ? (currentTrack + 1) % tracks.length
+      : (currentTrack - 1 + tracks.length) % tracks.length;
+    
+    setCurrentTrack(newTrack);
+    audioRef.current.src = tracks[newTrack];
+    
+    if (isPlaying) {
+      audioRef.current.play().catch(() => {});
+    }
+  };
+  
   const togglePlay = () => {
     if (!audioRef.current) return;
     
@@ -66,11 +71,9 @@ export function HomeAudioPlayer({ className }: HomeAudioPlayerProps) {
       localStorage.setItem(AUDIO_PREFERENCE_KEY, 'false');
     } else {
       audioRef.current.play().catch(() => {
-        // Browser blocked autoplay
         console.log('Audio playback blocked');
       });
       setIsPlaying(true);
-      setHasInteracted(true);
       localStorage.setItem(AUDIO_PREFERENCE_KEY, 'true');
     }
   };
@@ -83,9 +86,20 @@ export function HomeAudioPlayer({ className }: HomeAudioPlayerProps) {
 
   return (
     <div className={cn(
-      "flex items-center gap-1",
+      "flex items-center gap-0.5",
       className
     )}>
+      {/* Previous Track - only when playing */}
+      {isPlaying && (
+        <button
+          onClick={() => changeTrack('prev')}
+          className="p-1 rounded transition-all duration-200 text-muted-foreground/50 hover:text-foreground/70"
+          title="Música anterior"
+        >
+          <SkipBack className="h-2.5 w-2.5" />
+        </button>
+      )}
+      
       {/* Play/Pause Button */}
       <button
         onClick={togglePlay}
@@ -98,37 +112,44 @@ export function HomeAudioPlayer({ className }: HomeAudioPlayerProps) {
         title={isPlaying ? "Pausar música" : "Tocar música de abertura"}
       >
         {isPlaying ? (
-          <Pause className="h-3.5 w-3.5" />
+          <Pause className="h-3 w-3" />
         ) : (
-          <Play className="h-3.5 w-3.5" />
+          <Play className="h-3 w-3" />
         )}
       </button>
+      
+      {/* Next Track - only when playing */}
+      {isPlaying && (
+        <button
+          onClick={() => changeTrack('next')}
+          className="p-1 rounded transition-all duration-200 text-muted-foreground/50 hover:text-foreground/70"
+          title="Próxima música"
+        >
+          <SkipForward className="h-2.5 w-2.5" />
+        </button>
+      )}
       
       {/* Volume Button - only show when playing */}
       {isPlaying && (
         <button
           onClick={toggleMute}
-          className={cn(
-            "p-1.5 rounded-lg transition-all duration-300",
-            "bg-muted/30 text-muted-foreground/60 hover:text-foreground hover:bg-muted/50"
-          )}
+          className="p-1 rounded transition-all duration-200 text-muted-foreground/50 hover:text-foreground/70"
           title={isMuted ? "Ativar som" : "Silenciar"}
         >
           {isMuted ? (
-            <VolumeX className="h-3.5 w-3.5" />
+            <VolumeX className="h-2.5 w-2.5" />
           ) : (
-            <Volume2 className="h-3.5 w-3.5" />
+            <Volume2 className="h-2.5 w-2.5" />
           )}
         </button>
       )}
       
       {/* Playing indicator */}
       {isPlaying && !isMuted && (
-        <div className="flex items-center gap-0.5 ml-1">
-          <div className="w-0.5 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0ms' }} />
-          <div className="w-0.5 h-3 bg-primary rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
-          <div className="w-0.5 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
-          <div className="w-0.5 h-2.5 bg-primary rounded-full animate-pulse" style={{ animationDelay: '450ms' }} />
+        <div className="flex items-center gap-0.5 ml-0.5">
+          <div className="w-0.5 h-1.5 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0ms' }} />
+          <div className="w-0.5 h-2.5 bg-primary rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+          <div className="w-0.5 h-1.5 bg-primary rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
         </div>
       )}
     </div>
