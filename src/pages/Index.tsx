@@ -852,36 +852,43 @@ export default function Index() {
                 <span className="text-[9px] sm:text-[11px] font-bold text-emerald-400 uppercase tracking-wider text-glow-emerald">OPERACIONAL</span>
               </div>
               
-              {/* Security Badge - Tactical */}
-              <div className="security-badge hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 shadow-lg shadow-amber-500/5">
-                <Shield className="h-3.5 w-3.5 text-amber-400" />
-                <span className="text-[10px] font-semibold text-amber-400/90 uppercase tracking-wide">Seguro</span>
+              {/* Security Badge - Themed */}
+              <div className="security-badge hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/30 shadow-lg shadow-primary/5">
+                <Shield className="h-3.5 w-3.5 text-primary" />
+                <span className="text-[10px] font-semibold text-primary/90 uppercase tracking-wide">Seguro</span>
               </div>
             </div>
             
-            {/* Center: Animated Signal Wave */}
-            <div className="flex items-center gap-1">
+            {/* Center: Themed Animated Signal Wave */}
+            <div className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary/5 border border-primary/20">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((bar) => (
                   <div 
                     key={bar}
-                    className="w-0.5 sm:w-1 bg-primary rounded-full animate-pulse"
+                    className="w-0.5 sm:w-1 rounded-full"
                     style={{ 
                       height: `${bar * 3 + 4}px`,
+                      background: `hsl(var(--primary))`,
+                      animation: 'pulse 1.5s ease-in-out infinite',
                       animationDelay: `${bar * 100}ms`,
                       opacity: 0.5 + (bar * 0.1)
                     }}
                   />
                 ))}
               </div>
-              <Radio className="h-4 w-4 text-primary ml-1 animate-pulse" />
-              <div className="flex items-center gap-0.5 ml-1">
+              <div className="relative mx-1">
+                <Radio className="h-4 w-4 text-primary" />
+                <Radio className="h-4 w-4 text-primary absolute inset-0 animate-ping opacity-30" />
+              </div>
+              <div className="flex items-center gap-0.5">
                 {[5, 4, 3, 2, 1].map((bar) => (
                   <div 
                     key={bar}
-                    className="w-0.5 sm:w-1 bg-primary rounded-full animate-pulse"
+                    className="w-0.5 sm:w-1 rounded-full"
                     style={{ 
                       height: `${bar * 3 + 4}px`,
+                      background: `hsl(var(--primary))`,
+                      animation: 'pulse 1.5s ease-in-out infinite',
                       animationDelay: `${bar * 100}ms`,
                       opacity: 0.5 + (bar * 0.1)
                     }}
@@ -890,30 +897,36 @@ export default function Index() {
               </div>
             </div>
             
-            {/* Right: Theme & Clock */}
+            {/* Right: Theme & Clock - Themed */}
             <div className="flex items-center gap-1.5 sm:gap-2">
               <button
                 onClick={() => {
                   playSound('click');
                   setShowThemeSelector(true);
                 }}
-                className="p-1.5 sm:p-2 rounded-lg bg-primary/10 border border-primary/40 hover:bg-primary/20 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105"
+                className="p-1.5 sm:p-2 rounded-lg bg-primary/10 border border-primary/40 hover:bg-primary/20 transition-all duration-200 shadow-sm hover:shadow-primary/20 hover:scale-105 group"
                 title="Tema"
               >
-                <Palette className="h-4 w-4 text-primary" />
+                <Palette className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform" />
               </button>
-              <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-slate-800/80 border border-primary/40 shadow-lg shadow-primary/10">
-                <div className="relative">
-                  <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
-                  <div className="absolute inset-0 text-primary animate-ping opacity-30">
-                    <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </div>
+              <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-card/80 border-2 border-primary/30 shadow-lg shadow-primary/10 backdrop-blur-sm">
+                <div className="relative flex items-center justify-center w-5 h-5">
+                  <div className="absolute inset-0 rounded-full border border-primary/30" />
+                  <div className="absolute inset-[2px] rounded-full border border-primary/20" />
+                  <div 
+                    className="absolute inset-0 rounded-full"
+                    style={{ 
+                      background: 'conic-gradient(from 0deg, transparent, hsl(var(--primary) / 0.4) 30deg, transparent 60deg)',
+                      animation: 'spin 2s linear infinite'
+                    }}
+                  />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary))]" />
                 </div>
                 <div className="flex items-baseline gap-0.5">
                   <span className="text-sm sm:text-base font-mono font-black text-primary tracking-wider tabular-nums">
                     {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                   </span>
-                  <span className="text-[8px] sm:text-[10px] font-mono text-primary/60 animate-pulse">
+                  <span className="text-[8px] sm:text-[10px] font-mono text-primary/60">
                     :{String(new Date().getSeconds()).padStart(2, '0')}
                   </span>
                 </div>
@@ -961,16 +974,16 @@ export default function Index() {
       </section>
 
 
-      {/* Footer - Compact with Developer Credit on desktop */}
-      <footer className="py-1 sm:py-1.5 px-2 sm:px-4 bg-slate-900/95 backdrop-blur-sm border-t border-primary/20 relative z-20 shrink-0">
+      {/* Footer - Themed Compact */}
+      <footer className="py-1 sm:py-1.5 px-2 sm:px-4 bg-card/95 backdrop-blur-sm border-t border-primary/20 relative z-20 shrink-0">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-1">
           {/* Left: Branding + Audio */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="flex items-center gap-1 text-slate-500">
+            <div className="flex items-center gap-1 text-muted-foreground">
               <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary/70" />
               <span className="text-[9px] sm:text-[10px] font-medium">© {new Date().getFullYear()}</span>
             </div>
-            <span className="hidden sm:inline text-[10px] font-bold bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
+            <span className="hidden sm:inline text-[10px] font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               FRANC D'NIS
             </span>
             <HomeAudioPlayer />
@@ -1246,9 +1259,9 @@ export default function Index() {
 
       {/* Registration Dialog - Professional */}
       <Dialog open={showRegistration} onOpenChange={(open) => !open && safeCloseRegistration()}>
-        <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-cyan-500/40 w-[95vw] max-w-xl max-h-[85vh] overflow-y-auto shadow-2xl shadow-cyan-500/10 p-4 sm:p-6">
-          <DialogHeader className="pb-4 border-b border-slate-700/50">
-            <DialogTitle className="flex items-center gap-3 text-xl sm:text-2xl font-bold text-white">
+        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border-2 border-primary/40 w-[95vw] max-w-lg max-h-[85vh] overflow-y-auto shadow-2xl shadow-primary/10 p-3 sm:p-5">
+          <DialogHeader className="pb-3 border-b border-border/50">
+            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold text-foreground">
               {currentTeamConfig && (
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/30 to-cyan-500/10 border border-cyan-500/40">
                   <currentTeamConfig.icon className={`h-6 w-6 sm:h-7 sm:w-7 ${currentTeamConfig.color}`} />
@@ -1280,114 +1293,104 @@ export default function Index() {
 
           <form onSubmit={handleSignUp} className="space-y-4">
             {/* Nome */}
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-base font-semibold text-slate-300">Nome Completo *</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-sm font-semibold text-foreground">Nome Completo *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/\d/g, '').toUpperCase() })}
                 placeholder="NOME COMPLETO"
-                className="bg-slate-800/80 border-2 border-slate-600 text-white text-lg py-5 uppercase focus:border-cyan-500/60 transition-colors"
+                className="bg-card/80 border-2 border-border text-foreground text-base py-4 uppercase focus:border-primary/60 transition-colors"
                 required
               />
-              {regErrors.name && <p className="text-sm text-red-400 font-medium">{regErrors.name}</p>}
+              {regErrors.name && <p className="text-xs text-red-400 font-medium">{regErrors.name}</p>}
             </div>
             
-            {/* CPF e Matrícula */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div className="space-y-2">
-                <Label className="text-base font-semibold text-slate-300">CPF *</Label>
+            {/* CPF e Matrícula - Grid compacto */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label className="text-sm font-semibold text-foreground">CPF *</Label>
                 <div className="relative">
                   <Input
                     value={formData.cpf}
                     onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
                     placeholder="000.000.000-00"
-                    className={`bg-slate-800/80 border-2 text-white text-base py-5 pr-12 transition-colors ${
+                    className={`bg-card/80 border-2 text-foreground text-sm py-3 pr-10 transition-colors ${
                       formData.cpf.replace(/\D/g, '').length === 11
                         ? cpfValidation.isValid && !cpfValidation.exists
                           ? 'border-green-500 focus:border-green-500'
                           : cpfValidation.exists
                           ? 'border-amber-500 focus:border-amber-500'
                           : 'border-red-500 focus:border-red-500'
-                        : 'border-slate-600 focus:border-cyan-500/60'
+                        : 'border-border focus:border-primary/60'
                     }`}
                     maxLength={14}
                     required
                   />
                   {formData.cpf.replace(/\D/g, '').length === 11 && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       {cpfValidation.isChecking ? (
-                        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                       ) : cpfValidation.isValid && !cpfValidation.exists ? (
-                        <UserCheck className="h-5 w-5 text-green-400" />
+                        <UserCheck className="h-4 w-4 text-green-400" />
                       ) : cpfValidation.exists ? (
-                        <AlertTriangle className="h-5 w-5 text-amber-400" />
+                        <AlertTriangle className="h-4 w-4 text-amber-400" />
                       ) : (
-                        <AlertTriangle className="h-5 w-5 text-red-400" />
+                        <AlertTriangle className="h-4 w-4 text-red-400" />
                       )}
                     </div>
                   )}
                 </div>
-                {regErrors.cpf && <p className="text-sm text-red-400 font-medium">{regErrors.cpf}</p>}
-                
-                {/* Real-time CPF validation feedback */}
+                {regErrors.cpf && <p className="text-xs text-red-400">{regErrors.cpf}</p>}
                 {formData.cpf.replace(/\D/g, '').length === 11 && !cpfValidation.isChecking && (
-                  <div className={`text-sm font-medium ${
-                    cpfValidation.isValid && !cpfValidation.exists
-                      ? 'text-green-400'
-                      : cpfValidation.exists
-                      ? 'text-amber-400'
-                      : 'text-red-400'
+                  <p className={`text-xs ${
+                    cpfValidation.isValid && !cpfValidation.exists ? 'text-green-400' :
+                    cpfValidation.exists ? 'text-amber-400' : 'text-red-400'
                   }`}>
-                    {!cpfValidation.isValid && 'CPF inválido'}
-                    {cpfValidation.isValid && !cpfValidation.exists && '✓ CPF válido e disponível'}
-                    {cpfValidation.exists && cpfValidation.existingAgent && (
-                      <span>
-                        CPF já cadastrado: {cpfValidation.existingAgent.name}
-                        {cpfValidation.existingAgent.team && ` (Equipe ${cpfValidation.existingAgent.team})`}
-                      </span>
-                    )}
-                  </div>
+                    {!cpfValidation.isValid && 'Inválido'}
+                    {cpfValidation.isValid && !cpfValidation.exists && '✓ Disponível'}
+                    {cpfValidation.exists && 'Já cadastrado'}
+                  </p>
                 )}
               </div>
-              <div className="space-y-2">
-                <Label className="text-base font-semibold text-slate-300">Matrícula</Label>
+              <div className="space-y-1">
+                <Label className="text-sm font-semibold text-foreground">Matrícula</Label>
                 <Input
                   value={formData.matricula}
                   onChange={(e) => setFormData({ ...formData, matricula: formatMatricula(e.target.value) })}
-                  placeholder="000.000.00 (8 dígitos)"
-                  className="bg-slate-800/80 border-2 border-slate-600 text-white text-base py-5 focus:border-cyan-500/60 transition-colors"
+                  placeholder="000.000.00"
+                  className="bg-card/80 border-2 border-border text-foreground text-sm py-3 focus:border-primary/60 transition-colors"
                   maxLength={10}
                 />
-                <p className="text-xs text-slate-500">Opcional - 8 dígitos</p>
-                {regErrors.matricula && <p className="text-sm text-red-400 font-medium">{regErrors.matricula}</p>}
+                <p className="text-[10px] text-muted-foreground">Opcional</p>
+                {regErrors.matricula && <p className="text-xs text-red-400">{regErrors.matricula}</p>}
               </div>
             </div>
             
-            {/* Unidade e Município */}
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">Unidade Socioeducativa *</Label>
+            {/* Unidade - Compacto */}
+            <div className="space-y-1">
+              <Label className="text-sm font-semibold text-foreground">Unidade Socioeducativa *</Label>
               <Select
                 value={formData.unit_id}
                 onValueChange={(value) => setFormData({ ...formData, unit_id: value })}
               >
-                <SelectTrigger className="bg-slate-800/80 border-2 border-slate-600 text-white text-base py-5 focus:border-cyan-500/60">
-                  <SelectValue placeholder={units.length === 0 ? "Carregando unidades..." : "Selecione sua unidade"} />
+                <SelectTrigger className="bg-card/80 border-2 border-border text-foreground text-sm py-3 focus:border-primary/60">
+                  <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione unidade"} />
                 </SelectTrigger>
                 <SelectContent 
-                  className="bg-slate-900 border-2 border-slate-700 max-h-60"
+                  className="bg-card border-2 border-border max-h-60"
                   position="popper"
                   sideOffset={4}
                   style={{ zIndex: 9999 }}
                 >
                   {units.length === 0 ? (
-                    <div className="px-4 py-3 text-slate-400 text-base">Carregando unidades...</div>
+                    <div className="px-3 py-2 text-muted-foreground text-sm">Carregando...</div>
                   ) : (
                     units.map((unit) => (
-                      <SelectItem key={unit.id} value={unit.id} className="text-white hover:bg-slate-700 focus:bg-slate-700 cursor-pointer py-3">
+                      <SelectItem key={unit.id} value={unit.id} className="text-foreground hover:bg-muted focus:bg-muted cursor-pointer py-2">
                         <div className="flex flex-col">
-                          <span className="font-semibold text-base">{unit.name}</span>
-                          <span className="text-sm text-slate-400">{unit.municipality}</span>
+                          <span className="font-semibold text-sm">{unit.name}</span>
+                          <span className="text-xs text-muted-foreground">{unit.municipality}</span>
                         </div>
                       </SelectItem>
                     ))

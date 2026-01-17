@@ -66,37 +66,38 @@ export function OperationalStatus({ className }: OperationalStatusProps) {
     return () => clearInterval(interval);
   }, []);
 
+  // Use theme colors for operational states
   const statusConfig = {
     online: {
       label: 'OPERACIONAL',
-      color: 'text-emerald-400',
-      bgColor: 'bg-emerald-500/20',
-      borderColor: 'border-emerald-500/40',
-      pulseColor: 'bg-emerald-400',
+      color: 'text-primary',
+      bgColor: 'bg-primary/20',
+      borderColor: 'border-primary/40',
+      pulseColor: 'bg-primary',
       icon: Shield,
     },
     standby: {
       label: 'STANDBY',
-      color: 'text-amber-400',
-      bgColor: 'bg-amber-500/20',
-      borderColor: 'border-amber-500/40',
-      pulseColor: 'bg-amber-400',
+      color: 'text-accent',
+      bgColor: 'bg-accent/20',
+      borderColor: 'border-accent/40',
+      pulseColor: 'bg-accent',
       icon: Radio,
     },
     offline: {
       label: 'OFFLINE',
-      color: 'text-red-400',
-      bgColor: 'bg-red-500/20',
-      borderColor: 'border-red-500/40',
-      pulseColor: 'bg-red-400',
+      color: 'text-destructive',
+      bgColor: 'bg-destructive/20',
+      borderColor: 'border-destructive/40',
+      pulseColor: 'bg-destructive',
       icon: WifiOff,
     },
     alert: {
       label: 'ALERTA',
-      color: 'text-orange-400',
-      bgColor: 'bg-orange-500/20',
-      borderColor: 'border-orange-500/40',
-      pulseColor: 'bg-orange-400',
+      color: 'text-accent',
+      bgColor: 'bg-accent/20',
+      borderColor: 'border-accent/40',
+      pulseColor: 'bg-accent',
       icon: Activity,
     },
   };
@@ -107,44 +108,35 @@ export function OperationalStatus({ className }: OperationalStatusProps) {
   return (
     <div 
       className={cn(
-        "status-indicator flex items-center gap-2 px-3 py-1.5 rounded-lg border backdrop-blur-sm transition-all duration-300 shadow-lg",
+        "status-indicator flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 backdrop-blur-sm transition-all duration-300",
         config.bgColor,
         config.borderColor,
+        "shadow-lg",
         className
       )}
-      style={{
-        boxShadow: status === 'online' ? '0 0 15px rgba(16, 185, 129, 0.2)' : 
-                   status === 'alert' ? '0 0 15px rgba(249, 115, 22, 0.2)' :
-                   status === 'offline' ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
-      }}
     >
-      {/* Radar-style Animated Status Indicator */}
+      {/* Radar-style Animated Status Indicator - Themed */}
       <div className="radar-container relative w-6 h-6 flex items-center justify-center">
         {/* Radar Background */}
         <div className={cn(
-          "absolute inset-0 rounded-full border bg-slate-900/80",
+          "absolute inset-0 rounded-full border-2 bg-background/80",
           config.borderColor
         )} />
         {/* Radar Rings */}
-        <div className="absolute inset-[2px] rounded-full border border-current/20" style={{ borderColor: config.pulseColor.replace('bg-', '') }} />
-        <div className="absolute inset-[4px] rounded-full border border-current/10" style={{ borderColor: config.pulseColor.replace('bg-', '') }} />
-        {/* Radar Sweep */}
+        <div className="absolute inset-[2px] rounded-full border border-primary/20" />
+        <div className="absolute inset-[4px] rounded-full border border-primary/10" />
+        {/* Radar Sweep - Uses theme primary color */}
         <div 
           className="radar-sweep absolute inset-0 rounded-full"
           style={{ 
-            background: status === 'online' ? 'conic-gradient(from 0deg, transparent, rgba(16, 185, 129, 0.5) 30deg, transparent 60deg)' :
-                        status === 'alert' ? 'conic-gradient(from 0deg, transparent, rgba(249, 115, 22, 0.5) 30deg, transparent 60deg)' :
-                        status === 'standby' ? 'conic-gradient(from 0deg, transparent, rgba(245, 158, 11, 0.5) 30deg, transparent 60deg)' :
-                        'conic-gradient(from 0deg, transparent, rgba(239, 68, 68, 0.5) 30deg, transparent 60deg)',
+            background: 'conic-gradient(from 0deg, transparent, hsl(var(--primary) / 0.5) 30deg, transparent 60deg)',
             animation: 'spin 2s linear infinite'
           }}
         />
         {/* Center Blip */}
         <div 
           className={cn("status-dot absolute w-2 h-2 rounded-full z-10", config.pulseColor)}
-          style={{ boxShadow: status === 'online' ? '0 0 8px rgba(16, 185, 129, 0.8)' : 
-                               status === 'alert' ? '0 0 8px rgba(249, 115, 22, 0.8)' :
-                               '0 0 8px rgba(239, 68, 68, 0.6)' }}
+          style={{ boxShadow: '0 0 8px hsl(var(--primary) / 0.8)' }}
         />
       </div>
 
@@ -156,28 +148,28 @@ export function OperationalStatus({ className }: OperationalStatusProps) {
         </span>
       </div>
 
-      {/* Signal Bars (desktop only) */}
+      {/* Signal Bars (desktop only) - Themed */}
       <div className="hidden md:flex items-end gap-0.5 ml-1">
         {[1, 2, 3, 4].map((bar) => (
           <div
             key={bar}
             className={cn(
               "w-1 rounded-sm transition-all duration-300",
-              status === 'online' && bar <= 4 ? config.pulseColor : 
-              status === 'standby' && bar <= 2 ? config.pulseColor :
+              status === 'online' && bar <= 4 ? 'bg-primary' : 
+              status === 'standby' && bar <= 2 ? 'bg-accent' :
               status === 'offline' ? 'bg-muted-foreground/30' :
-              bar <= 3 ? config.pulseColor : 'bg-muted-foreground/30'
+              bar <= 3 ? 'bg-accent' : 'bg-muted-foreground/30'
             )}
             style={{ height: `${bar * 3 + 2}px` }}
           />
         ))}
       </div>
 
-      {/* Live Indicator with tactical styling */}
+      {/* Live Indicator - Themed */}
       {status === 'online' && (
         <div className="hidden md:flex items-center gap-1 ml-1 pl-2 border-l border-border/50">
-          <Wifi className="h-3 w-3 text-emerald-400" />
-          <span className="text-[9px] text-emerald-300 font-mono font-semibold">
+          <Wifi className="h-3 w-3 text-primary" />
+          <span className="text-[9px] text-primary font-mono font-semibold">
             {activeAgents} ATIVOS
           </span>
         </div>
