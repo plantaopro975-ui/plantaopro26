@@ -827,23 +827,33 @@ export default function Index() {
         {/* Animated Particles/Stars Effect */}
         <ParticleBackground particleCount={50} />
 
-      {/* Header - Professional Status Bar */}
-      <div className="bg-gradient-to-r from-slate-900/98 via-slate-800/95 to-slate-900/98 backdrop-blur-md border-b border-primary/30 py-2 px-3 sm:px-4 relative z-20 shrink-0">
+      {/* Header - Professional Status Bar with Tactical Styling */}
+      <div className="header-bar bg-gradient-to-r from-slate-900/98 via-slate-800/95 to-slate-900/98 backdrop-blur-md border-b border-primary/30 py-2 px-3 sm:px-4 relative z-20 shrink-0">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between gap-2">
-            {/* Left: Status Indicators */}
+            {/* Left: Status Indicators with Radar Effect */}
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Live Pulse Indicator */}
-              <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-green-500/15 border border-green-500/40 shadow-md">
-                <div className="relative">
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
-                  <div className="absolute inset-0 w-2 h-2 rounded-full bg-green-400 animate-ping opacity-75" />
+              {/* Radar-style Live Indicator */}
+              <div className="status-indicator flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/40 shadow-lg shadow-emerald-500/10">
+                <div className="radar-container relative w-5 h-5 sm:w-6 sm:h-6">
+                  {/* Radar Background */}
+                  <div className="absolute inset-0 rounded-full border border-emerald-500/30 bg-slate-900/80" />
+                  {/* Radar Rings */}
+                  <div className="absolute inset-[2px] rounded-full border border-emerald-500/20" />
+                  <div className="absolute inset-[4px] rounded-full border border-emerald-500/10" />
+                  {/* Radar Sweep */}
+                  <div className="radar-sweep absolute inset-0 rounded-full" style={{ 
+                    background: 'conic-gradient(from 0deg, transparent, rgba(16, 185, 129, 0.4) 30deg, transparent 60deg)',
+                    animation: 'spin 2s linear infinite'
+                  }} />
+                  {/* Center Blip */}
+                  <div className="status-dot absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
                 </div>
-                <span className="text-[9px] sm:text-[11px] font-bold text-green-400 uppercase tracking-wider">ONLINE</span>
+                <span className="text-[9px] sm:text-[11px] font-bold text-emerald-400 uppercase tracking-wider text-glow-emerald">OPERACIONAL</span>
               </div>
               
-              {/* Security Badge */}
-              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30">
+              {/* Security Badge - Tactical */}
+              <div className="security-badge hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 shadow-lg shadow-amber-500/5">
                 <Shield className="h-3.5 w-3.5 text-amber-400" />
                 <span className="text-[10px] font-semibold text-amber-400/90 uppercase tracking-wide">Seguro</span>
               </div>

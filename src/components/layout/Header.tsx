@@ -90,15 +90,15 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
   };
 
   return (
-    <header ref={ref} {...props} className={cn("h-16 border-b border-border bg-card/50 backdrop-blur-sm flex items-center justify-between px-4 lg:px-6", props.className)}>
+    <header ref={ref} {...props} className={cn("header-bar h-16 border-b border-border bg-gradient-to-r from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-md flex items-center justify-between px-4 lg:px-6 shadow-lg", props.className)}>
       {/* Mobile Menu */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild className="lg:hidden">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="tactical-btn">
             <Menu className="h-5 w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64">
+        <SheetContent side="left" className="p-0 w-64 bg-slate-900 border-r border-primary/30">
           <MobileSidebar onNavigate={() => setIsOpen(false)} />
         </SheetContent>
       </Sheet>
@@ -126,7 +126,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-8 w-8"
+          className="h-8 w-8 hover:bg-primary/10 hover:border-primary/30 transition-all"
           onClick={() => {
             toggleSound();
             playSound('tactical-click');
@@ -140,49 +140,49 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           )}
         </Button>
 
-        {/* Notifications */}
+        {/* Notifications - Tactical Style */}
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative h-8 w-8"
+          className="relative h-8 w-8 hover:bg-primary/10 transition-all"
           onClick={handleNotificationClick}
         >
           <Bell className="h-4 w-4" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />
+          <span className="notification-badge absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
         </Button>
 
-        {/* User Menu */}
+        {/* User Menu - Tactical Style */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              className="flex items-center gap-2 pl-2 pr-3 h-9"
+              className="flex items-center gap-2 pl-2 pr-3 h-9 hover:bg-primary/10 border border-transparent hover:border-primary/30 transition-all"
               onClick={() => playSound('tactical-hover')}
             >
-              <Avatar className="h-7 w-7">
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
+              <Avatar className="h-7 w-7 ring-2 ring-primary/30">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-xs font-bold">
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:block text-left">
-                <p className="text-xs font-medium truncate max-w-[120px]">{getDisplayName()}</p>
-                <p className="text-[10px] text-muted-foreground">{getRoleBadge()}</p>
+                <p className="text-xs font-semibold truncate max-w-[120px] text-foreground">{getDisplayName()}</p>
+                <p className="text-[10px] text-primary/80 font-medium">{getRoleBadge()}</p>
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-popover border-border">
-            <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleNavigate('/settings')}>
-              <User className="mr-2 h-4 w-4" />
+          <DropdownMenuContent align="end" className="w-56 bg-slate-900/95 backdrop-blur-md border-primary/30 shadow-xl shadow-primary/10">
+            <DropdownMenuLabel className="text-primary font-semibold">Minha Conta</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-primary/20" />
+            <DropdownMenuItem onClick={() => handleNavigate('/settings')} className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer">
+              <User className="mr-2 h-4 w-4 text-primary" />
               Perfil
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleNavigate('/settings')}>
-              <Settings className="mr-2 h-4 w-4" />
+            <DropdownMenuItem onClick={() => handleNavigate('/settings')} className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer">
+              <Settings className="mr-2 h-4 w-4 text-primary" />
               Configurações
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+            <DropdownMenuSeparator className="bg-primary/20" />
+            <DropdownMenuItem onClick={handleSignOut} className="text-red-400 hover:bg-red-500/10 focus:bg-red-500/10 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
               Sair
             </DropdownMenuItem>

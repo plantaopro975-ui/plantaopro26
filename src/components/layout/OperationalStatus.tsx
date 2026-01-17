@@ -107,37 +107,44 @@ export function OperationalStatus({ className }: OperationalStatusProps) {
   return (
     <div 
       className={cn(
-        "flex items-center gap-2 px-3 py-1.5 rounded-lg border backdrop-blur-sm transition-all duration-300",
+        "status-indicator flex items-center gap-2 px-3 py-1.5 rounded-lg border backdrop-blur-sm transition-all duration-300 shadow-lg",
         config.bgColor,
         config.borderColor,
         className
       )}
+      style={{
+        boxShadow: status === 'online' ? '0 0 15px rgba(16, 185, 129, 0.2)' : 
+                   status === 'alert' ? '0 0 15px rgba(249, 115, 22, 0.2)' :
+                   status === 'offline' ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
+      }}
     >
-      {/* Animated Status Indicator */}
-      <div className="relative flex items-center justify-center">
-        {/* Outer pulse ring */}
+      {/* Radar-style Animated Status Indicator */}
+      <div className="radar-container relative w-6 h-6 flex items-center justify-center">
+        {/* Radar Background */}
+        <div className={cn(
+          "absolute inset-0 rounded-full border bg-slate-900/80",
+          config.borderColor
+        )} />
+        {/* Radar Rings */}
+        <div className="absolute inset-[2px] rounded-full border border-current/20" style={{ borderColor: config.pulseColor.replace('bg-', '') }} />
+        <div className="absolute inset-[4px] rounded-full border border-current/10" style={{ borderColor: config.pulseColor.replace('bg-', '') }} />
+        {/* Radar Sweep */}
         <div 
-          key={pulseKey}
-          className={cn(
-            "absolute w-6 h-6 rounded-full animate-ping opacity-75",
-            config.pulseColor
-          )}
-          style={{ animationDuration: '1.5s' }}
+          className="radar-sweep absolute inset-0 rounded-full"
+          style={{ 
+            background: status === 'online' ? 'conic-gradient(from 0deg, transparent, rgba(16, 185, 129, 0.5) 30deg, transparent 60deg)' :
+                        status === 'alert' ? 'conic-gradient(from 0deg, transparent, rgba(249, 115, 22, 0.5) 30deg, transparent 60deg)' :
+                        status === 'standby' ? 'conic-gradient(from 0deg, transparent, rgba(245, 158, 11, 0.5) 30deg, transparent 60deg)' :
+                        'conic-gradient(from 0deg, transparent, rgba(239, 68, 68, 0.5) 30deg, transparent 60deg)',
+            animation: 'spin 2s linear infinite'
+          }}
         />
-        {/* Middle ring */}
+        {/* Center Blip */}
         <div 
-          className={cn(
-            "absolute w-5 h-5 rounded-full opacity-50",
-            config.pulseColor,
-            "animate-pulse"
-          )}
-        />
-        {/* Inner solid circle */}
-        <div 
-          className={cn(
-            "relative w-3 h-3 rounded-full z-10",
-            config.pulseColor
-          )}
+          className={cn("status-dot absolute w-2 h-2 rounded-full z-10", config.pulseColor)}
+          style={{ boxShadow: status === 'online' ? '0 0 8px rgba(16, 185, 129, 0.8)' : 
+                               status === 'alert' ? '0 0 8px rgba(249, 115, 22, 0.8)' :
+                               '0 0 8px rgba(239, 68, 68, 0.6)' }}
         />
       </div>
 
@@ -166,11 +173,11 @@ export function OperationalStatus({ className }: OperationalStatusProps) {
         ))}
       </div>
 
-      {/* Live Indicator */}
+      {/* Live Indicator with tactical styling */}
       {status === 'online' && (
         <div className="hidden md:flex items-center gap-1 ml-1 pl-2 border-l border-border/50">
           <Wifi className="h-3 w-3 text-emerald-400" />
-          <span className="text-[9px] text-muted-foreground font-mono">
+          <span className="text-[9px] text-emerald-300 font-mono font-semibold">
             {activeAgents} ATIVOS
           </span>
         </div>
