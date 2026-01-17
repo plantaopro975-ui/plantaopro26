@@ -8,8 +8,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, AlertTriangle, Palmtree, WifiOff, Settings2, Circle, Clock } from 'lucide-react';
+import { 
+  Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, 
+  AlertTriangle, Palmtree, WifiOff, Settings2, Clock, ChevronDown, ChevronUp,
+  Shield, Briefcase, Sun, Moon, Coffee, Star
+} from 'lucide-react';
 import { format, parseISO, isToday, isBefore, startOfDay, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -56,11 +61,27 @@ function saveToCache(agentId: string, data: AgentShift[]) {
   }
 }
 
+// Get icon based on shift type/time
+function getShiftIcon(shift: AgentShift) {
+  if (shift.is_vacation) return { icon: Palmtree, color: 'text-purple-400', bg: 'bg-purple-500/20' };
+  if (shift.status === 'completed') return { icon: Check, color: 'text-emerald-400', bg: 'bg-emerald-500/20' };
+  if (shift.status === 'missed') return { icon: X, color: 'text-red-400', bg: 'bg-red-500/20' };
+  
+  // Based on time of day
+  const hour = parseInt(shift.start_time?.split(':')[0] || '7');
+  if (hour >= 6 && hour < 12) return { icon: Sun, color: 'text-amber-400', bg: 'bg-amber-500/20' };
+  if (hour >= 12 && hour < 18) return { icon: Coffee, color: 'text-orange-400', bg: 'bg-orange-500/20' };
+  if (hour >= 18 || hour < 6) return { icon: Moon, color: 'text-indigo-400', bg: 'bg-indigo-500/20' };
+  
+  return { icon: Briefcase, color: 'text-amber-400', bg: 'bg-amber-500/20' };
+}
+
 export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
   const [shifts, setShifts] = useState<AgentShift[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFromCache, setIsFromCache] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [firstShiftDate, setFirstShiftDate] = useState<Date | undefined>();
   const [configMonth, setConfigMonth] = useState(new Date());
   const [isGenerating, setIsGenerating] = useState(false);
@@ -217,7 +238,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
       case 'vacation':
         return { color: 'bg-purple-500/20', icon: Palmtree, label: 'Férias', textColor: 'text-purple-400', dotColor: 'bg-purple-500' };
       default:
-        return { color: 'bg-amber-500/20', icon: Circle, label: 'Agendado', textColor: 'text-amber-400', dotColor: 'bg-amber-500' };
+        return { color: 'bg-amber-500/20', icon: Star, label: 'Agendado', textColor: 'text-amber-400', dotColor: 'bg-amber-500' };
     }
   };
 
@@ -237,85 +258,107 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
   );
 
   return (
-    <Card className="bg-slate-900/95 border border-slate-700/80 shadow-lg overflow-hidden">
-      {/* Header - Simplified */}
-      <CardHeader className="py-3 px-4 border-b border-slate-700/50 bg-slate-800/50">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-100">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
-              <CalendarIcon className="h-4 w-4 text-white" />
-            </div>
-            <span>Meus Plantões</span>
-            {isFromCache && (
-              <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-amber-500/50 text-amber-400">
-                <WifiOff className="h-2.5 w-2.5 mr-1" />
-                offline
-              </Badge>
-            )}
-          </CardTitle>
-          
-          <Dialog open={showConfig} onOpenChange={setShowConfig}>
-            <DialogTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-8 px-2 text-slate-400 hover:text-amber-400 hover:bg-slate-700/50"
-              >
-                {shifts.length === 0 ? (
-                  <Plus className="h-4 w-4" />
+    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+      <Card className="bg-slate-900/95 border border-slate-700/80 shadow-lg overflow-hidden">
+        {/* Header - Collapsible Trigger */}
+        <CardHeader className="py-2.5 px-4 border-b border-slate-700/50 bg-slate-800/50">
+          <div className="flex items-center justify-between">
+            <CollapsibleTrigger className="flex-1 flex items-center gap-2 cursor-pointer hover:opacity-80 transition-all">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+                <CalendarIcon className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-100">Meus Plantões</span>
+                  {isFromCache && (
+                    <Badge variant="outline" className="text-[8px] px-1 py-0 border-amber-500/50 text-amber-400">
+                      <WifiOff className="h-2 w-2 mr-0.5" />
+                      offline
+                    </Badge>
+                  )}
+                </div>
+                {!isExpanded && upcomingShifts.length > 0 && (
+                  <p className="text-[10px] text-slate-500 truncate">
+                    {upcomingShifts.length} próximo{upcomingShifts.length > 1 ? 's' : ''}
+                  </p>
+                )}
+              </div>
+              <div className="p-1.5 rounded-md hover:bg-slate-700/50 transition-colors">
+                {isExpanded ? (
+                  <ChevronUp className="h-4 w-4 text-slate-400" />
                 ) : (
-                  <Settings2 className="h-4 w-4" />
+                  <ChevronDown className="h-4 w-4 text-slate-400" />
                 )}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-slate-900 border-slate-700 max-w-xs">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 text-base">
-                  <CalendarIcon className="h-4 w-4 text-amber-500" />
-                  Configurar Escala
-                </DialogTitle>
-                <DialogDescription className="text-xs">
-                  Selecione o primeiro plantão (24h + 72h folga).
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-3 pt-2">
-                <SimpleDatePicker
-                  month={configMonth}
-                  onMonthChange={setConfigMonth}
-                  selected={firstShiftDate}
-                  onSelect={setFirstShiftDate}
-                />
-
-                {firstShiftDate && (
-                  <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-                    <p className="text-xs text-amber-400 font-medium">
-                      {format(firstShiftDate, "dd/MM/yyyy (EEEE)", { locale: ptBR })}
-                    </p>
-                  </div>
-                )}
-                
+              </div>
+            </CollapsibleTrigger>
+            
+            <Dialog open={showConfig} onOpenChange={setShowConfig}>
+              <DialogTrigger asChild>
                 <Button 
-                  onClick={generateShifts} 
-                  disabled={!firstShiftDate || isGenerating}
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-9"
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 w-7 p-0 text-slate-400 hover:text-amber-400 hover:bg-slate-700/50 ml-1"
                 >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Gerando...
-                    </>
+                  {shifts.length === 0 ? (
+                    <Plus className="h-4 w-4" />
                   ) : (
-                    'Gerar Escala'
+                    <Settings2 className="h-4 w-4" />
                   )}
                 </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </CardHeader>
+              </DialogTrigger>
+              <DialogContent className="bg-slate-900 border-slate-700 max-w-xs">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-base">
+                    <CalendarIcon className="h-4 w-4 text-amber-500" />
+                    Configurar Escala
+                  </DialogTitle>
+                  <DialogDescription className="text-xs">
+                    Selecione o primeiro plantão (24h + 72h folga).
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3 pt-2">
+                  <SimpleDatePicker
+                    month={configMonth}
+                    onMonthChange={setConfigMonth}
+                    selected={firstShiftDate}
+                    onSelect={setFirstShiftDate}
+                  />
 
-      <CardContent className="p-3 space-y-3">
+                  {firstShiftDate && (
+                    <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                      <p className="text-xs text-amber-400 font-medium">
+                        {format(firstShiftDate, "dd/MM/yyyy (EEEE)", { locale: ptBR })}
+                      </p>
+                    </div>
+                  )}
+                  
+                  <Button 
+                    onClick={generateShifts} 
+                    disabled={!firstShiftDate || isGenerating}
+                    className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-9"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Gerando...
+                      </>
+                    ) : (
+                      'Gerar Escala'
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+
+        <CollapsibleContent>
+          <CardContent className="p-3 space-y-3">
         {isLoading ? (
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
+          </div>
+        ) : shifts.length === 0 ? (
           <div className="flex items-center justify-center py-6">
             <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
           </div>
@@ -454,78 +497,80 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
             </div>
           </>
         )}
-      </CardContent>
+        </CardContent>
+        </CollapsibleContent>
 
-      {/* Shift Edit Dialog */}
-      <Dialog open={showShiftDialog} onOpenChange={setShowShiftDialog}>
-        <DialogContent className="bg-slate-900 border-slate-700 max-w-xs">
-          <DialogHeader>
-            <DialogTitle className="text-sm">
-              {selectedShift && format(parseISO(selectedShift.shift_date), "dd 'de' MMMM", { locale: ptBR })}
-            </DialogTitle>
-            <DialogDescription className="text-xs text-slate-400">
-              Atualize o status deste plantão
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3 pt-2">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Status</Label>
-              <Select value={editStatus} onValueChange={setEditStatus}>
-                <SelectTrigger className="bg-slate-800 border-slate-700 h-9 text-sm">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="scheduled">Agendado</SelectItem>
-                  <SelectItem value="completed">Cumprido</SelectItem>
-                  <SelectItem value="missed">Faltou</SelectItem>
-                  <SelectItem value="compensated">Compensado</SelectItem>
-                  <SelectItem value="vacation">Férias</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {editStatus === 'missed' && (
+        {/* Shift Edit Dialog */}
+        <Dialog open={showShiftDialog} onOpenChange={setShowShiftDialog}>
+          <DialogContent className="bg-slate-900 border-slate-700 max-w-xs">
+            <DialogHeader>
+              <DialogTitle className="text-sm">
+                {selectedShift && format(parseISO(selectedShift.shift_date), "dd 'de' MMMM", { locale: ptBR })}
+              </DialogTitle>
+              <DialogDescription className="text-xs text-slate-400">
+                Atualize o status deste plantão
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3 pt-2">
               <div className="space-y-1.5">
-                <Label className="text-xs">Compensação</Label>
-                <SimpleDatePicker
-                  month={compensationDate ?? new Date()}
-                  onMonthChange={(m) => setCompensationDate(m)}
-                  selected={compensationDate}
-                  onSelect={setCompensationDate}
+                <Label className="text-xs">Status</Label>
+                <Select value={editStatus} onValueChange={setEditStatus}>
+                  <SelectTrigger className="bg-slate-800 border-slate-700 h-9 text-sm">
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    <SelectItem value="scheduled">Agendado</SelectItem>
+                    <SelectItem value="completed">Cumprido</SelectItem>
+                    <SelectItem value="missed">Faltou</SelectItem>
+                    <SelectItem value="compensated">Compensado</SelectItem>
+                    <SelectItem value="vacation">Férias</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {editStatus === 'missed' && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Compensação</Label>
+                  <SimpleDatePicker
+                    month={compensationDate ?? new Date()}
+                    onMonthChange={(m) => setCompensationDate(m)}
+                    selected={compensationDate}
+                    onSelect={setCompensationDate}
+                  />
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <Label className="text-xs">Observações</Label>
+                <Textarea
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  placeholder="Motivo, ocorrência..."
+                  className="bg-slate-800 border-slate-700 min-h-[60px] text-sm"
                 />
               </div>
-            )}
-
-            <div className="space-y-1.5">
-              <Label className="text-xs">Observações</Label>
-              <Textarea
-                value={editNotes}
-                onChange={(e) => setEditNotes(e.target.value)}
-                placeholder="Motivo, ocorrência..."
-                className="bg-slate-800 border-slate-700 min-h-[60px] text-sm"
-              />
             </div>
-          </div>
-          <DialogFooter className="gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowShiftDialog(false)}
-              className="h-8"
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleSaveShift}
-              disabled={isSaving}
-              size="sm"
-              className="bg-amber-500 hover:bg-amber-600 text-black h-8"
-            >
-              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </Card>
+            <DialogFooter className="gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowShiftDialog(false)}
+                className="h-8"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSaveShift}
+                disabled={isSaving}
+                size="sm"
+                className="bg-amber-500 hover:bg-amber-600 text-black h-8"
+              >
+                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </Card>
+    </Collapsible>
   );
 }

@@ -14,6 +14,7 @@ import { ProfessionalShiftTimer } from '@/components/agent-panel/ProfessionalShi
 import { OnDutyOverlay } from '@/components/agent-panel/OnDutyOverlay';
 import { BHTracker } from '@/components/agent-panel/BHTracker';
 import { ShiftScheduleCard } from '@/components/agent-panel/ShiftScheduleCard';
+import { NextShiftCountdown } from '@/components/agent-panel/NextShiftCountdown';
 import { ChatPanel } from '@/components/agent-panel/ChatPanel';
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
 import { SwapRequestsCard } from '@/components/agent-panel/SwapRequestsCard';
@@ -560,8 +561,11 @@ export default function AgentPanel() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="plantoes" className="space-y-5 md:space-y-6 animate-fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+              <TabsContent value="plantoes" className="space-y-4 animate-fade-in">
+                {/* Next Shift Countdown - Top Priority */}
+                <NextShiftCountdown agentId={agent.id} />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <ProfessionalShiftTimer agentId={agent.id} />
                   <ShiftScheduleCard agentId={agent.id} />
                 </div>
