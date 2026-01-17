@@ -1345,14 +1345,12 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                 // Permitir marcar dias futuros baseado na configuração bhFutureMonthsAllowed
                 const today = new Date();
                 const maxAllowedDate = addMonths(endOfMonth(today), bhFutureMonthsAllowed);
-                
+
                 // Bloquear datas após o limite permitido
                 if (isAfter(startOfDay(date), startOfDay(maxAllowedDate))) return true;
 
-                // Limit reached
-                if (isAtLimit) return true;
-
-                // Closed months blocked (for non-admins)
+                // Meses anteriores bloqueados (para não-admin)
+                // (Não use o "isAtLimit" global aqui: o limite é validado por quinzena no submit)
                 if (isInClosedFortnight(date)) return true;
 
                 return false;
