@@ -45,11 +45,11 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
 import { ThemedTeamCard } from '@/components/ThemedTeamCard';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
-import { ThemeSelector } from '@/components/ThemeSelector';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
+import { ThemedHeader } from '@/components/ThemedHeader';
 
 
 interface Unit {
@@ -837,115 +837,8 @@ export default function Index() {
         {/* Animated Particles/Stars Effect */}
         <ParticleBackground particleCount={50} />
 
-      {/* Header - Professional Status Bar with Tactical Styling */}
-      <div className="header-bar bg-gradient-to-r from-slate-900/98 via-slate-800/95 to-slate-900/98 backdrop-blur-md border-b border-primary/30 py-2 px-3 sm:px-4 relative z-20 shrink-0">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between gap-2">
-            {/* Left: Status Indicators with Radar Effect */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Radar-style Live Indicator */}
-              <div className="status-indicator flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/40 shadow-lg shadow-emerald-500/10">
-                <div className="radar-container relative w-5 h-5 sm:w-6 sm:h-6">
-                  {/* Radar Background */}
-                  <div className="absolute inset-0 rounded-full border border-emerald-500/30 bg-slate-900/80" />
-                  {/* Radar Rings */}
-                  <div className="absolute inset-[2px] rounded-full border border-emerald-500/20" />
-                  <div className="absolute inset-[4px] rounded-full border border-emerald-500/10" />
-                  {/* Radar Sweep */}
-                  <div className="radar-sweep absolute inset-0 rounded-full" style={{ 
-                    background: 'conic-gradient(from 0deg, transparent, rgba(16, 185, 129, 0.4) 30deg, transparent 60deg)',
-                    animation: 'spin 2s linear infinite'
-                  }} />
-                  {/* Center Blip */}
-                  <div className="status-dot absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                </div>
-                <span className="text-[9px] sm:text-[11px] font-bold text-emerald-400 uppercase tracking-wider text-glow-emerald">OPERACIONAL</span>
-              </div>
-              
-              {/* Security Badge - Themed */}
-              <div className="security-badge hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/30 shadow-lg shadow-primary/5">
-                <Shield className="h-3.5 w-3.5 text-primary" />
-                <span className="text-[10px] font-semibold text-primary/90 uppercase tracking-wide">Seguro</span>
-              </div>
-            </div>
-            
-            {/* Center: Themed Animated Signal Wave */}
-            <div className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary/5 border border-primary/20">
-              <div className="flex items-center gap-0.5">
-                {[1, 2, 3, 4, 5].map((bar) => (
-                  <div 
-                    key={bar}
-                    className="w-0.5 sm:w-1 rounded-full"
-                    style={{ 
-                      height: `${bar * 3 + 4}px`,
-                      background: `hsl(var(--primary))`,
-                      animation: 'pulse 1.5s ease-in-out infinite',
-                      animationDelay: `${bar * 100}ms`,
-                      opacity: 0.5 + (bar * 0.1)
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="relative mx-1">
-                <Radio className="h-4 w-4 text-primary" />
-                <Radio className="h-4 w-4 text-primary absolute inset-0 animate-ping opacity-30" />
-              </div>
-              <div className="flex items-center gap-0.5">
-                {[5, 4, 3, 2, 1].map((bar) => (
-                  <div 
-                    key={bar}
-                    className="w-0.5 sm:w-1 rounded-full"
-                    style={{ 
-                      height: `${bar * 3 + 4}px`,
-                      background: `hsl(var(--primary))`,
-                      animation: 'pulse 1.5s ease-in-out infinite',
-                      animationDelay: `${bar * 100}ms`,
-                      opacity: 0.5 + (bar * 0.1)
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-            
-            {/* Right: Theme & Clock - Themed */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <button
-                onClick={() => {
-                  playSound('click');
-                  setShowThemeSelector(true);
-                }}
-                className="p-1.5 sm:p-2 rounded-lg bg-primary/10 border border-primary/40 hover:bg-primary/20 transition-all duration-200 shadow-sm hover:shadow-primary/20 hover:scale-105 group"
-                title="Tema"
-              >
-                <Palette className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform" />
-              </button>
-              <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-card/80 border-2 border-primary/30 shadow-lg shadow-primary/10 backdrop-blur-sm">
-                <div className="relative flex items-center justify-center w-5 h-5">
-                  <div className="absolute inset-0 rounded-full border border-primary/30" />
-                  <div className="absolute inset-[2px] rounded-full border border-primary/20" />
-                  <div 
-                    className="absolute inset-0 rounded-full"
-                    style={{ 
-                      background: 'conic-gradient(from 0deg, transparent, hsl(var(--primary) / 0.4) 30deg, transparent 60deg)',
-                      animation: 'spin 2s linear infinite'
-                    }}
-                  />
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary))]" />
-                </div>
-                <div className="flex items-baseline gap-0.5">
-                  <span className="text-sm sm:text-base font-mono font-black text-primary tracking-wider tabular-nums">
-                    {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  <span className="text-[8px] sm:text-[10px] font-mono text-primary/60">
-                    :{String(new Date().getSeconds()).padStart(2, '0')}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      {/* Themed Header - Professional Status Bar */}
+      <ThemedHeader selectedTeam={selectedTeam} />
       {/* Teams Grid Section - Optimized for both portrait and landscape */}
       <section className="flex-1 py-2 sm:py-3 px-2 sm:px-4 relative z-10 flex flex-col items-center justify-center min-h-0 overflow-hidden">
         {/* Prominent Title Above Cards */}
@@ -1595,24 +1488,6 @@ export default function Index() {
               )}
             </Button>
           </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Theme Selector Dialog */}
-      <Dialog open={showThemeSelector} onOpenChange={setShowThemeSelector}>
-        <DialogContent className="bg-card border-border max-w-lg max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-foreground">
-              <Palette className="h-5 w-5 text-primary" />
-              Personalizar Tema
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              Escolha o tema visual do sistema
-            </DialogDescription>
-          </DialogHeader>
-          <div className="pt-2">
-            <ThemeSelector onSelect={() => setShowThemeSelector(false)} />
-          </div>
         </DialogContent>
       </Dialog>
 
