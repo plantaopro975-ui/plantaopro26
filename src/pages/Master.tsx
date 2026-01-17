@@ -869,8 +869,7 @@ export default function Master() {
                                 )}
                                 title={agent.is_active ? 'Desativar' : 'Ativar'}
                               >
-                                {agent.is_active ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
-                              </Button>
+                              {agent.is_active ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
                               </Button>
                               <Button
                                 variant="ghost"
