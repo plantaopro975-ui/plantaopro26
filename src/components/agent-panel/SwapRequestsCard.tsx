@@ -1225,24 +1225,33 @@ Documento gerado automaticamente pelo PlantãoPro
       </Dialog>
 
       {/* Cancel Confirmation Dialog */}
-      <Dialog open={showCancelConfirm} onOpenChange={(open) => { if (!open) setCancelingRequestId(null); setShowCancelConfirm(open); }}>
-        <DialogContent className="bg-slate-800 border-slate-700 max-w-sm">
+      <Dialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-sm z-[100]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-white">
               <Trash2 className="h-5 w-5 text-red-400" />
               Cancelar Permuta
             </DialogTitle>
             <DialogDescription className="text-slate-400">
-              Tem certeza que deseja cancelar esta solicitação de permuta? Esta ação não pode ser desfeita.
+              Tem certeza que deseja cancelar esta solicitação?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 pt-4">
-            <Button variant="outline" onClick={() => { setShowCancelConfirm(false); setCancelingRequestId(null); }} className="border-slate-600 text-slate-300">
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={() => { setShowCancelConfirm(false); setCancelingRequestId(null); }} 
+              className="border-slate-600 text-slate-300 hover:bg-slate-700"
+            >
               Voltar
             </Button>
-            <Button onClick={cancelSwapRequest} className="bg-red-500 hover:bg-red-600 text-white">
+            <Button 
+              type="button"
+              onClick={() => { cancelSwapRequest(); }} 
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
               <Trash2 className="h-4 w-4 mr-1.5" />
-              Confirmar Cancelamento
+              Confirmar
             </Button>
           </DialogFooter>
         </DialogContent>
