@@ -47,7 +47,7 @@ const DEFAULT_SHIFT_OPTIONS = [
   { value: 'full', label: 'Dia Inteiro', icon: Clock, startTime: '07:00', endTime: '07:00', hours: 24, color: 'text-green-400' },
 ];
 
-// Monthly Summary by Fortnight Component
+// Monthly Summary by Fortnight Component - INDEPENDENT VALUES
 function MonthlySummary({ 
   entries, 
   selectedMonth, 
@@ -79,7 +79,7 @@ function MonthlySummary({
     return entryDate >= monthStart && entryDate <= monthEnd;
   });
 
-  // Split by fortnight
+  // Split by fortnight - INDEPENDENT calculations
   const firstFortnight = monthEntries.filter(entry => {
     const entryDate = parseEntryDate(entry);
     return entryDate && entryDate.getDate() <= 15;
@@ -90,13 +90,14 @@ function MonthlySummary({
     return entryDate && entryDate.getDate() >= 16;
   });
 
+  // Calculate totals INDEPENDENTLY - each fortnight has its own balance
   const calcTotal = (list: OvertimeEntry[]) => 
     list.reduce((acc, e) => e.operation_type === 'credit' ? acc + Number(e.hours) : acc - Number(e.hours), 0);
 
   const firstTotal = calcTotal(firstFortnight);
   const secondTotal = calcTotal(secondFortnight);
-  const monthTotal = firstTotal + secondTotal;
   
+  // Note: We show them independently, NOT summed
   const monthName = format(selectedMonth, 'MMMM yyyy', { locale: ptBR });
 
   return (
@@ -105,22 +106,26 @@ function MonthlySummary({
         <History className="h-4 w-4 text-slate-400" />
         <span className="text-sm font-medium text-slate-300 capitalize">Resumo de {monthName}</span>
       </div>
-      <div className="grid grid-cols-3 gap-2 text-center">
+      <div className="grid grid-cols-2 gap-2 text-center">
+        {/* First Fortnight - INDEPENDENT */}
         <div className="p-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-          <p className="text-[10px] text-blue-400 mb-0.5">1ª Quinzena</p>
-          <p className="text-sm font-bold text-blue-300">{firstTotal.toFixed(1)}h</p>
+          <p className="text-[10px] text-blue-400 mb-0.5 font-semibold">1ª Quinzena (1-15)</p>
+          <p className="text-lg font-bold text-blue-300">{firstTotal.toFixed(1)}h</p>
           <p className="text-[10px] text-slate-500">R$ {(firstTotal * hourlyRate).toFixed(2)}</p>
+          <p className="text-[9px] text-slate-600 mt-1">{firstFortnight.length} registro(s)</p>
         </div>
+        {/* Second Fortnight - INDEPENDENT */}
         <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-lg">
-          <p className="text-[10px] text-purple-400 mb-0.5">2ª Quinzena</p>
-          <p className="text-sm font-bold text-purple-300">{secondTotal.toFixed(1)}h</p>
+          <p className="text-[10px] text-purple-400 mb-0.5 font-semibold">2ª Quinzena (16+)</p>
+          <p className="text-lg font-bold text-purple-300">{secondTotal.toFixed(1)}h</p>
           <p className="text-[10px] text-slate-500">R$ {(secondTotal * hourlyRate).toFixed(2)}</p>
+          <p className="text-[9px] text-slate-600 mt-1">{secondFortnight.length} registro(s)</p>
         </div>
-        <div className="p-2 bg-green-500/10 border border-green-500/30 rounded-lg">
-          <p className="text-[10px] text-green-400 mb-0.5">Total Mês</p>
-          <p className="text-sm font-bold text-green-300">{monthTotal.toFixed(1)}h</p>
-          <p className="text-[10px] text-slate-500">R$ {(monthTotal * hourlyRate).toFixed(2)}</p>
-        </div>
+      </div>
+      <div className="pt-2 border-t border-slate-600/30">
+        <p className="text-[10px] text-center text-slate-500">
+          ⚠️ Cada quinzena é independente - valores não são somados
+        </p>
       </div>
     </div>
   );
@@ -482,8 +487,8 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   };
 
   // Check if a date is in a closed fortnight (quinzena)
-  // Regra operacional solicitada: permitir editar qualquer dia do mês corrente;
-  // bloquear apenas meses anteriores (a não ser admin).
+  // UPDATED: Allow editing any day of the current month (both fortnights)
+  // Only block previous months (unless admin)
   const isInClosedFortnight = (date: Date) => {
     if (isAdmin) return false;
 
@@ -494,11 +499,14 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     const dateMonth = date.getMonth();
     const dateYear = date.getFullYear();
 
-    // Meses anteriores sempre fechados
+    // Previous years are always closed
     if (dateYear < todayYear) return true;
+    
+    // Previous months are closed
     if (dateYear === todayYear && dateMonth < todayMonth) return true;
 
-    // Mês corrente e meses futuros: liberado
+    // Current month: ALL DAYS are open (including day 16+)
+    // Future months: open up to the allowed limit
     return false;
   };
 
@@ -1420,11 +1428,11 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           </div>
         </div>
 
-        {/* Recent Entries */}
+        {/* Recent Entries - with day of week and improved display */}
         <div>
           <div className="flex items-center gap-2 mb-3">
             <History className="h-4 w-4 text-slate-400" />
-            <span className="text-sm font-medium text-slate-300">Histórico</span>
+            <span className="text-sm font-medium text-slate-300">Histórico de BH</span>
           </div>
           
           {entries.length === 0 ? (
@@ -1435,27 +1443,65 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {entries.slice(0, 10).map((entry) => {
                 const editable = canEditEntry(entry);
+                
+                // Parse date from description to show day of week
+                let entryDate: Date | null = null;
+                let dayOfWeek = '';
+                let formattedDate = '';
+                
+                if (entry.description) {
+                  const match = entry.description.match(/BH - (\d{2})\/(\d{2})\/(\d{4})/);
+                  if (match) {
+                    const [, day, month, year] = match;
+                    entryDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                    dayOfWeek = format(entryDate, 'EEEE', { locale: ptBR });
+                    formattedDate = format(entryDate, 'dd/MM/yyyy', { locale: ptBR });
+                  }
+                }
+                
+                // Extract just the shift period from description (without duplicate date)
+                let shiftPeriod = '';
+                if (entry.description) {
+                  const periodMatch = entry.description.match(/\| ([^(]+)/);
+                  if (periodMatch) {
+                    shiftPeriod = periodMatch[1].trim();
+                  }
+                }
+                
                 return (
                   <div
                     key={entry.id}
-                    className={`flex items-center justify-between p-2 rounded-lg text-sm group transition-colors ${
-                      editable ? 'bg-slate-700/30' : 'bg-slate-700/10 border border-slate-600/30'
+                    className={`flex items-center justify-between p-2 rounded-lg text-sm group ${
+                      editable ? 'bg-slate-700/30 cursor-pointer hover:bg-slate-700/50' : 'bg-slate-700/10 border border-slate-600/30'
                     }`}
+                    onClick={() => editable && handleEditEntry(entry)}
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-slate-300 truncate">
-                          {entry.description || (entry.operation_type === 'credit' ? 'Crédito' : 'Débito')}
-                        </p>
+                        {/* Day of week */}
+                        {dayOfWeek && (
+                          <span className="text-xs font-semibold text-amber-400 capitalize">
+                            {dayOfWeek}
+                          </span>
+                        )}
+                        {/* Date */}
+                        {formattedDate && (
+                          <span className="text-xs text-slate-500">
+                            {formattedDate}
+                          </span>
+                        )}
                         {!editable && (
-                          <Badge variant="outline" className="text-xs text-slate-500 border-slate-600">
+                          <Badge variant="outline" className="text-[9px] text-slate-500 border-slate-600 py-0">
                             Fechado
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-slate-500">
-                        {format(new Date(entry.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                      </p>
+                      {/* Shift period */}
+                      {shiftPeriod && (
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          {shiftPeriod}
+                        </p>
+                      )}
                     </div>
                     <div className="flex items-center gap-1">
                       <Badge
@@ -1472,16 +1518,16 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
-                            onClick={() => handleEditEntry(entry)}
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+                            onClick={(e) => { e.stopPropagation(); handleEditEntry(entry); }}
                           >
                             <Edit2 className="h-3 w-3" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                            onClick={() => handleRequestDelete(entry)}
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                            onClick={(e) => { e.stopPropagation(); handleRequestDelete(entry); }}
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
