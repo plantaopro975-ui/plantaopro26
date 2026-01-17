@@ -158,27 +158,42 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
         }}
       />
       
-      {/* Team poster background - MORE VISIBLE */}
+      {/* Team poster background - MUCH MORE VISIBLE */}
       {mounted && showTeamImage && poster && (
         <>
+          {/* Main poster image - larger and more visible */}
           <div 
             className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-opacity duration-500"
             style={{ 
               backgroundImage: `url(${poster})`,
-              opacity: 0.12,
-              filter: 'blur(0.5px) saturate(1.2)',
+              opacity: 0.18,
+              filter: 'saturate(1.3) contrast(1.1)',
             }}
           />
-          {/* Team color overlay - MORE VIBRANT */}
+          {/* Team poster in corner - decorative badge */}
+          <div 
+            className="fixed bottom-4 right-4 w-20 h-20 md:w-28 md:h-28 pointer-events-none z-0 rounded-xl overflow-hidden border-2 shadow-xl opacity-60"
+            style={{ 
+              borderColor: colors?.primary || 'rgba(251, 191, 36, 0.5)',
+              boxShadow: `0 0 30px ${colors?.glow || 'rgba(251, 191, 36, 0.3)'}`,
+            }}
+          >
+            <img 
+              src={poster} 
+              alt="Team" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {/* Team color overlay - balanced */}
           <div 
             className="fixed inset-0 pointer-events-none z-0"
             style={{
               background: `linear-gradient(160deg, 
-                hsl(222 47% 8% / 0.85) 0%, 
-                ${colors?.glow || 'transparent'} 25%,
-                hsl(222 47% 10% / 0.8) 50%,
-                ${colors?.glow || 'transparent'} 75%,
-                hsl(222 47% 8% / 0.9) 100%
+                hsl(222 47% 8% / 0.8) 0%, 
+                ${colors?.glow || 'transparent'} 30%,
+                hsl(222 47% 10% / 0.75) 50%,
+                ${colors?.glow || 'transparent'} 70%,
+                hsl(222 47% 8% / 0.85) 100%
               )`,
             }}
           />
