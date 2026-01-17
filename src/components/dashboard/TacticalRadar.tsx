@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radar, Users, Activity, Wifi } from 'lucide-react';
+import { Radar, Users, Activity, Wifi, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 
@@ -17,28 +17,31 @@ interface AgentBlip {
 
 interface TacticalRadarProps {
   unitId?: string;
+  unitName?: string;
   className?: string;
   compact?: boolean;
 }
 
-export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(function TacticalRadar({ unitId, className, compact = false }, ref) {
+export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(function TacticalRadar({ unitId, unitName, className, compact = false }, ref) {
   const [agents, setAgents] = useState<AgentBlip[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const { playSound } = useSoundEffects();
 
-  // Fetch agents and generate blip positions
+  // Fetch agents ONLY from the same unit - each unit is independent
   useEffect(() => {
     const fetchAgents = async () => {
-      let query = supabase
-        .from('agents')
-        .select('id, name, team, is_active, updated_at')
-        .eq('is_active', true);
-
-      if (unitId) {
-        query = query.eq('unit_id', unitId);
+      // Only fetch if we have a unitId - radar is unit-specific
+      if (!unitId) {
+        setAgents([]);
+        return;
       }
 
-      const { data, error } = await query.limit(20);
+      const { data, error } = await supabase
+        .from('agents')
+        .select('id, name, team, is_active, updated_at')
+        .eq('is_active', true)
+        .eq('unit_id', unitId) // CRITICAL: Only fetch agents from the same unit
+        .limit(20);
 
       if (!error && data) {
         const blips: AgentBlip[] = data.map((agent, index) => ({
@@ -63,9 +66,6 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
     return () => clearInterval(interval);
   }, [unitId]);
 
-  // Disable sweep toggle to prevent flickering - keep constant animation
-  // Removed interval that was causing state updates and re-renders
-
   const teamColors: Record<string, string> = {
     ALFA: 'bg-blue-400 shadow-blue-400/50',
     BRAVO: 'bg-red-400 shadow-red-400/50',
@@ -80,6 +80,20 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
   const centerX = radarSize / 2;
   const centerY = radarSize / 2;
 
+  // If no unitId, show a message
+  if (!unitId) {
+    return (
+      <Card ref={ref} className={cn("glass glass-border shadow-card tactical-card overflow-hidden", className)}>
+        <CardContent className="flex items-center justify-center py-8 text-center">
+          <div className="text-slate-400">
+            <Building2 className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Selecione uma unidade</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card ref={ref} className={cn("glass glass-border shadow-card tactical-card overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl", className)}>
       <CardHeader className={cn("pb-2", compact && "p-3 pb-1")}>
@@ -87,9 +101,16 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           <div className="flex items-center gap-2">
             <div className="relative">
               <Radar className={cn("text-primary", compact ? "h-4 w-4" : "h-5 w-5")} />
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full" />
             </div>
-            <span className={compact ? "text-sm" : ""}>Radar Tático</span>
+            <div className="flex flex-col">
+              <span className={compact ? "text-sm" : ""}>Radar Tático</span>
+              {unitName && (
+                <span className="text-[10px] text-slate-400 font-normal truncate max-w-[120px]">
+                  {unitName}
+                </span>
+              )}
+            </div>
           </div>
           <Badge variant="outline" className="text-[10px] text-emerald-400 border-emerald-400/40">
             <Wifi className="h-3 w-3 mr-1" />
@@ -176,12 +197,12 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           <div className="flex items-center gap-1">
             <Users className="h-3 w-3 text-muted-foreground" />
             <span className="font-mono text-primary">{agents.length}</span>
-            <span className="text-muted-foreground">detectados</span>
+            <span className="text-muted-foreground">na unidade</span>
           </div>
           <div className="flex items-center gap-1">
             <Activity className="h-3 w-3 text-emerald-400" />
             <span className="text-muted-foreground">
-              Atualizado {lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+              {lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
         </div>

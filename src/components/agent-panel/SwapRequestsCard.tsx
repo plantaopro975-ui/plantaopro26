@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { ArrowRightLeft, Plus, Loader2, Check, X, Clock, User, FileText, Download, ArrowLeft, CalendarDays, Sparkles, Edit2 } from 'lucide-react';
+import { ArrowRightLeft, Plus, Loader2, Check, X, Clock, User, FileText, Download, ArrowLeft, CalendarDays, Sparkles, Edit2, Eye, Trash2 } from 'lucide-react';
 import { format, parseISO, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
@@ -32,8 +32,8 @@ interface SwapRequest {
   reason: string | null;
   created_at: string;
   updated_at: string;
-  requester?: { name: string; matricula?: string; phone?: string };
-  target?: { name: string; matricula?: string; phone?: string };
+  requester?: { name: string; matricula?: string; phone?: string; cpf?: string };
+  target?: { name: string; matricula?: string; phone?: string; cpf?: string };
   requester_shift?: { shift_date: string; start_time: string; end_time: string };
   target_shift?: { shift_date: string; start_time: string; end_time: string };
 }
@@ -70,6 +70,8 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
   const [showNewRequest, setShowNewRequest] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDocumentPreview, setShowDocumentPreview] = useState(false);
+  const [previewRequest, setPreviewRequest] = useState<SwapRequest | null>(null);
   const [editingRequest, setEditingRequest] = useState<SwapRequest | null>(null);
   const [selectedShift, setSelectedShift] = useState('');
   const [selectedAgent, setSelectedAgent] = useState('');
@@ -79,6 +81,7 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
   const [isExporting, setIsExporting] = useState(false);
   const [customDate, setCustomDate] = useState<Date | undefined>();
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [unitName, setUnitName] = useState('');
   
   const { showNotification, playTacticalSound } = usePushNotifications();
 
@@ -86,13 +89,13 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
     try {
       setIsLoading(true);
 
-      // Fetch swap requests with agent data
+      // Fetch swap requests with agent data including CPF
       const { data: requests, error: requestsError } = await (supabase as any)
         .from('shift_swaps')
         .select(`
           *,
-          requester:agents!requester_id(name, matricula, phone),
-          target:agents!target_id(name, matricula, phone),
+          requester:agents!requester_id(name, matricula, phone, cpf),
+          target:agents!target_id(name, matricula, phone, cpf),
           requester_shift:agent_shifts!requester_shift_id(shift_date, start_time, end_time),
           target_shift:agent_shifts!target_shift_id(shift_date, start_time, end_time)
         `)
@@ -101,6 +104,16 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
 
       if (requestsError) throw requestsError;
       setSwapRequests((requests || []) as SwapRequest[]);
+
+      // Fetch unit name
+      if (unitId) {
+        const { data: unitData } = await supabase
+          .from('units')
+          .select('name')
+          .eq('id', unitId)
+          .single();
+        if (unitData) setUnitName(unitData.name);
+      }
 
       // Fetch my future shifts
       const today = new Date().toISOString().split('T')[0];
@@ -308,6 +321,151 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
     setReason(request.reason || '');
     setSelectedShift(request.requester_shift_id);
     setShowEditDialog(true);
+  };
+
+  // Cancel a pending swap request
+  const cancelSwapRequest = async (requestId: string) => {
+    try {
+      const { error } = await (supabase as any)
+        .from('shift_swaps')
+        .delete()
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      toast.success('Solicitação de permuta cancelada!');
+      fetchData();
+    } catch (error) {
+      console.error('Error canceling swap:', error);
+      toast.error('Erro ao cancelar permuta');
+    }
+  };
+
+  // Show document preview
+  const showPreview = (request: SwapRequest) => {
+    setPreviewRequest(request);
+    setShowDocumentPreview(true);
+  };
+
+  // Generate formal document content
+  const generateFormalDocument = (request: SwapRequest) => {
+    const now = new Date();
+    const requesterShiftDate = request.requester_shift?.shift_date 
+      ? parseISO(request.requester_shift.shift_date)
+      : null;
+    const targetShiftDate = request.target_shift?.shift_date
+      ? parseISO(request.target_shift.shift_date)
+      : null;
+
+    return `REQUERIMENTO DE PERMUTA DE PLANTÃO
+
+AO DIRETOR DA UNIDADE SOCIOEDUCATIVA
+Instituto Socioeducativo do Acre – ISE/AC
+
+Assunto: Solicitação de Permuta de Plantão (Agentes da Mesma Unidade)
+
+1. IDENTIFICAÇÃO DOS AGENTES
+
+AGENTE SOLICITANTE (Requerente)
+
+Nome Completo: ${request.requester?.name || '_______________________________________________'}
+
+Matrícula: ${request.requester?.matricula || '_______________________'}
+
+CPF: ${request.requester?.cpf || '____________________________'}
+
+Cargo: Agente Socioeducativo
+
+Unidade Socioeducativa de Lotação: ${unitName || '_____________________________'}
+
+Plantão a ser permutado: ${requesterShiftDate ? format(requesterShiftDate, 'dd/MM/yyyy', { locale: ptBR }) : '__/__/____'} às 07h até ${requesterShiftDate ? format(addDays(requesterShiftDate, 1), 'dd/MM/yyyy', { locale: ptBR }) : '__/__/____'} às 07h
+
+AGENTE SOLICITADO
+
+Nome Completo: ${request.target?.name || '_______________________________________________'}
+
+Matrícula: ${request.target?.matricula || '_______________________'}
+
+CPF: ${request.target?.cpf || '____________________________'}
+
+Cargo: Agente Socioeducativo
+
+Unidade Socioeducativa de Lotação: ${unitName || '_____________________________'}
+
+Plantão correspondente: ${targetShiftDate ? format(targetShiftDate, 'dd/MM/yyyy', { locale: ptBR }) : '__/__/____'} às 07h até ${targetShiftDate ? format(addDays(targetShiftDate, 1), 'dd/MM/yyyy', { locale: ptBR }) : '__/__/____'} às 07h
+
+2. OBJETO DO REQUERIMENTO
+
+Os agentes acima identificados, lotados na mesma Unidade Socioeducativa, solicitam, de comum acordo e de livre e espontânea vontade, a permuta de plantão, observando que:
+
+A permuta refere-se a plantão de 24 horas, com início às 07h de um dia e término às 07h do dia seguinte;
+
+Não há alteração de unidade de lotação, apenas troca de datas de plantão;
+
+Ambos os agentes possuem cargo e atribuições compatíveis.
+
+MOTIVO DA SOLICITAÇÃO:
+${request.reason || 'Não informado'}
+
+3. DATA DE COMPENSAÇÃO
+
+Data prevista para compensação do plantão: __/__/____
+(Em caso de mais de uma data, especificar abaixo)
+
+4. DECLARAÇÃO DOS AGENTES
+
+Declaramos estar cientes de que:
+
+A permuta está condicionada à anuência da Direção da Unidade;
+
+A permuta não gera ônus financeiro para a Administração Pública;
+
+Permanecemos responsáveis pelo cumprimento integral do plantão assumido;
+
+O descumprimento do plantão acordado implicará as responsabilidades administrativas cabíveis.
+
+5. LOCAL E DATA
+
+______________________________________, _____ de __________________ de ${now.getFullYear()}.
+
+6. ASSINATURAS
+
+Agente Solicitante:
+Assinatura: ___________________________________________
+
+Agente Solicitado:
+Assinatura: ___________________________________________
+
+7. CIÊNCIA E AUTORIZAÇÃO DA DIREÇÃO
+
+Após análise, ( ) DEFIRO ( ) INDEFIRO o presente requerimento.
+
+Diretor(a) da Unidade Socioeducativa:
+Nome: _______________________________________________
+Assinatura: __________________________________________
+Data: __/__/____
+
+================================
+Documento gerado pelo PlantãoPro
+ID da Solicitação: ${request.id.slice(0, 8)}
+Status: ${request.status === 'accepted' ? 'ACEITA' : request.status === 'pending' ? 'PENDENTE' : 'RECUSADA'}
+Data de geração: ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+`;
+  };
+
+  // Export formal document
+  const exportFormalDocument = (request: SwapRequest) => {
+    const content = generateFormalDocument(request);
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `requerimento_permuta_${request.id.slice(0, 8)}_${format(new Date(), 'yyyy-MM-dd')}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success('Documento de permuta exportado!');
   };
 
   const respondToRequest = async (requestId: string, status: 'accepted' | 'rejected') => {
@@ -692,25 +850,48 @@ Documento gerado automaticamente pelo PlantãoPro
           ) : (
             <div className="space-y-2 max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
               {myRequests.map((request) => (
-                <div key={request.id} className="p-3 bg-slate-700/30 rounded-lg flex items-center justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-slate-400 shrink-0" />
-                      <span className="text-sm text-white truncate">{request.target?.name}</span>
+                <div key={request.id} className="p-3 bg-slate-700/30 rounded-lg">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-slate-400 shrink-0" />
+                        <span className="text-sm text-white truncate">{request.target?.name}</span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {request.requester_shift?.shift_date && 
+                          format(parseISO(request.requester_shift.shift_date), "dd/MM/yyyy (EEE)", { locale: ptBR })
+                        }
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">
-                      {request.requester_shift?.shift_date && 
-                        format(parseISO(request.requester_shift.shift_date), "dd/MM/yyyy", { locale: ptBR })
-                      }
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {request.status === 'pending' && (
-                      <Button size="sm" variant="ghost" onClick={() => openEditDialog(request)} className="h-7 w-7 p-0 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10">
-                        <Edit2 className="h-3.5 w-3.5" />
+                    <div className="flex items-center gap-1 shrink-0">
+                      {/* Preview document button */}
+                      <Button size="sm" variant="ghost" onClick={() => showPreview(request)} className="h-7 w-7 p-0 text-slate-400 hover:text-slate-300 hover:bg-slate-500/10" title="Visualizar documento">
+                        <Eye className="h-3.5 w-3.5" />
                       </Button>
-                    )}
-                    {getStatusBadge(request.status)}
+                      
+                      {/* Edit button - only for pending and requester */}
+                      {request.status === 'pending' && request.requester_id === agentId && (
+                        <Button size="sm" variant="ghost" onClick={() => openEditDialog(request)} className="h-7 w-7 p-0 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10" title="Editar">
+                          <Edit2 className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                      
+                      {/* Cancel button - only for pending and requester */}
+                      {request.status === 'pending' && request.requester_id === agentId && (
+                        <Button size="sm" variant="ghost" onClick={() => cancelSwapRequest(request.id)} className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10" title="Cancelar">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                      
+                      {/* Export button - only for accepted */}
+                      {request.status === 'accepted' && (
+                        <Button size="sm" variant="ghost" onClick={() => exportFormalDocument(request)} className="h-7 w-7 p-0 text-green-400 hover:text-green-300 hover:bg-green-500/10" title="Exportar documento">
+                          <Download className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                      
+                      {getStatusBadge(request.status)}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -787,7 +968,48 @@ Documento gerado automaticamente pelo PlantãoPro
               {isSubmitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
               Salvar Alterações
             </Button>
-          </DialogFooter>
+        </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Document Preview Dialog */}
+      <Dialog open={showDocumentPreview} onOpenChange={setShowDocumentPreview}>
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-white">
+              <FileText className="h-5 w-5 text-amber-400" />
+              Documento de Permuta
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Visualização do requerimento formal de permuta de plantão
+            </DialogDescription>
+          </DialogHeader>
+          {previewRequest && (
+            <div className="space-y-4">
+              <div className="bg-slate-900/50 border border-slate-600/50 rounded-lg p-4 max-h-[50vh] overflow-y-auto">
+                <pre className="text-xs text-slate-300 whitespace-pre-wrap font-mono">
+                  {generateFormalDocument(previewRequest)}
+                </pre>
+              </div>
+              <div className="flex items-center justify-between">
+                <Badge className={previewRequest.status === 'accepted' ? 'bg-green-500/20 text-green-400' : previewRequest.status === 'pending' ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}>
+                  {previewRequest.status === 'accepted' ? 'Aceita' : previewRequest.status === 'pending' ? 'Pendente' : 'Recusada'}
+                </Badge>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setShowDocumentPreview(false)} className="border-slate-600 text-slate-300">
+                    <ArrowLeft className="h-4 w-4 mr-1.5" />
+                    Voltar
+                  </Button>
+                  {previewRequest.status === 'accepted' && (
+                    <Button onClick={() => { exportFormalDocument(previewRequest); setShowDocumentPreview(false); }} className="bg-green-500 hover:bg-green-600 text-white">
+                      <Download className="h-4 w-4 mr-1.5" />
+                      Exportar
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </Card>

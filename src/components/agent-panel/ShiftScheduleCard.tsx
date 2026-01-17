@@ -216,7 +216,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
 
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-      <Card className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-2 border-slate-700/60 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-amber-500/30">
+      <Card className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-2 border-slate-700/60 shadow-xl">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <CollapsibleTrigger className="flex-1">
@@ -366,7 +366,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
                       <div
                         key={shift.id}
                         onClick={() => handleShiftClick(shift)}
-                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${statusInfo.color} border border-slate-700/50`}
+                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer ${statusInfo.color} border border-slate-700/50`}
                       >
                         <div className="flex items-center gap-3">
                           <StatusIcon className={`h-4 w-4 ${statusInfo.textColor}`} />
@@ -398,18 +398,18 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
                   const isTodayShift = isToday(shiftDate);
                   const statusInfo = getStatusInfo(shift.status);
                   
-                  return (
-                    <div
-                      key={shift.id}
-                      onClick={() => handleShiftClick(shift)}
-                      className={`flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${
-                        isTodayShift
-                          ? 'bg-green-500/25 border-2 border-green-500/40 shadow-lg shadow-green-500/10'
-                          : shift.is_vacation 
-                            ? 'bg-purple-500/25 border-2 border-purple-500/40 shadow-lg shadow-purple-500/10'
-                            : 'bg-slate-700/40 border border-slate-600/50'
-                      }`}
-                    >
+                    return (
+                      <div
+                        key={shift.id}
+                        onClick={() => handleShiftClick(shift)}
+                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer ${
+                          isTodayShift
+                            ? 'bg-green-500/25 border-2 border-green-500/40'
+                            : shift.is_vacation 
+                              ? 'bg-purple-500/25 border-2 border-purple-500/40'
+                              : 'bg-slate-700/40 border border-slate-600/50'
+                        }`}
+                      >
                       <div>
                         <p className={`font-medium ${isTodayShift ? 'text-green-400' : shift.is_vacation ? 'text-purple-400' : 'text-white'}`}>
                           {format(shiftDate, "EEEE", { locale: ptBR })}
