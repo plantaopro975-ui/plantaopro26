@@ -87,6 +87,8 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
   const [requesterSignature, setRequesterSignature] = useState<string>('');
   const [targetSignature, setTargetSignature] = useState<string>('');
   const [signatureType, setSignatureType] = useState<'requester' | 'target'>('requester');
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'docx'>('pdf');
+  const [exportingRequestId, setExportingRequestId] = useState<string | null>(null);
   
   const { showNotification, playTacticalSound } = usePushNotifications();
 
@@ -565,10 +567,6 @@ Data de geração: ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
     URL.revokeObjectURL(url);
     toast.success('Documento exportado!');
   };
-
-  // State for export format selection
-  const [exportFormat, setExportFormat] = useState<'pdf' | 'docx'>('pdf');
-  const [exportingRequestId, setExportingRequestId] = useState<string | null>(null);
 
   // Export formal document with format selection
   const exportFormalDocument = async (request: SwapRequest) => {
