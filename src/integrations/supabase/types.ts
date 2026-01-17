@@ -219,6 +219,8 @@ export type Database = {
           bh_future_months_allowed: number | null
           bh_hourly_rate: number | null
           bh_limit: number | null
+          bh_limit_1st: number | null
+          bh_limit_2nd: number | null
           birth_date: string | null
           blood_type: string | null
           cpf: string | null
@@ -252,6 +254,8 @@ export type Database = {
           bh_future_months_allowed?: number | null
           bh_hourly_rate?: number | null
           bh_limit?: number | null
+          bh_limit_1st?: number | null
+          bh_limit_2nd?: number | null
           birth_date?: string | null
           blood_type?: string | null
           cpf?: string | null
@@ -285,6 +289,8 @@ export type Database = {
           bh_future_months_allowed?: number | null
           bh_hourly_rate?: number | null
           bh_limit?: number | null
+          bh_limit_1st?: number | null
+          bh_limit_2nd?: number | null
           birth_date?: string | null
           blood_type?: string | null
           cpf?: string | null
