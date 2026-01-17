@@ -91,7 +91,8 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
   const [exportingRequestId, setExportingRequestId] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelingRequestId, setCancelingRequestId] = useState<string | null>(null);
-  
+  const [editableDocumentText, setEditableDocumentText] = useState<string>('');
+  const [isEditingDocument, setIsEditingDocument] = useState(false);
   const { showNotification, playTacticalSound } = usePushNotifications();
 
   const fetchData = useCallback(async () => {
@@ -363,6 +364,9 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
   // Show document preview
   const showPreview = (request: SwapRequest) => {
     setPreviewRequest(request);
+    const generatedText = generateFormalDocument(request);
+    setEditableDocumentText(generatedText);
+    setIsEditingDocument(false);
     setShowDocumentPreview(true);
   };
 
@@ -567,7 +571,8 @@ Data de geração: ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
 
   // Export as DOCX (plain text format for Word compatibility)
   const exportFormalDocumentDOCX = (request: SwapRequest) => {
-    const content = generateFormalDocument(request);
+    // Use edited text if available, otherwise generate
+    const content = editableDocumentText || generateFormalDocument(request);
     const blob = new Blob([content], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -1133,10 +1138,51 @@ Documento gerado automaticamente pelo PlantãoPro
           </DialogHeader>
           {previewRequest && (
             <div className="space-y-4">
-              <div className="bg-slate-900/50 border border-slate-600/50 rounded-lg p-3 max-h-[30vh] overflow-y-auto">
-                <pre className="text-[10px] text-slate-300 whitespace-pre-wrap font-mono leading-relaxed">
-                  {generateFormalDocument(previewRequest)}
-                </pre>
+              {/* Document Text - Editable or Read-only */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-400">Texto do Documento</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isEditingDocument) {
+                        setIsEditingDocument(false);
+                      } else {
+                        setEditableDocumentText(generateFormalDocument(previewRequest));
+                        setIsEditingDocument(true);
+                      }
+                    }}
+                    className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                  >
+                    <Edit2 className="h-3 w-3" />
+                    {isEditingDocument ? 'Visualizar' : 'Editar Texto'}
+                  </button>
+                </div>
+                
+                {isEditingDocument ? (
+                  <div className="space-y-2">
+                    <Textarea
+                      value={editableDocumentText}
+                      onChange={(e) => setEditableDocumentText(e.target.value)}
+                      className="bg-slate-900/50 border-slate-600/50 text-slate-300 text-[10px] font-mono min-h-[30vh] resize-y"
+                      placeholder="Edite o texto do documento..."
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setEditableDocumentText(generateFormalDocument(previewRequest))}
+                      className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                    >
+                      <ArrowLeft className="h-3 w-3" />
+                      Restaurar texto original
+                    </button>
+                  </div>
+                ) : (
+                  <div className="bg-slate-900/50 border border-slate-600/50 rounded-lg p-3 max-h-[30vh] overflow-y-auto">
+                    <pre className="text-[10px] text-slate-300 whitespace-pre-wrap font-mono leading-relaxed">
+                      {editableDocumentText || generateFormalDocument(previewRequest)}
+                    </pre>
+                  </div>
+                )}
               </div>
               
               {/* Digital Signatures Section */}
