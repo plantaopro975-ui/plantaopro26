@@ -986,31 +986,51 @@ Documento gerado automaticamente pelo PlantãoPro
                         }
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 relative z-10">
                       {/* Preview document button */}
-                      <Button size="sm" variant="ghost" onClick={() => showPreview(request)} className="h-7 w-7 p-0 text-slate-400 hover:text-slate-300 hover:bg-slate-500/10" title="Visualizar documento">
-                        <Eye className="h-3.5 w-3.5" />
-                      </Button>
+                      <button 
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); showPreview(request); }} 
+                        className="h-8 w-8 flex items-center justify-center rounded-md text-slate-400 hover:text-white hover:bg-slate-600 transition-colors cursor-pointer" 
+                        title="Visualizar documento"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
                       
                       {/* Edit button - only for pending and requester */}
                       {request.status === 'pending' && request.requester_id === agentId && (
-                        <Button size="sm" variant="ghost" onClick={() => openEditDialog(request)} className="h-7 w-7 p-0 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10" title="Editar">
-                          <Edit2 className="h-3.5 w-3.5" />
-                        </Button>
+                        <button 
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); openEditDialog(request); }} 
+                          className="h-8 w-8 flex items-center justify-center rounded-md text-blue-400 hover:text-white hover:bg-blue-600 transition-colors cursor-pointer" 
+                          title="Editar"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
                       )}
                       
                       {/* Cancel button - only for pending and requester */}
                       {request.status === 'pending' && request.requester_id === agentId && (
-                        <Button size="sm" variant="ghost" onClick={() => openCancelConfirm(request.id)} className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10" title="Cancelar">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                        <button 
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); openCancelConfirm(request.id); }} 
+                          className="h-8 w-8 flex items-center justify-center rounded-md text-red-400 hover:text-white hover:bg-red-600 transition-colors cursor-pointer" 
+                          title="Cancelar"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       )}
                       
                       {/* Export button - only for accepted */}
                       {request.status === 'accepted' && (
-                        <Button size="sm" variant="ghost" onClick={() => exportFormalDocument(request)} className="h-7 w-7 p-0 text-green-400 hover:text-green-300 hover:bg-green-500/10" title="Exportar documento">
-                          <Download className="h-3.5 w-3.5" />
-                        </Button>
+                        <button 
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); exportFormalDocument(request); }} 
+                          className="h-8 w-8 flex items-center justify-center rounded-md text-green-400 hover:text-white hover:bg-green-600 transition-colors cursor-pointer" 
+                          title="Exportar documento"
+                        >
+                          <Download className="h-4 w-4" />
+                        </button>
                       )}
                       
                       {getStatusBadge(request.status)}
