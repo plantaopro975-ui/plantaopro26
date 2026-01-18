@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import { X, MessageCircle, Bell, Image, Clock } from 'lucide-react';
-import { useChatSettings, ChatBackgroundTheme, ShiftReminderHours } from '@/hooks/useChatSettings';
+import { X, MessageCircle, Bell, Image, Clock, Palette } from 'lucide-react';
+import { useChatSettings, ChatBackgroundTheme, ShiftReminderHours, BubbleTheme } from '@/hooks/useChatSettings';
 import { toast } from 'sonner';
 
 // Import background thumbnails
@@ -31,12 +31,23 @@ const reminderOptions: { value: ShiftReminderHours; label: string; description: 
   { value: 48, label: '48 horas', description: 'Lembrete dois dias antes' },
 ];
 
+const bubbleThemeOptions: { value: BubbleTheme; label: string; ownBg: string; otherBg: string; textColor: string }[] = [
+  { value: 'amber', label: 'Âmbar', ownBg: 'bg-amber-500', otherBg: 'bg-slate-700', textColor: 'text-black' },
+  { value: 'emerald', label: 'Esmeralda', ownBg: 'bg-emerald-500', otherBg: 'bg-slate-700', textColor: 'text-black' },
+  { value: 'blue', label: 'Azul', ownBg: 'bg-blue-500', otherBg: 'bg-slate-700', textColor: 'text-white' },
+  { value: 'purple', label: 'Roxo', ownBg: 'bg-purple-500', otherBg: 'bg-slate-700', textColor: 'text-white' },
+  { value: 'rose', label: 'Rosa', ownBg: 'bg-rose-500', otherBg: 'bg-slate-700', textColor: 'text-white' },
+  { value: 'cyan', label: 'Ciano', ownBg: 'bg-cyan-500', otherBg: 'bg-slate-800', textColor: 'text-black' },
+];
+
 export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsProps) {
   const { 
     backgroundTheme, 
     shiftReminderHours, 
+    bubbleTheme,
     setBackgroundTheme, 
     setShiftReminderHours,
+    setBubbleTheme,
     isLoaded 
   } = useChatSettings(agentId);
 
@@ -48,6 +59,11 @@ export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsP
   const handleReminderChange = (value: string) => {
     setShiftReminderHours(Number(value) as ShiftReminderHours);
     toast.success('Configuração de lembrete salva!');
+  };
+
+  const handleBubbleThemeChange = (value: BubbleTheme) => {
+    setBubbleTheme(value);
+    toast.success('Tema das bolhas atualizado!');
   };
 
   if (!isLoaded) {
@@ -127,6 +143,48 @@ export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsP
                 }`}>
                   {option.label}
                 </p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Bubble Theme */}
+        <div className="space-y-3 pt-2 border-t border-slate-700/50">
+          <Label className="text-slate-200 flex items-center gap-2 text-sm font-medium">
+            <Palette className="h-4 w-4 text-purple-400" />
+            Tema das Bolhas de Mensagem
+          </Label>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+            {bubbleThemeOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleBubbleThemeChange(option.value)}
+                className={`relative p-2 rounded-lg border-2 transition-all duration-200 ${
+                  bubbleTheme === option.value 
+                    ? 'border-purple-400 ring-2 ring-purple-400/30 scale-105' 
+                    : 'border-slate-600 hover:border-slate-500'
+                }`}
+              >
+                {/* Preview bubbles */}
+                <div className="flex flex-col items-center gap-1.5">
+                  {/* Own message preview */}
+                  <div className={`w-full h-4 rounded-full ${option.ownBg}`} />
+                  {/* Other message preview */}
+                  <div className={`w-full h-3 rounded-full ${option.otherBg}`} />
+                </div>
+                <p className={`text-[10px] text-center mt-1.5 font-medium ${
+                  bubbleTheme === option.value ? 'text-purple-300' : 'text-slate-400'
+                }`}>
+                  {option.label}
+                </p>
+                {bubbleTheme === option.value && (
+                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-purple-500 flex items-center justify-center">
+                    <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
               </button>
             ))}
           </div>

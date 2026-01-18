@@ -28,7 +28,17 @@ import chatBgTactical from '@/assets/chat-background-tactical.png';
 import chatBgMilitary from '@/assets/chat-bg-military.png';
 import chatBgAlert from '@/assets/chat-bg-alert.png';
 import chatBgCyber from '@/assets/chat-bg-cyber.png';
-import { useChatBackgroundTheme, ChatBackgroundTheme } from '@/hooks/useChatSettings';
+import { useChatBackgroundTheme, useBubbleTheme, ChatBackgroundTheme, BubbleTheme } from '@/hooks/useChatSettings';
+
+// Bubble theme styles mapping
+const bubbleStyles: Record<BubbleTheme, { own: string; other: string; ownText: string; nameColor: string }> = {
+  amber: { own: 'bg-amber-500', other: 'bg-slate-700', ownText: 'text-black', nameColor: 'text-amber-300' },
+  emerald: { own: 'bg-emerald-500', other: 'bg-slate-700', ownText: 'text-black', nameColor: 'text-emerald-300' },
+  blue: { own: 'bg-blue-500', other: 'bg-slate-700', ownText: 'text-white', nameColor: 'text-blue-300' },
+  purple: { own: 'bg-purple-500', other: 'bg-slate-700', ownText: 'text-white', nameColor: 'text-purple-300' },
+  rose: { own: 'bg-rose-500', other: 'bg-slate-700', ownText: 'text-white', nameColor: 'text-rose-300' },
+  cyan: { own: 'bg-cyan-500', other: 'bg-slate-800', ownText: 'text-black', nameColor: 'text-cyan-300' },
+};
 
 // Background mapping
 const backgroundImages: Record<ChatBackgroundTheme, string | null> = {
@@ -184,6 +194,10 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   // Get user's preferred background theme
   const backgroundTheme = useChatBackgroundTheme(agentId);
   const currentBackground = backgroundImages[backgroundTheme];
+  
+  // Get user's preferred bubble theme
+  const bubbleTheme = useBubbleTheme(agentId);
+  const currentBubbleStyle = bubbleStyles[bubbleTheme];
 
   const isLeader = agentRole === 'team_leader' || agentRole === 'support';
 
@@ -813,7 +827,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                     }`}>
                       <AvatarImage src={(msg.sender as any)?.avatar_url} />
                       <AvatarFallback className={`text-sm font-bold ${
-                        isOwn ? 'bg-amber-500 text-black' : 
+                        isOwn ? `${currentBubbleStyle.own} ${currentBubbleStyle.ownText}` : 
                         msg.sender?.role === 'team_leader' ? 'bg-amber-600 text-white' :
                         msg.sender?.role === 'support' ? 'bg-blue-600 text-white' :
                         'bg-slate-600 text-slate-200'
@@ -832,7 +846,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                             <Shield className="h-3.5 w-3.5 text-blue-500" />
                           )}
                           <p className={`text-sm font-semibold ${
-                            isOwn ? 'text-amber-300' : isLeaderRole ? 'text-amber-400' : 'text-slate-200'
+                            isOwn ? currentBubbleStyle.nameColor : isLeaderRole ? 'text-amber-400' : 'text-slate-200'
                           }`}>
                             {isOwn ? 'Você' : (msg.sender?.name || 'Agente')}
                           </p>
@@ -848,8 +862,8 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                         <div
                           className={`px-3 py-2 rounded-xl ${
                             isOwn
-                              ? 'bg-amber-500 text-black rounded-br-sm'
-                              : 'bg-slate-700 text-white rounded-bl-sm'
+                              ? `${currentBubbleStyle.own} ${currentBubbleStyle.ownText} rounded-br-sm`
+                              : `${currentBubbleStyle.other} text-white rounded-bl-sm`
                           }`}
                         >
                           <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
