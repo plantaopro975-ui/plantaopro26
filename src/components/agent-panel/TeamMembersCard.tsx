@@ -325,53 +325,62 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
 
                 if (leavesToday.length > 0 || upcomingLeaves.length > 0) {
                   return (
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/25">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/15 to-indigo-500/10 border border-purple-500/30">
                       {leavesToday.length > 0 && (
-                        <div className="mb-2">
-                          <div className="flex items-center gap-1.5 mb-1.5">
-                            <Palmtree className="h-3.5 w-3.5 text-purple-400" />
-                            <span className="text-[11px] font-semibold text-purple-300">De folga hoje:</span>
+                        <div className="mb-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Palmtree className="h-4 w-4 text-purple-400" />
+                            <span className="text-xs font-bold text-purple-300 uppercase tracking-wide">
+                              De folga hoje ({leavesToday.length})
+                            </span>
                           </div>
-                          <div className="flex flex-wrap gap-1.5">
+                          <div className="flex flex-wrap gap-2">
                             {leavesToday.map(leave => {
                               const info = leaveTypeInfo[leave.leave_type] || leaveTypeInfo.special;
+                              const nameParts = leave.agent_name.split(' ');
+                              const displayName = nameParts.length > 1 
+                                ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`
+                                : nameParts[0];
                               return (
-                                <Badge 
+                                <div 
                                   key={leave.id}
-                                  className={`text-[10px] ${info.color} border-0 px-2 py-0.5`}
+                                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${info.color} border border-current/20`}
                                 >
                                   {info.icon}
-                                  <span className="ml-1">{leave.agent_name.split(' ')[0]}</span>
-                                </Badge>
+                                  <span className="text-sm font-semibold">{displayName}</span>
+                                  <span className="text-[10px] opacity-70">{info.label}</span>
+                                </div>
                               );
                             })}
                           </div>
                         </div>
                       )}
                       {upcomingLeaves.length > 0 && (
-                        <div>
-                          <div className="flex items-center gap-1.5 mb-1.5">
-                            <Star className="h-3 w-3 text-blue-400" />
-                            <span className="text-[10px] font-medium text-blue-300">Próximos 7 dias:</span>
+                        <div className={leavesToday.length > 0 ? 'pt-2 border-t border-purple-500/20' : ''}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Star className="h-3.5 w-3.5 text-indigo-400" />
+                            <span className="text-[11px] font-semibold text-indigo-300">Próximos 7 dias:</span>
                           </div>
-                          <div className="flex flex-wrap gap-1">
-                            {upcomingLeaves.slice(0, 4).map(leave => {
+                          <div className="flex flex-wrap gap-2">
+                            {upcomingLeaves.slice(0, 6).map(leave => {
                               const info = leaveTypeInfo[leave.leave_type] || leaveTypeInfo.special;
+                              const firstName = leave.agent_name.split(' ')[0];
                               return (
                                 <div 
                                   key={leave.id}
-                                  className="text-[9px] px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-300 flex items-center gap-1"
+                                  className="text-xs px-2 py-1 rounded-lg bg-slate-700/60 text-slate-200 flex items-center gap-1.5 border border-slate-600/50"
                                 >
                                   {info.icon}
-                                  <span>{leave.agent_name.split(' ')[0]}</span>
-                                  <span className="text-slate-500">
+                                  <span className="font-medium">{firstName}</span>
+                                  <span className="text-slate-400">•</span>
+                                  <span className="text-slate-400">
                                     {format(parseISO(leave.start_date), 'dd/MM', { locale: ptBR })}
                                   </span>
                                 </div>
                               );
                             })}
-                            {upcomingLeaves.length > 4 && (
-                              <span className="text-[9px] text-slate-500 px-1">+{upcomingLeaves.length - 4} mais</span>
+                            {upcomingLeaves.length > 6 && (
+                              <span className="text-xs text-slate-500 px-2 py-1">+{upcomingLeaves.length - 6} mais</span>
                             )}
                           </div>
                         </div>

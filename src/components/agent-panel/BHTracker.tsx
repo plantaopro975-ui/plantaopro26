@@ -101,30 +101,32 @@ function MonthlySummary({
   const monthName = format(selectedMonth, 'MMMM yyyy', { locale: ptBR });
 
   return (
-    <div className="p-3 bg-slate-700/30 border border-slate-600/50 rounded-lg space-y-3">
+    <div className="p-4 bg-slate-800/50 border border-slate-600/40 rounded-xl space-y-3">
       <div className="flex items-center gap-2">
-        <History className="h-4 w-4 text-slate-400" />
-        <span className="text-sm font-medium text-slate-300 capitalize">Resumo de {monthName}</span>
+        <History className="h-4 w-4 text-emerald-400" />
+        <span className="text-sm font-semibold text-slate-200 capitalize">Resumo de {monthName}</span>
       </div>
-      <div className="grid grid-cols-2 gap-2 text-center">
+      <div className="grid grid-cols-2 gap-3 text-center">
         {/* First Fortnight - INDEPENDENT */}
-        <div className="p-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-          <p className="text-[10px] text-blue-400 mb-0.5 font-semibold">1ª Quinzena (1-15)</p>
-          <p className="text-lg font-bold text-blue-300">{firstTotal.toFixed(1)}h</p>
-          <p className="text-[10px] text-slate-500">R$ {(firstTotal * hourlyRate).toFixed(2)}</p>
-          <p className="text-[9px] text-slate-600 mt-1">{firstFortnight.length} registro(s)</p>
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+          <p className="text-xs text-emerald-400 mb-1 font-bold">1ª Quinzena</p>
+          <p className="text-[10px] text-slate-500 mb-2">Dias 01-15</p>
+          <p className="text-2xl font-black text-emerald-300">{firstTotal.toFixed(1)}h</p>
+          <p className="text-sm font-semibold text-emerald-400/80 mt-1">R$ {(firstTotal * hourlyRate).toFixed(2)}</p>
+          <p className="text-xs text-slate-400 mt-2 font-medium">{firstFortnight.length} registro(s)</p>
         </div>
         {/* Second Fortnight - INDEPENDENT */}
-        <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-lg">
-          <p className="text-[10px] text-purple-400 mb-0.5 font-semibold">2ª Quinzena (16+)</p>
-          <p className="text-lg font-bold text-purple-300">{secondTotal.toFixed(1)}h</p>
-          <p className="text-[10px] text-slate-500">R$ {(secondTotal * hourlyRate).toFixed(2)}</p>
-          <p className="text-[9px] text-slate-600 mt-1">{secondFortnight.length} registro(s)</p>
+        <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl">
+          <p className="text-xs text-cyan-400 mb-1 font-bold">2ª Quinzena</p>
+          <p className="text-[10px] text-slate-500 mb-2">Dias 16-31</p>
+          <p className="text-2xl font-black text-cyan-300">{secondTotal.toFixed(1)}h</p>
+          <p className="text-sm font-semibold text-cyan-400/80 mt-1">R$ {(secondTotal * hourlyRate).toFixed(2)}</p>
+          <p className="text-xs text-slate-400 mt-2 font-medium">{secondFortnight.length} registro(s)</p>
         </div>
       </div>
-      <div className="pt-2 border-t border-slate-600/30">
-        <p className="text-[10px] text-center text-slate-500">
-          ⚠️ Cada quinzena é independente - valores não são somados
+      <div className="pt-3 border-t border-slate-600/30">
+        <p className="text-xs text-center text-slate-400">
+          ℹ️ Cada quinzena é independente - os valores não são somados entre si
         </p>
       </div>
     </div>
@@ -920,11 +922,13 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   }
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700">
+    <Card className="bg-slate-800/60 border-slate-600/50 rounded-xl">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Clock className="h-5 w-5 text-amber-500" />
+          <CardTitle className="flex items-center gap-2 text-lg text-slate-100">
+            <div className="p-2 bg-emerald-500/20 rounded-lg">
+              <Clock className="h-5 w-5 text-emerald-400" />
+            </div>
             <span>Banco de Horas</span>
           </CardTitle>
           <div className="flex items-center gap-1">
@@ -943,8 +947,8 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                 onClick={() => setIsExpanded(false)}
                 className="text-slate-400 hover:text-white"
               >
-                <TrendingDown className="h-4 w-4" />
-                <span className="text-xs ml-1">Minimizar</span>
+                <X className="h-4 w-4" />
+                <span className="text-xs ml-1">Fechar</span>
               </Button>
             )}
           </div>
@@ -1283,12 +1287,15 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
               return (
                 <div className="space-y-3">
-                  <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
-                    <p className="text-xs text-slate-300">
-                      Resumo de <span className="font-semibold capitalize">{monthLabel}</span>
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+                    <p className="text-xs text-slate-400 mb-1">
+                      Resumo de <span className="font-semibold capitalize text-slate-300">{monthLabel}</span>
                     </p>
-                    <p className="text-lg font-black text-amber-300">{total.toFixed(1)}h</p>
-                    <p className="text-[11px] text-slate-400">⚠️ Quinzena independente (não soma com a outra)</p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-3xl font-black text-emerald-300">{total.toFixed(1)}h</p>
+                      <span className="text-lg font-semibold text-emerald-400/70">= R$ {(total * hourlyRate).toFixed(2)}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-2">ℹ️ Quinzena independente (não soma com a outra)</p>
                   </div>
 
                   <div className="space-y-2 max-h-[40vh] overflow-auto pr-1">
