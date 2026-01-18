@@ -78,16 +78,46 @@ function RealTimeClock() {
   };
   
   return (
-    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-slate-800/90 via-slate-900/90 to-slate-800/90 rounded-xl border border-cyan-500/40 shadow-lg shadow-cyan-500/10">
-      <Clock className="h-4 w-4 text-cyan-400" />
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/80 rounded-lg border border-slate-600/50">
+      <Clock className="h-4 w-4 text-slate-400" />
       <div className="flex flex-col items-center">
-        <span className="text-sm md:text-base font-mono font-bold text-cyan-300 tracking-wider tabular-nums">
+        <span className="text-sm font-mono font-bold text-slate-200 tracking-wider tabular-nums">
           {formatTime(time)}
         </span>
-        <span className="text-[8px] md:text-[9px] text-cyan-400/70 font-medium tracking-wider -mt-0.5">
+        <span className="text-[9px] text-slate-500 font-medium tracking-wider -mt-0.5">
           {formatDate(time)}
         </span>
       </div>
+    </div>
+  );
+}
+
+// Unit Name Display Component
+function UnitNameDisplay({ unitId }: { unitId: string }) {
+  const [unitName, setUnitName] = useState<string>('');
+  
+  useEffect(() => {
+    const fetchUnit = async () => {
+      const { data } = await supabase
+        .from('units')
+        .select('name')
+        .eq('id', unitId)
+        .single();
+      if (data?.name) {
+        setUnitName(data.name);
+      }
+    };
+    if (unitId) fetchUnit();
+  }, [unitId]);
+  
+  if (!unitName) return null;
+  
+  return (
+    <div className="text-center">
+      <p className="text-[9px] text-slate-500 uppercase tracking-widest font-medium">UNIDADE</p>
+      <p className="text-sm md:text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400 tracking-wide uppercase">
+        {unitName}
+      </p>
     </div>
   );
 }
@@ -302,72 +332,88 @@ export default function AgentPanel() {
       <div className="flex-1 flex flex-col h-[100dvh] overflow-hidden touch-pan-y">
         <main className={`flex-1 p-3 md:p-6 lg:p-8 overflow-y-auto overflow-x-hidden overscroll-contain ${showLicenseWarning ? 'pt-28' : ''}`}>
           <div className="max-w-7xl mx-auto space-y-3 md:space-y-6 animate-fade-in">
-            {/* Professional Header Bar */}
-            <div className="bg-gradient-to-r from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border-2 border-amber-500/40 shadow-2xl backdrop-blur-md overflow-hidden">
-              <div className="flex items-center justify-between p-2 md:p-3">
-                {/* Left: Agent Avatar + Info */}
+            {/* Professional Header Bar - Public Security Style */}
+            <div className="bg-gradient-to-r from-slate-900 via-[hsl(220,30%,12%)] to-slate-900 rounded-xl border border-slate-600/60 shadow-2xl backdrop-blur-md overflow-hidden">
+              {/* Top accent bar */}
+              <div className="h-1 bg-gradient-to-r from-amber-500/80 via-amber-400 to-amber-500/80" />
+              
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between p-3 md:p-4 gap-3">
+                {/* Left: Agent Profile Section */}
                 <div 
-                  className="flex items-center gap-2 md:gap-3 cursor-pointer hover:opacity-90 transition-all duration-200 p-1.5 md:p-2 rounded-xl hover:bg-slate-700/40 group"
+                  className="flex items-center gap-3 cursor-pointer hover:opacity-95 transition-all duration-200 p-2 rounded-xl hover:bg-slate-700/30 group"
                   onClick={() => navigate('/agent-profile')}
                 >
-                  <Avatar className="w-11 h-11 md:w-14 md:h-14 border-2 border-amber-500/70 shadow-lg flex-shrink-0 ring-2 ring-amber-400/20 group-hover:ring-amber-400/50 transition-all">
+                  <Avatar className="w-14 h-14 md:w-16 md:h-16 border-3 border-amber-500/70 shadow-xl flex-shrink-0 ring-2 ring-amber-400/30 group-hover:ring-amber-400/60 transition-all">
                     {(agent as any).avatar_url && <AvatarImage src={(agent as any).avatar_url} alt={agent.name} className="object-cover" />}
-                    <AvatarFallback className="bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 text-lg md:text-xl font-black text-black">
+                    <AvatarFallback className="bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 text-xl md:text-2xl font-black text-black">
                       {agent.name.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="hidden sm:block min-w-0">
-                    <h1 className="text-sm md:text-base font-bold text-amber-100 truncate leading-tight max-w-[120px] md:max-w-[180px]">
-                      {agent.name.split(' ')[0]}
+                  
+                  <div className="flex-1 min-w-0">
+                    {/* Agent Name - Clear and Bold */}
+                    <h1 className="text-base md:text-lg font-bold text-slate-100 truncate leading-tight">
+                      {agent.name}
                     </h1>
-                    <div className="flex items-center gap-1.5 mt-0.5">
+                    
+                    {/* Team & Role Row */}
+                    <div className="flex items-center gap-2 mt-1">
                       {agent.team && (
-                        <Badge variant="outline" className="text-[9px] md:text-[10px] border-amber-500/50 text-amber-400 bg-amber-500/10 px-1.5 py-0 h-4">
-                          {agent.team}
+                        <Badge className="text-[10px] md:text-xs bg-amber-500/20 text-amber-300 border-amber-500/40 px-2 py-0.5 font-semibold">
+                          EQUIPE {agent.team}
                         </Badge>
                       )}
-                      {(agent as any).blood_type && (
-                        <span className="text-[9px] md:text-[10px] text-red-400/90 flex items-center gap-0.5 bg-red-500/10 px-1 py-0.5 rounded">
-                          <Droplet className="h-2.5 w-2.5" />
+                      {getRoleBadge((agent as any).role)}
+                    </div>
+                    
+                    {/* Blood Type - Highlighted */}
+                    {(agent as any).blood_type && (
+                      <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-red-600/30 to-red-500/20 border border-red-500/50 rounded-lg shadow-sm">
+                        <Droplet className="h-4 w-4 text-red-400 fill-red-400/30" />
+                        <span className="text-sm font-black text-red-300 tracking-wide">
                           {(agent as any).blood_type}
                         </span>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Center: Real-Time Clock + Status */}
-                <div className="flex items-center gap-2 md:gap-4">
+                {/* Center: Unit & Clock Section */}
+                <div className="flex flex-col items-center gap-2 px-4 py-2 bg-slate-800/40 rounded-xl border border-slate-600/40">
+                  {/* Unit Name - Professional Security Style */}
+                  {(agent as any).unit_id && (
+                    <UnitNameDisplay unitId={(agent as any).unit_id} />
+                  )}
+                  
                   {/* Real-Time Clock */}
                   <RealTimeClock />
                   
                   {/* Online/Offline Status */}
-                  <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full ${isOnline ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/50' : 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50'} shadow-lg`}>
+                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full ${
+                    isOnline 
+                      ? 'bg-emerald-500/20 border border-emerald-500/50' 
+                      : 'bg-amber-500/20 border border-amber-500/50'
+                  }`}>
                     <div className="relative">
-                      <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-amber-400 to-orange-500'}`} />
-                      {isOnline && <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-400 animate-ping opacity-50" />}
+                      <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                      {isOnline && <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-400 animate-ping opacity-50" />}
                     </div>
-                    <span className={`text-[10px] md:text-xs font-bold uppercase tracking-wider hidden md:inline ${isOnline ? 'text-green-400' : 'text-amber-400'}`}>
-                      {isOnline ? 'Online' : 'Offline'}
+                    <span className={`text-xs font-semibold ${isOnline ? 'text-emerald-400' : 'text-amber-400'}`}>
+                      {isOnline ? 'ONLINE' : 'OFFLINE'}
                     </span>
-                  </div>
-                  
-                  {/* Role Badge */}
-                  <div className="hidden sm:block">
-                    {getRoleBadge((agent as any).role)}
-                  </div>
-                  
-                  {/* Trial Badge */}
-                  <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/15 to-orange-500/15 border border-amber-500/40 shadow-lg shadow-amber-500/10">
-                    <Gift className="h-3.5 w-3.5 text-amber-400" />
-                    <span className="text-[10px] font-bold text-amber-400">{getRemainingTrialDays()}d</span>
                   </div>
                 </div>
 
                 {/* Right: Action Buttons */}
-                <div className="flex items-center gap-1 md:gap-1.5">
+                <div className="flex items-center gap-2 md:gap-3">
                   <AgentRoleSelector agentId={agent.id} currentRole={(agent as any).role || 'agent'} />
                   <NotificationsPanel agentId={agent.id} />
+                  
+                  {/* Trial Badge - Desktop */}
+                  <div className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800/60 border border-amber-500/30">
+                    <Gift className="h-4 w-4 text-amber-400" />
+                    <span className="text-xs font-bold text-amber-400">{getRemainingTrialDays()} dias</span>
+                  </div>
                   
                   <TooltipProvider>
                     <Tooltip delayDuration={200}>
@@ -376,19 +422,13 @@ export default function AgentPanel() {
                           variant="ghost"
                           size="icon"
                           onClick={() => setShowWelcomeDialog(true)}
-                          className="text-amber-400 hover:bg-amber-500/20 hover:text-amber-300 h-9 w-9 md:h-10 md:w-10 lg:hidden transition-all duration-200 hover:scale-105"
+                          className="text-amber-400 hover:bg-amber-500/20 hover:text-amber-300 h-10 w-10 lg:hidden transition-all duration-200"
                         >
-                          <Gift className="h-4 w-4 md:h-5 md:w-5" />
+                          <Gift className="h-5 w-5" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent 
-                        side="bottom" 
-                        className="bg-amber-600 text-white border-amber-500 px-3 py-2 font-semibold shadow-lg shadow-amber-500/30"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Gift className="h-3.5 w-3.5" />
-                          <span>Trial: {getRemainingTrialDays()} dias restantes</span>
-                        </div>
+                      <TooltipContent side="bottom" className="bg-slate-800 text-amber-300 border-amber-500/50">
+                        Trial: {getRemainingTrialDays()} dias
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -400,24 +440,18 @@ export default function AgentPanel() {
                           variant="ghost"
                           size="icon"
                           onClick={() => navigate('/')}
-                          className="text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 h-9 w-9 md:h-10 md:w-10 transition-all duration-200 hover:scale-105"
+                          className="text-slate-400 hover:bg-slate-700 hover:text-slate-200 h-10 w-10"
                         >
-                          <Home className="h-4 w-4 md:h-5 md:w-5" />
+                          <Home className="h-5 w-5" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent 
-                        side="bottom" 
-                        className="bg-blue-600 text-white border-blue-500 px-3 py-2 font-semibold shadow-lg shadow-blue-500/30"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Home className="h-3.5 w-3.5" />
-                          <span>Tela Inicial</span>
-                        </div>
+                      <TooltipContent side="bottom" className="bg-slate-800 border-slate-600">
+                        Tela Inicial
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                   
-                  {/* Exit Button - Highly Visible in Header */}
+                  {/* Exit Button */}
                   <Button
                     variant="destructive"
                     size="sm"
@@ -425,10 +459,10 @@ export default function AgentPanel() {
                       await supabase.auth.signOut();
                       navigate('/');
                     }}
-                    className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white border border-red-400/50 h-9 md:h-10 px-3 md:px-4 shadow-lg shadow-red-500/30 transition-all duration-200 hover:scale-105"
+                    className="flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white h-10 px-4 font-bold"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span className="text-xs md:text-sm font-bold tracking-wide hidden sm:inline">SAIR</span>
+                    <span className="hidden sm:inline">SAIR</span>
                   </Button>
                 </div>
               </div>

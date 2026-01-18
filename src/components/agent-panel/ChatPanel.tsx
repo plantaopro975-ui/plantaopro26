@@ -1,10 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { MessageCircle, Send, Users, Building2, Globe, Loader2, Trash2, MoreVertical, Circle, Crown, Shield } from 'lucide-react';
 import { format } from 'date-fns';
@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
 
 interface OnlineUser {
   id: string;
@@ -120,6 +121,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const [deletedMessageIds, setDeletedMessageIds] = useState<Set<string>>(new Set());
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const presenceChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const { playSound, isSoundEnabled } = useSoundEffects();
 
   const isLeader = agentRole === 'team_leader' || agentRole === 'support';
 
@@ -464,7 +466,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
 
           setMessages(prev => [...prev, newMsg]);
 
+          // Play notification sound for incoming messages
           if (payload.new.sender_id !== agentId) {
+            playSound('notification');
             const roleName = getRoleLabel(senderData?.role);
             const teamInfo = senderData?.team ? ` • Equipe ${senderData.team}` : '';
             toast.info(`Nova mensagem de ${senderData?.name || 'Agente'}`, {
@@ -497,6 +501,8 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
 
       if (error) throw error;
 
+      // Play send sound
+      playSound('success');
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -720,42 +726,44 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                 return (
                   <div
                     key={msg.id}
-                    className={`flex gap-2 group ${isOwn ? 'flex-row-reverse' : ''}`}
+                    className={`flex gap-3 group ${isOwn ? 'flex-row-reverse' : ''}`}
                   >
-                    <Avatar className={`h-8 w-8 flex-shrink-0 ${
-                      isLeaderRole ? 'ring-2 ring-amber-500/50' : ''
+                    <Avatar className={`h-10 w-10 flex-shrink-0 border-2 ${
+                      isLeaderRole ? 'border-amber-500/60' : 'border-slate-600/60'
                     }`}>
-                      <AvatarFallback className={`text-xs ${
+                      <AvatarImage src={(msg.sender as any)?.avatar_url} />
+                      <AvatarFallback className={`text-sm font-bold ${
                         isOwn ? 'bg-amber-500 text-black' : 
                         msg.sender?.role === 'team_leader' ? 'bg-amber-600 text-white' :
                         msg.sender?.role === 'support' ? 'bg-blue-600 text-white' :
-                        'bg-slate-600'
+                        'bg-slate-600 text-slate-200'
                       }`}>
                         {(msg.sender?.name || 'A').charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className={`max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
-                      {!isOwn && (
-                        <div className="mb-1 px-1">
-                          <div className="flex items-center gap-1">
-                            {msg.sender?.role === 'team_leader' && (
-                              <Crown className="h-3 w-3 text-amber-500" />
-                            )}
-                            {msg.sender?.role === 'support' && (
-                              <Shield className="h-3 w-3 text-blue-500" />
-                            )}
-                            <p className={`text-xs font-medium ${
-                              isLeaderRole ? 'text-amber-400' : 'text-slate-300'
-                            }`}>
-                              {msg.sender?.name || 'Agente'}
-                            </p>
-                          </div>
+                      {/* Always show sender info for clarity */}
+                      <div className={`mb-1 px-1 ${isOwn ? 'text-right' : ''}`}>
+                        <div className={`flex items-center gap-1.5 ${isOwn ? 'justify-end' : ''}`}>
+                          {msg.sender?.role === 'team_leader' && (
+                            <Crown className="h-3.5 w-3.5 text-amber-500" />
+                          )}
+                          {msg.sender?.role === 'support' && (
+                            <Shield className="h-3.5 w-3.5 text-blue-500" />
+                          )}
+                          <p className={`text-sm font-semibold ${
+                            isOwn ? 'text-amber-300' : isLeaderRole ? 'text-amber-400' : 'text-slate-200'
+                          }`}>
+                            {isOwn ? 'Você' : (msg.sender?.name || 'Agente')}
+                          </p>
+                        </div>
+                        {!isOwn && (
                           <p className="text-[10px] text-slate-500">
                             {roleLabel}
                             {teamLabel && ` • ${teamLabel}`}
                           </p>
-                        </div>
-                      )}
+                        )}
+                      </div>
                       <div className="flex items-start gap-1">
                         <div
                           className={`px-3 py-2 rounded-xl ${
