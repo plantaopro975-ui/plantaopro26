@@ -24,6 +24,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
+import chatBackground from '@/assets/chat-background.png';
 
 interface OnlineUser {
   id: string;
@@ -550,8 +551,21 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const currentConfig = chatRoomConfig[chatType];
 
   return (
-    <Card className="card-night-emerald bg-gradient-to-br from-[hsl(222,60%,3%)] via-[hsl(222,55%,5%)] to-[hsl(160,40%,8%)] border-3 border-emerald-500/50 h-[600px] flex flex-col transition-all duration-300 hover:border-emerald-400/70 group">
-      <CardHeader className="pb-2 border-b border-emerald-500/20">
+    <Card className="card-night-emerald border-3 border-emerald-500/50 h-[600px] flex flex-col transition-all duration-300 hover:border-emerald-400/70 group relative overflow-hidden">
+      {/* Background Image with Dark Overlay */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url(${chatBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(222,60%,3%)/92%] via-[hsl(222,55%,5%)/88%] to-[hsl(160,40%,8%)/85%]" />
+      
+      <CardHeader className="pb-2 border-b border-emerald-500/20 relative z-10">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-3 text-lg">
             <div className="p-2 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-500/30 transition-colors">
@@ -704,9 +718,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
         </p>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative z-10">
         {/* Messages Area */}
-        <ScrollArea className="flex-1 p-4">
+        <ScrollArea className="flex-1 p-4 [&>div>div]:backdrop-blur-[2px]">
           <div className="space-y-3">
             {messages.length === 0 ? (
               <div className="text-center py-8 text-slate-400">
@@ -822,7 +836,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
         </ScrollArea>
 
         {/* Message Input */}
-        <div className="p-3 border-t border-slate-700 bg-slate-800/50">
+        <div className="p-3 border-t border-slate-700 bg-slate-900/80 backdrop-blur-sm relative z-10">
           <div className="flex gap-2">
             <Input
               value={newMessage}
