@@ -24,7 +24,51 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
-import chatBackground from '@/assets/chat-background.png';
+import chatBackground from '@/assets/chat-background-tactical.png';
+
+// Floating particle component for dynamic effect
+const FloatingParticles = () => {
+  return (
+    <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
+      {/* Animated glow particles */}
+      {[...Array(12)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full opacity-30 animate-pulse"
+          style={{
+            width: `${Math.random() * 4 + 2}px`,
+            height: `${Math.random() * 4 + 2}px`,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            background: `radial-gradient(circle, rgba(45,212,191,0.8) 0%, transparent 70%)`,
+            animationDelay: `${Math.random() * 3}s`,
+            animationDuration: `${3 + Math.random() * 4}s`,
+          }}
+        />
+      ))}
+      {/* Floating lines effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent animate-pulse" 
+        style={{ animationDuration: '4s' }} 
+      />
+      {/* Subtle scan line */}
+      <div 
+        className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent"
+        style={{
+          animation: 'scanLine 8s linear infinite',
+          top: '0%',
+        }}
+      />
+      <style>{`
+        @keyframes scanLine {
+          0% { transform: translateY(0); opacity: 0; }
+          10% { opacity: 0.5; }
+          90% { opacity: 0.5; }
+          100% { transform: translateY(600px); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+};
 
 interface OnlineUser {
   id: string;
@@ -563,9 +607,12 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
         }}
       />
       {/* Dark overlay for readability */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(222,60%,3%)/92%] via-[hsl(222,55%,5%)/88%] to-[hsl(160,40%,8%)/85%]" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(220,60%,4%)/94%] via-[hsl(210,55%,6%)/90%] to-[hsl(200,40%,8%)/88%]" />
       
-      <CardHeader className="pb-2 border-b border-emerald-500/20 relative z-10">
+      {/* Floating Particles Animation */}
+      <FloatingParticles />
+      
+      <CardHeader className="pb-2 border-b border-cyan-500/20 relative z-10">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-3 text-lg">
             <div className="p-2 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-500/30 transition-colors">

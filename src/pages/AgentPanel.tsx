@@ -22,7 +22,7 @@ import { SwapRequestsCard } from '@/components/agent-panel/SwapRequestsCard';
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { LeaveRequestCard } from '@/components/agent-panel/LeaveRequestCard';
 import { ShiftSetupPrompt } from '@/components/agent-panel/ShiftSetupPrompt';
-import { ShiftAlertsBanner } from '@/components/agent-panel/ShiftAlertsBanner';
+import { ShiftAlertsBanner, useShiftAlertsBanner } from '@/components/agent-panel/ShiftAlertsBanner';
 import { NotificationSettings } from '@/components/agent-panel/NotificationSettings';
 import { AgentSettingsCard } from '@/components/agent-panel/AgentSettingsCard';
 import { AgentEventsCard } from '@/components/agent-panel/AgentEventsCard';
@@ -56,6 +56,9 @@ export default function AgentPanel() {
   const [activeTab, setActiveTab] = useState('equipe');
   const [hasShifts, setHasShifts] = useState(true);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
+  
+  // Shift alerts banner control
+  const { isDismissed: isShiftBannerDismissed, setIsDismissed: setShiftBannerDismissed, forceShow: forceShowShiftBanner, reactivateBanner: reactivateShiftBanner } = useShiftAlertsBanner();
   // Check for first access or daily welcome
   useEffect(() => {
     if (!agent?.name) return;
@@ -262,6 +265,15 @@ export default function AgentPanel() {
               }}
               isOnline={isOnline}
               onShowWelcome={() => setShowWelcomeDialog(true)}
+              onReactivateShiftBanner={reactivateShiftBanner}
+              isShiftBannerDismissed={isShiftBannerDismissed}
+            />
+
+            {/* Shift Alerts Banner */}
+            <ShiftAlertsBanner 
+              agentId={agent.id} 
+              onDismissedChange={setShiftBannerDismissed}
+              forceShow={forceShowShiftBanner}
             />
 
             {/* On Duty Overlay - Discreto e minimizável */}
