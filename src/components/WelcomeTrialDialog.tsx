@@ -183,7 +183,7 @@ export function WelcomeTrialDialog({ agentName, onClose, trialDays }: WelcomeTri
                   <span className="text-[10px] text-slate-400">Colaboração</span>
                 </div>
                 <p className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 leading-none">
-                  R$15<span className="text-[10px] text-slate-500 font-normal">/mês</span>
+                  R$14,99<span className="text-[10px] text-slate-500 font-normal">/mês</span>
                 </p>
               </div>
             </div>
@@ -193,7 +193,7 @@ export function WelcomeTrialDialog({ agentName, onClose, trialDays }: WelcomeTri
               <div className="flex items-start gap-2">
                 <Heart className="h-4 w-4 text-pink-400 shrink-0 mt-0.5" />
                 <p className="text-[11px] text-slate-300 leading-relaxed">
-                  <span className="font-semibold text-cyan-300">Sua colaboração de R$15/mês</span> ajuda a manter o sistema funcionando, custear hospedagem e desenvolvimento de novas funcionalidades para todos os agentes.
+                  <span className="font-semibold text-cyan-300">Sua colaboração de R$14,99/mês</span> ajuda a manter o sistema funcionando, custear hospedagem e desenvolvimento de novas funcionalidades para todos os agentes.
                 </p>
               </div>
             </div>

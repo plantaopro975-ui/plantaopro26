@@ -83,7 +83,7 @@ export function ContributionMessage({ onClose }: ContributionMessageProps) {
             {/* Price */}
             <div className="py-4">
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 rounded-2xl">
-                <span className="text-3xl font-bold text-primary">R$ 20</span>
+                <span className="text-3xl font-bold text-primary">R$ 14,99</span>
                 <span className="text-muted-foreground">/mês</span>
               </div>
             </div>
