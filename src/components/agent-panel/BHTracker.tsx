@@ -774,6 +774,14 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   // Calculate value and progress (CURRENT fortnight only)
   const currentFortnightBalance = getFortnightBalanceForDate(new Date());
   const currentFortnightLimit = getFortnightLimitForDate(new Date());
+  
+  // Calculate BOTH fortnight balances for display
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const sixteenthOfMonth = new Date(today.getFullYear(), today.getMonth(), 16);
+  const firstFortnightBalance = getFortnightBalanceForDate(firstDayOfMonth);
+  const secondFortnightBalance = getFortnightBalanceForDate(sixteenthOfMonth);
+  
   const totalValue = currentFortnightBalance * hourlyRate;
   const progressPercent = currentFortnightLimit > 0 ? Math.min((currentFortnightBalance / currentFortnightLimit) * 100, 100) : 0;
   const isNearLimit = currentFortnightLimit > 0 && currentFortnightBalance >= currentFortnightLimit * 0.8;
@@ -985,57 +993,72 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           </div>
         )}
 
-        {/* Balance Summary */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className={`p-4 rounded-xl ${balance >= 0 ? 'bg-green-500/10 border border-green-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
-            <div className="flex items-center gap-2 mb-1">
-              {balance >= 0 ? (
-                <TrendingUp className="h-4 w-4 text-green-400" />
-              ) : (
-                <TrendingDown className="h-4 w-4 text-red-400" />
-              )}
-              <span className="text-sm text-slate-400">Saldo</span>
-            </div>
-            <p className={`text-2xl font-bold ${balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-              {balance >= 0 ? '+' : ''}{balance.toFixed(1)}h
-            </p>
+        {/* Fortnight Summary with Independent Bars */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="h-4 w-4 text-amber-500" />
+            <span className="text-sm font-semibold text-slate-200">Resumo por Quinzena</span>
           </div>
           
-          <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
-            <div className="flex items-center gap-2 mb-1">
-              <DollarSign className="h-4 w-4 text-amber-400" />
-              <span className="text-sm text-slate-400">Valor</span>
+          {/* First Fortnight Bar */}
+          <div 
+            onClick={() => setFortnightDialog(1)}
+            className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 cursor-pointer hover:bg-blue-500/20 transition-all"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-blue-300">1ª Quinzena</span>
+                <span className="text-[10px] text-slate-500">(01-15)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-blue-300">{firstFortnightBalance.toFixed(1)}h</span>
+                <span className="text-xs text-blue-400/70">R$ {(firstFortnightBalance * hourlyRate).toFixed(2)}</span>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-amber-400">
-              R$ {totalValue.toFixed(2)}
-            </p>
+            <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all"
+                style={{ width: `${Math.min((firstFortnightBalance / (bhLimit1st || bhLimitLegacy)) * 100, 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-[10px] text-slate-500 mt-1">
+              <span>{firstFortnightBalance.toFixed(1)} / {bhLimit1st || bhLimitLegacy}h</span>
+              <span>Toque para editar</span>
+            </div>
           </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-400">Limite ({fortnightInfo.label}): {currentFortnightLimit}h</span>
-            <span className={`font-medium ${isNearLimit ? 'text-amber-400' : 'text-slate-300'}`}>
-              {currentFortnightBalance.toFixed(1)} / {currentFortnightLimit}h
-            </span>
+          
+          {/* Second Fortnight Bar */}
+          <div 
+            onClick={() => setFortnightDialog(2)}
+            className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 cursor-pointer hover:bg-purple-500/20 transition-all"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-purple-300">2ª Quinzena</span>
+                <span className="text-[10px] text-slate-500">(16-31)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-purple-300">{secondFortnightBalance.toFixed(1)}h</span>
+                <span className="text-xs text-purple-400/70">R$ {(secondFortnightBalance * hourlyRate).toFixed(2)}</span>
+              </div>
+            </div>
+            <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-purple-500 to-purple-400 rounded-full transition-all"
+                style={{ width: `${Math.min((secondFortnightBalance / (bhLimit2nd || bhLimitLegacy)) * 100, 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-[10px] text-slate-500 mt-1">
+              <span>{secondFortnightBalance.toFixed(1)} / {bhLimit2nd || bhLimitLegacy}h</span>
+              <span>Toque para editar</span>
+            </div>
           </div>
-          <Progress 
-            value={progressPercent} 
-            className={`h-2 ${isNearLimit ? '[&>div]:bg-amber-500' : ''}`}
-          />
-          {isAtLimit && (
-            <p className="text-xs text-amber-400 flex items-center gap-1">
-              <AlertTriangle className="h-3 w-3" />
-              Limite atingido
-            </p>
-          )}
-        </div>
-
-        {/* Hourly Rate Info */}
-        <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
-          <span className="text-sm text-slate-400">Valor por hora:</span>
-          <span className="font-medium text-white">R$ {hourlyRate.toFixed(2)}</span>
+          
+          {/* Hourly Rate Info */}
+          <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg">
+            <span className="text-xs text-slate-400">Valor por hora:</span>
+            <span className="text-sm font-medium text-amber-300">R$ {hourlyRate.toFixed(2)}</span>
+          </div>
         </div>
 
         {/* Fortnight Scale Visual */}

@@ -89,119 +89,112 @@ export function BirthdayCard({ agentId, team, unitId }: BirthdayCardProps) {
   const upcomingList = upcomingBirthdays.filter(m => (m.daysUntil ?? 0) > 0);
 
   return (
-    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-      <Card className="card-night-rose bg-gradient-to-br from-[hsl(222,60%,3%)] via-[hsl(222,55%,5%)] to-[hsl(350,40%,8%)] border-3 border-pink-500/50 overflow-hidden transition-all duration-300 hover:border-pink-400/70 group relative">
-        {/* Glow Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 via-transparent to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
-        <CardHeader className="pb-3 relative">
+    <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-pink-500/30 rounded-xl overflow-hidden">
+      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+        <CardHeader className="pb-2 pt-3 px-3">
           <CollapsibleTrigger className="w-full">
-            <CardTitle className="flex items-center justify-between text-xl md:text-2xl cursor-pointer hover:opacity-90 transition-all duration-200 group/title">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-pink-500/30 to-rose-500/20 border border-pink-500/40 group-hover/title:scale-110 transition-transform duration-200">
-                  <Cake className="h-6 w-6 md:h-7 md:w-7 text-pink-400" />
+            <CardTitle className="flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-pink-500/20 border border-pink-500/30">
+                  <Cake className="h-4 w-4 text-pink-400" />
                 </div>
-                <span className="font-bold bg-gradient-to-r from-pink-200 to-rose-300 bg-clip-text text-transparent">
-                  Aniversários da Equipe
-                </span>
+                <span className="text-sm font-bold text-pink-200">Aniversários</span>
                 {todayBirthdays.length > 0 && (
-                  <Badge className="bg-gradient-to-r from-pink-500/30 to-rose-500/30 text-pink-300 animate-pulse border border-pink-500/40 px-3 py-1">
-                    <PartyPopper className="h-3.5 w-3.5 mr-1.5" />
+                  <Badge className="bg-pink-500/30 text-pink-300 border-pink-500/40 text-[10px] px-1.5 py-0 animate-pulse">
+                    <PartyPopper className="h-3 w-3 mr-1" />
                     Hoje!
                   </Badge>
                 )}
               </div>
-              <div className="p-2 rounded-xl bg-slate-800/80 border border-pink-500/30 group-hover:bg-pink-500/20 group-hover:border-pink-400/50 transition-all duration-200">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-slate-700/60 text-slate-300 border-slate-600/50 text-[10px] px-1.5 py-0">
+                  {upcomingBirthdays.length}
+                </Badge>
                 {isExpanded ? (
-                  <ChevronUp className="h-5 w-5 text-pink-400" />
+                  <ChevronUp className="h-4 w-4 text-pink-400" />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-pink-400" />
+                  <ChevronDown className="h-4 w-4 text-pink-400" />
                 )}
               </div>
             </CardTitle>
           </CollapsibleTrigger>
         </CardHeader>
+        
         <CollapsibleContent>
-          <CardContent className="space-y-3 pt-0">
-            {/* Today's Birthdays */}
+          <CardContent className="pt-1 px-3 pb-3 space-y-2">
+            {/* Today's Birthdays - Compact */}
             {todayBirthdays.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {todayBirthdays.map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center gap-3 p-3 bg-gradient-to-r from-pink-500/20 to-purple-500/10 rounded-xl border border-pink-500/30 animate-pulse"
+                    className="flex items-center gap-2 p-2 bg-gradient-to-r from-pink-500/20 to-purple-500/10 rounded-lg border border-pink-500/30"
                   >
-                    <Avatar className="h-12 w-12 border-2 border-pink-500/50">
+                    <Avatar className="h-8 w-8 border border-pink-500/50">
                       {member.avatar_url && <AvatarImage src={member.avatar_url} />}
-                      <AvatarFallback className="bg-pink-500/30 text-pink-400 font-bold">
+                      <AvatarFallback className="bg-pink-500/30 text-pink-300 text-xs font-bold">
                         {member.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-foreground">{member.name}</span>
-                        <Sparkles className="h-4 w-4 text-amber-400 animate-spin" />
-                      </div>
-                      <p className="text-sm text-pink-400 font-medium">
-                        🎂 Fazendo aniversário hoje!
-                      </p>
+                    <div className="flex-1 min-w-0">
+                      <span className="font-semibold text-sm text-foreground truncate block">{member.name}</span>
+                      <span className="text-[10px] text-pink-400">🎂 Aniversário hoje!</span>
                     </div>
-                    <div className="text-3xl">🎉</div>
+                    <span className="text-xl">🎉</span>
                   </div>
                 ))}
               </div>
             )}
 
-            {/* Upcoming Birthdays */}
+            {/* Upcoming Birthdays - Compact List */}
             {upcomingList.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {todayBirthdays.length > 0 && (
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider pt-2">
-                    Próximos
-                  </p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider pt-1">Próximos</p>
                 )}
-                {upcomingList.slice(0, 4).map((member) => {
+                {upcomingList.slice(0, 3).map((member) => {
                   const birthday = member.birth_date ? getBirthdayThisYear(member.birth_date) : null;
                   const daysUntil = member.daysUntil ?? 0;
                   
                   return (
                     <div
                       key={member.id}
-                      className="flex items-center gap-3.5 p-3.5 bg-slate-800/60 rounded-xl border-2 border-slate-600/50 hover:border-pink-500/40 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-pink-500/10 hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+                      className="flex items-center gap-2 p-2 bg-slate-800/50 rounded-lg border border-slate-600/40 hover:border-pink-500/30 transition-colors"
                     >
-                      <Avatar className="h-12 w-12 border-2 border-pink-500/30 shadow-md">
+                      <Avatar className="h-7 w-7 border border-pink-500/20">
                         {member.avatar_url && <AvatarImage src={member.avatar_url} />}
-                        <AvatarFallback className="bg-gradient-to-br from-pink-500/20 to-rose-500/10 text-pink-300 font-bold">
+                        <AvatarFallback className="bg-pink-500/10 text-pink-300 text-[10px] font-bold">
                           {member.name.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <span className="font-semibold text-foreground text-base truncate block">
-                          {member.name}
-                        </span>
+                        <span className="font-medium text-xs text-foreground truncate block">{member.name}</span>
                         {birthday && (
-                          <p className="text-sm text-pink-300/70">
-                            {format(birthday, "dd 'de' MMMM", { locale: ptBR })}
-                          </p>
+                          <span className="text-[10px] text-slate-400">
+                            {format(birthday, "dd/MM", { locale: ptBR })}
+                          </span>
                         )}
                       </div>
                       <Badge 
-                        className={`text-sm px-3 py-1 font-semibold ${
+                        className={`text-[9px] px-1.5 py-0 ${
                           daysUntil === 1 
-                            ? 'bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-300 border-amber-500/50' 
-                            : 'bg-slate-700/80 text-slate-300 border-slate-500/50'
+                            ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' 
+                            : 'bg-slate-700/60 text-slate-400 border-slate-600/40'
                         }`}
                       >
-                        {daysUntil === 1 ? 'Amanhã' : `${daysUntil} dias`}
+                        {daysUntil === 1 ? 'Amanhã' : `${daysUntil}d`}
                       </Badge>
                     </div>
                   );
                 })}
+                {upcomingList.length > 3 && (
+                  <p className="text-[10px] text-center text-slate-500">+{upcomingList.length - 3} mais</p>
+                )}
               </div>
             )}
           </CardContent>
         </CollapsibleContent>
-      </Card>
-    </Collapsible>
+      </Collapsible>
+    </Card>
   );
 }

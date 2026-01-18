@@ -42,85 +42,12 @@ import { WelcomeTrialDialog, shouldShowWelcomeToday, getRemainingTrialDays } fro
 import { PasswordChangeRequest } from '@/components/agent-panel/PasswordChangeRequest';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
+import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, LogOut, Home, WifiOff, RefreshCw, Droplet, Radar, Gift, Shield, Zap, Key, Bell } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { BackButton } from '@/components/BackButton';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from '@/hooks/use-toast';
-
-// Real-Time Clock Component
-function RealTimeClock() {
-  const [time, setTime] = useState(new Date());
-  
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-  
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('pt-BR', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
-  
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('pt-BR', { 
-      weekday: 'short',
-      day: '2-digit', 
-      month: 'short'
-    }).toUpperCase();
-  };
-  
-  return (
-    <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/80 rounded-lg border border-slate-600/50">
-      <Clock className="h-4 w-4 text-slate-400" />
-      <div className="flex flex-col items-center">
-        <span className="text-sm font-mono font-bold text-slate-200 tracking-wider tabular-nums">
-          {formatTime(time)}
-        </span>
-        <span className="text-[9px] text-slate-500 font-medium tracking-wider -mt-0.5">
-          {formatDate(time)}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-// Unit Name Display Component
-function UnitNameDisplay({ unitId }: { unitId: string }) {
-  const [unitName, setUnitName] = useState<string>('');
-  
-  useEffect(() => {
-    const fetchUnit = async () => {
-      const { data } = await supabase
-        .from('units')
-        .select('name')
-        .eq('id', unitId)
-        .single();
-      if (data?.name) {
-        setUnitName(data.name);
-      }
-    };
-    if (unitId) fetchUnit();
-  }, [unitId]);
-  
-  if (!unitName) return null;
-  
-  return (
-    <div className="text-center">
-      <p className="text-[9px] text-slate-500 uppercase tracking-widest font-medium">UNIDADE</p>
-      <p className="text-sm md:text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400 tracking-wide uppercase">
-        {unitName}
-      </p>
-    </div>
-  );
-}
 
 export default function AgentPanel() {
   const { user, isLoading, masterSession } = useAuth();
@@ -256,16 +183,6 @@ export default function AgentPanel() {
     }
   }, [user, masterSession, isLoading, isLoadingAgent, navigate]);
 
-  const getRoleBadge = (role: string | null) => {
-    switch (role) {
-      case 'team_leader':
-        return <Badge className="bg-amber-500 text-black">Chefe de Equipe</Badge>;
-      case 'support':
-        return <Badge variant="secondary">Apoio</Badge>;
-      default:
-        return <Badge variant="outline">Agente</Badge>;
-    }
-  };
 
   // Show loading while auth is hydrating - AFTER all hooks
   if (isLoading || isLoadingAgent) {
@@ -332,141 +249,20 @@ export default function AgentPanel() {
       <div className="flex-1 flex flex-col h-[100dvh] overflow-hidden touch-pan-y">
         <main className={`flex-1 p-3 md:p-6 lg:p-8 overflow-y-auto overflow-x-hidden overscroll-contain ${showLicenseWarning ? 'pt-28' : ''}`}>
           <div className="max-w-7xl mx-auto space-y-3 md:space-y-6 animate-fade-in">
-            {/* Professional Header Bar - Public Security Style */}
-            <div className="bg-gradient-to-r from-slate-900 via-[hsl(220,30%,12%)] to-slate-900 rounded-xl border border-slate-600/60 shadow-2xl backdrop-blur-md overflow-hidden">
-              {/* Top accent bar */}
-              <div className="h-1 bg-gradient-to-r from-amber-500/80 via-amber-400 to-amber-500/80" />
-              
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between p-3 md:p-4 gap-3">
-                {/* Left: Agent Profile Section */}
-                <div 
-                  className="flex items-center gap-3 cursor-pointer hover:opacity-95 transition-all duration-200 p-2 rounded-xl hover:bg-slate-700/30 group"
-                  onClick={() => navigate('/agent-profile')}
-                >
-                  <Avatar className="w-14 h-14 md:w-16 md:h-16 border-3 border-amber-500/70 shadow-xl flex-shrink-0 ring-2 ring-amber-400/30 group-hover:ring-amber-400/60 transition-all">
-                    {(agent as any).avatar_url && <AvatarImage src={(agent as any).avatar_url} alt={agent.name} className="object-cover" />}
-                    <AvatarFallback className="bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 text-xl md:text-2xl font-black text-black">
-                      {agent.name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  
-                  <div className="flex-1 min-w-0">
-                    {/* Agent Name - Clear and Bold */}
-                    <h1 className="text-base md:text-lg font-bold text-slate-100 truncate leading-tight">
-                      {agent.name}
-                    </h1>
-                    
-                    {/* Team & Role Row */}
-                    <div className="flex items-center gap-2 mt-1">
-                      {agent.team && (
-                        <Badge className="text-[10px] md:text-xs bg-amber-500/20 text-amber-300 border-amber-500/40 px-2 py-0.5 font-semibold">
-                          EQUIPE {agent.team}
-                        </Badge>
-                      )}
-                      {getRoleBadge((agent as any).role)}
-                    </div>
-                    
-                    {/* Blood Type - Highlighted */}
-                    {(agent as any).blood_type && (
-                      <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-red-600/30 to-red-500/20 border border-red-500/50 rounded-lg shadow-sm">
-                        <Droplet className="h-4 w-4 text-red-400 fill-red-400/30" />
-                        <span className="text-sm font-black text-red-300 tracking-wide">
-                          {(agent as any).blood_type}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Center: Unit & Clock Section */}
-                <div className="flex flex-col items-center gap-2 px-4 py-2 bg-slate-800/40 rounded-xl border border-slate-600/40">
-                  {/* Unit Name - Professional Security Style */}
-                  {(agent as any).unit_id && (
-                    <UnitNameDisplay unitId={(agent as any).unit_id} />
-                  )}
-                  
-                  {/* Real-Time Clock */}
-                  <RealTimeClock />
-                  
-                  {/* Online/Offline Status */}
-                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full ${
-                    isOnline 
-                      ? 'bg-emerald-500/20 border border-emerald-500/50' 
-                      : 'bg-amber-500/20 border border-amber-500/50'
-                  }`}>
-                    <div className="relative">
-                      <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                      {isOnline && <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-400 animate-ping opacity-50" />}
-                    </div>
-                    <span className={`text-xs font-semibold ${isOnline ? 'text-emerald-400' : 'text-amber-400'}`}>
-                      {isOnline ? 'ONLINE' : 'OFFLINE'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right: Action Buttons */}
-                <div className="flex items-center gap-2 md:gap-3">
-                  <AgentRoleSelector agentId={agent.id} currentRole={(agent as any).role || 'agent'} />
-                  <NotificationsPanel agentId={agent.id} />
-                  
-                  {/* Trial Badge - Desktop */}
-                  <div className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800/60 border border-amber-500/30">
-                    <Gift className="h-4 w-4 text-amber-400" />
-                    <span className="text-xs font-bold text-amber-400">{getRemainingTrialDays()} dias</span>
-                  </div>
-                  
-                  <TooltipProvider>
-                    <Tooltip delayDuration={200}>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setShowWelcomeDialog(true)}
-                          className="text-amber-400 hover:bg-amber-500/20 hover:text-amber-300 h-10 w-10 lg:hidden transition-all duration-200"
-                        >
-                          <Gift className="h-5 w-5" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="bg-slate-800 text-amber-300 border-amber-500/50">
-                        Trial: {getRemainingTrialDays()} dias
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  
-                  <TooltipProvider>
-                    <Tooltip delayDuration={200}>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => navigate('/')}
-                          className="text-slate-400 hover:bg-slate-700 hover:text-slate-200 h-10 w-10"
-                        >
-                          <Home className="h-5 w-5" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="bg-slate-800 border-slate-600">
-                        Tela Inicial
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  
-                  {/* Exit Button */}
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={async () => {
-                      await supabase.auth.signOut();
-                      navigate('/');
-                    }}
-                    className="flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white h-10 px-4 font-bold"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span className="hidden sm:inline">SAIR</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            {/* Professional Header Bar */}
+            <AgentPanelHeader 
+              agent={{
+                id: agent.id,
+                name: agent.name,
+                team: agent.team,
+                role: (agent as any).role,
+                blood_type: (agent as any).blood_type,
+                avatar_url: (agent as any).avatar_url,
+                unit_id: (agent as any).unit_id
+              }}
+              isOnline={isOnline}
+              onShowWelcome={() => setShowWelcomeDialog(true)}
+            />
 
             {/* On Duty Overlay - Discreto e minimizável */}
             <OnDutyOverlay agentId={agent.id} />

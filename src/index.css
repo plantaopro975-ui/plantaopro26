@@ -87,6 +87,32 @@
     --shadow-card: 0 8px 40px hsl(0 0% 0% / 0.5);
     --shadow-glow: 0 0 50px hsl(187 85% 53% / 0.2);
   }
+
+  /* Soft Night Mode - Easier on the eyes, better text contrast */
+  .soft-night-mode {
+    --background: 220 20% 10%;
+    --foreground: 210 20% 92%;
+    --card: 220 18% 12%;
+    --card-foreground: 210 20% 92%;
+    --popover: 220 18% 14%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 187 70% 48%;
+    --primary-foreground: 220 20% 10%;
+    --secondary: 220 15% 16%;
+    --secondary-foreground: 210 15% 88%;
+    --muted: 220 12% 14%;
+    --muted-foreground: 215 15% 65%;
+    --accent: 38 80% 55%;
+    --accent-foreground: 220 20% 10%;
+    --border: 220 15% 22%;
+    --input: 220 15% 16%;
+    --ring: 187 70% 48%;
+
+    --gradient-dark: linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 20% 8%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(220 18% 13%) 0%, hsl(220 18% 10%) 100%);
+    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.35);
+    --shadow-glow: 0 0 30px hsl(187 70% 48% / 0.12);
+  }
 }
 
 @layer base {
