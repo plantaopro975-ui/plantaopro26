@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 
 export type ChatBackgroundTheme = 'tactical' | 'military' | 'alert' | 'cyber' | 'none';
 export type ShiftReminderHours = 12 | 24 | 48;
+export type BubbleTheme = 'amber' | 'emerald' | 'blue' | 'purple' | 'rose' | 'cyan';
 
 interface ChatSettings {
   backgroundTheme: ChatBackgroundTheme;
   shiftReminderHours: ShiftReminderHours;
+  bubbleTheme: BubbleTheme;
 }
 
 const STORAGE_KEY = 'chat_settings';
@@ -13,6 +15,7 @@ const STORAGE_KEY = 'chat_settings';
 const defaultSettings: ChatSettings = {
   backgroundTheme: 'tactical',
   shiftReminderHours: 24,
+  bubbleTheme: 'amber',
 };
 
 export function useChatSettings(agentId: string) {
@@ -57,11 +60,16 @@ export function useChatSettings(agentId: string) {
     saveSettings({ shiftReminderHours: hours });
   };
 
+  const setBubbleTheme = (theme: BubbleTheme) => {
+    saveSettings({ bubbleTheme: theme });
+  };
+
   return {
     ...settings,
     isLoaded,
     setBackgroundTheme,
     setShiftReminderHours,
+    setBubbleTheme,
   };
 }
 
@@ -105,6 +113,29 @@ export function useChatBackgroundTheme(agentId: string): ChatBackgroundTheme {
       }
     } catch (error) {
       console.error('Error loading chat background theme:', error);
+    }
+  }, [agentId]);
+
+  return theme;
+}
+
+// Hook to get just the bubble theme for a given agent
+export function useBubbleTheme(agentId: string): BubbleTheme {
+  const [theme, setTheme] = useState<BubbleTheme>('amber');
+
+  useEffect(() => {
+    if (!agentId) return;
+    
+    try {
+      const stored = localStorage.getItem(`${STORAGE_KEY}_${agentId}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.bubbleTheme) {
+          setTheme(parsed.bubbleTheme);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading bubble theme:', error);
     }
   }, [agentId]);
 
