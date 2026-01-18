@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
 import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
-import { Clock, Droplet, LogOut, Home, Gift, Shield, Building2 } from 'lucide-react';
+import { Clock, Droplet, LogOut, Home, Gift, Shield, Building2, Bell } from 'lucide-react';
 
 interface Agent {
   id: string;
@@ -23,6 +23,8 @@ interface AgentPanelHeaderProps {
   agent: Agent;
   isOnline: boolean;
   onShowWelcome: () => void;
+  onReactivateShiftBanner?: () => void;
+  isShiftBannerDismissed?: boolean;
 }
 
 // Real-Time Clock Component - Compact
@@ -82,7 +84,7 @@ function UnitBadge({ unitId }: { unitId: string }) {
   );
 }
 
-export function AgentPanelHeader({ agent, isOnline, onShowWelcome }: AgentPanelHeaderProps) {
+export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
 
   const getRoleBadge = (role: string | null) => {
@@ -194,6 +196,26 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome }: AgentPanelH
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            
+            {/* Reactivate Shift Banner Button - Only shown when dismissed */}
+            {isShiftBannerDismissed && onReactivateShiftBanner && (
+              <TooltipProvider>
+                <Tooltip delayDuration={200}>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={onReactivateShiftBanner}
+                      className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-orange-500/20 border border-orange-500/40 hover:bg-orange-500/30 transition-colors animate-pulse"
+                    >
+                      <Bell className="h-3.5 w-3.5 text-orange-400" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="bg-slate-800 text-orange-300 border-orange-500/50 text-xs">
+                    Reativar lembrete de plantão
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
             
             {/* Home Button */}
             <TooltipProvider>

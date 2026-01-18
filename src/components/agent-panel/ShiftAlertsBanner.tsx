@@ -9,6 +9,8 @@ import { ptBR } from 'date-fns/locale';
 
 interface ShiftAlertsBannerProps {
   agentId: string;
+  onDismissedChange?: (dismissed: boolean) => void;
+  forceShow?: boolean;
 }
 
 interface UpcomingShift {
@@ -17,11 +19,18 @@ interface UpcomingShift {
   start_time: string;
 }
 
-export function ShiftAlertsBanner({ agentId }: ShiftAlertsBannerProps) {
+export function ShiftAlertsBanner({ agentId, onDismissedChange, forceShow = false }: ShiftAlertsBannerProps) {
   const [upcomingShift, setUpcomingShift] = useState<UpcomingShift | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const { isEnabled, showNotification } = usePushNotifications();
   const notificationSentRef = useRef<string | null>(null);
+
+  // Reset dismissed state when forceShow changes to true
+  useEffect(() => {
+    if (forceShow) {
+      setDismissed(false);
+    }
+  }, [forceShow]);
 
   useEffect(() => {
     checkUpcomingShift();
@@ -30,6 +39,11 @@ export function ShiftAlertsBanner({ agentId }: ShiftAlertsBannerProps) {
     const interval = setInterval(checkUpcomingShift, 30 * 60 * 1000);
     return () => clearInterval(interval);
   }, [agentId]);
+
+  // Notify parent when dismissed state changes
+  useEffect(() => {
+    onDismissedChange?.(dismissed);
+  }, [dismissed, onDismissedChange]);
 
   const checkUpcomingShift = async () => {
     try {
@@ -114,6 +128,10 @@ export function ShiftAlertsBanner({ agentId }: ShiftAlertsBannerProps) {
     }
   };
 
+  const handleDismiss = () => {
+    setDismissed(true);
+  };
+
   if (!upcomingShift || dismissed) {
     return null;
   }
@@ -134,7 +152,7 @@ export function ShiftAlertsBanner({ agentId }: ShiftAlertsBannerProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setDismissed(true)}
+          onClick={handleDismiss}
           className="h-6 w-6 p-0 hover:bg-amber-500/20"
         >
           <X className="h-4 w-4" />
@@ -146,4 +164,23 @@ export function ShiftAlertsBanner({ agentId }: ShiftAlertsBannerProps) {
       </AlertDescription>
     </Alert>
   );
+}
+
+// Hook to control the banner from parent
+export function useShiftAlertsBanner() {
+  const [isDismissed, setIsDismissed] = useState(false);
+  const [forceShow, setForceShow] = useState(false);
+
+  const reactivateBanner = () => {
+    setForceShow(true);
+    // Reset forceShow after a tick to allow the effect to trigger
+    setTimeout(() => setForceShow(false), 100);
+  };
+
+  return {
+    isDismissed,
+    setIsDismissed,
+    forceShow,
+    reactivateBanner,
+  };
 }
