@@ -26,6 +26,7 @@ import { ShiftAlertsBanner, useShiftAlertsBanner } from '@/components/agent-pane
 import { NotificationSettings } from '@/components/agent-panel/NotificationSettings';
 import { AgentSettingsCard } from '@/components/agent-panel/AgentSettingsCard';
 import { AgentEventsCard } from '@/components/agent-panel/AgentEventsCard';
+import { ChatAndAlertSettings } from '@/components/agent-panel/ChatAndAlertSettings';
 import ShiftPlannerCard from '@/components/agent-panel/ShiftPlannerCard';
 import { ShiftCalendarOverview } from '@/components/agent-panel/ShiftCalendarOverview';
 import { BHReminderSettings } from '@/components/agent-panel/BHReminderSettings';
@@ -378,8 +379,6 @@ export default function AgentPanel() {
               {/* Profile Completion Alert */}
               <ProfileCompletionAlert agentId={agent.id} agentName={agent.name} />
 
-              {/* Shift Alert Banner */}
-              <ShiftAlertsBanner agentId={agent.id} />
 
               {/* Shift Setup Prompt */}
               <ShiftSetupPrompt
@@ -474,6 +473,7 @@ export default function AgentPanel() {
                     onUpdate={() => window.location.reload()}
                   />
                   <div className="space-y-4 md:space-y-5">
+                    <ChatAndAlertSettings agentId={agent.id} />
                     <NotificationSettings />
                     <BHReminderSettings agentId={agent.id} />
                     

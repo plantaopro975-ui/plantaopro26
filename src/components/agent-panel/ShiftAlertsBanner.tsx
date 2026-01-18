@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { useShiftReminderHours } from '@/hooks/useChatSettings';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Bell, X, Clock } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, addHours } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface ShiftAlertsBannerProps {
@@ -24,6 +25,9 @@ export function ShiftAlertsBanner({ agentId, onDismissedChange, forceShow = fals
   const [dismissed, setDismissed] = useState(false);
   const { isEnabled, showNotification } = usePushNotifications();
   const notificationSentRef = useRef<string | null>(null);
+  
+  // Get user's preferred reminder hours (12, 24, or 48)
+  const reminderHours = useShiftReminderHours(agentId);
 
   // Reset dismissed state when forceShow changes to true
   useEffect(() => {
@@ -38,7 +42,7 @@ export function ShiftAlertsBanner({ agentId, onDismissedChange, forceShow = fals
     // Check every 30 minutes
     const interval = setInterval(checkUpcomingShift, 30 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [agentId]);
+  }, [agentId, reminderHours]);
 
   // Notify parent when dismissed state changes
   useEffect(() => {
@@ -48,16 +52,16 @@ export function ShiftAlertsBanner({ agentId, onDismissedChange, forceShow = fals
   const checkUpcomingShift = async () => {
     try {
       const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
+      // Calculate future date based on reminder hours setting
+      const futureDate = addHours(now, reminderHours);
       
-      // Get shifts within next 24 hours
+      // Get shifts within the configured reminder window
       const { data, error } = await supabase
         .from('agent_shifts')
         .select('id, shift_date, start_time')
         .eq('agent_id', agentId)
         .gte('shift_date', format(now, 'yyyy-MM-dd'))
-        .lte('shift_date', format(tomorrow, 'yyyy-MM-dd'))
+        .lte('shift_date', format(futureDate, 'yyyy-MM-dd'))
         .neq('status', 'vacation')
         .order('shift_date', { ascending: true })
         .limit(1);
@@ -69,8 +73,8 @@ export function ShiftAlertsBanner({ agentId, onDismissedChange, forceShow = fals
         const shiftDateTime = parseISO(`${shift.shift_date}T${shift.start_time}`);
         const hoursUntilShift = (shiftDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
         
-        // Show alert if shift is within 24 hours but hasn't started
-        if (hoursUntilShift > 0 && hoursUntilShift <= 24) {
+        // Show alert if shift is within configured hours and hasn't started
+        if (hoursUntilShift > 0 && hoursUntilShift <= reminderHours) {
           setUpcomingShift(shift);
           
           // Create alert in database if not exists

@@ -24,7 +24,20 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
-import chatBackground from '@/assets/chat-background-tactical.png';
+import chatBgTactical from '@/assets/chat-background-tactical.png';
+import chatBgMilitary from '@/assets/chat-bg-military.png';
+import chatBgAlert from '@/assets/chat-bg-alert.png';
+import chatBgCyber from '@/assets/chat-bg-cyber.png';
+import { useChatBackgroundTheme, ChatBackgroundTheme } from '@/hooks/useChatSettings';
+
+// Background mapping
+const backgroundImages: Record<ChatBackgroundTheme, string | null> = {
+  tactical: chatBgTactical,
+  military: chatBgMilitary,
+  alert: chatBgAlert,
+  cyber: chatBgCyber,
+  none: null,
+};
 
 // Floating particle component for dynamic effect
 const FloatingParticles = () => {
@@ -167,6 +180,10 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const presenceChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const { playSound, isSoundEnabled } = useSoundEffects();
+  
+  // Get user's preferred background theme
+  const backgroundTheme = useChatBackgroundTheme(agentId);
+  const currentBackground = backgroundImages[backgroundTheme];
 
   const isLeader = agentRole === 'team_leader' || agentRole === 'support';
 
@@ -597,15 +614,17 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   return (
     <Card className="card-night-emerald border-3 border-emerald-500/50 h-[600px] flex flex-col transition-all duration-300 hover:border-emerald-400/70 group relative overflow-hidden">
       {/* Background Image with Dark Overlay */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url(${chatBackground})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
+      {currentBackground && (
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url(${currentBackground})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+      )}
       {/* Dark overlay for readability */}
       <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(220,60%,4%)/94%] via-[hsl(210,55%,6%)/90%] to-[hsl(200,40%,8%)/88%]" />
       
