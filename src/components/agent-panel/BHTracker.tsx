@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Clock, TrendingUp, TrendingDown, DollarSign, Loader2, History, AlertTriangle, Trash2, CalendarPlus, Edit2, Sun, Moon, Bell, BellOff, HelpCircle, BarChart3, Timer, Lock, Shield, Unlock, X } from 'lucide-react';
+import { Clock, TrendingUp, TrendingDown, DollarSign, Loader2, History, AlertTriangle, Trash2, CalendarPlus, Edit2, Sun, Moon, Bell, BellOff, HelpCircle, BarChart3, Timer, Lock, Shield, Unlock, X, Building2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { NumberStepper } from '@/components/ui/number-stepper';
@@ -266,6 +266,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   const [bhLimit1st, setBhLimit1st] = useState<number>(70);
   const [bhLimit2nd, setBhLimit2nd] = useState<number>(70);
   const [entries, setEntries] = useState<OvertimeEntry[]>([]);
+  
+  // Track if limits are from agent-specific config or unit defaults
+  const [limitSource, setLimitSource] = useState<'agent' | 'unit' | 'system'>('system');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -448,6 +451,12 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
       setBhLimitLegacy(legacyLimit > 0 ? legacyLimit : unitDefaults.bh_limit_1st_default);
       
+      // Determine limit source and values
+      const hasAgentSpecificLimit = (agentData?.bh_limit_1st != null && Number(agentData.bh_limit_1st) > 0) ||
+                                    (agentData?.bh_limit_2nd != null && Number(agentData.bh_limit_2nd) > 0);
+      const hasUnitDefaults = unitDefaults.bh_limit_1st_default !== DEFAULT_FORTNIGHT_LIMIT ||
+                              unitDefaults.bh_limit_2nd_default !== DEFAULT_FORTNIGHT_LIMIT;
+      
       // Use agent values if set and > 0, otherwise unit defaults, then system defaults
       const limit1st = agentData?.bh_limit_1st != null && Number(agentData.bh_limit_1st) > 0 
         ? Number(agentData.bh_limit_1st) 
@@ -458,6 +467,15 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
       
       setBhLimit1st(limit1st);
       setBhLimit2nd(limit2nd);
+      
+      // Set limit source for visual indicator
+      if (hasAgentSpecificLimit) {
+        setLimitSource('agent');
+      } else if (hasUnitDefaults) {
+        setLimitSource('unit');
+      } else {
+        setLimitSource('system');
+      }
 
       if (agentData?.bh_future_months_allowed !== undefined) {
         setBhFutureMonthsAllowed(Number(agentData.bh_future_months_allowed) || 0);
@@ -1082,6 +1100,69 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg">
             <span className="text-xs text-slate-400">Valor por hora:</span>
             <span className="text-sm font-medium text-amber-300">R$ {hourlyRate.toFixed(2)}</span>
+          </div>
+          
+          {/* Limit Source Indicator */}
+          <div className={`flex items-center justify-between p-2.5 rounded-lg border ${
+            limitSource === 'agent' 
+              ? 'bg-blue-500/10 border-blue-500/30' 
+              : limitSource === 'unit'
+                ? 'bg-emerald-500/10 border-emerald-500/30'
+                : 'bg-slate-700/30 border-slate-600/30'
+          }`}>
+            <div className="flex items-center gap-2">
+              {limitSource === 'agent' ? (
+                <Shield className="h-4 w-4 text-blue-400" />
+              ) : limitSource === 'unit' ? (
+                <Building2 className="h-4 w-4 text-emerald-400" />
+              ) : (
+                <Shield className="h-4 w-4 text-slate-400" />
+              )}
+              <div>
+                <span className={`text-xs font-medium ${
+                  limitSource === 'agent' 
+                    ? 'text-blue-300' 
+                    : limitSource === 'unit'
+                      ? 'text-emerald-300'
+                      : 'text-slate-300'
+                }`}>
+                  {limitSource === 'agent' 
+                    ? 'Limites Individuais' 
+                    : limitSource === 'unit'
+                      ? 'Limites da Unidade'
+                      : 'Limites Padrão do Sistema'}
+                </span>
+                <p className="text-[10px] text-slate-500">
+                  {limitSource === 'agent' 
+                    ? 'Configuração específica para este agente' 
+                    : limitSource === 'unit'
+                      ? 'Configuração definida pela unidade'
+                      : 'Limites padrão: 70h por quinzena'}
+                </p>
+              </div>
+            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className={`h-4 w-4 cursor-help ${
+                    limitSource === 'agent' 
+                      ? 'text-blue-400/70' 
+                      : limitSource === 'unit'
+                        ? 'text-emerald-400/70'
+                        : 'text-slate-400/70'
+                  }`} />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs bg-slate-800 border-slate-600 text-slate-200">
+                  <p className="text-xs">
+                    {limitSource === 'agent' 
+                      ? 'O administrador configurou limites específicos para você que são diferentes dos limites padrão da unidade.' 
+                      : limitSource === 'unit'
+                        ? 'Você está usando os limites de BH definidos para toda a sua unidade pelo administrador.'
+                        : 'Nenhum limite personalizado foi configurado. Usando o padrão do sistema: 70h por quinzena.'}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
 
