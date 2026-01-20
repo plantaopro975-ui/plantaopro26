@@ -404,30 +404,57 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
     try {
       setIsLoading(true);
       
-      // Fetch agent's hourly rate, limits (per fortnight), and future months config
-       const { data: agentData } = await (supabase as any)
-         .from('agents')
-         .select('bh_hourly_rate, bh_limit, bh_limit_1st, bh_limit_2nd, bh_future_months_allowed')
-         .eq('id', agentId)
-         .maybeSingle();
-
       // Default limit is 70h per fortnight
       const DEFAULT_FORTNIGHT_LIMIT = 70;
-      const legacyLimit = agentData?.bh_limit ? Number(agentData.bh_limit) : DEFAULT_FORTNIGHT_LIMIT;
+      const DEFAULT_HOURLY_RATE = 15.75;
+      
+      // Fetch agent's hourly rate, limits (per fortnight), future months config, and unit_id
+      const { data: agentData } = await (supabase as any)
+        .from('agents')
+        .select('bh_hourly_rate, bh_limit, bh_limit_1st, bh_limit_2nd, bh_future_months_allowed, unit_id')
+        .eq('id', agentId)
+        .maybeSingle();
 
-      if (agentData?.bh_hourly_rate) {
-        setHourlyRate(Number(agentData.bh_hourly_rate));
+      // Fetch unit defaults if agent has a unit
+      let unitDefaults = {
+        bh_limit_1st_default: DEFAULT_FORTNIGHT_LIMIT,
+        bh_limit_2nd_default: DEFAULT_FORTNIGHT_LIMIT,
+        bh_hourly_rate_default: DEFAULT_HOURLY_RATE,
+      };
+      
+      if (agentData?.unit_id) {
+        const { data: unitData } = await (supabase as any)
+          .from('units')
+          .select('bh_limit_1st_default, bh_limit_2nd_default, bh_hourly_rate_default')
+          .eq('id', agentData.unit_id)
+          .maybeSingle();
+        
+        if (unitData) {
+          unitDefaults = {
+            bh_limit_1st_default: unitData.bh_limit_1st_default ?? DEFAULT_FORTNIGHT_LIMIT,
+            bh_limit_2nd_default: unitData.bh_limit_2nd_default ?? DEFAULT_FORTNIGHT_LIMIT,
+            bh_hourly_rate_default: unitData.bh_hourly_rate_default ?? DEFAULT_HOURLY_RATE,
+          };
+        }
       }
 
-      setBhLimitLegacy(legacyLimit > 0 ? legacyLimit : DEFAULT_FORTNIGHT_LIMIT);
+      const legacyLimit = agentData?.bh_limit ? Number(agentData.bh_limit) : unitDefaults.bh_limit_1st_default;
+
+      // Set hourly rate: agent > unit default > system default
+      const effectiveHourlyRate = agentData?.bh_hourly_rate 
+        ? Number(agentData.bh_hourly_rate) 
+        : unitDefaults.bh_hourly_rate_default;
+      setHourlyRate(effectiveHourlyRate);
+
+      setBhLimitLegacy(legacyLimit > 0 ? legacyLimit : unitDefaults.bh_limit_1st_default);
       
-      // Use explicit values if set and > 0, otherwise fallback to legacy limit or default
+      // Use agent values if set and > 0, otherwise unit defaults, then system defaults
       const limit1st = agentData?.bh_limit_1st != null && Number(agentData.bh_limit_1st) > 0 
         ? Number(agentData.bh_limit_1st) 
-        : (legacyLimit > 0 ? legacyLimit : DEFAULT_FORTNIGHT_LIMIT);
+        : (legacyLimit > 0 ? legacyLimit : unitDefaults.bh_limit_1st_default);
       const limit2nd = agentData?.bh_limit_2nd != null && Number(agentData.bh_limit_2nd) > 0 
         ? Number(agentData.bh_limit_2nd) 
-        : (legacyLimit > 0 ? legacyLimit : DEFAULT_FORTNIGHT_LIMIT);
+        : (legacyLimit > 0 ? legacyLimit : unitDefaults.bh_limit_2nd_default);
       
       setBhLimit1st(limit1st);
       setBhLimit2nd(limit2nd);

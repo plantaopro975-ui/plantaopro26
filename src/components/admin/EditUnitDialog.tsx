@@ -11,9 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, Users } from 'lucide-react';
+import { Loader2, Save, Users, Clock, DollarSign, Settings2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { UnsavedChangesDialog } from '@/components/UnsavedChangesDialog';
+import { Separator } from '@/components/ui/separator';
 
 interface Unit {
   id: string;
@@ -24,6 +25,9 @@ interface Unit {
   address?: string | null;
   email?: string | null;
   phone?: string | null;
+  bh_limit_1st_default?: number | null;
+  bh_limit_2nd_default?: number | null;
+  bh_hourly_rate_default?: number | null;
 }
 
 interface UnitAgent {
@@ -49,6 +53,9 @@ export function EditUnitDialog({ unit, open, onOpenChange, onSuccess }: EditUnit
     address: '',
     email: '',
     phone: '',
+    bh_limit_1st_default: '70',
+    bh_limit_2nd_default: '70',
+    bh_hourly_rate_default: '15.75',
   });
   const [agents, setAgents] = useState<UnitAgent[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,6 +75,9 @@ export function EditUnitDialog({ unit, open, onOpenChange, onSuccess }: EditUnit
         address: unit.address || '',
         email: unit.email || '',
         phone: unit.phone || '',
+        bh_limit_1st_default: String(unit.bh_limit_1st_default ?? 70),
+        bh_limit_2nd_default: String(unit.bh_limit_2nd_default ?? 70),
+        bh_hourly_rate_default: String(unit.bh_hourly_rate_default ?? 15.75),
       };
       setFormData(data);
       initialDataRef.current = JSON.stringify(data);
@@ -125,6 +135,9 @@ export function EditUnitDialog({ unit, open, onOpenChange, onSuccess }: EditUnit
           address: formData.address.trim() || null,
           email: formData.email.trim() || null,
           phone: formData.phone.trim() || null,
+          bh_limit_1st_default: parseInt(formData.bh_limit_1st_default) || 70,
+          bh_limit_2nd_default: parseInt(formData.bh_limit_2nd_default) || 70,
+          bh_hourly_rate_default: parseFloat(formData.bh_hourly_rate_default) || 15.75,
         })
         .eq('id', unit.id);
 
@@ -252,7 +265,76 @@ export function EditUnitDialog({ unit, open, onOpenChange, onSuccess }: EditUnit
             </div>
           </div>
 
-          <div className="flex justify-end gap-2">
+          {/* BH Configuration Section */}
+          <Separator className="my-4" />
+          
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Settings2 className="h-4 w-4 text-green-500" />
+              <Label className="text-sm font-medium">Configuração Padrão de BH da Unidade</Label>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Estes valores serão usados como padrão para novos agentes e agentes sem configuração individual.
+            </p>
+            
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-2">
+                <Label className="text-xs flex items-center gap-1">
+                  <Clock className="h-3 w-3 text-blue-400" />
+                  Limite 1ª Quinz.
+                </Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="200"
+                    value={formData.bh_limit_1st_default}
+                    onChange={(e) => setFormData({ ...formData, bh_limit_1st_default: e.target.value })}
+                    className="bg-input pr-8"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">h</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs flex items-center gap-1">
+                  <Clock className="h-3 w-3 text-purple-400" />
+                  Limite 2ª Quinz.
+                </Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="200"
+                    value={formData.bh_limit_2nd_default}
+                    onChange={(e) => setFormData({ ...formData, bh_limit_2nd_default: e.target.value })}
+                    className="bg-input pr-8"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">h</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs flex items-center gap-1">
+                  <DollarSign className="h-3 w-3 text-green-400" />
+                  Valor Hora
+                </Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.bh_hourly_rate_default}
+                    onChange={(e) => setFormData({ ...formData, bh_hourly_rate_default: e.target.value })}
+                    className="bg-input pl-8"
+                  />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">R$</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>

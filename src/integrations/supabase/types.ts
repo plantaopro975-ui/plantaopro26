@@ -1177,6 +1177,9 @@ export type Database = {
       units: {
         Row: {
           address: string | null
+          bh_hourly_rate_default: number | null
+          bh_limit_1st_default: number | null
+          bh_limit_2nd_default: number | null
           coordinator_name: string | null
           created_at: string
           director_name: string | null
@@ -1188,6 +1191,9 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          bh_hourly_rate_default?: number | null
+          bh_limit_1st_default?: number | null
+          bh_limit_2nd_default?: number | null
           coordinator_name?: string | null
           created_at?: string
           director_name?: string | null
@@ -1199,6 +1205,9 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          bh_hourly_rate_default?: number | null
+          bh_limit_1st_default?: number | null
+          bh_limit_2nd_default?: number | null
           coordinator_name?: string | null
           created_at?: string
           director_name?: string | null
