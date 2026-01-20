@@ -1276,6 +1276,8 @@ export type Database = {
       }
       is_admin_or_master: { Args: { _user_id: string }; Returns: boolean }
       is_license_expired: { Args: { p_agent_id: string }; Returns: boolean }
+      is_own_agent: { Args: { check_agent_id: string }; Returns: boolean }
+      is_same_unit: { Args: { shift_agent_id: string }; Returns: boolean }
       record_login_attempt: {
         Args: { p_identifier: string; p_ip?: string; p_success: boolean }
         Returns: undefined
