@@ -16,7 +16,8 @@ type SoundType =
   | 'tactical-hover'
   | 'tactical-confirm'
   | 'status-change'
-  | 'radio-static';
+  | 'radio-static'
+  | 'access-denied';
 
 export function useSoundEffects() {
   const [isSoundEnabled, setIsSoundEnabled] = useState(() => {
@@ -287,6 +288,48 @@ export function useSoundEffects() {
         noiseNode.start(now);
         noiseNode.stop(now + 0.05);
         return; // Early return since we don't use the oscillator
+
+      case 'access-denied':
+        // Military-style access denied alarm - three urgent beeps with descending pitch
+        // First beep - high alert
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(800, now);
+        oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+        gainNode.gain.setValueAtTime(0.15, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        oscillator.start(now);
+        oscillator.stop(now + 0.12);
+
+        // Second beep - warning
+        setTimeout(() => {
+          const osc2 = audioContext.createOscillator();
+          const gain2 = audioContext.createGain();
+          osc2.connect(gain2);
+          gain2.connect(audioContext.destination);
+          osc2.type = 'square';
+          osc2.frequency.setValueAtTime(600, audioContext.currentTime);
+          osc2.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.08);
+          gain2.gain.setValueAtTime(0.18, audioContext.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+          osc2.start(audioContext.currentTime);
+          osc2.stop(audioContext.currentTime + 0.12);
+        }, 150);
+
+        // Third beep - final alert (deeper)
+        setTimeout(() => {
+          const osc3 = audioContext.createOscillator();
+          const gain3 = audioContext.createGain();
+          osc3.connect(gain3);
+          gain3.connect(audioContext.destination);
+          osc3.type = 'sawtooth';
+          osc3.frequency.setValueAtTime(300, audioContext.currentTime);
+          osc3.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.15);
+          gain3.gain.setValueAtTime(0.12, audioContext.currentTime);
+          gain3.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+          osc3.start(audioContext.currentTime);
+          osc3.stop(audioContext.currentTime + 0.25);
+        }, 300);
+        break;
     }
   }, [isSoundEnabled]);
 
