@@ -154,6 +154,60 @@ export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsP
             <Palette className="h-4 w-4 text-purple-400" />
             Tema das Bolhas de Mensagem
           </Label>
+          
+          {/* Real-time Preview */}
+          <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-700/50">
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2 text-center">
+              Preview em Tempo Real
+            </p>
+            <div className="space-y-2">
+              {/* Other user message */}
+              <div className="flex items-start gap-2">
+                <div className="w-6 h-6 rounded-full bg-slate-600 flex items-center justify-center text-[10px] text-slate-300 font-bold shrink-0">
+                  A
+                </div>
+                <div className="flex flex-col">
+                  <span className={`text-[10px] font-medium mb-0.5 ${
+                    bubbleThemeOptions.find(o => o.value === bubbleTheme)?.value === 'amber' ? 'text-amber-400' :
+                    bubbleThemeOptions.find(o => o.value === bubbleTheme)?.value === 'emerald' ? 'text-emerald-400' :
+                    bubbleThemeOptions.find(o => o.value === bubbleTheme)?.value === 'blue' ? 'text-blue-400' :
+                    bubbleThemeOptions.find(o => o.value === bubbleTheme)?.value === 'purple' ? 'text-purple-400' :
+                    bubbleThemeOptions.find(o => o.value === bubbleTheme)?.value === 'rose' ? 'text-rose-400' :
+                    'text-cyan-400'
+                  }`}>
+                    Agente Silva
+                  </span>
+                  <div className={`px-3 py-1.5 rounded-lg rounded-tl-none text-xs ${
+                    bubbleThemeOptions.find(o => o.value === bubbleTheme)?.otherBg
+                  } text-slate-200`}>
+                    Olá! Como vai o plantão hoje?
+                  </div>
+                </div>
+              </div>
+              
+              {/* Own message */}
+              <div className="flex items-start gap-2 justify-end">
+                <div className="flex flex-col items-end">
+                  <div className={`px-3 py-1.5 rounded-lg rounded-tr-none text-xs ${
+                    bubbleThemeOptions.find(o => o.value === bubbleTheme)?.ownBg
+                  } ${
+                    bubbleThemeOptions.find(o => o.value === bubbleTheme)?.textColor
+                  }`}>
+                    Tudo certo por aqui! 👍
+                  </div>
+                </div>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                  bubbleThemeOptions.find(o => o.value === bubbleTheme)?.ownBg
+                } ${
+                  bubbleThemeOptions.find(o => o.value === bubbleTheme)?.textColor
+                }`}>
+                  V
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Theme selector grid */}
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
             {bubbleThemeOptions.map((option) => (
               <button
