@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import { X, MessageCircle, Bell, Image, Clock, Palette } from 'lucide-react';
-import { useChatSettings, ChatBackgroundTheme, ShiftReminderHours, BubbleTheme } from '@/hooks/useChatSettings';
+import { X, MessageCircle, Bell, Image, Clock, Palette, Volume2, Play } from 'lucide-react';
+import { useChatSettings, ChatBackgroundTheme, ShiftReminderHours, BubbleTheme, ReminderSound, playReminderSound } from '@/hooks/useChatSettings';
 import { toast } from 'sonner';
 
 // Import background thumbnails
@@ -40,14 +40,25 @@ const bubbleThemeOptions: { value: BubbleTheme; label: string; ownBg: string; ot
   { value: 'cyan', label: 'Ciano', ownBg: 'bg-cyan-500', otherBg: 'bg-slate-800', textColor: 'text-black' },
 ];
 
+const soundOptions: { value: ReminderSound; label: string; icon: string }[] = [
+  { value: 'default', label: 'Padrão', icon: '🔔' },
+  { value: 'tactical', label: 'Tático', icon: '🎖️' },
+  { value: 'radio', label: 'Rádio', icon: '📻' },
+  { value: 'chime', label: 'Sino', icon: '🎵' },
+  { value: 'urgent', label: 'Urgente', icon: '🚨' },
+  { value: 'silent', label: 'Silencioso', icon: '🔇' },
+];
+
 export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsProps) {
   const { 
     backgroundTheme, 
     shiftReminderHours, 
     bubbleTheme,
+    reminderSounds,
     setBackgroundTheme, 
     setShiftReminderHours,
     setBubbleTheme,
+    setReminderSound,
     isLoaded 
   } = useChatSettings(agentId);
 
@@ -64,6 +75,15 @@ export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsP
   const handleBubbleThemeChange = (value: BubbleTheme) => {
     setBubbleTheme(value);
     toast.success('Tema das bolhas atualizado!');
+  };
+
+  const handleSoundChange = (type: 'shift' | 'bh' | 'leave', value: ReminderSound) => {
+    setReminderSound(type, value);
+    toast.success('Som de notificação atualizado!');
+  };
+
+  const previewSound = (sound: ReminderSound) => {
+    playReminderSound(sound);
   };
 
   if (!isLoaded) {
@@ -286,6 +306,119 @@ export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsP
               </div>
             ))}
           </RadioGroup>
+        </div>
+
+        {/* Notification Sounds */}
+        <div className="space-y-4 pt-2 border-t border-slate-700/50">
+          <Label className="text-slate-200 flex items-center gap-2 text-sm font-medium">
+            <Volume2 className="h-4 w-4 text-green-400" />
+            Sons de Notificação Personalizados
+          </Label>
+          
+          {/* Shift Sound */}
+          <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-slate-300 flex items-center gap-1.5">
+                <span className="text-lg">🗓️</span> Lembrete de Plantão
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => previewSound(reminderSounds.shift)}
+                className="h-7 px-2 text-xs text-green-400 hover:text-green-300 hover:bg-green-500/10"
+              >
+                <Play className="h-3 w-3 mr-1" />
+                Testar
+              </Button>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+              {soundOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleSoundChange('shift', option.value)}
+                  className={`p-2 rounded-md border text-center transition-all ${
+                    reminderSounds.shift === option.value
+                      ? 'bg-green-500/20 border-green-500/60 text-green-300'
+                      : 'bg-slate-700/30 border-slate-600/50 text-slate-400 hover:border-slate-500'
+                  }`}
+                >
+                  <span className="text-base block mb-0.5">{option.icon}</span>
+                  <span className="text-[9px] font-medium">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* BH Sound */}
+          <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-slate-300 flex items-center gap-1.5">
+                <span className="text-lg">💰</span> Alerta de Banco de Horas
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => previewSound(reminderSounds.bh)}
+                className="h-7 px-2 text-xs text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+              >
+                <Play className="h-3 w-3 mr-1" />
+                Testar
+              </Button>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+              {soundOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleSoundChange('bh', option.value)}
+                  className={`p-2 rounded-md border text-center transition-all ${
+                    reminderSounds.bh === option.value
+                      ? 'bg-blue-500/20 border-blue-500/60 text-blue-300'
+                      : 'bg-slate-700/30 border-slate-600/50 text-slate-400 hover:border-slate-500'
+                  }`}
+                >
+                  <span className="text-base block mb-0.5">{option.icon}</span>
+                  <span className="text-[9px] font-medium">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Leave Sound */}
+          <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-slate-300 flex items-center gap-1.5">
+                <span className="text-lg">🏖️</span> Notificação de Folgas
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => previewSound(reminderSounds.leave)}
+                className="h-7 px-2 text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+              >
+                <Play className="h-3 w-3 mr-1" />
+                Testar
+              </Button>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+              {soundOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleSoundChange('leave', option.value)}
+                  className={`p-2 rounded-md border text-center transition-all ${
+                    reminderSounds.leave === option.value
+                      ? 'bg-amber-500/20 border-amber-500/60 text-amber-300'
+                      : 'bg-slate-700/30 border-slate-600/50 text-slate-400 hover:border-slate-500'
+                  }`}
+                >
+                  <span className="text-base block mb-0.5">{option.icon}</span>
+                  <span className="text-[9px] font-medium">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Info Text */}
