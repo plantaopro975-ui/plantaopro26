@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Trash2, User, Key, KeyRound } from 'lucide-react';
+import { Trash2, User, Key, KeyRound, Clock, ShieldCheck } from 'lucide-react';
 import { formatCPF } from '@/lib/validators';
 
 interface SavedCredential {
@@ -10,6 +10,7 @@ interface SavedCredential {
   name?: string;
   password?: string; // Base64 encoded for basic obfuscation
   savedAt: string;
+  lastLoginAt?: string; // Track last successful login
 }
 
 interface SavedCredentialsProps {
@@ -20,6 +21,7 @@ interface SavedCredentialsProps {
 }
 
 const STORAGE_KEY = 'plantao_pro_saved_credentials';
+const QUICK_LOGIN_EXPIRY_HOURS = 4; // Hours before requiring password again
 
 // Simple obfuscation (not encryption - just to prevent casual viewing)
 function obfuscate(str: string): string {
@@ -55,6 +57,7 @@ export function saveCredential(cpf: string, name?: string, password?: string) {
     name,
     password: password ? obfuscate(password) : undefined,
     savedAt: new Date().toISOString(),
+    lastLoginAt: new Date().toISOString(),
   };
   
   if (existingIndex >= 0) {
@@ -69,6 +72,15 @@ export function saveCredential(cpf: string, name?: string, password?: string) {
   }
   
   localStorage.setItem(STORAGE_KEY, JSON.stringify(credentials));
+}
+
+export function updateLastLogin(cpf: string) {
+  const credentials = getSavedCredentials();
+  const cleanCpf = cpf.replace(/\D/g, '');
+  const updated = credentials.map(c => 
+    c.cpf === cleanCpf ? { ...c, lastLoginAt: new Date().toISOString() } : c
+  );
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 }
 
 export function removeCredentialPassword(cpf: string) {
@@ -91,15 +103,42 @@ export function clearAllCredentials() {
   localStorage.removeItem(STORAGE_KEY);
 }
 
-// Check if auto-login is possible (only one saved credential with password)
+// Check if quick login is possible (credential has password and was used within expiry period)
+export function canQuickLogin(credential: SavedCredential): boolean {
+  if (!credential.password || !credential.lastLoginAt) return false;
+  
+  const lastLogin = new Date(credential.lastLoginAt);
+  const now = new Date();
+  const hoursSinceLogin = (now.getTime() - lastLogin.getTime()) / (1000 * 60 * 60);
+  
+  return hoursSinceLogin < QUICK_LOGIN_EXPIRY_HOURS;
+}
+
+// Get credential for quick login if available
+export function getQuickLoginCredential(cpf: string): { cpf: string; password: string } | null {
+  const credentials = getSavedCredentials();
+  const cleanCpf = cpf.replace(/\D/g, '');
+  const cred = credentials.find(c => c.cpf === cleanCpf);
+  
+  if (cred && cred.password && canQuickLogin(cred)) {
+    return {
+      cpf: cred.cpf,
+      password: deobfuscate(cred.password)
+    };
+  }
+  
+  return null;
+}
+
+// Check if auto-login is possible (only one saved credential with password within expiry)
 export function getAutoLoginCredential(): { cpf: string; password: string } | null {
   const credentials = getSavedCredentials();
-  const withPassword = credentials.filter(c => c.password);
+  const validCredentials = credentials.filter(c => c.password && canQuickLogin(c));
   
-  if (withPassword.length === 1 && withPassword[0].password) {
+  if (validCredentials.length === 1 && validCredentials[0].password) {
     return {
-      cpf: withPassword[0].cpf,
-      password: deobfuscate(withPassword[0].password)
+      cpf: validCredentials[0].cpf,
+      password: deobfuscate(validCredentials[0].password)
     };
   }
   
@@ -136,7 +175,6 @@ export function SavedCredentials({ onSelectCredential, onSaveChange, saveCpf, sa
   };
 
   const handleSaveCpfChange = (checked: boolean) => {
-    // If unchecking CPF, also uncheck password
     if (!checked) {
       onSaveChange(false, false);
     } else {
@@ -148,94 +186,125 @@ export function SavedCredentials({ onSelectCredential, onSaveChange, saveCpf, sa
     onSaveChange(saveCpf, checked);
   };
 
+  const getTimeRemaining = (cred: SavedCredential): string | null => {
+    if (!cred.lastLoginAt || !cred.password) return null;
+    const lastLogin = new Date(cred.lastLoginAt);
+    const now = new Date();
+    const hoursRemaining = QUICK_LOGIN_EXPIRY_HOURS - (now.getTime() - lastLogin.getTime()) / (1000 * 60 * 60);
+    if (hoursRemaining <= 0) return null;
+    if (hoursRemaining < 1) {
+      return `${Math.round(hoursRemaining * 60)}min`;
+    }
+    return `${Math.round(hoursRemaining)}h`;
+  };
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {credentials.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label className="text-xs text-muted-foreground">CPFs Salvos</Label>
+            <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">Acesso Rápido</Label>
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="h-6 text-xs text-destructive hover:text-destructive"
+              className="h-5 text-[10px] text-destructive/70 hover:text-destructive px-1"
               onClick={handleClearAll}
             >
-              <Trash2 className="h-3 w-3 mr-1" />
-              Limpar todos
+              <Trash2 className="h-2.5 w-2.5 mr-0.5" />
+              Limpar
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {credentials.map((cred) => (
-              <div
-                key={cred.cpf}
-                onClick={() => handleSelectCredential(cred)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 hover:bg-muted rounded-lg cursor-pointer group transition-colors"
-              >
-                <User className="h-3 w-3 text-muted-foreground" />
-                <span className="text-sm font-mono">
-                  {formatCPF(cred.cpf).slice(0, 7)}***
-                </span>
-                {cred.password && (
+          <div className="flex flex-wrap gap-1.5">
+            {credentials.map((cred) => {
+              const canQuick = canQuickLogin(cred);
+              const timeLeft = getTimeRemaining(cred);
+              
+              return (
+                <div
+                  key={cred.cpf}
+                  onClick={() => handleSelectCredential(cred)}
+                  className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer group transition-all text-xs ${
+                    canQuick 
+                      ? 'bg-green-500/15 hover:bg-green-500/25 border border-green-500/30' 
+                      : 'bg-muted/40 hover:bg-muted/60 border border-border/50'
+                  }`}
+                  title={canQuick ? 'Clique para login rápido' : 'Sessão expirada - digite a senha'}
+                >
+                  {canQuick ? (
+                    <ShieldCheck className="h-3 w-3 text-green-500" />
+                  ) : (
+                    <User className="h-3 w-3 text-muted-foreground" />
+                  )}
+                  <span className="font-mono text-[11px]">
+                    ***{cred.cpf.slice(-4)}
+                  </span>
+                  {cred.name && (
+                    <span className="text-[10px] text-muted-foreground hidden sm:inline">
+                      {cred.name.split(' ')[0]}
+                    </span>
+                  )}
+                  {canQuick && timeLeft && (
+                    <span className="text-[9px] text-green-400 flex items-center gap-0.5">
+                      <Clock className="h-2.5 w-2.5" />
+                      {timeLeft}
+                    </span>
+                  )}
+                  {cred.password && !canQuick && (
+                    <button
+                      type="button"
+                      onClick={(e) => handleRemovePassword(cred.cpf, e)}
+                      className="text-amber-400 hover:text-destructive transition-colors"
+                      title="Sessão expirada"
+                    >
+                      <Key className="h-2.5 w-2.5" />
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={(e) => handleRemovePassword(cred.cpf, e)}
-                    className="text-primary hover:text-destructive transition-colors"
-                    title="Clique para remover a senha salva"
+                    onClick={(e) => handleRemove(cred.cpf, e)}
+                    className="opacity-0 group-hover:opacity-100 text-destructive/70 hover:text-destructive transition-opacity"
+                    title="Remover"
                   >
-                    <Key className="h-3 w-3" />
+                    <Trash2 className="h-2.5 w-2.5" />
                   </button>
-                )}
-                {cred.name && (
-                  <span className="text-xs text-muted-foreground">
-                    ({cred.name.split(' ')[0]})
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={(e) => handleRemove(cred.cpf, e)}
-                  className="opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive/80 transition-opacity"
-                  title="Remover CPF"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </button>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
       
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3 pt-1">
+        <div className="flex items-center gap-1.5">
           <Checkbox
             id="save-cpf"
             checked={saveCpf}
             onCheckedChange={(checked) => handleSaveCpfChange(!!checked)}
+            className="h-3.5 w-3.5"
           />
-          <Label htmlFor="save-cpf" className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1">
-            <User className="h-3 w-3" />
-            Lembrar meu CPF
+          <Label htmlFor="save-cpf" className="text-[10px] text-muted-foreground cursor-pointer">
+            Lembrar CPF
           </Label>
         </div>
         
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-1.5">
           <Checkbox
             id="save-password"
             checked={savePassword}
             disabled={!saveCpf}
             onCheckedChange={(checked) => handleSavePasswordChange(!!checked)}
+            className="h-3.5 w-3.5"
           />
           <Label 
             htmlFor="save-password" 
-            className={`text-xs cursor-pointer flex items-center gap-1 ${
-              saveCpf ? 'text-muted-foreground' : 'text-muted-foreground/50'
-            }`}
+            className={`text-[10px] cursor-pointer ${saveCpf ? 'text-muted-foreground' : 'text-muted-foreground/40'}`}
           >
-            <KeyRound className="h-3 w-3" />
-            Lembrar minha senha também
+            Login rápido (4h)
           </Label>
         </div>
       </div>
     </div>
   );
 }
+
