@@ -10,9 +10,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, User, Phone, Mail, MapPin, Loader2, Droplet, Camera } from 'lucide-react';
+import { ArrowLeft, Save, User, Phone, Mail, MapPin, Loader2, Droplet, Camera, Calendar } from 'lucide-react';
 import { formatPhone } from '@/lib/validators';
 import { AvatarUpload } from '@/components/agent-panel/AvatarUpload';
+import { format, parse, isValid } from 'date-fns';
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -27,7 +28,8 @@ export default function AgentProfileEdit() {
     phone: '',
     email: '',
     address: '',
-    blood_type: ''
+    blood_type: '',
+    birth_date: ''
   });
 
   // Redirect only after loading is complete
@@ -47,11 +49,25 @@ export default function AgentProfileEdit() {
 
   useEffect(() => {
     if (agent) {
+      // Format birth_date for input type="date" (YYYY-MM-DD)
+      let birthDateFormatted = '';
+      if (agent.birth_date) {
+        try {
+          const parsed = parse(agent.birth_date, 'yyyy-MM-dd', new Date());
+          if (isValid(parsed)) {
+            birthDateFormatted = agent.birth_date;
+          }
+        } catch {
+          birthDateFormatted = '';
+        }
+      }
+      
       setFormData({
         phone: agent.phone || '',
         email: agent.email || '',
         address: agent.address || '',
-        blood_type: agent.blood_type || ''
+        blood_type: agent.blood_type || '',
+        birth_date: birthDateFormatted
       });
       setAvatarUrl(agent.avatar_url || null);
     }
@@ -79,7 +95,8 @@ export default function AgentProfileEdit() {
           phone: formData.phone || null,
           email: formData.email || null,
           address: formData.address || null,
-          blood_type: formData.blood_type || null
+          blood_type: formData.blood_type || null,
+          birth_date: formData.birth_date || null
         })
         .eq('id', agent.id);
 
@@ -262,6 +279,24 @@ export default function AgentProfileEdit() {
                   onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                   className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 min-h-[80px]"
                 />
+              </div>
+
+              {/* Birth Date */}
+              <div className="space-y-2">
+                <Label htmlFor="birth_date" className="text-slate-300 flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-pink-500" />
+                  Data de Nascimento
+                </Label>
+                <Input
+                  id="birth_date"
+                  type="date"
+                  value={formData.birth_date}
+                  onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
+                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
+                />
+                <p className="text-xs text-slate-500">
+                  Usado para aniversários e alertas de equipe
+                </p>
               </div>
 
               {/* Blood Type */}
