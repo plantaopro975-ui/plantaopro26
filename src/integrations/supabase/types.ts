@@ -1240,6 +1240,10 @@ export type Database = {
         Args: { p_agent_id?: string; p_code: string }
         Returns: Json
       }
+      agents_same_unit: {
+        Args: { agent_id_1: string; agent_id_2: string }
+        Returns: boolean
+      }
       calculate_bh_balance: { Args: { p_agent_id: string }; Returns: number }
       calculate_bh_value: { Args: { p_agent_id: string }; Returns: number }
       check_rate_limit: {
@@ -1255,6 +1259,7 @@ export type Database = {
         Args: { p_agent_id: string; p_shift_date: string; p_shift_id?: string }
         Returns: undefined
       }
+      current_agent_id: { Args: never; Returns: string }
       extend_license: {
         Args: { p_admin_id: string; p_agent_id: string; p_months: number }
         Returns: string
