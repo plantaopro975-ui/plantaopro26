@@ -273,7 +273,6 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                   onMonthChange={setSelectedMonth}
                   onSelect={handleDateClick}
                   locale={ptBR}
-                  disabled={(date) => !isAfter(date, startOfDay(new Date())) && !isSameDay(date, new Date())}
                   modifiers={{ leave: leaveDates }}
                   modifiersStyles={{
                     leave: {
