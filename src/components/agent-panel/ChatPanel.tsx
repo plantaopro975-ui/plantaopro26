@@ -516,6 +516,11 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
           filter: `room_id=eq.${activeRoom.id}`
         },
         async (payload) => {
+          // Skip if this is our own message (already added optimistically)
+          if (payload.new.sender_id === agentId) {
+            return;
+          }
+          
           const { data: senderData } = await supabase
             .from('agents')
             .select('name, team, role')
@@ -527,18 +532,22 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
             sender: senderData
           };
 
-          setMessages(prev => [...prev, newMsg]);
+          setMessages(prev => {
+            // Prevent duplicates
+            if (prev.some(m => m.id === newMsg.id)) {
+              return prev;
+            }
+            return [...prev, newMsg];
+          });
 
           // Play notification sound for incoming messages
-          if (payload.new.sender_id !== agentId) {
-            playSound('notification');
-            const roleName = getRoleLabel(senderData?.role);
-            const teamInfo = senderData?.team ? ` • Equipe ${senderData.team}` : '';
-            toast.info(`Nova mensagem de ${senderData?.name || 'Agente'}`, {
-              description: `${roleName}${teamInfo}`,
-              duration: 5000,
-            });
-          }
+          playSound('notification');
+          const roleName = getRoleLabel(senderData?.role);
+          const teamInfo = senderData?.team ? ` • Equipe ${senderData.team}` : '';
+          toast.info(`Nova mensagem de ${senderData?.name || 'Agente'}`, {
+            description: `${roleName}${teamInfo}`,
+            duration: 3000,
+          });
         }
       )
       .subscribe();
@@ -551,25 +560,53 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const sendMessage = async () => {
     if (!newMessage.trim() || !activeRoom || isSending) return;
 
+    const messageContent = newMessage.trim();
+    const tempId = `temp-${Date.now()}`;
+    
+    // Optimistic update - show message immediately
+    const optimisticMessage: ChatMessage = {
+      id: tempId,
+      room_id: activeRoom.id,
+      sender_id: agentId,
+      content: messageContent,
+      created_at: new Date().toISOString(),
+      sender: {
+        name: agentName,
+        team: team,
+        role: agentRole || null,
+      }
+    };
+    
+    setMessages(prev => [...prev, optimisticMessage]);
+    setNewMessage('');
+    
+    // Play send sound immediately
+    playSound('success');
+
     try {
       setIsSending(true);
       
-      const { error } = await (supabase as any)
+      const { data, error } = await (supabase as any)
         .from('chat_messages')
         .insert({
           room_id: activeRoom.id,
           sender_id: agentId,
-          content: newMessage.trim()
-        });
+          content: messageContent
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
-      // Play send sound
-      playSound('success');
-      setNewMessage('');
+      // Replace optimistic message with real one (to get the real ID)
+      setMessages(prev => 
+        prev.map(m => m.id === tempId ? { ...m, id: data.id } : m)
+      );
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Erro ao enviar mensagem');
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(m => m.id !== tempId));
     } finally {
       setIsSending(false);
     }
