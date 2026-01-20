@@ -1487,10 +1487,13 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
               }}
               modifiersStyles={{
                 bh: {
-                  backgroundColor: 'hsl(142 76% 36% / 0.3)',
-                  color: 'hsl(142 71% 45%)',
+                  backgroundColor: 'hsl(142 76% 36% / 0.4)',
+                  color: 'hsl(142 71% 55%)',
                   fontWeight: 'bold',
-                  borderRadius: '50%'
+                  borderRadius: '50%',
+                  boxShadow: '0 0 0 2px hsl(142 76% 36% / 0.6), inset 0 0 6px hsl(142 76% 36% / 0.4)',
+                  border: '2px solid hsl(142 71% 45%)',
+                  position: 'relative' as const
                 },
                 closed: {
                   backgroundColor: 'hsl(215 20% 30% / 0.3)',
@@ -1522,10 +1525,16 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           <div className="flex flex-wrap items-center gap-3 text-xs">
             <div className="flex items-center gap-1.5">
               <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: 'hsl(142 76% 36% / 0.5)' }}
-              />
-              <span className="text-slate-400">BH registrado</span>
+                className="w-4 h-4 rounded-full flex items-center justify-center"
+                style={{ 
+                  backgroundColor: 'hsl(142 76% 36% / 0.4)', 
+                  border: '2px solid hsl(142 71% 45%)',
+                  boxShadow: '0 0 0 2px hsl(142 76% 36% / 0.4)'
+                }}
+              >
+                <Edit2 className="h-2 w-2 text-green-300" />
+              </div>
+              <span className="text-slate-400">BH registrado (clique para editar)</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div
