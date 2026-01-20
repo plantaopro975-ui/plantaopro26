@@ -9,15 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+import { BirthDatePicker } from '@/components/ui/birth-date-picker';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, User, Phone, Mail, MapPin, Loader2, Droplet, Camera, CalendarIcon, Cake } from 'lucide-react';
+import { ArrowLeft, Save, User, Phone, Mail, MapPin, Loader2, Droplet, Camera, Cake } from 'lucide-react';
 import { formatPhone } from '@/lib/validators';
 import { AvatarUpload } from '@/components/agent-panel/AvatarUpload';
-import { format, parse, isValid, parseISO } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -294,55 +292,10 @@ export default function AgentProfileEdit() {
                   <Cake className="h-4 w-4 text-pink-500" />
                   Data de Nascimento
                 </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal h-12 bg-slate-900/50 border-slate-600 hover:bg-slate-800/70 hover:border-slate-500",
-                        !birthDate && "text-slate-500"
-                      )}
-                    >
-                      <CalendarIcon className="mr-3 h-5 w-5 text-pink-500" />
-                      {birthDate ? (
-                        <div className="flex items-center justify-between w-full">
-                          <span className="text-white font-medium">
-                            {format(birthDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                          </span>
-                          <span className="ml-3 px-2.5 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 text-sm font-bold">
-                            {(() => {
-                              const today = new Date();
-                              let age = today.getFullYear() - birthDate.getFullYear();
-                              const monthDiff = today.getMonth() - birthDate.getMonth();
-                              if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                                age--;
-                              }
-                              return `${age} anos`;
-                            })()}
-                          </span>
-                        </div>
-                      ) : (
-                        <span>Selecione sua data de nascimento</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-600" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={birthDate}
-                      onSelect={setBirthDate}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1940-01-01")
-                      }
-                      defaultMonth={birthDate || new Date(1990, 0, 1)}
-                      captionLayout="dropdown-buttons"
-                      fromYear={1940}
-                      toYear={new Date().getFullYear()}
-                      locale={ptBR}
-                      className="rounded-md pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
+                <BirthDatePicker
+                  value={birthDate}
+                  onChange={setBirthDate}
+                />
                 <p className="text-xs text-slate-500">
                   Usado para aniversários e alertas de equipe
                 </p>
