@@ -299,13 +299,14 @@ export default function Index() {
             });
           }, 800);
         } else if (data && data.team && data.team !== selectedTeam) {
-          // Wrong team - show professional warning
+          // Wrong team - show professional security-style warning via ErrorDialog
           playSound('error');
-          toast({
-            title: '⚠️ Equipe Incorreta',
-            description: `Você pertence à equipe ${data.team}. Selecione o card correto para continuar.`,
-            variant: 'destructive',
-            duration: 5000,
+          setShowCpfCheck(false);
+          setErrorDialog({
+            open: true,
+            title: 'ACESSO RESTRITO',
+            message: `⚠️ ATENÇÃO, AGENTE ${data.name.split(' ')[0].toUpperCase()}!\n\nVocê está cadastrado na EQUIPE ${data.team}.\n\nPor protocolo de segurança, o acesso é permitido apenas pela equipe designada.\n\nSelecione o card da EQUIPE ${data.team} para continuar.`,
+            type: 'warning',
           });
         }
       } catch (error) {
@@ -341,20 +342,15 @@ export default function Index() {
       if (existingAgent) {
         // Check if agent belongs to a different team
         if (existingAgent.team && existingAgent.team !== selectedTeam) {
-          toast({
-            title: 'Equipe Incorreta',
-            description: `Você pertence à equipe ${existingAgent.team}. Redirecionando...`,
-            duration: 3000,
-          });
-          
-          // Close current dialog and reopen with correct team
+          // Show professional security-style warning
+          playSound('error');
           setShowCpfCheck(false);
-          setSelectedTeam(existingAgent.team);
-          
-          setTimeout(() => {
-            setLoginCpf(checkCpf);
-            setShowLogin(true);
-          }, 500);
+          setErrorDialog({
+            open: true,
+            title: 'ACESSO RESTRITO',
+            message: `⚠️ PROTOCOLO DE SEGURANÇA\n\nAgente identificado como membro da EQUIPE ${existingAgent.team}.\n\nO acesso por equipe divergente não é autorizado.\n\nRetorne à tela inicial e selecione o card da EQUIPE ${existingAgent.team}.`,
+            type: 'warning',
+          });
         } else {
           // User belongs to selected team or has no team - show login
           setShowCpfCheck(false);
