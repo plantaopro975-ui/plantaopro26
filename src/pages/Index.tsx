@@ -300,7 +300,7 @@ export default function Index() {
           }, 800);
         } else if (data && data.team && data.team !== selectedTeam) {
           // Wrong team - show professional security-style warning via ErrorDialog
-          playSound('error');
+          playSound('access-denied');
           setShowCpfCheck(false);
           setErrorDialog({
             open: true,
@@ -343,7 +343,7 @@ export default function Index() {
         // Check if agent belongs to a different team
         if (existingAgent.team && existingAgent.team !== selectedTeam) {
           // Show professional security-style warning
-          playSound('error');
+          playSound('access-denied');
           setShowCpfCheck(false);
           setErrorDialog({
             open: true,
