@@ -532,25 +532,10 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
   // Check if a date is in a closed fortnight (quinzena)
   // UPDATED: Allow editing any day of the current month (both fortnights)
-  // Only block previous months (unless admin)
+  // UPDATED (2026-01-20): Keep BH calendar fully unlocked for past dates.
   const isInClosedFortnight = (date: Date) => {
-    if (isAdmin) return false;
-
-    const today = new Date();
-    const todayMonth = today.getMonth();
-    const todayYear = today.getFullYear();
-
-    const dateMonth = date.getMonth();
-    const dateYear = date.getFullYear();
-
-    // Previous years are always closed
-    if (dateYear < todayYear) return true;
-
-    // Previous months are closed
-    if (dateYear === todayYear && dateMonth < todayMonth) return true;
-
-    // Current month: ALL DAYS are open (including day 16+)
-    // Future months: open up to the allowed limit
+    // Admins can always edit.
+    // Agents: also keep unlocked so they can lançar BH de dias anteriores.
     return false;
   };
 
@@ -1438,10 +1423,6 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
                 // Bloquear datas após o limite permitido
                 if (isAfter(startOfDay(date), startOfDay(maxAllowedDate))) return true;
-
-                // Meses anteriores bloqueados (para não-admin)
-                // (Não use o "isAtLimit" global aqui: o limite é validado por quinzena no submit)
-                if (isInClosedFortnight(date)) return true;
 
                 return false;
               }}
