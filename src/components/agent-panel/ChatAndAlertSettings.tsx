@@ -2,28 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import { X, MessageCircle, Bell, Image, Clock, Palette, Volume2, Play } from 'lucide-react';
-import { useChatSettings, ChatBackgroundTheme, ShiftReminderHours, BubbleTheme, ReminderSound, playReminderSound } from '@/hooks/useChatSettings';
+import { X, MessageCircle, Bell, Clock, Palette, Volume2, Play } from 'lucide-react';
+import { useChatSettings, ShiftReminderHours, BubbleTheme, ReminderSound, playReminderSound } from '@/hooks/useChatSettings';
 import { toast } from 'sonner';
-
-// Import background thumbnails
-import chatBgTactical from '@/assets/chat-background-tactical.png';
-import chatBgMilitary from '@/assets/chat-bg-military.png';
-import chatBgAlert from '@/assets/chat-bg-alert.png';
-import chatBgCyber from '@/assets/chat-bg-cyber.png';
 
 interface ChatAndAlertSettingsProps {
   agentId: string;
   onClose?: () => void;
 }
-
-const backgroundOptions: { value: ChatBackgroundTheme; label: string; color: string; preview: string | null }[] = [
-  { value: 'tactical', label: 'Tático', color: 'from-cyan-500 to-blue-600', preview: chatBgTactical },
-  { value: 'military', label: 'Militar', color: 'from-green-600 to-emerald-800', preview: chatBgMilitary },
-  { value: 'alert', label: 'Alerta', color: 'from-red-600 to-rose-800', preview: chatBgAlert },
-  { value: 'cyber', label: 'Cyber', color: 'from-purple-600 to-violet-800', preview: chatBgCyber },
-  { value: 'none', label: 'Sem Imagem', color: 'from-slate-700 to-slate-800', preview: null },
-];
 
 const reminderOptions: { value: ShiftReminderHours; label: string; description: string }[] = [
   { value: 12, label: '12 horas', description: 'Lembrete meio dia antes' },
@@ -51,21 +37,14 @@ const soundOptions: { value: ReminderSound; label: string; icon: string }[] = [
 
 export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsProps) {
   const { 
-    backgroundTheme, 
     shiftReminderHours, 
     bubbleTheme,
     reminderSounds,
-    setBackgroundTheme, 
     setShiftReminderHours,
     setBubbleTheme,
     setReminderSound,
     isLoaded 
   } = useChatSettings(agentId);
-
-  const handleBackgroundChange = (value: ChatBackgroundTheme) => {
-    setBackgroundTheme(value);
-    toast.success('Tema do chat atualizado!');
-  };
 
   const handleReminderChange = (value: string) => {
     setShiftReminderHours(Number(value) as ShiftReminderHours);
@@ -118,58 +97,8 @@ export function ChatAndAlertSettings({ agentId, onClose }: ChatAndAlertSettingsP
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Chat Background Theme */}
-        <div className="space-y-3">
-          <Label className="text-slate-200 flex items-center gap-2 text-sm font-medium">
-            <Image className="h-4 w-4 text-cyan-400" />
-            Tema do Background do Chat
-          </Label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {backgroundOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handleBackgroundChange(option.value)}
-                className={`relative p-1 rounded-lg border-2 transition-all duration-200 overflow-hidden ${
-                  backgroundTheme === option.value 
-                    ? 'border-cyan-400 ring-2 ring-cyan-400/30 scale-105' 
-                    : 'border-slate-600 hover:border-slate-500'
-                }`}
-              >
-                <div 
-                  className={`h-16 rounded-md bg-gradient-to-br ${option.color} relative overflow-hidden`}
-                  style={option.preview ? {
-                    backgroundImage: `url(${option.preview})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  } : {}}
-                >
-                  {/* Dark overlay for preview */}
-                  <div className="absolute inset-0 bg-black/40" />
-                  
-                  {/* Selection indicator */}
-                  {backgroundTheme === option.value && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center">
-                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <p className={`text-xs text-center mt-1.5 font-medium ${
-                  backgroundTheme === option.value ? 'text-cyan-300' : 'text-slate-400'
-                }`}>
-                  {option.label}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Bubble Theme */}
-        <div className="space-y-3 pt-2 border-t border-slate-700/50">
+        <div className="space-y-3">
           <Label className="text-slate-200 flex items-center gap-2 text-sm font-medium">
             <Palette className="h-4 w-4 text-purple-400" />
             Tema das Bolhas de Mensagem

@@ -55,6 +55,7 @@ const App = () => (
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/agent-panel" element={<AgentPanel />} />
                   <Route path="/agent-profile" element={<AgentProfileEdit />} />
+                  <Route path="/agent-profile-edit" element={<AgentProfileEdit />} />
                   <Route path="/unit/:unitId" element={<UnitDashboard />} />
                   <Route path="/agents" element={<Agents />} />
                   <Route path="/agents/:id" element={<AgentProfile />} />
