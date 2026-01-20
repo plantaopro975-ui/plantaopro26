@@ -24,7 +24,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
-import chatBgProfessional from '@/assets/chat-bg-professional.png';
+import chatBgTacticalPro from '@/assets/chat-bg-tactical-pro.png';
 import { useBubbleTheme, BubbleTheme } from '@/hooks/useChatSettings';
 
 // Bubble theme styles mapping
@@ -179,8 +179,8 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const presenceChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const { playSound, isSoundEnabled } = useSoundEffects();
   
-  // Professional background - single unified theme
-  const currentBackground = chatBgProfessional;
+  // Professional tactical background - unified dark security theme
+  const currentBackground = chatBgTacticalPro;
   
   // Get user's preferred bubble theme
   const bubbleTheme = useBubbleTheme(agentId);
