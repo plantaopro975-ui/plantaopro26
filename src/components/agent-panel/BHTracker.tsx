@@ -263,8 +263,8 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   const [balance, setBalance] = useState(0);
   const [hourlyRate, setHourlyRate] = useState(15.75);
   const [bhLimitLegacy, setBhLimitLegacy] = useState(70);
-  const [bhLimit1st, setBhLimit1st] = useState<number | null>(null);
-  const [bhLimit2nd, setBhLimit2nd] = useState<number | null>(null);
+  const [bhLimit1st, setBhLimit1st] = useState<number>(70);
+  const [bhLimit2nd, setBhLimit2nd] = useState<number>(70);
   const [entries, setEntries] = useState<OvertimeEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -411,15 +411,26 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
          .eq('id', agentId)
          .maybeSingle();
 
-      const legacyLimit = agentData?.bh_limit ? Number(agentData.bh_limit) : 70;
+      // Default limit is 70h per fortnight
+      const DEFAULT_FORTNIGHT_LIMIT = 70;
+      const legacyLimit = agentData?.bh_limit ? Number(agentData.bh_limit) : DEFAULT_FORTNIGHT_LIMIT;
 
       if (agentData?.bh_hourly_rate) {
         setHourlyRate(Number(agentData.bh_hourly_rate));
       }
 
-      setBhLimitLegacy(legacyLimit);
-      setBhLimit1st(agentData?.bh_limit_1st !== undefined && agentData?.bh_limit_1st !== null ? Number(agentData.bh_limit_1st) : legacyLimit);
-      setBhLimit2nd(agentData?.bh_limit_2nd !== undefined && agentData?.bh_limit_2nd !== null ? Number(agentData.bh_limit_2nd) : legacyLimit);
+      setBhLimitLegacy(legacyLimit > 0 ? legacyLimit : DEFAULT_FORTNIGHT_LIMIT);
+      
+      // Use explicit values if set and > 0, otherwise fallback to legacy limit or default
+      const limit1st = agentData?.bh_limit_1st != null && Number(agentData.bh_limit_1st) > 0 
+        ? Number(agentData.bh_limit_1st) 
+        : (legacyLimit > 0 ? legacyLimit : DEFAULT_FORTNIGHT_LIMIT);
+      const limit2nd = agentData?.bh_limit_2nd != null && Number(agentData.bh_limit_2nd) > 0 
+        ? Number(agentData.bh_limit_2nd) 
+        : (legacyLimit > 0 ? legacyLimit : DEFAULT_FORTNIGHT_LIMIT);
+      
+      setBhLimit1st(limit1st);
+      setBhLimit2nd(limit2nd);
 
       if (agentData?.bh_future_months_allowed !== undefined) {
         setBhFutureMonthsAllowed(Number(agentData.bh_future_months_allowed) || 0);
@@ -477,9 +488,10 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   };
 
   const getFortnightLimitForDate = (date: Date) => {
+    const DEFAULT_LIMIT = 70;
     const fortnight = date.getDate() <= 15 ? 1 : 2;
-    const l1 = bhLimit1st ?? bhLimitLegacy;
-    const l2 = bhLimit2nd ?? bhLimitLegacy;
+    const l1 = (bhLimit1st && bhLimit1st > 0) ? bhLimit1st : (bhLimitLegacy > 0 ? bhLimitLegacy : DEFAULT_LIMIT);
+    const l2 = (bhLimit2nd && bhLimit2nd > 0) ? bhLimit2nd : (bhLimitLegacy > 0 ? bhLimitLegacy : DEFAULT_LIMIT);
     return fortnight === 1 ? l1 : l2;
   };
 
