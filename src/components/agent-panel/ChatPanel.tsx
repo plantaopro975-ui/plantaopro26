@@ -24,11 +24,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
-import chatBgTactical from '@/assets/chat-background-tactical.png';
-import chatBgMilitary from '@/assets/chat-bg-military.png';
-import chatBgAlert from '@/assets/chat-bg-alert.png';
-import chatBgCyber from '@/assets/chat-bg-cyber.png';
-import { useChatBackgroundTheme, useBubbleTheme, ChatBackgroundTheme, BubbleTheme } from '@/hooks/useChatSettings';
+import chatBgProfessional from '@/assets/chat-bg-professional.png';
+import { useBubbleTheme, BubbleTheme } from '@/hooks/useChatSettings';
 
 // Bubble theme styles mapping
 const bubbleStyles: Record<BubbleTheme, { own: string; other: string; ownText: string; nameColor: string }> = {
@@ -38,15 +35,6 @@ const bubbleStyles: Record<BubbleTheme, { own: string; other: string; ownText: s
   purple: { own: 'bg-purple-500', other: 'bg-slate-700', ownText: 'text-white', nameColor: 'text-purple-300' },
   rose: { own: 'bg-rose-500', other: 'bg-slate-700', ownText: 'text-white', nameColor: 'text-rose-300' },
   cyan: { own: 'bg-cyan-500', other: 'bg-slate-800', ownText: 'text-black', nameColor: 'text-cyan-300' },
-};
-
-// Background mapping
-const backgroundImages: Record<ChatBackgroundTheme, string | null> = {
-  tactical: chatBgTactical,
-  military: chatBgMilitary,
-  alert: chatBgAlert,
-  cyber: chatBgCyber,
-  none: null,
 };
 
 // Floating particle component for dynamic effect
@@ -191,9 +179,8 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const presenceChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const { playSound, isSoundEnabled } = useSoundEffects();
   
-  // Get user's preferred background theme
-  const backgroundTheme = useChatBackgroundTheme(agentId);
-  const currentBackground = backgroundImages[backgroundTheme];
+  // Professional background - single unified theme
+  const currentBackground = chatBgProfessional;
   
   // Get user's preferred bubble theme
   const bubbleTheme = useBubbleTheme(agentId);
