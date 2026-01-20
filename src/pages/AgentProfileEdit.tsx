@@ -305,9 +305,22 @@ export default function AgentProfileEdit() {
                     >
                       <CalendarIcon className="mr-3 h-5 w-5 text-pink-500" />
                       {birthDate ? (
-                        <span className="text-white font-medium">
-                          {format(birthDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                        </span>
+                        <div className="flex items-center justify-between w-full">
+                          <span className="text-white font-medium">
+                            {format(birthDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                          </span>
+                          <span className="ml-3 px-2.5 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 text-sm font-bold">
+                            {(() => {
+                              const today = new Date();
+                              let age = today.getFullYear() - birthDate.getFullYear();
+                              const monthDiff = today.getMonth() - birthDate.getMonth();
+                              if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                                age--;
+                              }
+                              return `${age} anos`;
+                            })()}
+                          </span>
+                        </div>
                       ) : (
                         <span>Selecione sua data de nascimento</span>
                       )}
