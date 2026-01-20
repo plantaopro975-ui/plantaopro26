@@ -9,11 +9,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, User, Phone, Mail, MapPin, Loader2, Droplet, Camera, Calendar } from 'lucide-react';
+import { ArrowLeft, Save, User, Phone, Mail, MapPin, Loader2, Droplet, Camera, CalendarIcon, Cake } from 'lucide-react';
 import { formatPhone } from '@/lib/validators';
 import { AvatarUpload } from '@/components/agent-panel/AvatarUpload';
-import { format, parse, isValid } from 'date-fns';
+import { format, parse, isValid, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -24,12 +28,12 @@ export default function AgentProfileEdit() {
   
   const [isSaving, setIsSaving] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [birthDate, setBirthDate] = useState<Date | undefined>();
   const [formData, setFormData] = useState({
     phone: '',
     email: '',
     address: '',
-    blood_type: '',
-    birth_date: ''
+    blood_type: ''
   });
 
   // Redirect only after loading is complete
@@ -49,25 +53,25 @@ export default function AgentProfileEdit() {
 
   useEffect(() => {
     if (agent) {
-      // Format birth_date for input type="date" (YYYY-MM-DD)
-      let birthDateFormatted = '';
+      // Parse birth_date from database (YYYY-MM-DD)
+      let parsedBirthDate: Date | undefined = undefined;
       if (agent.birth_date) {
         try {
-          const parsed = parse(agent.birth_date, 'yyyy-MM-dd', new Date());
+          const parsed = parseISO(agent.birth_date);
           if (isValid(parsed)) {
-            birthDateFormatted = agent.birth_date;
+            parsedBirthDate = parsed;
           }
         } catch {
-          birthDateFormatted = '';
+          parsedBirthDate = undefined;
         }
       }
       
+      setBirthDate(parsedBirthDate);
       setFormData({
         phone: agent.phone || '',
         email: agent.email || '',
         address: agent.address || '',
-        blood_type: agent.blood_type || '',
-        birth_date: birthDateFormatted
+        blood_type: agent.blood_type || ''
       });
       setAvatarUrl(agent.avatar_url || null);
     }
@@ -89,6 +93,9 @@ export default function AgentProfileEdit() {
     setIsSaving(true);
     
     try {
+      // Format birth_date for database (YYYY-MM-DD)
+      const birthDateForDb = birthDate ? format(birthDate, 'yyyy-MM-dd') : null;
+      
       const { error } = await (supabase as any)
         .from('agents')
         .update({
@@ -96,7 +103,7 @@ export default function AgentProfileEdit() {
           email: formData.email || null,
           address: formData.address || null,
           blood_type: formData.blood_type || null,
-          birth_date: formData.birth_date || null
+          birth_date: birthDateForDb
         })
         .eq('id', agent.id);
 
@@ -281,19 +288,48 @@ export default function AgentProfileEdit() {
                 />
               </div>
 
-              {/* Birth Date */}
+              {/* Birth Date - Professional DatePicker */}
               <div className="space-y-2">
-                <Label htmlFor="birth_date" className="text-slate-300 flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-pink-500" />
+                <Label className="text-slate-300 flex items-center gap-2">
+                  <Cake className="h-4 w-4 text-pink-500" />
                   Data de Nascimento
                 </Label>
-                <Input
-                  id="birth_date"
-                  type="date"
-                  value={formData.birth_date}
-                  onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
-                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal h-12 bg-slate-900/50 border-slate-600 hover:bg-slate-800/70 hover:border-slate-500",
+                        !birthDate && "text-slate-500"
+                      )}
+                    >
+                      <CalendarIcon className="mr-3 h-5 w-5 text-pink-500" />
+                      {birthDate ? (
+                        <span className="text-white font-medium">
+                          {format(birthDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                        </span>
+                      ) : (
+                        <span>Selecione sua data de nascimento</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-600" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={birthDate}
+                      onSelect={setBirthDate}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1940-01-01")
+                      }
+                      defaultMonth={birthDate || new Date(1990, 0, 1)}
+                      captionLayout="dropdown-buttons"
+                      fromYear={1940}
+                      toYear={new Date().getFullYear()}
+                      locale={ptBR}
+                      className="rounded-md pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
                 <p className="text-xs text-slate-500">
                   Usado para aniversários e alertas de equipe
                 </p>
