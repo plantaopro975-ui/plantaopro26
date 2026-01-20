@@ -617,7 +617,7 @@ export default function Index() {
         type: 'auth',
       });
     } else {
-      // Save credentials if enabled
+      // Save credentials if enabled and update last login time
       if (saveCpfEnabled) {
         const { data: agentData } = await supabase
           .from('agents')
@@ -626,6 +626,8 @@ export default function Index() {
           .single();
         saveCredential(cleanCpf, agentData?.name, savePasswordEnabled ? loginPassword : undefined);
       }
+      // Always update last login time for quick login feature
+      updateLastLogin(cleanCpf);
       
       // Enroll biometric if enabled and available
       if (enableBiometric && isBiometricAvailable) {
