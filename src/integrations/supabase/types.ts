@@ -49,6 +49,62 @@ export type Database = {
           },
         ]
       }
+      admin_announcements: {
+        Row: {
+          content: string | null
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          priority: string
+          starts_at: string
+          target_team: string | null
+          target_type: string
+          target_unit_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          priority?: string
+          starts_at?: string
+          target_team?: string | null
+          target_type?: string
+          target_unit_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          priority?: string
+          starts_at?: string
+          target_team?: string | null
+          target_type?: string
+          target_unit_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_announcements_target_unit_id_fkey"
+            columns: ["target_unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_events: {
         Row: {
           agent_id: string

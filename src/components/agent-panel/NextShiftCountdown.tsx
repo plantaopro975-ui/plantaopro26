@@ -2,11 +2,13 @@ import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, parseISO, differenceInDays, differenceInHours, isToday, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Calendar, Clock, Zap, AlertTriangle, Palmtree, Wallet, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, Zap, AlertTriangle, Palmtree, Wallet, TrendingUp, ChevronLeft, ChevronRight, Megaphone, Bell, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NextShiftCountdownProps {
   agentId: string;
+  agentUnitId?: string | null;
+  agentTeam?: string | null;
   className?: string;
 }
 
@@ -23,9 +25,16 @@ interface AgentLeave {
   end_date: string;
 }
 
+interface AdminAnnouncement {
+  id: string;
+  title: string;
+  content: string | null;
+  priority: string;
+}
+
 interface InfoCard {
   id: string;
-  type: 'shift' | 'leave' | 'bh' | 'bh_value';
+  type: 'shift' | 'leave' | 'bh' | 'bh_value' | 'announcement';
   priority: number;
   icon: React.ReactNode;
   title: string;
@@ -37,9 +46,10 @@ interface InfoCard {
   animate?: boolean;
 }
 
-export function NextShiftCountdown({ agentId, className }: NextShiftCountdownProps) {
+export function NextShiftCountdown({ agentId, agentUnitId, agentTeam, className }: NextShiftCountdownProps) {
   const [nextShift, setNextShift] = useState<NextShift | null>(null);
   const [todayLeave, setTodayLeave] = useState<AgentLeave | null>(null);
+  const [announcements, setAnnouncements] = useState<AdminAnnouncement[]>([]);
   const [bhBalance, setBhBalance] = useState<number>(0);
   const [bhValue, setBhValue] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,8 +62,8 @@ export function NextShiftCountdown({ agentId, className }: NextShiftCountdownPro
       try {
         const today = format(new Date(), 'yyyy-MM-dd');
         
-        // Fetch next shift, leaves, and BH in parallel
-        const [shiftResult, leaveResult, bhResult, agentResult] = await Promise.all([
+        // Fetch next shift, leaves, BH, and announcements in parallel
+        const [shiftResult, leaveResult, bhResult, agentResult, announcementsResult] = await Promise.all([
           supabase
             .from('agent_shifts')
             .select('id, shift_date, start_time')
@@ -78,7 +88,16 @@ export function NextShiftCountdown({ agentId, className }: NextShiftCountdownPro
             .from('agents')
             .select('bh_hourly_rate')
             .eq('id', agentId)
-            .single()
+            .single(),
+          supabase
+            .from('admin_announcements')
+            .select('id, title, content, priority')
+            .eq('is_active', true)
+            .lte('starts_at', new Date().toISOString())
+            .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+            .order('priority', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(5)
         ]);
 
         if (shiftResult.data) {
@@ -87,6 +106,11 @@ export function NextShiftCountdown({ agentId, className }: NextShiftCountdownPro
 
         if (leaveResult.data) {
           setTodayLeave(leaveResult.data as AgentLeave);
+        }
+
+        // Filter announcements by target
+        if (announcementsResult.data) {
+          setAnnouncements(announcementsResult.data as AdminAnnouncement[]);
         }
 
         const balance = bhResult.data || 0;
@@ -103,7 +127,7 @@ export function NextShiftCountdown({ agentId, className }: NextShiftCountdownPro
     };
 
     fetchData();
-  }, [agentId]);
+  }, [agentId, agentUnitId, agentTeam]);
 
   const infoCards = useMemo(() => {
     const cards: InfoCard[] = [];
@@ -198,9 +222,63 @@ export function NextShiftCountdown({ agentId, className }: NextShiftCountdownPro
       });
     }
 
+    // Admin Announcements
+    announcements.forEach((announcement, index) => {
+      const priorityConfig: Record<string, { priority: number; icon: React.ReactNode; colorClass: string; bgClass: string; borderClass: string; animate: boolean }> = {
+        urgent: {
+          priority: 0, // Highest priority
+          icon: <AlertCircle className="h-5 w-5 text-white" />,
+          colorClass: 'text-red-400',
+          bgClass: 'bg-gradient-to-br from-red-500 to-rose-600',
+          borderClass: 'border-red-500/60 bg-gradient-to-r from-red-500/20 via-rose-500/15 to-red-500/20 shadow-lg shadow-red-500/20',
+          animate: true,
+        },
+        high: {
+          priority: 3,
+          icon: <Bell className="h-5 w-5 text-white" />,
+          colorClass: 'text-amber-400',
+          bgClass: 'bg-gradient-to-br from-amber-500 to-orange-600',
+          borderClass: 'border-amber-500/50 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 shadow-lg shadow-amber-500/15',
+          animate: true,
+        },
+        normal: {
+          priority: 15,
+          icon: <Megaphone className="h-5 w-5 text-white" />,
+          colorClass: 'text-blue-400',
+          bgClass: 'bg-gradient-to-br from-blue-500 to-indigo-600',
+          borderClass: 'border-blue-500/50 bg-gradient-to-r from-blue-500/15 via-indigo-500/10 to-blue-500/15',
+          animate: false,
+        },
+        low: {
+          priority: 25,
+          icon: <Megaphone className="h-5 w-5 text-white" />,
+          colorClass: 'text-slate-400',
+          bgClass: 'bg-gradient-to-br from-slate-500 to-slate-600',
+          borderClass: 'border-slate-500/50 bg-gradient-to-r from-slate-500/15 via-slate-600/10 to-slate-500/15',
+          animate: false,
+        },
+      };
+
+      const config = priorityConfig[announcement.priority] || priorityConfig.normal;
+
+      cards.push({
+        id: `announcement-${announcement.id}`,
+        type: 'announcement',
+        priority: config.priority + (index * 0.1), // Slight offset for multiple announcements
+        icon: config.icon,
+        title: announcement.priority === 'urgent' ? '🚨 AVISO URGENTE' : announcement.priority === 'high' ? '⚠️ AVISO IMPORTANTE' : 'AVISO',
+        value: announcement.title,
+        subtitle: announcement.content || '',
+        colorClass: config.colorClass,
+        bgClass: config.bgClass,
+        borderClass: config.borderClass,
+        animate: config.animate,
+      });
+    });
+
     // Sort by priority
     return cards.sort((a, b) => a.priority - b.priority);
-  }, [nextShift, todayLeave, bhBalance, bhValue]);
+  }, [nextShift, todayLeave, bhBalance, bhValue, announcements]);
 
   // Auto-rotate cards
   useEffect(() => {
