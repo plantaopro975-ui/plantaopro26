@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +24,9 @@ interface Advertisement {
   frequency_type: string | null;
   frequency_limit: number | null;
   priority: number;
+  target_teams: string[] | null;
+  target_unit_ids: string[] | null;
+  target_user_types: string[] | null;
 }
 
 interface AdViewState {
@@ -33,6 +37,7 @@ interface AdViewState {
 
 export function AdDisplaySystem() {
   const { user } = useAuth();
+  const { agent } = useAgentProfile();
   const [ads, setAds] = useState<Advertisement[]>([]);
   const [currentAd, setCurrentAd] = useState<Advertisement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -43,11 +48,11 @@ export function AdDisplaySystem() {
   const [bannerAds, setBannerAds] = useState<Advertisement[]>([]);
 
   useEffect(() => {
-    if (user) {
+    if (user && agent) {
       fetchActiveAds();
       loadViewedAdsFromStorage();
     }
-  }, [user]);
+  }, [user, agent]);
 
   const loadViewedAdsFromStorage = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -56,7 +61,6 @@ export function AdDisplaySystem() {
     if (stored) {
       setViewedAds(new Set(JSON.parse(stored)));
     }
-    // Clean old entries
     Object.keys(localStorage).forEach(key => {
       if (key.startsWith('viewed_ads_') && key !== storedKey) {
         localStorage.removeItem(key);
@@ -71,6 +75,37 @@ export function AdDisplaySystem() {
     newSet.add(adId);
     setViewedAds(newSet);
     localStorage.setItem(storedKey, JSON.stringify([...newSet]));
+  };
+
+  const isAdTargetedToAgent = (ad: Advertisement): boolean => {
+    if (!agent) return false;
+
+    // Check user type targeting
+    const userTypes = ad.target_user_types || ['all'];
+    if (!userTypes.includes('all')) {
+      const agentRole = agent.role || 'agent';
+      if (!userTypes.includes(agentRole)) {
+        return false;
+      }
+    }
+
+    // Check team targeting
+    const targetTeams = ad.target_teams || [];
+    if (targetTeams.length > 0 && agent.team) {
+      if (!targetTeams.includes(agent.team)) {
+        return false;
+      }
+    }
+
+    // Check unit targeting
+    const targetUnits = ad.target_unit_ids || [];
+    if (targetUnits.length > 0 && agent.unit_id) {
+      if (!targetUnits.includes(agent.unit_id)) {
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const fetchActiveAds = async () => {
@@ -90,17 +125,17 @@ export function AdDisplaySystem() {
         
         if (startsAt && startsAt > now) return false;
         if (expiresAt && expiresAt < now) return false;
-        return true;
-      });
+        
+        // Apply segmentation filter
+        return isAdTargetedToAgent(ad as Advertisement);
+      }) as Advertisement[];
 
-      // Separate banner ads and popup/fullscreen ads
       const banners = activeAds.filter(ad => ad.ad_type === 'banner' || ad.ad_type === 'card');
       const popups = activeAds.filter(ad => ad.ad_type === 'popup' || ad.ad_type === 'fullscreen' || ad.ad_type === 'video');
 
       setBannerAds(banners);
       setAds(popups);
 
-      // Show first unviewed popup ad
       const unviewedAd = popups.find(ad => !viewedAds.has(ad.id));
       if (unviewedAd) {
         showAd(unviewedAd);
