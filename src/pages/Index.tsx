@@ -163,9 +163,6 @@ export default function Index() {
     formData.password
   );
 
-  // Auto-login on page load if single valid credential exists
-  const [autoLoginTriggered, setAutoLoginTriggered] = useState(false);
-  
   useEffect(() => {
     if (!isLoading && user) {
       // Agents go to agent-panel, admins go to dashboard
@@ -173,33 +170,6 @@ export default function Index() {
       navigate('/agent-panel', { replace: true });
     }
   }, [user, isLoading, navigate]);
-
-  // Auto-login when page loads and there's a valid quick login credential
-  useEffect(() => {
-    if (isLoading || user || autoLoginTriggered) return;
-    
-    const savedCreds = getSavedCredentials();
-    const validCreds = savedCreds.filter(c => canQuickLogin(c));
-    
-    // Auto-login only if there's exactly ONE valid credential
-    if (validCreds.length === 1 && validCreds[0].password) {
-      setAutoLoginTriggered(true);
-      
-      // Small delay to show UI first
-      const timer = setTimeout(() => {
-        const password = atob(validCreds[0].password!);
-        let decodedPassword: string;
-        try {
-          decodedPassword = decodeURIComponent(password);
-        } catch {
-          decodedPassword = password;
-        }
-        handleQuickLogin(validCreds[0].cpf, decodedPassword);
-      }, 300);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, user, autoLoginTriggered]);
 
   useEffect(() => {
     fetchUnits();
@@ -971,19 +941,12 @@ export default function Index() {
         {/* Quick Login Cards - Shows when credentials are saved */}
         {getSavedCredentials().length > 0 && (
           <div className="w-full max-w-md mb-3 sm:mb-4 px-2 animate-fade-in" style={{ animationDelay: '300ms' }}>
-            {autoLoginTriggered && quickLoginLoadingCpf ? (
-              <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-950/80 to-emerald-900/50 border-2 border-emerald-500/40">
-                <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
-                <span className="text-sm font-medium text-emerald-300">Entrando automaticamente...</span>
-              </div>
-            ) : (
-              <QuickLoginCards
-                onQuickLogin={handleQuickLogin}
-                onSelectCredential={handleQuickLoginSelect}
-                isLoading={!!quickLoginLoadingCpf}
-                loadingCpf={quickLoginLoadingCpf || undefined}
-              />
-            )}
+            <QuickLoginCards
+              onQuickLogin={handleQuickLogin}
+              onSelectCredential={handleQuickLoginSelect}
+              isLoading={!!quickLoginLoadingCpf}
+              loadingCpf={quickLoginLoadingCpf || undefined}
+            />
           </div>
         )}
         
