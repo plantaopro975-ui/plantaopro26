@@ -16,6 +16,7 @@ import { SavedCredentials, saveCredential, getAutoLoginCredential } from '@/comp
 import logoShield from '@/assets/logo-shield.png';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { checkOfflineLicense, isOnline } from '@/hooks/useOfflineLicenseCache';
+import { setMasterToken } from '@/lib/masterSession';
 
 interface Unit {
   id: string;
@@ -525,29 +526,29 @@ export default function Auth() {
       // Guarantee separation: master login cannot share a normal user session
       await supabase.auth.signOut();
 
-      const { data, error } = await supabase.rpc('verify_master_admin', {
-        p_username: masterUsername,
-        p_password: masterPassword,
+      const res = await fetch('/functions/v1/master-login', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ username: masterUsername, password: masterPassword }),
       });
-      
-      if (error) throw error;
-      
-      if (data) {
-        setMasterSession(masterUsername);
-        toast({
-          title: 'Bem-vindo, Administrador!',
-          description: 'Acesso master autorizado.',
-        });
-        navigate('/master');
-      } else {
-        toast({
-          title: 'Acesso negado',
-          description: 'Usuário ou senha incorretos.',
-          variant: 'destructive',
-        });
+
+      const json = await res.json().catch(() => null);
+
+      if (!res.ok || !json?.success || !json?.data?.token) {
+        throw new Error(json?.error || 'Usuário ou senha incorretos.');
       }
+
+      setMasterToken(json.data.token);
+      setMasterSession(masterUsername);
+
+      toast({
+        title: 'Bem-vindo, Administrador!',
+        description: 'Acesso master autorizado.',
+      });
+      navigate('/master');
     } catch (error) {
       console.error('Master login error:', error);
+      setMasterToken(null);
       toast({
         title: 'Erro',
         description: 'Falha ao verificar credenciais.',

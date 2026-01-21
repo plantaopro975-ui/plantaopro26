@@ -69,6 +69,8 @@ import { UnitsManagementCard } from '@/components/admin/UnitsManagementCard';
 import { AgentAccessControl } from '@/components/admin/AgentAccessControl';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
+import { getMasterToken } from '@/lib/masterSession';
+import { masterClient } from '@/lib/masterClient';
 
 interface UserWithRole {
   id: string;
@@ -282,23 +284,27 @@ export default function Master() {
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
-      const { data: existingRole } = await supabase
-        .from('user_roles')
-        .select('id')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (existingRole) {
-        const { error } = await supabase
-          .from('user_roles')
-          .update({ role: newRole as 'admin' | 'user' | 'master' })
-          .eq('user_id', userId);
-        if (error) throw error;
+      if (getMasterToken()) {
+        await masterClient.setRole({ userId, role: newRole as any });
       } else {
-        const { error } = await supabase
+        const { data: existingRole } = await supabase
           .from('user_roles')
-          .insert([{ user_id: userId, role: newRole as 'admin' | 'user' | 'master' }]);
-        if (error) throw error;
+          .select('id')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (existingRole) {
+          const { error } = await supabase
+            .from('user_roles')
+            .update({ role: newRole as 'admin' | 'user' | 'master' })
+            .eq('user_id', userId);
+          if (error) throw error;
+        } else {
+          const { error } = await supabase
+            .from('user_roles')
+            .insert([{ user_id: userId, role: newRole as 'admin' | 'user' | 'master' }]);
+          if (error) throw error;
+        }
       }
 
       toast({ title: 'Sucesso', description: 'Função do usuário atualizada.' });
@@ -329,33 +335,41 @@ export default function Master() {
     
     setCreatingAgent(true);
     try {
-      const agentEmail = `${cleanCpf}@agent.plantaopro.com`;
-      
-      // Create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: agentEmail,
-        password: newAgentData.password,
-        options: {
-          data: { full_name: newAgentData.name }
-        }
-      });
-      
-      if (authError) throw authError;
-      
-      // Create agent record
-      const { error: agentError } = await supabase.from('agents').insert({
-        name: newAgentData.name.toUpperCase(),
-        cpf: cleanCpf,
-        matricula: newAgentData.matricula || null,
-        phone: newAgentData.phone || null,
-        team: newAgentData.team,
-        unit_id: newAgentData.unit_id,
-        is_active: true,
-        license_status: 'active',
-        license_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      });
-      
-      if (agentError) throw agentError;
+      if (getMasterToken()) {
+        await masterClient.createAgent({
+          name: newAgentData.name,
+          cpf: cleanCpf,
+          password: newAgentData.password,
+          unit_id: newAgentData.unit_id,
+          team: newAgentData.team,
+          matricula: newAgentData.matricula || null,
+          phone: newAgentData.phone || null,
+        });
+      } else {
+        // Fallback: authenticated admins can still use normal flow (may switch session in some providers)
+        const agentEmail = `${cleanCpf}@agent.plantaopro.com`;
+        const { error: authError } = await supabase.auth.signUp({
+          email: agentEmail,
+          password: newAgentData.password,
+          options: {
+            data: { full_name: newAgentData.name }
+          }
+        });
+        if (authError) throw authError;
+
+        const { error: agentError } = await supabase.from('agents').insert({
+          name: newAgentData.name.toUpperCase(),
+          cpf: cleanCpf,
+          matricula: newAgentData.matricula || null,
+          phone: newAgentData.phone || null,
+          team: newAgentData.team,
+          unit_id: newAgentData.unit_id,
+          is_active: true,
+          license_status: 'active',
+          license_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        });
+        if (agentError) throw agentError;
+      }
       
       toast({ title: 'Sucesso', description: 'Agente criado com sucesso!' });
       setNewAgentOpen(false);
