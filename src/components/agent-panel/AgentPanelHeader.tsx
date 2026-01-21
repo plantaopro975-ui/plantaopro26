@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
 import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
-import { Clock, Droplet, LogOut, Home, Gift, Shield, Building2, Bell } from 'lucide-react';
+import { Clock, Droplet, LogOut, Gift, Shield, Building2, Bell, Settings, RefreshCw } from 'lucide-react';
 
 interface Agent {
   id: string;
@@ -220,20 +220,20 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
               </TooltipProvider>
             )}
             
-            {/* Home Button - Spectacular */}
+            {/* Refresh Button - Useful action */}
             <TooltipProvider>
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>
                   <button
                     type="button"
-                    onClick={() => navigate('/')}
-                    className="p-2.5 rounded-xl bg-gradient-to-br from-slate-700/80 to-slate-800/80 border-2 border-slate-600/50 hover:border-slate-500/70 text-slate-400 hover:text-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 group"
+                    onClick={() => window.location.reload()}
+                    className="p-2.5 rounded-xl bg-gradient-to-br from-slate-700/80 to-slate-800/80 border-2 border-slate-600/50 hover:border-emerald-500/50 text-slate-400 hover:text-emerald-400 shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 hover:scale-105 active:scale-95 group"
                   >
-                    <Home className="h-4 w-4 group-hover:-translate-y-0.5 transition-transform duration-300" />
+                    <RefreshCw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="bg-slate-800 border-slate-600 text-xs font-medium">
-                  🏠 Tela Inicial
+                  🔄 Atualizar Dados
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
