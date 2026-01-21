@@ -995,15 +995,15 @@ export default function Index() {
                 className="w-48 bg-slate-900/95 backdrop-blur-xl border-2 border-slate-600/50 shadow-2xl shadow-black/50 z-[100]"
               >
                 <DropdownMenuItem 
-                  onClick={() => navigate('/auth')}
+                  onClick={() => setShowMasterLogin(true)}
                   className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer text-blue-400 hover:text-blue-300 hover:bg-blue-500/15 focus:bg-blue-500/15 focus:text-blue-300"
                 >
                   <div className="p-1.5 rounded-md bg-blue-500/20 border border-blue-500/30">
-                    <Mail className="h-3.5 w-3.5" />
+                    <KeyRound className="h-3.5 w-3.5" />
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm">Admin</span>
-                    <span className="text-[10px] text-slate-400">Login por e-mail</span>
+                    <span className="text-[10px] text-slate-400">Painel administrativo</span>
                   </div>
                 </DropdownMenuItem>
                 
