@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { getMasterToken } from '@/lib/masterSession';
+import { getMasterToken, setMasterToken } from '@/lib/masterSession';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
@@ -60,6 +60,10 @@ async function callAdminBackend<T>(action: AdminAction, payload: Record<string, 
   }
 
   if (!res.ok) {
+    // If master token is invalid/expired, clear it to force a fresh login.
+    if (res.status === 401 && masterToken && (json?.error?.toLowerCase?.().includes('sessão master') || json?.error?.toLowerCase?.().includes('sessao master'))) {
+      setMasterToken(null);
+    }
     throw new AdminClientError(json?.error || `Falha na operação (${res.status}).`, res.status);
   }
 

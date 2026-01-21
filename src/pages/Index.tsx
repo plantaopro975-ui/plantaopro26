@@ -51,6 +51,7 @@ import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDial
 import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
 import { QuickLoginCards } from '@/components/QuickLoginCards';
 import { useTheme } from '@/contexts/ThemeContext';
+import { setMasterToken } from '@/lib/masterSession';
 import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
 import { ThemedTeamCard } from '@/components/ThemedTeamCard';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
@@ -670,54 +671,37 @@ export default function Index() {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.rpc('verify_master_admin', {
-        p_username: masterUsername,
-        p_password: masterPassword,
+      // Guarantee separation: master login cannot share a normal user session
+      await supabase.auth.signOut();
+
+      const res = await fetch('/functions/v1/master-login', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ username: masterUsername, password: masterPassword }),
       });
 
-      if (error) throw error;
+      const json = await res.json().catch(() => null);
 
-      if (data) {
-        // Use a deterministic UUID based on username for consistency
-        const masterUUID = '00000000-0000-0000-0000-000000000001';
-        const token = crypto.randomUUID();
-        const expiresAt = new Date();
-        expiresAt.setHours(expiresAt.getHours() + 8);
-
-        // Try to insert session token, ignore error if RLS blocks it
-        try {
-          await supabase.from('master_session_tokens').insert({
-            user_id: masterUUID,
-            token,
-            expires_at: expiresAt.toISOString(),
-          });
-        } catch (tokenError) {
-          console.log('Token storage skipped (RLS policy)');
-        }
-
-        setMasterSession(masterUsername);
-        localStorage.setItem('master_token', token);
-        localStorage.setItem('master_user', masterUsername);
-        
-        toast({
-          title: 'Acesso Master',
-          description: 'Bem-vindo ao painel de controle.',
-        });
-
-        setShowMasterLogin(false);
-        navigate('/master', { replace: true });
-      } else {
-        toast({
-          title: 'Acesso Negado',
-          description: 'Credenciais inválidas.',
-          variant: 'destructive',
-        });
+      if (!res.ok || !json?.success || !json?.data?.token) {
+        throw new Error(json?.error || 'Credenciais inválidas.');
       }
+
+      setMasterToken(json.data.token);
+      setMasterSession(masterUsername);
+
+      toast({
+        title: 'Acesso Master',
+        description: 'Bem-vindo ao painel de controle.',
+      });
+
+      setShowMasterLogin(false);
+      navigate('/master', { replace: true });
     } catch (error: any) {
       console.error('Master login error:', error);
+      setMasterToken(null);
       toast({
         title: 'Erro',
-        description: 'Não foi possível autenticar.',
+        description: error?.message || 'Não foi possível autenticar.',
         variant: 'destructive',
       });
     }
