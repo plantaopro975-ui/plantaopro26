@@ -78,7 +78,7 @@ export function useLicenseCheck(config: LicenseCheckConfig): LicenseCheckResult 
     } catch (error) {
       console.error('[LicenseCheck] Logout error:', error);
     } finally {
-      navigate('/auth', { replace: true });
+      navigate('/', { replace: true });
     }
   }, [navigate]);
 

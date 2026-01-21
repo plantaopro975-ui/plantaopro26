@@ -220,7 +220,7 @@ export default function AgentPanel() {
               variant="destructive"
               onClick={async () => {
                 await supabase.auth.signOut();
-                navigate('/auth');
+                navigate('/');
               }}
             >
               Sair
