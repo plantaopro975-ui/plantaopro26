@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { adminClient } from '@/lib/adminClient';
 import {
   Dialog,
   DialogContent,
@@ -125,9 +126,9 @@ export function EditUnitDialog({ unit, open, onOpenChange, onSuccess }: EditUnit
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('units')
-        .update({
+      await adminClient.updateUnit({
+        unitId: unit.id,
+        patch: {
           name: formData.name.toUpperCase().trim(),
           municipality: formData.municipality.toUpperCase().trim(),
           director_name: formData.director_name.toUpperCase().trim() || null,
@@ -138,10 +139,8 @@ export function EditUnitDialog({ unit, open, onOpenChange, onSuccess }: EditUnit
           bh_limit_1st_default: parseInt(formData.bh_limit_1st_default) || 70,
           bh_limit_2nd_default: parseInt(formData.bh_limit_2nd_default) || 70,
           bh_hourly_rate_default: parseFloat(formData.bh_hourly_rate_default) || 15.75,
-        })
-        .eq('id', unit.id);
-
-      if (error) throw error;
+        },
+      });
 
       toast({
         title: 'Sucesso',
@@ -149,17 +148,18 @@ export function EditUnitDialog({ unit, open, onOpenChange, onSuccess }: EditUnit
       });
       onSuccess();
       onOpenChange(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating unit:', error);
       toast({
         title: 'Erro',
-        description: 'Não foi possível atualizar os dados.',
+        description: error.message || 'Não foi possível atualizar os dados.',
         variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   const agentsByTeam = agents.reduce((acc, agent) => {
     const team = agent.team || 'SEM EQUIPE';

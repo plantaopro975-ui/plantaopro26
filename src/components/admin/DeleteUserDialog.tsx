@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { deleteAgentCompletely } from '@/lib/deleteAgent';
+import { adminClient } from '@/lib/adminClient';
 import { useAuth } from '@/contexts/AuthContext';
+import { getMasterToken } from '@/lib/masterSession';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,7 +30,7 @@ export function DeleteUserDialog({ userId, userName, onSuccess }: DeleteUserDial
   const { user, userRole, masterSession } = useAuth();
 
   const isSelfDeletion = user?.id === userId;
-  const isAdmin = userRole === 'admin' || userRole === 'master' || !!masterSession;
+  const isAdmin = userRole === 'admin' || userRole === 'master' || !!masterSession || !!getMasterToken();
   const cannotDelete = isSelfDeletion && isAdmin;
 
   const handleDelete = async () => {
@@ -45,8 +46,7 @@ export function DeleteUserDialog({ userId, userName, onSuccess }: DeleteUserDial
     setIsDeleting(true);
 
     try {
-      const result = await deleteAgentCompletely(userId);
-      if (!result.success) console.error('Error:', result.error);
+      await adminClient.deleteAgent({ agentId: userId });
 
       toast({
         title: 'Usuário excluído',

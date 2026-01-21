@@ -69,8 +69,8 @@ import { UnitsManagementCard } from '@/components/admin/UnitsManagementCard';
 import { AgentAccessControl } from '@/components/admin/AgentAccessControl';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
-import { getMasterToken } from '@/lib/masterSession';
-import { masterClient } from '@/lib/masterClient';
+import { getMasterToken, setMasterToken } from '@/lib/masterSession';
+import { adminClient } from '@/lib/adminClient';
 
 interface UserWithRole {
   id: string;
@@ -284,38 +284,17 @@ export default function Master() {
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
-      if (getMasterToken()) {
-        await masterClient.setRole({ userId, role: newRole as any });
-      } else {
-        const { data: existingRole } = await supabase
-          .from('user_roles')
-          .select('id')
-          .eq('user_id', userId)
-          .maybeSingle();
-
-        if (existingRole) {
-          const { error } = await supabase
-            .from('user_roles')
-            .update({ role: newRole as 'admin' | 'user' | 'master' })
-            .eq('user_id', userId);
-          if (error) throw error;
-        } else {
-          const { error } = await supabase
-            .from('user_roles')
-            .insert([{ user_id: userId, role: newRole as 'admin' | 'user' | 'master' }]);
-          if (error) throw error;
-        }
-      }
-
+      await adminClient.setRole({ userId, role: newRole as any });
       toast({ title: 'Sucesso', description: 'Função do usuário atualizada.' });
       setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating role:', error);
-      toast({ title: 'Erro', description: 'Não foi possível atualizar a função.', variant: 'destructive' });
+      toast({ title: 'Erro', description: error.message || 'Não foi possível atualizar a função.', variant: 'destructive' });
     }
   };
 
   const handleLogout = () => {
+    setMasterToken(null);
     setMasterSession(null);
     navigate('/auth');
   };
@@ -335,41 +314,15 @@ export default function Master() {
     
     setCreatingAgent(true);
     try {
-      if (getMasterToken()) {
-        await masterClient.createAgent({
-          name: newAgentData.name,
-          cpf: cleanCpf,
-          password: newAgentData.password,
-          unit_id: newAgentData.unit_id,
-          team: newAgentData.team,
-          matricula: newAgentData.matricula || null,
-          phone: newAgentData.phone || null,
-        });
-      } else {
-        // Fallback: authenticated admins can still use normal flow (may switch session in some providers)
-        const agentEmail = `${cleanCpf}@agent.plantaopro.com`;
-        const { error: authError } = await supabase.auth.signUp({
-          email: agentEmail,
-          password: newAgentData.password,
-          options: {
-            data: { full_name: newAgentData.name }
-          }
-        });
-        if (authError) throw authError;
-
-        const { error: agentError } = await supabase.from('agents').insert({
-          name: newAgentData.name.toUpperCase(),
-          cpf: cleanCpf,
-          matricula: newAgentData.matricula || null,
-          phone: newAgentData.phone || null,
-          team: newAgentData.team,
-          unit_id: newAgentData.unit_id,
-          is_active: true,
-          license_status: 'active',
-          license_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        });
-        if (agentError) throw agentError;
-      }
+      await adminClient.createAgent({
+        name: newAgentData.name,
+        cpf: cleanCpf,
+        password: newAgentData.password,
+        unit_id: newAgentData.unit_id,
+        team: newAgentData.team,
+        matricula: newAgentData.matricula || null,
+        phone: newAgentData.phone || null,
+      });
       
       toast({ title: 'Sucesso', description: 'Agente criado com sucesso!' });
       setNewAgentOpen(false);
@@ -386,21 +339,16 @@ export default function Master() {
   // Toggle agent active status
   const handleToggleAgentStatus = async (agent: Agent) => {
     try {
-      const { error } = await supabase
-        .from('agents')
-        .update({ is_active: !agent.is_active })
-        .eq('id', agent.id);
-      
-      if (error) throw error;
+      await adminClient.toggleAgentStatus({ agentId: agent.id, isActive: !agent.is_active });
       
       toast({ 
         title: 'Sucesso', 
         description: `Agente ${!agent.is_active ? 'ativado' : 'desativado'} com sucesso.` 
       });
       fetchData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error toggling agent status:', error);
-      toast({ title: 'Erro', description: 'Não foi possível alterar status.', variant: 'destructive' });
+      toast({ title: 'Erro', description: error.message || 'Não foi possível alterar status.', variant: 'destructive' });
     }
   };
   

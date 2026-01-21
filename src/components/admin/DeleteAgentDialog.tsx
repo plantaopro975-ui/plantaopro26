@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { deleteAgentCompletely } from '@/lib/deleteAgent';
+import { adminClient } from '@/lib/adminClient';
 import { useAuth } from '@/contexts/AuthContext';
+import { getMasterToken } from '@/lib/masterSession';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,7 +32,7 @@ export function DeleteAgentDialog({ agentId, agentName, onSuccess, trigger }: De
 
   // Prevent self-deletion for admins and masters
   const isSelfDeletion = user?.id === agentId;
-  const isAdmin = userRole === 'admin' || userRole === 'master' || !!masterSession;
+  const isAdmin = userRole === 'admin' || userRole === 'master' || !!masterSession || !!getMasterToken();
   const cannotDelete = isSelfDeletion && isAdmin;
 
   const handleDelete = async () => {
@@ -47,11 +48,7 @@ export function DeleteAgentDialog({ agentId, agentName, onSuccess, trigger }: De
     setIsDeleting(true);
 
     try {
-      const result = await deleteAgentCompletely(agentId);
-
-      if (!result.success) {
-        throw new Error(result.error);
-      }
+      await adminClient.deleteAgent({ agentId });
 
       toast({
         title: 'Agente excluído',

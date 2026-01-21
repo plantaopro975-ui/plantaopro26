@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { adminClient } from '@/lib/adminClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -121,16 +121,16 @@ export function UnitsManagementCard({ units, agents, onEditUnit, onRefresh }: Un
 
     setCreatingUnit(true);
     try {
-      const { error } = await supabase.from('units').insert({
-        name: newUnitData.name.toUpperCase().trim(),
-        municipality: newUnitData.municipality.toUpperCase().trim(),
-        director_name: newUnitData.director_name.toUpperCase().trim() || null,
-        coordinator_name: newUnitData.coordinator_name.toUpperCase().trim() || null,
-        phone: newUnitData.phone.trim() || null,
-        email: newUnitData.email.trim() || null,
+      await adminClient.createUnit({
+        data: {
+          name: newUnitData.name.toUpperCase().trim(),
+          municipality: newUnitData.municipality.toUpperCase().trim(),
+          director_name: newUnitData.director_name.toUpperCase().trim() || null,
+          coordinator_name: newUnitData.coordinator_name.toUpperCase().trim() || null,
+          phone: newUnitData.phone.trim() || null,
+          email: newUnitData.email.trim() || null,
+        },
       });
-
-      if (error) throw error;
 
       toast({ title: 'Sucesso', description: 'Unidade criada com sucesso!' });
       setNewUnitOpen(false);
