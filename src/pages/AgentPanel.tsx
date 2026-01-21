@@ -44,6 +44,7 @@ import { PasswordChangeRequest } from '@/components/agent-panel/PasswordChangeRe
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
 import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
+import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -389,6 +390,9 @@ export default function AgentPanel() {
               />
 
               <TabsContent value="equipe" className="space-y-3 md:space-y-4 animate-fade-in">
+                {/* Unit Summary Card */}
+                <UnitSummaryCard unitId={agent.unit_id} />
+                
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-3 md:gap-4">
                   <div className="xl:col-span-3">
                     <TeamMembersCard 
