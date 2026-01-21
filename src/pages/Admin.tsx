@@ -41,7 +41,8 @@ import {
   TrendingUp,
   AlertTriangle,
   ArrowRightLeft,
-  Wallet
+  Wallet,
+  Megaphone
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -55,6 +56,7 @@ import { toast } from 'sonner';
 import { HardDrive, Zap } from 'lucide-react';
 import { TransferApprovalPanel } from '@/components/agents/TransferApprovalPanel';
 import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
+import { AnnouncementsManager } from '@/components/admin/AnnouncementsManager';
 interface UserWithRole {
   id: string;
   email: string;
@@ -465,6 +467,10 @@ export default function Admin() {
                   <ArrowRightLeft className="h-4 w-4 mr-2" />
                   Permutas
                 </TabsTrigger>
+                <TabsTrigger value="announcements" className="data-[state=active]:bg-slate-700">
+                  <Megaphone className="h-4 w-4 mr-2" />
+                  Avisos
+                </TabsTrigger>
               </TabsList>
 
               {/* Units Tab */}
@@ -801,6 +807,11 @@ export default function Admin() {
               {/* Swaps Tab */}
               <TabsContent value="swaps" className="space-y-4">
                 <SwapManagementPanel onDataChange={fetchData} />
+              </TabsContent>
+
+              {/* Announcements Tab */}
+              <TabsContent value="announcements" className="space-y-4">
+                <AnnouncementsManager />
               </TabsContent>
             </Tabs>
             

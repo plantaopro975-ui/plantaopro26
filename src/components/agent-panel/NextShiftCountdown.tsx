@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 interface NextShiftCountdownProps {
   agentId: string;
+  agentName?: string;
   agentUnitId?: string | null;
   agentTeam?: string | null;
   className?: string;
@@ -46,7 +47,7 @@ interface InfoCard {
   animate?: boolean;
 }
 
-export function NextShiftCountdown({ agentId, agentUnitId, agentTeam, className }: NextShiftCountdownProps) {
+export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam, className }: NextShiftCountdownProps) {
   const [nextShift, setNextShift] = useState<NextShift | null>(null);
   const [todayLeave, setTodayLeave] = useState<AgentLeave | null>(null);
   const [announcements, setAnnouncements] = useState<AdminAnnouncement[]>([]);
@@ -54,6 +55,9 @@ export function NextShiftCountdown({ agentId, agentUnitId, agentTeam, className 
   const [bhValue, setBhValue] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
+  
+  // Get first name for display
+  const firstName = agentName?.split(' ')[0] || '';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -318,22 +322,31 @@ export function NextShiftCountdown({ agentId, agentUnitId, agentTeam, className 
       {activeCard.animate && (
         <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5 animate-pulse" />
       )}
+      
+      {/* Floating name badge - Professional style */}
+      {firstName && (
+        <div className="absolute top-1 right-2 z-10">
+          <span className="text-[9px] font-bold tracking-widest text-amber-400/80 uppercase bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent px-2 py-0.5 rounded-full border border-amber-500/20">
+            {firstName}
+          </span>
+        </div>
+      )}
 
       <div className="relative flex items-center gap-3">
         {/* Navigation Left */}
         {showNavigation && (
           <button
             onClick={goToPrev}
-            className="flex-shrink-0 p-1 rounded-md hover:bg-white/10 transition-colors"
+            className="flex-shrink-0 p-1.5 rounded-lg bg-gradient-to-br from-slate-700/80 to-slate-800/80 hover:from-slate-600/80 hover:to-slate-700/80 border border-slate-600/50 shadow-lg transition-all duration-200 hover:scale-110 active:scale-95"
           >
-            <ChevronLeft className="h-4 w-4 text-slate-400" />
+            <ChevronLeft className="h-4 w-4 text-amber-400" />
           </button>
         )}
 
         {/* Icon with animation */}
         <div
           className={cn(
-            "flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center shadow-lg transition-all duration-500",
+            "flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center shadow-xl transition-all duration-500 border border-white/20",
             activeCard.bgClass
           )}
         >
@@ -369,18 +382,18 @@ export function NextShiftCountdown({ agentId, agentUnitId, agentTeam, className 
           </p>
         </div>
 
-        {/* Dots indicator */}
+        {/* Dots indicator - Professional style */}
         {showNavigation && (
-          <div className="flex-shrink-0 flex flex-col items-center gap-1">
+          <div className="flex-shrink-0 flex flex-col items-center gap-1.5 p-1.5 rounded-lg bg-slate-800/50 border border-slate-700/50">
             {infoCards.map((card, idx) => (
               <button
                 key={card.id}
                 onClick={() => setActiveIndex(idx)}
                 className={cn(
-                  "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                  "w-2 h-2 rounded-full transition-all duration-300 shadow-sm",
                   idx === activeIndex 
-                    ? "bg-white scale-125" 
-                    : "bg-slate-500/50 hover:bg-slate-400/50"
+                    ? "bg-gradient-to-br from-amber-400 to-orange-500 scale-125 shadow-amber-500/50" 
+                    : "bg-slate-600 hover:bg-slate-500"
                 )}
               />
             ))}
@@ -391,9 +404,9 @@ export function NextShiftCountdown({ agentId, agentUnitId, agentTeam, className 
         {showNavigation && (
           <button
             onClick={goToNext}
-            className="flex-shrink-0 p-1 rounded-md hover:bg-white/10 transition-colors"
+            className="flex-shrink-0 p-1.5 rounded-lg bg-gradient-to-br from-slate-700/80 to-slate-800/80 hover:from-slate-600/80 hover:to-slate-700/80 border border-slate-600/50 shadow-lg transition-all duration-200 hover:scale-110 active:scale-95"
           >
-            <ChevronRight className="h-4 w-4 text-slate-400" />
+            <ChevronRight className="h-4 w-4 text-amber-400" />
           </button>
         )}
       </div>
