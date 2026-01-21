@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,9 +9,17 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Crown, Shield, User, Droplet, Phone, MapPin, MessageCircle, Mail, Cake, X } from 'lucide-react';
+import { Crown, Shield, User, Droplet, Phone, MapPin, MessageCircle, Mail, Cake, X, ChevronDown, ChevronUp, Send } from 'lucide-react';
 import { format, parseISO, differenceInYears } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+
+const quickMessages = [
+  { id: 'cover', label: 'Cobrir plantão', message: 'Olá! Preciso de você para cobrir um plantão. Pode me ajudar?' },
+  { id: 'swap', label: 'Trocar plantão', message: 'Olá! Gostaria de propor uma troca de plantão. Podemos conversar?' },
+  { id: 'urgent', label: 'Urgente', message: '🚨 URGENTE: Preciso falar com você imediatamente sobre o serviço.' },
+  { id: 'info', label: 'Pedir informação', message: 'Olá! Preciso de uma informação sobre o serviço. Pode me ajudar?' },
+  { id: 'thanks', label: 'Agradecer', message: 'Muito obrigado pela ajuda! 👏' },
+];
 
 interface TeamMember {
   id: string;
@@ -34,6 +43,8 @@ interface TeamMemberDialogProps {
 }
 
 export function TeamMemberDialog({ member, open, onOpenChange, isCurrentUser }: TeamMemberDialogProps) {
+  const [showQuickMessages, setShowQuickMessages] = useState(false);
+  
   if (!member) return null;
 
   const getRoleIcon = (role: string | null) => {
@@ -162,26 +173,69 @@ export function TeamMemberDialog({ member, open, onOpenChange, isCurrentUser }: 
             </div>
           )}
 
-          {/* Phone */}
+          {/* Phone & WhatsApp */}
           {member.phone && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <Phone className="h-5 w-5 text-green-500" />
-              <div className="flex-1">
-                <p className="text-xs text-muted-foreground">Telefone</p>
-                <p className="font-semibold text-foreground">{member.phone}</p>
-              </div>
-              {whatsappLink && (
-                <a
-                  href={`https://wa.me/${whatsappLink}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0"
-                >
-                  <Button size="sm" variant="outline" className="gap-1.5 border-green-500/50 text-green-500 hover:bg-green-500/10">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <Phone className="h-5 w-5 text-green-500" />
+                <div className="flex-1">
+                  <p className="text-xs text-muted-foreground">Telefone</p>
+                  <p className="font-semibold text-foreground">{member.phone}</p>
+                </div>
+                {whatsappLink && (
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="gap-1.5 border-green-500/50 text-green-500 hover:bg-green-500/10"
+                    onClick={() => setShowQuickMessages(!showQuickMessages)}
+                  >
                     <MessageCircle className="h-4 w-4" />
                     WhatsApp
+                    {showQuickMessages ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                   </Button>
-                </a>
+                )}
+              </div>
+              
+              {/* Quick Messages Panel */}
+              {whatsappLink && showQuickMessages && (
+                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30 space-y-2">
+                  <p className="text-xs font-medium text-green-400 flex items-center gap-1.5">
+                    <Send className="h-3 w-3" />
+                    Mensagens Rápidas
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {quickMessages.map((qm) => (
+                      <a
+                        key={qm.id}
+                        href={`https://wa.me/${whatsappLink}?text=${encodeURIComponent(qm.message)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-7 text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/40"
+                        >
+                          {qm.label}
+                        </Button>
+                      </a>
+                    ))}
+                  </div>
+                  <a
+                    href={`https://wa.me/${whatsappLink}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    <Button 
+                      size="sm" 
+                      className="w-full mt-1 bg-green-600 hover:bg-green-700 text-white gap-1.5"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Abrir Conversa (sem mensagem)
+                    </Button>
+                  </a>
+                </div>
               )}
             </div>
           )}
