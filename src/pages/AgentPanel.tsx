@@ -45,8 +45,9 @@ import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
 import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
 import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
+import { AdminAnnouncementsPanel } from '@/components/agent-panel/AdminAnnouncementsPanel';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell } from 'lucide-react';
+import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -390,6 +391,13 @@ export default function AgentPanel() {
               />
 
               <TabsContent value="equipe" className="space-y-3 md:space-y-4 animate-fade-in">
+                {/* Admin Announcements Panel - Priority Display */}
+                <AdminAnnouncementsPanel 
+                  agentId={agent.id}
+                  agentUnitId={agent.unit_id}
+                  agentTeam={agent.team}
+                />
+
                 {/* Unit Summary Card */}
                 <UnitSummaryCard unitId={agent.unit_id} />
                 
