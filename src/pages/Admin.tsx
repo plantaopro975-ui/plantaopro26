@@ -13,6 +13,8 @@ import { AnnouncementsCard } from '@/components/dashboard/AnnouncementsCard';
 import { ActivityLogsCard } from '@/components/dashboard/ActivityLogsCard';
 import { SystemOverviewCard } from '@/components/dashboard/SystemOverviewCard';
 import { ShiftConflictsBanner } from '@/components/dashboard/ShiftConflictsBanner';
+import { AdvertisementsManager } from '@/components/admin/AdvertisementsManager';
+import { DynamicScreensManager } from '@/components/admin/DynamicScreensManager';
 import { useShiftConflictDetection } from '@/hooks/useShiftConflictDetection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -31,7 +33,9 @@ import {
   Home,
   Lock,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Megaphone,
+  Monitor
 } from 'lucide-react';
 
 interface AdminPermissions {
@@ -275,6 +279,18 @@ export default function Admin() {
                       Avisos
                     </TabsTrigger>
                   )}
+                  {permissions?.can_manage_ads && (
+                    <TabsTrigger value="ads" className="data-[state=active]:bg-purple-600">
+                      <Megaphone className="h-4 w-4 mr-2" />
+                      Propagandas
+                    </TabsTrigger>
+                  )}
+                  {permissions?.can_manage_screens && (
+                    <TabsTrigger value="screens" className="data-[state=active]:bg-cyan-600">
+                      <Monitor className="h-4 w-4 mr-2" />
+                      Telas
+                    </TabsTrigger>
+                  )}
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-4">
@@ -317,6 +333,18 @@ export default function Admin() {
                 {permissions?.can_manage_announcements && (
                   <TabsContent value="announcements">
                     <AnnouncementsCard />
+                  </TabsContent>
+                )}
+
+                {permissions?.can_manage_ads && (
+                  <TabsContent value="ads">
+                    <AdvertisementsManager />
+                  </TabsContent>
+                )}
+
+                {permissions?.can_manage_screens && (
+                  <TabsContent value="screens">
+                    <DynamicScreensManager />
                   </TabsContent>
                 )}
               </Tabs>
