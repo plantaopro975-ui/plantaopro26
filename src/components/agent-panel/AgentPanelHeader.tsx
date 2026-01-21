@@ -87,17 +87,6 @@ function UnitBadge({ unitId }: { unitId: string }) {
 export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
 
-  const getRoleBadge = (role: string | null) => {
-    switch (role) {
-      case 'team_leader':
-        return <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/40 text-[10px] px-1.5 py-0">Chefe</Badge>;
-      case 'support':
-        return <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/40 text-[10px] px-1.5 py-0">Apoio</Badge>;
-      default:
-        return null;
-    }
-  };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
@@ -126,14 +115,6 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
               <h1 className="text-sm md:text-base font-bold text-slate-100 truncate leading-tight">
                 {agent.name}
               </h1>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                {agent.team && (
-                  <Badge className="text-[9px] bg-slate-700/60 text-amber-300 border-amber-500/30 px-1.5 py-0">
-                    {agent.team}
-                  </Badge>
-                )}
-                {getRoleBadge(agent.role || null)}
-              </div>
             </div>
           </div>
 
