@@ -97,6 +97,26 @@ export function useSavedCredentialsSync() {
     }
   }, [user, deviceId]);
 
+  // Parse user agent for device info
+  const getDeviceInfo = useCallback(() => {
+    const ua = navigator.userAgent;
+    
+    let browser = 'Navegador';
+    if (ua.includes('Chrome')) browser = 'Chrome';
+    else if (ua.includes('Firefox')) browser = 'Firefox';
+    else if (ua.includes('Safari')) browser = 'Safari';
+    else if (ua.includes('Edge')) browser = 'Edge';
+    
+    let os = 'Sistema';
+    if (ua.includes('Windows')) os = 'Windows';
+    else if (ua.includes('Mac')) os = 'macOS';
+    else if (ua.includes('Linux')) os = 'Linux';
+    else if (ua.includes('Android')) os = 'Android';
+    else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+    
+    return { browser, os };
+  }, []);
+
   // Sync to database when saving credentials
   const syncToDatabase = useCallback(async (cpf: string, name?: string, password?: string) => {
     if (!user) return;
@@ -112,6 +132,7 @@ export function useSavedCredentialsSync() {
       if (!agent) return;
 
       const encryptedToken = password ? encrypt(password) : null;
+      const { browser, os } = getDeviceInfo();
 
       await supabase
         .from('saved_credentials')
@@ -121,7 +142,10 @@ export function useSavedCredentialsSync() {
           name,
           encrypted_token: encryptedToken,
           device_id: deviceId,
-          last_login_at: new Date().toISOString()
+          last_login_at: new Date().toISOString(),
+          browser,
+          os,
+          is_active: true
         }, {
           onConflict: 'agent_id,device_id'
         });

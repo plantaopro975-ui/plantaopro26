@@ -966,35 +966,50 @@ export type Database = {
       saved_credentials: {
         Row: {
           agent_id: string
+          browser: string | null
           cpf: string
           created_at: string
           device_id: string | null
+          device_name: string | null
           encrypted_token: string | null
           id: string
+          is_active: boolean | null
+          last_ip: string | null
           last_login_at: string | null
           name: string | null
+          os: string | null
           updated_at: string
         }
         Insert: {
           agent_id: string
+          browser?: string | null
           cpf: string
           created_at?: string
           device_id?: string | null
+          device_name?: string | null
           encrypted_token?: string | null
           id?: string
+          is_active?: boolean | null
+          last_ip?: string | null
           last_login_at?: string | null
           name?: string | null
+          os?: string | null
           updated_at?: string
         }
         Update: {
           agent_id?: string
+          browser?: string | null
           cpf?: string
           created_at?: string
           device_id?: string | null
+          device_name?: string | null
           encrypted_token?: string | null
           id?: string
+          is_active?: boolean | null
+          last_ip?: string | null
           last_login_at?: string | null
           name?: string | null
+          os?: string | null
           updated_at?: string
         }
         Relationships: [
