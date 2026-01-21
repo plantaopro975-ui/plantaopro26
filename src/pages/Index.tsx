@@ -21,7 +21,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Palette, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio } from 'lucide-react';
+import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Palette, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { HomeAudioPlayer } from '@/components/HomeAudioPlayer';
 import { DeveloperFooter } from '@/components/DeveloperFooter';
 import { Card, CardContent } from '@/components/ui/card';
@@ -902,7 +909,7 @@ export default function Index() {
             </div>
           </div>
           
-          {/* Right: Actions - Professional Icons */}
+          {/* Right: Actions - Compact Dropdown */}
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setShowAboutDialog(true)}
@@ -922,23 +929,50 @@ export default function Index() {
               </button>
             )}
             
-            <button
-              onClick={() => navigate('/auth')}
-              className="p-2 text-muted-foreground hover:text-blue-400 rounded-lg hover:bg-blue-500/10 transition-all duration-200 hover:scale-105"
-              title="Login Administrativo"
-            >
-              <Mail className="h-4 w-4" />
-            </button>
-            
-            {/* Master Panel - More Visible */}
-            <button
-              onClick={() => setShowMasterLogin(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold text-red-400 hover:text-red-300 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-400/50 transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-red-500/20"
-              title="Acesso Master"
-            >
-              <Shield className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">MASTER</span>
-            </button>
+            {/* Admin/Master Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-lg bg-slate-800/50 hover:bg-slate-700/70 border border-slate-600/50 hover:border-slate-500/70 transition-all duration-200 hover:scale-105"
+                >
+                  <Settings className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Acesso</span>
+                  <ChevronDown className="h-3 w-3 opacity-60" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="w-48 bg-slate-900/95 backdrop-blur-xl border-2 border-slate-600/50 shadow-2xl shadow-black/50 z-[100]"
+              >
+                <DropdownMenuItem 
+                  onClick={() => navigate('/auth')}
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer text-blue-400 hover:text-blue-300 hover:bg-blue-500/15 focus:bg-blue-500/15 focus:text-blue-300"
+                >
+                  <div className="p-1.5 rounded-md bg-blue-500/20 border border-blue-500/30">
+                    <Mail className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-sm">Admin</span>
+                    <span className="text-[10px] text-slate-400">Login por e-mail</span>
+                  </div>
+                </DropdownMenuItem>
+                
+                <DropdownMenuSeparator className="bg-slate-600/50 my-1" />
+                
+                <DropdownMenuItem 
+                  onClick={() => setShowMasterLogin(true)}
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer text-red-400 hover:text-red-300 hover:bg-red-500/15 focus:bg-red-500/15 focus:text-red-300"
+                >
+                  <div className="p-1.5 rounded-md bg-red-500/20 border border-red-500/30">
+                    <Shield className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-sm">Master</span>
+                    <span className="text-[10px] text-slate-400">Controle total</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </footer>
