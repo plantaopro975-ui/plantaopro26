@@ -83,7 +83,7 @@ export function useGlobalNavigation(options: UseGlobalNavigationOptions = {}) {
         }
 
         // Skip navigation on auth and index pages
-        if (location.pathname === '/' || location.pathname === '/auth') {
+        if (location.pathname === '/') {
           return;
         }
 
