@@ -33,6 +33,7 @@ interface AgentLeave {
 
 interface TeamMemberLeave extends AgentLeave {
   agent_name: string;
+  agent_avatar_url?: string | null;
 }
 
 const leaveTypes = [
@@ -116,7 +117,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
     try {
       const { data: teamMembers, error: teamError } = await supabase
         .from('agents')
-        .select('id, name')
+        .select('id, name, avatar_url')
         .eq('team', agentTeam)
         .eq('unit_id', agentUnitId)
         .neq('id', agentId);
@@ -140,7 +141,11 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
         const leavesWithNames = (leavesData || []).map((leave: any) => {
           const member = teamMembers.find(m => m.id === leave.agent_id);
-          return { ...leave, agent_name: member?.name || 'Agente' };
+          return { 
+            ...leave, 
+            agent_name: member?.name || 'Agente',
+            agent_avatar_url: member?.avatar_url || null
+          };
         });
 
         setTeamLeaves(leavesWithNames);
@@ -365,15 +370,30 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                       <div className="mt-2 flex flex-wrap gap-2">
                         {teamToday.map((leave) => {
                           const agentName = (leave as any).agent_name || '';
+                          const avatarUrl = (leave as any).agent_avatar_url;
                           const nameParts = agentName.split(' ');
                           const displayName = nameParts.length > 1 
                             ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`
                             : nameParts[0];
+                          const initials = nameParts.length > 1
+                            ? `${nameParts[0].charAt(0)}${nameParts[nameParts.length - 1].charAt(0)}`
+                            : nameParts[0]?.charAt(0) || '?';
                           return (
                             <div
                               key={leave.id}
                               className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-700/40 border border-slate-600/40"
                             >
+                              <div className="h-6 w-6 rounded-full overflow-hidden bg-slate-600 flex items-center justify-center flex-shrink-0">
+                                {avatarUrl ? (
+                                  <img 
+                                    src={avatarUrl} 
+                                    alt={agentName}
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : (
+                                  <span className="text-[10px] font-bold text-slate-300 uppercase">{initials}</span>
+                                )}
+                              </div>
                               <span className="text-xs font-semibold text-white">{displayName}</span>
                               <Badge variant="outline" className={leaveTypeLabels[leave.leave_type]?.color || ''}>
                                 {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type}
