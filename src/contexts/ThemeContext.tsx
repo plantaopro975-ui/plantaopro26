@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { Shield, Cpu, Sun, Monitor, Flame, Snowflake, Target, Zap, Radio, Crosshair } from 'lucide-react';
+import { Shield, Cpu, Monitor, Flame, Snowflake, Target, Zap, Radio, Crosshair, Crown, Network } from 'lucide-react';
 
-// Reduced to 4 unique themes + system + light
-export type ThemeType = 'tactical' | 'cyber' | 'crimson' | 'arctic' | 'light' | 'system';
+// Premium themes: tactical, cyber, crimson, arctic, sovereign, nexus, system
+export type ThemeType = 'tactical' | 'cyber' | 'crimson' | 'arctic' | 'sovereign' | 'nexus' | 'system';
 
 export interface ThemeConfig {
   id: ThemeType;
@@ -44,10 +44,7 @@ export interface ThemeConfig {
   };
 }
 
-const getSystemTheme = (): 'light' | 'tactical' => {
-  if (typeof window !== 'undefined' && window.matchMedia) {
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'tactical';
-  }
+const getSystemTheme = (): 'tactical' => {
   return 'tactical';
 };
 
@@ -208,43 +205,84 @@ export const themes: Record<ThemeType, ThemeConfig> = {
       hoverShadow: 'hover:shadow-sky-400/40',
     },
   },
-  light: {
-    id: 'light',
-    name: 'Diurno',
-    description: 'Tema claro profissional',
-    icon: Sun,
-    emoji: '☀️',
-    fontFamily: "'Inter', 'Segoe UI', sans-serif",
+  // NEW THEME: Sovereign - Premium Gold/Bronze institutional government theme
+  sovereign: {
+    id: 'sovereign',
+    name: 'Sovereign',
+    description: 'Premium institucional dourado',
+    icon: Crown,
+    emoji: '👑',
+    fontFamily: "'Cinzel', 'Playfair Display', serif",
     teamIcons: {
-      ALFA: Shield,
-      BRAVO: Target,
-      CHARLIE: Radio,
-      DELTA: Zap,
+      ALFA: Crown,
+      BRAVO: Shield,
+      CHARLIE: Target,
+      DELTA: Radio,
     },
     colors: {
-      primary: '217 91% 45%',
-      primaryForeground: '0 0% 100%',
-      accent: '217 91% 50%',
-      background: '210 40% 98%',
-      card: '0 0% 100%',
-      border: '214 32% 85%',
-      gradientFrom: '217 91% 45%',
-      gradientTo: '200 85% 50%',
-      foreground: '222 47% 11%',
-      muted: '210 40% 94%',
-      mutedForeground: '215 25% 35%',
-      isLight: true,
+      primary: '45 93% 47%', // Royal gold
+      primaryForeground: '30 25% 8%',
+      accent: '28 85% 45%', // Bronze
+      background: '30 20% 5%',
+      card: '30 18% 8%',
+      border: '45 60% 25%',
+      gradientFrom: '45 93% 47%',
+      gradientTo: '28 85% 45%',
+      foreground: '40 40% 96%',
+      muted: '30 15% 12%',
+      mutedForeground: '45 35% 55%',
+      isLight: false,
     },
     effects: {
-      glowIntensity: 'low',
-      particleColor: 'rgba(59, 130, 246, 0.3)',
-      scanlineOpacity: 0,
+      glowIntensity: 'medium',
+      particleColor: 'rgba(234, 179, 8, 0.6)',
+      scanlineOpacity: 0.02,
     },
     cardStyle: {
-      gradient: 'from-blue-50 via-slate-50 to-white',
-      border: 'border-blue-200',
-      shadow: 'shadow-blue-500/10',
-      hoverShadow: 'hover:shadow-blue-500/20',
+      gradient: 'from-yellow-950/90 via-amber-950/85 to-stone-950/95',
+      border: 'border-yellow-600/50',
+      shadow: 'shadow-yellow-500/25',
+      hoverShadow: 'hover:shadow-yellow-400/50',
+    },
+  },
+  // NEW THEME: Nexus - Matrix green futuristic network theme
+  nexus: {
+    id: 'nexus',
+    name: 'Nexus',
+    description: 'Rede futurista matrix verde',
+    icon: Network,
+    emoji: '🌐',
+    fontFamily: "'Fira Code', 'Source Code Pro', monospace",
+    teamIcons: {
+      ALFA: Network,
+      BRAVO: Cpu,
+      CHARLIE: Zap,
+      DELTA: Radio,
+    },
+    colors: {
+      primary: '142 76% 45%', // Matrix green
+      primaryForeground: '160 30% 6%',
+      accent: '165 80% 40%', // Teal accent
+      background: '160 40% 3%',
+      card: '160 35% 5%',
+      border: '142 50% 18%',
+      gradientFrom: '142 76% 45%',
+      gradientTo: '165 80% 40%',
+      foreground: '145 40% 95%',
+      muted: '160 25% 8%',
+      mutedForeground: '142 40% 55%',
+      isLight: false,
+    },
+    effects: {
+      glowIntensity: 'high',
+      particleColor: 'rgba(34, 197, 94, 0.8)',
+      scanlineOpacity: 0.08,
+    },
+    cardStyle: {
+      gradient: 'from-emerald-950/90 via-green-950/85 to-slate-950/95',
+      border: 'border-emerald-500/40',
+      shadow: 'shadow-emerald-500/20',
+      hoverShadow: 'hover:shadow-emerald-400/45',
     },
   },
   system: {
@@ -299,26 +337,20 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeType>(() => {
-    const saved = localStorage.getItem('plantaopro-theme') as ThemeType;
-    // If saved theme no longer exists, fallback to tactical
-    if (saved && themes[saved]) {
-      return saved;
+    const saved = localStorage.getItem('plantaopro-theme');
+    // If saved theme no longer exists (e.g. light was removed), fallback to tactical
+    if (saved && themes[saved as ThemeType]) {
+      return saved as ThemeType;
+    }
+    // Migrate old 'light' users to sovereign
+    if (saved === 'light') {
+      localStorage.setItem('plantaopro-theme', 'sovereign');
+      return 'sovereign';
     }
     return 'tactical';
   });
 
-  const [systemTheme, setSystemTheme] = useState<'light' | 'tactical'>(getSystemTheme);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      setSystemTheme(e.matches ? 'light' : 'tactical');
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  const [systemTheme] = useState<'tactical'>(getSystemTheme);
 
   const setTheme = useCallback((newTheme: ThemeType) => {
     setThemeState(newTheme);
@@ -377,7 +409,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
     
     // Remove todas as classes de tema anteriores
-    root.classList.remove('light-theme', 'nightops-theme', 'tactical-theme', 'cyber-theme', 'crimson-theme', 'arctic-theme');
+    root.classList.remove('light-theme', 'nightops-theme', 'tactical-theme', 'cyber-theme', 'crimson-theme', 'arctic-theme', 'sovereign-theme', 'nexus-theme');
     
     // Aplica nova classe de tema
     root.setAttribute('data-theme', resolvedTheme);

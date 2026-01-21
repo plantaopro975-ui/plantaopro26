@@ -13,9 +13,9 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
   const { theme, setTheme, themeConfig } = useTheme();
   const { playSound, isSoundEnabled, toggleSound } = useSoundEffects();
 
-  // Show 4 main themes + system + light
+  // Show 6 premium themes + system
   const availableThemes = Object.values(themes).filter(t => 
-    ['tactical', 'cyber', 'crimson', 'arctic', 'light', 'system'].includes(t.id)
+    ['tactical', 'cyber', 'crimson', 'arctic', 'sovereign', 'nexus', 'system'].includes(t.id)
   );
 
   const handleSelect = (themeId: ThemeType) => {

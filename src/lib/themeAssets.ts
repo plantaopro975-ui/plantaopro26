@@ -1,15 +1,15 @@
 import { 
-  Shield, Cpu, Sun, Monitor, Flame, Snowflake,
+  Shield, Cpu, Monitor, Flame, Snowflake,
   Crown, Swords, Crosshair, Target, Binary, Orbit, Hexagon, Atom,
   Skull, Zap, AlertTriangle, Diamond, Sparkles, Waves,
   BadgeCheck, Gem, Award, Radio, Siren, Lock,
-  Cloud, Compass, Navigation
+  Cloud, Compass, Navigation, Network, Globe, Database, Server, Wifi
 } from 'lucide-react';
 import type { ThemeType } from '@/contexts/ThemeContext';
 import type { LucideIcon } from 'lucide-react';
 
 export interface BackgroundEffect {
-  type: 'particles' | 'grid' | 'radar' | 'matrix' | 'hexagons' | 'scanlines' | 'frost' | 'flames' | 'dots' | 'waves' | 'orbs';
+  type: 'particles' | 'grid' | 'radar' | 'matrix' | 'hexagons' | 'scanlines' | 'frost' | 'flames' | 'dots' | 'waves' | 'orbs' | 'circuits' | 'golden';
   intensity: 'low' | 'medium' | 'high';
   primaryColor: string;
   secondaryColor?: string;
@@ -51,7 +51,7 @@ export interface ThemeAssets {
     tertiary?: string;
   };
   cornerAccents: {
-    style: 'tactical' | 'tech' | 'military' | 'minimal' | 'frost' | 'flame' | 'none';
+    style: 'tactical' | 'tech' | 'military' | 'minimal' | 'frost' | 'flame' | 'royal' | 'matrix' | 'none';
     color: string;
   };
 }
@@ -193,38 +193,74 @@ export const themeAssets: Record<ThemeType, ThemeAssets> = {
     ambientGlow: { primary: 'rgba(56, 189, 248, 0.2)', secondary: 'rgba(6, 182, 212, 0.15)', tertiary: 'rgba(255, 255, 255, 0.1)' },
     cornerAccents: { style: 'frost', color: 'border-sky-400/40' },
   },
-  light: {
-    mainIcon: Sun,
+  // NEW: Sovereign - Premium Gold/Bronze institutional theme
+  sovereign: {
+    mainIcon: Crown,
     decorativeIcons: [BadgeCheck, Gem, Award],
     teamIcons: {
-      ALFA: BadgeCheck,
-      BRAVO: Gem,
+      ALFA: Crown,
+      BRAVO: Shield,
       CHARLIE: Award,
-      DELTA: Crown,
+      DELTA: Gem,
     },
     teamColors: {
-      ALFA: { color: 'text-blue-600', bgGradient: 'from-blue-100 via-slate-100 to-white', borderColor: 'border-blue-300', glowColor: 'shadow-blue-500/20' },
-      BRAVO: { color: 'text-indigo-600', bgGradient: 'from-indigo-100 via-slate-100 to-white', borderColor: 'border-indigo-300', glowColor: 'shadow-indigo-500/20' },
-      CHARLIE: { color: 'text-sky-600', bgGradient: 'from-sky-100 via-slate-100 to-white', borderColor: 'border-sky-300', glowColor: 'shadow-sky-500/20' },
-      DELTA: { color: 'text-violet-600', bgGradient: 'from-violet-100 via-slate-100 to-white', borderColor: 'border-violet-300', glowColor: 'shadow-violet-500/20' },
+      ALFA: { color: 'text-yellow-400', bgGradient: 'from-yellow-950/95 via-amber-900/85 to-stone-950', borderColor: 'border-yellow-500/60', glowColor: 'shadow-yellow-500/40' },
+      BRAVO: { color: 'text-amber-400', bgGradient: 'from-amber-950/95 via-yellow-900/80 to-stone-950', borderColor: 'border-amber-500/60', glowColor: 'shadow-amber-500/40' },
+      CHARLIE: { color: 'text-orange-300', bgGradient: 'from-orange-950/95 via-amber-900/80 to-stone-950', borderColor: 'border-orange-400/60', glowColor: 'shadow-orange-400/40' },
+      DELTA: { color: 'text-yellow-300', bgGradient: 'from-yellow-900/95 via-stone-900/80 to-stone-950', borderColor: 'border-yellow-400/60', glowColor: 'shadow-yellow-400/40' },
     },
     teamDescriptions: {
-      ALFA: { description: 'Proteção Institucional', slogan: 'Tradição e Honra' },
-      BRAVO: { description: 'Excelência Operacional', slogan: 'Padrão Ouro' },
-      CHARLIE: { description: 'Reconhecimento de Elite', slogan: 'Mérito Máximo' },
-      DELTA: { description: 'Acesso Controlado', slogan: 'Segurança Total' },
+      ALFA: { description: 'Comando Soberano', slogan: 'Autoridade Máxima' },
+      BRAVO: { description: 'Elite Institucional', slogan: 'Honra e Dever' },
+      CHARLIE: { description: 'Excelência Operacional', slogan: 'Mérito Supremo' },
+      DELTA: { description: 'Legado e Tradição', slogan: 'Glória Eterna' },
     },
     logoStyle: {
-      gradient: 'from-blue-600 via-indigo-600 to-blue-600',
-      textShadow: '0 2px 10px rgba(59, 130, 246, 0.3)',
+      gradient: 'from-yellow-400 via-amber-500 to-yellow-600',
+      textShadow: '0 0 50px rgba(234, 179, 8, 0.7)',
     },
-    subtitle: 'Sistema Institucional de Escalas',
+    subtitle: 'Sistema Governamental Premium',
     backgroundEffects: [
-      { type: 'dots', intensity: 'low', primaryColor: 'rgba(59, 130, 246, 0.15)', animated: false },
-      { type: 'waves', intensity: 'low', primaryColor: 'rgba(99, 102, 241, 0.1)', animated: true, speed: 'slow' },
+      { type: 'golden', intensity: 'medium', primaryColor: 'rgba(234, 179, 8, 0.3)', secondaryColor: 'rgba(180, 130, 20, 0.2)', animated: true, speed: 'slow' },
+      { type: 'particles', intensity: 'low', primaryColor: 'rgba(234, 179, 8, 0.5)', animated: true, particleCount: 30, speed: 'slow' },
     ],
-    ambientGlow: { primary: 'rgba(59, 130, 246, 0.1)', secondary: 'rgba(99, 102, 241, 0.08)' },
-    cornerAccents: { style: 'minimal', color: 'border-blue-200' },
+    ambientGlow: { primary: 'rgba(234, 179, 8, 0.2)', secondary: 'rgba(180, 130, 20, 0.15)', tertiary: 'rgba(255, 215, 0, 0.1)' },
+    cornerAccents: { style: 'royal', color: 'border-yellow-500/50' },
+  },
+  // NEW: Nexus - Matrix green futuristic network theme
+  nexus: {
+    mainIcon: Network,
+    decorativeIcons: [Globe, Database, Server],
+    teamIcons: {
+      ALFA: Network,
+      BRAVO: Globe,
+      CHARLIE: Database,
+      DELTA: Wifi,
+    },
+    teamColors: {
+      ALFA: { color: 'text-emerald-400', bgGradient: 'from-emerald-950/95 via-green-900/85 to-slate-950', borderColor: 'border-emerald-500/60', glowColor: 'shadow-emerald-500/40' },
+      BRAVO: { color: 'text-green-400', bgGradient: 'from-green-950/95 via-emerald-900/80 to-slate-950', borderColor: 'border-green-500/60', glowColor: 'shadow-green-500/40' },
+      CHARLIE: { color: 'text-teal-400', bgGradient: 'from-teal-950/95 via-green-900/80 to-slate-950', borderColor: 'border-teal-500/60', glowColor: 'shadow-teal-500/40' },
+      DELTA: { color: 'text-lime-400', bgGradient: 'from-lime-950/95 via-emerald-900/80 to-slate-950', borderColor: 'border-lime-500/60', glowColor: 'shadow-lime-500/40' },
+    },
+    teamDescriptions: {
+      ALFA: { description: 'Nó Central', slogan: 'Conectado 24/7' },
+      BRAVO: { description: 'Rede Global', slogan: 'Alcance Total' },
+      CHARLIE: { description: 'Banco de Dados', slogan: 'Zero Latência' },
+      DELTA: { description: 'Sinal Forte', slogan: 'Full Stack' },
+    },
+    logoStyle: {
+      gradient: 'from-emerald-400 via-green-500 to-teal-400',
+      textShadow: '0 0 45px rgba(34, 197, 94, 0.7)',
+    },
+    subtitle: 'Sistema Neural de Rede',
+    backgroundEffects: [
+      { type: 'matrix', intensity: 'high', primaryColor: 'rgba(34, 197, 94, 0.6)', animated: true, speed: 'fast' },
+      { type: 'circuits', intensity: 'medium', primaryColor: 'rgba(16, 185, 129, 0.4)', animated: true, speed: 'medium' },
+      { type: 'particles', intensity: 'high', primaryColor: 'rgba(34, 197, 94, 0.7)', animated: true, particleCount: 70, speed: 'medium' },
+    ],
+    ambientGlow: { primary: 'rgba(34, 197, 94, 0.25)', secondary: 'rgba(16, 185, 129, 0.18)', tertiary: 'rgba(20, 184, 166, 0.12)' },
+    cornerAccents: { style: 'matrix', color: 'border-emerald-500/50' },
   },
   system: {
     mainIcon: Monitor,
