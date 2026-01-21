@@ -21,7 +21,7 @@ import AgentProfileEdit from "./pages/AgentProfileEdit";
 import Overtime from "./pages/Overtime";
 import Units from "./pages/Units";
 import Settings from "./pages/Settings";
-import Admin from "./pages/Admin";
+
 import Master from "./pages/Master";
 import Install from "./pages/Install";
 import About from "./pages/About";
@@ -63,7 +63,7 @@ const App = () => (
                   <Route path="/overtime" element={<Overtime />} />
                   <Route path="/units" element={<Units />} />
                   <Route path="/settings" element={<Settings />} />
-                  <Route path="/admin" element={<Admin />} />
+                  
                   <Route path="/master" element={<Master />} />
                   <Route path="/install" element={<Install />} />
                   <Route path="/about" element={<About />} />
