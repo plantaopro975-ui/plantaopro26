@@ -363,17 +363,24 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                       <p className="text-xs text-slate-400 mt-2">Nenhum colega de folga hoje.</p>
                     ) : (
                       <div className="mt-2 flex flex-wrap gap-2">
-                        {teamToday.map((leave) => (
-                          <div
-                            key={leave.id}
-                            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-700/40 border border-slate-600/40"
-                          >
-                            <span className="text-xs font-semibold text-white">{(leave as any).agent_name}</span>
-                            <Badge variant="outline" className={leaveTypeLabels[leave.leave_type]?.color || ''}>
-                              {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type}
-                            </Badge>
-                          </div>
-                        ))}
+                        {teamToday.map((leave) => {
+                          const agentName = (leave as any).agent_name || '';
+                          const nameParts = agentName.split(' ');
+                          const displayName = nameParts.length > 1 
+                            ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`
+                            : nameParts[0];
+                          return (
+                            <div
+                              key={leave.id}
+                              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-700/40 border border-slate-600/40"
+                            >
+                              <span className="text-xs font-semibold text-white">{displayName}</span>
+                              <Badge variant="outline" className={leaveTypeLabels[leave.leave_type]?.color || ''}>
+                                {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type}
+                              </Badge>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
