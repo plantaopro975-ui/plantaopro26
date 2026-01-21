@@ -21,7 +21,7 @@ interface SavedCredentialsProps {
 }
 
 const STORAGE_KEY = 'plantao_pro_saved_credentials';
-const QUICK_LOGIN_EXPIRY_HOURS = 4; // Hours before requiring password again
+const QUICK_LOGIN_EXPIRY_HOURS = 72; // Hours before requiring password again (3 days)
 
 // Simple obfuscation (not encryption - just to prevent casual viewing)
 function obfuscate(str: string): string {
@@ -300,7 +300,7 @@ export function SavedCredentials({ onSelectCredential, onSaveChange, saveCpf, sa
             htmlFor="save-password" 
             className={`text-[10px] cursor-pointer ${saveCpf ? 'text-muted-foreground' : 'text-muted-foreground/40'}`}
           >
-            Login rápido (4h)
+            Login rápido (3 dias)
           </Label>
         </div>
       </div>

@@ -24,7 +24,7 @@ interface QuickLoginCardsProps {
   loadingCpf?: string;
 }
 
-const QUICK_LOGIN_EXPIRY_HOURS = 4;
+const QUICK_LOGIN_EXPIRY_HOURS = 72; // 3 days
 
 function deobfuscate(str: string): string {
   try {
@@ -40,6 +40,9 @@ function getTimeRemaining(cred: SavedCredential): string | null {
   const now = new Date();
   const hoursRemaining = QUICK_LOGIN_EXPIRY_HOURS - (now.getTime() - lastLogin.getTime()) / (1000 * 60 * 60);
   if (hoursRemaining <= 0) return null;
+  if (hoursRemaining >= 24) {
+    return `${Math.round(hoursRemaining / 24)}d`;
+  }
   if (hoursRemaining < 1) {
     return `${Math.round(hoursRemaining * 60)}min`;
   }
