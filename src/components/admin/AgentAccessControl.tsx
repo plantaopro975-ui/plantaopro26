@@ -130,9 +130,19 @@ export function AgentAccessControl({ agents, onRefresh }: AgentAccessControlProp
         action: activate ? 'activated_by_admin' : 'deactivated_by_admin',
       });
 
+      // Send notification to agent
+      await supabase.from('notifications').insert({
+        agent_id: agent.id,
+        title: activate ? '✅ Acesso Ativado' : '⚠️ Acesso Desativado',
+        content: activate 
+          ? 'Seu acesso ao sistema foi ativado pelo administrador. Você pode acessar normalmente.'
+          : 'Seu acesso ao sistema foi desativado pelo administrador. Entre em contato para mais informações.',
+        type: 'access_change',
+      });
+
       toast({
         title: 'Sucesso',
-        description: `Agente ${activate ? 'ativado' : 'desativado'} com sucesso.`,
+        description: `Agente ${activate ? 'ativado' : 'desativado'} com sucesso. Notificação enviada.`,
       });
       onRefresh();
     } catch (error) {
@@ -164,9 +174,19 @@ export function AgentAccessControl({ agents, onRefresh }: AgentAccessControlProp
         action: freeze ? 'frozen_by_admin' : 'unfrozen_by_admin',
       });
 
+      // Send notification to agent
+      await supabase.from('notifications').insert({
+        agent_id: agent.id,
+        title: freeze ? '🔒 Acesso Bloqueado' : '🔓 Acesso Desbloqueado',
+        content: freeze 
+          ? 'Seu acesso ao sistema foi bloqueado pelo administrador. Entre em contato para regularizar sua situação.'
+          : 'Seu acesso ao sistema foi desbloqueado! Você pode acessar normalmente agora.',
+        type: 'access_change',
+      });
+
       toast({
         title: 'Sucesso',
-        description: `Acesso ${freeze ? 'bloqueado' : 'desbloqueado'} com sucesso.`,
+        description: `Acesso ${freeze ? 'bloqueado' : 'desbloqueado'} com sucesso. Notificação enviada.`,
       });
       onRefresh();
     } catch (error) {
