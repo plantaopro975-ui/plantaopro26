@@ -5,14 +5,15 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Settings as SettingsIcon, User, Shield, Loader2, Palette, Sparkles, ArrowLeft } from 'lucide-react';
+import { Settings as SettingsIcon, Shield, Loader2, Palette, Sparkles, ArrowLeft, Bell, Volume2 } from 'lucide-react';
 import { ChangePasswordDialog } from '@/components/ChangePasswordDialog';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
+import { ConnectedDevicesCard } from '@/components/settings/ConnectedDevicesCard';
+import { Switch } from '@/components/ui/switch';
 
 export default function Settings() {
   const { user, isLoading, userRole, masterSession } = useAuth();
@@ -70,10 +71,10 @@ export default function Settings() {
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <SettingsIcon className="h-6 w-6 text-primary" />
-                Configurações
+                Configurações Gerais
               </h1>
               <p className="text-muted-foreground">
-                Gerencie suas preferências e configurações da conta
+                Personalize o sistema e gerencie preferências globais
               </p>
             </div>
 
@@ -99,72 +100,58 @@ export default function Settings() {
               </CardContent>
             </Card>
 
-            {/* Profile Section */}
+            {/* Notifications Settings */}
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Perfil
+                  <Bell className="h-5 w-5 text-primary" />
+                  Notificações
                 </CardTitle>
                 <CardDescription>
-                  Informações da sua conta
+                  Configure alertas e avisos do sistema
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {masterSession && !user ? (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Usuário Master</Label>
-                      <Input value={masterSession} disabled className="bg-muted" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Tipo de Sessão</Label>
-                      <Input value="Administrador Master" disabled className="bg-muted" />
-                    </div>
-                  </>
-                ) : user ? (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Email</Label>
-                      <Input value={user.email || ''} disabled className="bg-muted" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>ID do Usuário</Label>
-                      <Input value={user.id} disabled className="bg-muted font-mono text-sm" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Conta criada em</Label>
-                      <Input
-                        value={new Date(user.created_at).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                        disabled
-                        className="bg-muted"
-                      />
-                    </div>
-                  </>
-                ) : null}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Notificações Push</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Receba alertas de plantão no navegador
+                    </p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Sons do Sistema</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Tocar sons para alertas importantes
+                    </p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
               </CardContent>
             </Card>
+
+            {/* Connected Devices - Only for logged in users */}
+            {user && <ConnectedDevicesCard />}
 
             {/* Password Section - Only for regular users, not master session */}
             {user && (
               <Card className="glass glass-border shadow-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Segurança
+                    <Shield className="h-5 w-5 text-primary" />
+                    Segurança da Conta
                   </CardTitle>
                   <CardDescription>
-                    Altere sua senha de acesso
+                    Gerencie a segurança do seu acesso
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium">Senha</p>
+                      <p className="font-medium">Alterar Senha</p>
                       <p className="text-sm text-muted-foreground">
                         Mantenha sua conta segura com uma senha forte
                       </p>
@@ -211,7 +198,7 @@ export default function Settings() {
             {/* App Info */}
             <Card className="glass glass-border shadow-card">
               <CardHeader>
-                <CardTitle>Sobre o PlantaoPro</CardTitle>
+                <CardTitle>Sobre o PlantãoPro</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between">
