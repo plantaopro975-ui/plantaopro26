@@ -131,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       pushDiagEvent('info', 'login_attempt', { identifier: email });
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       // Record attempt
       await supabase.rpc('record_login_attempt', {
@@ -143,6 +143,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         pushDiagEvent('error', 'login_failed', { identifier: email, message: error.message });
         return { error };
+      }
+
+      // Register access log for successful login
+      if (data?.user?.id) {
+        try {
+          await supabase.from('access_logs').insert({
+            agent_id: data.user.id,
+            action: 'login',
+            ip_address: null,
+            user_agent: navigator.userAgent || null,
+          });
+        } catch (logErr) {
+          console.warn('Failed to log access:', logErr);
+        }
       }
 
       pushDiagEvent('info', 'login_success', { identifier: email });
@@ -185,6 +199,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     pushDiagEvent('info', 'signout');
+    
+    // Register logout in access_logs before signing out
+    if (user?.id) {
+      try {
+        await supabase.from('access_logs').insert({
+          agent_id: user.id,
+          action: 'logout',
+          ip_address: null,
+          user_agent: navigator.userAgent || null,
+        });
+      } catch (logErr) {
+        console.warn('Failed to log logout:', logErr);
+      }
+    }
+    
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
