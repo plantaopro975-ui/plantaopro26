@@ -14,14 +14,13 @@ import {
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: UserCircle, label: 'Meu Painel', href: '/agent-panel' },
-  { icon: Calendar, label: 'Escalas', href: '/shifts' },
   { icon: Users, label: 'Agentes', href: '/agents' },
   { icon: Clock, label: 'Banco de Horas', href: '/overtime' },
   { icon: Settings, label: 'Configurações', href: '/settings' },
 ];
 
-const adminItems = [
-  { icon: Shield, label: 'Administração', href: '/admin' },
+const masterItems = [
+  { icon: Shield, label: 'Painel Master', href: '/master' },
 ];
 
 interface MobileSidebarProps {
@@ -30,11 +29,7 @@ interface MobileSidebarProps {
 
 export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
   const location = useLocation();
-  const { isAdmin, masterSession } = useAuth();
-
-  const masterItems = [
-    { icon: Shield, label: 'Painel Master', href: '/master' },
-  ];
+  const { masterSession } = useAuth();
 
   return (
     <div className="flex flex-col h-full bg-sidebar">
@@ -72,36 +67,6 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
             </Link>
           );
         })}
-
-        {/* Admin Section */}
-        {isAdmin && !masterSession && (
-          <>
-            <div className="pt-4 pb-2">
-              <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Admin
-              </p>
-            </div>
-            {adminItems.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  onClick={onNavigate}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
-                    isActive
-                      ? 'bg-sidebar-accent text-sidebar-primary shadow-soft'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                  )}
-                >
-                  <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-                  <span className="font-medium">{item.label}</span>
-                </Link>
-              );
-            })}
-          </>
-        )}
 
         {/* Master Section */}
         {masterSession && (

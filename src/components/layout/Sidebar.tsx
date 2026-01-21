@@ -22,9 +22,6 @@ const navItems = [
   { icon: Settings, label: 'Configurações', href: '/settings' },
 ];
 
-const adminItems = [
-  { icon: Shield, label: 'Administração', href: '/admin' },
-];
 
 const masterItems = [
   { icon: Shield, label: 'Painel Master', href: '/master' },
@@ -32,7 +29,7 @@ const masterItems = [
 
 export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const location = useLocation();
-  const { isAdmin, isMaster, masterSession } = useAuth();
+  const { masterSession } = useAuth();
 
   return (
     <aside ref={ref} {...props} className={cn("w-64 border-r border-sidebar-border bg-sidebar hidden lg:flex flex-col", props.className)}>
@@ -73,34 +70,6 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
           );
         })}
 
-        {/* Admin Section */}
-        {isAdmin && !masterSession && (
-          <>
-            <div className="pt-4 pb-2">
-              <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Admin
-              </p>
-            </div>
-            {adminItems.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
-                    isActive
-                      ? 'bg-sidebar-accent text-sidebar-primary shadow-soft'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                  )}
-                >
-                  <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-                  <span className="font-medium">{item.label}</span>
-                </Link>
-              );
-            })}
-          </>
-        )}
 
         {/* Master Section */}
         {masterSession && (
