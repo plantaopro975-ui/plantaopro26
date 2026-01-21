@@ -963,6 +963,50 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_credentials: {
+        Row: {
+          agent_id: string
+          cpf: string
+          created_at: string
+          device_id: string | null
+          encrypted_token: string | null
+          id: string
+          last_login_at: string | null
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          cpf: string
+          created_at?: string
+          device_id?: string | null
+          encrypted_token?: string | null
+          id?: string
+          last_login_at?: string | null
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          cpf?: string
+          created_at?: string
+          device_id?: string | null
+          encrypted_token?: string | null
+          id?: string
+          last_login_at?: string | null
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_credentials_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_alerts: {
         Row: {
           agent_id: string
