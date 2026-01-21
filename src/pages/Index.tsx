@@ -48,6 +48,8 @@ import { UnsavedChangesDialog } from '@/components/UnsavedChangesDialog';
 import { ForgotPasswordDialog } from '@/components/ForgotPasswordDialog';
 import { SavedCredentials, saveCredential, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, updateLastLogin, canQuickLogin } from '@/components/auth/SavedCredentials';
 import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDialog';
+import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
+import { QuickLoginCards } from '@/components/QuickLoginCards';
 import { useTheme } from '@/contexts/ThemeContext';
 import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
 import { ThemedTeamCard } from '@/components/ThemedTeamCard';
@@ -108,6 +110,7 @@ export default function Index() {
   const [saveCpfEnabled, setSaveCpfEnabled] = useState(false);
   const [savePasswordEnabled, setSavePasswordEnabled] = useState(false);
   const [enableBiometric, setEnableBiometric] = useState(false);
+  const [quickLoginLoadingCpf, setQuickLoginLoadingCpf] = useState<string | null>(null);
 
   // Registration form
   const [formData, setFormData] = useState({
@@ -720,6 +723,53 @@ export default function Index() {
     setIsSubmitting(false);
   };
 
+  // Handle quick login from cards (1-click)
+  const handleQuickLogin = async (cpf: string, password: string) => {
+    setQuickLoginLoadingCpf(cpf);
+    
+    try {
+      const cleanCpf = cpf.replace(/\D/g, '');
+      const authEmail = `${cleanCpf}@agent.plantaopro.com`;
+      
+      const { error } = await signIn(authEmail, password);
+      
+      if (error) {
+        toast({
+          title: 'Falha no Login Rápido',
+          description: 'Credenciais inválidas. Faça login manualmente.',
+          variant: 'destructive',
+        });
+      } else {
+        updateLastLogin(cleanCpf);
+        toast({
+          title: 'Bem-vindo!',
+          description: 'Login rápido realizado com sucesso.',
+        });
+        navigate('/agent-panel', { replace: true });
+      }
+    } catch (error) {
+      console.error('Quick login error:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível realizar o login rápido.',
+        variant: 'destructive',
+      });
+    }
+    
+    setQuickLoginLoadingCpf(null);
+  };
+
+  // Handle credential selection (without password)
+  const handleQuickLoginSelect = (cpf: string) => {
+    setLoginCpf(formatCPF(cpf));
+    setSelectedTeam(null); // Clear team selection for direct login
+    setShowLogin(true);
+    toast({
+      title: 'CPF Carregado',
+      description: 'Digite sua senha para entrar.',
+    });
+  };
+
   const handleBiometricLogin = async () => {
     setIsBiometricLoading(true);
     try {
@@ -862,6 +912,19 @@ export default function Index() {
           </p>
         </div>
         
+        {/* Quick Login Cards - Shows when credentials are saved */}
+        {getSavedCredentials().length > 0 && (
+          <div className="w-full max-w-md mb-3 sm:mb-4 px-2 animate-fade-in" style={{ animationDelay: '300ms' }}>
+            <QuickLoginCards
+              onQuickLogin={handleQuickLogin}
+              onSelectCredential={handleQuickLoginSelect}
+              isLoading={!!quickLoginLoadingCpf}
+              loadingCpf={quickLoginLoadingCpf || undefined}
+            />
+          </div>
+        )}
+        
+        {/* Teams Grid */}
         <div className="w-full h-full max-w-[95vw] landscape:max-w-[90vw] sm:max-w-2xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto flex items-center justify-center">
           <div className="w-full grid grid-cols-2 landscape:grid-cols-4 md:grid-cols-4 gap-1.5 landscape:gap-2 sm:gap-3 md:gap-4 lg:gap-5 auto-rows-fr">
             {teams.map((team, index) => (
@@ -1435,6 +1498,11 @@ export default function Index() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
+            </div>
+            
+            {/* Password Recovery Link */}
+            <div className="flex justify-end">
+              <MasterPasswordRecoveryDialog />
             </div>
             
             <Button
