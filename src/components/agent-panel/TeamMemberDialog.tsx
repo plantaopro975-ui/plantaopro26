@@ -9,16 +9,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Crown, Shield, User, Droplet, Phone, MapPin, MessageCircle, Mail, Cake, X, ChevronDown, ChevronUp, Send } from 'lucide-react';
-import { format, parseISO, differenceInYears } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { Crown, Shield, User, Droplet, Phone, MessageCircle, Cake, Send } from 'lucide-react';
+import { differenceInYears, parseISO } from 'date-fns';
 
 const quickMessages = [
-  { id: 'cover', label: 'Cobrir plantão', message: 'Olá! Preciso de você para cobrir um plantão. Pode me ajudar?' },
-  { id: 'swap', label: 'Trocar plantão', message: 'Olá! Gostaria de propor uma troca de plantão. Podemos conversar?' },
-  { id: 'urgent', label: 'Urgente', message: '🚨 URGENTE: Preciso falar com você imediatamente sobre o serviço.' },
-  { id: 'info', label: 'Pedir informação', message: 'Olá! Preciso de uma informação sobre o serviço. Pode me ajudar?' },
-  { id: 'thanks', label: 'Agradecer', message: 'Muito obrigado pela ajuda! 👏' },
+  { id: 'cover', label: '🛡️ Cobrir', message: 'Olá! Preciso de você para cobrir um plantão. Pode me ajudar?' },
+  { id: 'swap', label: '🔄 Trocar', message: 'Olá! Gostaria de propor uma troca de plantão. Podemos conversar?' },
+  { id: 'urgent', label: '🚨 Urgente', message: '🚨 URGENTE: Preciso falar com você imediatamente sobre o serviço.' },
 ];
 
 interface TeamMember {
@@ -43,40 +40,18 @@ interface TeamMemberDialogProps {
 }
 
 export function TeamMemberDialog({ member, open, onOpenChange, isCurrentUser }: TeamMemberDialogProps) {
-  const [showQuickMessages, setShowQuickMessages] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   
   if (!member) return null;
 
-  const getRoleIcon = (role: string | null) => {
+  const getRoleConfig = (role: string | null) => {
     switch (role) {
       case 'team_leader':
-        return <Crown className="h-6 w-6 text-amber-500" />;
+        return { icon: Crown, label: 'Chefe', color: 'amber', bgClass: 'from-amber-500 to-orange-600' };
       case 'support':
-        return <Shield className="h-6 w-6 text-blue-500" />;
+        return { icon: Shield, label: 'Apoio', color: 'blue', bgClass: 'from-blue-500 to-indigo-600' };
       default:
-        return <User className="h-6 w-6 text-slate-400" />;
-    }
-  };
-
-  const getRoleLabel = (role: string | null) => {
-    switch (role) {
-      case 'team_leader':
-        return 'Chefe de Equipe';
-      case 'support':
-        return 'Apoio';
-      default:
-        return 'Agente';
-    }
-  };
-
-  const getRoleBadgeClass = (role: string | null) => {
-    switch (role) {
-      case 'team_leader':
-        return 'bg-gradient-to-r from-amber-500 to-amber-600 text-black border-amber-400';
-      case 'support':
-        return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-400';
-      default:
-        return 'bg-slate-700/80 text-slate-300 border-slate-600';
+        return { icon: User, label: 'Agente', color: 'slate', bgClass: 'from-slate-500 to-slate-600' };
     }
   };
 
@@ -96,139 +71,111 @@ export function TeamMemberDialog({ member, open, onOpenChange, isCurrentUser }: 
     }
   };
 
+  const roleConfig = getRoleConfig(member.role);
+  const RoleIcon = roleConfig.icon;
   const whatsappLink = formatPhoneForWhatsApp(member.phone);
   const age = getAge(member.birth_date);
+  const firstName = member.name.split(' ')[0];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-border max-w-md">
+      <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-slate-600/50 max-w-xs p-0 gap-0 rounded-2xl shadow-2xl overflow-hidden">
         <DialogHeader className="sr-only">
           <DialogTitle>Perfil de {member.name}</DialogTitle>
-          <DialogDescription>Informações de contato e perfil do membro da equipe.</DialogDescription>
+          <DialogDescription>Informações do membro da equipe.</DialogDescription>
         </DialogHeader>
         
-        {/* Profile Card */}
-        <div className="flex flex-col items-center pt-4 pb-2">
-          {/* Avatar grande */}
-          <div className="relative mb-4">
-            <Avatar className={`h-28 w-28 border-4 shadow-xl ${
-              member.role === 'team_leader' ? 'border-amber-500 shadow-amber-500/30' :
-              member.role === 'support' ? 'border-blue-500 shadow-blue-500/30' : 
-              'border-primary/50 shadow-primary/20'
-            }`}>
+        {/* Compact Header with Avatar */}
+        <div className={`relative bg-gradient-to-r ${roleConfig.bgClass} p-4`}>
+          {/* Background pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+          </div>
+          
+          <div className="relative flex items-center gap-3">
+            <Avatar className="h-14 w-14 border-2 border-white/30 shadow-xl">
               {member.avatar_url && <AvatarImage src={member.avatar_url} alt={member.name} className="object-cover" />}
-              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-4xl font-bold text-primary-foreground">
+              <AvatarFallback className="bg-white/20 text-xl font-black text-white">
                 {member.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             
-            {/* Role icon overlay */}
-            <div className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-card border-2 border-border">
-              {getRoleIcon(member.role)}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg font-black text-white truncate leading-tight">
+                {firstName}
+              </h2>
+              <div className="flex items-center gap-1.5 mt-1">
+                <Badge className="bg-white/20 text-white border-white/30 text-[10px] px-1.5 py-0 gap-1">
+                  <RoleIcon className="h-3 w-3" />
+                  {roleConfig.label}
+                </Badge>
+                {member.team && (
+                  <Badge className="bg-black/20 text-white/90 border-white/20 text-[10px] px-1.5 py-0">
+                    {member.team}
+                  </Badge>
+                )}
+                {isCurrentUser && (
+                  <Badge className="bg-emerald-500 text-white text-[10px] px-1.5 py-0">Você</Badge>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Name */}
-          <h2 className="text-xl font-bold text-foreground text-center">
-            {member.name}
-          </h2>
-          
-          {/* Badges */}
-          <div className="flex items-center gap-2 mt-2">
-            <Badge className={`${getRoleBadgeClass(member.role)}`}>
-              {getRoleLabel(member.role)}
-            </Badge>
-            {member.team && (
-              <Badge variant="outline">
-                Equipe {member.team}
-              </Badge>
-            )}
-            {isCurrentUser && (
-              <Badge className="bg-primary text-primary-foreground">Você</Badge>
-            )}
           </div>
         </div>
 
-        {/* Info Grid */}
-        <div className="space-y-3 py-4 border-t border-border">
-          {/* Blood Type */}
+        {/* Quick Info Row */}
+        <div className="flex items-center justify-center gap-3 py-3 px-4 bg-slate-800/50 border-b border-slate-700/50">
           {member.blood_type && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/30">
-              <Droplet className="h-5 w-5 text-red-500" />
-              <div>
-                <p className="text-xs text-muted-foreground">Tipo Sanguíneo</p>
-                <p className="font-bold text-red-400 text-lg">{member.blood_type}</p>
-              </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/20 border border-red-500/40">
+              <Droplet className="h-3.5 w-3.5 text-red-400 fill-red-400/30" />
+              <span className="text-sm font-black text-red-300">{member.blood_type}</span>
             </div>
           )}
-
-          {/* Age (only show age, not exact date) */}
           {age && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <Cake className="h-5 w-5 text-pink-500" />
-              <div>
-                <p className="text-xs text-muted-foreground">Idade</p>
-                <p className="font-semibold text-foreground">{age} anos</p>
-              </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-pink-500/20 border border-pink-500/40">
+              <Cake className="h-3.5 w-3.5 text-pink-400" />
+              <span className="text-sm font-bold text-pink-300">{age} anos</span>
             </div>
           )}
+        </div>
 
-          {/* Phone & WhatsApp */}
+        {/* Contact Actions */}
+        <div className="p-4 space-y-3">
           {member.phone && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                <Phone className="h-5 w-5 text-green-500" />
-                <div className="flex-1">
-                  <p className="text-xs text-muted-foreground">Telefone</p>
-                  <p className="font-semibold text-foreground">{member.phone}</p>
+            <>
+              {/* Phone Number Display */}
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50">
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-emerald-400" />
+                  <span className="text-sm font-medium text-slate-300">{member.phone}</span>
                 </div>
-                <div className="flex gap-1.5">
-                  {/* Direct Call Button */}
-                  <a href={`tel:${member.phone.replace(/\D/g, '')}`}>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="gap-1.5 border-blue-500/50 text-blue-500 hover:bg-blue-500/10"
-                    >
-                      <Phone className="h-4 w-4" />
-                      Ligar
-                    </Button>
-                  </a>
-                  {/* WhatsApp Button */}
-                  {whatsappLink && (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="gap-1.5 border-green-500/50 text-green-500 hover:bg-green-500/10"
-                      onClick={() => setShowQuickMessages(!showQuickMessages)}
-                    >
-                      <MessageCircle className="h-4 w-4" />
-                      <span className="hidden sm:inline">WhatsApp</span>
-                      {showQuickMessages ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                    </Button>
-                  )}
-                </div>
+                <a href={`tel:${member.phone.replace(/\D/g, '')}`}>
+                  <Button size="sm" variant="ghost" className="h-7 px-2 text-xs bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/40">
+                    <Phone className="h-3 w-3 mr-1" />
+                    Ligar
+                  </Button>
+                </a>
               </div>
-              
-              {/* Quick Messages Panel */}
-              {whatsappLink && showQuickMessages && (
-                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30 space-y-2">
-                  <p className="text-xs font-medium text-green-400 flex items-center gap-1.5">
-                    <Send className="h-3 w-3" />
-                    Mensagens Rápidas
+
+              {/* WhatsApp Quick Actions */}
+              {whatsappLink && (
+                <div className="space-y-2">
+                  <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                    <MessageCircle className="h-3 w-3" />
+                    Mensagem Rápida WhatsApp
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="grid grid-cols-3 gap-1.5">
                     {quickMessages.map((qm) => (
                       <a
                         key={qm.id}
                         href={`https://wa.me/${whatsappLink}?text=${encodeURIComponent(qm.message)}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="block"
                       >
                         <Button 
                           size="sm" 
                           variant="ghost" 
-                          className="h-7 text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/40"
+                          className="w-full h-8 text-[10px] bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 hover:border-emerald-400/50 transition-all"
                         >
                           {qm.label}
                         </Button>
@@ -243,44 +190,30 @@ export function TeamMemberDialog({ member, open, onOpenChange, isCurrentUser }: 
                   >
                     <Button 
                       size="sm" 
-                      className="w-full mt-1 bg-green-600 hover:bg-green-700 text-white gap-1.5"
+                      className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold shadow-lg shadow-emerald-500/20 border border-emerald-400/30"
                     >
-                      <MessageCircle className="h-4 w-4" />
-                      Abrir Conversa (sem mensagem)
+                      <Send className="h-3.5 w-3.5 mr-1.5" />
+                      Abrir WhatsApp
                     </Button>
                   </a>
                 </div>
               )}
-            </div>
+            </>
           )}
 
-          {/* Email */}
-          {member.email && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <Mail className="h-5 w-5 text-blue-500" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground">E-mail</p>
-                <p className="font-semibold text-foreground truncate">{member.email}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Address */}
-          {member.address && (
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-              <MapPin className="h-5 w-5 text-orange-500 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs text-muted-foreground">Endereço</p>
-                <p className="font-semibold text-foreground text-sm">{member.address}</p>
-              </div>
+          {!member.phone && (
+            <div className="text-center py-4 text-slate-500 text-sm">
+              📵 Telefone não cadastrado
             </div>
           )}
         </div>
 
-        {/* Info footer */}
-        <p className="text-[10px] text-center text-muted-foreground border-t border-border pt-3">
-          ℹ️ Estas informações são visíveis apenas para membros da sua equipe
-        </p>
+        {/* Footer */}
+        <div className="px-4 pb-3">
+          <p className="text-[9px] text-center text-slate-500">
+            🔒 Visível apenas para sua equipe
+          </p>
+        </div>
       </DialogContent>
     </Dialog>
   );
