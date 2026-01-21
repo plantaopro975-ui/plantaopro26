@@ -96,6 +96,50 @@ export type Database = {
           },
         ]
       }
+      ad_views: {
+        Row: {
+          ad_id: string
+          agent_id: string
+          clicked: boolean | null
+          completed: boolean | null
+          converted: boolean | null
+          device_info: Json | null
+          id: string
+          view_duration_seconds: number | null
+          viewed_at: string
+        }
+        Insert: {
+          ad_id: string
+          agent_id: string
+          clicked?: boolean | null
+          completed?: boolean | null
+          converted?: boolean | null
+          device_info?: Json | null
+          id?: string
+          view_duration_seconds?: number | null
+          viewed_at?: string
+        }
+        Update: {
+          ad_id?: string
+          agent_id?: string
+          clicked?: boolean | null
+          completed?: boolean | null
+          converted?: boolean | null
+          device_info?: Json | null
+          id?: string
+          view_duration_seconds?: number | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_views_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "advertisements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_announcements: {
         Row: {
           content: string | null
@@ -151,6 +195,129 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      admin_permissions: {
+        Row: {
+          can_approve_transfers: boolean | null
+          can_delete_agents: boolean | null
+          can_manage_ads: boolean | null
+          can_manage_agents: boolean | null
+          can_manage_announcements: boolean | null
+          can_manage_licenses: boolean | null
+          can_manage_roles: boolean | null
+          can_manage_screens: boolean | null
+          can_manage_units: boolean | null
+          can_view_analytics: boolean | null
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_approve_transfers?: boolean | null
+          can_delete_agents?: boolean | null
+          can_manage_ads?: boolean | null
+          can_manage_agents?: boolean | null
+          can_manage_announcements?: boolean | null
+          can_manage_licenses?: boolean | null
+          can_manage_roles?: boolean | null
+          can_manage_screens?: boolean | null
+          can_manage_units?: boolean | null
+          can_view_analytics?: boolean | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_approve_transfers?: boolean | null
+          can_delete_agents?: boolean | null
+          can_manage_ads?: boolean | null
+          can_manage_agents?: boolean | null
+          can_manage_announcements?: boolean | null
+          can_manage_licenses?: boolean | null
+          can_manage_roles?: boolean | null
+          can_manage_screens?: boolean | null
+          can_manage_units?: boolean | null
+          can_view_analytics?: boolean | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      advertisements: {
+        Row: {
+          ad_type: string
+          click_url: string | null
+          content_type: string
+          created_at: string
+          created_by: string | null
+          cta_text: string | null
+          description: string | null
+          expires_at: string | null
+          frequency_limit: number | null
+          frequency_type: string | null
+          id: string
+          is_active: boolean
+          is_mandatory: boolean
+          media_url: string | null
+          min_view_seconds: number | null
+          name: string
+          priority: number
+          starts_at: string | null
+          target_user_types: string[] | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          ad_type?: string
+          click_url?: string | null
+          content_type?: string
+          created_at?: string
+          created_by?: string | null
+          cta_text?: string | null
+          description?: string | null
+          expires_at?: string | null
+          frequency_limit?: number | null
+          frequency_type?: string | null
+          id?: string
+          is_active?: boolean
+          is_mandatory?: boolean
+          media_url?: string | null
+          min_view_seconds?: number | null
+          name: string
+          priority?: number
+          starts_at?: string | null
+          target_user_types?: string[] | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ad_type?: string
+          click_url?: string | null
+          content_type?: string
+          created_at?: string
+          created_by?: string | null
+          cta_text?: string | null
+          description?: string | null
+          expires_at?: string | null
+          frequency_limit?: number | null
+          frequency_type?: string | null
+          id?: string
+          is_active?: boolean
+          is_mandatory?: boolean
+          media_url?: string | null
+          min_view_seconds?: number | null
+          name?: string
+          priority?: number
+          starts_at?: string | null
+          target_user_types?: string[] | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       agent_events: {
         Row: {
@@ -578,6 +745,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dynamic_screens: {
+        Row: {
+          content: Json | null
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          name: string
+          priority: number
+          screen_type: string
+          show_on_login: boolean | null
+          slug: string
+          starts_at: string | null
+          styles: Json | null
+          subtitle: string | null
+          target_user_types: string[] | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          priority?: number
+          screen_type?: string
+          show_on_login?: boolean | null
+          slug: string
+          starts_at?: string | null
+          styles?: Json | null
+          subtitle?: string | null
+          target_user_types?: string[] | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          priority?: number
+          screen_type?: string
+          show_on_login?: boolean | null
+          slug?: string
+          starts_at?: string | null
+          styles?: Json | null
+          subtitle?: string | null
+          target_user_types?: string[] | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       external_database_configs: {
         Row: {
@@ -1069,6 +1296,38 @@ export type Database = {
           },
         ]
       }
+      screen_views: {
+        Row: {
+          agent_id: string
+          id: string
+          interactions: Json | null
+          screen_id: string
+          viewed_at: string
+        }
+        Insert: {
+          agent_id: string
+          id?: string
+          interactions?: Json | null
+          screen_id: string
+          viewed_at?: string
+        }
+        Update: {
+          agent_id?: string
+          id?: string
+          interactions?: Json | null
+          screen_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "screen_views_screen_id_fkey"
+            columns: ["screen_id"]
+            isOneToOne: false
+            referencedRelation: "dynamic_screens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_alerts: {
         Row: {
           agent_id: string
@@ -1452,6 +1711,10 @@ export type Database = {
         }
         Returns: number
       }
+      has_admin_permission: {
+        Args: { _permission: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1478,7 +1741,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user" | "master"
+      app_role: "admin" | "user" | "master" | "editor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1606,7 +1869,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user", "master"],
+      app_role: ["admin", "user", "master", "editor"],
     },
   },
 } as const

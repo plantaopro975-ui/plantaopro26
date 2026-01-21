@@ -87,6 +87,7 @@ export default function Index() {
   const [showRegistration, setShowRegistration] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showMasterLogin, setShowMasterLogin] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
   const [showCredentialsManager, setShowCredentialsManager] = useState(false);
   const [showAboutDialog, setShowAboutDialog] = useState(false);
@@ -97,9 +98,11 @@ export default function Index() {
   
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
   
-  // Master login
+  // Master/Admin login
   const [masterUsername, setMasterUsername] = useState('');
   const [masterPassword, setMasterPassword] = useState('');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
 
   // CPF check
   const [checkCpf, setCheckCpf] = useState('');
@@ -710,6 +713,39 @@ export default function Index() {
     setIsSubmitting(false);
   };
 
+  // Handle admin login (email-based)
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await signIn(adminEmail, adminPassword);
+      
+      if (error) {
+        toast({
+          title: 'Erro',
+          description: error.message || 'Credenciais inválidas.',
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Bem-vindo!',
+          description: 'Login administrativo realizado.',
+        });
+        setShowAdminLogin(false);
+        navigate('/admin', { replace: true });
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Erro',
+        description: error?.message || 'Não foi possível autenticar.',
+        variant: 'destructive',
+      });
+    }
+
+    setIsSubmitting(false);
+  };
+
   // Handle quick login from cards (1-click)
   const handleQuickLogin = async (cpf: string, password: string) => {
     setQuickLoginLoadingCpf(cpf);
@@ -810,12 +846,15 @@ export default function Index() {
     setShowLogin(false);
     setShowRegistration(false);
     setShowMasterLogin(false);
+    setShowAdminLogin(false);
     setSelectedTeam(null);
     setCheckCpf('');
     setLoginCpf('');
     setLoginPassword('');
     setMasterUsername('');
     setMasterPassword('');
+    setAdminEmail('');
+    setAdminPassword('');
     // Reset registration form
     setFormData({
       name: '',
@@ -995,7 +1034,7 @@ export default function Index() {
                 className="w-48 bg-slate-900/95 backdrop-blur-xl border-2 border-slate-600/50 shadow-2xl shadow-black/50 z-[100]"
               >
                 <DropdownMenuItem 
-                  onClick={() => setShowMasterLogin(true)}
+                  onClick={() => setShowAdminLogin(true)}
                   className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer text-blue-400 hover:text-blue-300 hover:bg-blue-500/15 focus:bg-blue-500/15 focus:text-blue-300"
                 >
                   <div className="p-1.5 rounded-md bg-blue-500/20 border border-blue-500/30">
@@ -1003,7 +1042,7 @@ export default function Index() {
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm">Admin</span>
-                    <span className="text-[10px] text-slate-400">Painel administrativo</span>
+                    <span className="text-[10px] text-slate-400">Login por e-mail</span>
                   </div>
                 </DropdownMenuItem>
                 
@@ -1501,6 +1540,59 @@ export default function Index() {
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Autenticando...</>
               ) : (
                 <><Lock className="mr-2 h-4 w-4" /> Acessar Painel Master</>
+              )}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Admin Login Dialog */}
+      <Dialog open={showAdminLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/40 max-w-md shadow-2xl shadow-blue-900/20">
+          <DialogHeader className="text-center pb-4">
+            <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <DialogTitle className="text-xl font-bold text-white text-center">
+              Login Administrativo
+            </DialogTitle>
+            <DialogDescription className="text-sm text-slate-400 text-center">
+              Entre com suas credenciais de administrador
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleAdminLogin} className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-slate-300">E-mail</Label>
+              <Input
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@exemplo.com"
+                className="bg-slate-800/80 border border-slate-600 text-white focus:border-blue-500/60"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
+              <Input
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                placeholder="••••••••"
+                className="bg-slate-800/80 border border-slate-600 text-white focus:border-blue-500/60"
+              />
+            </div>
+            
+            <Button
+              type="submit"
+              disabled={isSubmitting || !adminEmail || !adminPassword}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3 shadow-lg"
+            >
+              {isSubmitting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Autenticando...</>
+              ) : (
+                <><Lock className="mr-2 h-4 w-4" /> Entrar</>
               )}
             </Button>
           </form>
