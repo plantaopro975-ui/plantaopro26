@@ -267,6 +267,8 @@ export type Database = {
           name: string
           priority: number
           starts_at: string | null
+          target_teams: string[] | null
+          target_unit_ids: string[] | null
           target_user_types: string[] | null
           title: string | null
           updated_at: string
@@ -290,6 +292,8 @@ export type Database = {
           name: string
           priority?: number
           starts_at?: string | null
+          target_teams?: string[] | null
+          target_unit_ids?: string[] | null
           target_user_types?: string[] | null
           title?: string | null
           updated_at?: string
@@ -313,6 +317,8 @@ export type Database = {
           name?: string
           priority?: number
           starts_at?: string | null
+          target_teams?: string[] | null
+          target_unit_ids?: string[] | null
           target_user_types?: string[] | null
           title?: string | null
           updated_at?: string
