@@ -53,7 +53,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 
 export default function AgentPanel() {
-  const { user, isLoading, masterSession } = useAuth();
+  const { user, isLoading, masterSession, isAdmin } = useAuth();
   const { agent, isLoading: isLoadingAgent } = useAgentProfile();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('equipe');
@@ -188,6 +188,14 @@ export default function AgentPanel() {
       navigate('/master', { replace: true });
     }
   }, [user, masterSession, isLoading, isLoadingAgent, navigate]);
+
+  // If an admin account lands here (no linked agent profile), route to the admin area instead
+  useEffect(() => {
+    if (isLoading || isLoadingAgent) return;
+    if (user && isAdmin && !agent) {
+      navigate('/admin', { replace: true });
+    }
+  }, [user, isAdmin, agent, isLoading, isLoadingAgent, navigate]);
 
 
   // Show loading while auth is hydrating - AFTER all hooks

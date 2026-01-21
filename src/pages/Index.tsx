@@ -73,7 +73,7 @@ interface Unit {
 const teams = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const;
 
 export default function Index() {
-  const { user, isLoading, signIn, signUp, setMasterSession } = useAuth();
+  const { user, isLoading, signIn, signUp, setMasterSession, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { playSound } = useSoundEffects();
@@ -165,11 +165,32 @@ export default function Index() {
 
   useEffect(() => {
     if (!isLoading && user) {
-      // Agents go to agent-panel, admins go to dashboard
-      // Use replace to prevent back navigation to login page
-      navigate('/agent-panel', { replace: true });
+      // Route by role to avoid admins being sent to the agent panel (which requires an agent profile)
+      navigate(isAdmin ? '/admin' : '/agent-panel', { replace: true });
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isLoading, isAdmin, navigate]);
+
+  const LAST_CPF_KEY = 'plantaopro_last_cpf';
+
+  const persistLastCpf = (cpf: string) => {
+    try {
+      const clean = cpf.replace(/\D/g, '');
+      if (clean.length === 11) localStorage.setItem(LAST_CPF_KEY, clean);
+    } catch {
+      // ignore
+    }
+  };
+
+  const readLastCpf = (): string | null => {
+    try {
+      const v = localStorage.getItem(LAST_CPF_KEY);
+      if (!v) return null;
+      const clean = v.replace(/\D/g, '');
+      return clean.length === 11 ? clean : null;
+    } catch {
+      return null;
+    }
+  };
 
   useEffect(() => {
     fetchUnits();
@@ -231,36 +252,48 @@ export default function Index() {
     }
   }, [formData.cpf]);
 
-  // Auto-login effect when login dialog opens
-  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
-  
+  // Smart prefill when dialogs open (no auto-submit, to avoid race conditions)
+  const [prefillAttempted, setPrefillAttempted] = useState(false);
+
   useEffect(() => {
-    if (showLogin && !autoLoginAttempted && !isSubmitting) {
-      const autoLoginCred = getAutoLoginCredential();
-      if (autoLoginCred) {
-        // Check if the saved CPF matches the current login CPF (or if no CPF is set)
-        const currentCpf = loginCpf.replace(/\D/g, '');
-        if (!currentCpf || currentCpf === autoLoginCred.cpf) {
-          setAutoLoginAttempted(true);
-          setLoginCpf(formatCPF(autoLoginCred.cpf));
-          setLoginPassword(autoLoginCred.password);
-          
-          // Auto-submit after a brief delay to show the user what's happening
-          setTimeout(() => {
-            const form = document.querySelector('form[data-login-form="true"]') as HTMLFormElement;
-            if (form) {
-              form.requestSubmit();
-            }
-          }, 500);
-        }
-      }
+    if (!showCpfCheck) {
+      setPrefillAttempted(false);
+      return;
     }
-    
-    // Reset auto-login attempted when dialog closes
-    if (!showLogin) {
-      setAutoLoginAttempted(false);
+
+    if (prefillAttempted) return;
+    const lastCpf = readLastCpf();
+    if (!lastCpf) {
+      setPrefillAttempted(true);
+      return;
     }
-  }, [showLogin, autoLoginAttempted, isSubmitting, loginCpf]);
+
+    // Only prefill if user hasn't typed anything yet
+    if (!checkCpf) {
+      setPrefillAttempted(true);
+      // Reuse the existing real-time lookup flow
+      handleCpfInputChange(lastCpf);
+    }
+  }, [showCpfCheck, prefillAttempted, checkCpf]);
+
+  useEffect(() => {
+    if (!showLogin) return;
+
+    // If login is opened directly (quick login select / biometric), prefill CPF from last usage
+    if (!loginCpf) {
+      const lastCpf = readLastCpf();
+      if (lastCpf) setLoginCpf(formatCPF(lastCpf));
+    }
+
+    // Prefill password (only) when we have a single auto-login credential
+    const autoLoginCred = getAutoLoginCredential();
+    const currentCpf = loginCpf.replace(/\D/g, '');
+    if (autoLoginCred && (!currentCpf || currentCpf === autoLoginCred.cpf) && !loginPassword) {
+      setLoginCpf(formatCPF(autoLoginCred.cpf));
+      setLoginPassword(autoLoginCred.password);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showLogin]);
 
   const fetchUnits = async () => {
     try {
@@ -633,6 +666,7 @@ export default function Index() {
         type: 'auth',
       });
     } else {
+      persistLastCpf(cleanCpf);
       // Save credentials if enabled and update last login time
       if (saveCpfEnabled) {
         const { data: agentData } = await supabase
@@ -763,6 +797,7 @@ export default function Index() {
           variant: 'destructive',
         });
       } else {
+        persistLastCpf(cleanCpf);
         updateLastLogin(cleanCpf);
         toast({
           title: 'Bem-vindo!',
@@ -784,6 +819,7 @@ export default function Index() {
 
   // Handle credential selection (without password)
   const handleQuickLoginSelect = (cpf: string) => {
+    persistLastCpf(cpf);
     setLoginCpf(formatCPF(cpf));
     setSelectedTeam(null); // Clear team selection for direct login
     setShowLogin(true);
@@ -817,6 +853,7 @@ export default function Index() {
         
         // We need the password for login - prompt user
         const authEmail = agentData.email || `${cpf}@agent.plantaopro.com`;
+        persistLastCpf(cpf);
         setLoginCpf(formatCPF(cpf));
         setShowLogin(true);
         toast({
@@ -1174,12 +1211,12 @@ export default function Index() {
           
           <DialogHeader className="pb-2 border-b border-slate-700/40">
             <DialogTitle className="flex items-center justify-center gap-2 text-sm font-bold text-white">
-              {currentTeamConfig && (
+              {currentTeamConfig && selectedTeam && (
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-600/30 to-blue-600/10 border border-blue-500/30">
                   <currentTeamConfig.icon className={`h-3.5 w-3.5 ${currentTeamConfig.color}`} />
                 </div>
               )}
-              <span>Equipe {selectedTeam}</span>
+              <span>{selectedTeam ? `Equipe ${selectedTeam}` : 'Acesso'}</span>
             </DialogTitle>
             <DialogDescription className="text-[10px] text-slate-400 mt-1 text-center">
               Acesso autenticado
@@ -1195,7 +1232,7 @@ export default function Index() {
                 placeholder="000.000.000-00"
                 className="bg-slate-800/80 border border-slate-600 text-white text-sm py-3 font-mono tracking-wider focus:border-blue-500/60"
                 maxLength={14}
-                disabled
+                disabled={!!selectedTeam}
               />
               {loginErrors.cpf && <p className="text-[10px] text-red-400 font-medium">{loginErrors.cpf}</p>}
             </div>
