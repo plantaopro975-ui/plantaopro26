@@ -1022,11 +1022,11 @@ export default function Index() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-lg bg-slate-800/50 hover:bg-slate-700/70 border border-slate-600/50 hover:border-slate-500/70 transition-all duration-200 hover:scale-105"
+                  className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-slate-400 hover:text-slate-200 rounded-md bg-slate-800/40 hover:bg-slate-700/60 border border-slate-700/50 hover:border-primary/40 transition-all duration-200"
                 >
-                  <Settings className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Acesso</span>
-                  <ChevronDown className="h-3 w-3 opacity-60" />
+                  <Shield className="h-3 w-3" />
+                  <span className="hidden sm:inline">Admin</span>
+                  <ChevronDown className="h-2.5 w-2.5 opacity-50" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 

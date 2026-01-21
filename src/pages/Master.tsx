@@ -461,12 +461,25 @@ export default function Master() {
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate('/')}>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => {
+                setLoadingData(true);
+                fetchData();
+              }}
+              disabled={loadingData}
+              className="h-9 w-9 border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all"
+              title="Atualizar dados"
+            >
+              <RefreshCw className={cn("h-4 w-4", loadingData && "animate-spin")} />
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/')} className="h-9 px-3">
               <Calendar className="h-4 w-4 mr-2" />
               Início
             </Button>
-            <Button variant="destructive" onClick={handleLogout}>
+            <Button variant="destructive" size="sm" onClick={handleLogout} className="h-9 px-3">
               <LogOut className="h-4 w-4 mr-2" />
               Sair
             </Button>
