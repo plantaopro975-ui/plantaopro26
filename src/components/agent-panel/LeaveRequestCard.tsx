@@ -11,9 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCap, CalendarPlus, Users, User } from 'lucide-react';
+import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCap, CalendarPlus, Users, User, MessageCircle } from 'lucide-react';
 import { format, parseISO, differenceInDays, isAfter, startOfDay, isSameDay, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { TeamMemberDialog } from './TeamMemberDialog';
 
 interface LeaveRequestCardProps {
   agentId: string;
@@ -35,6 +36,12 @@ interface AgentLeave {
 interface TeamMemberLeave extends AgentLeave {
   agent_name: string;
   agent_avatar_url?: string | null;
+  agent_phone?: string | null;
+  agent_role?: string | null;
+  agent_blood_type?: string | null;
+  agent_birth_date?: string | null;
+  agent_address?: string | null;
+  agent_email?: string | null;
 }
 
 const leaveTypes = [
@@ -72,7 +79,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const [activeTab, setActiveTab] = useState('minhas');
 
   const [selectedTeamDate, setSelectedTeamDate] = useState<Date | undefined>();
-
+  const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [showMemberDialog, setShowMemberDialog] = useState(false);
   useEffect(() => {
     fetchLeaves();
     if (agentTeam && agentUnitId) {
@@ -118,7 +126,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
     try {
       const { data: teamMembers, error: teamError } = await supabase
         .from('agents')
-        .select('id, name, avatar_url')
+        .select('id, name, avatar_url, phone, role, blood_type, birth_date, address, email, is_active, team')
         .eq('team', agentTeam)
         .eq('unit_id', agentUnitId)
         .neq('id', agentId);
@@ -145,7 +153,15 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           return { 
             ...leave, 
             agent_name: member?.name || 'Agente',
-            agent_avatar_url: member?.avatar_url || null
+            agent_avatar_url: member?.avatar_url || null,
+            agent_phone: member?.phone || null,
+            agent_role: member?.role || null,
+            agent_blood_type: member?.blood_type || null,
+            agent_birth_date: member?.birth_date || null,
+            agent_address: member?.address || null,
+            agent_email: member?.email || null,
+            agent_is_active: member?.is_active ?? true,
+            agent_team: member?.team || null
           };
         });
 
@@ -373,6 +389,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                           {teamToday.map((leave) => {
                             const agentName = (leave as any).agent_name || '';
                             const avatarUrl = (leave as any).agent_avatar_url;
+                            const agentPhone = (leave as any).agent_phone;
                             const nameParts = agentName.split(' ');
                             const displayName = nameParts.length > 1 
                               ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`
@@ -385,10 +402,30 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                             const endDate = format(parseISO(leave.end_date), 'dd/MM', { locale: ptBR });
                             const isSingleDay = leave.start_date === leave.end_date;
                             
+                            const handleCardClick = () => {
+                              setSelectedMember({
+                                id: leave.agent_id,
+                                name: agentName,
+                                role: (leave as any).agent_role,
+                                team: (leave as any).agent_team,
+                                blood_type: (leave as any).agent_blood_type,
+                                avatar_url: avatarUrl,
+                                is_active: (leave as any).agent_is_active ?? true,
+                                phone: agentPhone,
+                                address: (leave as any).agent_address,
+                                birth_date: (leave as any).agent_birth_date,
+                                email: (leave as any).agent_email
+                              });
+                              setShowMemberDialog(true);
+                            };
+                            
                             return (
                               <Tooltip key={leave.id}>
                                 <TooltipTrigger asChild>
-                                  <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-gradient-to-br from-slate-700/60 to-slate-800/60 border border-slate-500/30 hover:border-blue-500/50 hover:from-slate-700/80 hover:to-slate-800/80 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md hover:shadow-blue-500/10">
+                                  <div 
+                                    onClick={handleCardClick}
+                                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-gradient-to-br from-slate-700/60 to-slate-800/60 border border-slate-500/30 hover:border-blue-500/50 hover:from-slate-700/80 hover:to-slate-800/80 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md hover:shadow-blue-500/10 active:scale-95"
+                                  >
                                     <div className="h-8 w-8 rounded-full overflow-hidden bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center flex-shrink-0 ring-2 ring-slate-400/30 shadow-inner">
                                       {avatarUrl ? (
                                         <img 
@@ -406,6 +443,9 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                                         {leaveInfo.label}
                                       </span>
                                     </div>
+                                    {agentPhone && (
+                                      <MessageCircle className="h-3.5 w-3.5 text-green-400 ml-auto" />
+                                    )}
                                   </div>
                                 </TooltipTrigger>
                                 <TooltipContent 
@@ -438,6 +478,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                                       {leave.reason && (
                                         <p className="text-slate-500 italic text-[11px]">"{leave.reason}"</p>
                                       )}
+                                      <p className="text-blue-400 text-[10px] mt-1">Clique para ver perfil e WhatsApp</p>
                                     </div>
                                   </div>
                                 </TooltipContent>
@@ -686,6 +727,14 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Team Member Dialog */}
+      <TeamMemberDialog 
+        member={selectedMember}
+        open={showMemberDialog}
+        onOpenChange={setShowMemberDialog}
+        isCurrentUser={false}
+      />
     </Card>
   );
 }
