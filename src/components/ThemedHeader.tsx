@@ -6,7 +6,7 @@ import {
   Shield, Cpu, Snowflake, Flame, Volume2, VolumeX,
   Radio, Activity, Zap, Target, Crosshair, Clock,
   Check, ChevronDown, Hexagon, Triangle, Diamond, Circle,
-  Sparkles, Gauge, Heart, Eye, Waves, Star
+  Sparkles, Gauge, Heart, Eye, Waves, Star, Crown, Network, Wifi
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -60,14 +60,25 @@ const headerStyles = {
     statusText: 'text-sky-300',
     operationalText: 'ÁRTICO',
   },
-  light: {
-    bg: 'from-slate-100/98 via-white/98 to-slate-100/98',
-    border: 'border-slate-300',
-    accent: 'text-slate-700',
-    glow: 'shadow-slate-400/20',
+  // NEW: Sovereign - Premium gold institutional
+  sovereign: {
+    bg: 'from-yellow-950/95 via-stone-900/98 to-amber-950/95',
+    border: 'border-yellow-500/40',
+    accent: 'text-yellow-400',
+    glow: 'shadow-yellow-500/25',
+    statusBg: 'bg-yellow-500/10 border-yellow-500/40',
+    statusText: 'text-yellow-400',
+    operationalText: 'SOBERANO',
+  },
+  // NEW: Nexus - Matrix green network
+  nexus: {
+    bg: 'from-emerald-950/95 via-slate-900/98 to-green-950/95',
+    border: 'border-emerald-500/40',
+    accent: 'text-emerald-400',
+    glow: 'shadow-emerald-500/25',
     statusBg: 'bg-emerald-500/10 border-emerald-500/40',
-    statusText: 'text-emerald-600',
-    operationalText: 'ATIVO',
+    statusText: 'text-emerald-400',
+    operationalText: 'NEXUS',
   },
   system: {
     bg: 'from-slate-900/95 via-slate-800/98 to-slate-900/95',
@@ -110,7 +121,7 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
   }, []);
 
   const availableThemes = Object.values(themes).filter(t => 
-    ['tactical', 'cyber', 'crimson', 'arctic', 'light', 'system'].includes(t.id)
+    ['tactical', 'cyber', 'crimson', 'arctic', 'sovereign', 'nexus', 'system'].includes(t.id)
   );
 
   const handleThemeChange = (themeId: string) => {
@@ -215,22 +226,30 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
           </div>
         );
       
-      case 'light':
-        // Clean productivity status
+      case 'sovereign':
+        // Premium gold institutional meter
         return (
-          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-50 to-slate-50 border border-slate-200">
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-yellow-900/40 to-amber-800/30 border border-yellow-500/40">
+            <Crown className="h-5 w-5 text-yellow-400" />
             <div className="flex items-center gap-1.5">
-              <div className="relative">
-                <Activity className="h-5 w-5 text-emerald-600" />
-                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              </div>
-              <span className="text-xs font-semibold text-slate-700">Sistema Estável</span>
+              <span className="text-xs font-bold text-yellow-300 tracking-wider">AUTORIDADE</span>
+              <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
             </div>
-            <div className="h-4 w-px bg-slate-300" />
-            <div className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-              <span className="text-[10px] text-slate-500">100%</span>
+            <span className="text-[10px] font-mono text-yellow-400/70">GOV</span>
+          </div>
+        );
+      
+      case 'nexus':
+        // Matrix network monitor
+        return (
+          <div className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-900/40 to-green-800/30 border border-emerald-500/40">
+            <Network className="h-5 w-5 text-emerald-400" />
+            <div className="font-mono text-[10px] text-emerald-300">
+              <span className="text-green-400">[</span>
+              ONLINE
+              <span className="text-green-400">]</span>
             </div>
+            <Wifi className="h-4 w-4 text-emerald-400/60 animate-pulse" />
           </div>
         );
       
