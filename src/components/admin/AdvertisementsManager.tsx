@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
@@ -29,14 +30,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import { 
   Plus, Pencil, Trash2, Eye, Loader2, Image, Video, 
-  Layout, ExternalLink, Clock, Target, Megaphone, BarChart3 
+  Layout, ExternalLink, Clock, Target, Megaphone, BarChart3,
+  Play, X, Volume2, VolumeX
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdAnalyticsDashboard } from './AdAnalyticsDashboard';
 
 interface Advertisement {
@@ -83,12 +85,86 @@ const frequencyTypes = [
   { value: 'once', label: 'Uma Vez' },
 ];
 
+// Video Preview Dialog Component
+function VideoPreviewDialog({ 
+  isOpen, 
+  onClose, 
+  videoUrl, 
+  title 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  videoUrl: string; 
+  title: string;
+}) {
+  const [isMuted, setIsMuted] = useState(false);
+
+  if (!isOpen) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl bg-slate-900 border-slate-700 p-0 overflow-hidden">
+        <div className="relative">
+          {/* Header */}
+          <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/80 to-transparent">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Video className="h-5 w-5 text-purple-400" />
+                <span className="text-white font-medium">{title}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsMuted(!isMuted)}
+                  className="text-white hover:bg-white/20"
+                >
+                  {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  className="text-white hover:bg-white/20"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Video Player */}
+          <div className="aspect-video bg-black">
+            <video
+              src={videoUrl}
+              controls
+              autoPlay
+              muted={isMuted}
+              className="w-full h-full"
+            >
+              Seu navegador não suporta vídeo.
+            </video>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function AdvertisementsManager() {
   const [ads, setAds] = useState<Advertisement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingAd, setEditingAd] = useState<Advertisement | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<'list' | 'analytics'>('list');
+  
+  // Video Preview State
+  const [videoPreview, setVideoPreview] = useState<{ isOpen: boolean; url: string; title: string }>({
+    isOpen: false,
+    url: '',
+    title: ''
+  });
   
   // Form state
   const [formData, setFormData] = useState({
@@ -268,305 +344,411 @@ export function AdvertisementsManager() {
     }
   };
 
-  const [activeView, setActiveView] = useState<'list' | 'analytics'>('list');
+  const handlePreviewMedia = (ad: Advertisement) => {
+    if (!ad.media_url) return;
+    
+    const isVideo = ad.content_type === 'video' || 
+                    ad.ad_type === 'video' || 
+                    ad.media_url.match(/\.(mp4|webm|ogg|mov)$/i);
+    
+    if (isVideo) {
+      setVideoPreview({
+        isOpen: true,
+        url: ad.media_url,
+        title: ad.title || ad.name
+      });
+    } else {
+      window.open(ad.media_url, '_blank');
+    }
+  };
+
+  const isVideoAd = (ad: Advertisement) => {
+    return ad.content_type === 'video' || 
+           ad.ad_type === 'video' || 
+           (ad.media_url && ad.media_url.match(/\.(mp4|webm|ogg|mov)$/i));
+  };
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Megaphone className="h-5 w-5 text-purple-400" />
-              Gestão de Propagandas
-            </CardTitle>
-            <CardDescription>
-              Crie e gerencie banners, popups e vídeos promocionais
-            </CardDescription>
+    <>
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Megaphone className="h-5 w-5 text-purple-400" />
+                Gestão de Propagandas
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Crie e gerencie banners, popups e vídeos promocionais
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'list' | 'analytics')}>
+                <TabsList className="bg-slate-700/50 h-9">
+                  <TabsTrigger value="list" className="text-xs px-3 data-[state=active]:bg-purple-600">
+                    <Megaphone className="h-3.5 w-3.5 mr-1.5" />
+                    Lista
+                  </TabsTrigger>
+                  <TabsTrigger value="analytics" className="text-xs px-3 data-[state=active]:bg-purple-600">
+                    <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
+                    Analytics
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+              {activeTab === 'list' && (
+                <Button 
+                  onClick={() => handleOpenDialog()} 
+                  size="sm"
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Nova
+                </Button>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'list' | 'analytics')}>
-              <TabsList className="bg-slate-700/50">
-                <TabsTrigger value="list" className="data-[state=active]:bg-purple-600">
-                  <Megaphone className="h-4 w-4 mr-1" />
-                  Anúncios
-                </TabsTrigger>
-                <TabsTrigger value="analytics" className="data-[state=active]:bg-purple-600">
-                  <BarChart3 className="h-4 w-4 mr-1" />
-                  Analytics
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            {activeView === 'list' && (
-              <Button onClick={() => handleOpenDialog()} className="bg-purple-600 hover:bg-purple-700">
+        </CardHeader>
+        <CardContent>
+          {activeTab === 'analytics' ? (
+            <AdAnalyticsDashboard />
+          ) : isLoading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
+            </div>
+          ) : ads.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Megaphone className="h-12 w-12 mx-auto mb-3 opacity-40" />
+              <p>Nenhuma propaganda cadastrada</p>
+              <Button 
+                onClick={() => handleOpenDialog()} 
+                variant="outline" 
+                className="mt-4"
+              >
                 <Plus className="h-4 w-4 mr-2" />
-                Nova
+                Criar Primeira Propaganda
               </Button>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {activeView === 'analytics' ? (
-          <AdAnalyticsDashboard />
-        ) : isLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
-          </div>
-        ) : ads.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Megaphone className="h-12 w-12 mx-auto mb-3 opacity-40" />
-            <p>Nenhuma propaganda cadastrada</p>
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="border-slate-700">
-                <TableHead>Nome</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Prioridade</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {ads.map((ad) => (
-                <TableRow key={ad.id} className="border-slate-700">
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{ad.name}</div>
-                      {ad.title && (
-                        <div className="text-xs text-muted-foreground">{ad.title}</div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="border-purple-500/50 text-purple-300">
-                      {adTypes.find(t => t.value === ad.ad_type)?.label || ad.ad_type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{ad.priority}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={ad.is_active}
-                      onCheckedChange={() => toggleActive(ad.id, ad.is_active)}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      {ad.media_url && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => window.open(ad.media_url!, '_blank')}
+            </div>
+          ) : (
+            <ScrollArea className="w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-slate-700">
+                    <TableHead className="whitespace-nowrap">Nome</TableHead>
+                    <TableHead className="whitespace-nowrap">Tipo</TableHead>
+                    <TableHead className="whitespace-nowrap text-center">Prio</TableHead>
+                    <TableHead className="whitespace-nowrap text-center">Status</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {ads.map((ad) => (
+                    <TableRow key={ad.id} className="border-slate-700 hover:bg-slate-700/30">
+                      <TableCell className="max-w-[200px]">
+                        <div className="truncate">
+                          <div className="font-medium text-white truncate">{ad.name}</div>
+                          {ad.title && (
+                            <div className="text-xs text-muted-foreground truncate">{ad.title}</div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant="outline" 
+                          className={`whitespace-nowrap ${
+                            ad.ad_type === 'video' 
+                              ? 'border-rose-500/50 text-rose-300 bg-rose-500/10' 
+                              : 'border-purple-500/50 text-purple-300'
+                          }`}
                         >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleOpenDialog(ad)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-red-400 hover:text-red-300"
-                        onClick={() => handleDelete(ad.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
+                          {ad.ad_type === 'video' && <Video className="h-3 w-3 mr-1" />}
+                          {adTypes.find(t => t.value === ad.ad_type)?.label || ad.ad_type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="secondary" className="text-xs">{ad.priority}</Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Switch
+                          checked={ad.is_active}
+                          onCheckedChange={() => toggleActive(ad.id, ad.is_active)}
+                        />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          {ad.media_url && (
+                            <>
+                              {isVideoAd(ad) ? (
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => handlePreviewMedia(ad)}
+                                  className="h-8 w-8 border-rose-500/50 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300"
+                                  title="Assistir Vídeo"
+                                >
+                                  <Play className="h-4 w-4" />
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handlePreviewMedia(ad)}
+                                  className="h-8 w-8"
+                                  title="Visualizar"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleOpenDialog(ad)}
+                            className="h-8 w-8"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                            onClick={() => handleDelete(ad.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl bg-slate-900 border-slate-700">
+        <DialogContent className="max-w-2xl bg-slate-900 border-slate-700 max-h-[90vh]">
           <DialogHeader>
-            <DialogTitle>
-              {editingAd ? 'Editar Propaganda' : 'Nova Propaganda'}
+            <DialogTitle className="flex items-center gap-2">
+              {editingAd ? (
+                <>
+                  <Pencil className="h-5 w-5 text-purple-400" />
+                  Editar Propaganda
+                </>
+              ) : (
+                <>
+                  <Plus className="h-5 w-5 text-purple-400" />
+                  Nova Propaganda
+                </>
+              )}
             </DialogTitle>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
-            <div className="grid grid-cols-2 gap-4">
+          <ScrollArea className="max-h-[60vh] pr-4">
+            <div className="grid gap-4 py-4">
+              {/* Row 1: Name and Type */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Nome*</Label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Nome interno da propaganda"
+                    className="bg-slate-800 border-slate-600"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Tipo de Anúncio</Label>
+                  <Select
+                    value={formData.ad_type}
+                    onValueChange={(v) => setFormData({ ...formData, ad_type: v })}
+                  >
+                    <SelectTrigger className="bg-slate-800 border-slate-600">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {adTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          <div className="flex items-center gap-2">
+                            <type.icon className="h-4 w-4" />
+                            {type.label}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Row 2: Title and Content Type */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Título (exibido)</Label>
+                  <Input
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Título exibido ao usuário"
+                    className="bg-slate-800 border-slate-600"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Tipo de Conteúdo</Label>
+                  <Select
+                    value={formData.content_type}
+                    onValueChange={(v) => setFormData({ ...formData, content_type: v })}
+                  >
+                    <SelectTrigger className="bg-slate-800 border-slate-600">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {contentTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Row 3: Description */}
               <div className="space-y-2">
-                <Label>Nome*</Label>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Nome interno da propaganda"
+                <Label>Descrição</Label>
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Descrição do anúncio"
                   className="bg-slate-800 border-slate-600"
+                  rows={2}
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Tipo</Label>
-                <Select
-                  value={formData.ad_type}
-                  onValueChange={(v) => setFormData({ ...formData, ad_type: v })}
-                >
-                  <SelectTrigger className="bg-slate-800 border-slate-600">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {adTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+
+              {/* Row 4: URLs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    {formData.content_type === 'video' ? (
+                      <>
+                        <Video className="h-4 w-4 text-rose-400" />
+                        URL do Vídeo
+                      </>
+                    ) : (
+                      <>
+                        <Image className="h-4 w-4" />
+                        URL da Mídia
+                      </>
+                    )}
+                  </Label>
+                  <Input
+                    value={formData.media_url}
+                    onChange={(e) => setFormData({ ...formData, media_url: e.target.value })}
+                    placeholder="https://..."
+                    className="bg-slate-800 border-slate-600"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <ExternalLink className="h-4 w-4" />
+                    URL de Clique
+                  </Label>
+                  <Input
+                    value={formData.click_url}
+                    onChange={(e) => setFormData({ ...formData, click_url: e.target.value })}
+                    placeholder="https://..."
+                    className="bg-slate-800 border-slate-600"
+                  />
+                </div>
+              </div>
+
+              {/* Row 5: CTA, Frequency, Priority */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Texto do Botão (CTA)</Label>
+                  <Input
+                    value={formData.cta_text}
+                    onChange={(e) => setFormData({ ...formData, cta_text: e.target.value })}
+                    placeholder="Saiba mais"
+                    className="bg-slate-800 border-slate-600"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Frequência</Label>
+                  <Select
+                    value={formData.frequency_type}
+                    onValueChange={(v) => setFormData({ ...formData, frequency_type: v })}
+                  >
+                    <SelectTrigger className="bg-slate-800 border-slate-600">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {frequencyTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Prioridade</Label>
+                  <Input
+                    type="number"
+                    value={formData.priority}
+                    onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
+                    className="bg-slate-800 border-slate-600"
+                  />
+                </div>
+              </div>
+
+              {/* Row 6: Time limits */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    Tempo mínimo (segundos)
+                  </Label>
+                  <Input
+                    type="number"
+                    value={formData.min_view_seconds}
+                    onChange={(e) => setFormData({ ...formData, min_view_seconds: parseInt(e.target.value) || 5 })}
+                    className="bg-slate-800 border-slate-600"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Limite de exibições</Label>
+                  <Input
+                    type="number"
+                    value={formData.frequency_limit}
+                    onChange={(e) => setFormData({ ...formData, frequency_limit: parseInt(e.target.value) || 1 })}
+                    className="bg-slate-800 border-slate-600"
+                  />
+                </div>
+              </div>
+
+              {/* Row 7: Toggles */}
+              <div className="flex flex-wrap gap-6 pt-2 border-t border-slate-700">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={formData.is_active}
+                    onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
+                  />
+                  <Label>Ativo</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={formData.is_mandatory}
+                    onCheckedChange={(v) => setFormData({ ...formData, is_mandatory: v })}
+                  />
+                  <Label>Obrigatório</Label>
+                </div>
               </div>
             </div>
+          </ScrollArea>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Título</Label>
-                <Input
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Título exibido"
-                  className="bg-slate-800 border-slate-600"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Tipo de Conteúdo</Label>
-                <Select
-                  value={formData.content_type}
-                  onValueChange={(v) => setFormData({ ...formData, content_type: v })}
-                >
-                  <SelectTrigger className="bg-slate-800 border-slate-600">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {contentTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Descrição</Label>
-              <Textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Descrição do anúncio"
-                className="bg-slate-800 border-slate-600"
-                rows={2}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>URL da Mídia</Label>
-                <Input
-                  value={formData.media_url}
-                  onChange={(e) => setFormData({ ...formData, media_url: e.target.value })}
-                  placeholder="https://..."
-                  className="bg-slate-800 border-slate-600"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>URL de Clique</Label>
-                <Input
-                  value={formData.click_url}
-                  onChange={(e) => setFormData({ ...formData, click_url: e.target.value })}
-                  placeholder="https://..."
-                  className="bg-slate-800 border-slate-600"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Texto CTA</Label>
-                <Input
-                  value={formData.cta_text}
-                  onChange={(e) => setFormData({ ...formData, cta_text: e.target.value })}
-                  placeholder="Saiba mais"
-                  className="bg-slate-800 border-slate-600"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Frequência</Label>
-                <Select
-                  value={formData.frequency_type}
-                  onValueChange={(v) => setFormData({ ...formData, frequency_type: v })}
-                >
-                  <SelectTrigger className="bg-slate-800 border-slate-600">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {frequencyTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Prioridade</Label>
-                <Input
-                  type="number"
-                  value={formData.priority}
-                  onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
-                  className="bg-slate-800 border-slate-600"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Tempo mínimo (segundos)</Label>
-                <Input
-                  type="number"
-                  value={formData.min_view_seconds}
-                  onChange={(e) => setFormData({ ...formData, min_view_seconds: parseInt(e.target.value) || 5 })}
-                  className="bg-slate-800 border-slate-600"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Limite de exibições</Label>
-                <Input
-                  type="number"
-                  value={formData.frequency_limit}
-                  onChange={(e) => setFormData({ ...formData, frequency_limit: parseInt(e.target.value) || 1 })}
-                  className="bg-slate-800 border-slate-600"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-6 pt-2">
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={formData.is_active}
-                  onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
-                />
-                <Label>Ativo</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={formData.is_mandatory}
-                  onCheckedChange={(v) => setFormData({ ...formData, is_mandatory: v })}
-                />
-                <Label>Obrigatório</Label>
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
+          <DialogFooter className="border-t border-slate-700 pt-4">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancelar
             </Button>
@@ -577,6 +759,14 @@ export function AdvertisementsManager() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+
+      {/* Video Preview Dialog */}
+      <VideoPreviewDialog
+        isOpen={videoPreview.isOpen}
+        onClose={() => setVideoPreview({ isOpen: false, url: '', title: '' })}
+        videoUrl={videoPreview.url}
+        title={videoPreview.title}
+      />
+    </>
   );
 }
