@@ -46,7 +46,7 @@ import {
 } from '@/lib/validators';
 import { UnsavedChangesDialog } from '@/components/UnsavedChangesDialog';
 import { ForgotPasswordDialog } from '@/components/ForgotPasswordDialog';
-import { SavedCredentials, saveCredential, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, updateLastLogin, canQuickLogin } from '@/components/auth/SavedCredentials';
+import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, canQuickLogin } from '@/components/auth/SavedCredentials';
 import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDialog';
 import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
 import { QuickLoginCards } from '@/components/QuickLoginCards';
@@ -55,6 +55,7 @@ import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
 import { ThemedTeamCard } from '@/components/ThemedTeamCard';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
+import { useSavedCredentialsSync } from '@/hooks/useSavedCredentialsSync';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
@@ -78,6 +79,7 @@ export default function Index() {
   const { themeConfig, theme, resolvedTheme } = useTheme();
   const themeAssets = getThemeAssets(theme, resolvedTheme);
   const { isAvailable: isBiometricAvailable, isEnrolled: isBiometricEnrolled, enrolledCpf, enrollBiometric, authenticateBiometric } = useBiometricAuth();
+  const { saveCredential, updateLastLogin } = useSavedCredentialsSync();
 
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [showCpfCheck, setShowCpfCheck] = useState(false);
