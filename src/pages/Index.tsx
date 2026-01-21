@@ -902,12 +902,12 @@ export default function Index() {
             </div>
           </div>
           
-          {/* Right: Actions */}
-          <div className="flex items-center gap-1">
+          {/* Right: Actions - Professional Icons */}
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => setShowAboutDialog(true)}
-              className="p-1.5 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-colors"
-              title="Sobre"
+              className="p-2 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-all duration-200 hover:scale-105"
+              title="Sobre o App"
             >
               <Info className="h-4 w-4" />
             </button>
@@ -915,8 +915,8 @@ export default function Index() {
             {getSavedCredentials().length > 0 && (
               <button
                 onClick={() => setShowCredentialsManager(true)}
-                className="p-1.5 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-colors"
-                title="Credenciais"
+                className="p-2 text-muted-foreground hover:text-emerald-400 rounded-lg hover:bg-emerald-500/10 transition-all duration-200 hover:scale-105"
+                title="Credenciais Salvas"
               >
                 <KeyRound className="h-4 w-4" />
               </button>
@@ -924,18 +924,20 @@ export default function Index() {
             
             <button
               onClick={() => navigate('/auth')}
-              className="p-1.5 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-colors"
-              title="Login Admin"
+              className="p-2 text-muted-foreground hover:text-blue-400 rounded-lg hover:bg-blue-500/10 transition-all duration-200 hover:scale-105"
+              title="Login Administrativo"
             >
               <Mail className="h-4 w-4" />
             </button>
             
+            {/* Master Panel - More Visible */}
             <button
               onClick={() => setShowMasterLogin(true)}
-              className="p-1.5 text-muted-foreground hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors"
-              title="Master"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold text-red-400 hover:text-red-300 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-400/50 transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-red-500/20"
+              title="Acesso Master"
             >
-              <Lock className="h-4 w-4" />
+              <Shield className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">MASTER</span>
             </button>
           </div>
         </div>
