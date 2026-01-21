@@ -65,6 +65,8 @@ import { PasswordRequestsManager } from '@/components/admin/PasswordRequestsMana
 import { AgentBHManagement } from '@/components/admin/AgentBHManagement';
 import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
 import { LicenseFinanceControl } from '@/components/admin/LicenseFinanceControl';
+import { UnitsManagementCard } from '@/components/admin/UnitsManagementCard';
+import { AgentAccessControl } from '@/components/admin/AgentAccessControl';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
 
@@ -593,8 +595,16 @@ export default function Master() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5 sm:grid-cols-10">
+          <TabsList className="grid w-full grid-cols-6 sm:grid-cols-11">
             <TabsTrigger value="overview">Unidades</TabsTrigger>
+            <TabsTrigger value="access-control" className="relative">
+              Acesso
+              {agents.filter(a => !a.is_active || (a as any).is_frozen).length > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] text-white flex items-center justify-center">
+                  !
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="agents">Agentes</TabsTrigger>
             <TabsTrigger value="credentials">Credenciais</TabsTrigger>
             <TabsTrigger value="password-requests">Senhas</TabsTrigger>
@@ -615,60 +625,39 @@ export default function Master() {
 
           {/* Overview Tab - Units */}
           <TabsContent value="overview" className="space-y-6 mt-6">
-            <Card className="glass glass-border shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  Unidades Cadastradas
-                </CardTitle>
-                <CardDescription>
-                  Unidades e municípios do sistema
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border">
-                      <TableHead>Unidade</TableHead>
-                      <TableHead>Município</TableHead>
-                      <TableHead>Diretor</TableHead>
-                      <TableHead>Coordenador</TableHead>
-                      <TableHead>Equipes</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {units.map((unit) => (
-                      <TableRow key={unit.id} className="border-border">
-                        <TableCell>
-                          <button
-                            onClick={() => {
-                              setEditingUnit(unit);
-                              setEditUnitOpen(true);
-                            }}
-                            className="font-medium text-primary hover:underline cursor-pointer flex items-center gap-1"
-                          >
-                            {unit.name}
-                            <Pencil className="h-3 w-3 opacity-50" />
-                          </button>
-                        </TableCell>
-                        <TableCell>{unit.municipality}</TableCell>
-                        <TableCell className="text-sm">{unit.director_name || '-'}</TableCell>
-                        <TableCell className="text-sm">{unit.coordinator_name || '-'}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-1">
-                            {['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'].map((team) => (
-                              <Badge key={team} variant="outline" className="text-xs">
-                                {team}
-                              </Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            <UnitsManagementCard 
+              units={units}
+              agents={agents.map(a => ({
+                id: a.id,
+                name: a.name,
+                team: a.team,
+                unit_id: a.unit_id,
+                is_active: a.is_active
+              }))}
+              onEditUnit={(unit) => {
+                setEditingUnit(unit);
+                setEditUnitOpen(true);
+              }}
+              onRefresh={fetchData}
+            />
+          </TabsContent>
+
+          {/* Access Control Tab */}
+          <TabsContent value="access-control" className="space-y-4 mt-6">
+            <AgentAccessControl 
+              agents={agents.map(a => ({
+                id: a.id,
+                name: a.name,
+                cpf: a.cpf,
+                team: a.team,
+                is_active: a.is_active,
+                is_frozen: (a as any).is_frozen,
+                license_status: a.license_status,
+                license_expires_at: a.license_expires_at,
+                unit: a.unit
+              }))}
+              onRefresh={fetchData}
+            />
           </TabsContent>
 
           {/* Agents Tab */}
