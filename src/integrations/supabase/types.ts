@@ -1342,6 +1342,7 @@ export type Database = {
           bh_hourly_rate_default: number | null
           bh_limit_1st_default: number | null
           bh_limit_2nd_default: number | null
+          bh_lock_agent_edit: boolean | null
           coordinator_name: string | null
           created_at: string
           director_name: string | null
@@ -1358,6 +1359,7 @@ export type Database = {
           bh_hourly_rate_default?: number | null
           bh_limit_1st_default?: number | null
           bh_limit_2nd_default?: number | null
+          bh_lock_agent_edit?: boolean | null
           coordinator_name?: string | null
           created_at?: string
           director_name?: string | null
@@ -1374,6 +1376,7 @@ export type Database = {
           bh_hourly_rate_default?: number | null
           bh_limit_1st_default?: number | null
           bh_limit_2nd_default?: number | null
+          bh_lock_agent_edit?: boolean | null
           coordinator_name?: string | null
           created_at?: string
           director_name?: string | null

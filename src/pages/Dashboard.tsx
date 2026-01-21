@@ -7,19 +7,32 @@ import { Header } from '@/components/layout/Header';
 import { SystemOverviewCard } from '@/components/dashboard/SystemOverviewCard';
 import { ActivityLogsCard } from '@/components/dashboard/ActivityLogsCard';
 import { UnitsManagementCard } from '@/components/dashboard/UnitsManagementCard';
+import { BHControlCard } from '@/components/dashboard/BHControlCard';
+import { AnnouncementsCard } from '@/components/dashboard/AnnouncementsCard';
 import { TeamShiftsPanel } from '@/components/dashboard/TeamShiftsPanel';
 import { OvertimeChart } from '@/components/dashboard/OvertimeChart';
 import { ShiftConflictsBanner } from '@/components/dashboard/ShiftConflictsBanner';
 import { useShiftConflictDetection } from '@/hooks/useShiftConflictDetection';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
-import { Users, Clock, Calendar, Building2, Loader2, ArrowLeft, LayoutDashboard, Settings, MessageSquare, FileText } from 'lucide-react';
+import { Users, Clock, Calendar, Building2, Loader2, ArrowLeft, LayoutDashboard, Settings, MessageSquare, FileText, Home, LogOut } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Dashboard() {
-  const { user, isLoading, isAdmin, masterSession } = useAuth();
+  const { user, isLoading, isAdmin, masterSession, signOut, setMasterSession } = useAuth();
   const navigate = useNavigate();
+
+  const handleExit = async () => {
+    if (masterSession) {
+      setMasterSession(null);
+      localStorage.removeItem('master_token');
+      sessionStorage.removeItem('master_session');
+    } else {
+      await signOut();
+    }
+    navigate('/', { replace: true });
+  };
 
   // Shift conflict detection for admins
   const {
@@ -74,28 +87,37 @@ export default function Dashboard() {
             <div className="max-w-7xl mx-auto space-y-4 animate-fade-in">
               {/* Page Header */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  {masterSession && (
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate('/master')}
-                      className="gap-1.5 h-8 text-xs"
-                    >
-                      <ArrowLeft className="h-3 w-3" />
-                      Master
-                    </Button>
-                  )}
-                  <div>
-                    <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
-                      <LayoutDashboard className="h-5 w-5 text-primary" />
-                      Painel Administrativo
-                    </h1>
-                    <p className="text-xs text-muted-foreground">
-                      Visão geral e gestão do sistema
-                    </p>
-                  </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => navigate('/')}
+                    className="gap-1.5 h-8 text-xs"
+                  >
+                    <Home className="h-3 w-3" />
+                    Início
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleExit}
+                    className="gap-1.5 h-8 text-xs text-red-400 border-red-400/30 hover:bg-red-500/10"
+                  >
+                    <LogOut className="h-3 w-3" />
+                    Sair
+                  </Button>
                 </div>
+                <div>
+                  <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
+                    <LayoutDashboard className="h-5 w-5 text-primary" />
+                    Painel Administrativo
+                  </h1>
+                  <p className="text-xs text-muted-foreground">
+                    Visão geral e gestão do sistema
+                  </p>
+                </div>
+              </div>
                 
                 <Badge variant="outline" className="w-fit bg-primary/10 text-primary border-primary/30">
                   {masterSession ? 'Acesso Master' : 'Administrador'}
@@ -164,6 +186,12 @@ export default function Dashboard() {
 
                 {/* Units Management */}
                 <UnitsManagementCard />
+              </div>
+
+              {/* BH Control and Announcements */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <BHControlCard />
+                <AnnouncementsCard />
               </div>
 
               {/* Activity Logs - Full Width */}
