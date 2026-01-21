@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,7 +39,7 @@ interface DayShifts {
   shifts: ShiftWithAgent[];
 }
 
-export function TeamShiftsPanel() {
+export const TeamShiftsPanel = forwardRef<HTMLDivElement>(function TeamShiftsPanel(_props, ref) {
   const [shifts, setShifts] = useState<ShiftWithAgent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 0 }));
@@ -323,4 +323,4 @@ export function TeamShiftsPanel() {
       </CardContent>
     </Card>
   );
-}
+});

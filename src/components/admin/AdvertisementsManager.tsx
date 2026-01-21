@@ -32,10 +32,12 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { 
   Plus, Pencil, Trash2, Eye, Loader2, Image, Video, 
-  Layout, ExternalLink, Clock, Target, Megaphone 
+  Layout, ExternalLink, Clock, Target, Megaphone, BarChart3 
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AdAnalyticsDashboard } from './AdAnalyticsDashboard';
 
 interface Advertisement {
   id: string;
@@ -266,6 +268,8 @@ export function AdvertisementsManager() {
     }
   };
 
+  const [activeView, setActiveView] = useState<'list' | 'analytics'>('list');
+
   return (
     <Card className="bg-slate-800/50 border-slate-700">
       <CardHeader>
@@ -279,14 +283,32 @@ export function AdvertisementsManager() {
               Crie e gerencie banners, popups e vídeos promocionais
             </CardDescription>
           </div>
-          <Button onClick={() => handleOpenDialog()} className="bg-purple-600 hover:bg-purple-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Propaganda
-          </Button>
+          <div className="flex items-center gap-2">
+            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'list' | 'analytics')}>
+              <TabsList className="bg-slate-700/50">
+                <TabsTrigger value="list" className="data-[state=active]:bg-purple-600">
+                  <Megaphone className="h-4 w-4 mr-1" />
+                  Anúncios
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="data-[state=active]:bg-purple-600">
+                  <BarChart3 className="h-4 w-4 mr-1" />
+                  Analytics
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            {activeView === 'list' && (
+              <Button onClick={() => handleOpenDialog()} className="bg-purple-600 hover:bg-purple-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Nova
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {activeView === 'analytics' ? (
+          <AdAnalyticsDashboard />
+        ) : isLoading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
           </div>
@@ -365,8 +387,6 @@ export function AdvertisementsManager() {
           </Table>
         )}
       </CardContent>
-
-      {/* Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl bg-slate-900 border-slate-700">
           <DialogHeader>
