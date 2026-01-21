@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { deleteAgentCompletely } from '@/lib/deleteAgent';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +14,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, Trash2, ShieldAlert } from 'lucide-react';
 
 interface DeleteAgentDialogProps {
   agentId: string;
@@ -26,12 +27,26 @@ export function DeleteAgentDialog({ agentId, agentName, onSuccess, trigger }: De
   const [isDeleting, setIsDeleting] = useState(false);
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const { user, userRole, masterSession } = useAuth();
+
+  // Prevent self-deletion for admins and masters
+  const isSelfDeletion = user?.id === agentId;
+  const isAdmin = userRole === 'admin' || userRole === 'master' || !!masterSession;
+  const cannotDelete = isSelfDeletion && isAdmin;
 
   const handleDelete = async () => {
+    if (cannotDelete) {
+      toast({
+        title: 'Ação não permitida',
+        description: 'Administradores não podem excluir sua própria conta.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsDeleting(true);
 
     try {
-      // Use centralized deletion function
       const result = await deleteAgentCompletely(agentId);
 
       if (!result.success) {
@@ -57,6 +72,20 @@ export function DeleteAgentDialog({ agentId, agentName, onSuccess, trigger }: De
     }
   };
 
+  if (cannotDelete) {
+    return (
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        disabled 
+        className="text-muted-foreground cursor-not-allowed opacity-50"
+        title="Administradores não podem excluir sua própria conta"
+      >
+        <ShieldAlert className="h-4 w-4" />
+      </Button>
+    );
+  }
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
@@ -68,22 +97,12 @@ export function DeleteAgentDialog({ agentId, agentName, onSuccess, trigger }: De
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-card border-border">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-destructive">Excluir Agente Permanentemente</AlertDialogTitle>
+          <AlertDialogTitle className="text-destructive">Excluir Agente</AlertDialogTitle>
           <AlertDialogDescription className="space-y-2">
             <p>
-              Você está prestes a excluir <strong className="text-foreground">{agentName}</strong> permanentemente.
+              Excluir <strong className="text-foreground">{agentName}</strong> permanentemente?
             </p>
-            <p className="text-destructive font-medium">
-              Esta ação irá remover:
-            </p>
-            <ul className="list-disc list-inside text-sm space-y-1 text-muted-foreground">
-              <li>Todos os plantões registrados</li>
-              <li>Todo o banco de horas</li>
-              <li>Histórico de eventos e férias</li>
-              <li>Solicitações de transferência</li>
-              <li>Mensagens e configurações</li>
-            </ul>
-            <p className="text-destructive font-bold pt-2">
+            <p className="text-destructive font-bold text-sm">
               Esta ação NÃO pode ser desfeita!
             </p>
           </AlertDialogDescription>
@@ -96,15 +115,9 @@ export function DeleteAgentDialog({ agentId, agentName, onSuccess, trigger }: De
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {isDeleting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Excluindo...
-              </>
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Excluir Permanentemente
-              </>
+              <Trash2 className="h-4 w-4" />
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

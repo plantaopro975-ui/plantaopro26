@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { deleteAgentCompletely } from '@/lib/deleteAgent';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +14,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, Trash2, ShieldAlert } from 'lucide-react';
 
 interface DeleteUserDialogProps {
   userId: string;
@@ -25,21 +26,31 @@ export function DeleteUserDialog({ userId, userName, onSuccess }: DeleteUserDial
   const [isDeleting, setIsDeleting] = useState(false);
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const { user, userRole, masterSession } = useAuth();
+
+  const isSelfDeletion = user?.id === userId;
+  const isAdmin = userRole === 'admin' || userRole === 'master' || !!masterSession;
+  const cannotDelete = isSelfDeletion && isAdmin;
 
   const handleDelete = async () => {
+    if (cannotDelete) {
+      toast({
+        title: 'Ação não permitida',
+        description: 'Administradores não podem excluir sua própria conta.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsDeleting(true);
 
     try {
-      // Use centralized deletion function
       const result = await deleteAgentCompletely(userId);
-
-      if (!result.success) {
-        console.error('Error in deletion:', result.error);
-      }
+      if (!result.success) console.error('Error:', result.error);
 
       toast({
         title: 'Usuário excluído',
-        description: `${userName} foi removido permanentemente do sistema.`,
+        description: `${userName} foi removido do sistema.`,
       });
 
       setOpen(false);
@@ -48,7 +59,7 @@ export function DeleteUserDialog({ userId, userName, onSuccess }: DeleteUserDial
       console.error('Error deleting user:', error);
       toast({
         title: 'Erro ao excluir',
-        description: 'Não foi possível excluir o usuário. Tente novamente.',
+        description: 'Não foi possível excluir o usuário.',
         variant: 'destructive',
       });
     } finally {
@@ -56,35 +67,32 @@ export function DeleteUserDialog({ userId, userName, onSuccess }: DeleteUserDial
     }
   };
 
+  if (cannotDelete) {
+    return (
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        disabled 
+        className="text-muted-foreground cursor-not-allowed opacity-50"
+        title="Administradores não podem excluir sua própria conta"
+      >
+        <ShieldAlert className="h-4 w-4" />
+      </Button>
+    );
+  }
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-        >
+        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
           <Trash2 className="h-4 w-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-card border-border">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-destructive">Excluir Usuário</AlertDialogTitle>
-          <AlertDialogDescription className="space-y-2">
-            <p>
-              Você está prestes a excluir <strong className="text-foreground">{userName}</strong> permanentemente.
-            </p>
-            <p className="text-destructive font-medium">
-              Esta ação irá remover:
-            </p>
-            <ul className="list-disc list-inside text-sm space-y-1 text-muted-foreground">
-              <li>Perfil do usuário</li>
-              <li>Funções e permissões</li>
-              <li>Dados de autenticação</li>
-            </ul>
-            <p className="text-destructive font-bold pt-2">
-              Esta ação NÃO pode ser desfeita!
-            </p>
+          <AlertDialogDescription>
+            Excluir <strong className="text-foreground">{userName}</strong>? Esta ação é permanente.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -94,17 +102,7 @@ export function DeleteUserDialog({ userId, userName, onSuccess }: DeleteUserDial
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Excluindo...
-              </>
-            ) : (
-              <>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Excluir Permanentemente
-              </>
-            )}
+            {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
