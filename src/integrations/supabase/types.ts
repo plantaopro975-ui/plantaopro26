@@ -49,6 +49,53 @@ export type Database = {
           },
         ]
       }
+      activity_logs: {
+        Row: {
+          action: string
+          agent_id: string | null
+          agent_name: string | null
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: string | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          agent_id?: string | null
+          agent_name?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          agent_id?: string | null
+          agent_name?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_announcements: {
         Row: {
           content: string | null
@@ -1303,6 +1350,8 @@ export type Database = {
           municipality: string
           name: string
           phone: string | null
+          president_name: string | null
+          security_coordinator_name: string | null
         }
         Insert: {
           address?: string | null
@@ -1317,6 +1366,8 @@ export type Database = {
           municipality: string
           name: string
           phone?: string | null
+          president_name?: string | null
+          security_coordinator_name?: string | null
         }
         Update: {
           address?: string | null
@@ -1331,6 +1382,8 @@ export type Database = {
           municipality?: string
           name?: string
           phone?: string | null
+          president_name?: string | null
+          security_coordinator_name?: string | null
         }
         Relationships: []
       }
