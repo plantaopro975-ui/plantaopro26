@@ -62,7 +62,7 @@ import { DeleteUserDialog } from '@/components/admin/DeleteUserDialog';
 import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { CredentialsViewer } from '@/components/admin/CredentialsViewer';
 import { PasswordRequestsManager } from '@/components/admin/PasswordRequestsManager';
-import { AgentBHManagement } from '@/components/admin/AgentBHManagement';
+import { AnnouncementsManager } from '@/components/admin/AnnouncementsManager';
 import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
 import { LicenseFinanceControl } from '@/components/admin/LicenseFinanceControl';
 import { UnitsManagementCard } from '@/components/admin/UnitsManagementCard';
@@ -616,7 +616,7 @@ export default function Master() {
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="bh-management">B.Horas</TabsTrigger>
+            <TabsTrigger value="announcements">Anúncios</TabsTrigger>
             <TabsTrigger value="swaps">Trocas</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
@@ -1061,9 +1061,9 @@ export default function Master() {
             </Card>
           </TabsContent>
 
-          {/* BH Management Tab */}
-          <TabsContent value="bh-management" className="space-y-6 mt-6">
-            <AgentBHManagement />
+          {/* Announcements Tab */}
+          <TabsContent value="announcements" className="space-y-6 mt-6">
+            <AnnouncementsManager />
           </TabsContent>
 
           {/* Swaps Management Tab */}
