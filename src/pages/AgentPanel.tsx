@@ -415,7 +415,7 @@ export default function AgentPanel() {
 
               <TabsContent value="plantoes" className="space-y-3 md:space-y-4 animate-fade-in">
                 {/* Next Shift Countdown - Top Priority */}
-                <NextShiftCountdown agentId={agent.id} />
+                <NextShiftCountdown agentId={agent.id} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
                   <ProfessionalShiftTimer agentId={agent.id} />
