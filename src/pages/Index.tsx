@@ -674,7 +674,8 @@ export default function Index() {
       // Guarantee separation: master login cannot share a normal user session
       await supabase.auth.signOut();
 
-      const res = await fetch('/functions/v1/master-login', {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/master-login`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ username: masterUsername, password: masterPassword }),
