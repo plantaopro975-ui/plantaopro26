@@ -182,18 +182,32 @@ export function TeamMemberDialog({ member, open, onOpenChange, isCurrentUser }: 
                   <p className="text-xs text-muted-foreground">Telefone</p>
                   <p className="font-semibold text-foreground">{member.phone}</p>
                 </div>
-                {whatsappLink && (
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="gap-1.5 border-green-500/50 text-green-500 hover:bg-green-500/10"
-                    onClick={() => setShowQuickMessages(!showQuickMessages)}
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    WhatsApp
-                    {showQuickMessages ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                  </Button>
-                )}
+                <div className="flex gap-1.5">
+                  {/* Direct Call Button */}
+                  <a href={`tel:${member.phone.replace(/\D/g, '')}`}>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="gap-1.5 border-blue-500/50 text-blue-500 hover:bg-blue-500/10"
+                    >
+                      <Phone className="h-4 w-4" />
+                      Ligar
+                    </Button>
+                  </a>
+                  {/* WhatsApp Button */}
+                  {whatsappLink && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="gap-1.5 border-green-500/50 text-green-500 hover:bg-green-500/10"
+                      onClick={() => setShowQuickMessages(!showQuickMessages)}
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      <span className="hidden sm:inline">WhatsApp</span>
+                      {showQuickMessages ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                    </Button>
+                  )}
+                </div>
               </div>
               
               {/* Quick Messages Panel */}
