@@ -53,6 +53,8 @@ import { QuickLoginCards } from '@/components/QuickLoginCards';
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
 import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
+import { HomeVideoBackground } from '@/components/HomeVideoBackground';
+import { ThemedAnalogClock } from '@/components/ThemedAnalogClock';
 import { ThemedTeamCard } from '@/components/ThemedTeamCard';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
@@ -950,6 +952,9 @@ export default function Index() {
   return (
     <>
       <div className="h-[100dvh] flex flex-col bg-background relative overflow-hidden touch-none overscroll-none">
+        {/* Video Background with Security/Surveillance footage */}
+        <HomeVideoBackground />
+        
         {/* Themed Animated Background with Rotating Team Images */}
         <ThemedHomeBackground />
         
@@ -1024,14 +1029,17 @@ export default function Index() {
             <HomeAudioPlayer />
           </div>
           
-          {/* Center: Version Badge (desktop) */}
-          <div className="hidden md:flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/30">
-              <Radio className="h-3 w-3 text-green-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-primary tracking-wide">v2.6</span>
-            </div>
-            <div className="text-[9px] text-muted-foreground font-medium tracking-wider">
-              FEIJÓ/AC
+          {/* Center: Themed Analog Clock + Version Badge */}
+          <div className="hidden md:flex items-center gap-4">
+            <ThemedAnalogClock size={60} />
+            <div className="flex flex-col items-start gap-0.5">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/30">
+                <Radio className="h-3 w-3 text-green-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-primary tracking-wide">v2.6</span>
+              </div>
+              <div className="text-[9px] text-muted-foreground font-medium tracking-wider">
+                FEIJÓ/AC
+              </div>
             </div>
           </div>
           

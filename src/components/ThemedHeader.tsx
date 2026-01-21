@@ -4,10 +4,11 @@ import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { cn } from '@/lib/utils';
 import { 
   Shield, Cpu, Snowflake, Flame, Volume2, VolumeX,
-  Radio, Activity, Zap, Target, Crosshair, Clock,
+  Radio, Activity, Zap, Target, Crosshair,
   Check, ChevronDown, Hexagon, Triangle, Diamond, Circle,
   Sparkles, Gauge, Heart, Eye, Waves, Star, Crown, Network, Wifi
 } from 'lucide-react';
+import { ThemedAnalogClock } from '@/components/ThemedAnalogClock';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -102,18 +103,12 @@ const teamMessages = {
 export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
   const { theme, setTheme, themeConfig, resolvedTheme } = useTheme();
   const { playSound, isSoundEnabled, toggleSound } = useSoundEffects();
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const [pulseState, setPulseState] = useState(0);
   
   const effectiveTheme = theme === 'system' ? (resolvedTheme as keyof typeof headerStyles) : theme;
   const style = headerStyles[effectiveTheme] || headerStyles.tactical;
   const teamConfig = selectedTeam ? teamMessages[selectedTeam as keyof typeof teamMessages] : null;
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     const pulse = setInterval(() => setPulseState(p => (p + 1) % 100), 50);
@@ -397,16 +392,13 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            {/* Compact Clock */}
+            {/* Compact Analog Clock */}
             <div className={cn(
-              "flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg border shadow-lg backdrop-blur-sm",
+              "flex items-center justify-center p-1.5 rounded-lg border shadow-lg backdrop-blur-sm",
               "bg-card/80",
               style.border
             )}>
-              <Clock className="h-3.5 w-3.5 text-primary" />
-              <span className={cn("text-sm font-mono font-bold tracking-wider tabular-nums", style.accent)}>
-                {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-              </span>
+              <ThemedAnalogClock size={36} />
             </div>
           </div>
         </div>
