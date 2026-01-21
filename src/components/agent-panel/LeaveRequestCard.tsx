@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
@@ -367,40 +368,83 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                     {teamToday.length === 0 ? (
                       <p className="text-xs text-slate-400 mt-2">Nenhum colega de folga hoje.</p>
                     ) : (
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {teamToday.map((leave) => {
-                          const agentName = (leave as any).agent_name || '';
-                          const avatarUrl = (leave as any).agent_avatar_url;
-                          const nameParts = agentName.split(' ');
-                          const displayName = nameParts.length > 1 
-                            ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`
-                            : nameParts[0];
-                          const initials = nameParts.length > 1
-                            ? `${nameParts[0].charAt(0)}${nameParts[nameParts.length - 1].charAt(0)}`
-                            : nameParts[0]?.charAt(0) || '?';
-                          return (
-                            <div
-                              key={leave.id}
-                              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-700/40 border border-slate-600/40"
-                            >
-                              <div className="h-6 w-6 rounded-full overflow-hidden bg-slate-600 flex items-center justify-center flex-shrink-0">
-                                {avatarUrl ? (
-                                  <img 
-                                    src={avatarUrl} 
-                                    alt={agentName}
-                                    className="h-full w-full object-cover"
-                                  />
-                                ) : (
-                                  <span className="text-[10px] font-bold text-slate-300 uppercase">{initials}</span>
-                                )}
-                              </div>
-                              <span className="text-xs font-semibold text-white">{displayName}</span>
-                              <Badge variant="outline" className={leaveTypeLabels[leave.leave_type]?.color || ''}>
-                                {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type}
-                              </Badge>
-                            </div>
-                          );
-                        })}
+                      <div className="mt-3 flex flex-wrap gap-2.5">
+                        <TooltipProvider delayDuration={200}>
+                          {teamToday.map((leave) => {
+                            const agentName = (leave as any).agent_name || '';
+                            const avatarUrl = (leave as any).agent_avatar_url;
+                            const nameParts = agentName.split(' ');
+                            const displayName = nameParts.length > 1 
+                              ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`
+                              : nameParts[0];
+                            const initials = nameParts.length > 1
+                              ? `${nameParts[0].charAt(0)}${nameParts[nameParts.length - 1].charAt(0)}`
+                              : nameParts[0]?.charAt(0) || '?';
+                            const leaveInfo = leaveTypeLabels[leave.leave_type] || { label: leave.leave_type, color: '' };
+                            const startDate = format(parseISO(leave.start_date), 'dd/MM', { locale: ptBR });
+                            const endDate = format(parseISO(leave.end_date), 'dd/MM', { locale: ptBR });
+                            const isSingleDay = leave.start_date === leave.end_date;
+                            
+                            return (
+                              <Tooltip key={leave.id}>
+                                <TooltipTrigger asChild>
+                                  <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-gradient-to-br from-slate-700/60 to-slate-800/60 border border-slate-500/30 hover:border-blue-500/50 hover:from-slate-700/80 hover:to-slate-800/80 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md hover:shadow-blue-500/10">
+                                    <div className="h-8 w-8 rounded-full overflow-hidden bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center flex-shrink-0 ring-2 ring-slate-400/30 shadow-inner">
+                                      {avatarUrl ? (
+                                        <img 
+                                          src={avatarUrl} 
+                                          alt={agentName}
+                                          className="h-full w-full object-cover"
+                                        />
+                                      ) : (
+                                        <span className="text-xs font-bold text-white uppercase tracking-tight">{initials}</span>
+                                      )}
+                                    </div>
+                                    <div className="flex flex-col">
+                                      <span className="text-sm font-semibold text-white leading-tight">{displayName}</span>
+                                      <span className={`text-[10px] font-medium ${leaveInfo.color.includes('green') ? 'text-green-400' : leaveInfo.color.includes('red') ? 'text-red-400' : leaveInfo.color.includes('amber') ? 'text-amber-400' : 'text-blue-400'}`}>
+                                        {leaveInfo.label}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent 
+                                  side="top" 
+                                  className="bg-slate-900 border border-slate-700 p-3 max-w-xs shadow-xl"
+                                >
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                      <div className="h-6 w-6 rounded-full overflow-hidden bg-slate-600 flex items-center justify-center flex-shrink-0">
+                                        {avatarUrl ? (
+                                          <img src={avatarUrl} alt={agentName} className="h-full w-full object-cover" />
+                                        ) : (
+                                          <span className="text-[9px] font-bold text-slate-300 uppercase">{initials}</span>
+                                        )}
+                                      </div>
+                                      <span className="font-bold text-white text-sm">{agentName}</span>
+                                    </div>
+                                    <div className="space-y-1 text-xs">
+                                      <div className="flex items-center gap-2">
+                                        <Badge variant="outline" className={`${leaveInfo.color} text-[10px] px-1.5 py-0.5`}>
+                                          {leaveInfo.label}
+                                        </Badge>
+                                      </div>
+                                      <p className="text-slate-400">
+                                        {isSingleDay 
+                                          ? `Dia: ${startDate}`
+                                          : `Período: ${startDate} até ${endDate}`
+                                        }
+                                      </p>
+                                      {leave.reason && (
+                                        <p className="text-slate-500 italic text-[11px]">"{leave.reason}"</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            );
+                          })}
+                        </TooltipProvider>
                       </div>
                     )}
                   </div>
