@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
 import { 
   Loader2, 
@@ -31,11 +32,12 @@ import {
   Bell,
   BarChart3,
   Home,
-  Lock,
   CheckCircle2,
   XCircle,
   Megaphone,
-  Monitor
+  Monitor,
+  LayoutDashboard,
+  Settings2
 } from 'lucide-react';
 
 interface AdminPermissions {
@@ -88,8 +90,8 @@ export default function Admin() {
             can_manage_agents: true,
             can_manage_units: true,
             can_manage_licenses: false,
-            can_manage_screens: false,
-            can_manage_ads: false,
+            can_manage_screens: true,
+            can_manage_ads: true,
             can_view_analytics: true,
             can_manage_roles: false,
             can_delete_agents: false,
@@ -145,6 +147,19 @@ export default function Admin() {
     return null;
   }
 
+  const permissionLabels: Record<string, { label: string; icon: React.ReactNode }> = {
+    can_manage_agents: { label: 'Agentes', icon: <Users className="h-3 w-3" /> },
+    can_manage_units: { label: 'Unidades', icon: <Building2 className="h-3 w-3" /> },
+    can_manage_licenses: { label: 'Licenças', icon: <Shield className="h-3 w-3" /> },
+    can_manage_screens: { label: 'Telas', icon: <Monitor className="h-3 w-3" /> },
+    can_manage_ads: { label: 'Anúncios', icon: <Megaphone className="h-3 w-3" /> },
+    can_view_analytics: { label: 'Analytics', icon: <BarChart3 className="h-3 w-3" /> },
+    can_manage_roles: { label: 'Roles', icon: <Settings2 className="h-3 w-3" /> },
+    can_delete_agents: { label: 'Excluir', icon: <XCircle className="h-3 w-3" /> },
+    can_manage_announcements: { label: 'Avisos', icon: <Bell className="h-3 w-3" /> },
+    can_approve_transfers: { label: 'Transf.', icon: <CheckCircle2 className="h-3 w-3" /> },
+  };
+
   return (
     <ThemedPanelBackground team={null}>
       <div className="flex h-screen overflow-hidden">
@@ -153,92 +168,73 @@ export default function Admin() {
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header />
           
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-            <div className="max-w-7xl mx-auto space-y-6">
-              {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
-                    <Shield className="h-6 w-6 text-white" />
+          <main className="flex-1 overflow-y-auto">
+            <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+              {/* Header Section */}
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/20">
+                      <Shield className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h1 className="text-xl md:text-2xl font-bold text-white">Painel Administrativo</h1>
+                      <p className="text-xs md:text-sm text-muted-foreground">Gestão operacional do sistema</p>
+                    </div>
+                    <Badge className="hidden sm:flex bg-blue-500/20 text-blue-400 border-blue-500/40">
+                      ADMIN
+                    </Badge>
                   </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-white">Painel Administrativo</h1>
-                    <p className="text-sm text-muted-foreground">Gestão operacional do sistema</p>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/')}
+                      className="border-slate-600 hover:bg-slate-700"
+                    >
+                      <Home className="h-4 w-4 mr-2" />
+                      Início
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleExit}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sair
+                    </Button>
                   </div>
-                  <Badge className="ml-2 bg-blue-500/20 text-blue-400 border-blue-500/40">
-                    ADMIN
-                  </Badge>
                 </div>
-                
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/')}
-                    className="border-slate-600"
-                  >
-                    <Home className="h-4 w-4 mr-2" />
-                    Início
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={handleExit}
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sair
-                  </Button>
-                </div>
-              </div>
 
-              {/* Permissions Card */}
-              <Card className="bg-slate-800/50 border-slate-700">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-blue-400" />
-                    Suas Permissões
-                  </CardTitle>
-                  <CardDescription>
-                    Funcionalidades disponíveis para sua conta
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                {/* Permissions - Compact Horizontal */}
+                <div className="bg-slate-800/30 border border-slate-700/50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Settings2 className="h-4 w-4 text-blue-400" />
+                    <span className="text-sm font-medium text-slate-300">Permissões</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
                     {permissions && Object.entries(permissions).map(([key, value]) => {
-                      const labels: Record<string, string> = {
-                        can_manage_agents: 'Agentes',
-                        can_manage_units: 'Unidades',
-                        can_manage_licenses: 'Licenças',
-                        can_manage_screens: 'Telas',
-                        can_manage_ads: 'Anúncios',
-                        can_view_analytics: 'Analytics',
-                        can_manage_roles: 'Roles',
-                        can_delete_agents: 'Excluir',
-                        can_manage_announcements: 'Avisos',
-                        can_approve_transfers: 'Transf.',
-                      };
-                      
+                      const perm = permissionLabels[key];
+                      if (!perm) return null;
                       return (
-                        <div 
+                        <Badge
                           key={key}
-                          className={`flex items-center gap-2 p-2 rounded-lg ${
-                            value ? 'bg-emerald-500/10 border border-emerald-500/30' : 'bg-slate-700/50 border border-slate-600/50'
+                          variant="outline"
+                          className={`text-xs py-0.5 px-2 ${
+                            value 
+                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
+                              : 'bg-slate-700/30 border-slate-600/50 text-slate-500'
                           }`}
                         >
-                          {value ? (
-                            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                          ) : (
-                            <XCircle className="h-4 w-4 text-slate-500" />
-                          )}
-                          <span className={`text-xs ${value ? 'text-emerald-300' : 'text-slate-500'}`}>
-                            {labels[key] || key}
-                          </span>
-                        </div>
+                          <span className="mr-1">{perm.icon}</span>
+                          {perm.label}
+                        </Badge>
                       );
                     })}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Conflicts Banner */}
               {hasConflicts && conflicts.length > 0 && (
@@ -250,50 +246,81 @@ export default function Admin() {
                 />
               )}
 
-              {/* Tabs */}
+              {/* Main Tabs - Clean Design */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-                <TabsList className="bg-slate-800/80 border border-slate-700 p-1">
-                  <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600">
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Visão Geral
-                  </TabsTrigger>
-                  {permissions?.can_manage_units && (
-                    <TabsTrigger value="units" className="data-[state=active]:bg-blue-600">
-                      <Building2 className="h-4 w-4 mr-2" />
-                      Unidades
+                <ScrollArea className="w-full">
+                  <TabsList className="inline-flex h-auto w-auto p-1 bg-slate-800/80 border border-slate-700/50 rounded-lg">
+                    <TabsTrigger 
+                      value="overview" 
+                      className="px-4 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
+                    >
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
+                      Visão Geral
                     </TabsTrigger>
-                  )}
-                  {permissions?.can_manage_agents && (
-                    <TabsTrigger value="agents" className="data-[state=active]:bg-blue-600">
-                      <Users className="h-4 w-4 mr-2" />
-                      Agentes
+                    
+                    {permissions?.can_manage_units && (
+                      <TabsTrigger 
+                        value="units" 
+                        className="px-4 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
+                      >
+                        <Building2 className="h-4 w-4 mr-2" />
+                        Unidades
+                      </TabsTrigger>
+                    )}
+                    
+                    {permissions?.can_manage_agents && (
+                      <TabsTrigger 
+                        value="agents" 
+                        className="px-4 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
+                      >
+                        <Users className="h-4 w-4 mr-2" />
+                        Agentes
+                      </TabsTrigger>
+                    )}
+                    
+                    <TabsTrigger 
+                      value="bh" 
+                      className="px-4 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      Banco de Horas
                     </TabsTrigger>
-                  )}
-                  <TabsTrigger value="bh" className="data-[state=active]:bg-blue-600">
-                    <Clock className="h-4 w-4 mr-2" />
-                    B.Horas
-                  </TabsTrigger>
-                  {permissions?.can_manage_announcements && (
-                    <TabsTrigger value="announcements" className="data-[state=active]:bg-blue-600">
-                      <Bell className="h-4 w-4 mr-2" />
-                      Avisos
-                    </TabsTrigger>
-                  )}
-                  {permissions?.can_manage_ads && (
-                    <TabsTrigger value="ads" className="data-[state=active]:bg-purple-600">
-                      <Megaphone className="h-4 w-4 mr-2" />
-                      Propagandas
-                    </TabsTrigger>
-                  )}
-                  {permissions?.can_manage_screens && (
-                    <TabsTrigger value="screens" className="data-[state=active]:bg-cyan-600">
-                      <Monitor className="h-4 w-4 mr-2" />
-                      Telas
-                    </TabsTrigger>
-                  )}
-                </TabsList>
+                    
+                    {permissions?.can_manage_announcements && (
+                      <TabsTrigger 
+                        value="announcements" 
+                        className="px-4 py-2 data-[state=active]:bg-amber-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
+                      >
+                        <Bell className="h-4 w-4 mr-2" />
+                        Avisos
+                      </TabsTrigger>
+                    )}
+                    
+                    {permissions?.can_manage_ads && (
+                      <TabsTrigger 
+                        value="ads" 
+                        className="px-4 py-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
+                      >
+                        <Megaphone className="h-4 w-4 mr-2" />
+                        Propagandas
+                      </TabsTrigger>
+                    )}
+                    
+                    {permissions?.can_manage_screens && (
+                      <TabsTrigger 
+                        value="screens" 
+                        className="px-4 py-2 data-[state=active]:bg-cyan-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
+                      >
+                        <Monitor className="h-4 w-4 mr-2" />
+                        Telas Dinâmicas
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
 
-                <TabsContent value="overview" className="space-y-4">
+                {/* Tab Contents */}
+                <TabsContent value="overview" className="space-y-4 mt-4">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <SystemOverviewCard />
                     <ActivityLogsCard />
@@ -302,22 +329,28 @@ export default function Admin() {
                 </TabsContent>
 
                 {permissions?.can_manage_units && (
-                  <TabsContent value="units">
+                  <TabsContent value="units" className="mt-4">
                     <UnitsManagementCard />
                   </TabsContent>
                 )}
 
                 {permissions?.can_manage_agents && (
-                  <TabsContent value="agents">
+                  <TabsContent value="agents" className="mt-4">
                     <Card className="bg-slate-800/50 border-slate-700">
                       <CardHeader>
-                        <CardTitle>Gestão de Agentes</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                          <Users className="h-5 w-5 text-blue-400" />
+                          Gestão de Agentes
+                        </CardTitle>
                         <CardDescription>
                           Visualize e gerencie os agentes do sistema
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <Button onClick={() => navigate('/agents')}>
+                        <Button 
+                          onClick={() => navigate('/agents')}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
                           <Users className="h-4 w-4 mr-2" />
                           Acessar Lista de Agentes
                         </Button>
@@ -326,24 +359,24 @@ export default function Admin() {
                   </TabsContent>
                 )}
 
-                <TabsContent value="bh">
+                <TabsContent value="bh" className="mt-4">
                   <BHControlCard />
                 </TabsContent>
 
                 {permissions?.can_manage_announcements && (
-                  <TabsContent value="announcements">
+                  <TabsContent value="announcements" className="mt-4">
                     <AnnouncementsCard />
                   </TabsContent>
                 )}
 
                 {permissions?.can_manage_ads && (
-                  <TabsContent value="ads">
+                  <TabsContent value="ads" className="mt-4">
                     <AdvertisementsManager />
                   </TabsContent>
                 )}
 
                 {permissions?.can_manage_screens && (
-                  <TabsContent value="screens">
+                  <TabsContent value="screens" className="mt-4">
                     <DynamicScreensManager />
                   </TabsContent>
                 )}
