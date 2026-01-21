@@ -165,11 +165,11 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
             <CompactClock />
           </div>
 
-          {/* Right Section: Actions */}
+          {/* Right Section: Actions - Spectacular Professional Buttons */}
           <div className="flex items-center gap-1.5">
             {/* Mobile: Blood type badge */}
             {agent.blood_type && (
-              <div className="md:hidden flex items-center gap-1 px-1.5 py-0.5 bg-red-500/20 border border-red-500/40 rounded-md">
+              <div className="md:hidden flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-br from-red-500/30 to-rose-600/20 border border-red-500/50 rounded-lg shadow-lg shadow-red-500/10">
                 <Droplet className="h-3 w-3 text-red-400 fill-red-400/30" />
                 <span className="text-[10px] font-black text-red-300">{agent.blood_type}</span>
               </div>
@@ -178,26 +178,28 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
             <AgentRoleSelector agentId={agent.id} currentRole={agent.role || 'agent'} />
             <NotificationsPanel agentId={agent.id} />
             
-            {/* Trial Badge */}
+            {/* Trial Badge - Spectacular */}
             <TooltipProvider>
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>
                   <button
                     type="button"
                     onClick={onShowWelcome}
-                    className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 transition-colors"
+                    className="relative flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-br from-amber-500/20 via-amber-600/15 to-orange-500/20 border-2 border-amber-500/40 hover:border-amber-400/60 shadow-lg shadow-amber-500/15 hover:shadow-amber-500/25 transition-all duration-300 hover:scale-105 active:scale-95 group overflow-hidden"
                   >
-                    <Gift className="h-3.5 w-3.5 text-amber-400" />
-                    <span className="text-[10px] font-bold text-amber-400 hidden sm:inline">{getRemainingTrialDays()}d</span>
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/10 to-amber-400/0 group-hover:translate-x-full transition-transform duration-700" />
+                    <Gift className="h-4 w-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300" />
+                    <span className="text-xs font-bold text-amber-300 hidden sm:inline">{getRemainingTrialDays()}d</span>
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom" className="bg-slate-800 text-amber-300 border-amber-500/50 text-xs">
-                  Trial: {getRemainingTrialDays()} dias restantes
+                <TooltipContent side="bottom" className="bg-slate-800 text-amber-300 border-amber-500/50 text-xs font-medium">
+                  ✨ Trial: {getRemainingTrialDays()} dias restantes
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
             
-            {/* Reactivate Shift Banner Button - Only shown when dismissed */}
+            {/* Reactivate Shift Banner Button - Spectacular */}
             {isShiftBannerDismissed && onReactivateShiftBanner && (
               <TooltipProvider>
                 <Tooltip delayDuration={200}>
@@ -205,44 +207,47 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
                     <button
                       type="button"
                       onClick={onReactivateShiftBanner}
-                      className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-orange-500/20 border border-orange-500/40 hover:bg-orange-500/30 transition-colors animate-pulse"
+                      className="relative flex items-center gap-1 px-3 py-2 rounded-xl bg-gradient-to-br from-orange-500/25 via-orange-600/20 to-red-500/20 border-2 border-orange-500/50 hover:border-orange-400/70 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all duration-300 hover:scale-105 active:scale-95 animate-pulse group overflow-hidden"
                     >
-                      <Bell className="h-3.5 w-3.5 text-orange-400" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-orange-400/0 via-orange-400/15 to-orange-400/0 animate-pulse" />
+                      <Bell className="h-4 w-4 text-orange-400 group-hover:animate-bounce" />
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" className="bg-slate-800 text-orange-300 border-orange-500/50 text-xs">
-                    Reativar lembrete de plantão
+                  <TooltipContent side="bottom" className="bg-slate-800 text-orange-300 border-orange-500/50 text-xs font-medium">
+                    🔔 Reativar lembrete de plantão
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             )}
             
-            {/* Home Button */}
+            {/* Home Button - Spectacular */}
             <TooltipProvider>
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>
                   <button
                     type="button"
                     onClick={() => navigate('/')}
-                    className="p-2 rounded-lg text-slate-400 hover:bg-slate-700/60 hover:text-slate-200 transition-colors"
+                    className="p-2.5 rounded-xl bg-gradient-to-br from-slate-700/80 to-slate-800/80 border-2 border-slate-600/50 hover:border-slate-500/70 text-slate-400 hover:text-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 group"
                   >
-                    <Home className="h-4 w-4" />
+                    <Home className="h-4 w-4 group-hover:-translate-y-0.5 transition-transform duration-300" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom" className="bg-slate-800 border-slate-600 text-xs">
-                  Tela Inicial
+                <TooltipContent side="bottom" className="bg-slate-800 border-slate-600 text-xs font-medium">
+                  🏠 Tela Inicial
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
             
-            {/* Logout Button - Compact */}
+            {/* Logout Button - Spectacular */}
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-600/90 hover:bg-red-500 text-white font-semibold text-xs transition-colors"
+              className="relative flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-br from-red-600 via-red-500 to-rose-600 hover:from-red-500 hover:via-red-400 hover:to-rose-500 text-white font-bold text-xs shadow-lg shadow-red-500/30 hover:shadow-red-500/50 transition-all duration-300 hover:scale-105 active:scale-95 border border-red-400/30 group overflow-hidden"
             >
-              <LogOut className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Sair</span>
+              {/* Shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
+              <LogOut className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform duration-300" />
+              <span className="hidden sm:inline tracking-wide">Sair</span>
             </button>
           </div>
         </div>
