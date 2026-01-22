@@ -276,8 +276,8 @@ export default function AgentPanel() {
       <SessionMonitorBanner />
 
       <div className="flex-1 flex flex-col h-[100dvh] overflow-hidden">
-        <main className={`flex-1 px-1.5 py-1 sm:p-2 md:p-3 lg:p-4 overflow-y-auto overflow-x-hidden overscroll-y-auto scroll-smooth pb-safe ${showLicenseWarning ? 'pt-28' : ''}`}>
-          <div className="max-w-7xl mx-auto space-y-1.5 sm:space-y-2 md:space-y-3 animate-fade-in pb-2 sm:pb-4">
+        <main className={`flex-1 px-2 py-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto overflow-x-hidden overscroll-y-auto scroll-smooth pb-safe ${showLicenseWarning ? 'pt-28' : ''}`}>
+          <div className="max-w-7xl mx-auto space-y-3 md:space-y-4 lg:space-y-5 animate-fade-in pb-4 sm:pb-6">
             {/* Professional Header Bar */}
             <AgentPanelHeader 
               agent={{
@@ -305,100 +305,119 @@ export default function AgentPanel() {
             {/* On Duty Overlay - Discreto e minimizável */}
             <OnDutyOverlay agentId={agent.id} />
 
-            {/* Main Tabs - Professional Control Panel - REDESIGNED */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-3 sm:space-y-4">
-              <div className="bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl sm:rounded-2xl border-2 border-amber-500/40 shadow-2xl shadow-amber-500/10 backdrop-blur-md p-3 sm:p-4 md:p-5">
-                {/* Control Panel Header - Professional & Larger */}
-                <div className="flex items-center justify-between mb-3 sm:mb-4 px-1">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-2 sm:p-2.5 bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 rounded-xl shadow-lg shadow-amber-500/30">
-                      <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-black" />
+            {/* Main Tabs - REDESIGNED: Modern, Legible, Mobile-First */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
+              {/* Control Panel Container - Modern Glass Design */}
+              <div className="relative bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-2xl md:rounded-3xl border-2 md:border-3 border-amber-500/50 shadow-2xl shadow-amber-500/15 backdrop-blur-xl overflow-hidden">
+                {/* Decorative glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5 pointer-events-none" />
+                
+                {/* Control Panel Header - MUCH LARGER & Professional */}
+                <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 md:p-6 border-b border-amber-500/20">
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <div className="p-3 md:p-4 bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 rounded-xl md:rounded-2xl shadow-xl shadow-amber-500/40 ring-2 ring-amber-300/30">
+                      <Shield className="h-7 w-7 md:h-9 md:w-9 text-black" />
                     </div>
                     <div>
-                      <h2 className="text-base sm:text-lg md:text-xl font-bold text-amber-100 tracking-wide leading-tight">PAINEL DE CONTROLE</h2>
-                      <p className="text-xs sm:text-sm text-amber-400/80 uppercase tracking-widest">Sistema Operacional Integrado</p>
+                      <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-amber-100 tracking-tight leading-tight">
+                        PAINEL DE CONTROLE
+                      </h2>
+                      <p className="text-sm md:text-base text-amber-400/90 font-medium tracking-wide mt-0.5">
+                        Sistema Operacional Integrado
+                      </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 bg-emerald-500/20 px-3 py-1.5 rounded-lg border border-emerald-500/40">
-                    <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-400 animate-pulse" />
-                    <span className="text-xs sm:text-sm text-emerald-400 font-bold tracking-wide">ONLINE</span>
+                  <div className="flex items-center gap-2 md:gap-3 bg-emerald-500/25 px-4 md:px-5 py-2 md:py-2.5 rounded-xl border-2 border-emerald-500/50 shadow-lg shadow-emerald-500/20">
+                    <Zap className="h-5 w-5 md:h-6 md:w-6 text-emerald-400 animate-pulse" />
+                    <span className="text-sm md:text-base font-bold text-emerald-300 tracking-wider">ONLINE</span>
                   </div>
                 </div>
                 
-                {/* Tabs Grid - Much Larger & More Readable */}
-                <TabsList className="bg-gradient-to-br from-slate-800/90 via-slate-900/80 to-slate-800/90 border-2 border-amber-500/30 p-2 sm:p-3 md:p-4 h-auto grid grid-cols-5 lg:grid-cols-9 gap-1.5 sm:gap-2 md:gap-3 rounded-xl shadow-inner">
-                  <TabsTrigger 
-                    value="equipe" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-amber-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-amber-300 text-amber-200/90 hover:text-amber-100"
-                  >
-                    <Users className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">Equipe</span>
-                  </TabsTrigger>
-                  
-                  <TabsTrigger 
-                    value="plantoes" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-orange-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-orange-300 text-orange-200/90 hover:text-orange-100"
-                  >
-                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">Plantões</span>
-                  </TabsTrigger>
-                  
-                  <TabsTrigger 
-                    value="bh" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-emerald-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-emerald-300 text-emerald-200/90 hover:text-emerald-100"
-                  >
-                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">B.Horas</span>
-                  </TabsTrigger>
-                  
-                  <TabsTrigger 
-                    value="folgas" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-purple-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-purple-300 text-purple-200/90 hover:text-purple-100"
-                  >
-                    <CalendarOff className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">Folgas</span>
-                  </TabsTrigger>
-                  
-                  <TabsTrigger 
-                    value="agenda" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-400 data-[state=active]:via-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-black data-[state=active]:shadow-lg data-[state=active]:shadow-cyan-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-cyan-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-cyan-300 text-cyan-200/90 hover:text-cyan-100"
-                  >
-                    <CalendarDays className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">Agenda</span>
-                  </TabsTrigger>
-                  
-                  <TabsTrigger 
-                    value="planejador" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-rose-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-rose-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-rose-300 text-rose-200/90 hover:text-rose-100"
-                  >
-                    <Calculator className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">Planejar</span>
-                  </TabsTrigger>
-                  
-                  <TabsTrigger 
-                    value="permutas" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-lg data-[state=active]:shadow-yellow-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-yellow-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-yellow-300 text-yellow-200/90 hover:text-yellow-100"
-                  >
-                    <ArrowRightLeft className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">Trocas</span>
-                  </TabsTrigger>
-                  
-                  <TabsTrigger 
-                    value="chat" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-blue-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-blue-300 text-blue-200/90 hover:text-blue-100"
-                  >
-                    <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">Chat</span>
-                  </TabsTrigger>
-                  
-                  <TabsTrigger 
-                    value="config" 
-                    className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-xs sm:text-sm md:text-base p-3 sm:p-4 md:p-5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-400 data-[state=active]:via-gray-500 data-[state=active]:to-zinc-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-slate-500/30 data-[state=active]:scale-[1.03] rounded-lg sm:rounded-xl font-bold transition-all duration-200 hover:bg-slate-500/20 min-h-[60px] sm:min-h-[72px] md:min-h-[84px] border-2 border-slate-600/50 data-[state=active]:border-slate-300 text-slate-200/90 hover:text-slate-100"
-                  >
-                    <Settings className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-                    <span className="tracking-wide font-semibold">Config</span>
-                  </TabsTrigger>
-                </TabsList>
+                {/* Tabs Grid - MODERN, LARGE, FULLY READABLE */}
+                <div className="p-3 md:p-5 lg:p-6">
+                  <TabsList className="bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border-2 border-amber-500/25 p-2 md:p-3 lg:p-4 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2 md:gap-3 rounded-xl md:rounded-2xl shadow-inner">
+                    {/* Equipe Tab */}
+                    <TabsTrigger 
+                      value="equipe" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-amber-500/15 hover:border-amber-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-amber-500/40 data-[state=active]:border-amber-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <Users className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-amber-400 group-data-[state=active]:text-black transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-amber-200 group-data-[state=active]:text-black tracking-wide">Equipe</span>
+                    </TabsTrigger>
+                    
+                    {/* Plantões Tab */}
+                    <TabsTrigger 
+                      value="plantoes" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-orange-500/15 hover:border-orange-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/40 data-[state=active]:border-orange-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <Calendar className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-orange-400 group-data-[state=active]:text-white transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-orange-200 group-data-[state=active]:text-white tracking-wide">Plantões</span>
+                    </TabsTrigger>
+                    
+                    {/* B.Horas Tab */}
+                    <TabsTrigger 
+                      value="bh" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-emerald-500/15 hover:border-emerald-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-emerald-500/40 data-[state=active]:border-emerald-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <Clock className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-emerald-400 group-data-[state=active]:text-black transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-emerald-200 group-data-[state=active]:text-black tracking-wide">B.Horas</span>
+                    </TabsTrigger>
+                    
+                    {/* Folgas Tab */}
+                    <TabsTrigger 
+                      value="folgas" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-purple-500/15 hover:border-purple-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-purple-500/40 data-[state=active]:border-purple-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <CalendarOff className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-purple-400 group-data-[state=active]:text-white transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-purple-200 group-data-[state=active]:text-white tracking-wide">Folgas</span>
+                    </TabsTrigger>
+                    
+                    {/* Agenda Tab */}
+                    <TabsTrigger 
+                      value="agenda" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-cyan-500/15 hover:border-cyan-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-400 data-[state=active]:via-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-cyan-500/40 data-[state=active]:border-cyan-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <CalendarDays className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-cyan-400 group-data-[state=active]:text-black transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-cyan-200 group-data-[state=active]:text-black tracking-wide">Agenda</span>
+                    </TabsTrigger>
+                    
+                    {/* Planejar Tab */}
+                    <TabsTrigger 
+                      value="planejador" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-rose-500/40 data-[state=active]:border-rose-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <Calculator className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-rose-400 group-data-[state=active]:text-white transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-rose-200 group-data-[state=active]:text-white tracking-wide">Planejar</span>
+                    </TabsTrigger>
+                    
+                    {/* Trocas Tab */}
+                    <TabsTrigger 
+                      value="permutas" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-yellow-500/40 data-[state=active]:border-yellow-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <ArrowRightLeft className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-yellow-400 group-data-[state=active]:text-black transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-yellow-200 group-data-[state=active]:text-black tracking-wide">Trocas</span>
+                    </TabsTrigger>
+                    
+                    {/* Chat Tab */}
+                    <TabsTrigger 
+                      value="chat" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-blue-500/15 hover:border-blue-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-blue-500/40 data-[state=active]:border-blue-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <MessageCircle className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-blue-400 group-data-[state=active]:text-white transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-blue-200 group-data-[state=active]:text-white tracking-wide">Chat</span>
+                    </TabsTrigger>
+                    
+                    {/* Config Tab */}
+                    <TabsTrigger 
+                      value="config" 
+                      className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-slate-500/15 hover:border-slate-400/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-400 data-[state=active]:via-gray-500 data-[state=active]:to-zinc-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-slate-500/40 data-[state=active]:border-slate-300 data-[state=active]:scale-[1.02]"
+                    >
+                      <Settings className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-slate-400 group-data-[state=active]:text-white transition-colors" />
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-slate-200 group-data-[state=active]:text-white tracking-wide">Config</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
               </div>
 
               {/* Profile Completion Alert */}
@@ -413,7 +432,7 @@ export default function AgentPanel() {
                 onComplete={checkAgentShifts}
               />
 
-              <TabsContent value="equipe" className="space-y-1.5 sm:space-y-2 animate-fade-in mt-0">
+              <TabsContent value="equipe" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 {/* Ad Display System - Show banners and popups */}
                 <AdDisplaySystem />
                 
@@ -427,7 +446,7 @@ export default function AgentPanel() {
                 {/* Unit Summary Card */}
                 <UnitSummaryCard unitId={agent.unit_id} />
                 
-                <div className="grid grid-cols-1 xl:grid-cols-4 gap-1.5 sm:gap-2 md:gap-3">
+                <div className="grid grid-cols-1 xl:grid-cols-4 gap-3 md:gap-4 lg:gap-5">
                   <div className="xl:col-span-3">
                     <TeamMembersCard 
                       unitId={agent.unit_id} 
@@ -437,7 +456,7 @@ export default function AgentPanel() {
                       unitName={agent.unit?.name}
                     />
                   </div>
-                  <div className="xl:col-span-1 grid grid-cols-2 xl:grid-cols-1 gap-1.5 sm:gap-2 md:gap-3">
+                  <div className="xl:col-span-1 grid grid-cols-2 xl:grid-cols-1 gap-3 md:gap-4">
                     <TacticalRadar 
                       unitId={agent.unit_id || undefined}
                       compact={true}
@@ -451,22 +470,22 @@ export default function AgentPanel() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="plantoes" className="space-y-1.5 sm:space-y-2 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="plantoes" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 {/* Next Shift Countdown - Top Priority */}
                 <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-1.5 sm:gap-2 md:gap-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
                   <ProfessionalShiftTimer agentId={agent.id} />
                   <ShiftScheduleCard agentId={agent.id} />
                 </div>
                 <ShiftCalendarOverview agentId={agent.id} />
               </TabsContent>
 
-              <TabsContent value="bh" className="space-y-2 sm:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="bh" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 <BHTracker agentId={agent.id} />
               </TabsContent>
 
-              <TabsContent value="folgas" className="space-y-2 sm:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="folgas" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 <LeaveRequestCard 
                   agentId={agent.id} 
                   agentTeam={agent.team}
@@ -474,15 +493,15 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="agenda" className="space-y-2 sm:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="agenda" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 <AgentEventsCard agentId={agent.id} />
               </TabsContent>
 
-              <TabsContent value="planejador" className="space-y-2 sm:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="planejador" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 <ShiftPlannerCard agentId={agent.id} />
               </TabsContent>
 
-              <TabsContent value="permutas" className="space-y-2 sm:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="permutas" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 <SwapRequestsCard 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
@@ -490,7 +509,7 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="chat" className="space-y-2 sm:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="chat" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 <ChatPanel 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
@@ -501,8 +520,8 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="config" className="space-y-2 sm:space-y-3 animate-fade-in mt-0">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
+              <TabsContent value="config" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-4 lg:gap-5">
                   <AgentSettingsCard
                     agentId={agent.id}
                     agentName={agent.name}
@@ -510,36 +529,36 @@ export default function AgentPanel() {
                     currentAvatarUrl={(agent as any).avatar_url}
                     onUpdate={() => window.location.reload()}
                   />
-                  <div className="space-y-2 sm:space-y-3">
+                  <div className="space-y-3 md:space-y-4">
                     <ChatAndAlertSettings agentId={agent.id} />
                     <NotificationSettings />
                     <BHReminderSettings agentId={agent.id} />
                     
-                    {/* Diagnostic Tools Section */}
-                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-600/50 sm:border-2 rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-2 shadow-lg">
-                      <h3 className="font-semibold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 text-slate-200">
-                        <Settings className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
+                    {/* Diagnostic Tools Section - IMPROVED */}
+                    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-2 border-slate-600/60 rounded-2xl p-4 md:p-5 space-y-3 shadow-xl">
+                      <h3 className="font-bold text-base md:text-lg flex items-center gap-2 md:gap-3 text-slate-100">
+                        <Settings className="h-5 w-5 md:h-6 md:w-6 text-amber-400" />
                         Ferramentas de Diagnóstico
                       </h3>
-                      <p className="text-[10px] sm:text-xs text-slate-400">
+                      <p className="text-sm md:text-base text-slate-400 leading-relaxed">
                         Resolva problemas de conexão ou sessão.
                       </p>
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                      <div className="flex flex-wrap gap-2 md:gap-3">
                         <DiagnosticReportButton />
                         <SafeModeToggle variant="compact" />
                       </div>
                     </div>
 
-                    {/* Password & Security Section */}
-                    <div className="bg-gradient-to-br from-purple-900/30 to-slate-900/80 border border-purple-500/30 sm:border-2 rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-2 shadow-lg">
-                      <h3 className="font-semibold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 text-slate-200">
-                        <Key className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
+                    {/* Password & Security Section - IMPROVED */}
+                    <div className="bg-gradient-to-br from-purple-900/40 to-slate-900/90 border-2 border-purple-500/40 rounded-2xl p-4 md:p-5 space-y-3 shadow-xl">
+                      <h3 className="font-bold text-base md:text-lg flex items-center gap-2 md:gap-3 text-slate-100">
+                        <Key className="h-5 w-5 md:h-6 md:w-6 text-purple-400" />
                         Segurança da Conta
                       </h3>
-                      <p className="text-[10px] sm:text-xs text-slate-400">
-                        Altere sua senha via solicitação.
+                      <p className="text-sm md:text-base text-slate-400 leading-relaxed">
+                        Altere sua senha via solicitação ao administrador.
                       </p>
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                      <div className="flex flex-wrap gap-2 md:gap-3">
                         <PasswordChangeRequest 
                           agentId={agent.id} 
                           agentName={agent.name} 
@@ -552,9 +571,9 @@ export default function AgentPanel() {
               </TabsContent>
             </Tabs>
 
-            {/* Footer Credits - Ultra Compact */}
-            <div className="text-center text-[8px] sm:text-[10px] text-muted-foreground py-1 sm:py-1.5 border-t border-border/30">
-              <p>Desenvolvido por <span className="text-primary font-semibold">Franc D'nis</span> • Feijó, Acre</p>
+            {/* Footer Credits - Modern & Readable */}
+            <div className="text-center text-xs md:text-sm text-muted-foreground py-3 md:py-4 border-t border-border/40 mt-4">
+              <p className="font-medium">Desenvolvido por <span className="text-primary font-bold">Franc D'nis</span> • Feijó, Acre</p>
             </div>
           </div>
         </main>
