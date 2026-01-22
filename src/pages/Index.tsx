@@ -764,14 +764,16 @@ export default function Index() {
           description: error.message || 'Credenciais inválidas.',
           variant: 'destructive',
         });
-      } else {
-        toast({
-          title: 'Bem-vindo!',
-          description: 'Login administrativo realizado.',
-        });
-        setShowAdminLogin(false);
-        navigate('/admin', { replace: true });
+        setIsSubmitting(false);
+        return;
       }
+      
+      // CRÍTICO: NÃO mostrar toast aqui - esperar navegação completar
+      setShowAdminLogin(false);
+      
+      // Delay para garantir que o userRole seja carregado antes de navegar
+      await new Promise(resolve => setTimeout(resolve, 800));
+      navigate('/admin', { replace: true });
     } catch (error: any) {
       toast({
         title: 'Erro',
