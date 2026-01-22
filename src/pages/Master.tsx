@@ -180,14 +180,9 @@ export default function Master() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
 
-  useEffect(() => {
-    if (isLoading) return;
-    if (masterSession) return;
-    const timer = setTimeout(() => {
-      navigate('/auth', { replace: true });
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [masterSession, isLoading, navigate]);
+  // CRÍTICO: NÃO redirecionar automaticamente - o Master deve permanecer na tela
+  // O painel Master usa masterSession que é gerenciada separadamente do auth.user
+  // Removido redirect automático para evitar logout forçado
 
   useEffect(() => {
     if (masterSession) {

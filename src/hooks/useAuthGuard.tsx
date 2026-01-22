@@ -21,6 +21,18 @@ export function useAuthGuard(options: UseAuthGuardOptions = {}) {
       return;
     }
 
+    // CRÍTICO: Se estamos na rota /master, NUNCA redirecionar
+    if (window.location.pathname === '/master') {
+      setIsReady(true);
+      return;
+    }
+
+    // CRÍTICO: Se há masterSession, NUNCA redirecionar
+    if (masterSession) {
+      setIsReady(true);
+      return;
+    }
+
     // Give more time for the session to be fully established
     // This prevents premature redirects during token refresh
     const timer = setTimeout(() => {
@@ -39,11 +51,14 @@ export function useAuthGuard(options: UseAuthGuardOptions = {}) {
 
       // CRITICAL: Only redirect if we're SURE there's no session
       // and enough time has passed for token refresh to complete
-      if (!isAuthenticated && !isLoading) {
+      // NUNCA redirecionar se estamos em /master
+      if (!isAuthenticated && !isLoading && window.location.pathname !== '/master') {
         // Double-check before redirecting
         setTimeout(() => {
           // Re-check auth state before actually redirecting
-          if (!user && !masterSession) {
+          // Check stored master token as well
+          const storedMaster = sessionStorage.getItem('masterToken') || localStorage.getItem('masterToken');
+          if (!user && !masterSession && !storedMaster && window.location.pathname !== '/master') {
             navigate('/auth', { replace: true });
           } else {
             setIsReady(true);

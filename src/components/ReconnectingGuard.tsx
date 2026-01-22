@@ -53,15 +53,25 @@ export function ReconnectingGuard({
   }, [user, session, masterSession]);
 
   // Handle session loss - silently redirect to home instead of showing UI
+  // CRÍTICO: NUNCA redirecionar se há masterSession (painel Master)
   useEffect(() => {
     // Still loading - do nothing
     if (isLoading) return;
 
-    // Master session bypasses everything
-    if (masterSession) return;
+    // CRÍTICO: Master session SEMPRE bypassa tudo - NUNCA redirecionar
+    if (masterSession) {
+      // Garantir que o ref está setado para evitar redirects futuros
+      wasAuthenticatedRef.current = true;
+      return;
+    }
 
     // Has valid session - all good
     if (user && session) return;
+
+    // CRÍTICO: Se estamos na rota /master, NUNCA redirecionar
+    if (window.location.pathname === '/master') {
+      return;
+    }
 
     // User was authenticated before but now lost session - redirect silently
     if (wasAuthenticatedRef.current && !user && !session) {
@@ -72,6 +82,12 @@ export function ReconnectingGuard({
 
       // Give Supabase time to recover the session before redirecting
       graceTimeoutRef.current = setTimeout(async () => {
+        // CRITICAL: Re-check masterSession before any redirect
+        const storedMaster = sessionStorage.getItem('masterToken') || localStorage.getItem('masterToken');
+        if (storedMaster) {
+          return; // Não redirecionar se há token master
+        }
+
         // Double-check if we still don't have a session
         const hasSession = await verifySession();
         
@@ -79,7 +95,7 @@ export function ReconnectingGuard({
           // Check context state again (it may have updated)
           const { data: { session: latestSession } } = await supabase.auth.getSession();
           
-          if (!latestSession) {
+          if (!latestSession && window.location.pathname !== '/master') {
             // Silently redirect to home - no UI shown
             wasAuthenticatedRef.current = false;
             navigate('/', { replace: true });
