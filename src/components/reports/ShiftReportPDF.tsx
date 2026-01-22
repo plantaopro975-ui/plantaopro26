@@ -105,7 +105,7 @@ export function ShiftReportPDF({ units }: ShiftReportPDFProps) {
       // Fetch shifts for these agents in the date range
       const agentIds = agents.map(a => a.id);
       const { data: shifts, error: shiftsError } = await supabase
-        .from('shifts')
+        .from('agent_shifts')
         .select('*')
         .in('agent_id', agentIds)
         .gte('shift_date', startDate)
@@ -141,7 +141,10 @@ export function ShiftReportPDF({ units }: ShiftReportPDFProps) {
           const start = new Date(`2000-01-01T${shift.start_time}`);
           const end = new Date(`2000-01-01T${shift.end_time}`);
           let hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-          if (hours < 0) hours += 24; // Handle overnight shifts
+          // 24x72 plantão: quando o horário de fim é igual ao início, significa 24h.
+          // Também cobre virada de dia (horas negativas).
+          if (hours === 0) hours = 24;
+          if (hours < 0) hours += 24;
           return acc + hours;
         }, 0);
 

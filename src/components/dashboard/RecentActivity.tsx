@@ -32,7 +32,7 @@ export function RecentActivity() {
 
       // Fetch recent shifts
       const { data: shifts } = await supabase
-        .from('shifts')
+        .from('agent_shifts')
         .select(`
           id,
           shift_date,

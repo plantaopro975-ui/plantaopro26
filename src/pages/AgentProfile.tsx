@@ -107,7 +107,7 @@ export default function AgentProfile() {
   const fetchAgentShifts = async () => {
     try {
       const { data, error } = await supabase
-        .from('shifts')
+        .from('agent_shifts')
         .select('*')
         .eq('agent_id', id)
         .order('shift_date', { ascending: false })

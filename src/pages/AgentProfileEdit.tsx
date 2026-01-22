@@ -16,6 +16,7 @@ import { formatPhone } from '@/lib/validators';
 import { AvatarUpload } from '@/components/agent-panel/AvatarUpload';
 import { format, isValid, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { formatMatricula, getMatriculaNumbers } from '@/lib/validators';
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -28,6 +29,7 @@ export default function AgentProfileEdit() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState<Date | undefined>();
   const [formData, setFormData] = useState({
+    matricula: '',
     phone: '',
     email: '',
     address: '',
@@ -66,6 +68,7 @@ export default function AgentProfileEdit() {
       
       setBirthDate(parsedBirthDate);
       setFormData({
+        matricula: agent.matricula || '',
         phone: agent.phone || '',
         email: agent.email || '',
         address: agent.address || '',
@@ -91,12 +94,21 @@ export default function AgentProfileEdit() {
     setIsSaving(true);
     
     try {
+      // Matrícula: opcional, mas quando preenchida deve ter 8 dígitos
+      const matriculaNumbers = getMatriculaNumbers(formData.matricula);
+      if (matriculaNumbers && matriculaNumbers.length !== 8) {
+        toast.error('Matrícula deve ter 8 dígitos');
+        setIsSaving(false);
+        return;
+      }
+
       // Format birth_date for database (YYYY-MM-DD)
       const birthDateForDb = birthDate ? format(birthDate, 'yyyy-MM-dd') : null;
       
       const { error } = await (supabase as any)
         .from('agents')
         .update({
+          matricula: matriculaNumbers || null,
           phone: formData.phone || null,
           email: formData.email || null,
           address: formData.address || null,
@@ -235,6 +247,28 @@ export default function AgentProfileEdit() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Matrícula */}
+              <div className="space-y-2">
+                <Label htmlFor="matricula" className="text-slate-300 flex items-center gap-2">
+                  <User className="h-4 w-4 text-amber-500" />
+                  Matrícula (8 dígitos)
+                </Label>
+                <Input
+                  id="matricula"
+                  inputMode="numeric"
+                  placeholder="00000000"
+                  value={formatMatricula(formData.matricula)}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    const digits = raw.replace(/\D/g, '').slice(0, 8);
+                    setFormData(prev => ({ ...prev, matricula: digits }));
+                  }}
+                  maxLength={8}
+                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
+                />
+                <p className="text-xs text-slate-500">Opcional, mas deve ter exatamente 8 dígitos.</p>
+              </div>
+
               {/* Phone */}
               <div className="space-y-2">
                 <Label htmlFor="phone" className="text-slate-300 flex items-center gap-2">

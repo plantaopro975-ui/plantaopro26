@@ -41,7 +41,7 @@ export function ShiftCalendar() {
     const end = format(endOfMonth(date), 'yyyy-MM-dd');
 
     const { data, error } = await supabase
-      .from('shifts')
+      .from('agent_shifts')
       .select(`
         id,
         shift_date,
