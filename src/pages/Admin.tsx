@@ -59,6 +59,8 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState('overview');
   const [permissions, setPermissions] = useState<AdminPermissions | null>(null);
   const [loadingPermissions, setLoadingPermissions] = useState(true);
+  // Avoid “kick out” while role is still being fetched (race during token refresh)
+  const isRoleResolved = !!userRole;
   
   const { conflicts, hasConflicts, isChecking, checkForConflicts, dismissConflict } = useShiftConflictDetection({
     enabled: true,
@@ -118,6 +120,11 @@ export default function Admin() {
       navigate('/', { replace: true });
       return;
     }
+
+     // Role still loading/resolving - do not redirect yet
+     if (!userRole) {
+       return;
+     }
     
     // Not an admin
     if (userRole !== 'admin' && userRole !== 'master') {
@@ -135,7 +142,7 @@ export default function Admin() {
     navigate('/');
   };
 
-  if (isLoading || loadingPermissions) {
+  if (isLoading || loadingPermissions || (!!user && !isRoleResolved)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900">
         <Loader2 className="h-8 w-8 animate-spin text-amber-500" />

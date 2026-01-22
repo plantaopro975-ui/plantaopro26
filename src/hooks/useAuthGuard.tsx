@@ -57,7 +57,7 @@ export function useAuthGuard(options: UseAuthGuardOptions = {}) {
         setTimeout(() => {
           // Re-check auth state before actually redirecting
           // Check stored master token as well
-          const storedMaster = sessionStorage.getItem('masterToken') || localStorage.getItem('masterToken');
+          const storedMaster = localStorage.getItem('master_token');
           if (!user && !masterSession && !storedMaster && window.location.pathname !== '/master') {
             navigate('/auth', { replace: true });
           } else {
