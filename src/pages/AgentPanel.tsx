@@ -208,7 +208,21 @@ export default function AgentPanel() {
     );
   }
 
+  // CRÍTICO: Se é admin sem perfil de agente, mostrar loading enquanto redireciona
+  // para evitar flash da tela de erro
+  if (user && isAdmin && !agent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto" />
+          <p className="text-slate-400 text-sm">Redirecionando para painel administrativo...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show error state if no agent - AFTER all hooks
+  // Mas apenas para usuários normais, não admins
   if (!agent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 p-6">

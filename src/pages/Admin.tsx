@@ -111,30 +111,37 @@ export default function Admin() {
     fetchPermissions();
   }, [user?.id]);
 
-  // Auth and role check
+  // Auth and role check - MUITO MAIS TOLERANTE para evitar redirects prematuros
   useEffect(() => {
+    // Ainda carregando - não fazer nada
     if (isLoading) return;
     
-    // Not logged in
-    if (!user) {
-      navigate('/', { replace: true });
-      return;
-    }
-
-     // Role still loading/resolving - do not redirect yet
-     if (!userRole) {
-       return;
-     }
+    // CRÍTICO: Dar mais tempo para o userRole carregar (até 3 segundos)
+    // antes de decidir redirecionar
+    const timer = setTimeout(() => {
+      // Sem usuário logado após timeout
+      if (!user) {
+        navigate('/', { replace: true });
+        return;
+      }
+      
+      // Role ainda não carregou - aguardar mais
+      if (!userRole) {
+        return;
+      }
+      
+      // Não é admin - redirecionar para painel do agente
+      if (userRole !== 'admin' && userRole !== 'master') {
+        toast({
+          title: 'Acesso negado',
+          description: 'Você não tem permissão para acessar o painel administrativo.',
+          variant: 'destructive',
+        });
+        navigate('/agent-panel', { replace: true });
+      }
+    }, 1500);
     
-    // Not an admin
-    if (userRole !== 'admin' && userRole !== 'master') {
-      toast({
-        title: 'Acesso negado',
-        description: 'Você não tem permissão para acessar o painel administrativo.',
-        variant: 'destructive',
-      });
-      navigate('/agent-panel', { replace: true });
-    }
+    return () => clearTimeout(timer);
   }, [user, userRole, isLoading, navigate]);
 
   const handleExit = async () => {
