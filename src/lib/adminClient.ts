@@ -22,7 +22,9 @@ type AdminAction =
   | 'toggle_agent_status'
   | 'extend_license'
   | 'freeze_agent'
-  | 'reset_password';
+  | 'reset_password'
+  | 'cleanup_orphan_auth'
+  | 'immediate_transfer';
 
 /**
  * Unified admin client that works for both Master (token-based) and Admin (session-based)
@@ -116,6 +118,14 @@ export const adminClient = {
 
   updateUnit: (input: { unitId: string; patch: Record<string, unknown> }) =>
     callAdminBackend<{}>('update_unit', input),
+
+  // Cleanup orphan auth user (antes de novo cadastro)
+  cleanupOrphanAuth: (input: { cpf: string }) =>
+    callAdminBackend<{ removed: boolean }>('cleanup_orphan_auth', input),
+
+  // Transferência imediata (sem logout, sem aprovação)
+  immediateTransfer: (input: { agentId: string; toUnitId: string; toTeam: string }) =>
+    callAdminBackend<{}>('immediate_transfer', input),
 };
 
 /**

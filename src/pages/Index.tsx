@@ -504,7 +504,8 @@ export default function Index() {
       const { data: existingByCpf } = await query.maybeSingle();
 
       if (existingByCpf) {
-        setRegErrors({ cpf: 'CPF já cadastrado' });
+        // CPF já cadastrado - não permitir novo cadastro
+        setRegErrors({ cpf: 'CPF já cadastrado. Faça login ou solicite ao Master para excluir o cadastro anterior.' });
         setIsSubmitting(false);
         return;
       }

@@ -48,6 +48,7 @@ export async function deleteAllAgentData(agentId: string): Promise<{ success: bo
   };
 
   // Excluir de todas as tabelas com agent_id
+  await deleteFromTable('ad_views', 'agent_id');
   await deleteFromTable('shift_alerts', 'agent_id');
   await deleteFromTable('overtime_bank', 'agent_id');
   await deleteFromTable('agent_shifts', 'agent_id');
@@ -65,6 +66,7 @@ export async function deleteAllAgentData(agentId: string): Promise<{ success: bo
   await deleteFromTable('password_change_requests', 'agent_id');
   await deleteFromTable('offline_license_cache', 'agent_id');
   await deleteFromTable('license_code_usage', 'agent_id');
+  await deleteFromTable('master_session_tokens', 'user_id');
   
   // chat_messages usa sender_id
   await deleteFromTable('chat_messages', 'sender_id');

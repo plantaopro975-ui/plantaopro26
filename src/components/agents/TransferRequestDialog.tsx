@@ -112,33 +112,49 @@ export function TransferRequestDialog({
     setLoading(true);
 
     try {
-      const { error } = await supabase.from('transfer_requests').insert({
-        agent_id: agent.id,
-        from_unit_id: agent.unit_id,
-        to_unit_id: targetUnitId,
-        from_team: agent.team,
-        to_team: targetTeam,
-        reason: reason || null,
-      });
+      // Transferência imediata - atualiza o agente diretamente
+      const { error: updateError } = await supabase
+        .from('agents')
+        .update({
+          unit_id: targetUnitId,
+          team: targetTeam,
+        })
+        .eq('id', agent.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      // Registrar a transferência no histórico (opcional)
+      try {
+        await supabase.from('transfer_requests').insert({
+          agent_id: agent.id,
+          from_unit_id: agent.unit_id,
+          to_unit_id: targetUnitId,
+          from_team: agent.team,
+          to_team: targetTeam,
+          reason: reason || null,
+          status: 'approved', // Já aprovada automaticamente
+          reviewed_at: new Date().toISOString(),
+          reviewed_by: 'Auto-Transfer',
+        });
+      } catch {
+        // Ignorar erro se tabela não existir
+      }
 
       toast({
-        title: 'Solicitação Enviada',
-        description: 'Sua solicitação de transferência foi enviada. Você será deslogado.',
+        title: '✓ Transferência Concluída!',
+        description: `Você agora faz parte da equipe ${targetTeam}.`,
       });
 
       onSuccess();
       onOpenChange(false);
 
-      // Logout immediately after submitting transfer request
-      await supabase.auth.signOut();
-      window.location.href = '/';
+      // NÃO faz logout - apenas recarrega para atualizar dados
+      window.location.reload();
     } catch (error) {
       console.error('Error submitting transfer request:', error);
       toast({
         title: 'Erro',
-        description: 'Não foi possível enviar a solicitação.',
+        description: 'Não foi possível realizar a transferência.',
         variant: 'destructive',
       });
       setLoading(false);

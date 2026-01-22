@@ -192,6 +192,57 @@ export default function Master() {
   useEffect(() => {
     if (masterSession) {
       fetchData();
+      
+      // Realtime subscription para mudanças em agentes
+      const agentsChannel = supabase
+        .channel('master-agents-realtime')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'agents',
+        }, (payload) => {
+          console.log('[Master] Realtime agents change:', payload.eventType);
+          fetchData(); // Recarrega todos os dados
+          
+          if (payload.eventType === 'UPDATE') {
+            toast({
+              title: '🔄 Atualização detectada',
+              description: 'Dados de agente foram atualizados.',
+              duration: 2000,
+            });
+          } else if (payload.eventType === 'DELETE') {
+            toast({
+              title: '🗑️ Registro removido',
+              description: 'Um agente foi excluído do sistema.',
+              duration: 2000,
+            });
+          } else if (payload.eventType === 'INSERT') {
+            toast({
+              title: '✨ Novo agente',
+              description: 'Um novo agente foi cadastrado.',
+              duration: 2000,
+            });
+          }
+        })
+        .subscribe();
+
+      // Realtime para transferências
+      const transfersChannel = supabase
+        .channel('master-transfers-realtime')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'transfer_requests',
+        }, () => {
+          console.log('[Master] Realtime transfer change');
+          fetchData();
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(agentsChannel);
+        supabase.removeChannel(transfersChannel);
+      };
     }
   }, [masterSession]);
 

@@ -233,43 +233,149 @@ serve(async (req) => {
       const agentId = String(body?.agentId ?? "");
       if (!agentId) return json({ success: false, error: "agentId obrigatório." }, 400);
 
-      // Delete from related tables first
+      console.log(`[delete_agent] Iniciando exclusão completa para: ${agentId}`);
+
+      // Delete from ALL related tables first (order matters for foreign keys)
       const tables = [
-        "shift_alerts", "overtime_bank", "agent_shifts", "agent_events",
-        "agent_leaves", "shift_planner_configs", "shifts", "transfer_requests",
-        "chat_room_members", "deleted_messages", "access_logs", "payments",
-        "notifications", "saved_credentials", "password_change_requests",
-        "offline_license_cache", "license_code_usage", "chat_messages",
+        { name: "ad_views", column: "agent_id" },
+        { name: "shift_alerts", column: "agent_id" },
+        { name: "overtime_bank", column: "agent_id" },
+        { name: "agent_shifts", column: "agent_id" },
+        { name: "agent_events", column: "agent_id" },
+        { name: "agent_leaves", column: "agent_id" },
+        { name: "shift_planner_configs", column: "agent_id" },
+        { name: "shifts", column: "agent_id" },
+        { name: "transfer_requests", column: "agent_id" },
+        { name: "chat_room_members", column: "agent_id" },
+        { name: "deleted_messages", column: "agent_id" },
+        { name: "access_logs", column: "agent_id" },
+        { name: "payments", column: "agent_id" },
+        { name: "notifications", column: "agent_id" },
+        { name: "saved_credentials", column: "agent_id" },
+        { name: "password_change_requests", column: "agent_id" },
+        { name: "offline_license_cache", column: "agent_id" },
+        { name: "license_code_usage", column: "agent_id" },
+        { name: "chat_messages", column: "sender_id" },
+        { name: "master_session_tokens", column: "user_id" },
       ];
 
-      for (const table of tables) {
-        const column = table === "chat_messages" ? "sender_id" : "agent_id";
+      for (const { name, column } of tables) {
         try {
-          await admin.from(table).delete().eq(column, agentId);
-        } catch {
-          // ignore
+          await admin.from(name).delete().eq(column, agentId);
+          console.log(`[delete_agent] ✓ ${name} limpo`);
+        } catch (e) {
+          console.warn(`[delete_agent] Erro em ${name}:`, e);
         }
       }
 
       // Delete user_roles and profiles
       try {
         await admin.from("user_roles").delete().eq("user_id", agentId);
+        console.log("[delete_agent] ✓ user_roles limpo");
       } catch {
         // ignore
       }
       try {
         await admin.from("profiles").delete().eq("user_id", agentId);
+        console.log("[delete_agent] ✓ profiles limpo");
       } catch {
         // ignore
       }
 
       // Delete agent record
       const { error: agentDelErr } = await admin.from("agents").delete().eq("id", agentId);
-      if (agentDelErr) return json({ success: false, error: agentDelErr.message }, 400);
+      if (agentDelErr) {
+        console.error("[delete_agent] Erro ao deletar agent:", agentDelErr);
+        return json({ success: false, error: agentDelErr.message }, 400);
+      }
+      console.log("[delete_agent] ✓ agents limpo");
 
-      // Delete auth user
-      await admin.auth.admin.deleteUser(agentId).catch(() => {});
+      // Delete auth user (allows re-registration with same CPF)
+      try {
+        await admin.auth.admin.deleteUser(agentId);
+        console.log("[delete_agent] ✓ auth.users limpo");
+      } catch (e) {
+        console.warn("[delete_agent] Erro ao deletar auth user:", e);
+      }
 
+      console.log(`[delete_agent] Exclusão completa concluída para: ${agentId}`);
+      return json({ success: true, data: {} });
+    }
+
+    // ===== CLEANUP ORPHAN AUTH USER =====
+    if (action === "cleanup_orphan_auth") {
+      const cpf = String(body?.cpf ?? "").replace(/\D/g, "");
+      if (!cpf || cpf.length !== 11) {
+        return json({ success: false, error: "CPF inválido." }, 400);
+      }
+
+      const email = `${cpf}@agent.plantaopro.com`;
+      console.log(`[cleanup_orphan_auth] Buscando usuário órfão: ${email}`);
+
+      // Check if there's an agent with this CPF
+      const { data: existingAgent } = await admin
+        .from("agents")
+        .select("id")
+        .eq("cpf", cpf)
+        .maybeSingle();
+
+      if (existingAgent) {
+        console.log(`[cleanup_orphan_auth] Agente existe, não é órfão`);
+        return json({ success: false, error: "CPF já cadastrado com agente válido." }, 400);
+      }
+
+      // Find and delete orphan auth user
+      const { data: users } = await admin.auth.admin.listUsers();
+      const orphanUser = users?.users?.find(u => u.email === email);
+
+      if (orphanUser) {
+        console.log(`[cleanup_orphan_auth] Encontrado usuário órfão: ${orphanUser.id}`);
+        
+        // Clean up related tables
+        const tables = ["user_roles", "profiles", "saved_credentials"];
+        for (const table of tables) {
+          try {
+            await admin.from(table).delete().eq("user_id", orphanUser.id);
+          } catch {
+            // ignore
+          }
+        }
+
+        // Delete auth user
+        await admin.auth.admin.deleteUser(orphanUser.id);
+        console.log(`[cleanup_orphan_auth] ✓ Usuário órfão removido`);
+        return json({ success: true, data: { removed: true } });
+      }
+
+      console.log(`[cleanup_orphan_auth] Nenhum usuário órfão encontrado`);
+      return json({ success: true, data: { removed: false } });
+    }
+
+    // ===== IMMEDIATE TRANSFER =====
+    if (action === "immediate_transfer") {
+      const agentId = String(body?.agentId ?? "");
+      const toUnitId = String(body?.toUnitId ?? "");
+      const toTeam = String(body?.toTeam ?? "");
+      
+      if (!agentId || !toUnitId || !toTeam) {
+        return json({ success: false, error: "agentId, toUnitId e toTeam são obrigatórios." }, 400);
+      }
+
+      console.log(`[immediate_transfer] Transferindo ${agentId} para ${toTeam}@${toUnitId}`);
+
+      // Update agent immediately
+      const { error } = await admin.from("agents").update({
+        unit_id: toUnitId,
+        team: toTeam,
+        updated_at: new Date().toISOString(),
+      }).eq("id", agentId);
+
+      if (error) {
+        console.error("[immediate_transfer] Erro:", error);
+        return json({ success: false, error: error.message }, 400);
+      }
+
+      console.log(`[immediate_transfer] ✓ Transferência concluída`);
       return json({ success: true, data: {} });
     }
 
