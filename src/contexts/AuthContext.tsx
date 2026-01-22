@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { pushDiagEvent } from '@/lib/diagLog';
@@ -26,6 +26,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
+
+  // Prevent premature redirects on first paint:
+  // some pages gate on isLoading=false && !user and redirect,
+  // but Supabase can momentarily report null session before hydration.
+  const hasInitializedRef = useRef(false);
   const [masterSession, setMasterSessionState] = useState<string | null>(() => {
     // Check both sessionStorage and localStorage for master session
     if (typeof window !== 'undefined') {
@@ -90,7 +95,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUserRole(null);
         }
 
-        setIsLoading(false);
+        // Do not end loading state until the initial getSession() completes.
+        // This avoids a brief window where pages think there's no user and redirect.
+        if (hasInitializedRef.current) {
+          setIsLoading(false);
+        }
       }
     );
 
@@ -109,6 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         fetchUserRole(session.user.id);
       }
 
+      hasInitializedRef.current = true;
       setIsLoading(false);
     });
 
