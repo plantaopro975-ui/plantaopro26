@@ -29,6 +29,7 @@ interface AgentProfile {
   } | null;
 }
 
+// IMPORTANT: use explicit FK join to units for consistent embedding
 const AGENT_SELECT_QUERY = `
   id,
   name,
@@ -48,7 +49,7 @@ const AGENT_SELECT_QUERY = `
   license_status,
   license_expires_at,
   license_notes,
-  units:unit_id (
+  unit:units(
     id,
     name,
     municipality
@@ -165,7 +166,7 @@ export function useAgentProfile() {
           if (foundAgent) {
             setAgent({
               ...foundAgent,
-              unit: foundAgent.units as AgentProfile['unit'],
+              unit: (foundAgent as any).unit as AgentProfile['unit'],
             });
             // Cache key based on user id + email
             lastEmailRef.current = `${user.id || ''}-${user.email || ''}`;

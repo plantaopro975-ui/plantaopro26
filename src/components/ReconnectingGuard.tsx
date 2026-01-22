@@ -83,7 +83,8 @@ export function ReconnectingGuard({
       // Give Supabase time to recover the session before redirecting
       graceTimeoutRef.current = setTimeout(async () => {
         // CRITICAL: Re-check masterSession before any redirect
-        const storedMaster = sessionStorage.getItem('masterToken') || localStorage.getItem('masterToken');
+        // Master token is stored in localStorage under "master_token" (src/lib/masterSession.ts)
+        const storedMaster = localStorage.getItem('master_token');
         if (storedMaster) {
           return; // Não redirecionar se há token master
         }
