@@ -312,36 +312,36 @@ export default function AgentPanel() {
                 </div>
                 
                 {/* Tabs Grid - Ultra Compact on Mobile */}
-                <TabsList className="bg-gradient-to-br from-slate-800/80 via-slate-900/70 to-slate-800/80 border border-amber-500/15 sm:border-2 sm:border-amber-500/20 p-1 sm:p-1.5 md:p-2 h-auto grid grid-cols-5 lg:grid-cols-9 gap-0.5 sm:gap-1 md:gap-1.5 rounded-md sm:rounded-lg shadow-inner">
+                <TabsList className="bg-gradient-to-br from-slate-800/80 via-slate-900/70 to-slate-800/80 border border-amber-500/15 sm:border-2 sm:border-amber-500/20 p-1.5 sm:p-2 md:p-2.5 h-auto grid grid-cols-5 lg:grid-cols-9 gap-1 sm:gap-1.5 md:gap-2 rounded-md sm:rounded-lg shadow-inner">
                   <TabsTrigger 
                     value="equipe" 
-                    className="flex flex-col items-center justify-center gap-0 text-[7px] sm:text-[9px] md:text-xs p-1 sm:p-1.5 md:p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-md data-[state=active]:shadow-amber-500/20 data-[state=active]:scale-[1.02] rounded-md sm:rounded-lg font-semibold transition-all duration-200 hover:bg-amber-500/15 min-h-[32px] sm:min-h-[40px] md:min-h-[52px] border border-slate-600/40 data-[state=active]:border-amber-300 text-amber-200/70 hover:text-amber-100"
+                    className="flex flex-col items-center justify-center gap-0.5 text-[9px] sm:text-[10px] md:text-sm p-2 sm:p-2.5 md:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-md data-[state=active]:shadow-amber-500/20 data-[state=active]:scale-[1.02] rounded-md sm:rounded-lg font-semibold transition-all duration-200 hover:bg-amber-500/15 min-h-[44px] sm:min-h-[52px] md:min-h-[64px] border border-slate-600/40 data-[state=active]:border-amber-300 text-amber-200/80 hover:text-amber-100"
                   >
-                    <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <Users className="h-4 w-4 sm:h-5 sm:w-5" />
                     <span className="tracking-wide leading-none">Equipe</span>
                   </TabsTrigger>
                   
                   <TabsTrigger 
                     value="plantoes" 
-                    className="flex flex-col items-center justify-center gap-0 text-[7px] sm:text-[9px] md:text-xs p-1 sm:p-1.5 md:p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-orange-500/20 data-[state=active]:scale-[1.02] rounded-md sm:rounded-lg font-semibold transition-all duration-200 hover:bg-orange-500/15 min-h-[32px] sm:min-h-[40px] md:min-h-[52px] border border-slate-600/40 data-[state=active]:border-orange-300 text-orange-200/70 hover:text-orange-100"
+                    className="flex flex-col items-center justify-center gap-0.5 text-[9px] sm:text-[10px] md:text-sm p-2 sm:p-2.5 md:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-orange-500/20 data-[state=active]:scale-[1.02] rounded-md sm:rounded-lg font-semibold transition-all duration-200 hover:bg-orange-500/15 min-h-[44px] sm:min-h-[52px] md:min-h-[64px] border border-slate-600/40 data-[state=active]:border-orange-300 text-orange-200/80 hover:text-orange-100"
                   >
-                    <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
                     <span className="tracking-wide leading-none">Plantões</span>
                   </TabsTrigger>
                   
                   <TabsTrigger 
                     value="bh" 
-                    className="flex flex-col items-center justify-center gap-0 text-[7px] sm:text-[9px] md:text-xs p-1 sm:p-1.5 md:p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-md data-[state=active]:shadow-emerald-500/20 data-[state=active]:scale-[1.02] rounded-md sm:rounded-lg font-semibold transition-all duration-200 hover:bg-emerald-500/15 min-h-[32px] sm:min-h-[40px] md:min-h-[52px] border border-slate-600/40 data-[state=active]:border-emerald-300 text-emerald-200/70 hover:text-emerald-100"
+                    className="flex flex-col items-center justify-center gap-0.5 text-[9px] sm:text-[10px] md:text-sm p-2 sm:p-2.5 md:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-md data-[state=active]:shadow-emerald-500/20 data-[state=active]:scale-[1.02] rounded-md sm:rounded-lg font-semibold transition-all duration-200 hover:bg-emerald-500/15 min-h-[44px] sm:min-h-[52px] md:min-h-[64px] border border-slate-600/40 data-[state=active]:border-emerald-300 text-emerald-200/80 hover:text-emerald-100"
                   >
-                    <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <Clock className="h-4 w-4 sm:h-5 sm:w-5" />
                     <span className="tracking-wide leading-none">BH</span>
                   </TabsTrigger>
                   
                   <TabsTrigger 
                     value="folgas" 
-                    className="flex flex-col items-center justify-center gap-0 text-[7px] sm:text-[9px] md:text-xs p-1 sm:p-1.5 md:p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 data-[state=active]:scale-[1.02] rounded-md sm:rounded-lg font-semibold transition-all duration-200 hover:bg-purple-500/15 min-h-[32px] sm:min-h-[40px] md:min-h-[52px] border border-slate-600/40 data-[state=active]:border-purple-300 text-purple-200/70 hover:text-purple-100"
+                    className="flex flex-col items-center justify-center gap-0.5 text-[9px] sm:text-[10px] md:text-sm p-2 sm:p-2.5 md:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 data-[state=active]:scale-[1.02] rounded-md sm:rounded-lg font-semibold transition-all duration-200 hover:bg-purple-500/15 min-h-[44px] sm:min-h-[52px] md:min-h-[64px] border border-slate-600/40 data-[state=active]:border-purple-300 text-purple-200/80 hover:text-purple-100"
                   >
-                    <CalendarOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <CalendarOff className="h-4 w-4 sm:h-5 sm:w-5" />
                     <span className="tracking-wide leading-none">Folgas</span>
                   </TabsTrigger>
                   
