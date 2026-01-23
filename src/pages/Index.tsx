@@ -1206,22 +1206,18 @@ export default function Index() {
       {/* CPF Check Dialog - Compact Professional */}
       <Dialog open={showCpfCheck} onOpenChange={(open) => !open && closeAllDialogs()}>
         <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border border-primary/30 max-w-xs shadow-xl shadow-primary/10 p-4">
-          {/* Logo Header with Effects */}
+          {/* Logo Header - Elegante */}
           <div className="text-center py-3">
-            <div className="relative inline-block">
-              {/* Glow rings */}
-              <div className="absolute inset-0 w-20 h-20 mx-auto rounded-full bg-primary/20 blur-xl animate-pulse" />
-              <div className="absolute inset-0 w-16 h-16 mx-auto mt-2 rounded-full bg-primary/30 blur-lg animate-pulse" style={{ animationDelay: '0.5s' }} />
+            <div className="relative inline-block group">
+              {/* Subtle glow behind */}
+              <div className="absolute inset-0 w-16 h-16 mx-auto rounded-full bg-primary/15 blur-2xl" />
               
-              {/* Logo with animation */}
+              {/* Logo */}
               <img 
                 src={logoShield} 
                 alt="Plantão Pro" 
-                className="w-20 h-auto mx-auto relative z-10 drop-shadow-[0_0_25px_rgba(var(--primary),0.5)] hover:scale-105 transition-transform duration-300"
+                className="w-16 h-auto mx-auto relative z-10 drop-shadow-[0_4px_20px_rgba(var(--primary),0.35)] group-hover:drop-shadow-[0_4px_25px_rgba(var(--primary),0.5)] transition-all duration-500"
               />
-              
-              {/* Rotating ring effect */}
-              <div className="absolute inset-0 w-24 h-24 mx-auto -mt-2 rounded-full border border-primary/20 animate-spin" style={{ animationDuration: '8s' }} />
             </div>
           </div>
           
@@ -1329,22 +1325,18 @@ export default function Index() {
       {/* Login Dialog - Compact Professional */}
       <Dialog open={showLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
         <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-blue-600/30 w-[90vw] max-w-xs shadow-xl shadow-blue-900/15 p-4">
-          {/* Logo Header with Effects */}
+          {/* Logo Header - Elegante */}
           <div className="text-center py-3">
-            <div className="relative inline-block">
-              {/* Glow rings */}
-              <div className="absolute inset-0 w-24 h-24 mx-auto rounded-full bg-blue-500/20 blur-xl animate-pulse" />
-              <div className="absolute inset-0 w-20 h-20 mx-auto mt-2 rounded-full bg-blue-500/30 blur-lg animate-pulse" style={{ animationDelay: '0.5s' }} />
+            <div className="relative inline-block group">
+              {/* Subtle glow behind */}
+              <div className="absolute inset-0 w-18 h-18 mx-auto rounded-full bg-blue-500/15 blur-2xl" />
               
-              {/* Logo with animation */}
+              {/* Logo */}
               <img 
                 src={logoShield} 
                 alt="Plantão Pro" 
-                className="w-24 h-auto mx-auto relative z-10 drop-shadow-[0_0_30px_rgba(59,130,246,0.5)] hover:scale-105 transition-transform duration-300"
+                className="w-18 h-auto mx-auto relative z-10 drop-shadow-[0_4px_20px_rgba(59,130,246,0.4)] group-hover:drop-shadow-[0_4px_25px_rgba(59,130,246,0.55)] transition-all duration-500"
               />
-              
-              {/* Rotating ring effect */}
-              <div className="absolute inset-0 w-28 h-28 mx-auto -mt-2 rounded-full border border-blue-500/20 animate-spin" style={{ animationDuration: '10s' }} />
             </div>
           </div>
           
@@ -1693,23 +1685,18 @@ export default function Index() {
       {/* Master Admin Login Dialog - Professional with Shield Logo */}
       <Dialog open={showMasterLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
         <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-amber-500/40 max-w-md shadow-2xl shadow-amber-900/20">
-          {/* Logo Header with Effects */}
+          {/* Logo Header - Elegante */}
           <div className="text-center py-4">
-            <div className="relative inline-block">
-              {/* Glow rings */}
-              <div className="absolute inset-0 w-28 h-28 mx-auto rounded-full bg-amber-500/20 blur-xl animate-pulse" />
-              <div className="absolute inset-0 w-24 h-24 mx-auto mt-2 rounded-full bg-amber-500/30 blur-lg animate-pulse" style={{ animationDelay: '0.5s' }} />
+            <div className="relative inline-block group">
+              {/* Subtle glow behind */}
+              <div className="absolute inset-0 w-20 h-20 mx-auto rounded-full bg-amber-500/15 blur-2xl" />
               
-              {/* Logo with animation */}
+              {/* Logo */}
               <img 
                 src={logoShield} 
                 alt="Plantão Pro" 
-                className="w-28 h-auto mx-auto relative z-10 drop-shadow-[0_0_35px_rgba(251,191,36,0.6)] hover:scale-105 transition-transform duration-300"
+                className="w-20 h-auto mx-auto relative z-10 drop-shadow-[0_4px_20px_rgba(251,191,36,0.4)] group-hover:drop-shadow-[0_4px_25px_rgba(251,191,36,0.55)] transition-all duration-500"
               />
-              
-              {/* Rotating ring effect */}
-              <div className="absolute inset-0 w-32 h-32 mx-auto -mt-2 rounded-full border-2 border-amber-500/20 animate-spin" style={{ animationDuration: '12s' }} />
-              <div className="absolute inset-0 w-36 h-36 mx-auto -mt-4 rounded-full border border-amber-500/10 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }} />
             </div>
           </div>
           
@@ -1792,23 +1779,18 @@ export default function Index() {
       {/* Admin Login Dialog */}
       <Dialog open={showAdminLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
         <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/40 max-w-md shadow-2xl shadow-blue-900/20">
-          {/* Logo Header with Effects */}
+          {/* Logo Header - Elegante */}
           <div className="text-center py-4">
-            <div className="relative inline-block">
-              {/* Glow rings */}
-              <div className="absolute inset-0 w-28 h-28 mx-auto rounded-full bg-blue-500/20 blur-xl animate-pulse" />
-              <div className="absolute inset-0 w-24 h-24 mx-auto mt-2 rounded-full bg-blue-500/30 blur-lg animate-pulse" style={{ animationDelay: '0.5s' }} />
+            <div className="relative inline-block group">
+              {/* Subtle glow behind */}
+              <div className="absolute inset-0 w-20 h-20 mx-auto rounded-full bg-blue-500/15 blur-2xl" />
               
-              {/* Logo with animation */}
+              {/* Logo */}
               <img 
                 src={logoShield} 
                 alt="Plantão Pro" 
-                className="w-28 h-auto mx-auto relative z-10 drop-shadow-[0_0_35px_rgba(59,130,246,0.6)] hover:scale-105 transition-transform duration-300"
+                className="w-20 h-auto mx-auto relative z-10 drop-shadow-[0_4px_20px_rgba(59,130,246,0.4)] group-hover:drop-shadow-[0_4px_25px_rgba(59,130,246,0.55)] transition-all duration-500"
               />
-              
-              {/* Rotating ring effect */}
-              <div className="absolute inset-0 w-32 h-32 mx-auto -mt-2 rounded-full border-2 border-blue-500/20 animate-spin" style={{ animationDuration: '12s' }} />
-              <div className="absolute inset-0 w-36 h-36 mx-auto -mt-4 rounded-full border border-blue-500/10 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }} />
             </div>
           </div>
           
