@@ -1256,63 +1256,50 @@ export default function Index() {
       </section>
 
 
-      {/* Footer - Clean & Themed */}
-      <footer className="py-2 sm:py-2.5 px-3 sm:px-4 bg-card/95 backdrop-blur-sm border-t border-primary/20 relative z-20 shrink-0">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          {/* Left: Copyright + Developer + Audio */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary/60" />
-              <span className="text-[10px] sm:text-xs font-medium">© {new Date().getFullYear()}</span>
-              <span className="text-[10px] sm:text-xs font-bold bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
-                FRANC D'NIS
-              </span>
-            </div>
+      {/* Footer - Compacto e Reorganizado */}
+      <footer className="py-1.5 sm:py-2 px-2 sm:px-3 bg-card/90 backdrop-blur-sm border-t border-primary/15 relative z-20 shrink-0">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+          {/* Left: Developer + Copyright + Year + Audio */}
+          <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
+            <span className="text-[9px] sm:text-[10px] font-bold bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
+              FRANC D'NIS
+            </span>
+            <span className="text-[8px] sm:text-[9px] opacity-50">•</span>
+            <span className="text-[8px] sm:text-[9px] opacity-70">© {new Date().getFullYear()}</span>
             <HomeAudioPlayer />
           </div>
           
-          {/* Center: Themed Analog Clock + Version Badge */}
-          <div className="hidden md:flex items-center gap-4">
-            <ThemedAnalogClock size={60} />
-            <div className="flex flex-col items-start gap-0.5">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/30">
-                <Radio className="h-3 w-3 text-green-500 animate-pulse" />
-                <span className="text-xs font-bold text-primary tracking-wide">v2.6</span>
-              </div>
-              <div className="text-[10px] text-muted-foreground font-medium tracking-wider">
-                FEIJÓ/AC
-              </div>
+          {/* Center: Themed Analog Clock + Feijó em destaque - CENTRALIZADO */}
+          <div className="flex-1 flex items-center justify-center gap-2">
+            <ThemedAnalogClock size={44} />
+            <div className="px-2 py-0.5 rounded bg-primary/10 border border-primary/30">
+              <span className="text-[10px] sm:text-xs font-bold text-primary tracking-wider">
+                FEIJÓ
+              </span>
+              <span className="text-[8px] sm:text-[9px] text-muted-foreground/70 ml-0.5">/AC</span>
             </div>
           </div>
           
-          {/* Right: Actions - Compact Dropdown */}
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setShowAboutDialog(true)}
-              className="p-2 text-muted-foreground hover:text-primary rounded-lg hover:bg-primary/10 transition-all duration-200 hover:scale-105"
-              title="Sobre o App"
-            >
-              <Info className="h-4 w-4" />
-            </button>
-            
+          {/* Right: Actions - Cadeado MAIOR + Sobre abaixo */}
+          <div className="flex items-center gap-1">
             {getSavedCredentials().length > 0 && (
               <button
                 onClick={() => setShowCredentialsManager(true)}
-                className="p-2 text-muted-foreground hover:text-emerald-400 rounded-lg hover:bg-emerald-500/10 transition-all duration-200 hover:scale-105"
+                className="p-1.5 text-muted-foreground hover:text-emerald-400 rounded hover:bg-emerald-500/10 transition-all duration-200"
                 title="Credenciais Salvas"
               >
-                <KeyRound className="h-4 w-4" />
+                <KeyRound className="h-3.5 w-3.5" />
               </button>
             )}
             
-            {/* Admin/Master Dropdown - Compacto e Profissional */}
+            {/* Admin/Master Dropdown - Botão MAIOR */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-slate-500 hover:text-slate-300 rounded bg-slate-800/30 hover:bg-slate-700/50 border border-slate-700/30 hover:border-slate-600/50 transition-all duration-200"
+                  className="flex items-center justify-center p-2 sm:p-2.5 text-muted-foreground hover:text-primary rounded-lg bg-slate-800/50 hover:bg-slate-700/70 border border-slate-700/50 hover:border-primary/50 transition-all duration-200"
+                  title="Acesso Administrativo"
                 >
-                  <Lock className="h-2.5 w-2.5" />
-                  <ChevronDown className="h-2 w-2 opacity-60" />
+                  <Lock className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
@@ -1344,6 +1331,15 @@ export default function Index() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            
+            {/* Sobre o App - Abaixo do cadeado em mobile, ao lado em desktop */}
+            <button
+              onClick={() => setShowAboutDialog(true)}
+              className="p-1.5 sm:p-2 text-muted-foreground hover:text-primary rounded hover:bg-primary/10 transition-all duration-200"
+              title="Sobre o App"
+            >
+              <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            </button>
           </div>
         </div>
       </footer>

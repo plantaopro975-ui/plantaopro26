@@ -522,26 +522,26 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
           )}
           
           {/* Content */}
-          <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 md:p-6 lg:p-7 z-10">
+          <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 md:p-5 lg:p-6 z-10">
             <div className="flex flex-col items-center">
-              {/* Team name with theme-specific icon */}
-              <div className="flex items-center gap-2 sm:gap-2.5 mb-2.5 sm:mb-3">
-                <TeamIcon className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 shrink-0 text-white/80" />
+              {/* Team name with theme-specific icon - PROPORCIONAL AO CARD */}
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                <TeamIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 shrink-0 text-white/80" />
                 <h3 
                   className={cn(
-                    "text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-[0.08em] sm:tracking-[0.15em] drop-shadow-lg",
+                    "text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-[0.05em] sm:tracking-[0.1em] drop-shadow-lg",
                     textColor
                   )}
-                  style={{ textShadow: `0 2px 12px ${teamColors[team as keyof typeof teamColors]?.glow}` }}
+                  style={{ textShadow: `0 2px 10px ${teamColors[team as keyof typeof teamColors]?.glow}` }}
                 >
                   {team}
                 </h3>
-                <TeamIcon className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 shrink-0 text-white/80" />
+                <TeamIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 shrink-0 text-white/80" />
               </div>
               
-              {/* War Name / Codename - visible on mobile too */}
+              {/* War Name / Codename - PROPORCIONAL */}
               <p className={cn(
-                "text-xs sm:text-sm md:text-base text-center font-bold uppercase tracking-widest mb-2.5 md:mb-4 max-w-full transition-colors duration-300",
+                "text-[10px] sm:text-xs md:text-sm text-center font-bold uppercase tracking-wider mb-2 md:mb-3 max-w-full transition-colors duration-300",
                 subTextColor,
                 "opacity-90"
               )}>
@@ -551,10 +551,10 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
                 {team === 'DELTA' && 'OPERAÇÃO SIGMA'}
               </p>
               
-              {/* Access button - Theme styled - LARGER */}
+              {/* Access button - PROPORCIONAL */}
               <div 
                 className={cn(
-                  "tactical-btn flex items-center justify-center gap-2 sm:gap-2.5 px-5 py-2.5 sm:px-7 sm:py-3 md:px-8 md:py-3.5 backdrop-blur-sm border-2 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg",
+                  "tactical-btn flex items-center justify-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 backdrop-blur-sm border-2 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg",
                   'bg-black/80',
                   resolvedTheme === 'cyber' ? 'rounded-none' : 
                   resolvedTheme === 'arctic' ? 'rounded-full' : 
@@ -564,12 +564,12 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
                 )}
                 style={{ 
                   borderColor: teamColors[team as keyof typeof teamColors]?.primary,
-                  boxShadow: `0 0 15px ${teamColors[team as keyof typeof teamColors]?.glow}40`,
+                  boxShadow: `0 0 12px ${teamColors[team as keyof typeof teamColors]?.glow}40`,
                   clipPath: resolvedTheme === 'cyber' ? 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)' : undefined
                 }}
               >
-                <Radio className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0 animate-pulse text-green-400" />
-                <span className="text-base sm:text-lg md:text-xl font-bold tracking-wider uppercase text-white">
+                <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 shrink-0 animate-pulse text-green-400" />
+                <span className="text-sm sm:text-base md:text-lg font-bold tracking-wider uppercase text-white">
                   ACESSAR
                 </span>
               </div>
