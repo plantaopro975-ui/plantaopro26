@@ -405,12 +405,58 @@ export default function Index() {
       const cleanCpf = checkCpf.replace(/\D/g, '');
       const { data: existingAgent } = await supabase
         .from('agents')
-        .select('id, cpf, team, name, is_active')
+        .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at')
         .eq('cpf', cleanCpf)
         .maybeSingle();
 
       if (existingAgent) {
-        // CRÍTICO: Bloquear login se agent.team = null (forçar correção pelo admin)
+        // 1. Bloqueio por desativação manual
+        if (existingAgent.is_active === false) {
+          playSound('access-denied');
+          setShowCpfCheck(false);
+          setErrorDialog({
+            open: true,
+            title: 'ACESSO BLOQUEADO',
+            message: 'Seu acesso foi desativado pelo administrador.\n\nEntre em contato com a coordenação para regularizar.',
+            type: 'error',
+          });
+          return;
+        }
+        
+        // 2. Bloqueio por congelamento
+        if (existingAgent.is_frozen === true) {
+          playSound('access-denied');
+          setShowCpfCheck(false);
+          setErrorDialog({
+            open: true,
+            title: 'CONTA CONGELADA',
+            message: 'Sua conta foi congelada pelo sistema.\n\nEntre em contato com o administrador para reativar seu acesso.',
+            type: 'error',
+          });
+          return;
+        }
+        
+        // 3. Bloqueio por licença expirada
+        const licenseStatus = existingAgent.license_status;
+        const licenseExpires = existingAgent.license_expires_at ? new Date(existingAgent.license_expires_at) : null;
+        const now = new Date();
+        const gracePeriodDays = 3;
+        const isLicenseExpired = licenseExpires && 
+          new Date(licenseExpires.getTime() + gracePeriodDays * 24 * 60 * 60 * 1000) < now;
+        
+        if (licenseStatus === 'expired' || licenseStatus === 'frozen' || isLicenseExpired) {
+          playSound('access-denied');
+          setShowCpfCheck(false);
+          setErrorDialog({
+            open: true,
+            title: 'LICENÇA EXPIRADA',
+            message: 'Sua licença de acesso expirou.\n\nEntre em contato com o administrador para renovar seu acesso ao sistema.',
+            type: 'error',
+          });
+          return;
+        }
+        
+        // 4. Bloqueio por falta de equipe
         if (!existingAgent.team) {
           playSound('access-denied');
           setShowCpfCheck(false);
@@ -423,7 +469,7 @@ export default function Index() {
           return;
         }
         
-        // Check if agent belongs to a different team - cannot switch teams
+        // 5. Verificar se pertence à equipe selecionada
         if (existingAgent.team !== selectedTeam) {
           playSound('access-denied');
           setShowCpfCheck(false);
@@ -434,7 +480,7 @@ export default function Index() {
             type: 'team',
           });
         } else {
-          // User belongs to selected team - show login
+          // Tudo OK - mostrar login
           setShowCpfCheck(false);
           setLoginCpf(checkCpf);
           setFoundAgent({ name: existingAgent.name || '', team: existingAgent.team });
@@ -691,13 +737,14 @@ export default function Index() {
     
     setIsSubmitting(true);
     
-    // Verificar se agente está ativo e tem equipe vinculada
+    // Verificar status completo do agente: ativo, equipe, licença, congelamento
     const { data: agentCheck } = await supabase
       .from('agents')
-      .select('is_active, name, team')
+      .select('is_active, name, team, is_frozen, license_status, license_expires_at')
       .eq('cpf', cleanCpf)
       .maybeSingle();
     
+    // 1. Bloqueio por desativação manual (is_active = false)
     if (agentCheck?.is_active === false) {
       setIsSubmitting(false);
       setShowLogin(false);
@@ -710,7 +757,42 @@ export default function Index() {
       return;
     }
     
-    // CRÍTICO: Bloquear login se agent.team = null
+    // 2. Bloqueio por congelamento (is_frozen = true)
+    if (agentCheck?.is_frozen === true) {
+      setIsSubmitting(false);
+      setShowLogin(false);
+      setErrorDialog({
+        open: true,
+        title: 'CONTA CONGELADA',
+        message: 'Sua conta foi congelada pelo sistema.\n\nEntre em contato com o administrador para reativar seu acesso.',
+        type: 'error',
+      });
+      return;
+    }
+    
+    // 3. Bloqueio por licença expirada ou inativa
+    const licenseStatus = agentCheck?.license_status;
+    const licenseExpires = agentCheck?.license_expires_at ? new Date(agentCheck.license_expires_at) : null;
+    const now = new Date();
+    const gracePeriodDays = 3; // 3 dias de carência após expiração
+    
+    // Verificar se licença expirou (com período de carência)
+    const isLicenseExpired = licenseExpires && 
+      new Date(licenseExpires.getTime() + gracePeriodDays * 24 * 60 * 60 * 1000) < now;
+    
+    if (licenseStatus === 'expired' || licenseStatus === 'frozen' || isLicenseExpired) {
+      setIsSubmitting(false);
+      setShowLogin(false);
+      setErrorDialog({
+        open: true,
+        title: 'LICENÇA EXPIRADA',
+        message: 'Sua licença de acesso expirou.\n\nEntre em contato com o administrador para renovar seu acesso ao sistema.',
+        type: 'error',
+      });
+      return;
+    }
+    
+    // 4. Bloqueio por falta de equipe (team = null)
     if (!agentCheck?.team) {
       setIsSubmitting(false);
       setShowLogin(false);
@@ -881,13 +963,14 @@ export default function Index() {
     try {
       const cleanCpf = cpf.replace(/\D/g, '');
       
-      // Verificar se agente está ativo e tem equipe
+      // Verificar status completo do agente
       const { data: agentCheck } = await supabase
         .from('agents')
-        .select('is_active, team')
+        .select('is_active, team, is_frozen, license_status, license_expires_at')
         .eq('cpf', cleanCpf)
         .maybeSingle();
       
+      // Bloqueio por desativação
       if (agentCheck?.is_active === false) {
         toast({
           title: 'Acesso Bloqueado',
@@ -898,6 +981,36 @@ export default function Index() {
         return;
       }
       
+      // Bloqueio por congelamento
+      if (agentCheck?.is_frozen === true) {
+        toast({
+          title: 'Conta Congelada',
+          description: 'Sua conta foi congelada. Contate o administrador.',
+          variant: 'destructive',
+        });
+        setQuickLoginLoadingCpf(null);
+        return;
+      }
+      
+      // Bloqueio por licença expirada
+      const licenseStatus = agentCheck?.license_status;
+      const licenseExpires = agentCheck?.license_expires_at ? new Date(agentCheck.license_expires_at) : null;
+      const now = new Date();
+      const gracePeriodDays = 3;
+      const isLicenseExpired = licenseExpires && 
+        new Date(licenseExpires.getTime() + gracePeriodDays * 24 * 60 * 60 * 1000) < now;
+      
+      if (licenseStatus === 'expired' || licenseStatus === 'frozen' || isLicenseExpired) {
+        toast({
+          title: 'Licença Expirada',
+          description: 'Sua licença expirou. Contate o administrador.',
+          variant: 'destructive',
+        });
+        setQuickLoginLoadingCpf(null);
+        return;
+      }
+      
+      // Bloqueio por falta de equipe
       if (!agentCheck?.team) {
         toast({
           title: 'Cadastro Incompleto',
