@@ -10,53 +10,22 @@
   "scope": "/",
   "start_url": "/?pwa=1",
   "icons": [
-    {
-      "src": "/favicon.ico",
-      "sizes": "64x64",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    }
+    { "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "categories": ["productivity", "business"],
-  "lang": "pt-BR",
-  "dir": "ltr",
-  "prefer_related_applications": false,
-  "related_applications": [],
-  "handle_links": "preferred",
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  },
   "shortcuts": [
     {
       "name": "Meus Plantões",
       "short_name": "Plantões",
-      "description": "Ver meus plantões",
       "url": "/agent-panel?tab=plantoes&pwa=1",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Banco de Horas",
-      "short_name
+      "short_name": "BH",
+      "url": "/agent-panel?tab=bh&pwa=1",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
