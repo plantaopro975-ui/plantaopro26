@@ -222,6 +222,51 @@ export default function AgentPanel() {
     );
   }
 
+  // CRÍTICO: Se o cadastro existe mas não está aprovado/ativo, mostrar o status correto
+  // (evita cair no genérico "Perfil não carregou").
+  if (agent && (agent.approval_status === 'pending' || agent.approval_status === 'rejected' || agent.is_active === false)) {
+    const statusTitle =
+      agent.approval_status === 'rejected'
+        ? 'Cadastro rejeitado'
+        : agent.approval_status === 'pending'
+          ? 'Cadastro pendente de aprovação'
+          : 'Acesso bloqueado';
+
+    const statusMessage =
+      agent.approval_status === 'rejected'
+        ? 'Seu cadastro foi rejeitado pela administração. Entre em contato com a coordenação para regularizar.'
+        : agent.approval_status === 'pending'
+          ? 'Seu cadastro ainda está em análise. Assim que for aprovado, o acesso será liberado automaticamente.'
+          : 'Seu acesso está desativado no momento. Procure a administração.';
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 p-6">
+        <div className="max-w-md w-full rounded-xl border border-slate-700 bg-slate-800/50 p-6 text-center space-y-4">
+          <h1 className="text-xl font-bold text-white">{statusTitle}</h1>
+          <p className="text-slate-300 text-sm">{statusMessage}</p>
+          <div className="flex gap-2 justify-center">
+            <Button
+              variant="outline"
+              onClick={() => window.location.reload()}
+              className="border-slate-600 hover:bg-slate-800"
+            >
+              Recarregar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate('/');
+              }}
+            >
+              Sair
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Show error state if no agent - AFTER all hooks
   // Mas apenas para usuários normais, não admins
   if (!agent) {
@@ -230,7 +275,7 @@ export default function AgentPanel() {
         <div className="max-w-md w-full rounded-xl border border-slate-700 bg-slate-800/50 p-6 text-center space-y-4">
           <h1 className="text-xl font-bold text-white">Perfil não carregou</h1>
           <p className="text-slate-300 text-sm">
-            Não foi possível localizar seus dados de agente. Isso acontece quando o CPF da conta não está vinculado a um registro de agente.
+            Não foi possível localizar seus dados de agente no momento. Estamos tentando novamente automaticamente.
           </p>
           <div className="flex gap-2 justify-center">
             <Button

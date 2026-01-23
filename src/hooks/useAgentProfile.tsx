@@ -15,6 +15,8 @@ interface AgentProfile {
   birth_date: string | null;
   age: number | null;
   is_active: boolean | null;
+  is_frozen?: boolean | null;
+  approval_status?: string | null;
   unit_id: string | null;
   role: string | null;
   blood_type: string | null;
@@ -66,6 +68,8 @@ export function useAgentProfile() {
   const fetchingRef = useRef(false);
   const lastEmailRef = useRef<string | null>(null);
   const mountedRef = useRef(true);
+  const retryCountRef = useRef(0);
+  const retryTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -96,6 +100,7 @@ export function useAgentProfile() {
       // Prevent concurrent fetches
       if (fetchingRef.current || !mountedRef.current) return;
       fetchingRef.current = true;
+      let scheduledRetry = false;
 
       try {
         setIsLoading(true);
@@ -103,8 +108,19 @@ export function useAgentProfile() {
 
         let foundAgent = null;
 
+        // 0) Primary: backend function using JWT → avoids transient RLS/hydration issues.
+        // If it succeeds, we can stop immediately.
+        try {
+          const { data, error: fnError } = await supabase.functions.invoke('agent-profile', { body: {} });
+          if (!fnError && (data as any)?.success && (data as any)?.data) {
+            foundAgent = (data as any).data;
+          }
+        } catch {
+          // Ignore and fall back to direct table queries below.
+        }
+
         // 1) Most reliable: link by auth user id (agents.id is created to match auth.uid())
-        if (mountedRef.current) {
+        if (!foundAgent && mountedRef.current) {
           const { data: idData, error: idError } = await (supabase as any)
             .from('agents')
             .select(AGENT_SELECT_QUERY)
@@ -170,7 +186,35 @@ export function useAgentProfile() {
             });
             // Cache key based on user id + email
             lastEmailRef.current = `${user.id || ''}-${user.email || ''}`;
+            retryCountRef.current = 0;
           } else {
+            // CRÍTICO: Evitar mostrar "Perfil não carregou" por flutuação temporária.
+            // Faz até 3 retentativas com backoff antes de assumir "não encontrado".
+            retryCountRef.current += 1;
+            const attempt = retryCountRef.current;
+
+            if (attempt <= 3) {
+              const delays = [400, 900, 1600];
+              const delay = delays[attempt - 1] ?? 1600;
+
+              // Force refetch by clearing cache key
+              lastEmailRef.current = null;
+
+              if (retryTimerRef.current) {
+                window.clearTimeout(retryTimerRef.current);
+              }
+              retryTimerRef.current = window.setTimeout(() => {
+                fetchingRef.current = false;
+                // Trigger by toggling loading; effect deps are unchanged, so we call fetch directly.
+                fetchAgentProfile();
+              }, delay);
+
+              // Keep loading during retries
+              setIsLoading(true);
+              scheduledRetry = true;
+              return;
+            }
+
             setAgent(null);
             // Do NOT cache "not found" to allow retry after auth hydration / transient failures
             lastEmailRef.current = null;
@@ -182,9 +226,8 @@ export function useAgentProfile() {
           setError(err as Error);
         }
       } finally {
-        if (mountedRef.current) {
-          setIsLoading(false);
-        }
+        // If we're scheduling a retry, keep loading.
+        if (mountedRef.current && !scheduledRetry) setIsLoading(false);
         fetchingRef.current = false;
       }
     };
@@ -194,6 +237,10 @@ export function useAgentProfile() {
 
     return () => {
       clearTimeout(timer);
+      if (retryTimerRef.current) {
+        window.clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
       mountedRef.current = false;
       fetchingRef.current = false;
     };
@@ -205,6 +252,7 @@ export function useAgentProfile() {
     
     lastEmailRef.current = null; // Force refetch
     fetchingRef.current = false;
+    retryCountRef.current = 0;
     
     // Trigger useEffect by forcing a state update
     setIsLoading(true);
