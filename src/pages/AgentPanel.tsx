@@ -61,6 +61,7 @@ export default function AgentPanel() {
   const [activeTab, setActiveTab] = useState('equipe');
   const [hasShifts, setHasShifts] = useState(true);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
+  const [isVerifyingSession, setIsVerifyingSession] = useState(false);
   
   // Shift alerts banner control
   const { isDismissed: isShiftBannerDismissed, setIsDismissed: setShiftBannerDismissed, forceShow: forceShowShiftBanner, reactivateBanner: reactivateShiftBanner } = useShiftAlertsBanner();
@@ -210,16 +211,31 @@ export default function AgentPanel() {
     // Se já teve sessão válida, NÃO redireciona - permite tempo de recuperação
     if (hadSessionRef.current) return;
     
-    // Só redireciona se realmente nunca houve usuário E não é master
+    // Só redireciona se realmente nunca houve usuário E não é master,
+    // MAS antes revalida a sessão diretamente para evitar falso-positivo.
     if (!user && !masterSession) {
-      // Delay para dar tempo de hidratação
-      const timer = setTimeout(() => {
-        // Verificar novamente após delay
-        if (!hadSessionRef.current) {
+      let cancelled = false;
+      setIsVerifyingSession(true);
+
+      const timer = setTimeout(async () => {
+        try {
+          const { data } = await supabase.auth.getSession();
+          const hasSession = !!data?.session;
+
+          // Se já recuperou sessão (ou o componente já marcou que teve sessão), não redireciona.
+          if (cancelled || hasSession || hadSessionRef.current) return;
+
           navigate('/', { replace: true });
+        } finally {
+          if (!cancelled) setIsVerifyingSession(false);
         }
-      }, 2000);
-      return () => clearTimeout(timer);
+      }, 2500);
+
+      return () => {
+        cancelled = true;
+        clearTimeout(timer);
+        setIsVerifyingSession(false);
+      };
     }
   }, [user, masterSession, isLoading, isLoadingAgent, navigate]);
 
@@ -247,7 +263,9 @@ export default function AgentPanel() {
       <div className="min-h-screen flex items-center justify-center bg-slate-900">
         <div className="text-center space-y-3">
           <Loader2 className="h-8 w-8 animate-spin text-amber-500 mx-auto" />
-          <p className="text-slate-400 text-sm">Sessão não encontrada. Redirecionando…</p>
+          <p className="text-slate-400 text-sm">
+            {isVerifyingSession ? 'Verificando sessão…' : 'Sessão não encontrada. Redirecionando…'}
+          </p>
         </div>
       </div>
     );
