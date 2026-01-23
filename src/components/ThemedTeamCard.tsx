@@ -317,7 +317,44 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
           {/* Top accent stripe */}
           <div className={cn("absolute top-0 left-0 right-0 transition-all duration-300", themeStyle.topAccent)} />
           
-          {/* Scan line effect */}
+          {/* Security scan sweep effect - always active */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Horizontal sweep scanner */}
+            <div 
+              className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent"
+              style={{ 
+                animation: 'securityScanH 4s ease-in-out infinite',
+                boxShadow: '0 0 15px 3px hsl(var(--primary) / 0.4)'
+              }}
+            />
+            {/* Vertical sweep scanner */}
+            <div 
+              className="absolute h-full w-[2px] bg-gradient-to-b from-transparent via-primary/50 to-transparent"
+              style={{ 
+                animation: 'securityScanV 5s ease-in-out infinite',
+                animationDelay: '1.5s',
+                boxShadow: '0 0 12px 2px hsl(var(--primary) / 0.3)'
+              }}
+            />
+            {/* Corner pulse beacons */}
+            <div 
+              className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full bg-primary/70"
+              style={{ animation: 'securityPulse 2s ease-in-out infinite' }}
+            />
+            <div 
+              className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full bg-primary/70"
+              style={{ animation: 'securityPulse 2s ease-in-out infinite', animationDelay: '1s' }}
+            />
+            {/* Diagonal security grid overlay */}
+            <div 
+              className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, hsl(var(--primary) / 0.2) 10px, hsl(var(--primary) / 0.2) 11px)',
+              }}
+            />
+          </div>
+          
+          {/* Original hover scan line effect */}
           <div className={cn(
             "absolute inset-0 overflow-hidden pointer-events-none transition-opacity duration-300 hidden sm:block",
             themeStyle.scanlineStyle,
