@@ -6,11 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
-import { Camera, Mail, Save, Loader2, User, Phone, MapPin, Droplets, CalendarDays, X } from 'lucide-react';
+import { Camera, Mail, Save, Loader2, User, Phone, MapPin, Droplets, CalendarDays, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { format, differenceInYears } from 'date-fns';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { differenceInYears } from 'date-fns';
 
 interface AgentSettingsCardProps {
   agentId: string;
@@ -43,18 +43,23 @@ export function AgentSettingsCard({
   const [isSavingAddress, setIsSavingAddress] = useState(false);
   const [isSavingBloodType, setIsSavingBloodType] = useState(false);
   const [isSavingBirthDate, setIsSavingBirthDate] = useState(false);
+  const [originalEmail, setOriginalEmail] = useState(currentEmail || '');
   const [originalPhone, setOriginalPhone] = useState('');
   const [originalAddress, setOriginalAddress] = useState('');
   const [originalBloodType, setOriginalBloodType] = useState('');
   const [originalBirthDate, setOriginalBirthDate] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Collapsible states
+  const [contactOpen, setContactOpen] = useState(true);
+  const [personalOpen, setPersonalOpen] = useState(false);
 
   // Fetch current data on mount
   useEffect(() => {
     const fetchAgentData = async () => {
       const { data } = await supabase
         .from('agents')
-        .select('phone, address, blood_type, birth_date')
+        .select('phone, address, blood_type, birth_date, email')
         .eq('id', agentId)
         .single();
       
@@ -67,6 +72,10 @@ export function AgentSettingsCard({
         setOriginalAddress(data.address || '');
         setOriginalBloodType(data.blood_type || '');
         setOriginalBirthDate(data.birth_date || '');
+        if (data.email) {
+          setEmail(data.email);
+          setOriginalEmail(data.email);
+        }
       }
     };
     
@@ -115,7 +124,7 @@ export function AgentSettingsCard({
       if (updateError) throw updateError;
 
       setAvatarUrl(publicUrl);
-      toast.success('Foto de perfil atualizada!');
+      toast.success('Foto atualizada!');
       onUpdate();
     } catch (error) {
       console.error('Error uploading avatar:', error);
@@ -147,7 +156,8 @@ export function AgentSettingsCard({
 
       if (error) throw error;
 
-      toast.success('E-mail atualizado com sucesso!');
+      setOriginalEmail(email.trim());
+      toast.success('E-mail atualizado!');
       onUpdate();
     } catch (error) {
       console.error('Error updating email:', error);
@@ -169,7 +179,7 @@ export function AgentSettingsCard({
       if (error) throw error;
 
       setOriginalPhone(phone.trim());
-      toast.success('Telefone atualizado com sucesso!');
+      toast.success('Telefone atualizado!');
       onUpdate();
     } catch (error) {
       console.error('Error updating phone:', error);
@@ -191,7 +201,7 @@ export function AgentSettingsCard({
       if (error) throw error;
 
       setOriginalAddress(address.trim());
-      toast.success('Endereço atualizado com sucesso!');
+      toast.success('Endereço atualizado!');
       onUpdate();
     } catch (error) {
       console.error('Error updating address:', error);
@@ -228,7 +238,6 @@ export function AgentSettingsCard({
     try {
       setIsSavingBirthDate(true);
 
-      // Calculate age from birth date
       const age = birthDate ? differenceInYears(new Date(), new Date(birthDate)) : null;
 
       const { error } = await supabase
@@ -252,7 +261,6 @@ export function AgentSettingsCard({
     }
   };
 
-  // Format phone number as user types
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, '');
     if (numbers.length <= 11) {
@@ -264,7 +272,6 @@ export function AgentSettingsCard({
     return value;
   };
 
-  // Calculate age display
   const getAgeDisplay = () => {
     if (!birthDate) return null;
     const age = differenceInYears(new Date(), new Date(birthDate));
@@ -272,89 +279,166 @@ export function AgentSettingsCard({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-slate-800/90 via-slate-800/70 to-slate-900/90 border-2 border-slate-600/50 shadow-xl shadow-black/20">
-      <CardHeader className="pb-3">
+    <Card className="bg-zinc-900/90 border border-zinc-700/60 shadow-xl">
+      <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500/30 to-orange-500/20 border border-amber-500/40">
-              <User className="h-5 w-5 text-amber-400" />
+          <CardTitle className="flex items-center gap-2 text-sm">
+            <div className="p-1.5 rounded-md bg-amber-500/15 border border-amber-500/30">
+              <User className="h-4 w-4 text-amber-400" />
             </div>
-            <span className="bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent font-bold">
-              Configurações do Perfil
-            </span>
+            <span className="font-semibold text-zinc-100">Configurações</span>
           </CardTitle>
           {onClose && (
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700"
+              className="h-7 w-7 text-zinc-400 hover:text-white hover:bg-zinc-800"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </Button>
           )}
         </div>
-        <CardDescription className="text-slate-400 text-sm">
-          Atualize sua foto, dados pessoais e contato
-        </CardDescription>
       </CardHeader>
-      <CardContent className="pt-0">
-        <ScrollArea className="h-[400px] pr-4">
-          <div className="space-y-5">
-            {/* Avatar Upload */}
-            <div className="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600/30">
-              <div className="relative shrink-0">
-                <Avatar className="h-16 w-16 border-3 border-amber-500/50">
-                  {avatarUrl && <AvatarImage src={avatarUrl} alt={agentName} />}
-                  <AvatarFallback className="bg-slate-700 text-xl font-bold text-amber-400">
-                    {agentName.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="absolute -bottom-1 -right-1 p-1.5 bg-amber-500 rounded-full hover:bg-amber-600 transition-colors disabled:opacity-50 shadow-lg"
-                >
-                  {isUploading ? (
-                    <Loader2 className="h-3 w-3 text-black animate-spin" />
-                  ) : (
-                    <Camera className="h-3 w-3 text-black" />
-                  )}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarUpload}
-                  className="hidden"
+      <CardContent className="px-3 pb-3 space-y-3">
+        {/* Avatar Upload - Always visible */}
+        <div className="flex items-center gap-3 p-2 bg-zinc-800/50 rounded-lg border border-zinc-700/40">
+          <div className="relative shrink-0">
+            <Avatar className="h-12 w-12 border-2 border-amber-500/40">
+              {avatarUrl && <AvatarImage src={avatarUrl} alt={agentName} />}
+              <AvatarFallback className="bg-zinc-700 text-lg font-bold text-amber-400">
+                {agentName.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="absolute -bottom-0.5 -right-0.5 p-1 bg-amber-500 rounded-full hover:bg-amber-600 transition-colors disabled:opacity-50 shadow"
+            >
+              {isUploading ? (
+                <Loader2 className="h-2.5 w-2.5 text-black animate-spin" />
+              ) : (
+                <Camera className="h-2.5 w-2.5 text-black" />
+              )}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+              className="hidden"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-zinc-100 truncate">{agentName}</p>
+            <p className="text-[10px] text-zinc-500">JPG, PNG (máx. 2MB)</p>
+          </div>
+        </div>
+
+        {/* Contact Section - Collapsible */}
+        <Collapsible open={contactOpen} onOpenChange={setContactOpen}>
+          <CollapsibleTrigger className="w-full flex items-center justify-between p-2 bg-zinc-800/30 rounded-lg border border-zinc-700/30 hover:bg-zinc-800/50 transition-colors">
+            <span className="text-xs font-medium text-zinc-300 flex items-center gap-2">
+              <Mail className="h-3.5 w-3.5 text-cyan-400" />
+              Contato
+            </span>
+            {contactOpen ? <ChevronUp className="h-3.5 w-3.5 text-zinc-500" /> : <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />}
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-2 space-y-2">
+            {/* Email */}
+            <div className="space-y-1">
+              <Label className="text-[10px] text-zinc-400 uppercase tracking-wide">E-mail</Label>
+              <div className="flex gap-1.5">
+                <Input
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-zinc-900/50 border-zinc-700 text-zinc-100 h-8 text-xs"
                 />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">{agentName}</p>
-                <p className="text-xs text-slate-400">Clique no ícone para alterar a foto</p>
-                <p className="text-[10px] text-slate-500">JPG, PNG, GIF (máx. 2MB)</p>
+                <Button
+                  onClick={handleSaveEmail}
+                  disabled={isSaving || email === originalEmail}
+                  size="icon"
+                  className="bg-cyan-600 hover:bg-cyan-500 h-8 w-8 shrink-0"
+                >
+                  {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                </Button>
               </div>
             </div>
 
-            {/* Blood Type and Birth Date Row */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Phone */}
+            <div className="space-y-1">
+              <Label className="text-[10px] text-zinc-400 uppercase tracking-wide">Telefone</Label>
+              <div className="flex gap-1.5">
+                <Input
+                  type="tel"
+                  placeholder="(68) 99999-9999"
+                  value={phone}
+                  onChange={(e) => setPhone(formatPhone(e.target.value))}
+                  maxLength={15}
+                  className="bg-zinc-900/50 border-zinc-700 text-zinc-100 h-8 text-xs"
+                />
+                <Button
+                  onClick={handleSavePhone}
+                  disabled={isSavingPhone || phone === originalPhone}
+                  size="icon"
+                  className="bg-cyan-600 hover:bg-cyan-500 h-8 w-8 shrink-0"
+                >
+                  {isSavingPhone ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                </Button>
+              </div>
+            </div>
+
+            {/* Address */}
+            <div className="space-y-1">
+              <Label className="text-[10px] text-zinc-400 uppercase tracking-wide">Endereço</Label>
+              <div className="flex gap-1.5">
+                <Textarea
+                  placeholder="Rua, número, bairro..."
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  rows={2}
+                  className="bg-zinc-900/50 border-zinc-700 text-zinc-100 resize-none text-xs min-h-[50px]"
+                />
+                <Button
+                  onClick={handleSaveAddress}
+                  disabled={isSavingAddress || address === originalAddress}
+                  size="icon"
+                  className="bg-cyan-600 hover:bg-cyan-500 h-8 w-8 shrink-0 self-start"
+                >
+                  {isSavingAddress ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                </Button>
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Personal Info Section - Collapsible */}
+        <Collapsible open={personalOpen} onOpenChange={setPersonalOpen}>
+          <CollapsibleTrigger className="w-full flex items-center justify-between p-2 bg-zinc-800/30 rounded-lg border border-zinc-700/30 hover:bg-zinc-800/50 transition-colors">
+            <span className="text-xs font-medium text-zinc-300 flex items-center gap-2">
+              <Droplets className="h-3.5 w-3.5 text-rose-400" />
+              Dados Pessoais
+            </span>
+            {personalOpen ? <ChevronUp className="h-3.5 w-3.5 text-zinc-500" /> : <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />}
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-2 space-y-2">
+            <div className="grid grid-cols-2 gap-2">
               {/* Blood Type */}
-              <div className="space-y-1.5">
-                <Label className="text-slate-300 flex items-center gap-1.5 text-xs font-medium">
-                  <Droplets className="h-3.5 w-3.5 text-red-500" />
-                  Tipo Sanguíneo
-                </Label>
+              <div className="space-y-1">
+                <Label className="text-[10px] text-zinc-400 uppercase tracking-wide">Tipo Sanguíneo</Label>
                 <Select 
                   value={bloodType} 
                   onValueChange={handleSaveBloodType}
                   disabled={isSavingBloodType}
                 >
-                  <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white h-9 text-sm">
+                  <SelectTrigger className="bg-zinc-900/50 border-zinc-700 text-zinc-100 h-8 text-xs">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectContent className="bg-zinc-800 border-zinc-700">
                     {BLOOD_TYPES.map(type => (
-                      <SelectItem key={type} value={type} className="text-white hover:bg-slate-700">
+                      <SelectItem key={type} value={type} className="text-zinc-100 hover:bg-zinc-700 text-xs">
                         {type}
                       </SelectItem>
                     ))}
@@ -363,133 +447,31 @@ export function AgentSettingsCard({
               </div>
 
               {/* Birth Date */}
-              <div className="space-y-1.5">
-                <Label htmlFor="birthDate" className="text-slate-300 flex items-center gap-1.5 text-xs font-medium">
-                  <CalendarDays className="h-3.5 w-3.5 text-amber-500" />
-                  Nascimento
-                </Label>
-                <div className="flex gap-1.5">
+              <div className="space-y-1">
+                <Label className="text-[10px] text-zinc-400 uppercase tracking-wide">Nascimento</Label>
+                <div className="flex gap-1">
                   <Input
-                    id="birthDate"
                     type="date"
                     value={birthDate}
                     onChange={(e) => setBirthDate(e.target.value)}
-                    className="bg-slate-900/50 border-slate-600 text-white h-9 text-sm flex-1"
+                    className="bg-zinc-900/50 border-zinc-700 text-zinc-100 h-8 text-xs flex-1"
                   />
                   <Button
                     onClick={handleSaveBirthDate}
                     disabled={isSavingBirthDate || birthDate === originalBirthDate}
                     size="icon"
-                    className="bg-amber-500 hover:bg-amber-600 text-black h-9 w-9 shrink-0"
+                    className="bg-cyan-600 hover:bg-cyan-500 h-8 w-8 shrink-0"
                   >
-                    {isSavingBirthDate ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Save className="h-3.5 w-3.5" />
-                    )}
+                    {isSavingBirthDate ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
                   </Button>
                 </div>
                 {birthDate && (
-                  <p className="text-[10px] text-amber-400 pl-1">{getAgeDisplay()}</p>
+                  <p className="text-[9px] text-amber-400">{getAgeDisplay()}</p>
                 )}
               </div>
             </div>
-
-            {/* Email Update */}
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-slate-300 flex items-center gap-1.5 text-xs font-medium">
-                <Mail className="h-3.5 w-3.5 text-amber-500" />
-                E-mail de Contato
-              </Label>
-              <div className="flex gap-1.5">
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 h-9 text-sm"
-                />
-                <Button
-                  onClick={handleSaveEmail}
-                  disabled={isSaving || email === currentEmail}
-                  size="icon"
-                  className="bg-amber-500 hover:bg-amber-600 text-black h-9 w-9 shrink-0"
-                >
-                  {isSaving ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Save className="h-3.5 w-3.5" />
-                  )}
-                </Button>
-              </div>
-              <p className="text-[10px] text-slate-500 pl-1">
-                Para recuperação de senha e notificações
-              </p>
-            </div>
-
-            {/* Phone Update */}
-            <div className="space-y-1.5">
-              <Label htmlFor="phone" className="text-slate-300 flex items-center gap-1.5 text-xs font-medium">
-                <Phone className="h-3.5 w-3.5 text-amber-500" />
-                Telefone
-              </Label>
-              <div className="flex gap-1.5">
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="(68) 99999-9999"
-                  value={phone}
-                  onChange={(e) => setPhone(formatPhone(e.target.value))}
-                  maxLength={15}
-                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 h-9 text-sm"
-                />
-                <Button
-                  onClick={handleSavePhone}
-                  disabled={isSavingPhone || phone === originalPhone}
-                  size="icon"
-                  className="bg-amber-500 hover:bg-amber-600 text-black h-9 w-9 shrink-0"
-                >
-                  {isSavingPhone ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Save className="h-3.5 w-3.5" />
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            {/* Address Update */}
-            <div className="space-y-1.5">
-              <Label htmlFor="address" className="text-slate-300 flex items-center gap-1.5 text-xs font-medium">
-                <MapPin className="h-3.5 w-3.5 text-amber-500" />
-                Endereço
-              </Label>
-              <div className="flex gap-1.5">
-                <Textarea
-                  id="address"
-                  placeholder="Rua, número, bairro, cidade..."
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  rows={2}
-                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 resize-none text-sm min-h-[60px]"
-                />
-                <Button
-                  onClick={handleSaveAddress}
-                  disabled={isSavingAddress || address === originalAddress}
-                  size="icon"
-                  className="bg-amber-500 hover:bg-amber-600 text-black h-9 w-9 shrink-0 self-start"
-                >
-                  {isSavingAddress ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Save className="h-3.5 w-3.5" />
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </ScrollArea>
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
     </Card>
   );
