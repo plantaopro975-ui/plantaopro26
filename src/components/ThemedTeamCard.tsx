@@ -297,24 +297,24 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
           }}
         />
         
-        {/* Main Card - Mobile Portrait Optimized */}
+        {/* Main Card - Mobile Compact & Professional */}
         <div 
           className={cn(
             "relative overflow-hidden transition-all duration-300",
             themeStyle.borderRadius,
             themeStyle.borderStyle,
             themeStyle.glowEffect,
-            // Mobile portrait: taller cards (4/5 aspect) for better visibility
-            // Tablet/Desktop: balanced proportions
+            // Compact cards that fit well on mobile without taking all space
             "w-full",
-            "aspect-[3/5] portrait:aspect-[3/5] landscape:aspect-[3/4]",
-            "sm:aspect-[2/3] md:aspect-[3/4]",
-            // Responsive heights optimized for mobile portrait
-            "min-h-[160px] max-h-[240px]",
-            "portrait:min-h-[180px] portrait:max-h-[280px]",
-            "sm:min-h-[200px] sm:max-h-[320px]",
-            "md:min-h-[220px] md:max-h-[380px]",
-            "lg:min-h-[260px] lg:max-h-[420px]"
+            // Balanced aspect ratio for all screens
+            "aspect-[4/5]",
+            "sm:aspect-[3/4]",
+            "md:aspect-[3/4]",
+            // Compact height limits - prevents cards from dominating the screen
+            "min-h-[120px] max-h-[160px]",
+            "sm:min-h-[140px] sm:max-h-[200px]",
+            "md:min-h-[180px] md:max-h-[280px]",
+            "lg:min-h-[220px] lg:max-h-[340px]"
           )}
           style={{ 
             borderColor: teamColors[team as keyof typeof teamColors]?.primary,

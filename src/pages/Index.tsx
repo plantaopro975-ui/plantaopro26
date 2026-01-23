@@ -1205,33 +1205,17 @@ export default function Index() {
 
       {/* CPF Check Dialog - Compact Professional */}
       <Dialog open={showCpfCheck} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border border-primary/30 max-w-xs shadow-xl shadow-primary/10 p-4">
-          {/* Logo Header - Elegante */}
+        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border border-primary/30 w-[90vw] max-w-[320px] shadow-xl shadow-primary/10 p-5">
+          {/* Logo */}
           <div className="text-center py-3">
-            <div className="relative inline-block group">
-              {/* Subtle glow behind */}
-              <div className="absolute inset-0 w-16 h-16 mx-auto rounded-full bg-primary/15 blur-2xl" />
-              
-              {/* Logo */}
-              <img 
-                src={logoShield} 
-                alt="Plantão Pro" 
-                className="w-16 h-auto mx-auto relative z-10 drop-shadow-[0_4px_20px_rgba(var(--primary),0.35)] group-hover:drop-shadow-[0_4px_25px_rgba(var(--primary),0.5)] transition-all duration-500"
-              />
-            </div>
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-16 h-auto mx-auto drop-shadow-[0_4px_20px_rgba(var(--primary),0.35)]"
+            />
           </div>
           
-          {/* Auth Type Badge */}
-          <div className="flex justify-center mb-2">
-            <div className="px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/40 flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[9px] font-bold text-green-400 uppercase tracking-wider">
-                Supabase Auth • Agent
-              </span>
-            </div>
-          </div>
-          
-          <DialogHeader className="pb-2 border-b border-border/40">
+          <DialogHeader className="pb-3 border-b border-border/40">
             <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground justify-center">
               {currentTeamConfig && (
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30">
@@ -1240,12 +1224,12 @@ export default function Index() {
               )}
               <span>Equipe {selectedTeam}</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground mt-1 text-center">
+            <DialogDescription className="text-sm text-muted-foreground mt-1 text-center">
               Digite seu CPF para acessar
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-3 pt-2">
+          <div className="space-y-4 pt-3">
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-slate-300">CPF</Label>
               <div className="relative">
@@ -1253,7 +1237,7 @@ export default function Index() {
                   value={checkCpf}
                   onChange={(e) => handleCpfInputChange(e.target.value)}
                   placeholder="000.000.000-00"
-                  className="bg-slate-800/80 border border-slate-600 text-white text-base text-center tracking-widest py-4 font-mono focus:border-primary/60 transition-colors"
+                  className="bg-slate-800/80 border border-slate-600 text-white text-base h-12 text-center tracking-widest font-mono focus:border-primary/60 transition-colors"
                   maxLength={14}
                 />
                 {isSearchingAgent && (
@@ -1266,7 +1250,7 @@ export default function Index() {
             
             {/* Compact found agent info */}
             {foundAgent && (
-              <div className={`p-2.5 rounded-lg border animate-fade-in ${
+              <div className={`p-3 rounded-lg border animate-fade-in ${
                 foundAgent.team && foundAgent.team !== selectedTeam 
                   ? 'bg-red-500/15 border-red-500/40' 
                   : 'bg-green-500/15 border-green-500/40'
@@ -1276,17 +1260,17 @@ export default function Index() {
                     <>
                       <AlertTriangle className="h-4 w-4 text-red-400 shrink-0" />
                       <div className="min-w-0">
-                        <span className="font-bold text-red-400 text-xs block">EQUIPE INCORRETA</span>
-                        <span className="text-red-300/80 text-[10px]">Você pertence à {foundAgent.team}</span>
+                        <span className="font-bold text-red-400 text-sm block">EQUIPE INCORRETA</span>
+                        <span className="text-red-300/80 text-xs">Você pertence à {foundAgent.team}</span>
                       </div>
                     </>
                   ) : (
                     <>
                       <UserCheck className="h-4 w-4 text-green-400 shrink-0" />
                       <div className="min-w-0">
-                        <span className="font-bold text-green-400 text-xs block truncate">{foundAgent.name}</span>
+                        <span className="font-bold text-green-400 text-sm block truncate">{foundAgent.name}</span>
                         {foundAgent.team && (
-                          <span className="text-green-300/80 text-[10px]">Equipe {foundAgent.team}</span>
+                          <span className="text-green-300/80 text-xs">Equipe {foundAgent.team}</span>
                         )}
                       </div>
                     </>
@@ -1296,10 +1280,10 @@ export default function Index() {
             )}
             
             {checkCpf.replace(/\D/g, '').length === 11 && !foundAgent && !isSearchingAgent && (
-              <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/30 animate-fade-in">
+              <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/30 animate-fade-in">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
-                  <span className="text-amber-400 font-medium text-xs">CPF não cadastrado</span>
+                  <AlertTriangle className="h-4 w-4 text-amber-400" />
+                  <span className="text-amber-400 font-medium text-sm">CPF não cadastrado</span>
                 </div>
               </div>
             )}
@@ -1307,79 +1291,78 @@ export default function Index() {
             <Button
               onClick={handleCheckCpf}
               disabled={isCheckingCpf || checkCpf.replace(/\D/g, '').length !== 11}
-              size="sm"
-              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-sm py-4 shadow-lg shadow-amber-500/20"
+              className="w-full h-11 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-base shadow-lg shadow-amber-500/20"
             >
               {isCheckingCpf ? (
-                <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Verificando...</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verificando...</>
               ) : foundAgent ? (
-                <><Lock className="mr-1.5 h-4 w-4" /> Fazer Login</>
+                <><Lock className="mr-2 h-4 w-4" /> Fazer Login</>
               ) : (
-                <><UserCheck className="mr-1.5 h-4 w-4" /> Continuar</>
+                <><UserCheck className="mr-2 h-4 w-4" /> Continuar</>
               )}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Login Dialog - Compact */}
+      {/* Login Dialog - Professional & Compact */}
       <Dialog open={showLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-blue-600/30 max-w-xs shadow-xl shadow-blue-900/15 p-4">
-          {/* Compact Logo */}
-          <div className="text-center py-2">
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-blue-600/30 w-[90vw] max-w-[320px] shadow-xl shadow-blue-900/15 p-5">
+          {/* Logo */}
+          <div className="text-center py-3">
             <img 
               src={logoShield} 
               alt="Plantão Pro" 
-              className="w-14 h-auto mx-auto drop-shadow-[0_4px_15px_rgba(59,130,246,0.35)]"
+              className="w-16 h-auto mx-auto drop-shadow-[0_4px_20px_rgba(59,130,246,0.4)]"
             />
           </div>
           
-          <DialogHeader className="pb-2 border-b border-slate-700/40">
-            <DialogTitle className="flex items-center justify-center gap-2 text-sm font-bold text-white">
+          <DialogHeader className="pb-3 border-b border-slate-700/40">
+            <DialogTitle className="flex items-center justify-center gap-2 text-base font-bold text-white">
               {currentTeamConfig && selectedTeam && (
-                <div className="p-1 rounded-lg bg-blue-600/20 border border-blue-500/30">
-                  <currentTeamConfig.icon className={`h-3 w-3 ${currentTeamConfig.color}`} />
+                <div className="p-1.5 rounded-lg bg-blue-600/20 border border-blue-500/30">
+                  <currentTeamConfig.icon className={`h-4 w-4 ${currentTeamConfig.color}`} />
                 </div>
               )}
               <span>Equipe {selectedTeam}</span>
             </DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleLogin} className="space-y-3 pt-2" data-login-form="true">
-            <div className="space-y-1">
-              <Label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">CPF</Label>
+          <form onSubmit={handleLogin} className="space-y-4 pt-3" data-login-form="true">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">CPF</Label>
               <Input
                 value={loginCpf}
                 onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
                 placeholder="000.000.000-00"
-                className="bg-slate-800/80 border border-slate-600 text-white text-sm py-3 font-mono tracking-wider focus:border-blue-500/60"
+                className="bg-slate-800/80 border border-slate-600 text-white text-base h-11 font-mono tracking-wider focus:border-blue-500/60"
                 maxLength={14}
                 disabled={!!selectedTeam}
               />
-              {loginErrors.cpf && <p className="text-[10px] text-red-400 font-medium">{loginErrors.cpf}</p>}
+              {loginErrors.cpf && <p className="text-xs text-red-400 font-medium">{loginErrors.cpf}</p>}
             </div>
             
-            <div className="space-y-1">
-              <Label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Senha</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Senha</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="bg-slate-800/80 border border-slate-600 text-white text-sm py-3 pr-10 focus:border-blue-500/60 transition-colors"
+                  className="bg-slate-800/80 border border-slate-600 text-white text-base h-11 pr-10 focus:border-blue-500/60 transition-colors"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 p-0 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
-              {loginErrors.password && <p className="text-[10px] text-red-400 font-medium">{loginErrors.password}</p>}
+              {loginErrors.password && <p className="text-xs text-red-400 font-medium">{loginErrors.password}</p>}
             </div>
             
             <SavedCredentials
@@ -1404,13 +1387,12 @@ export default function Index() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              size="sm"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-sm py-4 shadow-lg shadow-blue-900/30"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-base h-11 shadow-lg shadow-blue-900/30"
             >
               {isSubmitting ? (
-                <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Entrando...</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Entrando...</>
               ) : (
-                <><Lock className="mr-1.5 h-4 w-4" /> Entrar</>
+                <><Lock className="mr-2 h-4 w-4" /> Entrar</>
               )}
             </Button>
           </form>
@@ -1426,18 +1408,18 @@ export default function Index() {
         showSaveOption={false}
       />
 
-      {/* Registration Dialog - Professional & Responsive */}
+      {/* Registration Dialog - Professional & Compact */}
       <Dialog open={showRegistration} onOpenChange={(open) => !open && safeCloseRegistration()}>
         <DialogContent className={cn(
           "bg-gradient-to-br from-slate-900 via-slate-900/98 to-slate-950",
           "border-2 border-cyan-500/40 shadow-2xl shadow-cyan-900/20",
-          // Responsive sizing - compact on all devices
-          "w-[92vw] max-w-[380px]",
-          "max-h-[80vh] sm:max-h-[85vh] overflow-y-auto",
-          "p-4 sm:p-5"
+          // Professional sizing
+          "w-[92vw] max-w-[360px]",
+          "max-h-[85vh] overflow-y-auto",
+          "p-5"
         )}>
           <DialogHeader className="pb-3 border-b border-slate-700/50">
-            <DialogTitle className="flex items-center gap-3 text-base font-bold text-foreground">
+            <DialogTitle className="flex items-center gap-3 text-lg font-bold text-foreground">
               {currentTeamConfig && (
                 <div className="p-2 rounded-xl bg-gradient-to-br from-cyan-500/25 to-cyan-600/15 border border-cyan-500/40 shadow-lg shadow-cyan-500/10">
                   <currentTeamConfig.icon className={`h-5 w-5 ${currentTeamConfig.color}`} />
@@ -1445,16 +1427,16 @@ export default function Index() {
               )}
               <div>
                 <span className="block text-cyan-100">Cadastro - {selectedTeam}</span>
-                <span className="text-[10px] font-medium text-cyan-400/80">Novo Agente</span>
+                <span className="text-xs font-medium text-cyan-400/80">Novo Agente</span>
               </div>
             </DialogTitle>
           </DialogHeader>
 
           {/* Alert compact */}
-          <div className="p-2.5 bg-amber-500/10 rounded-lg border border-amber-500/30 mt-3">
+          <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/30 mt-3">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-              <p className="text-amber-300/90 text-[10px] font-medium">
+              <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
+              <p className="text-amber-300/90 text-xs font-medium">
                 <strong>CPF</strong> será seu usuário de acesso
               </p>
             </div>
@@ -1464,46 +1446,45 @@ export default function Index() {
           <div className="p-3 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-lg border border-cyan-500/30 mt-2">
             <div className="flex items-start gap-2.5">
               <div className="p-1.5 rounded-lg bg-cyan-500/20 border border-cyan-500/30 shrink-0">
-                <Clock className="h-3.5 w-3.5 text-cyan-400" />
+                <Clock className="h-4 w-4 text-cyan-400" />
               </div>
               <div className="space-y-1">
-                <p className="text-cyan-300 text-[10px] font-semibold">
+                <p className="text-cyan-300 text-xs font-semibold">
                   Aprovação Necessária
                 </p>
-                <p className="text-cyan-200/70 text-[9px] leading-relaxed">
-                  Seu cadastro será analisado pelo administrador antes da liberação do acesso. 
-                  Você será notificado quando aprovado.
+                <p className="text-cyan-200/70 text-[11px] leading-relaxed">
+                  Seu cadastro será analisado pelo administrador antes da liberação do acesso.
                 </p>
               </div>
             </div>
           </div>
 
-          <form onSubmit={handleSignUp} className="space-y-3 mt-3">
+          <form onSubmit={handleSignUp} className="space-y-4 mt-4">
             {/* Nome */}
-            <div className="space-y-1">
-              <Label htmlFor="name" className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Nome Completo *</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Nome Completo *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/\d/g, '').toUpperCase() })}
                 placeholder="NOME COMPLETO"
-                className="h-10 text-sm uppercase"
+                className="h-11 text-base uppercase"
                 required
               />
-              {regErrors.name && <p className="text-[10px] text-red-400">{regErrors.name}</p>}
+              {regErrors.name && <p className="text-xs text-red-400">{regErrors.name}</p>}
             </div>
             
             {/* CPF e Matrícula */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">CPF *</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">CPF *</Label>
                 <div className="relative">
                   <Input
                     value={formData.cpf}
                     onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
                     placeholder="000.000.000-00"
                     className={cn(
-                      "h-10 text-sm pr-8",
+                      "h-11 text-base pr-9",
                       formData.cpf.replace(/\D/g, '').length === 11 && (
                         cpfValidation.isValid && !cpfValidation.exists
                           ? 'border-green-500 focus:border-green-500'
@@ -1518,40 +1499,40 @@ export default function Index() {
                   {formData.cpf.replace(/\D/g, '').length === 11 && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       {cpfValidation.isChecking ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" />
+                        <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
                       ) : cpfValidation.isValid && !cpfValidation.exists ? (
-                        <UserCheck className="h-3.5 w-3.5 text-green-400" />
+                        <UserCheck className="h-4 w-4 text-green-400" />
                       ) : cpfValidation.exists ? (
-                        <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
+                        <AlertTriangle className="h-4 w-4 text-amber-400" />
                       ) : (
-                        <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+                        <AlertTriangle className="h-4 w-4 text-red-400" />
                       )}
                     </div>
                   )}
                 </div>
-                {regErrors.cpf && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.cpf}</p>}
+                {regErrors.cpf && <p className="text-xs text-red-400 mt-0.5">{regErrors.cpf}</p>}
               </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Matrícula</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Matrícula</Label>
                 <Input
                   value={formData.matricula}
                   onChange={(e) => setFormData({ ...formData, matricula: formatMatricula(e.target.value) })}
                   placeholder="000.000.00"
-                  className="h-10 text-sm"
+                  className="h-11 text-base"
                   maxLength={10}
                 />
-                {regErrors.matricula && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.matricula}</p>}
+                {regErrors.matricula && <p className="text-xs text-red-400 mt-0.5">{regErrors.matricula}</p>}
               </div>
             </div>
             
             {/* Unidade */}
-            <div className="space-y-1">
-              <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Unidade *</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Unidade *</Label>
               <Select
                 value={formData.unit_id}
                 onValueChange={(value) => setFormData({ ...formData, unit_id: value })}
               >
-                <SelectTrigger className="h-10 text-sm">
+                <SelectTrigger className="h-11 text-base">
                   <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione a unidade"} />
                 </SelectTrigger>
                 <SelectContent 
@@ -1572,31 +1553,31 @@ export default function Index() {
                   )}
                 </SelectContent>
               </Select>
-              {regErrors.unit_id && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.unit_id}</p>}
+              {regErrors.unit_id && <p className="text-xs text-red-400 mt-0.5">{regErrors.unit_id}</p>}
             </div>
 
             {/* Nascimento e Telefone */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Nascimento</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Nascimento</Label>
                 <Input
                   value={formData.birth_date}
                   onChange={(e) => setFormData({ ...formData, birth_date: formatBirthDate(e.target.value) })}
                   placeholder="DD-MM-AAAA"
-                  className="h-10 text-sm"
+                  className="h-11 text-base"
                   maxLength={10}
                 />
                 {calculatedAge !== null && (
-                  <p className="text-[9px] text-amber-400 font-medium">{calculatedAge} anos</p>
+                  <p className="text-xs text-amber-400 font-medium">{calculatedAge} anos</p>
                 )}
               </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Telefone</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Telefone</Label>
                 <Input
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
                   placeholder="(00) 00000-0000"
-                  className="h-10 text-sm"
+                  className="h-11 text-base"
                   maxLength={15}
                 />
               </div>
@@ -1604,40 +1585,40 @@ export default function Index() {
 
             {/* Senhas */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Senha *</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Senha *</Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     placeholder="Mín. 6 caracteres"
-                    className="h-10 text-sm pr-9"
+                    className="h-11 text-base pr-10"
                     required
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-slate-400 hover:text-slate-200"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 p-0 text-slate-400 hover:text-slate-200"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
-                {regErrors.password && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.password}</p>}
+                {regErrors.password && <p className="text-xs text-red-400 mt-0.5">{regErrors.password}</p>}
               </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Confirmar *</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Confirmar *</Label>
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   placeholder="Repita a senha"
-                  className="h-10 text-sm"
+                  className="h-11 text-base"
                   required
                 />
-                {regErrors.confirmPassword && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.confirmPassword}</p>}
+                {regErrors.confirmPassword && <p className="text-xs text-red-400 mt-0.5">{regErrors.confirmPassword}</p>}
               </div>
             </div>
             
@@ -1646,15 +1627,15 @@ export default function Index() {
               type="submit"
               disabled={isSubmitting}
               className={cn(
-                "w-full h-11 mt-2",
+                "w-full h-12 mt-2",
                 "bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-500 hover:to-cyan-600",
-                "text-white font-bold text-sm tracking-wide",
+                "text-white font-bold text-base tracking-wide",
                 "shadow-lg shadow-cyan-900/30 hover:shadow-cyan-800/40",
                 "transition-all duration-200"
               )}
             >
               {isSubmitting ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cadastrando...</>
+                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Cadastrando...</>
               ) : (
                 <>Cadastrar Agente</>
               )}
@@ -1663,73 +1644,54 @@ export default function Index() {
         </DialogContent>
       </Dialog>
 
-      {/* Master Admin Login Dialog - Professional with Shield Logo */}
+      {/* Master Admin Login Dialog - Compact Professional */}
       <Dialog open={showMasterLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-amber-500/40 max-w-md shadow-2xl shadow-amber-900/20">
-          {/* Logo Header - Elegante */}
-          <div className="text-center py-4">
-            <div className="relative inline-block group">
-              {/* Subtle glow behind */}
-              <div className="absolute inset-0 w-20 h-20 mx-auto rounded-full bg-amber-500/15 blur-2xl" />
-              
-              {/* Logo */}
-              <img 
-                src={logoShield} 
-                alt="Plantão Pro" 
-                className="w-20 h-auto mx-auto relative z-10 drop-shadow-[0_4px_20px_rgba(251,191,36,0.4)] group-hover:drop-shadow-[0_4px_25px_rgba(251,191,36,0.55)] transition-all duration-500"
-              />
-            </div>
-          </div>
-          
-          {/* Auth Type Badge - Visual Identifier */}
-          <div className="flex justify-center mb-2">
-            <div className="px-3 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/40 flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
-                Edge Function • Token Session
-              </span>
-            </div>
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-amber-500/40 w-[90vw] max-w-[360px] shadow-2xl shadow-amber-900/20 p-5">
+          {/* Logo */}
+          <div className="text-center py-3">
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-16 h-auto mx-auto drop-shadow-[0_4px_20px_rgba(251,191,36,0.4)]"
+            />
           </div>
           
           <DialogHeader className="pb-3 border-b border-slate-700/50">
-            <DialogTitle className="flex items-center justify-center gap-2 text-xl font-bold text-amber-400">
+            <DialogTitle className="flex items-center justify-center gap-2 text-lg font-bold text-amber-400">
               <Lock className="h-5 w-5" />
               Acesso Master
             </DialogTitle>
             <DialogDescription className="text-sm text-slate-400 text-center">
-              Área restrita para administradores do sistema
+              Área restrita para administradores
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleMasterLogin} className="space-y-4 pt-3">
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">Usuário (Email Master)</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-300">Usuário</Label>
               <Input
                 value={masterUsername}
                 onChange={(e) => setMasterUsername(e.target.value)}
                 placeholder="plantaopro@proton.me"
-                className="bg-slate-800/80 border border-slate-600 text-white focus:border-amber-500/60"
+                className="bg-slate-800/80 border border-slate-600 text-white h-11 text-base focus:border-amber-500/60"
               />
-              <p className="text-[10px] text-amber-400/70 flex items-center gap-1">
-                <Info className="h-3 w-3" /> Use: plantaopro@proton.me
-              </p>
             </div>
             
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-300">Senha</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={masterPassword}
                   onChange={(e) => setMasterPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="bg-slate-800/80 border border-slate-600 text-white pr-10 focus:border-amber-500/60"
+                  className="bg-slate-800/80 border border-slate-600 text-white h-11 text-base pr-10 focus:border-amber-500/60"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-white"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 p-0 text-slate-400 hover:text-white"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -1737,7 +1699,6 @@ export default function Index() {
               </div>
             </div>
             
-            {/* Password Recovery Link */}
             <div className="flex justify-end">
               <MasterPasswordRecoveryDialog />
             </div>
@@ -1745,89 +1706,83 @@ export default function Index() {
             <Button
               type="submit"
               disabled={isSubmitting || !masterUsername || !masterPassword}
-              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold shadow-lg shadow-amber-900/30"
+              className="w-full h-11 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-base shadow-lg shadow-amber-900/30"
             >
               {isSubmitting ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Autenticando...</>
               ) : (
-                <><Lock className="mr-2 h-4 w-4" /> Acessar Painel Master</>
+                <><Lock className="mr-2 h-4 w-4" /> Acessar Painel</>
               )}
             </Button>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Admin Login Dialog */}
+      {/* Admin Login Dialog - Compact */}
       <Dialog open={showAdminLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/40 max-w-md shadow-2xl shadow-blue-900/20">
-          {/* Logo Header - Elegante */}
-          <div className="text-center py-4">
-            <div className="relative inline-block group">
-              {/* Subtle glow behind */}
-              <div className="absolute inset-0 w-20 h-20 mx-auto rounded-full bg-blue-500/15 blur-2xl" />
-              
-              {/* Logo */}
-              <img 
-                src={logoShield} 
-                alt="Plantão Pro" 
-                className="w-20 h-auto mx-auto relative z-10 drop-shadow-[0_4px_20px_rgba(59,130,246,0.4)] group-hover:drop-shadow-[0_4px_25px_rgba(59,130,246,0.55)] transition-all duration-500"
-              />
-            </div>
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/40 w-[90vw] max-w-[360px] shadow-2xl shadow-blue-900/20 p-5">
+          {/* Logo */}
+          <div className="text-center py-3">
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-16 h-auto mx-auto drop-shadow-[0_4px_20px_rgba(59,130,246,0.4)]"
+            />
           </div>
           
-          {/* Auth Type Badge */}
-          <div className="flex justify-center mb-2">
-            <div className="px-3 py-1.5 rounded-full bg-blue-500/15 border border-blue-500/40 flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-              <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">
-                Edge Function • Token Session
-              </span>
-            </div>
-          </div>
-          
-          <DialogHeader className="text-center pb-4 border-b border-slate-700/50">
-            <DialogTitle className="text-xl font-bold text-blue-400 text-center flex items-center justify-center gap-2">
+          <DialogHeader className="pb-3 border-b border-slate-700/50">
+            <DialogTitle className="text-lg font-bold text-blue-400 text-center flex items-center justify-center gap-2">
               <Shield className="h-5 w-5" />
               Login Administrativo
             </DialogTitle>
             <DialogDescription className="text-sm text-slate-400 text-center">
-              Entre com suas credenciais de administrador
+              Credenciais de administrador
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleAdminLogin} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">E-mail (Usuário Master)</Label>
+          <form onSubmit={handleAdminLogin} className="space-y-4 pt-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-300">E-mail</Label>
               <Input
                 type="email"
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
                 placeholder="plantaopro@proton.me"
-                className="bg-slate-800/80 border border-slate-600 text-white focus:border-blue-500/60"
+                className="bg-slate-800/80 border border-slate-600 text-white h-11 text-base focus:border-blue-500/60"
               />
-              <p className="text-[10px] text-blue-400/70">💡 Use: plantaopro@proton.me</p>
             </div>
             
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
-              <Input
-                type="password"
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="••••••••"
-                className="bg-slate-800/80 border border-slate-600 text-white focus:border-blue-500/60"
-              />
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-300">Senha</Label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="bg-slate-800/80 border border-slate-600 text-white h-11 text-base pr-10 focus:border-blue-500/60"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 p-0 text-slate-400 hover:text-white"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
             </div>
             
             <Button
               type="submit"
               disabled={isSubmitting || !adminEmail || !adminPassword}
-              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3 shadow-lg"
+              className="w-full h-11 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-base shadow-lg"
             >
               {isSubmitting ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Autenticando...</>
               ) : (
-                <><Lock className="mr-2 h-4 w-4" /> Entrar no Admin</>
+                <><Lock className="mr-2 h-4 w-4" /> Entrar</>
               )}
             </Button>
           </form>
