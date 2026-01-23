@@ -38,6 +38,7 @@ import { TacticalRadar } from '@/components/dashboard/TacticalRadar';
 import { SessionMonitorBanner } from '@/components/SessionMonitorBanner';
 import { DiagnosticReportButton } from '@/components/DiagnosticReportButton';
 import { SafeModeToggle } from '@/components/SafeModeToggle';
+import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { WelcomeTrialDialog, shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
 import { PasswordChangeRequest } from '@/components/agent-panel/PasswordChangeRequest';
@@ -571,10 +572,8 @@ export default function AgentPanel() {
               </TabsContent>
             </Tabs>
 
-            {/* Footer Credits - Modern & Readable */}
-            <div className="text-center text-xs md:text-sm text-muted-foreground py-3 md:py-4 border-t border-border/40 mt-4">
-              <p className="font-medium">Desenvolvido por <span className="text-primary font-bold">Franc D'nis</span> • Feijó, Acre</p>
-            </div>
+            {/* Footer Copyright - Compacto */}
+            <CopyrightFooter className="border-t border-border/30 mt-4" />
           </div>
         </main>
       </div>

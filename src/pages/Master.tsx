@@ -67,6 +67,7 @@ import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
 import { LicenseFinanceControl } from '@/components/admin/LicenseFinanceControl';
 import { UnitsManagementCard } from '@/components/admin/UnitsManagementCard';
 import { AgentAccessControl } from '@/components/admin/AgentAccessControl';
+import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
 import { getMasterToken, setMasterToken } from '@/lib/masterSession';
@@ -1214,6 +1215,9 @@ export default function Master() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Footer Copyright */}
+      <CopyrightFooter className="border-t border-border/30 mt-6" />
     </div>
   );
 }
