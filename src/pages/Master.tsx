@@ -67,11 +67,13 @@ import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
 import { LicenseFinanceControl } from '@/components/admin/LicenseFinanceControl';
 import { UnitsManagementCard } from '@/components/admin/UnitsManagementCard';
 import { AgentAccessControl } from '@/components/admin/AgentAccessControl';
+import { PendingApprovalsManager } from '@/components/admin/PendingApprovalsManager';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
 import { getMasterToken, setMasterToken } from '@/lib/masterSession';
 import { adminClient } from '@/lib/adminClient';
+import { Bell } from 'lucide-react';
 
 interface UserWithRole {
   id: string;
@@ -129,6 +131,7 @@ interface SystemStats {
   pendingTransfers: number;
   activeAgents: number;
   expiredLicenses: number;
+  pendingApprovals: number;
 }
 
 export default function Master() {
@@ -147,6 +150,7 @@ export default function Master() {
     pendingTransfers: 0,
     activeAgents: 0,
     expiredLicenses: 0,
+    pendingApprovals: 0,
   });
   const [loadingData, setLoadingData] = useState(true);
   const [agentSearchTerm, setAgentSearchTerm] = useState('');
@@ -300,10 +304,11 @@ export default function Master() {
       setAccessLogs((logsData as unknown as AccessLog[]) || []);
 
       // Fetch system stats
-      const [agentsRes, unitsRes, transfersRes] = await Promise.all([
+      const [agentsRes, unitsRes, transfersRes, pendingApprovalsRes] = await Promise.all([
         supabase.from('agents').select('*', { count: 'exact', head: true }),
         supabase.from('units').select('*', { count: 'exact', head: true }),
         supabase.from('transfer_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('agents').select('*', { count: 'exact', head: true }).eq('approval_status', 'pending'),
       ]);
       
       // Count expired licenses
@@ -321,6 +326,7 @@ export default function Master() {
         pendingTransfers: transfersRes.count || 0,
         activeAgents: activeCount,
         expiredLicenses: expiredCount,
+        pendingApprovals: pendingApprovalsRes.count || 0,
       });
     } catch (error) {
       console.error('Error fetching admin data:', error);
@@ -617,7 +623,16 @@ export default function Master() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6 sm:grid-cols-11">
+          <TabsList className="grid w-full grid-cols-6 sm:grid-cols-12">
+            <TabsTrigger value="approvals" className="relative">
+              <Bell className="w-4 h-4 sm:hidden" />
+              <span className="hidden sm:inline">Aprovações</span>
+              {stats.pendingApprovals > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] text-white flex items-center justify-center animate-pulse">
+                  {stats.pendingApprovals}
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="overview">Unidades</TabsTrigger>
             <TabsTrigger value="access-control" className="relative">
               Acesso
@@ -644,6 +659,11 @@ export default function Master() {
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
           </TabsList>
+
+          {/* Pending Approvals Tab */}
+          <TabsContent value="approvals" className="space-y-6 mt-6">
+            <PendingApprovalsManager onApprovalChange={fetchData} />
+          </TabsContent>
 
           {/* Overview Tab - Units */}
           <TabsContent value="overview" className="space-y-6 mt-6">
