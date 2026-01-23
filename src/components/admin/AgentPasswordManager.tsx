@@ -70,7 +70,7 @@ export function AgentPasswordManager({ agent, onSuccess }: AgentPasswordManagerP
     try {
       // Use the admin-operations edge function to reset password securely
       const { adminClient } = await import('@/lib/adminClient');
-      await adminClient.resetPassword({ 
+      const result = await adminClient.resetPassword({ 
         agentId: agent.id, 
         newPassword 
       });
@@ -85,9 +85,13 @@ export function AgentPasswordManager({ agent, onSuccess }: AgentPasswordManagerP
         // ignore logging errors
       }
 
+      // Show appropriate message based on result
+      const wasCreated = (result as any)?.created;
       toast({ 
-        title: 'Senha Redefinida', 
-        description: `Nova senha definida para ${agent.name}. Informe ao agente.` 
+        title: wasCreated ? 'Usuário Criado' : 'Senha Redefinida', 
+        description: wasCreated 
+          ? `Credenciais criadas para ${agent.name}. Informe a nova senha ao agente.`
+          : `Nova senha definida para ${agent.name}. Informe ao agente.`
       });
       
       setOpen(false);

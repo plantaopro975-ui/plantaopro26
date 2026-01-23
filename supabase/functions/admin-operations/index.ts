@@ -443,12 +443,179 @@ serve(async (req) => {
         return json({ success: false, error: "agentId e newPassword são obrigatórios." }, 400);
       }
 
-      const { error } = await admin.auth.admin.updateUserById(agentId, {
-        password: newPassword,
+      console.log(`[reset_password] Iniciando reset para: ${agentId}`);
+
+      // Get agent data first
+      const { data: agent } = await admin
+        .from("agents")
+        .select("cpf, name, email")
+        .eq("id", agentId)
+        .maybeSingle();
+
+      if (!agent || !agent.cpf) {
+        return json({ success: false, error: "Agente não encontrado." }, 404);
+      }
+
+      const email = `${agent.cpf}@agent.plantaopro.com`;
+
+      // Check if auth user exists
+      try {
+        const { data: existingUser, error: getUserErr } = await admin.auth.admin.getUserById(agentId);
+        
+        if (getUserErr || !existingUser?.user) {
+          console.log(`[reset_password] Usuário auth não existe, criando novo...`);
+          
+          // Create new auth user with the agent's ID
+          const { data: created, error: createErr } = await admin.auth.admin.createUser({
+            email,
+            password: newPassword,
+            email_confirm: true,
+            user_metadata: { full_name: agent.name },
+          });
+
+          if (createErr) {
+            console.error(`[reset_password] Erro ao criar usuário:`, createErr);
+            return json({ success: false, error: createErr.message }, 400);
+          }
+
+          const newUserId = created.user?.id;
+          console.log(`[reset_password] Novo usuário criado: ${newUserId}`);
+
+          // If created with different ID, update agent to match
+          if (newUserId && newUserId !== agentId) {
+            console.log(`[reset_password] Atualizando agent.id de ${agentId} para ${newUserId}`);
+            
+            // Update all references first
+            const tables = [
+              "agent_shifts", "overtime_bank", "shift_alerts", "agent_events",
+              "agent_leaves", "notifications", "saved_credentials", "chat_messages"
+            ];
+            
+            for (const table of tables) {
+              try {
+                const column = table === "chat_messages" ? "sender_id" : "agent_id";
+                await admin.from(table).update({ [column]: newUserId }).eq(column, agentId);
+              } catch {
+                // ignore
+              }
+            }
+
+            // Delete old agent and recreate with new ID
+            await admin.from("agents").delete().eq("id", agentId);
+            await admin.from("agents").insert({
+              id: newUserId,
+              name: agent.name,
+              cpf: agent.cpf,
+              email: agent.email,
+              is_active: true,
+              license_status: "active",
+            });
+
+            // Add user role
+            try {
+              await admin.from("user_roles").insert({ user_id: newUserId, role: "user" });
+            } catch { /* ignore */ }
+          }
+
+          console.log(`[reset_password] ✓ Usuário criado e senha definida`);
+          return json({ success: true, data: { created: true } });
+        }
+
+        // User exists, just update password
+        console.log(`[reset_password] Usuário existe, atualizando senha...`);
+        const { error: updateErr } = await admin.auth.admin.updateUserById(agentId, {
+          password: newPassword,
+        });
+
+        if (updateErr) {
+          console.error(`[reset_password] Erro ao atualizar senha:`, updateErr);
+          return json({ success: false, error: updateErr.message }, 400);
+        }
+
+        console.log(`[reset_password] ✓ Senha atualizada com sucesso`);
+        return json({ success: true, data: { updated: true } });
+
+      } catch (err) {
+        console.error(`[reset_password] Erro:`, err);
+        return json({ success: false, error: "Erro ao processar reset de senha." }, 500);
+      }
+    }
+
+    // ===== SYNC AGENT AUTH USER =====
+    if (action === "sync_agent_auth") {
+      const agentId = String(body?.agentId ?? "");
+      const password = String(body?.password ?? "");
+      
+      if (!agentId || !password) {
+        return json({ success: false, error: "agentId e password são obrigatórios." }, 400);
+      }
+
+      console.log(`[sync_agent_auth] Sincronizando usuário auth para: ${agentId}`);
+
+      // Get agent data
+      const { data: agent } = await admin
+        .from("agents")
+        .select("id, cpf, name, email, team, unit_id")
+        .eq("id", agentId)
+        .maybeSingle();
+
+      if (!agent || !agent.cpf) {
+        return json({ success: false, error: "Agente não encontrado." }, 404);
+      }
+
+      const email = `${agent.cpf}@agent.plantaopro.com`;
+
+      // Check if auth user exists
+      const { data: existingUser } = await admin.auth.admin.getUserById(agentId);
+
+      if (existingUser?.user) {
+        console.log(`[sync_agent_auth] Usuário já existe, atualizando senha...`);
+        await admin.auth.admin.updateUserById(agentId, { password });
+        return json({ success: true, data: { synced: true, existed: true } });
+      }
+
+      // Create new auth user
+      console.log(`[sync_agent_auth] Criando novo usuário auth...`);
+      const { data: created, error: createErr } = await admin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { full_name: agent.name },
       });
 
-      if (error) return json({ success: false, error: error.message }, 400);
-      return json({ success: true, data: {} });
+      if (createErr) {
+        console.error(`[sync_agent_auth] Erro ao criar:`, createErr);
+        return json({ success: false, error: createErr.message }, 400);
+      }
+
+      const newUserId = created.user?.id;
+      
+      // If new ID differs, we need to update agent record
+      if (newUserId && newUserId !== agentId) {
+        console.log(`[sync_agent_auth] ID divergente, atualizando agente...`);
+        
+        // Update agent ID
+        await admin.from("agents").delete().eq("id", agentId);
+        await admin.from("agents").insert({
+          ...agent,
+          id: newUserId,
+        });
+        
+        // Add role
+        try {
+          await admin.from("user_roles").insert({ user_id: newUserId, role: "user" });
+        } catch { /* ignore */ }
+        
+        return json({ success: true, data: { synced: true, newId: newUserId } });
+      }
+
+      // Add role
+      try {
+        await admin.from("user_roles").insert({ user_id: newUserId, role: "user" });
+      } catch { /* ignore */ }
+
+      console.log(`[sync_agent_auth] ✓ Usuário sincronizado`);
+      return json({ success: true, data: { synced: true, existed: false } });
     }
 
     return json({ success: false, error: "Ação desconhecida." }, 400);
