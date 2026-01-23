@@ -1205,18 +1205,18 @@ export default function Index() {
 
       {/* CPF Check Dialog - Compact Professional */}
       <Dialog open={showCpfCheck} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border border-primary/30 w-[90vw] max-w-[320px] shadow-xl shadow-primary/10 p-5">
-          {/* Logo */}
-          <div className="text-center py-3">
+        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border border-primary/30 w-[90vw] max-w-[340px] shadow-xl shadow-primary/10 p-4">
+          {/* Logo - Compacto */}
+          <div className="text-center py-1.5">
             <img 
               src={logoShield} 
               alt="Plantão Pro" 
-              className="w-16 h-auto mx-auto drop-shadow-[0_4px_20px_rgba(var(--primary),0.35)]"
+              className="w-12 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(var(--primary),0.35)]"
             />
           </div>
           
-          <DialogHeader className="pb-3 border-b border-border/40">
-            <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground justify-center">
+          <DialogHeader className="pb-2 border-b border-border/40">
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-foreground justify-center">
               {currentTeamConfig && (
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30">
                   <currentTeamConfig.icon className={`h-4 w-4 ${currentTeamConfig.color}`} />
@@ -1229,15 +1229,15 @@ export default function Index() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 pt-3">
+          <div className="space-y-3 pt-2">
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-300">CPF</Label>
+              <Label className="text-sm font-semibold text-foreground">CPF</Label>
               <div className="relative">
                 <Input
                   value={checkCpf}
                   onChange={(e) => handleCpfInputChange(e.target.value)}
                   placeholder="000.000.000-00"
-                  className="bg-slate-800/80 border border-slate-600 text-white text-base h-12 text-center tracking-widest font-mono focus:border-primary/60 transition-colors"
+                  className="bg-slate-800/80 border border-slate-600 text-white text-lg h-12 text-center tracking-widest font-mono focus:border-primary/60 transition-colors"
                   maxLength={14}
                 />
                 {isSearchingAgent && (
@@ -1307,18 +1307,18 @@ export default function Index() {
 
       {/* Login Dialog - Professional & Compact */}
       <Dialog open={showLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-blue-600/30 w-[90vw] max-w-[320px] shadow-xl shadow-blue-900/15 p-5">
-          {/* Logo */}
-          <div className="text-center py-3">
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-blue-600/30 w-[90vw] max-w-[340px] shadow-xl shadow-blue-900/15 p-4">
+          {/* Logo - Compacto */}
+          <div className="text-center py-1.5">
             <img 
               src={logoShield} 
               alt="Plantão Pro" 
-              className="w-16 h-auto mx-auto drop-shadow-[0_4px_20px_rgba(59,130,246,0.4)]"
+              className="w-12 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(59,130,246,0.4)]"
             />
           </div>
           
-          <DialogHeader className="pb-3 border-b border-slate-700/40">
-            <DialogTitle className="flex items-center justify-center gap-2 text-base font-bold text-white">
+          <DialogHeader className="pb-2 border-b border-slate-700/40">
+            <DialogTitle className="flex items-center justify-center gap-2 text-lg font-bold text-white">
               {currentTeamConfig && selectedTeam && (
                 <div className="p-1.5 rounded-lg bg-blue-600/20 border border-blue-500/30">
                   <currentTeamConfig.icon className={`h-4 w-4 ${currentTeamConfig.color}`} />
@@ -1328,29 +1328,29 @@ export default function Index() {
             </DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleLogin} className="space-y-4 pt-3" data-login-form="true">
+          <form onSubmit={handleLogin} className="space-y-3 pt-2" data-login-form="true">
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">CPF</Label>
+              <Label className="text-sm font-semibold text-slate-300">CPF</Label>
               <Input
                 value={loginCpf}
                 onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
                 placeholder="000.000.000-00"
-                className="bg-slate-800/80 border border-slate-600 text-white text-base h-11 font-mono tracking-wider focus:border-blue-500/60"
+                className="bg-slate-800/80 border border-slate-600 text-white text-lg h-12 font-mono tracking-wider focus:border-blue-500/60"
                 maxLength={14}
                 disabled={!!selectedTeam}
               />
-              {loginErrors.cpf && <p className="text-xs text-red-400 font-medium">{loginErrors.cpf}</p>}
+              {loginErrors.cpf && <p className="text-sm text-red-400 font-medium">{loginErrors.cpf}</p>}
             </div>
             
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Senha</Label>
+              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="bg-slate-800/80 border border-slate-600 text-white text-base h-11 pr-10 focus:border-blue-500/60 transition-colors"
+                  className="bg-slate-800/80 border border-slate-600 text-white text-lg h-12 pr-10 focus:border-blue-500/60 transition-colors"
                 />
                 <Button
                   type="button"
@@ -1362,7 +1362,7 @@ export default function Index() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
-              {loginErrors.password && <p className="text-xs text-red-400 font-medium">{loginErrors.password}</p>}
+              {loginErrors.password && <p className="text-sm text-red-400 font-medium">{loginErrors.password}</p>}
             </div>
             
             <SavedCredentials
@@ -1646,17 +1646,17 @@ export default function Index() {
 
       {/* Master Admin Login Dialog - Compact Professional */}
       <Dialog open={showMasterLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-amber-500/40 w-[90vw] max-w-[360px] shadow-2xl shadow-amber-900/20 p-5">
-          {/* Logo */}
-          <div className="text-center py-3">
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-amber-500/40 w-[90vw] max-w-[340px] shadow-2xl shadow-amber-900/20 p-4">
+          {/* Logo - Compacto */}
+          <div className="text-center py-1.5">
             <img 
               src={logoShield} 
               alt="Plantão Pro" 
-              className="w-16 h-auto mx-auto drop-shadow-[0_4px_20px_rgba(251,191,36,0.4)]"
+              className="w-12 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(251,191,36,0.4)]"
             />
           </div>
           
-          <DialogHeader className="pb-3 border-b border-slate-700/50">
+          <DialogHeader className="pb-2 border-b border-slate-700/50">
             <DialogTitle className="flex items-center justify-center gap-2 text-lg font-bold text-amber-400">
               <Lock className="h-5 w-5" />
               Acesso Master
@@ -1666,26 +1666,26 @@ export default function Index() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleMasterLogin} className="space-y-4 pt-3">
+          <form onSubmit={handleMasterLogin} className="space-y-3 pt-2">
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-300">Usuário</Label>
+              <Label className="text-sm font-semibold text-slate-300">Usuário</Label>
               <Input
                 value={masterUsername}
                 onChange={(e) => setMasterUsername(e.target.value)}
                 placeholder="plantaopro@proton.me"
-                className="bg-slate-800/80 border border-slate-600 text-white h-11 text-base focus:border-amber-500/60"
+                className="bg-slate-800/80 border border-slate-600 text-white h-12 text-lg focus:border-amber-500/60"
               />
             </div>
             
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-300">Senha</Label>
+              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={masterPassword}
                   onChange={(e) => setMasterPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="bg-slate-800/80 border border-slate-600 text-white h-11 text-base pr-10 focus:border-amber-500/60"
+                  className="bg-slate-800/80 border border-slate-600 text-white h-12 text-lg pr-10 focus:border-amber-500/60"
                 />
                 <Button
                   type="button"
@@ -1720,17 +1720,17 @@ export default function Index() {
 
       {/* Admin Login Dialog - Compact */}
       <Dialog open={showAdminLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/40 w-[90vw] max-w-[360px] shadow-2xl shadow-blue-900/20 p-5">
-          {/* Logo */}
-          <div className="text-center py-3">
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/40 w-[90vw] max-w-[340px] shadow-2xl shadow-blue-900/20 p-4">
+          {/* Logo - Compacto */}
+          <div className="text-center py-1.5">
             <img 
               src={logoShield} 
               alt="Plantão Pro" 
-              className="w-16 h-auto mx-auto drop-shadow-[0_4px_20px_rgba(59,130,246,0.4)]"
+              className="w-12 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(59,130,246,0.4)]"
             />
           </div>
           
-          <DialogHeader className="pb-3 border-b border-slate-700/50">
+          <DialogHeader className="pb-2 border-b border-slate-700/50">
             <DialogTitle className="text-lg font-bold text-blue-400 text-center flex items-center justify-center gap-2">
               <Shield className="h-5 w-5" />
               Login Administrativo
@@ -1740,27 +1740,27 @@ export default function Index() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleAdminLogin} className="space-y-4 pt-3">
+          <form onSubmit={handleAdminLogin} className="space-y-3 pt-2">
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-300">E-mail</Label>
+              <Label className="text-sm font-semibold text-slate-300">E-mail</Label>
               <Input
                 type="email"
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
                 placeholder="plantaopro@proton.me"
-                className="bg-slate-800/80 border border-slate-600 text-white h-11 text-base focus:border-blue-500/60"
+                className="bg-slate-800/80 border border-slate-600 text-white h-12 text-lg focus:border-blue-500/60"
               />
             </div>
             
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-300">Senha</Label>
+              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="bg-slate-800/80 border border-slate-600 text-white h-11 text-base pr-10 focus:border-blue-500/60"
+                  className="bg-slate-800/80 border border-slate-600 text-white h-12 text-lg pr-10 focus:border-blue-500/60"
                 />
                 <Button
                   type="button"
