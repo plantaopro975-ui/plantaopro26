@@ -765,34 +765,42 @@ export default function Index() {
     setIsSubmitting(false);
   };
 
-  // Handle admin login (email-based)
+  // Handle admin login - use master-login edge function like master panel
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const { error } = await signIn(adminEmail, adminPassword);
-      
-      if (error) {
-        toast({
-          title: 'Erro',
-          description: error.message || 'Credenciais inválidas.',
-          variant: 'destructive',
-        });
-        setIsSubmitting(false);
-        return;
+      // Use the same master-login edge function
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/master-login`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ username: adminEmail, password: adminPassword }),
+      });
+
+      const json = await res.json().catch(() => null);
+
+      if (!res.ok || !json?.success || !json?.data?.token) {
+        throw new Error(json?.error || 'Credenciais inválidas.');
       }
+
+      // Store session and navigate to admin panel
+      setMasterToken(json.data.token);
+      setMasterSession(adminEmail);
       
-      // CRÍTICO: NÃO mostrar toast aqui - esperar navegação completar
+      toast({
+        title: 'Acesso Admin',
+        description: 'Bem-vindo ao painel administrativo.',
+      });
+
       setShowAdminLogin(false);
-      
-      // Delay para garantir que o userRole seja carregado antes de navegar
-      await new Promise(resolve => setTimeout(resolve, 800));
       navigate('/admin', { replace: true });
     } catch (error: any) {
+      console.error('Admin login error:', error);
       toast({
         title: 'Erro',
-        description: error?.message || 'Não foi possível autenticar.',
+        description: error?.message || 'Credenciais inválidas.',
         variant: 'destructive',
       });
     }
