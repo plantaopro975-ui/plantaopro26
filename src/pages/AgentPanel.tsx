@@ -191,6 +191,15 @@ export default function AgentPanel() {
     }
   }, [user, masterSession, isLoading, isLoadingAgent, navigate]);
 
+  // CRÍTICO: Se não há sessão de usuário (e não é master), não existe perfil para carregar.
+  // Evita a tela enganosa "Perfil não carregou" quando o usuário está deslogado/pendente.
+  useEffect(() => {
+    if (isLoading || isLoadingAgent) return;
+    if (!user && !masterSession) {
+      navigate('/', { replace: true });
+    }
+  }, [user, masterSession, isLoading, isLoadingAgent, navigate]);
+
   // If an admin account lands here (no linked agent profile), route to the admin area instead
   useEffect(() => {
     if (isLoading || isLoadingAgent) return;
@@ -205,6 +214,18 @@ export default function AgentPanel() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900">
         <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      </div>
+    );
+  }
+
+  // While redirecting unauthenticated users, show a stable loading state
+  if (!user && !masterSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-amber-500 mx-auto" />
+          <p className="text-slate-400 text-sm">Sessão não encontrada. Redirecionando…</p>
+        </div>
       </div>
     );
   }
