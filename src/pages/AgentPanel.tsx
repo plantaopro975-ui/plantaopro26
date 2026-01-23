@@ -265,22 +265,18 @@ export default function AgentPanel() {
     );
   }
 
-  // CRÍTICO: Se o cadastro existe mas não está aprovado/ativo, mostrar o status correto
-  // (evita cair no genérico "Perfil não carregou").
-  if (agent && (agent.approval_status === 'pending' || agent.approval_status === 'rejected' || agent.is_active === false)) {
+  // Apenas bloquear se o cadastro foi rejeitado ou se is_active=false
+  // REMOVIDO: Verificação de approval_status='pending' - usuários entram direto após cadastro
+  if (agent && (agent.approval_status === 'rejected' || agent.is_active === false)) {
     const statusTitle =
       agent.approval_status === 'rejected'
         ? 'Cadastro rejeitado'
-        : agent.approval_status === 'pending'
-          ? 'Cadastro pendente de aprovação'
-          : 'Acesso bloqueado';
+        : 'Acesso bloqueado';
 
     const statusMessage =
       agent.approval_status === 'rejected'
         ? 'Seu cadastro foi rejeitado pela administração. Entre em contato com a coordenação para regularizar.'
-        : agent.approval_status === 'pending'
-          ? 'Seu cadastro ainda está em análise. Assim que for aprovado, o acesso será liberado automaticamente.'
-          : 'Seu acesso está desativado no momento. Procure a administração.';
+        : 'Seu acesso está desativado no momento. Procure a administração.';
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 p-6">
