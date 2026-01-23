@@ -232,11 +232,11 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
           </div>
         </div>
 
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-4 gap-2 md:gap-3">
+        {/* Quick Stats Grid - Compact with truncation */}
+        <div className="grid grid-cols-4 gap-1.5 md:gap-2">
           {[
             { 
-              label: 'Plantões', 
+              label: 'Total', 
               value: stats.totalShifts.toString(), 
               icon: Calendar, 
               color: 'from-cyan-500/20 to-cyan-600/10',
@@ -244,7 +244,7 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
               borderColor: 'border-cyan-500/30'
             },
             { 
-              label: 'Cumpridos', 
+              label: 'Taxa', 
               value: `${completionRate}%`, 
               icon: TrendingUp, 
               color: 'from-emerald-500/20 to-emerald-600/10',
@@ -252,8 +252,8 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
               borderColor: 'border-emerald-500/30'
             },
             { 
-              label: 'B.Horas', 
-              value: `${stats.bhBalance >= 0 ? '+' : ''}${stats.bhBalance}h`, 
+              label: 'BH', 
+              value: `${stats.bhBalance >= 0 ? '+' : ''}${stats.bhBalance}`, 
               icon: Activity, 
               color: stats.bhBalance >= 0 ? 'from-blue-500/20 to-blue-600/10' : 'from-rose-500/20 to-rose-600/10',
               iconColor: stats.bhBalance >= 0 ? 'text-blue-400' : 'text-rose-400',
@@ -271,17 +271,17 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
             <div
               key={stat.label}
               className={cn(
-                "relative p-2.5 md:p-3 rounded-xl border backdrop-blur-sm transition-all hover:scale-[1.02]",
+                "relative p-2 md:p-2.5 rounded-lg border backdrop-blur-sm transition-all hover:scale-[1.02] overflow-hidden",
                 `bg-gradient-to-br ${stat.color}`,
                 stat.borderColor
               )}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <stat.icon className={cn("h-4 w-4 md:h-5 md:w-5 mb-1.5", stat.iconColor)} />
-              <p className="text-lg md:text-xl font-bold text-white tabular-nums leading-none">
+              <stat.icon className={cn("h-3.5 w-3.5 md:h-4 md:w-4 mb-1", stat.iconColor)} />
+              <p className="text-base md:text-lg font-bold text-white tabular-nums leading-none truncate">
                 {stat.value}
               </p>
-              <p className="text-[10px] md:text-xs text-zinc-500 uppercase tracking-wide mt-0.5">
+              <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wide mt-0.5 truncate">
                 {stat.label}
               </p>
             </div>

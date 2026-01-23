@@ -7,7 +7,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
 import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
-import { Clock, Droplet, LogOut, Gift, Shield, Building2, Bell, Settings, RefreshCw } from 'lucide-react';
+import { Droplet, LogOut, Gift, Building2, Bell, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Agent {
   id: string;
@@ -27,28 +28,29 @@ interface AgentPanelHeaderProps {
   isShiftBannerDismissed?: boolean;
 }
 
-// Real-Time Clock Component - Compact
-function CompactClock() {
-  const [time, setTime] = useState(new Date());
-  
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-  
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('pt-BR', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
-  
+// Online Status Badge - Professional Design
+function OnlineStatusBadge({ isOnline }: { isOnline: boolean }) {
   return (
-    <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-800/60 rounded-lg border border-slate-600/40">
-      <Clock className="h-3.5 w-3.5 text-emerald-400" />
-      <span className="text-xs font-mono font-bold text-slate-200 tracking-wider tabular-nums">
-        {formatTime(time)}
+    <div className={cn(
+      "relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border shadow-lg transition-all",
+      isOnline 
+        ? "bg-gradient-to-r from-emerald-500/20 to-green-500/15 border-emerald-500/50 shadow-emerald-500/20" 
+        : "bg-gradient-to-r from-amber-500/20 to-orange-500/15 border-amber-500/50 shadow-amber-500/20"
+    )}>
+      <div className="relative">
+        <div className={cn(
+          "w-2 h-2 rounded-full",
+          isOnline ? "bg-emerald-400" : "bg-amber-400"
+        )} />
+        {isOnline && (
+          <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-400 animate-ping opacity-60" />
+        )}
+      </div>
+      <span className={cn(
+        "text-[10px] font-bold uppercase tracking-wider",
+        isOnline ? "text-emerald-400" : "text-amber-400"
+      )}>
+        {isOnline ? 'Online' : 'Offline'}
       </span>
     </div>
   );
@@ -118,7 +120,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
             </div>
           </div>
 
-          {/* Center Section: Unit + Blood Type + Status */}
+          {/* Center Section: Unit + Blood Type */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
             {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
             
@@ -129,21 +131,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
               </div>
             )}
             
-            <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
-              isOnline 
-                ? 'bg-emerald-500/20 border border-emerald-500/40' 
-                : 'bg-amber-500/20 border border-amber-500/40'
-            }`}>
-              <div className="relative">
-                <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                {isOnline && <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping opacity-50" />}
-              </div>
-              <span className={`text-[10px] font-semibold ${isOnline ? 'text-emerald-400' : 'text-amber-400'}`}>
-                {isOnline ? 'ON' : 'OFF'}
-              </span>
-            </div>
-            
-            <CompactClock />
+            <OnlineStatusBadge isOnline={isOnline} />
           </div>
 
           {/* Right Section: Actions - Spectacular Professional Buttons */}
@@ -233,20 +221,10 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
           </div>
         </div>
         
-        {/* Mobile: Unit + Clock Row */}
+        {/* Mobile: Unit Row */}
         <div className="md:hidden flex items-center justify-between mt-2 pt-2 border-t border-slate-700/50">
           {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
-          <div className="flex items-center gap-2">
-            <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded ${
-              isOnline ? 'bg-emerald-500/20' : 'bg-amber-500/20'
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-              <span className={`text-[9px] font-semibold ${isOnline ? 'text-emerald-400' : 'text-amber-400'}`}>
-                {isOnline ? 'ONLINE' : 'OFFLINE'}
-              </span>
-            </div>
-            <CompactClock />
-          </div>
+          <OnlineStatusBadge isOnline={isOnline} />
         </div>
       </div>
     </div>
