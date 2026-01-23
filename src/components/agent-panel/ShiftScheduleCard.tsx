@@ -164,15 +164,16 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
     try {
       setIsGenerating(true);
       
+      // Gerar plantões para 3 meses (padrão 24x72)
       const { data, error } = await supabase.rpc('generate_agent_shifts', {
         p_agent_id: agentId,
         p_first_shift_date: format(firstShiftDate, 'yyyy-MM-dd'),
-        p_months_ahead: 6
+        p_months_ahead: 3
       });
 
       if (error) throw error;
 
-      toast.success(`${data} plantões gerados com sucesso!`);
+      toast.success(`${data} plantões gerados para os próximos 3 meses!`);
       setShowConfig(false);
       refetchShifts();
     } catch (error) {
@@ -182,6 +183,17 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
       setIsGenerating(false);
     }
   };
+
+  // Check if shifts need renewal (less than 2 weeks remaining)
+  const needsRenewal = useMemo(() => {
+    if (shifts.length === 0) return false;
+    const futureShifts = shifts.filter(s => parseISO(s.shift_date) >= startOfDay(new Date()));
+    if (futureShifts.length === 0) return true;
+    
+    const lastShift = futureShifts[futureShifts.length - 1];
+    const daysUntilLast = differenceInDays(parseISO(lastShift.shift_date), new Date());
+    return daysUntilLast <= 14; // Alert when 2 weeks or less remaining
+  }, [shifts]);
 
   const handleShiftClick = (shift: AgentShift) => {
     setSelectedShift(shift);
@@ -260,6 +272,25 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <Card className="bg-slate-900/95 border border-slate-700/80 shadow-lg overflow-hidden">
+        {/* Renewal Alert Banner */}
+        {needsRenewal && shifts.length > 0 && (
+          <div className="px-4 py-2 bg-amber-500/15 border-b border-amber-500/30 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
+              <span className="text-xs text-amber-300 truncate">
+                Escala terminando! Renove seus plantões.
+              </span>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => setShowConfig(true)}
+              className="h-6 px-2 text-[10px] bg-amber-500 hover:bg-amber-600 text-black shrink-0"
+            >
+              Renovar
+            </Button>
+          </div>
+        )}
+        
         {/* Header - Collapsible Trigger */}
         <CardHeader className="py-2.5 px-4 border-b border-slate-700/50 bg-slate-800/50">
           <div className="flex items-center justify-between">
