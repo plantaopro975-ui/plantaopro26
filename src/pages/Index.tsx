@@ -1135,8 +1135,27 @@ export default function Index() {
       {/* CPF Check Dialog - Compact Professional */}
       <Dialog open={showCpfCheck} onOpenChange={(open) => !open && closeAllDialogs()}>
         <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border border-primary/30 max-w-xs shadow-xl shadow-primary/10 p-4">
+          {/* Logo Header */}
+          <div className="text-center py-2">
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-14 h-auto mx-auto drop-shadow-[0_0_15px_rgba(var(--primary),0.3)]"
+            />
+          </div>
+          
+          {/* Auth Type Badge */}
+          <div className="flex justify-center mb-2">
+            <div className="px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/40 flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-[9px] font-bold text-green-400 uppercase tracking-wider">
+                Supabase Auth • Agent
+              </span>
+            </div>
+          </div>
+          
           <DialogHeader className="pb-2 border-b border-border/40">
-            <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground justify-center">
               {currentTeamConfig && (
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30">
                   <currentTeamConfig.icon className={`h-4 w-4 ${currentTeamConfig.color}`} />
@@ -1144,7 +1163,7 @@ export default function Index() {
               )}
               <span>Equipe {selectedTeam}</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground mt-1">
+            <DialogDescription className="text-xs text-muted-foreground mt-1 text-center">
               Digite seu CPF para acessar
             </DialogDescription>
           </DialogHeader>
@@ -1236,6 +1255,16 @@ export default function Index() {
               alt="Plantão Pro" 
               className="w-16 h-auto mx-auto drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]"
             />
+          </div>
+          
+          {/* Auth Type Badge */}
+          <div className="flex justify-center mb-2">
+            <div className="px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/40 flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-[9px] font-bold text-green-400 uppercase tracking-wider">
+                Supabase Auth • Agent
+              </span>
+            </div>
           </div>
           
           <DialogHeader className="pb-2 border-b border-slate-700/40">
@@ -1541,15 +1570,25 @@ export default function Index() {
       <Dialog open={showMasterLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
         <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-amber-500/40 max-w-md shadow-2xl shadow-amber-900/20">
           {/* Logo Header */}
-          <div className="text-center py-4">
+          <div className="text-center py-3">
             <img 
               src={logoShield} 
               alt="Plantão Pro" 
-              className="w-24 h-auto mx-auto drop-shadow-[0_0_30px_rgba(245,158,11,0.4)]"
+              className="w-20 h-auto mx-auto drop-shadow-[0_0_25px_rgba(251,191,36,0.4)]"
             />
           </div>
           
-          <DialogHeader className="pb-4 border-b border-slate-700/50">
+          {/* Auth Type Badge - Visual Identifier */}
+          <div className="flex justify-center mb-2">
+            <div className="px-3 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/40 flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
+                Edge Function • Token Session
+              </span>
+            </div>
+          </div>
+          
+          <DialogHeader className="pb-3 border-b border-slate-700/50">
             <DialogTitle className="flex items-center justify-center gap-2 text-xl font-bold text-amber-400">
               <Lock className="h-5 w-5" />
               Acesso Master
@@ -1559,15 +1598,18 @@ export default function Index() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleMasterLogin} className="space-y-4 pt-4">
+          <form onSubmit={handleMasterLogin} className="space-y-4 pt-3">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">Usuário</Label>
+              <Label className="text-sm font-semibold text-slate-300">Usuário (Email Master)</Label>
               <Input
                 value={masterUsername}
                 onChange={(e) => setMasterUsername(e.target.value)}
-                placeholder="Digite o usuário"
+                placeholder="plantaopro@proton.me"
                 className="bg-slate-800/80 border border-slate-600 text-white focus:border-amber-500/60"
               />
+              <p className="text-[10px] text-amber-400/70 flex items-center gap-1">
+                <Info className="h-3 w-3" /> Use: plantaopro@proton.me
+              </p>
             </div>
             
             <div className="space-y-2">
@@ -1615,11 +1657,28 @@ export default function Index() {
       {/* Admin Login Dialog */}
       <Dialog open={showAdminLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
         <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/40 max-w-md shadow-2xl shadow-blue-900/20">
-          <DialogHeader className="text-center pb-4">
-            <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
-              <Shield className="h-8 w-8 text-white" />
+          {/* Logo Header */}
+          <div className="text-center py-3">
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-20 h-auto mx-auto drop-shadow-[0_0_25px_rgba(59,130,246,0.4)]"
+            />
+          </div>
+          
+          {/* Auth Type Badge */}
+          <div className="flex justify-center mb-2">
+            <div className="px-3 py-1.5 rounded-full bg-blue-500/15 border border-blue-500/40 flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+              <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">
+                Edge Function • Token Session
+              </span>
             </div>
-            <DialogTitle className="text-xl font-bold text-white text-center">
+          </div>
+          
+          <DialogHeader className="text-center pb-4 border-b border-slate-700/50">
+            <DialogTitle className="text-xl font-bold text-blue-400 text-center flex items-center justify-center gap-2">
+              <Shield className="h-5 w-5" />
               Login Administrativo
             </DialogTitle>
             <DialogDescription className="text-sm text-slate-400 text-center">
@@ -1629,14 +1688,15 @@ export default function Index() {
 
           <form onSubmit={handleAdminLogin} className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">E-mail</Label>
+              <Label className="text-sm font-semibold text-slate-300">E-mail (Usuário Master)</Label>
               <Input
                 type="email"
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
-                placeholder="admin@exemplo.com"
+                placeholder="plantaopro@proton.me"
                 className="bg-slate-800/80 border border-slate-600 text-white focus:border-blue-500/60"
               />
+              <p className="text-[10px] text-blue-400/70">💡 Use: plantaopro@proton.me</p>
             </div>
             
             <div className="space-y-2">
@@ -1658,7 +1718,7 @@ export default function Index() {
               {isSubmitting ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Autenticando...</>
               ) : (
-                <><Lock className="mr-2 h-4 w-4" /> Entrar</>
+                <><Lock className="mr-2 h-4 w-4" /> Entrar no Admin</>
               )}
             </Button>
           </form>

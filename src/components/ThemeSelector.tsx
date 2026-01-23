@@ -154,6 +154,9 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
                     isSelected ? "text-primary" : "text-foreground"
                   )}>
                     {t.name}
+                    {t.id === 'ember' && (
+                      <span className="ml-1 text-[8px] font-normal text-orange-400">★ LOGO</span>
+                    )}
                   </span>
                   <span className="text-[9px] text-muted-foreground truncate block">
                     {t.emoji} {t.description.split(' ').slice(0, 2).join(' ')}
