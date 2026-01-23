@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
@@ -180,6 +180,16 @@ export default function AgentPanel() {
     }
   };
 
+  // Track if we had a valid session to prevent aggressive redirects during hydration
+  const hadSessionRef = useRef(false);
+  
+  // Mark that we had a session once user/agent loads successfully
+  useEffect(() => {
+    if (user || agent) {
+      hadSessionRef.current = true;
+    }
+  }, [user, agent]);
+
   // Redirect only if master session is accessing agent panel (not allowed)
   // IMPORTANT: Do NOT redirect to home when user is temporarily null - this causes session loops
   useEffect(() => {
@@ -191,12 +201,24 @@ export default function AgentPanel() {
     }
   }, [user, masterSession, isLoading, isLoadingAgent, navigate]);
 
-  // CRÍTICO: Se não há sessão de usuário (e não é master), não existe perfil para carregar.
-  // Evita a tela enganosa "Perfil não carregou" quando o usuário está deslogado/pendente.
+  // CRÍTICO: Só redireciona para home se NUNCA teve sessão válida neste ciclo.
+  // Isso previne logout durante hidratação/refresh de token.
   useEffect(() => {
     if (isLoading || isLoadingAgent) return;
+    
+    // Se já teve sessão válida, NÃO redireciona - permite tempo de recuperação
+    if (hadSessionRef.current) return;
+    
+    // Só redireciona se realmente nunca houve usuário E não é master
     if (!user && !masterSession) {
-      navigate('/', { replace: true });
+      // Delay para dar tempo de hidratação
+      const timer = setTimeout(() => {
+        // Verificar novamente após delay
+        if (!hadSessionRef.current) {
+          navigate('/', { replace: true });
+        }
+      }, 2000);
+      return () => clearTimeout(timer);
     }
   }, [user, masterSession, isLoading, isLoadingAgent, navigate]);
 

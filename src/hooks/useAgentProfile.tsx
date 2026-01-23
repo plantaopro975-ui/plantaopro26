@@ -59,7 +59,7 @@ const AGENT_SELECT_QUERY = `
 `;
 
 export function useAgentProfile() {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const [agent, setAgent] = useState<AgentProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -70,12 +70,33 @@ export function useAgentProfile() {
   const mountedRef = useRef(true);
   const retryCountRef = useRef(0);
   const retryTimerRef = useRef<number | null>(null);
+  
+  // CRÍTICO: Mantém o agente em cache para evitar "piscar" durante refresh de token
+  const cachedAgentRef = useRef<AgentProfile | null>(null);
 
   useEffect(() => {
     mountedRef.current = true;
 
-    // Reset state if no user
+    // IMPORTANTE: Esperar auth terminar de carregar antes de decidir
+    if (isAuthLoading) {
+      return;
+    }
+
+    // Reset state if no user AND we never had a cached agent
     if (!user?.id && !user?.email) {
+      // Se temos cache, mantém por mais tempo antes de limpar
+      if (cachedAgentRef.current) {
+        // Delay para dar tempo de recuperação de sessão
+        const clearTimer = setTimeout(() => {
+          if (!user?.id && !user?.email && mountedRef.current) {
+            setAgent(null);
+            cachedAgentRef.current = null;
+            setIsLoading(false);
+          }
+        }, 3000);
+        return () => clearTimeout(clearTimer);
+      }
+      
       setAgent(null);
       setIsLoading(false);
       lastEmailRef.current = null;
@@ -91,7 +112,11 @@ export function useAgentProfile() {
       return;
     }
     
-    if (lastEmailRef.current === cacheKey && agent) {
+    // Se temos agente em cache e o cacheKey é o mesmo, usa o cache
+    if (lastEmailRef.current === cacheKey && (agent || cachedAgentRef.current)) {
+      if (!agent && cachedAgentRef.current) {
+        setAgent(cachedAgentRef.current);
+      }
       setIsLoading(false);
       return;
     }
@@ -206,6 +231,7 @@ export function useAgentProfile() {
             };
 
             setAgent(normalized);
+            cachedAgentRef.current = normalized;
             // Cache key based on user id + email
             lastEmailRef.current = `${user.id || ''}-${user.email || ''}`;
             retryCountRef.current = 0;
