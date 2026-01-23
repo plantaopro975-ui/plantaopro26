@@ -25,7 +25,10 @@ type AdminAction =
   | 'reset_password'
   | 'cleanup_orphan_auth'
   | 'immediate_transfer'
-  | 'sync_agent_auth';
+  | 'sync_agent_auth'
+  | 'approve_agent'
+  | 'reject_agent'
+  | 'get_pending_agents';
 
 /**
  * Unified admin client that works for both Master (token-based) and Admin (session-based)
@@ -78,6 +81,26 @@ async function callAdminBackend<T>(action: AdminAction, payload: Record<string, 
 }
 
 export const adminClient = {
+  // Agent approval operations
+  approveAgent: (input: { agentId: string }) =>
+    callAdminBackend<{}>('approve_agent', input),
+
+  rejectAgent: (input: { agentId: string; reason?: string }) =>
+    callAdminBackend<{}>('reject_agent', input),
+
+  getPendingAgents: () =>
+    callAdminBackend<{ agents: Array<{
+      id: string;
+      name: string;
+      cpf: string;
+      matricula: string | null;
+      team: string | null;
+      phone: string | null;
+      created_at: string;
+      approval_status: string;
+      unit: { id: string; name: string; municipality: string } | null;
+    }> }>('get_pending_agents', {}),
+
   // Agent operations
   createAgent: (input: {
     name: string;

@@ -120,6 +120,72 @@ serve(async (req) => {
       return json({ success: true, data: {} });
     }
 
+    // ===== AGENT APPROVAL OPERATIONS =====
+    if (action === "approve_agent") {
+      const agentId = String(body?.agentId ?? "");
+      if (!agentId) return json({ success: false, error: "agentId obrigatório." }, 400);
+
+      const { error } = await admin.from("agents").update({
+        approval_status: "approved",
+        approved_at: new Date().toISOString(),
+        is_active: true
+      }).eq("id", agentId);
+
+      if (error) {
+        console.error("[approve_agent] Error:", error);
+        return json({ success: false, error: error.message }, 400);
+      }
+
+      console.log(`[approve_agent] Agent ${agentId} approved successfully`);
+      return json({ success: true, data: {} });
+    }
+
+    if (action === "reject_agent") {
+      const agentId = String(body?.agentId ?? "");
+      const reason = String(body?.reason ?? "Cadastro não autorizado");
+      if (!agentId) return json({ success: false, error: "agentId obrigatório." }, 400);
+
+      const { error } = await admin.from("agents").update({
+        approval_status: "rejected",
+        rejection_reason: reason,
+        is_active: false
+      }).eq("id", agentId);
+
+      if (error) {
+        console.error("[reject_agent] Error:", error);
+        return json({ success: false, error: error.message }, 400);
+      }
+
+      console.log(`[reject_agent] Agent ${agentId} rejected`);
+      return json({ success: true, data: {} });
+    }
+
+    if (action === "get_pending_agents") {
+      const { data, error } = await admin
+        .from("agents")
+        .select(`
+          id,
+          name,
+          cpf,
+          matricula,
+          team,
+          phone,
+          created_at,
+          approval_status,
+          unit:units(id, name, municipality)
+        `)
+        .or("approval_status.eq.pending,approval_status.is.null")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("[get_pending_agents] Error:", error);
+        return json({ success: false, error: error.message }, 400);
+      }
+
+      console.log(`[get_pending_agents] Found ${data?.length || 0} pending agents`);
+      return json({ success: true, data: { agents: data || [] } });
+    }
+
     // ===== UNIT OPERATIONS =====
     if (action === "update_unit") {
       const unitId = String(body?.unitId ?? "");
