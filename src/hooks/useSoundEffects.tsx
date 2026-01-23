@@ -215,15 +215,18 @@ export function useSoundEffects() {
         oscillator.stop(now + 0.4);
         break;
 
-      case 'error':
-        oscillator.type = 'sawtooth';
-        oscillator.frequency.setValueAtTime(150, now);
-        oscillator.frequency.setValueAtTime(100, now + 0.1);
-        gainNode.gain.setValueAtTime(0.1, now);
+      case 'error': {
+        // Gentle attention sound - descending tone, not harsh
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(440, now); // A4
+        oscillator.frequency.exponentialRampToValueAtTime(349, now + 0.15); // F4
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(0.1, now + 0.02);
         gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
         oscillator.start(now);
-        oscillator.stop(now + 0.2);
+        oscillator.stop(now + 0.25);
         break;
+      }
 
       case 'shift-start':
         oscillator.type = 'sine';
@@ -345,43 +348,31 @@ export function useSoundEffects() {
         return;
       }
 
-      case 'access-denied':
-        oscillator.type = 'square';
-        oscillator.frequency.setValueAtTime(800, now);
-        oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.08);
-        gainNode.gain.setValueAtTime(0.15, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        oscillator.start(now);
-        oscillator.stop(now + 0.12);
-
-        setTimeout(() => {
-          const osc2 = audioContext.createOscillator();
-          const gain2 = audioContext.createGain();
-          osc2.connect(gain2);
-          gain2.connect(audioContext.destination);
-          osc2.type = 'square';
-          osc2.frequency.setValueAtTime(600, audioContext.currentTime);
-          osc2.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.08);
-          gain2.gain.setValueAtTime(0.18, audioContext.currentTime);
-          gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-          osc2.start(audioContext.currentTime);
-          osc2.stop(audioContext.currentTime + 0.12);
-        }, 150);
-
-        setTimeout(() => {
-          const osc3 = audioContext.createOscillator();
-          const gain3 = audioContext.createGain();
-          osc3.connect(gain3);
-          gain3.connect(audioContext.destination);
-          osc3.type = 'sawtooth';
-          osc3.frequency.setValueAtTime(300, audioContext.currentTime);
-          osc3.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.15);
-          gain3.gain.setValueAtTime(0.12, audioContext.currentTime);
-          gain3.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-          osc3.start(audioContext.currentTime);
-          osc3.stop(audioContext.currentTime + 0.25);
-        }, 300);
+      case 'access-denied': {
+        // Pleasant two-tone attention sound (not harsh)
+        // Uses descending gentle tones instead of harsh sawtooth
+        const deniedNotes = [523, 440]; // C5 -> A4 (gentle descent)
+        
+        deniedNotes.forEach((freq, index) => {
+          setTimeout(() => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.type = 'sine'; // Smooth sine wave, not harsh
+            osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+            
+            // Soft attack, gentle release
+            gain.gain.setValueAtTime(0, audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.12, audioContext.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            osc.start(audioContext.currentTime);
+            osc.stop(audioContext.currentTime + 0.25);
+          }, index * 150);
+        });
         break;
+      }
     }
   }, [isSoundEnabled, getCurrentTheme, getThemeSoundConfig]);
 
