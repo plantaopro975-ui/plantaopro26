@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { Shield, Cpu, Monitor, Flame, Snowflake, Target, Zap, Radio, Crosshair, Crown, Network } from 'lucide-react';
+import { Shield, Cpu, Monitor, Flame, Snowflake, Target, Zap, Radio, Crosshair, Crown, Network, Sparkles } from 'lucide-react';
 
-// Premium themes: tactical, cyber, crimson, arctic, sovereign, nexus, system
-export type ThemeType = 'tactical' | 'cyber' | 'crimson' | 'arctic' | 'sovereign' | 'nexus' | 'system';
+// Premium themes: tactical, cyber, crimson, arctic, sovereign, nexus, ember, system
+export type ThemeType = 'tactical' | 'cyber' | 'crimson' | 'arctic' | 'sovereign' | 'nexus' | 'ember' | 'system';
 
 export interface ThemeConfig {
   id: ThemeType;
@@ -285,6 +285,46 @@ export const themes: Record<ThemeType, ThemeConfig> = {
       hoverShadow: 'hover:shadow-emerald-400/45',
     },
   },
+  // NEW THEME: Ember - Inspired by PlantãoPro logo (black, gold, red)
+  ember: {
+    id: 'ember',
+    name: 'Ember',
+    description: 'Inspirado na logo PlantãoPro',
+    icon: Sparkles,
+    emoji: '🔶',
+    fontFamily: "'Orbitron', 'Teko', sans-serif",
+    teamIcons: {
+      ALFA: Shield,
+      BRAVO: Flame,
+      CHARLIE: Target,
+      DELTA: Crosshair,
+    },
+    colors: {
+      primary: '25 95% 53%', // Ember orange
+      primaryForeground: '0 0% 100%',
+      accent: '45 93% 47%', // Gold accent
+      background: '0 0% 5%', // Deep black
+      card: '0 0% 8%',
+      border: '25 60% 25%',
+      gradientFrom: '25 95% 53%',
+      gradientTo: '0 75% 50%', // Red accent
+      foreground: '40 40% 96%',
+      muted: '0 0% 12%',
+      mutedForeground: '25 50% 60%',
+      isLight: false,
+    },
+    effects: {
+      glowIntensity: 'high',
+      particleColor: 'rgba(234, 88, 12, 0.8)',
+      scanlineOpacity: 0.04,
+    },
+    cardStyle: {
+      gradient: 'from-orange-950/90 via-red-950/80 to-black/95',
+      border: 'border-orange-500/50',
+      shadow: 'shadow-orange-500/25',
+      hoverShadow: 'hover:shadow-orange-400/50',
+    },
+  },
   system: {
     id: 'system',
     name: 'Automático',
@@ -409,7 +449,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
     
     // Remove todas as classes de tema anteriores
-    root.classList.remove('light-theme', 'nightops-theme', 'tactical-theme', 'cyber-theme', 'crimson-theme', 'arctic-theme', 'sovereign-theme', 'nexus-theme');
+    root.classList.remove('light-theme', 'nightops-theme', 'tactical-theme', 'cyber-theme', 'crimson-theme', 'arctic-theme', 'sovereign-theme', 'nexus-theme', 'ember-theme');
     
     // Aplica nova classe de tema
     root.setAttribute('data-theme', resolvedTheme);

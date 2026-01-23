@@ -107,6 +107,24 @@
   100% { left: 100%; opacity: 0; }
 }
 
+/* Ember - Fire Effects */
+@keyframes emberGlow {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.45; }
+}
+
+@keyframes emberSweep {
+  0% { top: 0%; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes emberFlare {
+  0%, 100% { opacity: 0.5; transform: scale(1); box-shadow: 0 0 8px rgba(234,88,12,0.4); }
+  50% { opacity: 1; transform: scale(1.6); box-shadow: 0 0 20px rgba(234,88,12,0.8); }
+}
+
 /* ================================
    OFFLINE MODE - PREVENT PULL TO REFRESH
    ================================ */
