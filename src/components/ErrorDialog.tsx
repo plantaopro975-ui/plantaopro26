@@ -180,7 +180,7 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
         
         {/* Content */}
         <div className={cn("p-5", headerBg)}>
-          <DialogHeader className="space-y-4">
+          <div className="space-y-4">
             <div className="flex items-start gap-4">
               {/* Icon with glow effect */}
               <div className={cn(
@@ -203,12 +203,12 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
               </div>
               
               <div className="flex-1 space-y-2 pt-1">
-                <DialogTitle className={cn(
+                <h2 className={cn(
                   "text-xl font-bold text-left tracking-wide",
                   iconColor
                 )}>
                   {title}
-                </DialogTitle>
+                </h2>
                 
                 {/* Status indicator */}
                 <div className={cn(
@@ -224,14 +224,14 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
             </div>
             
             {/* Message box */}
-            <DialogDescription className={cn(
+            <p className={cn(
               "text-sm leading-relaxed whitespace-pre-line",
               "text-slate-200 bg-slate-800/60 p-4 rounded-xl",
               "border border-slate-700/50 backdrop-blur-sm"
             )}>
               {message}
-            </DialogDescription>
-          </DialogHeader>
+            </p>
+          </div>
           
           {/* Action button */}
           <div className="flex justify-end pt-5">
