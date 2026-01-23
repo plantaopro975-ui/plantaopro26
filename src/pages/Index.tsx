@@ -1203,74 +1203,74 @@ export default function Index() {
         </div>
       </footer>
 
-      {/* CPF Check Dialog - Compact Professional */}
+      {/* CPF Check Dialog - Professional & Larger */}
       <Dialog open={showCpfCheck} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border border-primary/30 w-[90vw] max-w-[340px] shadow-xl shadow-primary/10 p-4">
-          {/* Logo - Compacto */}
-          <div className="text-center py-1.5">
+        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border-2 border-primary/30 w-[92vw] max-w-[380px] shadow-xl shadow-primary/10 p-5">
+          {/* Logo */}
+          <div className="text-center py-2">
             <img 
               src={logoShield} 
               alt="Plantão Pro" 
-              className="w-12 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(var(--primary),0.35)]"
+              className="w-14 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(var(--primary),0.35)]"
             />
           </div>
           
-          <DialogHeader className="pb-2 border-b border-border/40">
-            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-foreground justify-center">
+          <DialogHeader className="pb-3 border-b border-border/40">
+            <DialogTitle className="flex items-center gap-2.5 text-xl font-bold text-foreground justify-center">
               {currentTeamConfig && (
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30">
-                  <currentTeamConfig.icon className={`h-4 w-4 ${currentTeamConfig.color}`} />
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30">
+                  <currentTeamConfig.icon className={`h-5 w-5 ${currentTeamConfig.color}`} />
                 </div>
               )}
               <span>Equipe {selectedTeam}</span>
             </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground mt-1 text-center">
+            <DialogDescription className="text-base text-muted-foreground mt-1.5 text-center">
               Digite seu CPF para acessar
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-3 pt-2">
-            <div className="space-y-1.5">
-              <Label className="text-sm font-semibold text-foreground">CPF</Label>
+          <div className="space-y-4 pt-3">
+            <div className="space-y-2">
+              <Label className="text-base font-semibold text-foreground">CPF</Label>
               <div className="relative">
                 <Input
                   value={checkCpf}
                   onChange={(e) => handleCpfInputChange(e.target.value)}
                   placeholder="000.000.000-00"
-                  className="bg-slate-800/80 border border-slate-600 text-white text-lg h-12 text-center tracking-widest font-mono focus:border-primary/60 transition-colors"
+                  className="bg-slate-800/80 border-2 border-slate-600 text-white text-xl h-14 text-center tracking-widest font-mono focus:border-primary/60 transition-colors"
                   maxLength={14}
                 />
                 {isSearchingAgent && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
                   </div>
                 )}
               </div>
             </div>
             
-            {/* Compact found agent info */}
+            {/* Found agent info */}
             {foundAgent && (
-              <div className={`p-3 rounded-lg border animate-fade-in ${
+              <div className={`p-4 rounded-lg border-2 animate-fade-in ${
                 foundAgent.team && foundAgent.team !== selectedTeam 
                   ? 'bg-red-500/15 border-red-500/40' 
                   : 'bg-green-500/15 border-green-500/40'
               }`}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {foundAgent.team && foundAgent.team !== selectedTeam ? (
                     <>
-                      <AlertTriangle className="h-4 w-4 text-red-400 shrink-0" />
+                      <AlertTriangle className="h-5 w-5 text-red-400 shrink-0" />
                       <div className="min-w-0">
-                        <span className="font-bold text-red-400 text-sm block">EQUIPE INCORRETA</span>
-                        <span className="text-red-300/80 text-xs">Você pertence à {foundAgent.team}</span>
+                        <span className="font-bold text-red-400 text-base block">EQUIPE INCORRETA</span>
+                        <span className="text-red-300/80 text-sm">Você pertence à {foundAgent.team}</span>
                       </div>
                     </>
                   ) : (
                     <>
-                      <UserCheck className="h-4 w-4 text-green-400 shrink-0" />
+                      <UserCheck className="h-5 w-5 text-green-400 shrink-0" />
                       <div className="min-w-0">
-                        <span className="font-bold text-green-400 text-sm block truncate">{foundAgent.name}</span>
+                        <span className="font-bold text-green-400 text-base block truncate">{foundAgent.name}</span>
                         {foundAgent.team && (
-                          <span className="text-green-300/80 text-xs">Equipe {foundAgent.team}</span>
+                          <span className="text-green-300/80 text-sm">Equipe {foundAgent.team}</span>
                         )}
                       </div>
                     </>
@@ -1280,10 +1280,10 @@ export default function Index() {
             )}
             
             {checkCpf.replace(/\D/g, '').length === 11 && !foundAgent && !isSearchingAgent && (
-              <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/30 animate-fade-in">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-400" />
-                  <span className="text-amber-400 font-medium text-sm">CPF não cadastrado</span>
+              <div className="p-4 bg-amber-500/10 rounded-lg border-2 border-amber-500/30 animate-fade-in">
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="h-5 w-5 text-amber-400" />
+                  <span className="text-amber-400 font-semibold text-base">CPF não cadastrado</span>
                 </div>
               </div>
             )}
@@ -1291,78 +1291,78 @@ export default function Index() {
             <Button
               onClick={handleCheckCpf}
               disabled={isCheckingCpf || checkCpf.replace(/\D/g, '').length !== 11}
-              className="w-full h-11 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-base shadow-lg shadow-amber-500/20"
+              className="w-full h-13 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-lg shadow-lg shadow-amber-500/20"
             >
               {isCheckingCpf ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verificando...</>
+                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Verificando...</>
               ) : foundAgent ? (
-                <><Lock className="mr-2 h-4 w-4" /> Fazer Login</>
+                <><Lock className="mr-2 h-5 w-5" /> Fazer Login</>
               ) : (
-                <><UserCheck className="mr-2 h-4 w-4" /> Continuar</>
+                <><UserCheck className="mr-2 h-5 w-5" /> Continuar</>
               )}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Login Dialog - Professional & Compact */}
+      {/* Login Dialog - Professional & Larger */}
       <Dialog open={showLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-blue-600/30 w-[90vw] max-w-[340px] shadow-xl shadow-blue-900/15 p-4">
-          {/* Logo - Compacto */}
-          <div className="text-center py-1.5">
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-600/30 w-[92vw] max-w-[380px] shadow-xl shadow-blue-900/15 p-5">
+          {/* Logo */}
+          <div className="text-center py-2">
             <img 
               src={logoShield} 
               alt="Plantão Pro" 
-              className="w-12 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(59,130,246,0.4)]"
+              className="w-14 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(59,130,246,0.4)]"
             />
           </div>
           
-          <DialogHeader className="pb-2 border-b border-slate-700/40">
-            <DialogTitle className="flex items-center justify-center gap-2 text-lg font-bold text-white">
+          <DialogHeader className="pb-3 border-b border-slate-700/40">
+            <DialogTitle className="flex items-center justify-center gap-2.5 text-xl font-bold text-white">
               {currentTeamConfig && selectedTeam && (
-                <div className="p-1.5 rounded-lg bg-blue-600/20 border border-blue-500/30">
-                  <currentTeamConfig.icon className={`h-4 w-4 ${currentTeamConfig.color}`} />
+                <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
+                  <currentTeamConfig.icon className={`h-5 w-5 ${currentTeamConfig.color}`} />
                 </div>
               )}
               <span>Equipe {selectedTeam}</span>
             </DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleLogin} className="space-y-3 pt-2" data-login-form="true">
-            <div className="space-y-1.5">
-              <Label className="text-sm font-semibold text-slate-300">CPF</Label>
+          <form onSubmit={handleLogin} className="space-y-4 pt-3" data-login-form="true">
+            <div className="space-y-2">
+              <Label className="text-base font-semibold text-slate-300">CPF</Label>
               <Input
                 value={loginCpf}
                 onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
                 placeholder="000.000.000-00"
-                className="bg-slate-800/80 border border-slate-600 text-white text-lg h-12 font-mono tracking-wider focus:border-blue-500/60"
+                className="bg-slate-800/80 border-2 border-slate-600 text-white text-xl h-14 font-mono tracking-wider focus:border-blue-500/60"
                 maxLength={14}
                 disabled={!!selectedTeam}
               />
-              {loginErrors.cpf && <p className="text-sm text-red-400 font-medium">{loginErrors.cpf}</p>}
+              {loginErrors.cpf && <p className="text-base text-red-400 font-medium">{loginErrors.cpf}</p>}
             </div>
             
-            <div className="space-y-1.5">
-              <Label className="text-sm font-semibold text-slate-300">Senha</Label>
+            <div className="space-y-2">
+              <Label className="text-base font-semibold text-slate-300">Senha</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="bg-slate-800/80 border border-slate-600 text-white text-lg h-12 pr-10 focus:border-blue-500/60 transition-colors"
+                  className="bg-slate-800/80 border-2 border-slate-600 text-white text-xl h-14 pr-12 focus:border-blue-500/60 transition-colors"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 p-0 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </Button>
               </div>
-              {loginErrors.password && <p className="text-sm text-red-400 font-medium">{loginErrors.password}</p>}
+              {loginErrors.password && <p className="text-base text-red-400 font-medium">{loginErrors.password}</p>}
             </div>
             
             <SavedCredentials
@@ -1387,12 +1387,12 @@ export default function Index() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-base h-11 shadow-lg shadow-blue-900/30"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-lg h-13 shadow-lg shadow-blue-900/30"
             >
               {isSubmitting ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Entrando...</>
+                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Entrando...</>
               ) : (
-                <><Lock className="mr-2 h-4 w-4" /> Entrar</>
+                <><Lock className="mr-2 h-5 w-5" /> Entrar</>
               )}
             </Button>
           </form>
