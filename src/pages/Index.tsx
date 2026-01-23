@@ -1081,63 +1081,41 @@ export default function Index() {
               </button>
             )}
             
-            {/* Admin/Master Dropdown Menu - Melhorado com descrições claras */}
+            {/* Admin/Master Dropdown - Compacto e Profissional */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-200 rounded-md bg-slate-800/40 hover:bg-slate-700/60 border border-slate-700/50 hover:border-primary/40 transition-all duration-200"
+                  className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-slate-500 hover:text-slate-300 rounded bg-slate-800/30 hover:bg-slate-700/50 border border-slate-700/30 hover:border-slate-600/50 transition-all duration-200"
                 >
-                  <Shield className="h-3 w-3" />
-                  <span>Acesso</span>
-                  <ChevronDown className="h-2.5 w-2.5 opacity-50" />
+                  <Lock className="h-2.5 w-2.5" />
+                  <ChevronDown className="h-2 w-2 opacity-60" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align="end" 
-                className="w-64 bg-slate-900/98 backdrop-blur-xl border-2 border-slate-600/50 shadow-2xl shadow-black/50 z-[100] p-1.5"
+                className="w-44 bg-slate-900 border border-slate-700/80 shadow-xl z-[100] p-1"
               >
-                {/* Título do Menu */}
-                <div className="px-3 py-2 mb-1">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Painéis Administrativos</p>
-                </div>
-                
-                {/* Admin - Gestão Operacional */}
                 <DropdownMenuItem 
                   onClick={() => setShowAdminLogin(true)}
-                  className="flex items-start gap-3 py-3 px-3 cursor-pointer rounded-lg hover:bg-blue-500/15 focus:bg-blue-500/15 group"
+                  className="flex items-center gap-2 py-2 px-2.5 cursor-pointer rounded text-xs hover:bg-blue-500/10 focus:bg-blue-500/10 group"
                 >
-                  <div className="p-2 rounded-lg bg-blue-500/20 border border-blue-500/40 group-hover:bg-blue-500/30 transition-colors">
-                    <KeyRound className="h-4 w-4 text-blue-400" />
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-bold text-sm text-blue-400 group-hover:text-blue-300">Administrador</span>
-                    <span className="text-[10px] text-slate-400 leading-tight">
-                      Gestão de escalas, BH e supervisão de equipe
-                    </span>
-                    <span className="text-[9px] text-slate-500 mt-1 flex items-center gap-1">
-                      <Mail className="h-2.5 w-2.5" /> Login por e-mail
-                    </span>
+                  <KeyRound className="h-3.5 w-3.5 text-blue-400" />
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-blue-400 group-hover:text-blue-300">Admin</span>
+                    <span className="text-[9px] text-slate-500">Gestão operacional</span>
                   </div>
                 </DropdownMenuItem>
                 
-                <DropdownMenuSeparator className="bg-slate-700/50 my-1.5" />
+                <DropdownMenuSeparator className="bg-slate-700/50 my-0.5" />
                 
-                {/* Master - Controle Total */}
                 <DropdownMenuItem 
                   onClick={() => setShowMasterLogin(true)}
-                  className="flex items-start gap-3 py-3 px-3 cursor-pointer rounded-lg hover:bg-amber-500/15 focus:bg-amber-500/15 group"
+                  className="flex items-center gap-2 py-2 px-2.5 cursor-pointer rounded text-xs hover:bg-amber-500/10 focus:bg-amber-500/10 group"
                 >
-                  <div className="p-2 rounded-lg bg-amber-500/20 border border-amber-500/40 group-hover:bg-amber-500/30 transition-colors">
-                    <Shield className="h-4 w-4 text-amber-400" />
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-bold text-sm text-amber-400 group-hover:text-amber-300">Master</span>
-                    <span className="text-[10px] text-slate-400 leading-tight">
-                      Controle total do sistema, licenças e exclusões
-                    </span>
-                    <span className="text-[9px] text-slate-500 mt-1 flex items-center gap-1">
-                      <User className="h-2.5 w-2.5" /> Login por usuário
-                    </span>
+                  <Shield className="h-3.5 w-3.5 text-amber-400" />
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-amber-400 group-hover:text-amber-300">Master</span>
+                    <span className="text-[9px] text-slate-500">Controle total</span>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
