@@ -1,32 +1,35 @@
-<script>
-      (function() {
-        const removeLovableElements = () => {
-          // 1. Procura por qualquer link que leve ao site deles
-          const links = document.querySelectorAll('a');
-          links.forEach(link => {
-            if (link.href.includes('lovable.dev') || link.href.includes('lovable.app')) {
-              // Encontrou o link? Deleta o container inteiro onde ele está
-              let container = link.closest('div');
-              if (container) container.remove();
-              link.remove();
-            }
-          });
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>PlantaoPro - Gestão de Escalas</title>
+    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />
+    <link rel="shortcut icon" href="/favicon.ico?v=2" />
+    <link rel="apple-touch-icon" href="/icon-192.png?v=2" />
 
-          // 2. Procura por qualquer div fixada no canto inferior direito que não seja do seu app
-          const fixedDivs = document.querySelectorAll('div[style*="fixed"][style*="bottom"][style*="right"]');
-          fixedDivs.forEach(div => {
-            if (div.innerHTML.includes('svg') || div.shadowRoot) {
-              div.remove();
-            }
-          });
-        };
+    <meta name="description" content="Sistema completo para gestão de escalas e plantões." />
+    <meta name="theme-color" content="#1BA9D2" />
+    
+    <link rel="manifest" href="/manifest.json?v=2" />
 
-        // Executa em loop constante nos primeiros 10 segundos
-        const interval = setInterval(removeLovableElements, 100);
-        setTimeout(() => clearInterval(interval), 10000); 
+    <style>
+      html, body, #root { background-color: #030712; min-height: 100vh; }
+      /* CSS emergencial para o selo */
+      #lovable-badge, .lovable-badge, a[href*="lovable.dev"] { display: none !important; visibility: hidden !important; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
 
-        // Monitor de mudanças na página (MutationObserver)
-        const observer = new MutationObserver(removeLovableElements);
-        observer.observe(document.documentElement, { childList: true, subtree: true });
-      })();
+    <script>
+      // Script para remover o selo via JavaScript
+      const clean = () => {
+        document.querySelectorAll('#lovable-badge, a[href*="lovable.dev"], img[src*="lovable"]').forEach(el => el.remove());
+      };
+      setInterval(clean, 500);
     </script>
+  </body>
+</html>
