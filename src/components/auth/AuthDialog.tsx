@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import logoShield from '@/assets/logo-shield.png';
 
@@ -98,6 +98,10 @@ export function AuthDialog({
           variant === 'register' && "max-h-[90vh] overflow-y-auto"
         )}
       >
+        {/* A11y: Radix requires DialogTitle/Description inside DialogContent */}
+        <DialogTitle className="sr-only">{title}</DialogTitle>
+        <DialogDescription className="sr-only">{subtitle || title}</DialogDescription>
+
         {/* Animated accent line at top */}
         <div className={cn(
           "h-1.5 w-full bg-gradient-to-r",
