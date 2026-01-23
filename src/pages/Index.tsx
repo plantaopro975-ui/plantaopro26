@@ -29,7 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { HomeAudioPlayer } from '@/components/HomeAudioPlayer';
+import { HomeMediaPlayer } from '@/components/HomeMediaPlayer';
 import { DeveloperFooter } from '@/components/DeveloperFooter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -1271,7 +1271,7 @@ export default function Index() {
                 </span>
               </div>
             </div>
-            <HomeAudioPlayer />
+            <HomeMediaPlayer />
             
             {getSavedCredentials().length > 0 && (
               <button
