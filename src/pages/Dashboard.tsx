@@ -14,6 +14,7 @@ import { OvertimeChart } from '@/components/dashboard/OvertimeChart';
 import { ShiftConflictsBanner } from '@/components/dashboard/ShiftConflictsBanner';
 import { useShiftConflictDetection } from '@/hooks/useShiftConflictDetection';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
+import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { Users, Clock, Calendar, Building2, Loader2, ArrowLeft, LayoutDashboard, Settings, MessageSquare, FileText, Home, LogOut } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -203,6 +204,8 @@ export default function Dashboard() {
               {/* Overtime Chart */}
               <OvertimeChart />
 
+              {/* Footer Copyright */}
+              <CopyrightFooter className="border-t border-border/30 mt-4" />
             </div>
           </main>
         </div>

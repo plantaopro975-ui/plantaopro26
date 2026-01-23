@@ -1744,31 +1744,27 @@ export default function Index() {
                 </CardContent>
               </Card>
 
-              {/* Contact */}
+              {/* Contact - Apenas email do app */}
               <div className="text-center">
                 <h4 className="text-sm font-semibold text-foreground mb-2">Contato</h4>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-                  <a 
-                    href="mailto:francdenisbr@gmail.com"
-                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg bg-muted/30 hover:bg-muted/50"
-                  >
-                    <Mail className="h-3.5 w-3.5" />
-                    francdenisbr@gmail.com
-                  </a>
-                  <a 
-                    href="mailto:plantaopro@proton.me"
-                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg bg-muted/30 hover:bg-muted/50"
-                  >
-                    <Mail className="h-3.5 w-3.5" />
-                    plantaopro@proton.me
-                  </a>
-                </div>
+                <a 
+                  href="mailto:plantaopro@proton.me"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg bg-muted/30 hover:bg-muted/50"
+                >
+                  <Mail className="h-3.5 w-3.5" />
+                  plantaopro@proton.me
+                </a>
               </div>
 
-              {/* Footer */}
-              <div className="mt-6 pt-4 border-t border-border/30 text-center">
-                <p className="text-[10px] text-muted-foreground/60">
-                  © {new Date().getFullYear()} PlantãoPro • Desenvolvido para a Segurança Pública brasileira
+              {/* Footer com desenvolvedor */}
+              <div className="mt-6 pt-4 border-t border-border/30 text-center space-y-1">
+                <p className="text-[10px] text-muted-foreground/80 flex items-center justify-center gap-1.5">
+                  <span className="font-bold bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">FRANC D'NIS</span>
+                  <span className="text-muted-foreground/50">•</span>
+                  <span>Feijó/AC</span>
+                </p>
+                <p className="text-[9px] text-muted-foreground/50">
+                  © {new Date().getFullYear()} PlantãoPro
                 </p>
               </div>
             </div>

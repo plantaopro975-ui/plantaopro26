@@ -187,12 +187,6 @@ export default function About() {
               
               <div className="space-y-2">
                 <a 
-                  href="mailto:francdenisbr@gmail.com"
-                  className="block rounded-lg bg-secondary/50 px-4 py-2.5 font-mono text-sm text-foreground transition-colors hover:bg-secondary"
-                >
-                  francdenisbr@gmail.com
-                </a>
-                <a 
                   href="mailto:plantaopro@proton.me"
                   className="block rounded-lg bg-secondary/50 px-4 py-2.5 font-mono text-sm text-foreground transition-colors hover:bg-secondary"
                 >
@@ -203,10 +197,14 @@ export default function About() {
           </Card>
         </section>
 
-        {/* Footer */}
-        <footer className="mt-12 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} PlantãoPro. Todos os direitos reservados.</p>
-          <p className="mt-1">Desenvolvido com dedicação para a Segurança Pública brasileira.</p>
+        {/* Footer com desenvolvedor */}
+        <footer className="mt-12 text-center space-y-2">
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
+            <span className="font-black bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent tracking-wide">FRANC D'NIS</span>
+            <span className="text-muted-foreground/40">|</span>
+            <span className="text-muted-foreground/70">Feijó/AC</span>
+          </p>
+          <p className="text-[10px] text-muted-foreground/50">© {new Date().getFullYear()} PlantãoPro</p>
         </footer>
       </main>
     </div>
