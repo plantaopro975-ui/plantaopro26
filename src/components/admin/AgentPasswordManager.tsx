@@ -68,15 +68,22 @@ export function AgentPasswordManager({ agent, onSuccess }: AgentPasswordManagerP
 
     setIsLoading(true);
     try {
-      // Get the agent's email for auth update
-      const agentEmail = agent.email || `${agent.cpf}@agent.plantaopro.com`;
-      
-      // Note: This requires admin privileges. In production, use a secure edge function
-      // For now, we'll log the password change request
-      await supabase.from('access_logs').insert({
-        agent_id: agent.id,
-        action: 'password_reset_by_admin',
+      // Use the admin-operations edge function to reset password securely
+      const { adminClient } = await import('@/lib/adminClient');
+      await adminClient.resetPassword({ 
+        agentId: agent.id, 
+        newPassword 
       });
+
+      // Log the action (best-effort)
+      try {
+        await supabase.from('access_logs').insert({
+          agent_id: agent.id,
+          action: 'password_reset_by_admin',
+        });
+      } catch {
+        // ignore logging errors
+      }
 
       toast({ 
         title: 'Senha Redefinida', 
