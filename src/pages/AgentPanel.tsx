@@ -257,45 +257,77 @@ export default function AgentPanel() {
 
 
   // Show loading while auth is hydrating - AFTER all hooks
+  // REDESIGN: Ultra-professional loading screen
   if (isLoading || isLoadingAgent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative">
+            <div className="h-16 w-16 rounded-full border-4 border-zinc-700 border-t-cyan-500 animate-spin" />
+            <div className="absolute inset-0 h-16 w-16 rounded-full border-4 border-transparent border-b-cyan-400/50 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+          </div>
+          <p className="text-zinc-400 font-medium tracking-wide text-sm uppercase">Inicializando sistema...</p>
+        </div>
       </div>
     );
   }
 
   // While redirecting unauthenticated users, show a stable loading state
+  // REDESIGN: Professional session verification UI
   if (!user && !masterSession) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="text-center space-y-3">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-500 mx-auto" />
-          <p className="text-slate-400 text-sm">
-            {isVerifyingSession
-              ? 'Verificando sessão…'
-              : sessionMissing
-                ? 'Sessão não encontrada.'
-                : 'Carregando…'}
-          </p>
-
-          {sessionMissing && (
-            <div className="flex justify-center gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => navigate('/', { replace: true })}
-                className="border-slate-600 hover:bg-slate-800"
-              >
-                Voltar ao início
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => window.location.reload()}
-              >
-                Tentar novamente
-              </Button>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
+        <div className="max-w-sm w-full bg-zinc-900/80 backdrop-blur-xl rounded-2xl border border-zinc-800 p-8 shadow-2xl">
+          <div className="flex flex-col items-center gap-6">
+            {/* Icon */}
+            <div className={`p-4 rounded-2xl ${sessionMissing ? 'bg-rose-500/10 border border-rose-500/30' : 'bg-cyan-500/10 border border-cyan-500/30'}`}>
+              {sessionMissing ? (
+                <Shield className="h-10 w-10 text-rose-400" />
+              ) : (
+                <div className="relative">
+                  <div className="h-10 w-10 rounded-full border-3 border-zinc-600 border-t-cyan-400 animate-spin" />
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Status Text */}
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-semibold text-zinc-100">
+                {isVerifyingSession
+                  ? 'Verificando Sessão'
+                  : sessionMissing
+                    ? 'Sessão Expirada'
+                    : 'Carregando'}
+              </h3>
+              <p className="text-zinc-500 text-sm">
+                {isVerifyingSession
+                  ? 'Aguarde enquanto validamos sua autenticação...'
+                  : sessionMissing
+                    ? 'Sua sessão expirou ou não foi encontrada.'
+                    : 'Preparando o ambiente...'}
+              </p>
+            </div>
+
+            {/* Action Buttons - Only show when session is missing */}
+            {sessionMissing && (
+              <div className="flex flex-col w-full gap-3 pt-2">
+                <Button
+                  onClick={() => window.location.reload()}
+                  className="w-full h-12 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl shadow-lg shadow-cyan-500/20 transition-all"
+                >
+                  <Zap className="h-4 w-4 mr-2" />
+                  Tentar Novamente
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/', { replace: true })}
+                  className="w-full h-12 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-xl"
+                >
+                  Voltar ao Início
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -305,10 +337,15 @@ export default function AgentPanel() {
   // para evitar flash da tela de erro
   if (user && isAdmin && !agent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="text-center space-y-3">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto" />
-          <p className="text-slate-400 text-sm">Redirecionando para painel administrativo...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+        <div className="flex flex-col items-center gap-5">
+          <div className="p-4 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl">
+            <Shield className="h-10 w-10 text-indigo-400" />
+          </div>
+          <div className="text-center space-y-1">
+            <p className="text-zinc-200 font-medium">Acesso Administrativo</p>
+            <p className="text-zinc-500 text-sm">Redirecionando para o painel...</p>
+          </div>
         </div>
       </div>
     );
@@ -317,38 +354,43 @@ export default function AgentPanel() {
   // Apenas bloquear se o cadastro foi rejeitado ou se is_active=false
   // REMOVIDO: Verificação de approval_status='pending' - usuários entram direto após cadastro
   if (agent && (agent.approval_status === 'rejected' || agent.is_active === false)) {
-    const statusTitle =
-      agent.approval_status === 'rejected'
-        ? 'Cadastro rejeitado'
-        : 'Acesso bloqueado';
-
-    const statusMessage =
-      agent.approval_status === 'rejected'
-        ? 'Seu cadastro foi rejeitado pela administração. Entre em contato com a coordenação para regularizar.'
-        : 'Seu acesso está desativado no momento. Procure a administração.';
+    const isRejected = agent.approval_status === 'rejected';
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 p-6">
-        <div className="max-w-md w-full rounded-xl border border-slate-700 bg-slate-800/50 p-6 text-center space-y-4">
-          <h1 className="text-xl font-bold text-white">{statusTitle}</h1>
-          <p className="text-slate-300 text-sm">{statusMessage}</p>
-          <div className="flex gap-2 justify-center">
-            <Button
-              variant="outline"
-              onClick={() => window.location.reload()}
-              className="border-slate-600 hover:bg-slate-800"
-            >
-              Recarregar
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate('/');
-              }}
-            >
-              Sair
-            </Button>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
+        <div className="max-w-md w-full bg-zinc-900/80 backdrop-blur-xl rounded-2xl border border-rose-500/30 p-8 shadow-2xl">
+          <div className="flex flex-col items-center gap-6">
+            <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl">
+              <Shield className="h-10 w-10 text-rose-400" />
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold text-zinc-100">
+                {isRejected ? 'Cadastro Rejeitado' : 'Acesso Bloqueado'}
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                {isRejected
+                  ? 'Seu cadastro foi rejeitado pela administração. Entre em contato com a coordenação.'
+                  : 'Seu acesso está temporariamente desativado. Procure a administração.'}
+              </p>
+            </div>
+            <div className="flex flex-col w-full gap-3 pt-2">
+              <Button
+                onClick={() => window.location.reload()}
+                className="w-full h-12 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-medium rounded-xl border border-zinc-700"
+              >
+                Recarregar Página
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  navigate('/');
+                }}
+                className="w-full h-12 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl"
+              >
+                Encerrar Sessão
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -359,29 +401,36 @@ export default function AgentPanel() {
   // Mas apenas para usuários normais, não admins
   if (!agent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 p-6">
-        <div className="max-w-md w-full rounded-xl border border-slate-700 bg-slate-800/50 p-6 text-center space-y-4">
-          <h1 className="text-xl font-bold text-white">Perfil não carregou</h1>
-          <p className="text-slate-300 text-sm">
-            Não foi possível localizar seus dados de agente no momento. Estamos tentando novamente automaticamente.
-          </p>
-          <div className="flex gap-2 justify-center">
-            <Button
-              variant="outline"
-              onClick={() => window.location.reload()}
-              className="border-slate-600 hover:bg-slate-800"
-            >
-              Recarregar
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate('/');
-              }}
-            >
-              Sair
-            </Button>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
+        <div className="max-w-md w-full bg-zinc-900/80 backdrop-blur-xl rounded-2xl border border-amber-500/30 p-8 shadow-2xl">
+          <div className="flex flex-col items-center gap-6">
+            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
+              <User className="h-10 w-10 text-amber-400" />
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold text-zinc-100">Perfil Não Encontrado</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Não foi possível carregar seus dados. O sistema está tentando reconectar automaticamente.
+              </p>
+            </div>
+            <div className="flex flex-col w-full gap-3 pt-2">
+              <Button
+                onClick={() => window.location.reload()}
+                className="w-full h-12 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/20"
+              >
+                Tentar Novamente
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  navigate('/');
+                }}
+                className="w-full h-12 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-xl"
+              >
+                Encerrar Sessão
+              </Button>
+            </div>
           </div>
         </div>
       </div>
