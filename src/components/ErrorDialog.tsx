@@ -152,7 +152,7 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent 
         className={cn(
-          "sm:max-w-md p-0 gap-0 border-2 overflow-hidden",
+          "w-[94vw] max-w-lg p-0 gap-0 border-2 overflow-hidden",
           "bg-slate-900/98 backdrop-blur-xl",
           borderColor,
           `shadow-[0_0_40px_rgba(var(--${accentColor}-rgb,245,158,11),0.15)]`
@@ -160,37 +160,37 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
       >
         {/* Stylish Header Bar */}
         <div className={cn(
-          "px-4 py-2.5 flex items-center gap-3 border-b",
+          "px-5 py-3.5 flex items-center gap-3 border-b",
           `border-${accentColor}-500/30`,
           `bg-gradient-to-r ${headerBar}`
         )}>
           <div className="relative">
-            <HeaderIcon className="w-5 h-5 text-white drop-shadow-lg" />
-            <Sparkles className="absolute -top-1 -right-1 w-2.5 h-2.5 text-white/80 animate-pulse" />
+            <HeaderIcon className="w-6 h-6 text-white drop-shadow-lg" />
+            <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-white/80 animate-pulse" />
           </div>
-          <span className="text-sm font-bold text-white uppercase tracking-widest drop-shadow-sm">
+          <span className="text-base font-bold text-white uppercase tracking-widest drop-shadow-sm">
             {headerText}
           </span>
           <div className="flex-1" />
-          <div className="flex gap-1.5">
-            <div className={cn("w-2 h-2 rounded-full animate-pulse", `bg-white/80`)} />
-            <div className={cn("w-2 h-2 rounded-full animate-pulse delay-150", `bg-white/60`)} />
+          <div className="flex gap-2">
+            <div className={cn("w-2.5 h-2.5 rounded-full animate-pulse", `bg-white/80`)} />
+            <div className={cn("w-2.5 h-2.5 rounded-full animate-pulse delay-150", `bg-white/60`)} />
           </div>
         </div>
         
         {/* Content */}
-        <div className={cn("p-5", headerBg)}>
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
+        <div className={cn("p-6 sm:p-7", headerBg)}>
+          <div className="space-y-5">
+            <div className="flex items-start gap-5">
               {/* Icon with glow effect */}
               <div className={cn(
-                "p-4 rounded-2xl shrink-0 border relative",
+                "p-5 rounded-2xl shrink-0 border relative",
                 iconBg,
                 `border-${accentColor}-500/30`,
                 `shadow-lg shadow-${accentColor}-500/20`
               )}>
                 <Icon className={cn(
-                  "w-8 h-8",
+                  "w-10 h-10",
                   iconColor,
                   `drop-shadow-[0_0_10px_rgba(var(--${accentColor}-rgb,245,158,11),0.5)]`
                 )} strokeWidth={2} />
@@ -202,9 +202,9 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
                 )} style={{ animationDuration: '2s' }} />
               </div>
               
-              <div className="flex-1 space-y-2 pt-1">
+              <div className="flex-1 space-y-3 pt-1">
                 <h2 className={cn(
-                  "text-xl font-bold text-left tracking-wide",
+                  "text-2xl font-bold text-left tracking-wide",
                   iconColor
                 )}>
                   {title}
@@ -212,10 +212,10 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
                 
                 {/* Status indicator */}
                 <div className={cn(
-                  "inline-flex items-center gap-2 text-xs px-2.5 py-1 rounded-full",
+                  "inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-full",
                   `bg-${accentColor}-500/10 border border-${accentColor}-500/30`
                 )}>
-                  <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", `bg-${accentColor}-400`)} />
+                  <div className={cn("w-2 h-2 rounded-full animate-pulse", `bg-${accentColor}-400`)} />
                   <span className={cn("uppercase tracking-wider font-semibold", `text-${accentColor}-400/90`)}>
                     Ação Necessária
                   </span>
@@ -225,8 +225,8 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
             
             {/* Message box */}
             <p className={cn(
-              "text-sm leading-relaxed whitespace-pre-line",
-              "text-slate-200 bg-slate-800/60 p-4 rounded-xl",
+              "text-base leading-relaxed whitespace-pre-line",
+              "text-slate-200 bg-slate-800/60 p-5 rounded-xl",
               "border border-slate-700/50 backdrop-blur-sm"
             )}>
               {message}
@@ -234,18 +234,18 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
           </div>
           
           {/* Action button */}
-          <div className="flex justify-end pt-5">
+          <div className="flex justify-end pt-6">
             <Button
               onClick={onClose}
               size="lg"
               className={cn(
-                "text-white font-bold uppercase tracking-wider px-8",
+                "text-white font-bold uppercase tracking-wider px-10 h-12 text-base",
                 "shadow-lg transition-all duration-200",
                 "hover:scale-105 hover:shadow-xl",
                 btnBg
               )}
             >
-              <Sparkles className="w-4 h-4 mr-2" />
+              <Sparkles className="w-5 h-5 mr-2" />
               Entendido
             </Button>
           </div>
@@ -253,7 +253,7 @@ export function ErrorDialog({ open, onClose, title, message, type = 'error' }: E
         
         {/* Bottom accent line */}
         <div className={cn(
-          "h-1 bg-gradient-to-r",
+          "h-1.5 bg-gradient-to-r",
           headerBar
         )} />
       </DialogContent>
