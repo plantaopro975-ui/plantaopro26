@@ -1,13 +1,35 @@
-/* Bloqueador Universal de Selos Lovable */
-[id*="lovable"], 
-[class*="lovable"],
-iframe[src*="lovable"],
-div[style*="bottom: 0"][style*="right: 0"] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    z-index: -9999 !important;
-    width: 0 !important;
-    height: 0 !important;
-}
+<script>
+      // Função para deletar qualquer rastro do selo
+      function killLovable() {
+        // Remove por ID e Classes comuns
+        const selectors = [
+          '#lovable-badge', 
+          '.lovable-badge', 
+          '[class*="lovable"]', 
+          '[id*="lovable"]',
+          'a[href*="lovable.dev"]'
+        ];
+        
+        selectors.forEach(s => {
+          document.querySelectorAll(s).forEach(el => el.remove());
+        });
+
+        // Se o selo estiver escondido em um "Shadow Root" (técnica nova deles)
+        const host = document.querySelector('div[style*="position: fixed"]');
+        if (host && host.shadowRoot) {
+           host.remove();
+        }
+      }
+
+      // Tenta remover imediatamente
+      killLovable();
+      
+      // Monitora a página por 5 segundos (tempo que o script deles leva para agir)
+      const observer = new MutationObserver(killLovable);
+      observer.observe(document.body, { childList: true, subtree: true });
+      
+      // Segurança extra: tenta de novo após 3 segundos
+      setTimeout(killLovable, 3000);
+    </script>
+  </body>
+</html>
