@@ -1018,13 +1018,13 @@ export default function Index() {
           </div>
         )}
         
-        {/* Teams Grid */}
-        <div className="w-full h-full max-w-[95vw] landscape:max-w-[90vw] sm:max-w-2xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto flex items-center justify-center">
-          <div className="w-full grid grid-cols-2 landscape:grid-cols-4 md:grid-cols-4 gap-1.5 landscape:gap-2 sm:gap-3 md:gap-4 lg:gap-5 auto-rows-fr">
+        {/* Teams Grid - Professional balanced sizing */}
+        <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
             {teams.map((team, index) => (
               <div
                 key={team}
-                className="animate-fade-in-scale"
+                className="animate-fade-in-scale flex justify-center"
                 style={{
                   animationDelay: `${400 + index * 80}ms`,
                 }}
