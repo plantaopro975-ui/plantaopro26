@@ -297,14 +297,16 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
           }}
         />
         
-        {/* Main Card */}
+        {/* Main Card - Professional proportions */}
         <div 
           className={cn(
             "relative overflow-hidden transition-all duration-300",
             themeStyle.borderRadius,
             themeStyle.borderStyle,
             themeStyle.glowEffect,
-            "w-full min-h-[120px] h-[calc(32vh-2rem)] landscape:min-h-[80px] landscape:h-[calc(70vh-4rem)] sm:min-h-[180px] sm:h-auto md:min-h-[260px] lg:min-h-[320px] xl:min-h-[380px] 2xl:min-h-[450px]"
+            // More balanced professional heights
+            "w-full aspect-[3/4] sm:aspect-[2/3] md:aspect-[3/4]",
+            "min-h-[140px] max-h-[280px] sm:min-h-[180px] sm:max-h-[320px] md:min-h-[220px] md:max-h-[380px] lg:min-h-[260px] lg:max-h-[420px]"
           )}
           style={{ 
             borderColor: teamColors[team as keyof typeof teamColors]?.primary,
