@@ -65,6 +65,10 @@ import { ErrorDialog } from '@/components/ErrorDialog';
 import { ThemedHeader } from '@/components/ThemedHeader';
 import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
 import { PendingApprovalDialog } from '@/components/PendingApprovalDialog';
+import { AuthDialog } from '@/components/auth/AuthDialog';
+import { AuthInput } from '@/components/auth/AuthInput';
+import { AuthButton } from '@/components/auth/AuthButton';
+import { TeamBadge } from '@/components/auth/TeamBadge';
 import logoShield from '@/assets/logo-shield.png';
 
 
@@ -1203,201 +1207,148 @@ export default function Index() {
         </div>
       </footer>
 
-      {/* CPF Check Dialog - Professional & Larger */}
-      <Dialog open={showCpfCheck} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border-2 border-primary/30 w-[92vw] max-w-[380px] shadow-xl shadow-primary/10 p-5">
-          {/* Logo */}
-          <div className="text-center py-2">
-            <img 
-              src={logoShield} 
-              alt="Plantão Pro" 
-              className="w-14 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(var(--primary),0.35)]"
-            />
-          </div>
+      {/* CPF Check Dialog - Ultra Professional */}
+      <AuthDialog
+        open={showCpfCheck}
+        onOpenChange={(open) => !open && closeAllDialogs()}
+        variant="check"
+        title={`Equipe ${selectedTeam}`}
+        subtitle="Digite seu CPF para identificação"
+        teamBadge={selectedTeam && <TeamBadge team={selectedTeam as any} size="lg" />}
+      >
+        <div className="space-y-5">
+          <AuthInput
+            value={checkCpf}
+            onChange={(e) => handleCpfInputChange(e.target.value)}
+            placeholder="000.000.000-00"
+            variant="centered"
+            maxLength={14}
+            rightIcon={isSearchingAgent ? (
+              <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
+            ) : undefined}
+          />
           
-          <DialogHeader className="pb-3 border-b border-border/40">
-            <DialogTitle className="flex items-center gap-2.5 text-xl font-bold text-foreground justify-center">
-              {currentTeamConfig && (
-                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30">
-                  <currentTeamConfig.icon className={`h-5 w-5 ${currentTeamConfig.color}`} />
-                </div>
-              )}
-              <span>Equipe {selectedTeam}</span>
-            </DialogTitle>
-            <DialogDescription className="text-base text-muted-foreground mt-1.5 text-center">
-              Digite seu CPF para acessar
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 pt-3">
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-foreground">CPF</Label>
-              <div className="relative">
-                <Input
-                  value={checkCpf}
-                  onChange={(e) => handleCpfInputChange(e.target.value)}
-                  placeholder="000.000.000-00"
-                  className="bg-slate-800/80 border-2 border-slate-600 text-white text-xl h-14 text-center tracking-widest font-mono focus:border-primary/60 transition-colors"
-                  maxLength={14}
-                />
-                {isSearchingAgent && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                  </div>
+          {/* Found agent feedback */}
+          {foundAgent && (
+            <div className={cn(
+              "p-4 rounded-xl border-2 animate-fade-in",
+              foundAgent.team && foundAgent.team !== selectedTeam 
+                ? 'bg-gradient-to-r from-red-500/15 to-red-600/10 border-red-500/40' 
+                : 'bg-gradient-to-r from-emerald-500/15 to-green-500/10 border-emerald-500/40'
+            )}>
+              <div className="flex items-center gap-3">
+                {foundAgent.team && foundAgent.team !== selectedTeam ? (
+                  <>
+                    <div className="p-2 rounded-lg bg-red-500/20">
+                      <AlertTriangle className="h-5 w-5 text-red-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="font-bold text-red-400 text-base block">EQUIPE INCORRETA</span>
+                      <span className="text-red-300/80 text-sm">Você pertence à {foundAgent.team}</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="p-2 rounded-lg bg-emerald-500/20">
+                      <UserCheck className="h-5 w-5 text-emerald-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="font-bold text-emerald-400 text-base block truncate">{foundAgent.name}</span>
+                      {foundAgent.team && (
+                        <span className="text-emerald-300/80 text-sm">Equipe {foundAgent.team}</span>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             </div>
-            
-            {/* Found agent info */}
-            {foundAgent && (
-              <div className={`p-4 rounded-lg border-2 animate-fade-in ${
-                foundAgent.team && foundAgent.team !== selectedTeam 
-                  ? 'bg-red-500/15 border-red-500/40' 
-                  : 'bg-green-500/15 border-green-500/40'
-              }`}>
-                <div className="flex items-center gap-3">
-                  {foundAgent.team && foundAgent.team !== selectedTeam ? (
-                    <>
-                      <AlertTriangle className="h-5 w-5 text-red-400 shrink-0" />
-                      <div className="min-w-0">
-                        <span className="font-bold text-red-400 text-base block">EQUIPE INCORRETA</span>
-                        <span className="text-red-300/80 text-sm">Você pertence à {foundAgent.team}</span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <UserCheck className="h-5 w-5 text-green-400 shrink-0" />
-                      <div className="min-w-0">
-                        <span className="font-bold text-green-400 text-base block truncate">{foundAgent.name}</span>
-                        {foundAgent.team && (
-                          <span className="text-green-300/80 text-sm">Equipe {foundAgent.team}</span>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-            
-            {checkCpf.replace(/\D/g, '').length === 11 && !foundAgent && !isSearchingAgent && (
-              <div className="p-4 bg-amber-500/10 rounded-lg border-2 border-amber-500/30 animate-fade-in">
-                <div className="flex items-center gap-3">
+          )}
+          
+          {checkCpf.replace(/\D/g, '').length === 11 && !foundAgent && !isSearchingAgent && (
+            <div className="p-4 bg-gradient-to-r from-amber-500/15 to-orange-500/10 rounded-xl border-2 border-amber-500/40 animate-fade-in">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-amber-500/20">
                   <AlertTriangle className="h-5 w-5 text-amber-400" />
-                  <span className="text-amber-400 font-semibold text-base">CPF não cadastrado</span>
                 </div>
+                <span className="text-amber-400 font-bold text-base">CPF não cadastrado</span>
               </div>
-            )}
-            
-            <Button
-              onClick={handleCheckCpf}
-              disabled={isCheckingCpf || checkCpf.replace(/\D/g, '').length !== 11}
-              className="w-full h-13 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-lg shadow-lg shadow-amber-500/20"
-            >
-              {isCheckingCpf ? (
-                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Verificando...</>
-              ) : foundAgent ? (
-                <><Lock className="mr-2 h-5 w-5" /> Fazer Login</>
-              ) : (
-                <><UserCheck className="mr-2 h-5 w-5" /> Continuar</>
-              )}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+            </div>
+          )}
+          
+          <AuthButton
+            onClick={handleCheckCpf}
+            disabled={isCheckingCpf || checkCpf.replace(/\D/g, '').length !== 11}
+            variant="master"
+            loading={isCheckingCpf}
+            loadingText="Verificando..."
+            icon={foundAgent ? <Lock className="h-5 w-5" /> : <UserCheck className="h-5 w-5" />}
+          >
+            {foundAgent ? 'Fazer Login' : 'Continuar'}
+          </AuthButton>
+        </div>
+      </AuthDialog>
 
-      {/* Login Dialog - Professional & Larger */}
-      <Dialog open={showLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-600/30 w-[92vw] max-w-[380px] shadow-xl shadow-blue-900/15 p-5">
-          {/* Logo */}
-          <div className="text-center py-2">
-            <img 
-              src={logoShield} 
-              alt="Plantão Pro" 
-              className="w-14 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(59,130,246,0.4)]"
-            />
+      {/* Login Dialog - Ultra Professional */}
+      <AuthDialog
+        open={showLogin}
+        onOpenChange={(open) => !open && closeAllDialogs()}
+        variant="agent"
+        title={`Equipe ${selectedTeam}`}
+        subtitle="Autenticação de Agente"
+        teamBadge={selectedTeam && <TeamBadge team={selectedTeam as any} size="md" />}
+      >
+        <form onSubmit={handleLogin} className="space-y-5" data-login-form="true">
+          <AuthInput
+            label="CPF"
+            value={loginCpf}
+            onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
+            placeholder="000.000.000-00"
+            variant="centered"
+            maxLength={14}
+            disabled={!!selectedTeam}
+            error={loginErrors.cpf}
+          />
+          
+          <AuthInput
+            label="Senha"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            placeholder="••••••••"
+            isPassword
+            error={loginErrors.password}
+          />
+          
+          <SavedCredentials
+            onSelectCredential={(cpf, savedPassword) => {
+              setLoginCpf(formatCPF(cpf));
+              if (savedPassword) {
+                setLoginPassword(savedPassword);
+              }
+            }}
+            onSaveChange={(cpf, pwd) => {
+              setSaveCpfEnabled(cpf);
+              setSavePasswordEnabled(pwd);
+            }}
+            saveCpf={saveCpfEnabled}
+            savePassword={savePasswordEnabled}
+          />
+          
+          <div className="flex items-center justify-between pt-1">
+            <ForgotPasswordDialog />
           </div>
           
-          <DialogHeader className="pb-3 border-b border-slate-700/40">
-            <DialogTitle className="flex items-center justify-center gap-2.5 text-xl font-bold text-white">
-              {currentTeamConfig && selectedTeam && (
-                <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-500/30">
-                  <currentTeamConfig.icon className={`h-5 w-5 ${currentTeamConfig.color}`} />
-                </div>
-              )}
-              <span>Equipe {selectedTeam}</span>
-            </DialogTitle>
-          </DialogHeader>
-
-          <form onSubmit={handleLogin} className="space-y-4 pt-3" data-login-form="true">
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">CPF</Label>
-              <Input
-                value={loginCpf}
-                onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
-                placeholder="000.000.000-00"
-                className="bg-slate-800/80 border-2 border-slate-600 text-white text-xl h-14 font-mono tracking-wider focus:border-blue-500/60"
-                maxLength={14}
-                disabled={!!selectedTeam}
-              />
-              {loginErrors.cpf && <p className="text-base text-red-400 font-medium">{loginErrors.cpf}</p>}
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">Senha</Label>
-              <div className="relative">
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="bg-slate-800/80 border-2 border-slate-600 text-white text-xl h-14 pr-12 focus:border-blue-500/60 transition-colors"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </Button>
-              </div>
-              {loginErrors.password && <p className="text-base text-red-400 font-medium">{loginErrors.password}</p>}
-            </div>
-            
-            <SavedCredentials
-              onSelectCredential={(cpf, savedPassword) => {
-                setLoginCpf(formatCPF(cpf));
-                if (savedPassword) {
-                  setLoginPassword(savedPassword);
-                }
-              }}
-              onSaveChange={(cpf, pwd) => {
-                setSaveCpfEnabled(cpf);
-                setSavePasswordEnabled(pwd);
-              }}
-              saveCpf={saveCpfEnabled}
-              savePassword={savePasswordEnabled}
-            />
-            
-            <div className="flex items-center justify-between pt-1">
-              <ForgotPasswordDialog />
-            </div>
-            
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-lg h-13 shadow-lg shadow-blue-900/30"
-            >
-              {isSubmitting ? (
-                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Entrando...</>
-              ) : (
-                <><Lock className="mr-2 h-5 w-5" /> Entrar</>
-              )}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+          <AuthButton
+            type="submit"
+            disabled={isSubmitting}
+            variant="primary"
+            loading={isSubmitting}
+            loadingText="Entrando..."
+            icon={<Lock className="h-5 w-5" />}
+          >
+            Entrar
+          </AuthButton>
+        </form>
+      </AuthDialog>
 
       {/* Unsaved Changes Dialog */}
       <UnsavedChangesDialog
@@ -1408,386 +1359,242 @@ export default function Index() {
         showSaveOption={false}
       />
 
-      {/* Registration Dialog - Professional & Larger */}
-      <Dialog open={showRegistration} onOpenChange={(open) => !open && safeCloseRegistration()}>
-        <DialogContent className={cn(
-          "bg-gradient-to-br from-slate-900 via-slate-900/98 to-slate-950",
-          "border-2 border-cyan-500/40 shadow-2xl shadow-cyan-900/20",
-          // Professional sizing - LARGER
-          "w-[94vw] max-w-[420px]",
-          "max-h-[88vh] overflow-y-auto",
-          "p-6"
-        )}>
-          <DialogHeader className="pb-4 border-b border-slate-700/50">
-            <DialogTitle className="flex items-center gap-3 text-xl font-bold text-foreground">
-              {currentTeamConfig && (
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/25 to-cyan-600/15 border border-cyan-500/40 shadow-lg shadow-cyan-500/10">
-                  <currentTeamConfig.icon className={`h-6 w-6 ${currentTeamConfig.color}`} />
-                </div>
-              )}
-              <div>
-                <span className="block text-cyan-100">Cadastro - {selectedTeam}</span>
-                <span className="text-sm font-medium text-cyan-400/80">Novo Agente</span>
-              </div>
-            </DialogTitle>
-          </DialogHeader>
-
-          {/* Alert */}
-          <div className="p-4 bg-amber-500/10 rounded-lg border-2 border-amber-500/30 mt-4">
+      {/* Registration Dialog - Ultra Professional */}
+      <AuthDialog
+        open={showRegistration}
+        onOpenChange={(open) => !open && safeCloseRegistration()}
+        variant="register"
+        title={`Cadastro - ${selectedTeam}`}
+        subtitle="Novo Agente"
+        teamBadge={selectedTeam && <TeamBadge team={selectedTeam as any} size="md" />}
+      >
+        {/* Info alerts */}
+        <div className="space-y-3 mb-6">
+          <div className="p-4 bg-gradient-to-r from-amber-500/15 to-orange-500/10 rounded-xl border-2 border-amber-500/40">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0" />
-              <p className="text-amber-300/90 text-sm font-medium">
-                <strong>CPF</strong> será seu usuário de acesso
+              <div className="p-2 rounded-lg bg-amber-500/20">
+                <AlertTriangle className="h-5 w-5 text-amber-400" />
+              </div>
+              <p className="text-amber-300/90 text-sm font-semibold">
+                <strong className="text-amber-400">CPF</strong> será seu usuário de acesso
               </p>
             </div>
           </div>
           
-          {/* Approval Warning */}
-          <div className="p-4 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-lg border-2 border-cyan-500/30 mt-3">
+          <div className="p-4 bg-gradient-to-r from-cyan-500/15 to-teal-500/10 rounded-xl border-2 border-cyan-500/40">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-cyan-500/20 border border-cyan-500/30 shrink-0">
+              <div className="p-2 rounded-lg bg-cyan-500/20 shrink-0">
                 <Clock className="h-5 w-5 text-cyan-400" />
               </div>
-              <div className="space-y-1.5">
-                <p className="text-cyan-300 text-sm font-semibold">
-                  Aprovação Necessária
-                </p>
+              <div className="space-y-1">
+                <p className="text-cyan-300 text-sm font-bold">Aprovação Necessária</p>
                 <p className="text-cyan-200/70 text-sm leading-relaxed">
-                  Seu cadastro será analisado pelo administrador antes da liberação do acesso.
+                  Cadastro será analisado antes da liberação.
                 </p>
               </div>
             </div>
           </div>
+        </div>
 
-          <form onSubmit={handleSignUp} className="space-y-5 mt-5">
-            {/* Nome */}
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Nome Completo *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/\d/g, '').toUpperCase() })}
-                placeholder="NOME COMPLETO"
-                className="h-12 text-lg uppercase"
-                required
-              />
-              {regErrors.name && <p className="text-sm text-red-400">{regErrors.name}</p>}
-            </div>
-            
-            {/* CPF e Matrícula */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-slate-300 uppercase tracking-wider">CPF *</Label>
-                <div className="relative">
-                  <Input
-                    value={formData.cpf}
-                    onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
-                    placeholder="000.000.000-00"
-                    className={cn(
-                      "h-12 text-lg pr-10",
-                      formData.cpf.replace(/\D/g, '').length === 11 && (
-                        cpfValidation.isValid && !cpfValidation.exists
-                          ? 'border-green-500 focus:border-green-500'
-                          : cpfValidation.exists
-                          ? 'border-amber-500 focus:border-amber-500'
-                          : 'border-red-500 focus:border-red-500'
-                      )
-                    )}
-                    maxLength={14}
-                    required
-                  />
-                  {formData.cpf.replace(/\D/g, '').length === 11 && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      {cpfValidation.isChecking ? (
-                        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
-                      ) : cpfValidation.isValid && !cpfValidation.exists ? (
-                        <UserCheck className="h-5 w-5 text-green-400" />
-                      ) : cpfValidation.exists ? (
-                        <AlertTriangle className="h-5 w-5 text-amber-400" />
-                      ) : (
-                        <AlertTriangle className="h-5 w-5 text-red-400" />
-                      )}
-                    </div>
-                  )}
-                </div>
-                {regErrors.cpf && <p className="text-sm text-red-400 mt-1">{regErrors.cpf}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Matrícula</Label>
-                <Input
-                  value={formData.matricula}
-                  onChange={(e) => setFormData({ ...formData, matricula: formatMatricula(e.target.value) })}
-                  placeholder="000.000.00"
-                  className="h-12 text-lg"
-                  maxLength={10}
-                />
-                {regErrors.matricula && <p className="text-sm text-red-400 mt-1">{regErrors.matricula}</p>}
-              </div>
-            </div>
-            
-            {/* Unidade */}
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Unidade *</Label>
-              <Select
-                value={formData.unit_id}
-                onValueChange={(value) => setFormData({ ...formData, unit_id: value })}
-              >
-                <SelectTrigger className="h-12 text-lg">
-                  <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione a unidade"} />
-                </SelectTrigger>
-                <SelectContent 
-                  className="max-h-48"
-                  position="popper"
-                  sideOffset={4}
-                  style={{ zIndex: 9999 }}
-                >
-                  {units.length === 0 ? (
-                    <div className="px-3 py-2 text-slate-400 text-base">Carregando...</div>
-                  ) : (
-                    units.map((unit) => (
-                      <SelectItem key={unit.id} value={unit.id} className="text-base">
-                        <span className="font-medium">{unit.name}</span>
-                        <span className="text-slate-400 ml-1.5">({unit.municipality})</span>
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-              {regErrors.unit_id && <p className="text-sm text-red-400 mt-1">{regErrors.unit_id}</p>}
-            </div>
-
-            {/* Nascimento e Telefone */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Nascimento</Label>
-                <Input
-                  value={formData.birth_date}
-                  onChange={(e) => setFormData({ ...formData, birth_date: formatBirthDate(e.target.value) })}
-                  placeholder="DD-MM-AAAA"
-                  className="h-12 text-lg"
-                  maxLength={10}
-                />
-                {calculatedAge !== null && (
-                  <p className="text-sm text-amber-400 font-semibold">{calculatedAge} anos</p>
+        <form onSubmit={handleSignUp} className="space-y-5">
+          {/* Nome */}
+          <AuthInput
+            label="Nome Completo *"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/\d/g, '').toUpperCase() })}
+            placeholder="NOME COMPLETO"
+            className="uppercase"
+            error={regErrors.name}
+          />
+          
+          {/* CPF e Matrícula */}
+          <div className="grid grid-cols-2 gap-4">
+            <AuthInput
+              label="CPF *"
+              value={formData.cpf}
+              onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
+              placeholder="000.000.000-00"
+              maxLength={14}
+              error={regErrors.cpf}
+              rightIcon={formData.cpf.replace(/\D/g, '').length === 11 ? (
+                cpfValidation.isChecking ? (
+                  <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+                ) : cpfValidation.isValid && !cpfValidation.exists ? (
+                  <UserCheck className="h-5 w-5 text-emerald-400" />
+                ) : (
+                  <AlertTriangle className="h-5 w-5 text-amber-400" />
+                )
+              ) : undefined}
+            />
+            <AuthInput
+              label="Matrícula"
+              value={formData.matricula}
+              onChange={(e) => setFormData({ ...formData, matricula: formatMatricula(e.target.value) })}
+              placeholder="000.000.00"
+              maxLength={10}
+              error={regErrors.matricula}
+            />
+          </div>
+          
+          {/* Unidade */}
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-300 uppercase tracking-wider">
+              Unidade *
+            </label>
+            <Select
+              value={formData.unit_id}
+              onValueChange={(value) => setFormData({ ...formData, unit_id: value })}
+            >
+              <SelectTrigger className="h-14 text-lg bg-slate-800/80 border-2 border-slate-700/80 hover:border-slate-600">
+                <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione a unidade"} />
+              </SelectTrigger>
+              <SelectContent className="max-h-48" position="popper" sideOffset={4} style={{ zIndex: 9999 }}>
+                {units.length === 0 ? (
+                  <div className="px-3 py-2 text-slate-400 text-base">Carregando...</div>
+                ) : (
+                  units.map((unit) => (
+                    <SelectItem key={unit.id} value={unit.id} className="text-base">
+                      <span className="font-medium">{unit.name}</span>
+                      <span className="text-slate-400 ml-1.5">({unit.municipality})</span>
+                    </SelectItem>
+                  ))
                 )}
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Telefone</Label>
-                <Input
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
-                  placeholder="(00) 00000-0000"
-                  className="h-12 text-lg"
-                  maxLength={15}
-                />
-              </div>
-            </div>
+              </SelectContent>
+            </Select>
+            {regErrors.unit_id && <p className="text-sm text-red-400">{regErrors.unit_id}</p>}
+          </div>
 
-            {/* Senhas */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Senha *</Label>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Mín. 6 caracteres"
-                    className="h-12 text-lg pr-12"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-slate-200"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </Button>
-                </div>
-                {regErrors.password && <p className="text-sm text-red-400 mt-1">{regErrors.password}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Confirmar *</Label>
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  placeholder="Repita a senha"
-                  className="h-12 text-lg"
-                  required
-                />
-                {regErrors.confirmPassword && <p className="text-sm text-red-400 mt-1">{regErrors.confirmPassword}</p>}
-              </div>
+          {/* Nascimento e Telefone */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <AuthInput
+                label="Nascimento"
+                value={formData.birth_date}
+                onChange={(e) => setFormData({ ...formData, birth_date: formatBirthDate(e.target.value) })}
+                placeholder="DD-MM-AAAA"
+                maxLength={10}
+              />
+              {calculatedAge !== null && (
+                <p className="text-sm text-amber-400 font-bold mt-2">{calculatedAge} anos</p>
+              )}
             </div>
-            
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className={cn(
-                "w-full h-14 mt-3",
-                "bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-500 hover:to-cyan-600",
-                "text-white font-bold text-lg tracking-wide",
-                "shadow-lg shadow-cyan-900/30 hover:shadow-cyan-800/40",
-                "transition-all duration-200"
-              )}
-            >
-              {isSubmitting ? (
-                <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Cadastrando...</>
-              ) : (
-                <>Cadastrar Agente</>
-              )}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+            <AuthInput
+              label="Telefone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
+              placeholder="(00) 00000-0000"
+              maxLength={15}
+            />
+          </div>
 
-      {/* Master Admin Login Dialog - Professional & Larger */}
-      <Dialog open={showMasterLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-amber-500/40 w-[92vw] max-w-[380px] shadow-2xl shadow-amber-900/20 p-5">
-          {/* Logo */}
-          <div className="text-center py-2">
-            <img 
-              src={logoShield} 
-              alt="Plantão Pro" 
-              className="w-14 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(251,191,36,0.4)]"
+          {/* Senhas */}
+          <div className="grid grid-cols-2 gap-4">
+            <AuthInput
+              label="Senha *"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              placeholder="Mín. 6 caracteres"
+              isPassword
+              error={regErrors.password}
+            />
+            <AuthInput
+              label="Confirmar *"
+              value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              placeholder="Repita a senha"
+              isPassword
+              error={regErrors.confirmPassword}
             />
           </div>
           
-          <DialogHeader className="pb-3 border-b border-slate-700/50">
-            <DialogTitle className="flex items-center justify-center gap-2.5 text-xl font-bold text-amber-400">
-              <Lock className="h-6 w-6" />
-              Acesso Master
-            </DialogTitle>
-            <DialogDescription className="text-base text-slate-400 text-center">
-              Área restrita para administradores
-            </DialogDescription>
-          </DialogHeader>
+          <AuthButton
+            type="submit"
+            disabled={isSubmitting}
+            variant="register"
+            loading={isSubmitting}
+            loadingText="Cadastrando..."
+            icon={<UserCheck className="h-5 w-5" />}
+          >
+            Cadastrar Agente
+          </AuthButton>
+        </form>
+      </AuthDialog>
 
-          <form onSubmit={handleMasterLogin} className="space-y-4 pt-3">
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">Usuário</Label>
-              <Input
-                value={masterUsername}
-                onChange={(e) => setMasterUsername(e.target.value)}
-                placeholder="plantaopro@proton.me"
-                className="bg-slate-800/80 border-2 border-slate-600 text-white h-14 text-xl focus:border-amber-500/60"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">Senha</Label>
-              <div className="relative">
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  value={masterPassword}
-                  onChange={(e) => setMasterPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="bg-slate-800/80 border-2 border-slate-600 text-white h-14 text-xl pr-12 focus:border-amber-500/60"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-white"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </Button>
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <MasterPasswordRecoveryDialog />
-            </div>
-            
-            <Button
-              type="submit"
-              disabled={isSubmitting || !masterUsername || !masterPassword}
-              className="w-full h-13 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-lg shadow-lg shadow-amber-900/30"
-            >
-              {isSubmitting ? (
-                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Autenticando...</>
-              ) : (
-                <><Lock className="mr-2 h-5 w-5" /> Acessar Painel</>
-              )}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Admin Login Dialog - Professional & Larger */}
-      <Dialog open={showAdminLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-blue-500/40 w-[92vw] max-w-[380px] shadow-2xl shadow-blue-900/20 p-5">
-          {/* Logo */}
-          <div className="text-center py-2">
-            <img 
-              src={logoShield} 
-              alt="Plantão Pro" 
-              className="w-14 h-auto mx-auto drop-shadow-[0_3px_12px_rgba(59,130,246,0.4)]"
-            />
+      {/* Master Admin Login Dialog - Ultra Professional */}
+      <AuthDialog
+        open={showMasterLogin}
+        onOpenChange={(open) => !open && closeAllDialogs()}
+        variant="master"
+        title="Acesso Master"
+        subtitle="Área restrita para administradores"
+        icon={<Lock className="h-6 w-6 text-amber-400" />}
+      >
+        <form onSubmit={handleMasterLogin} className="space-y-5">
+          <AuthInput
+            label="Usuário"
+            value={masterUsername}
+            onChange={(e) => setMasterUsername(e.target.value)}
+            placeholder="plantaopro@proton.me"
+          />
+          <AuthInput
+            label="Senha"
+            value={masterPassword}
+            onChange={(e) => setMasterPassword(e.target.value)}
+            placeholder="••••••••"
+            isPassword
+          />
+          <div className="flex justify-end">
+            <MasterPasswordRecoveryDialog />
           </div>
-          
-          <DialogHeader className="pb-3 border-b border-slate-700/50">
-            <DialogTitle className="text-xl font-bold text-blue-400 text-center flex items-center justify-center gap-2.5">
-              <Shield className="h-6 w-6" />
-              Login Administrativo
-            </DialogTitle>
-            <DialogDescription className="text-base text-slate-400 text-center">
-              Credenciais de administrador
-            </DialogDescription>
-          </DialogHeader>
+          <AuthButton
+            type="submit"
+            disabled={isSubmitting || !masterUsername || !masterPassword}
+            variant="master"
+            loading={isSubmitting}
+            loadingText="Autenticando..."
+            icon={<Lock className="h-5 w-5" />}
+          >
+            Acessar Painel
+          </AuthButton>
+        </form>
+      </AuthDialog>
 
-          <form onSubmit={handleAdminLogin} className="space-y-4 pt-3">
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">E-mail</Label>
-              <Input
-                type="email"
-                value={adminEmail}
-                onChange={(e) => setAdminEmail(e.target.value)}
-                placeholder="plantaopro@proton.me"
-                className="bg-slate-800/80 border-2 border-slate-600 text-white h-14 text-xl focus:border-blue-500/60"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-slate-300">Senha</Label>
-              <div className="relative">
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="bg-slate-800/80 border-2 border-slate-600 text-white h-14 text-xl pr-12 focus:border-blue-500/60"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-white"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </Button>
-              </div>
-            </div>
-            
-            <Button
-              type="submit"
-              disabled={isSubmitting || !adminEmail || !adminPassword}
-              className="w-full h-13 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-lg shadow-lg"
-            >
-              {isSubmitting ? (
-                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Autenticando...</>
-              ) : (
-                <><Lock className="mr-2 h-5 w-5" /> Entrar</>
-              )}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {/* Admin Login Dialog - Ultra Professional */}
+      <AuthDialog
+        open={showAdminLogin}
+        onOpenChange={(open) => !open && closeAllDialogs()}
+        variant="admin"
+        title="Login Administrativo"
+        subtitle="Credenciais de administrador"
+        icon={<Shield className="h-6 w-6 text-indigo-400" />}
+      >
+        <form onSubmit={handleAdminLogin} className="space-y-5">
+          <AuthInput
+            label="E-mail"
+            type="email"
+            value={adminEmail}
+            onChange={(e) => setAdminEmail(e.target.value)}
+            placeholder="plantaopro@proton.me"
+          />
+          <AuthInput
+            label="Senha"
+            value={adminPassword}
+            onChange={(e) => setAdminPassword(e.target.value)}
+            placeholder="••••••••"
+            isPassword
+          />
+          <AuthButton
+            type="submit"
+            disabled={isSubmitting || !adminEmail || !adminPassword}
+            variant="admin"
+            loading={isSubmitting}
+            loadingText="Autenticando..."
+            icon={<Lock className="h-5 w-5" />}
+          >
+            Entrar
+          </AuthButton>
+        </form>
+      </AuthDialog>
 
       {/* Manage Credentials Dialog */}
       <ManageCredentialsDialog 
