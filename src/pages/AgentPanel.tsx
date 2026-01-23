@@ -256,81 +256,14 @@ export default function AgentPanel() {
   }, [user, isAdmin, agent, isLoading, isLoadingAgent, navigate]);
 
 
-  // Show loading while auth is hydrating - AFTER all hooks
-  // REDESIGN: Ultra-professional loading screen
+  // Loading mínimo - apenas null enquanto carrega
   if (isLoading || isLoadingAgent) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
-        <div className="flex flex-col items-center gap-6">
-          <div className="relative">
-            <div className="h-16 w-16 rounded-full border-4 border-zinc-700 border-t-cyan-500 animate-spin" />
-            <div className="absolute inset-0 h-16 w-16 rounded-full border-4 border-transparent border-b-cyan-400/50 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-          </div>
-          <p className="text-zinc-400 font-medium tracking-wide text-sm uppercase">Inicializando sistema...</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
-  // While redirecting unauthenticated users, show a stable loading state
-  // REDESIGN: Professional session verification UI
+  // Sem sessão - retorna null (sem tela de carregamento)
   if (!user && !masterSession) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
-        <div className="max-w-sm w-full bg-zinc-900/80 backdrop-blur-xl rounded-2xl border border-zinc-800 p-8 shadow-2xl">
-          <div className="flex flex-col items-center gap-6">
-            {/* Icon */}
-            <div className={`p-4 rounded-2xl ${sessionMissing ? 'bg-rose-500/10 border border-rose-500/30' : 'bg-cyan-500/10 border border-cyan-500/30'}`}>
-              {sessionMissing ? (
-                <Shield className="h-10 w-10 text-rose-400" />
-              ) : (
-                <div className="relative">
-                  <div className="h-10 w-10 rounded-full border-3 border-zinc-600 border-t-cyan-400 animate-spin" />
-                </div>
-              )}
-            </div>
-
-            {/* Status Text */}
-            <div className="text-center space-y-2">
-              <h3 className="text-lg font-semibold text-zinc-100">
-                {isVerifyingSession
-                  ? 'Verificando Sessão'
-                  : sessionMissing
-                    ? 'Sessão Expirada'
-                    : 'Carregando'}
-              </h3>
-              <p className="text-zinc-500 text-sm">
-                {isVerifyingSession
-                  ? 'Aguarde enquanto validamos sua autenticação...'
-                  : sessionMissing
-                    ? 'Sua sessão expirou ou não foi encontrada.'
-                    : 'Preparando o ambiente...'}
-              </p>
-            </div>
-
-            {/* Action Buttons - Only show when session is missing */}
-            {sessionMissing && (
-              <div className="flex flex-col w-full gap-3 pt-2">
-                <Button
-                  onClick={() => window.location.reload()}
-                  className="w-full h-12 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl shadow-lg shadow-cyan-500/20 transition-all"
-                >
-                  <Zap className="h-4 w-4 mr-2" />
-                  Tentar Novamente
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate('/', { replace: true })}
-                  className="w-full h-12 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-xl"
-                >
-                  Voltar ao Início
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // CRÍTICO: Se é admin sem perfil de agente, mostrar loading enquanto redireciona
