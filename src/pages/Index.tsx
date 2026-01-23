@@ -538,6 +538,21 @@ export default function Index() {
       const cleanCpf = formData.cpf.replace(/\D/g, '');
       const authEmail = formData.email || `${cleanCpf}@agent.plantaopro.com`;
       
+      // CRÍTICO: Limpar possível usuário órfão em auth.users antes de registrar
+      // Isso acontece quando um registro anterior falhou no meio do processo
+      try {
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        await fetch(`${supabaseUrl}/functions/v1/admin-operations`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ action: 'cleanup_orphan_auth', cpf: cleanCpf }),
+        });
+        // Pequeno delay para garantir que a limpeza foi processada
+        await new Promise(resolve => setTimeout(resolve, 200));
+      } catch (cleanupErr) {
+        console.warn('Cleanup warning (non-fatal):', cleanupErr);
+      }
+      
       const { error: signUpError } = await signUp(
         authEmail, 
         formData.password, 
