@@ -80,16 +80,26 @@ export function QuickLoginCards({ onQuickLogin, onSelectCredential, isLoading, l
 
   return (
     <div className="w-full animate-fade-in">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-1.5">
-          <Zap className="h-3.5 w-3.5 text-amber-400" />
-          <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
-            Acesso Rápido
-          </span>
+      {/* Header with decorative line */}
+      <div className="relative mb-3">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+        </div>
+        <div className="relative flex justify-center">
+          <div className="flex items-center gap-2 px-4 py-1.5 bg-slate-900/90 rounded-full border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
+            <div className="relative">
+              <Zap className="h-4 w-4 text-emerald-400" />
+              <div className="absolute inset-0 blur-sm bg-emerald-400/50 rounded-full" />
+            </div>
+            <span className="text-xs font-bold text-emerald-300 uppercase tracking-widest">
+              Acesso Rápido
+            </span>
+          </div>
         </div>
       </div>
       
-      <div className="grid gap-2">
+      {/* Cards Container with proper constraints */}
+      <div className="space-y-2 max-w-full overflow-hidden">
         {credentials.map((cred) => {
           const canQuick = canQuickLogin(cred);
           const timeLeft = getTimeRemaining(cred);
@@ -100,25 +110,26 @@ export function QuickLoginCards({ onQuickLogin, onSelectCredential, isLoading, l
               key={cred.cpf}
               onClick={() => handleCardClick(cred)}
               className={cn(
-                "relative p-3 rounded-xl cursor-pointer transition-all duration-300 group border-2",
+                "relative p-3 rounded-xl cursor-pointer transition-all duration-300 group overflow-hidden",
+                "border-2 shadow-lg",
                 canQuick
-                  ? "bg-gradient-to-r from-emerald-950/80 to-emerald-900/50 border-emerald-500/40 hover:border-emerald-400/70 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]"
-                  : "bg-gradient-to-r from-slate-800/80 to-slate-700/50 border-slate-600/40 hover:border-slate-500/70 hover:shadow-lg",
+                  ? "bg-gradient-to-r from-emerald-950/90 via-emerald-900/70 to-emerald-950/90 border-emerald-500/50 hover:border-emerald-400/80 hover:shadow-emerald-500/30"
+                  : "bg-gradient-to-r from-slate-800/90 via-slate-700/70 to-slate-800/90 border-slate-600/50 hover:border-slate-500/80 hover:shadow-slate-500/20",
                 isThisLoading && "pointer-events-none opacity-70"
               )}
             >
-              {/* Glow effect for quick login */}
+              {/* Animated glow effect */}
               {canQuick && (
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/10 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/10 to-emerald-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               )}
               
               <div className="flex items-center gap-3 relative z-10">
                 {/* Avatar/Icon */}
                 <div className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all",
+                  "w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 border-2",
                   canQuick
-                    ? "bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/30 group-hover:scale-110"
-                    : "bg-slate-700 text-slate-400 group-hover:bg-slate-600"
+                    ? "bg-gradient-to-br from-emerald-500 to-green-600 border-emerald-400/50 text-white shadow-lg shadow-emerald-500/40 group-hover:scale-110 group-hover:rotate-3"
+                    : "bg-slate-700 border-slate-600 text-slate-400 group-hover:bg-slate-600"
                 )}>
                   {isThisLoading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -131,22 +142,22 @@ export function QuickLoginCards({ onQuickLogin, onSelectCredential, isLoading, l
                 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className={cn(
-                      "font-mono text-sm font-bold tracking-wider truncate",
-                      canQuick ? "text-emerald-300" : "text-slate-200"
+                      "font-mono text-sm font-bold tracking-wider",
+                      canQuick ? "text-emerald-200" : "text-slate-200"
                     )}>
                       {formatCPF(cred.cpf)}
                     </span>
                     {canQuick && (
-                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-bold uppercase">
-                        1-Clique
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[9px] font-bold uppercase tracking-wider shadow-inner">
+                        ⚡ 1-Clique
                       </span>
                     )}
                   </div>
                   {cred.name && (
                     <p className={cn(
-                      "text-xs truncate",
+                      "text-xs truncate mt-0.5",
                       canQuick ? "text-emerald-400/80" : "text-slate-400"
                     )}>
                       {cred.name}
@@ -155,48 +166,38 @@ export function QuickLoginCards({ onQuickLogin, onSelectCredential, isLoading, l
                 </div>
                 
                 {/* Status/Time */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   {canQuick && timeLeft && (
-                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 shadow-inner">
                       <Clock className="h-3 w-3 text-emerald-400" />
-                      <span className="text-[10px] font-bold text-emerald-300">{timeLeft}</span>
+                      <span className="text-[10px] font-bold text-emerald-300 tabular-nums">{timeLeft}</span>
                     </div>
                   )}
                   
                   {!canQuick && cred.password && (
-                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500/15 border border-amber-500/30">
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500/15 border border-amber-500/40">
                       <KeyRound className="h-3 w-3 text-amber-400" />
-                      <span className="text-[10px] text-amber-300">Expirado</span>
+                      <span className="text-[10px] text-amber-300 font-medium">Expirado</span>
                     </div>
                   )}
                   
                   {/* Remove button */}
                   <button
                     onClick={(e) => handleRemove(cred.cpf, e)}
-                    className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 text-red-400/60 hover:text-red-400 hover:bg-red-500/15 transition-all"
                     title="Remover credencial"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
-              
-              {/* Bottom hint */}
-              <div className={cn(
-                "mt-2 pt-2 border-t text-[10px] text-center transition-all",
-                canQuick
-                  ? "border-emerald-500/20 text-emerald-400/70"
-                  : "border-slate-600/30 text-slate-500"
-              )}>
-                {canQuick
-                  ? "Clique para entrar automaticamente"
-                  : "Clique para preencher CPF (senha necessária)"
-                }
-              </div>
             </div>
           );
         })}
       </div>
+      
+      {/* Bottom decorative line */}
+      <div className="mt-3 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
     </div>
   );
 }

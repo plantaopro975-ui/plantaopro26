@@ -145,6 +145,17 @@
   50% { opacity: 1; transform: scale(1.6); box-shadow: 0 0 20px rgba(234,88,12,0.8); }
 }
 
+/* Gradient Text Animation */
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
 /* ================================
    OFFLINE MODE - PREVENT PULL TO REFRESH
    ================================ */
