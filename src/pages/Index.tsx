@@ -64,6 +64,7 @@ import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
 import { ThemedHeader } from '@/components/ThemedHeader';
 import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
+import { PendingApprovalDialog } from '@/components/PendingApprovalDialog';
 import logoShield from '@/assets/logo-shield.png';
 
 
@@ -153,6 +154,12 @@ export default function Index() {
     endTime: Date;
     identifier: string;
   }>({ open: false, endTime: new Date(), identifier: '' });
+  
+  // Pending approval dialog state
+  const [pendingApprovalDialog, setPendingApprovalDialog] = useState<{
+    open: boolean;
+    agentName?: string;
+  }>({ open: false });
   
   // Real-time CPF validation state
   const [cpfValidation, setCpfValidation] = useState<{
@@ -394,11 +401,35 @@ export default function Index() {
       const cleanCpf = checkCpf.replace(/\D/g, '');
       const { data: existingAgent } = await supabase
         .from('agents')
-        .select('id, cpf, team')
+        .select('id, cpf, team, name, approval_status')
         .eq('cpf', cleanCpf)
         .maybeSingle();
 
       if (existingAgent) {
+        // Check if registration is pending approval
+        if (existingAgent.approval_status === 'pending') {
+          playSound('notification');
+          setShowCpfCheck(false);
+          setPendingApprovalDialog({
+            open: true,
+            agentName: existingAgent.name
+          });
+          return;
+        }
+        
+        // Check if registration was rejected
+        if (existingAgent.approval_status === 'rejected') {
+          playSound('access-denied');
+          setShowCpfCheck(false);
+          setErrorDialog({
+            open: true,
+            title: 'CADASTRO REJEITADO',
+            message: 'Seu cadastro foi rejeitado pelo administrador.\n\nEntre em contato com a coordenação para mais informações.',
+            type: 'error',
+          });
+          return;
+        }
+        
         // Check if agent belongs to a different team
         if (existingAgent.team && existingAgent.team !== selectedTeam) {
           // Show professional security-style warning
@@ -414,7 +445,7 @@ export default function Index() {
           // User belongs to selected team or has no team - show login
           setShowCpfCheck(false);
           setLoginCpf(checkCpf);
-          setFoundAgent({ name: foundAgent?.name || '', team: existingAgent.team });
+          setFoundAgent({ name: existingAgent.name || '', team: existingAgent.team });
           setShowLogin(true);
         }
       } else {
@@ -598,6 +629,7 @@ export default function Index() {
         email: formData.email || null,
         phone: formData.phone || null,
         address: formData.address || null,
+        approval_status: 'pending', // New registrations require admin approval
       });
 
       if (agentError) {
@@ -605,21 +637,10 @@ export default function Index() {
         throw agentError;
       }
 
-      const registeredUnitId = formData.unit_id;
       const registeredName = formData.name.toUpperCase().trim();
       
-      // Store registration timestamp and name for welcome dialog
-      localStorage.setItem('plantaopro_first_access', JSON.stringify({
-        timestamp: Date.now(),
-        name: registeredName,
-        shown: false
-      }));
-      
-      toast({
-        title: 'Cadastro Realizado!',
-        description: `Bem-vindo à equipe ${selectedTeam}!`,
-        duration: 3000,
-      });
+      // Sign out immediately - user needs admin approval before accessing
+      await supabase.auth.signOut();
 
       setFormData({
         name: '',
@@ -637,12 +658,11 @@ export default function Index() {
       setSelectedTeam(null);
       setShowRegistration(false);
       
-      // Small delay to ensure session is fully established before redirect
-      // This prevents issues where the auth state hasn't propagated yet
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Redirect to the agent panel
-      navigate('/agent-panel', { replace: true });
+      // Show pending approval dialog
+      setPendingApprovalDialog({
+        open: true,
+        agentName: registeredName
+      });
       
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -678,6 +698,35 @@ export default function Index() {
     if (Object.keys(errors).length > 0) return;
     
     setIsSubmitting(true);
+    
+    // First check if agent is approved
+    const { data: agentCheck } = await supabase
+      .from('agents')
+      .select('approval_status, name')
+      .eq('cpf', cleanCpf)
+      .maybeSingle();
+    
+    if (agentCheck?.approval_status === 'pending') {
+      setIsSubmitting(false);
+      setShowLogin(false);
+      setPendingApprovalDialog({
+        open: true,
+        agentName: agentCheck.name
+      });
+      return;
+    }
+    
+    if (agentCheck?.approval_status === 'rejected') {
+      setIsSubmitting(false);
+      setShowLogin(false);
+      setErrorDialog({
+        open: true,
+        title: 'CADASTRO REJEITADO',
+        message: 'Seu cadastro foi rejeitado pelo administrador.\n\nEntre em contato com a coordenação para mais informações.',
+        type: 'error',
+      });
+      return;
+    }
     
     const authEmail = `${cleanCpf}@agent.plantaopro.com`;
     const { error } = await signIn(authEmail, loginPassword);
@@ -1892,6 +1941,13 @@ export default function Index() {
         onClose={() => setLockoutDialog(prev => ({ ...prev, open: false }))}
         lockoutEndTime={lockoutDialog.endTime}
         identifier={lockoutDialog.identifier}
+      />
+      
+      {/* Pending Approval Dialog */}
+      <PendingApprovalDialog
+        open={pendingApprovalDialog.open}
+        onClose={() => setPendingApprovalDialog({ open: false })}
+        agentName={pendingApprovalDialog.agentName}
       />
       </div>
     </>

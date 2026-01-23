@@ -491,6 +491,9 @@ export type Database = {
         Row: {
           address: string | null
           age: number | null
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
           avatar_url: string | null
           bh_future_months_allowed: number | null
           bh_hourly_rate: number | null
@@ -516,6 +519,7 @@ export type Database = {
           name: string
           phone: string | null
           position: string | null
+          rejection_reason: string | null
           role: string | null
           team: string | null
           unblocked_at: string | null
@@ -526,6 +530,9 @@ export type Database = {
         Insert: {
           address?: string | null
           age?: number | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_url?: string | null
           bh_future_months_allowed?: number | null
           bh_hourly_rate?: number | null
@@ -551,6 +558,7 @@ export type Database = {
           name: string
           phone?: string | null
           position?: string | null
+          rejection_reason?: string | null
           role?: string | null
           team?: string | null
           unblocked_at?: string | null
@@ -561,6 +569,9 @@ export type Database = {
         Update: {
           address?: string | null
           age?: number | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_url?: string | null
           bh_future_months_allowed?: number | null
           bh_hourly_rate?: number | null
@@ -586,6 +597,7 @@ export type Database = {
           name?: string
           phone?: string | null
           position?: string | null
+          rejection_reason?: string | null
           role?: string | null
           team?: string | null
           unblocked_at?: string | null
@@ -1212,6 +1224,57 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pending_registrations_log: {
+        Row: {
+          agent_cpf: string
+          agent_id: string
+          agent_name: string
+          created_at: string | null
+          id: string
+          team: string | null
+          unit_id: string | null
+          viewed_at: string | null
+          viewed_by_admin: boolean | null
+        }
+        Insert: {
+          agent_cpf: string
+          agent_id: string
+          agent_name: string
+          created_at?: string | null
+          id?: string
+          team?: string | null
+          unit_id?: string | null
+          viewed_at?: string | null
+          viewed_by_admin?: boolean | null
+        }
+        Update: {
+          agent_cpf?: string
+          agent_id?: string
+          agent_name?: string
+          created_at?: string | null
+          id?: string
+          team?: string | null
+          unit_id?: string | null
+          viewed_at?: string | null
+          viewed_by_admin?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_registrations_log_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_registrations_log_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
             referencedColumns: ["id"]
           },
         ]
