@@ -676,27 +676,53 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
           </TooltipProvider>
         </div>
         
-        {/* Room Buttons - Compact row */}
-        <div className="mt-2 flex gap-1.5 flex-wrap">
+        {/* Room Buttons - Professional Modern Style */}
+        <div className="mt-2 flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
           {availableTypes.map((type) => {
             const config = chatRoomConfig[type];
             const isActive = chatType === type;
             
+            const buttonColors: Record<ChatType, { active: string; inactive: string; iconBg: string }> = {
+              team: {
+                active: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30',
+                inactive: 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700/80 hover:text-amber-400 border-zinc-700',
+                iconBg: 'bg-amber-500/20'
+              },
+              unit: {
+                active: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30',
+                inactive: 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700/80 hover:text-blue-400 border-zinc-700',
+                iconBg: 'bg-blue-500/20'
+              },
+              leaders: {
+                active: 'bg-gradient-to-r from-purple-500 to-violet-500 text-white shadow-lg shadow-purple-500/30',
+                inactive: 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700/80 hover:text-purple-400 border-zinc-700',
+                iconBg: 'bg-purple-500/20'
+              },
+              all: {
+                active: 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg shadow-emerald-500/30',
+                inactive: 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700/80 hover:text-emerald-400 border-zinc-700',
+                iconBg: 'bg-emerald-500/20'
+              }
+            };
+            
+            const colors = buttonColors[type];
+            
             return (
-              <Button
+              <button
                 key={type}
-                variant={isActive ? "default" : "ghost"}
-                size="sm"
+                type="button"
                 onClick={() => switchRoom(type)}
-                className={`h-7 px-2 text-[10px] ${
-                  isActive 
-                    ? 'bg-amber-500 hover:bg-amber-600 text-black' 
-                    : `text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800`
-                }`}
+                className={`
+                  flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                  transition-all duration-200 flex-shrink-0 border
+                  ${isActive ? colors.active : colors.inactive}
+                `}
               >
-                {config.icon}
-                <span className="ml-1">{config.label}</span>
-              </Button>
+                <span className={`p-1 rounded ${isActive ? 'bg-white/20' : colors.iconBg}`}>
+                  {config.icon}
+                </span>
+                <span className="whitespace-nowrap">{config.label}</span>
+              </button>
             );
           })}
         </div>

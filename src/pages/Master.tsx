@@ -662,7 +662,7 @@ export default function Master() {
               )}
             </TabsTrigger>
             <TabsTrigger value="announcements">Anúncios</TabsTrigger>
-            <TabsTrigger value="swaps">Trocas</TabsTrigger>
+            <TabsTrigger value="swaps">Permutas</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
