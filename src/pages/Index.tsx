@@ -655,6 +655,10 @@ export default function Index() {
         throw new Error('Não foi possível estabelecer a sessão. Tente novamente.');
       }
 
+      // Calcular data de expiração: 30 dias de teste gratuito
+      const trialExpiresAt = new Date();
+      trialExpiresAt.setDate(trialExpiresAt.getDate() + 30);
+
       const { error: agentError } = await supabase.from('agents').insert({
         id: sessionUserId,
         name: formData.name.toUpperCase().trim(),
@@ -667,7 +671,11 @@ export default function Index() {
         email: formData.email || null,
         phone: formData.phone || null,
         address: formData.address || null,
-        approval_status: 'pending', // New registrations require admin approval
+        approval_status: 'approved',
+        is_active: true,
+        license_status: 'trial',
+        license_expires_at: trialExpiresAt.toISOString(),
+        license_notes: 'Período de teste gratuito - 30 dias',
       });
 
       if (agentError) {
@@ -675,10 +683,8 @@ export default function Index() {
         throw agentError;
       }
 
-      const registeredName = formData.name.toUpperCase().trim();
-      
-      // Sign out immediately - user needs admin approval before accessing
-      await supabase.auth.signOut();
+      // Salvar CPF para prefill futuro
+      persistLastCpf(cleanCpf);
 
       setFormData({
         name: '',
@@ -695,12 +701,15 @@ export default function Index() {
       setCalculatedAge(null);
       setSelectedTeam(null);
       setShowRegistration(false);
-      
-      // Show pending approval dialog
-      setPendingApprovalDialog({
-        open: true,
-        agentName: registeredName
+
+      toast({
+        title: 'Cadastro concluído!',
+        description: 'Você tem 30 dias de acesso gratuito para teste.',
+        duration: 5000,
       });
+
+      // Redirecionar para painel do agente (sessão já está ativa)
+      navigate('/agent-panel', { replace: true });
       
     } catch (error: any) {
       console.error('Registration error:', error);
