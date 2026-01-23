@@ -62,6 +62,7 @@ export default function AgentPanel() {
   const [hasShifts, setHasShifts] = useState(true);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [isVerifyingSession, setIsVerifyingSession] = useState(false);
+  const [sessionMissing, setSessionMissing] = useState(false);
   
   // Shift alerts banner control
   const { isDismissed: isShiftBannerDismissed, setIsDismissed: setShiftBannerDismissed, forceShow: forceShowShiftBanner, reactivateBanner: reactivateShiftBanner } = useShiftAlertsBanner();
@@ -211,21 +212,25 @@ export default function AgentPanel() {
     // Se já teve sessão válida, NÃO redireciona - permite tempo de recuperação
     if (hadSessionRef.current) return;
     
-    // Só redireciona se realmente nunca houve usuário E não é master,
-    // MAS antes revalida a sessão diretamente para evitar falso-positivo.
+    // Se não há user/master, fazemos UMA verificação de sessão.
+    // Importante: não redirecionar automaticamente (evita loop infinito); deixa o usuário decidir.
     if (!user && !masterSession) {
       let cancelled = false;
       setIsVerifyingSession(true);
+      setSessionMissing(false);
 
-      const timer = setTimeout(async () => {
+      const timer = window.setTimeout(async () => {
         try {
           const { data } = await supabase.auth.getSession();
           const hasSession = !!data?.session;
 
-          // Se já recuperou sessão (ou o componente já marcou que teve sessão), não redireciona.
-          if (cancelled || hasSession || hadSessionRef.current) return;
+          if (cancelled) return;
+          if (hasSession || hadSessionRef.current) {
+            setSessionMissing(false);
+            return;
+          }
 
-          navigate('/', { replace: true });
+          setSessionMissing(true);
         } finally {
           if (!cancelled) setIsVerifyingSession(false);
         }
@@ -233,10 +238,13 @@ export default function AgentPanel() {
 
       return () => {
         cancelled = true;
-        clearTimeout(timer);
-        setIsVerifyingSession(false);
+        window.clearTimeout(timer);
       };
     }
+
+    // Reset se recuperou user/master
+    setSessionMissing(false);
+    setIsVerifyingSession(false);
   }, [user, masterSession, isLoading, isLoadingAgent, navigate]);
 
   // If an admin account lands here (no linked agent profile), route to the admin area instead
@@ -264,8 +272,30 @@ export default function AgentPanel() {
         <div className="text-center space-y-3">
           <Loader2 className="h-8 w-8 animate-spin text-amber-500 mx-auto" />
           <p className="text-slate-400 text-sm">
-            {isVerifyingSession ? 'Verificando sessão…' : 'Sessão não encontrada. Redirecionando…'}
+            {isVerifyingSession
+              ? 'Verificando sessão…'
+              : sessionMissing
+                ? 'Sessão não encontrada.'
+                : 'Carregando…'}
           </p>
+
+          {sessionMissing && (
+            <div className="flex justify-center gap-2 pt-1">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/', { replace: true })}
+                className="border-slate-600 hover:bg-slate-800"
+              >
+                Voltar ao início
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => window.location.reload()}
+              >
+                Tentar novamente
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
