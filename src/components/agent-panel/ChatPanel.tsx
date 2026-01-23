@@ -37,49 +37,7 @@ const bubbleStyles: Record<BubbleTheme, { own: string; other: string; ownText: s
   cyan: { own: 'bg-cyan-500', other: 'bg-slate-800', ownText: 'text-black', nameColor: 'text-cyan-300' },
 };
 
-// Floating particle component for dynamic effect
-const FloatingParticles = () => {
-  return (
-    <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
-      {/* Animated glow particles */}
-      {[...Array(12)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full opacity-30 animate-pulse"
-          style={{
-            width: `${Math.random() * 4 + 2}px`,
-            height: `${Math.random() * 4 + 2}px`,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            background: `radial-gradient(circle, rgba(45,212,191,0.8) 0%, transparent 70%)`,
-            animationDelay: `${Math.random() * 3}s`,
-            animationDuration: `${3 + Math.random() * 4}s`,
-          }}
-        />
-      ))}
-      {/* Floating lines effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent animate-pulse" 
-        style={{ animationDuration: '4s' }} 
-      />
-      {/* Subtle scan line */}
-      <div 
-        className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent"
-        style={{
-          animation: 'scanLine 8s linear infinite',
-          top: '0%',
-        }}
-      />
-      <style>{`
-        @keyframes scanLine {
-          0% { transform: translateY(0); opacity: 0; }
-          10% { opacity: 0.5; }
-          90% { opacity: 0.5; }
-          100% { transform: translateY(600px); opacity: 0; }
-        }
-      `}</style>
-    </div>
-  );
-};
+// Background is now simpler - no floating particles needed
 
 interface OnlineUser {
   id: string;
@@ -638,9 +596,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
 
   if (isLoading) {
     return (
-      <Card className="card-night-emerald bg-gradient-to-br from-[hsl(222,60%,3%)] via-[hsl(222,55%,5%)] to-[hsl(160,40%,8%)] border-3 border-emerald-500/50">
-        <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
+      <Card className="bg-zinc-900/90 border border-zinc-700/60">
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-emerald-400" />
         </CardContent>
       </Card>
     );
@@ -650,187 +608,108 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const currentConfig = chatRoomConfig[chatType];
 
   return (
-    <Card className="card-night-emerald border-3 border-emerald-500/50 h-[600px] flex flex-col transition-all duration-300 hover:border-emerald-400/70 group relative overflow-hidden">
-      {/* Background Image with Dark Overlay */}
+    <Card className="bg-zinc-900/95 border border-zinc-700/60 h-[550px] flex flex-col relative overflow-hidden">
+      {/* Background */}
       {currentBackground && (
         <div 
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-0 opacity-30"
           style={{
             backgroundImage: `url(${currentBackground})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
           }}
         />
       )}
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(220,60%,4%)/94%] via-[hsl(210,55%,6%)/90%] to-[hsl(200,40%,8%)/88%]" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-zinc-900/95 via-zinc-900/90 to-zinc-950/95" />
       
-      {/* Floating Particles Animation */}
-      <FloatingParticles />
-      
-      <CardHeader className="pb-2 border-b border-cyan-500/20 relative z-10">
+      <CardHeader className="pb-2 pt-3 px-3 border-b border-zinc-700/50 relative z-10">
+        {/* Top Row: Title + Online Badge */}
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-3 text-lg">
-            <div className="p-2 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-500/30 transition-colors">
-              <MessageCircle className="h-6 w-6 text-emerald-400" />
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-emerald-500/15 border border-emerald-500/30">
+              <MessageCircle className="h-4 w-4 text-emerald-400" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-emerald-300 to-emerald-500 bg-clip-text text-transparent">Chat</span>
-            <Badge variant="outline" className={`text-sm font-semibold ${currentConfig.color} border-current px-3 py-1`}>
+            <span className="text-sm font-semibold text-zinc-100">Chat</span>
+            <Badge className={`text-[10px] font-medium ${currentConfig.color} border-current/30 px-2 py-0 h-5`}>
               {currentConfig.label}
             </Badge>
-          </CardTitle>
+          </div>
           
-          {/* Online Users Panel */}
-          <div className="flex items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/40 rounded-full cursor-default hover:border-green-400/60 transition-colors">
-                    <div className="relative">
-                      <Circle className="h-2.5 w-2.5 fill-green-500 text-green-500" />
-                      <Circle className="absolute inset-0 h-2.5 w-2.5 fill-green-500 text-green-500 animate-ping opacity-50" />
-                    </div>
-                    <span className="text-xs font-medium text-green-300">
-                      {onlineUsers.length + 1} online
-                    </span>
-                    {onlineUsers.length > 0 && (
-                      <div className="flex -space-x-2 ml-1">
-                        {onlineUsers.slice(0, 4).map((user) => (
-                          <Avatar key={user.id} className="h-6 w-6 border-2 border-slate-800 ring-1 ring-green-500/30">
-                            {user.avatar_url ? (
-                              <img src={user.avatar_url} alt={user.name} className="object-cover" />
-                            ) : (
-                              <AvatarFallback className="text-[9px] font-bold bg-gradient-to-br from-green-500 to-emerald-600 text-white">
-                                {user.name.charAt(0).toUpperCase()}
-                              </AvatarFallback>
-                            )}
-                          </Avatar>
-                        ))}
-                        {onlineUsers.length > 4 && (
-                          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-[9px] font-bold text-white border-2 border-slate-800">
-                            +{onlineUsers.length - 4}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" align="end" className="bg-slate-800 border-slate-700 p-0 w-64">
-                  <div className="p-3 border-b border-slate-700">
-                    <p className="text-sm font-semibold text-emerald-400 flex items-center gap-2">
-                      <Circle className="h-2 w-2 fill-green-500 text-green-500" />
-                      Usuários Online ({onlineUsers.length + 1})
-                    </p>
-                  </div>
-                  <div className="p-2 max-h-[200px] overflow-y-auto space-y-1">
-                    {/* Current User */}
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-                      <Avatar className="h-8 w-8 border-2 border-emerald-500/50">
-                        {agentAvatarUrl ? (
-                          <img src={agentAvatarUrl} alt={agentName} className="object-cover" />
+          {/* Online Users - Compact */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full cursor-default">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] font-medium text-emerald-300">
+                    {onlineUsers.length + 1}
+                  </span>
+                  <div className="flex -space-x-1">
+                    {onlineUsers.slice(0, 2).map((user) => (
+                      <Avatar key={user.id} className="h-4 w-4 border border-zinc-800">
+                        {user.avatar_url ? (
+                          <img src={user.avatar_url} alt={user.name} className="object-cover" />
                         ) : (
-                          <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-emerald-500 to-green-600 text-white">
-                            {agentName.charAt(0).toUpperCase()}
+                          <AvatarFallback className="text-[7px] font-bold bg-emerald-600 text-white">
+                            {user.name.charAt(0)}
                           </AvatarFallback>
                         )}
                       </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-emerald-300 truncate">{agentName}</p>
-                        <p className="text-[10px] text-emerald-400/70">Você • {team || 'Sem equipe'}</p>
-                      </div>
-                      <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[9px]">EU</Badge>
-                    </div>
-                    
-                    {/* Other Online Users */}
-                    {onlineUsers.map((user) => (
-                      <div key={user.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-700/50 transition-colors">
-                        <div className="relative">
-                          <Avatar className="h-8 w-8 border border-slate-600">
-                            {user.avatar_url ? (
-                              <img src={user.avatar_url} alt={user.name} className="object-cover" />
-                            ) : (
-                              <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-slate-500 to-slate-600 text-white">
-                                {user.name.charAt(0).toUpperCase()}
-                              </AvatarFallback>
-                            )}
-                          </Avatar>
-                          <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-green-500 border-2 border-slate-800" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-200 truncate">{user.name}</p>
-                          <p className="text-[10px] text-slate-400">
-                            {user.team || 'Sem equipe'}
-                            {user.role && ` • ${getRoleLabel(user.role)}`}
-                          </p>
-                        </div>
-                      </div>
                     ))}
-                    
-                    {onlineUsers.length === 0 && (
-                      <div className="text-center py-4 text-slate-400">
-                        <p className="text-xs italic">Nenhum outro usuário online</p>
-                        <p className="text-[10px] mt-1 text-slate-500">Seja o primeiro a iniciar uma conversa!</p>
-                      </div>
-                    )}
                   </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" align="end" className="bg-zinc-800 border-zinc-700 p-2 max-w-[200px]">
+                <p className="text-[10px] font-semibold text-emerald-400 mb-1">
+                  Online ({onlineUsers.length + 1})
+                </p>
+                <div className="space-y-1 max-h-[150px] overflow-y-auto">
+                  <div className="text-[10px] text-emerald-300">• {agentName} (você)</div>
+                  {onlineUsers.map((user) => (
+                    <div key={user.id} className="text-[10px] text-zinc-300">
+                      • {user.name}
+                    </div>
+                  ))}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-        {/* Room Selection - Organized buttons */}
-        <div className="mt-3 flex flex-wrap gap-2">
+        
+        {/* Room Buttons - Compact row */}
+        <div className="mt-2 flex gap-1.5 flex-wrap">
           {availableTypes.map((type) => {
             const config = chatRoomConfig[type];
             const isActive = chatType === type;
             
             return (
-              <TooltipProvider key={type}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant={isActive ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => switchRoom(type)}
-                      className={`
-                        flex items-center gap-1.5 text-xs transition-all
-                        ${isActive 
-                          ? 'bg-amber-500 hover:bg-amber-600 text-black border-amber-500' 
-                          : `border-slate-600 hover:border-slate-500 ${config.color}`
-                        }
-                      `}
-                    >
-                      {config.icon}
-                      <span className="hidden sm:inline">{config.label}</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="bg-slate-800 border-slate-700">
-                    <p className="text-xs font-medium">{config.label}</p>
-                    <p className="text-xs text-slate-400">{config.description}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Button
+                key={type}
+                variant={isActive ? "default" : "ghost"}
+                size="sm"
+                onClick={() => switchRoom(type)}
+                className={`h-7 px-2 text-[10px] ${
+                  isActive 
+                    ? 'bg-amber-500 hover:bg-amber-600 text-black' 
+                    : `text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800`
+                }`}
+              >
+                {config.icon}
+                <span className="ml-1">{config.label}</span>
+              </Button>
             );
           })}
         </div>
-
-        {/* Room Description */}
-        <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
-          {currentConfig.icon}
-          {currentConfig.description}
-        </p>
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative z-10">
         {/* Messages Area */}
-        <ScrollArea className="flex-1 p-4 [&>div>div]:backdrop-blur-[2px]">
-          <div className="space-y-3">
+        <ScrollArea className="flex-1 px-3 py-2">
+          <div className="space-y-2">
             {messages.length === 0 ? (
-              <div className="text-center py-8 text-slate-400">
-                <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>Nenhuma mensagem ainda.</p>
-                <p className="text-sm">Seja o primeiro a enviar uma mensagem!</p>
+              <div className="text-center py-8 text-zinc-500">
+                <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-xs">Nenhuma mensagem ainda</p>
               </div>
             ) : (
               messages
@@ -838,88 +717,71 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                 .map((msg) => {
                 const isOwn = msg.sender_id === agentId;
                 const roleLabel = getRoleLabel(msg.sender?.role);
-                const teamLabel = msg.sender?.team ? `Equipe ${msg.sender.team}` : null;
                 const isLeaderRole = msg.sender?.role === 'team_leader' || msg.sender?.role === 'support';
                 
                 return (
                   <div
                     key={msg.id}
-                    className={`flex gap-3 group ${isOwn ? 'flex-row-reverse' : ''}`}
+                    className={`flex gap-2 group ${isOwn ? 'flex-row-reverse' : ''}`}
                   >
-                    <Avatar className={`h-10 w-10 flex-shrink-0 border-2 ${
-                      isLeaderRole ? 'border-amber-500/60' : 'border-slate-600/60'
+                    <Avatar className={`h-7 w-7 flex-shrink-0 border ${
+                      isLeaderRole ? 'border-amber-500/50' : 'border-zinc-600/50'
                     }`}>
                       <AvatarImage src={(msg.sender as any)?.avatar_url} />
-                      <AvatarFallback className={`text-sm font-bold ${
+                      <AvatarFallback className={`text-[10px] font-bold ${
                         isOwn ? `${currentBubbleStyle.own} ${currentBubbleStyle.ownText}` : 
-                        msg.sender?.role === 'team_leader' ? 'bg-amber-600 text-white' :
-                        msg.sender?.role === 'support' ? 'bg-blue-600 text-white' :
-                        'bg-slate-600 text-slate-200'
+                        isLeaderRole ? 'bg-amber-600 text-white' :
+                        'bg-zinc-700 text-zinc-200'
                       }`}>
                         {(msg.sender?.name || 'A').charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className={`max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
-                      {/* Always show sender info for clarity */}
-                      <div className={`mb-1 px-1 ${isOwn ? 'text-right' : ''}`}>
-                        <div className={`flex items-center gap-1.5 ${isOwn ? 'justify-end' : ''}`}>
-                          {msg.sender?.role === 'team_leader' && (
-                            <Crown className="h-3.5 w-3.5 text-amber-500" />
-                          )}
-                          {msg.sender?.role === 'support' && (
-                            <Shield className="h-3.5 w-3.5 text-blue-500" />
-                          )}
-                          <p className={`text-sm font-semibold ${
-                            isOwn ? currentBubbleStyle.nameColor : isLeaderRole ? 'text-amber-400' : 'text-slate-200'
-                          }`}>
-                            {isOwn ? 'Você' : (msg.sender?.name || 'Agente')}
-                          </p>
+                    <div className={`max-w-[75%] ${isOwn ? 'items-end' : 'items-start'}`}>
+                      {!isOwn && (
+                        <div className="mb-0.5 px-1 flex items-center gap-1">
+                          {isLeaderRole && <Crown className="h-2.5 w-2.5 text-amber-500" />}
+                          <span className="text-[10px] font-medium text-zinc-400">
+                            {msg.sender?.name || 'Agente'}
+                          </span>
                         </div>
-                        {!isOwn && (
-                          <p className="text-[10px] text-slate-500">
-                            {roleLabel}
-                            {teamLabel && ` • ${teamLabel}`}
-                          </p>
-                        )}
-                      </div>
+                      )}
                       <div className="flex items-start gap-1">
                         <div
-                          className={`px-3 py-2 rounded-xl ${
+                          className={`px-2.5 py-1.5 rounded-lg text-xs ${
                             isOwn
                               ? `${currentBubbleStyle.own} ${currentBubbleStyle.ownText} rounded-br-sm`
-                              : `${currentBubbleStyle.other} text-white rounded-bl-sm`
+                              : `bg-zinc-800 text-zinc-100 rounded-bl-sm`
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
+                          <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                         </div>
                         
-                        {/* Delete menu */}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-white"
+                              className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 hover:text-zinc-300"
                             >
-                              <MoreVertical className="h-3 w-3" />
+                              <MoreVertical className="h-2.5 w-2.5" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align={isOwn ? 'end' : 'start'} className="bg-slate-800 border-slate-700">
+                          <DropdownMenuContent align={isOwn ? 'end' : 'start'} className="bg-zinc-800 border-zinc-700">
                             <DropdownMenuItem 
                               onClick={() => deleteMessageForMe(msg.id)}
-                              className="text-slate-200 hover:bg-slate-700 cursor-pointer"
+                              className="text-zinc-200 hover:bg-zinc-700 cursor-pointer text-xs"
                             >
-                              <Trash2 className="h-4 w-4 mr-2" />
+                              <Trash2 className="h-3 w-3 mr-2" />
                               Apagar para mim
                             </DropdownMenuItem>
                             {isOwn && (
                               <>
-                                <DropdownMenuSeparator className="bg-slate-700" />
+                                <DropdownMenuSeparator className="bg-zinc-700" />
                                 <DropdownMenuItem 
                                   onClick={() => deleteMessageForAll(msg.id)}
-                                  className="text-red-400 hover:bg-slate-700 cursor-pointer"
+                                  className="text-rose-400 hover:bg-zinc-700 cursor-pointer text-xs"
                                 >
-                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  <Trash2 className="h-3 w-3 mr-2" />
                                   Apagar para todos
                                 </DropdownMenuItem>
                               </>
@@ -927,7 +789,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <p className={`text-xs text-slate-500 mt-1 px-1 ${isOwn ? 'text-right' : ''}`}>
+                      <p className={`text-[9px] text-zinc-600 mt-0.5 px-1 ${isOwn ? 'text-right' : ''}`}>
                         {format(new Date(msg.created_at), 'HH:mm', { locale: ptBR })}
                       </p>
                     </div>
@@ -939,26 +801,27 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
           </div>
         </ScrollArea>
 
-        {/* Message Input */}
-        <div className="p-3 border-t border-slate-700 bg-slate-900/80 backdrop-blur-sm relative z-10">
+        {/* Message Input - Compact */}
+        <div className="p-2 border-t border-zinc-700/50 bg-zinc-900/90">
           <div className="flex gap-2">
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Digite sua mensagem..."
-              className="flex-1 bg-slate-700 border-slate-600 focus:border-amber-500"
+              placeholder="Mensagem..."
+              className="flex-1 bg-zinc-800 border-zinc-700 h-8 text-xs"
               disabled={isSending}
             />
             <Button
               onClick={sendMessage}
               disabled={!newMessage.trim() || isSending}
-              className="bg-amber-500 hover:bg-amber-600 text-black"
+              size="icon"
+              className="bg-amber-500 hover:bg-amber-600 text-black h-8 w-8"
             >
               {isSending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <Send className="h-4 w-4" />
+                <Send className="h-3.5 w-3.5" />
               )}
             </Button>
           </div>

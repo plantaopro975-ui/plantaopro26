@@ -2,9 +2,8 @@ import { useState, useEffect, useMemo, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radar, Users, Activity, Wifi, Building2 } from 'lucide-react';
+import { Radar, Users, Activity, Wifi, Building2, Signal } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useSoundEffects } from '@/hooks/useSoundEffects';
 
 interface AgentBlip {
   id: string;
@@ -25,12 +24,10 @@ interface TacticalRadarProps {
 export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(function TacticalRadar({ unitId, unitName, className, compact = false }, ref) {
   const [agents, setAgents] = useState<AgentBlip[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
-  const { playSound } = useSoundEffects();
 
   // Fetch agents ONLY from the same unit - each unit is independent
   useEffect(() => {
     const fetchAgents = async () => {
-      // Only fetch if we have a unitId - radar is unit-specific
       if (!unitId) {
         setAgents([]);
         return;
@@ -40,7 +37,7 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
         .from('agents')
         .select('id, name, team, is_active, updated_at')
         .eq('is_active', true)
-        .eq('unit_id', unitId) // CRITICAL: Only fetch agents from the same unit
+        .eq('unit_id', unitId)
         .limit(20);
 
       if (!error && data) {
@@ -61,33 +58,33 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
     };
 
     fetchAgents();
-    const interval = setInterval(fetchAgents, 30000); // Update every 30s
+    const interval = setInterval(fetchAgents, 30000);
 
     return () => clearInterval(interval);
   }, [unitId]);
 
-  const teamColors: Record<string, string> = {
-    ALFA: 'bg-blue-400 shadow-blue-400/50',
-    BRAVO: 'bg-red-400 shadow-red-400/50',
-    CHARLIE: 'bg-emerald-400 shadow-emerald-400/50',
-    DELTA: 'bg-violet-400 shadow-violet-400/50',
-    default: 'bg-primary shadow-primary/50',
+  const teamColors: Record<string, { bg: string; glow: string }> = {
+    ALFA: { bg: 'bg-sky-400', glow: 'shadow-sky-400/60' },
+    BRAVO: { bg: 'bg-rose-400', glow: 'shadow-rose-400/60' },
+    CHARLIE: { bg: 'bg-emerald-400', glow: 'shadow-emerald-400/60' },
+    DELTA: { bg: 'bg-violet-400', glow: 'shadow-violet-400/60' },
+    default: { bg: 'bg-amber-400', glow: 'shadow-amber-400/60' },
   };
 
-  const rings = useMemo(() => [20, 40, 60, 80], []);
+  const rings = useMemo(() => [25, 50, 75], []);
 
-  const radarSize = compact ? 140 : 200;
+  const radarSize = compact ? 120 : 160;
   const centerX = radarSize / 2;
   const centerY = radarSize / 2;
 
   // If no unitId, show a message
   if (!unitId) {
     return (
-      <Card ref={ref} className={cn("glass glass-border shadow-card tactical-card overflow-hidden", className)}>
-        <CardContent className="flex items-center justify-center py-8 text-center">
-          <div className="text-slate-400">
-            <Building2 className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Selecione uma unidade</p>
+      <Card ref={ref} className={cn("bg-zinc-900/80 border border-zinc-700/50", className)}>
+        <CardContent className="flex items-center justify-center py-6 text-center">
+          <div className="text-zinc-500">
+            <Building2 className="h-6 w-6 mx-auto mb-1.5 opacity-50" />
+            <p className="text-xs">Selecione uma unidade</p>
           </div>
         </CardContent>
       </Card>
@@ -95,40 +92,42 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
   }
 
   return (
-    <Card ref={ref} className={cn("glass glass-border shadow-card tactical-card overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl", className)}>
-      <CardHeader className={cn("pb-2", compact && "p-3 pb-1")}>
+    <Card ref={ref} className={cn(
+      "bg-gradient-to-br from-zinc-900/95 via-zinc-900/90 to-zinc-800/80 border border-zinc-700/60 backdrop-blur-sm overflow-hidden",
+      className
+    )}>
+      <CardHeader className={cn("pb-1", compact ? "p-2.5" : "p-3")}>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="relative">
-              <Radar className={cn("text-primary", compact ? "h-4 w-4" : "h-5 w-5")} />
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full" />
+            <div className="p-1.5 rounded-md bg-cyan-500/15 border border-cyan-500/30">
+              <Signal className={cn("text-cyan-400", compact ? "h-3.5 w-3.5" : "h-4 w-4")} />
             </div>
             <div className="flex flex-col">
-              <span className={compact ? "text-sm" : ""}>Radar Tático</span>
+              <span className={cn("font-semibold text-zinc-100", compact ? "text-xs" : "text-sm")}>Radar</span>
               {unitName && (
-                <span className="text-[10px] text-slate-400 font-normal truncate max-w-[120px]">
+                <span className="text-[9px] text-zinc-500 font-normal truncate max-w-[100px]">
                   {unitName}
                 </span>
               )}
             </div>
           </div>
-          <Badge variant="outline" className="text-[10px] text-emerald-400 border-emerald-400/40">
-            <Wifi className="h-3 w-3 mr-1" />
+          <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[9px] px-1.5 py-0 h-5">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse" />
             LIVE
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn("flex flex-col items-center gap-3", compact && "p-3 pt-1")}>
-        {/* Radar Display */}
+      <CardContent className={cn("flex flex-col items-center gap-2", compact ? "p-2.5 pt-0" : "p-3 pt-1")}>
+        {/* Radar Display - Minimal Design */}
         <div 
-          className="relative rounded-full border border-primary/30 bg-background/50"
+          className="relative rounded-full bg-zinc-950/80 border border-zinc-700/50"
           style={{ width: radarSize, height: radarSize }}
         >
           {/* Grid rings */}
           {rings.map((ring) => (
             <div
               key={ring}
-              className="absolute rounded-full border border-primary/20"
+              className="absolute rounded-full border border-zinc-700/40"
               style={{
                 width: `${ring}%`,
                 height: `${ring}%`,
@@ -139,81 +138,66 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           ))}
 
           {/* Cross lines */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-            <div className="absolute h-full w-[1px] bg-gradient-to-b from-transparent via-primary/30 to-transparent" />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="absolute w-full h-[1px] bg-zinc-700/30" />
+            <div className="absolute h-full w-[1px] bg-zinc-700/30" />
           </div>
 
-          {/* Sweep animation - Optimized for performance */}
+          {/* Sweep animation */}
           <div 
-            className="absolute inset-0 rounded-full"
+            className="absolute inset-0 rounded-full pointer-events-none"
             style={{
-              background: 'conic-gradient(from 0deg, transparent 0deg, hsl(var(--primary) / 0.3) 30deg, transparent 60deg)',
-              animation: 'spin 4s linear infinite',
-              willChange: 'transform',
+              background: 'conic-gradient(from 0deg, transparent 0deg, rgba(34,211,238,0.15) 20deg, transparent 40deg)',
+              animation: 'spin 3s linear infinite',
             }}
           />
 
           {/* Center point */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full shadow-glow z-10" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/50 z-10" />
 
-          {/* Agent blips - Stable without pulse */}
+          {/* Agent blips */}
           {agents.map((agent) => {
             const radians = (agent.position.angle * Math.PI) / 180;
-            const x = centerX + Math.cos(radians) * (agent.position.distance * centerX / 100) - 4;
-            const y = centerY + Math.sin(radians) * (agent.position.distance * centerY / 100) - 4;
-            const colorClass = teamColors[agent.team || 'default'] || teamColors.default;
+            const x = centerX + Math.cos(radians) * (agent.position.distance * centerX / 100) - 3;
+            const y = centerY + Math.sin(radians) * (agent.position.distance * centerY / 100) - 3;
+            const colors = teamColors[agent.team || 'default'] || teamColors.default;
 
             return (
               <div
                 key={agent.id}
                 className={cn(
-                  "absolute w-2 h-2 rounded-full z-20 cursor-pointer transition-transform duration-300 hover:scale-150",
-                  colorClass
+                  "absolute w-1.5 h-1.5 rounded-full z-20 cursor-pointer transition-transform duration-200 hover:scale-[2]",
+                  colors.bg,
+                  colors.glow,
+                  "shadow-lg"
                 )}
-                style={{
-                  left: x,
-                  top: y,
-                  boxShadow: '0 0 6px currentColor',
-                }}
+                style={{ left: x, top: y }}
                 title={`${agent.name}${agent.team ? ` - ${agent.team}` : ''}`}
-                onClick={() => playSound('tactical-click')}
               />
             );
           })}
-
-          {/* Scan line effect */}
-          <div 
-            className="absolute left-1/2 top-1/2 h-1/2 w-[2px] origin-top -translate-x-1/2"
-            style={{
-              background: 'linear-gradient(to bottom, hsl(var(--primary)), transparent)',
-              animation: 'spin 4s linear infinite',
-            }}
-          />
         </div>
 
-        {/* Stats */}
-        <div className={cn("flex items-center gap-4 text-xs", compact && "gap-2")}>
+        {/* Stats - Compact row */}
+        <div className="flex items-center justify-between w-full text-[10px] text-zinc-500 px-1">
           <div className="flex items-center gap-1">
-            <Users className="h-3 w-3 text-muted-foreground" />
-            <span className="font-mono text-primary">{agents.length}</span>
-            <span className="text-muted-foreground">na unidade</span>
+            <Users className="h-3 w-3" />
+            <span className="font-mono text-cyan-400">{agents.length}</span>
+            <span>ativos</span>
           </div>
           <div className="flex items-center gap-1">
-            <Activity className="h-3 w-3 text-emerald-400" />
-            <span className="text-muted-foreground">
-              {lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-            </span>
+            <Activity className="h-3 w-3 text-emerald-500" />
+            <span>{lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
           </div>
         </div>
 
-        {/* Team legend */}
+        {/* Team legend - Compact */}
         {!compact && (
-          <div className="flex flex-wrap justify-center gap-2 text-[10px]">
-            {Object.entries(teamColors).filter(([k]) => k !== 'default').map(([team, color]) => (
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 text-[9px] text-zinc-400">
+            {Object.entries(teamColors).filter(([k]) => k !== 'default').map(([team, colors]) => (
               <div key={team} className="flex items-center gap-1">
-                <div className={cn("w-2 h-2 rounded-full", color.split(' ')[0])} />
-                <span className="text-muted-foreground">{team}</span>
+                <div className={cn("w-1.5 h-1.5 rounded-full", colors.bg)} />
+                <span>{team}</span>
               </div>
             ))}
           </div>
