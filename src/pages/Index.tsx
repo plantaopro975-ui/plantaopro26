@@ -1322,46 +1322,27 @@ export default function Index() {
         </DialogContent>
       </Dialog>
 
-      {/* Login Dialog - Compact Professional */}
+      {/* Login Dialog - Compact */}
       <Dialog open={showLogin} onOpenChange={(open) => !open && closeAllDialogs()}>
-        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-blue-600/30 w-[90vw] max-w-xs shadow-xl shadow-blue-900/15 p-4">
-          {/* Logo Header - Elegante */}
-          <div className="text-center py-3">
-            <div className="relative inline-block group">
-              {/* Subtle glow behind */}
-              <div className="absolute inset-0 w-18 h-18 mx-auto rounded-full bg-blue-500/15 blur-2xl" />
-              
-              {/* Logo */}
-              <img 
-                src={logoShield} 
-                alt="Plantão Pro" 
-                className="w-18 h-auto mx-auto relative z-10 drop-shadow-[0_4px_20px_rgba(59,130,246,0.4)] group-hover:drop-shadow-[0_4px_25px_rgba(59,130,246,0.55)] transition-all duration-500"
-              />
-            </div>
-          </div>
-          
-          {/* Auth Type Badge */}
-          <div className="flex justify-center mb-2">
-            <div className="px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/40 flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[9px] font-bold text-green-400 uppercase tracking-wider">
-                Supabase Auth • Agent
-              </span>
-            </div>
+        <DialogContent className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-blue-600/30 max-w-xs shadow-xl shadow-blue-900/15 p-4">
+          {/* Compact Logo */}
+          <div className="text-center py-2">
+            <img 
+              src={logoShield} 
+              alt="Plantão Pro" 
+              className="w-14 h-auto mx-auto drop-shadow-[0_4px_15px_rgba(59,130,246,0.35)]"
+            />
           </div>
           
           <DialogHeader className="pb-2 border-b border-slate-700/40">
             <DialogTitle className="flex items-center justify-center gap-2 text-sm font-bold text-white">
               {currentTeamConfig && selectedTeam && (
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-600/30 to-blue-600/10 border border-blue-500/30">
-                  <currentTeamConfig.icon className={`h-3.5 w-3.5 ${currentTeamConfig.color}`} />
+                <div className="p-1 rounded-lg bg-blue-600/20 border border-blue-500/30">
+                  <currentTeamConfig.icon className={`h-3 w-3 ${currentTeamConfig.color}`} />
                 </div>
               )}
-              <span>{selectedTeam ? `Equipe ${selectedTeam}` : 'Acesso'}</span>
+              <span>Equipe {selectedTeam}</span>
             </DialogTitle>
-            <DialogDescription className="text-[10px] text-slate-400 mt-1 text-center">
-              Acesso autenticado
-            </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleLogin} className="space-y-3 pt-2" data-login-form="true">
