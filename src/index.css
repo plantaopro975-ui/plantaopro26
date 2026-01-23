@@ -1,35 +1,44 @@
-<script>
-      // Função para deletar qualquer rastro do selo
-      function killLovable() {
-        // Remove por ID e Classes comuns
-        const selectors = [
-          '#lovable-badge', 
-          '.lovable-badge', 
-          '[class*="lovable"]', 
-          '[id*="lovable"]',
-          'a[href*="lovable.dev"]'
-        ];
-        
-        selectors.forEach(s => {
-          document.querySelectorAll(s).forEach(el => el.remove());
-        });
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-        // Se o selo estiver escondido em um "Shadow Root" (técnica nova deles)
-        const host = document.querySelector('div[style*="position: fixed"]');
-        if (host && host.shadowRoot) {
-           host.remove();
-        }
-      }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-      // Tenta remover imediatamente
-      killLovable();
-      
-      // Monitora a página por 5 segundos (tempo que o script deles leva para agir)
-      const observer = new MutationObserver(killLovable);
-      observer.observe(document.body, { childList: true, subtree: true });
-      
-      // Segurança extra: tenta de novo após 3 segundos
-      setTimeout(killLovable, 3000);
-    </script>
-  </body>
-</html>
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+    --primary: 187 85% 53%;
+    --primary-foreground: 222 47% 6%;
+    --radius: 0.75rem;
+    --gradient-primary: linear-gradient(135deg, hsl(187 85% 53%) 0%, hsl(200 100% 60%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(222 47% 8%) 0%, hsl(222 47% 4%) 100%);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--gradient-dark);
+    min-height: 100dvh;
+  }
+}
+
+/* Adicione as suas outras classes táticas aqui se desejar... */
+
+/* ================================
+   BLOQUEIO FINAL DO SELO LOVABLE
+   ================================ */
+#lovable-badge, 
+.lovable-badge,
+[id*="lovable"],
+[class*="lovable"],
+a[href*="lovable.dev"],
+div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -9999 !important;
+}
