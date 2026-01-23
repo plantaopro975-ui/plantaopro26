@@ -21,7 +21,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Palette, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown } from 'lucide-react';
+import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Palette, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1081,46 +1081,63 @@ export default function Index() {
               </button>
             )}
             
-            {/* Admin/Master Dropdown Menu */}
+            {/* Admin/Master Dropdown Menu - Melhorado com descrições claras */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-slate-400 hover:text-slate-200 rounded-md bg-slate-800/40 hover:bg-slate-700/60 border border-slate-700/50 hover:border-primary/40 transition-all duration-200"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-200 rounded-md bg-slate-800/40 hover:bg-slate-700/60 border border-slate-700/50 hover:border-primary/40 transition-all duration-200"
                 >
                   <Shield className="h-3 w-3" />
-                  <span className="hidden sm:inline">Admin</span>
+                  <span>Acesso</span>
                   <ChevronDown className="h-2.5 w-2.5 opacity-50" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align="end" 
-                className="w-48 bg-slate-900/95 backdrop-blur-xl border-2 border-slate-600/50 shadow-2xl shadow-black/50 z-[100]"
+                className="w-64 bg-slate-900/98 backdrop-blur-xl border-2 border-slate-600/50 shadow-2xl shadow-black/50 z-[100] p-1.5"
               >
+                {/* Título do Menu */}
+                <div className="px-3 py-2 mb-1">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Painéis Administrativos</p>
+                </div>
+                
+                {/* Admin - Gestão Operacional */}
                 <DropdownMenuItem 
                   onClick={() => setShowAdminLogin(true)}
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer text-blue-400 hover:text-blue-300 hover:bg-blue-500/15 focus:bg-blue-500/15 focus:text-blue-300"
+                  className="flex items-start gap-3 py-3 px-3 cursor-pointer rounded-lg hover:bg-blue-500/15 focus:bg-blue-500/15 group"
                 >
-                  <div className="p-1.5 rounded-md bg-blue-500/20 border border-blue-500/30">
-                    <KeyRound className="h-3.5 w-3.5" />
+                  <div className="p-2 rounded-lg bg-blue-500/20 border border-blue-500/40 group-hover:bg-blue-500/30 transition-colors">
+                    <KeyRound className="h-4 w-4 text-blue-400" />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-sm">Admin</span>
-                    <span className="text-[10px] text-slate-400">Login por e-mail</span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-bold text-sm text-blue-400 group-hover:text-blue-300">Administrador</span>
+                    <span className="text-[10px] text-slate-400 leading-tight">
+                      Gestão de escalas, BH e supervisão de equipe
+                    </span>
+                    <span className="text-[9px] text-slate-500 mt-1 flex items-center gap-1">
+                      <Mail className="h-2.5 w-2.5" /> Login por e-mail
+                    </span>
                   </div>
                 </DropdownMenuItem>
                 
-                <DropdownMenuSeparator className="bg-slate-600/50 my-1" />
+                <DropdownMenuSeparator className="bg-slate-700/50 my-1.5" />
                 
+                {/* Master - Controle Total */}
                 <DropdownMenuItem 
                   onClick={() => setShowMasterLogin(true)}
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer text-red-400 hover:text-red-300 hover:bg-red-500/15 focus:bg-red-500/15 focus:text-red-300"
+                  className="flex items-start gap-3 py-3 px-3 cursor-pointer rounded-lg hover:bg-amber-500/15 focus:bg-amber-500/15 group"
                 >
-                  <div className="p-1.5 rounded-md bg-red-500/20 border border-red-500/30">
-                    <Shield className="h-3.5 w-3.5" />
+                  <div className="p-2 rounded-lg bg-amber-500/20 border border-amber-500/40 group-hover:bg-amber-500/30 transition-colors">
+                    <Shield className="h-4 w-4 text-amber-400" />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-sm">Master</span>
-                    <span className="text-[10px] text-slate-400">Controle total</span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-bold text-sm text-amber-400 group-hover:text-amber-300">Master</span>
+                    <span className="text-[10px] text-slate-400 leading-tight">
+                      Controle total do sistema, licenças e exclusões
+                    </span>
+                    <span className="text-[9px] text-slate-500 mt-1 flex items-center gap-1">
+                      <User className="h-2.5 w-2.5" /> Login por usuário
+                    </span>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
