@@ -41,6 +41,7 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             <input
               ref={ref}
               type={actualType}
+              autoComplete={isPassword ? "new-password" : props.autoComplete}
               className={cn(
                 // Base styles
                 "relative w-full rounded-xl transition-all duration-200",

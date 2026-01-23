@@ -99,9 +99,9 @@ const chatRoomConfig: Record<ChatType, {
 }> = {
   team: {
     icon: <Users className="h-4 w-4" />,
-    label: 'Minha Equipe',
+    label: 'Equipe',
     description: 'Apenas membros da sua equipe',
-    color: 'text-amber-500',
+    color: 'text-emerald-400',
   },
   unit: {
     icon: <Building2 className="h-4 w-4" />,
@@ -609,18 +609,21 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
 
   return (
     <Card className="bg-zinc-900/95 border border-zinc-700/60 h-[550px] flex flex-col relative overflow-hidden">
-      {/* Background */}
-      {currentBackground && (
-        <div 
-          className="absolute inset-0 z-0 opacity-30"
-          style={{
-            backgroundImage: `url(${currentBackground})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-      )}
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-zinc-900/95 via-zinc-900/90 to-zinc-950/95" />
+      {/* Professional tactical background - deep dark with subtle pattern */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.98) 100%)',
+        }}
+      />
+      {/* Subtle hex grid pattern */}
+      <div 
+        className="absolute inset-0 z-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/svg%3E")`,
+        }}
+      />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-zinc-900/50 via-transparent to-zinc-950/80" />
       
       <CardHeader className="pb-2 pt-3 px-3 border-b border-zinc-700/50 relative z-10">
         {/* Top Row: Title + Online Badge */}
@@ -684,9 +687,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
             
             const buttonColors: Record<ChatType, { active: string; inactive: string; iconBg: string }> = {
               team: {
-                active: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30',
-                inactive: 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700/80 hover:text-amber-400 border-zinc-700',
-                iconBg: 'bg-amber-500/20'
+                active: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30',
+                inactive: 'bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700/80 hover:text-emerald-300 border-zinc-600',
+                iconBg: 'bg-emerald-500/20'
               },
               unit: {
                 active: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30',
