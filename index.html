@@ -1,21 +1,53 @@
-<head>
+<!doctype html>
+<html lang="pt-BR">
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>PlantaoPro - Gestão de Escalas</title>
+    <meta name="description" content="Sistema completo para gestão de escalas e plantões. Simplifique o controle da sua equipe com o PlantaoPro." />
+    <meta name="theme-color" content="#f59e0b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PlantãoPro" />
     
-    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />
-    <link rel="shortcut icon" href="/favicon.ico?v=2" />
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
     
-    <link rel="manifest" href="/manifest.json?v=2" />
-    <meta name="theme-color" content="#1BA9D2" />
+    <!-- Google Fonts - Tema específico -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500;600;700&family=Teko:wght@400;500;600;700&family=Exo+2:wght@400;500;600;700;800&family=Bebas+Neue&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <script>
-      const killBadge = () => {
-        const badge = document.querySelector('#lovable-badge') || 
-                      document.querySelector('a[href*="lovable.dev"]') ||
-                      document.querySelector('div[style*="fixed"][style*="bottom: 0"]');
-        if (badge) badge.remove();
-      };
-      setInterval(killBadge, 100); // Tenta remover a cada 100ms
-    </script>
-</head>
+    <!-- Favicon - Multiple sizes for better compatibility -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    
+    <!-- iOS home screen / standalone - Larger sizes for better visibility -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
+    
+    <!-- Windows tiles -->
+    <meta name="msapplication-TileImage" content="/icon-512.png" />
+    <meta name="msapplication-TileColor" content="#f59e0b" />
+
+    <meta property="og:title" content="PlantaoPro - Gestão de Escalas" />
+    <meta property="og:description" content="Sistema completo para gestão de escalas e plantões." />
+    <meta property="og:type" content="website" />
+
+    <style>
+      html, body, #root {
+        background-color: #0a0f1a;
+        min-height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
