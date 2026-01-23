@@ -1,74 +1,32 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>PlantaoPro - Gestão de Escalas</title>
-    
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    
-    <meta name="description" content="Sistema completo para gestão de escalas e plantões. Simplifique o controle da sua equipe com o PlantaoPro." />
-    <meta name="theme-color" content="#1BA9D2" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="PlantãoPro" />
-    
-    <link rel="manifest" href="/manifest.json" />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500;600;700&family=Teko:wght@400;500;600;700&family=Exo+2:wght@400;500;600;700;800&family=Bebas+Neue&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
-    <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
-
-    <meta property="og:title" content="PlantaoPro - Gestão de Escalas" />
-    <meta property="og:description" content="Sistema completo para gestão de escalas e plantões." />
-    <meta property="og:type" content="website" />
-
-    <style>
-      html, body, #root {
-        background-color: #030712;
-        min-height: 100vh;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-
-    <script>
+<script>
       (function() {
-        const killLovable = () => {
-          const selectors = [
-            '#lovable-badge', 
-            '.lovable-badge', 
-            '[id*="lovable"]', 
-            '[class*="lovable"]',
-            'a[href*="lovable.dev"]',
-            'img[alt*="Lovable"]'
-          ];
-          
-          selectors.forEach(s => {
-            document.querySelectorAll(s).forEach(el => el.remove());
+        const removeLovableElements = () => {
+          // 1. Procura por qualquer link que leve ao site deles
+          const links = document.querySelectorAll('a');
+          links.forEach(link => {
+            if (link.href.includes('lovable.dev') || link.href.includes('lovable.app')) {
+              // Encontrou o link? Deleta o container inteiro onde ele está
+              let container = link.closest('div');
+              if (container) container.remove();
+              link.remove();
+            }
           });
 
-          // Caso o selo esteja em um Shadow DOM (técnica de ocultação)
-          const allDivs = document.querySelectorAll('div[style*="position: fixed"]');
-          allDivs.forEach(div => {
-            if (div.shadowRoot || div.innerHTML.includes('lovable')) {
+          // 2. Procura por qualquer div fixada no canto inferior direito que não seja do seu app
+          const fixedDivs = document.querySelectorAll('div[style*="fixed"][style*="bottom"][style*="right"]');
+          fixedDivs.forEach(div => {
+            if (div.innerHTML.includes('svg') || div.shadowRoot) {
               div.remove();
             }
           });
         };
 
-        // Roda imediatamente, após carregar e a cada 1 segundo
-        killLovable();
-        window.addEventListener('load', killLovable);
-        setInterval(killLovable, 1000);
+        // Executa em loop constante nos primeiros 10 segundos
+        const interval = setInterval(removeLovableElements, 100);
+        setTimeout(() => clearInterval(interval), 10000); 
+
+        // Monitor de mudanças na página (MutationObserver)
+        const observer = new MutationObserver(removeLovableElements);
+        observer.observe(document.documentElement, { childList: true, subtree: true });
       })();
     </script>
-  </body>
-</html>
