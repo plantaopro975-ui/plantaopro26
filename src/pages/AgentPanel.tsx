@@ -514,13 +514,13 @@ export default function AgentPanel() {
                       <span className="text-sm md:text-base lg:text-lg font-bold text-rose-200 group-data-[state=active]:text-white tracking-wide">Planejar</span>
                     </TabsTrigger>
                     
-                    {/* Trocas Tab */}
+                    {/* Permutas Tab */}
                     <TabsTrigger 
                       value="permutas" 
                       className="group flex flex-col items-center justify-center gap-1.5 md:gap-2 p-3 md:p-4 lg:p-5 rounded-xl md:rounded-2xl font-bold transition-all duration-300 min-h-[80px] md:min-h-[100px] lg:min-h-[110px] border-2 border-slate-600/50 bg-slate-800/50 hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-yellow-500/40 data-[state=active]:border-yellow-300 data-[state=active]:scale-[1.02]"
                     >
                       <ArrowRightLeft className="h-6 w-6 md:h-8 md:w-8 lg:h-9 lg:w-9 text-yellow-400 group-data-[state=active]:text-black transition-colors" />
-                      <span className="text-sm md:text-base lg:text-lg font-bold text-yellow-200 group-data-[state=active]:text-black tracking-wide">Trocas</span>
+                      <span className="text-sm md:text-base lg:text-lg font-bold text-yellow-200 group-data-[state=active]:text-black tracking-wide">Permutas</span>
                     </TabsTrigger>
                     
                     {/* Chat Tab */}
