@@ -19,6 +19,8 @@ type SoundType =
   | 'radio-static'
   | 'access-denied';
 
+type ThemeType = 'tactical' | 'cyber' | 'crimson' | 'arctic' | 'sovereign' | 'nexus' | 'ember' | 'system';
+
 export function useSoundEffects() {
   const [isSoundEnabled, setIsSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('plantaopro-sound-enabled');
@@ -29,7 +31,60 @@ export function useSoundEffects() {
     localStorage.setItem('plantaopro-sound-enabled', String(isSoundEnabled));
   }, [isSoundEnabled]);
 
-  const playSound = useCallback((type: SoundType) => {
+  // Get current theme from localStorage
+  const getCurrentTheme = useCallback((): ThemeType => {
+    const saved = localStorage.getItem('plantaopro-theme');
+    return (saved as ThemeType) || 'tactical';
+  }, []);
+
+  // Theme-specific sound configurations
+  const getThemeSoundConfig = useCallback((theme: ThemeType) => {
+    const configs = {
+      tactical: {
+        themeChange: { freq: [300, 800, 600], type: 'sine' as OscillatorType, duration: 0.3 },
+        hover: { freq: [800, 600], type: 'sine' as OscillatorType, duration: 0.05 },
+        cardSelect: { freqs: [440, 587], type: 'sine' as OscillatorType },
+      },
+      cyber: {
+        themeChange: { freq: [200, 1200, 800], type: 'sawtooth' as OscillatorType, duration: 0.35 },
+        hover: { freq: [1200, 900], type: 'square' as OscillatorType, duration: 0.04 },
+        cardSelect: { freqs: [523, 784], type: 'square' as OscillatorType },
+      },
+      crimson: {
+        themeChange: { freq: [150, 600, 400], type: 'sawtooth' as OscillatorType, duration: 0.4 },
+        hover: { freq: [600, 400], type: 'triangle' as OscillatorType, duration: 0.06 },
+        cardSelect: { freqs: [349, 523], type: 'sawtooth' as OscillatorType },
+      },
+      arctic: {
+        themeChange: { freq: [500, 1000, 800], type: 'sine' as OscillatorType, duration: 0.4 },
+        hover: { freq: [1000, 800], type: 'sine' as OscillatorType, duration: 0.03 },
+        cardSelect: { freqs: [659, 880], type: 'sine' as OscillatorType },
+      },
+      sovereign: {
+        themeChange: { freq: [250, 500, 750], type: 'triangle' as OscillatorType, duration: 0.5 },
+        hover: { freq: [700, 550], type: 'triangle' as OscillatorType, duration: 0.05 },
+        cardSelect: { freqs: [392, 523], type: 'triangle' as OscillatorType },
+      },
+      nexus: {
+        themeChange: { freq: [400, 1000, 600], type: 'square' as OscillatorType, duration: 0.3 },
+        hover: { freq: [1100, 850], type: 'square' as OscillatorType, duration: 0.04 },
+        cardSelect: { freqs: [494, 659], type: 'square' as OscillatorType },
+      },
+      ember: {
+        themeChange: { freq: [180, 700, 500], type: 'sawtooth' as OscillatorType, duration: 0.45 },
+        hover: { freq: [650, 450], type: 'triangle' as OscillatorType, duration: 0.05 },
+        cardSelect: { freqs: [370, 554], type: 'sawtooth' as OscillatorType },
+      },
+      system: {
+        themeChange: { freq: [300, 800, 600], type: 'sine' as OscillatorType, duration: 0.3 },
+        hover: { freq: [800, 600], type: 'sine' as OscillatorType, duration: 0.05 },
+        cardSelect: { freqs: [440, 587], type: 'sine' as OscillatorType },
+      },
+    };
+    return configs[theme] || configs.tactical;
+  }, []);
+
+  const playSound = useCallback((type: SoundType, themeOverride?: ThemeType) => {
     if (!isSoundEnabled) return;
 
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -40,131 +95,39 @@ export function useSoundEffects() {
     gainNode.connect(audioContext.destination);
 
     const now = audioContext.currentTime;
+    const currentTheme = themeOverride || getCurrentTheme();
+    const themeConfig = getThemeSoundConfig(currentTheme);
 
     switch (type) {
-      case 'theme-change':
-        // Ascending sweep sound
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(300, now);
-        oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.15);
-        oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.25);
+      case 'theme-change': {
+        const config = themeConfig.themeChange;
+        oscillator.type = config.type;
+        oscillator.frequency.setValueAtTime(config.freq[0], now);
+        oscillator.frequency.exponentialRampToValueAtTime(config.freq[1], now + config.duration * 0.5);
+        oscillator.frequency.exponentialRampToValueAtTime(config.freq[2], now + config.duration * 0.85);
         gainNode.gain.setValueAtTime(0.15, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + config.duration);
         oscillator.start(now);
-        oscillator.stop(now + 0.3);
+        oscillator.stop(now + config.duration);
         break;
+      }
 
-      case 'notification':
-        // Alert chime
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(523, now); // C5
-        gainNode.gain.setValueAtTime(0.2, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      case 'hover': {
+        const config = themeConfig.hover;
+        oscillator.type = config.type;
+        oscillator.frequency.setValueAtTime(config.freq[0], now);
+        oscillator.frequency.exponentialRampToValueAtTime(config.freq[1], now + config.duration * 0.6);
+        gainNode.gain.setValueAtTime(0.04, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + config.duration);
         oscillator.start(now);
-        oscillator.stop(now + 0.15);
-        
-        // Second note
-        setTimeout(() => {
-          const osc2 = audioContext.createOscillator();
-          const gain2 = audioContext.createGain();
-          osc2.connect(gain2);
-          gain2.connect(audioContext.destination);
-          osc2.type = 'sine';
-          osc2.frequency.setValueAtTime(659, audioContext.currentTime); // E5
-          gain2.gain.setValueAtTime(0.2, audioContext.currentTime);
-          gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-          osc2.start(audioContext.currentTime);
-          osc2.stop(audioContext.currentTime + 0.2);
-        }, 120);
-        
-        // Third note
-        setTimeout(() => {
-          const osc3 = audioContext.createOscillator();
-          const gain3 = audioContext.createGain();
-          osc3.connect(gain3);
-          gain3.connect(audioContext.destination);
-          osc3.type = 'sine';
-          osc3.frequency.setValueAtTime(784, audioContext.currentTime); // G5
-          gain3.gain.setValueAtTime(0.2, audioContext.currentTime);
-          gain3.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-          osc3.start(audioContext.currentTime);
-          osc3.stop(audioContext.currentTime + 0.35);
-        }, 240);
+        oscillator.stop(now + config.duration);
         break;
+      }
 
-      case 'click':
-        // Soft click
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(600, now);
-        oscillator.frequency.exponentialRampToValueAtTime(400, now + 0.05);
-        gainNode.gain.setValueAtTime(0.1, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-        oscillator.start(now);
-        oscillator.stop(now + 0.1);
-        break;
-
-      case 'success':
-        // Success chime
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(400, now);
-        oscillator.frequency.setValueAtTime(500, now + 0.1);
-        oscillator.frequency.setValueAtTime(600, now + 0.2);
-        gainNode.gain.setValueAtTime(0.15, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-        oscillator.start(now);
-        oscillator.stop(now + 0.4);
-        break;
-
-      case 'error':
-        // Error buzz
-        oscillator.type = 'sawtooth';
-        oscillator.frequency.setValueAtTime(150, now);
-        oscillator.frequency.setValueAtTime(100, now + 0.1);
-        gainNode.gain.setValueAtTime(0.1, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-        oscillator.start(now);
-        oscillator.stop(now + 0.2);
-        break;
-
-      case 'shift-start':
-        // Shift start fanfare
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(392, now); // G4
-        oscillator.frequency.setValueAtTime(523, now + 0.15); // C5
-        oscillator.frequency.setValueAtTime(659, now + 0.3); // E5
-        gainNode.gain.setValueAtTime(0.2, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-        oscillator.start(now);
-        oscillator.stop(now + 0.5);
-        break;
-
-      case 'shift-end':
-        // Shift end melody
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(659, now); // E5
-        oscillator.frequency.setValueAtTime(523, now + 0.15); // C5
-        oscillator.frequency.setValueAtTime(392, now + 0.3); // G4
-        gainNode.gain.setValueAtTime(0.2, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-        oscillator.start(now);
-        oscillator.stop(now + 0.5);
-        break;
-
-      case 'hover':
-        // Subtle hover tick - very short and light
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(800, now);
-        oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.03);
-        gainNode.gain.setValueAtTime(0.05, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-        oscillator.start(now);
-        oscillator.stop(now + 0.05);
-        break;
-
-      case 'card-select':
-        // Tactical selection sound - two quick beeps
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(440, now); // A4
+      case 'card-select': {
+        const config = themeConfig.cardSelect;
+        oscillator.type = config.type;
+        oscillator.frequency.setValueAtTime(config.freqs[0], now);
         gainNode.gain.setValueAtTime(0.15, now);
         gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
         oscillator.start(now);
@@ -176,17 +139,105 @@ export function useSoundEffects() {
           const gain2 = audioContext.createGain();
           osc2.connect(gain2);
           gain2.connect(audioContext.destination);
-          osc2.type = 'sine';
-          osc2.frequency.setValueAtTime(587, audioContext.currentTime); // D5
+          osc2.type = config.type;
+          osc2.frequency.setValueAtTime(config.freqs[1], audioContext.currentTime);
           gain2.gain.setValueAtTime(0.18, audioContext.currentTime);
           gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.12);
           osc2.start(audioContext.currentTime);
           osc2.stop(audioContext.currentTime + 0.15);
         }, 80);
         break;
+      }
+
+      case 'notification':
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(523, now);
+        gainNode.gain.setValueAtTime(0.2, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        oscillator.start(now);
+        oscillator.stop(now + 0.15);
+        
+        setTimeout(() => {
+          const osc2 = audioContext.createOscillator();
+          const gain2 = audioContext.createGain();
+          osc2.connect(gain2);
+          gain2.connect(audioContext.destination);
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(659, audioContext.currentTime);
+          gain2.gain.setValueAtTime(0.2, audioContext.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+          osc2.start(audioContext.currentTime);
+          osc2.stop(audioContext.currentTime + 0.2);
+        }, 120);
+        
+        setTimeout(() => {
+          const osc3 = audioContext.createOscillator();
+          const gain3 = audioContext.createGain();
+          osc3.connect(gain3);
+          gain3.connect(audioContext.destination);
+          osc3.type = 'sine';
+          osc3.frequency.setValueAtTime(784, audioContext.currentTime);
+          gain3.gain.setValueAtTime(0.2, audioContext.currentTime);
+          gain3.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+          osc3.start(audioContext.currentTime);
+          osc3.stop(audioContext.currentTime + 0.35);
+        }, 240);
+        break;
+
+      case 'click':
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(600, now);
+        oscillator.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+        gainNode.gain.setValueAtTime(0.1, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+        oscillator.start(now);
+        oscillator.stop(now + 0.1);
+        break;
+
+      case 'success':
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(400, now);
+        oscillator.frequency.setValueAtTime(500, now + 0.1);
+        oscillator.frequency.setValueAtTime(600, now + 0.2);
+        gainNode.gain.setValueAtTime(0.15, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        oscillator.start(now);
+        oscillator.stop(now + 0.4);
+        break;
+
+      case 'error':
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(150, now);
+        oscillator.frequency.setValueAtTime(100, now + 0.1);
+        gainNode.gain.setValueAtTime(0.1, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        oscillator.start(now);
+        oscillator.stop(now + 0.2);
+        break;
+
+      case 'shift-start':
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(392, now);
+        oscillator.frequency.setValueAtTime(523, now + 0.15);
+        oscillator.frequency.setValueAtTime(659, now + 0.3);
+        gainNode.gain.setValueAtTime(0.2, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        oscillator.start(now);
+        oscillator.stop(now + 0.5);
+        break;
+
+      case 'shift-end':
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(659, now);
+        oscillator.frequency.setValueAtTime(523, now + 0.15);
+        oscillator.frequency.setValueAtTime(392, now + 0.3);
+        gainNode.gain.setValueAtTime(0.2, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        oscillator.start(now);
+        oscillator.stop(now + 0.5);
+        break;
 
       case 'button-press':
-        // Satisfying button press with slight bounce
         oscillator.type = 'triangle';
         oscillator.frequency.setValueAtTime(500, now);
         oscillator.frequency.exponentialRampToValueAtTime(350, now + 0.05);
@@ -198,7 +249,6 @@ export function useSoundEffects() {
         break;
 
       case 'nav-click':
-        // Navigation/menu click - crisp and professional
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(700, now);
         oscillator.frequency.exponentialRampToValueAtTime(500, now + 0.06);
@@ -209,7 +259,6 @@ export function useSoundEffects() {
         break;
 
       case 'tactical-click':
-        // Military-style tactical click - sharp and precise
         oscillator.type = 'square';
         oscillator.frequency.setValueAtTime(1200, now);
         oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.02);
@@ -221,7 +270,6 @@ export function useSoundEffects() {
         break;
 
       case 'tactical-hover':
-        // Subtle radar blip for hover
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(1400, now);
         oscillator.frequency.exponentialRampToValueAtTime(1000, now + 0.02);
@@ -232,7 +280,6 @@ export function useSoundEffects() {
         break;
 
       case 'tactical-confirm':
-        // Confirmation beep sequence
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(880, now);
         gainNode.gain.setValueAtTime(0.1, now);
@@ -255,7 +302,6 @@ export function useSoundEffects() {
         break;
 
       case 'status-change':
-        // Status update notification - two-tone alert
         oscillator.type = 'triangle';
         oscillator.frequency.setValueAtTime(600, now);
         oscillator.frequency.setValueAtTime(900, now + 0.1);
@@ -265,8 +311,7 @@ export function useSoundEffects() {
         oscillator.stop(now + 0.2);
         break;
 
-      case 'radio-static':
-        // Short radio static/click effect using noise
+      case 'radio-static': {
         const bufferSize = audioContext.sampleRate * 0.05;
         const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
         const output = noiseBuffer.getChannelData(0);
@@ -287,11 +332,10 @@ export function useSoundEffects() {
         noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
         noiseNode.start(now);
         noiseNode.stop(now + 0.05);
-        return; // Early return since we don't use the oscillator
+        return;
+      }
 
       case 'access-denied':
-        // Military-style access denied alarm - three urgent beeps with descending pitch
-        // First beep - high alert
         oscillator.type = 'square';
         oscillator.frequency.setValueAtTime(800, now);
         oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.08);
@@ -300,7 +344,6 @@ export function useSoundEffects() {
         oscillator.start(now);
         oscillator.stop(now + 0.12);
 
-        // Second beep - warning
         setTimeout(() => {
           const osc2 = audioContext.createOscillator();
           const gain2 = audioContext.createGain();
@@ -315,7 +358,6 @@ export function useSoundEffects() {
           osc2.stop(audioContext.currentTime + 0.12);
         }, 150);
 
-        // Third beep - final alert (deeper)
         setTimeout(() => {
           const osc3 = audioContext.createOscillator();
           const gain3 = audioContext.createGain();
@@ -331,7 +373,7 @@ export function useSoundEffects() {
         }, 300);
         break;
     }
-  }, [isSoundEnabled]);
+  }, [isSoundEnabled, getCurrentTheme, getThemeSoundConfig]);
 
   const toggleSound = useCallback(() => {
     setIsSoundEnabled(prev => !prev);

@@ -262,6 +262,41 @@ export const themeAssets: Record<ThemeType, ThemeAssets> = {
     ambientGlow: { primary: 'rgba(34, 197, 94, 0.25)', secondary: 'rgba(16, 185, 129, 0.18)', tertiary: 'rgba(20, 184, 166, 0.12)' },
     cornerAccents: { style: 'matrix', color: 'border-emerald-500/50' },
   },
+  // NEW: Ember theme - inspired by PlantãoPro logo
+  ember: {
+    mainIcon: Shield,
+    decorativeIcons: [Flame, Crown, Swords],
+    teamIcons: {
+      ALFA: Shield,
+      BRAVO: Flame,
+      CHARLIE: Target,
+      DELTA: Crosshair,
+    },
+    teamColors: {
+      ALFA: { color: 'text-orange-400', bgGradient: 'from-orange-950/95 via-red-900/80 to-black', borderColor: 'border-orange-500/60', glowColor: 'shadow-orange-500/50' },
+      BRAVO: { color: 'text-red-400', bgGradient: 'from-red-950/95 via-orange-900/80 to-black', borderColor: 'border-red-500/60', glowColor: 'shadow-red-500/50' },
+      CHARLIE: { color: 'text-amber-400', bgGradient: 'from-amber-950/95 via-orange-900/80 to-black', borderColor: 'border-amber-500/60', glowColor: 'shadow-amber-500/50' },
+      DELTA: { color: 'text-yellow-400', bgGradient: 'from-yellow-950/95 via-red-900/80 to-black', borderColor: 'border-yellow-500/60', glowColor: 'shadow-yellow-500/50' },
+    },
+    teamDescriptions: {
+      ALFA: { description: 'Escudo Supremo', slogan: 'Proteção Total' },
+      BRAVO: { description: 'Força Operacional', slogan: 'Intensidade Máxima' },
+      CHARLIE: { description: 'Elite Tática', slogan: 'Precisão de Fogo' },
+      DELTA: { description: 'Comando Especial', slogan: 'Líder Estratégico' },
+    },
+    logoStyle: {
+      gradient: 'from-orange-400 via-red-500 to-amber-400',
+      textShadow: '0 0 50px rgba(234, 88, 12, 0.8)',
+    },
+    subtitle: 'Sistema Operacional de Elite',
+    backgroundEffects: [
+      { type: 'flames', intensity: 'high', primaryColor: 'rgba(234, 88, 12, 0.5)', secondaryColor: 'rgba(220, 38, 38, 0.3)', animated: true, speed: 'medium' },
+      { type: 'particles', intensity: 'high', primaryColor: 'rgba(234, 88, 12, 0.7)', animated: true, particleCount: 60, speed: 'medium' },
+      { type: 'golden', intensity: 'medium', primaryColor: 'rgba(234, 179, 8, 0.3)', animated: true, speed: 'slow' },
+    ],
+    ambientGlow: { primary: 'rgba(234, 88, 12, 0.3)', secondary: 'rgba(220, 38, 38, 0.2)', tertiary: 'rgba(234, 179, 8, 0.15)' },
+    cornerAccents: { style: 'flame', color: 'border-orange-500/60' },
+  },
   system: {
     mainIcon: Monitor,
     decorativeIcons: [Radio, Siren, Lock],

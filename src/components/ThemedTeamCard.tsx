@@ -116,6 +116,20 @@ const getThemeCardStyle = (resolvedTheme: string) => {
         bottomAccent: 'h-1 bg-gradient-to-r from-emerald-600 via-green-400 to-emerald-600',
         cardClipPath: 'polygon(0% 3%, 3% 0%, 97% 0%, 100% 3%, 100% 97%, 97% 100%, 3% 100%, 0% 97%)',
       };
+    // NEW: Ember - Inspired by PlantãoPro logo
+    case 'ember':
+      return {
+        borderRadius: 'rounded-xl sm:rounded-2xl',
+        borderStyle: 'border-3',
+        overlayGradient: 'bg-gradient-to-t from-black/95 via-red-950/60 to-orange-900/30',
+        glowEffect: 'shadow-[0_0_30px_rgba(234,88,12,0.35)] group-hover:shadow-[0_0_50px_rgba(234,88,12,0.6)]',
+        scanlineStyle: 'opacity-15',
+        buttonStyle: '',
+        accentShape: Star,
+        topAccent: 'h-1.5 bg-gradient-to-r from-orange-600 via-red-500 to-amber-500',
+        bottomAccent: 'h-1 bg-gradient-to-r from-orange-700 via-red-600 to-orange-700',
+        cardClipPath: '',
+      };
     case 'tactical':
     default:
       return {
@@ -430,6 +444,28 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
                 <div 
                   className="absolute inset-0 opacity-[0.05]"
                   style={{ backgroundImage: 'linear-gradient(0deg, transparent 49%, rgba(34,197,94,0.3) 50%, transparent 51%), linear-gradient(90deg, transparent 49%, rgba(34,197,94,0.3) 50%, transparent 51%)', backgroundSize: '20px 20px' }}
+                />
+              </>
+            )}
+            
+            {resolvedTheme === 'ember' && (
+              <>
+                {/* Ember: Fire effect inspired by logo */}
+                <div 
+                  className="absolute inset-0 bg-gradient-to-t from-orange-600/30 via-red-600/20 to-transparent"
+                  style={{ animation: 'emberGlow 2.5s ease-in-out infinite' }}
+                />
+                <div 
+                  className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-orange-500/80 to-transparent"
+                  style={{ animation: 'emberSweep 3s linear infinite', boxShadow: '0 0 25px 5px rgba(234,88,12,0.5)' }}
+                />
+                <div 
+                  className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-orange-500"
+                  style={{ animation: 'emberFlare 1s ease-in-out infinite' }}
+                />
+                <div 
+                  className="absolute bottom-2 left-2 w-2 h-2 rounded-full bg-amber-500"
+                  style={{ animation: 'emberFlare 1s ease-in-out infinite', animationDelay: '0.5s' }}
                 />
               </>
             )}
