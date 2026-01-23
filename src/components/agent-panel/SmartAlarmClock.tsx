@@ -1,15 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSmartAlarms, UpcomingAlarm, AlarmCategory, categoryConfig } from '@/hooks/useSmartAlarms';
+import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { 
   Bell, BellRing, Clock, ChevronDown, ChevronUp, 
-  Volume2, VolumeX, Calendar, Zap, AlertTriangle
+  Volume2, VolumeX, Calendar, Zap, AlertTriangle,
+  Plus, ExternalLink, Loader2, Star
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 import {
   Tooltip,
   TooltipContent,
@@ -23,9 +31,19 @@ interface SmartAlarmClockProps {
 
 export function SmartAlarmClock({ agentId }: SmartAlarmClockProps) {
   const { alarms, isLoading, nextAlarm, playCategorySound, refreshAlarms } = useSmartAlarms({ agentId });
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [newAlarm, setNewAlarm] = useState({
+    title: '',
+    date: '',
+    time: '09:00',
+    category: 'personalizado' as AlarmCategory,
+  });
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -35,6 +53,36 @@ export function SmartAlarmClock({ agentId }: SmartAlarmClockProps) {
   const testSound = (category: AlarmCategory) => {
     if (isSoundEnabled) {
       playCategorySound(category);
+    }
+  };
+
+  const handleSaveAlarm = async () => {
+    if (!newAlarm.title || !newAlarm.date) {
+      toast({ title: 'Preencha título e data', variant: 'destructive' });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const { error } = await supabase.from('agent_events').insert({
+        agent_id: agentId,
+        title: newAlarm.title,
+        event_date: newAlarm.date,
+        start_time: newAlarm.time,
+        event_type: newAlarm.category === 'reuniao' ? 'meeting' : 'custom',
+        reminder_before: 60,
+      });
+
+      if (error) throw error;
+
+      toast({ title: 'Alarme criado!', description: 'Notificação configurada.' });
+      setShowAddDialog(false);
+      setNewAlarm({ title: '', date: '', time: '09:00', category: 'personalizado' });
+      refreshAlarms();
+    } catch (error) {
+      toast({ title: 'Erro ao salvar', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -92,23 +140,105 @@ export function SmartAlarmClock({ agentId }: SmartAlarmClockProps) {
             </div>
           </div>
           
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
+          <div className="flex items-center gap-1">
+            {/* Add Alarm Button */}
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+              <DialogTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIsSoundEnabled(!isSoundEnabled)}
-                  className="h-8 w-8 p-0 text-zinc-400 hover:text-cyan-400"
+                  className="h-8 w-8 p-0 text-zinc-400 hover:text-emerald-400 hover:bg-emerald-500/10"
                 >
-                  {isSoundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                  <Plus className="h-4 w-4" />
                 </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                {isSoundEnabled ? 'Desativar sons' : 'Ativar sons'}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+              </DialogTrigger>
+              <DialogContent className="max-w-sm bg-slate-900 border-zinc-700">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-white">
+                    <Star className="h-5 w-5 text-amber-400" />
+                    Criar Alarme Rápido
+                  </DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label className="text-zinc-300">Título</Label>
+                    <Input
+                      value={newAlarm.title}
+                      onChange={(e) => setNewAlarm({ ...newAlarm, title: e.target.value })}
+                      placeholder="Ex: Lembrete importante"
+                      className="bg-zinc-800 border-zinc-700 text-white"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label className="text-zinc-300">Data</Label>
+                      <Input
+                        type="date"
+                        value={newAlarm.date}
+                        onChange={(e) => setNewAlarm({ ...newAlarm, date: e.target.value })}
+                        className="bg-zinc-800 border-zinc-700 text-white"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-zinc-300">Hora</Label>
+                      <Input
+                        type="time"
+                        value={newAlarm.time}
+                        onChange={(e) => setNewAlarm({ ...newAlarm, time: e.target.value })}
+                        className="bg-zinc-800 border-zinc-700 text-white"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-zinc-300">Categoria</Label>
+                    <Select
+                      value={newAlarm.category}
+                      onValueChange={(v) => setNewAlarm({ ...newAlarm, category: v as AlarmCategory })}
+                    >
+                      <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-zinc-800 border-zinc-700">
+                        <SelectItem value="personalizado">⭐ Personalizado</SelectItem>
+                        <SelectItem value="reuniao">📋 Reunião</SelectItem>
+                        <SelectItem value="bh">⏱️ Banco de Horas</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <Button 
+                    onClick={handleSaveAlarm} 
+                    className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Bell className="h-4 w-4 mr-2" />}
+                    Criar Alarme
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsSoundEnabled(!isSoundEnabled)}
+                    className="h-8 w-8 p-0 text-zinc-400 hover:text-cyan-400"
+                  >
+                    {isSoundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {isSoundEnabled ? 'Desativar sons' : 'Ativar sons'}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
 
         {/* Main Clock Display */}
@@ -285,6 +415,16 @@ export function SmartAlarmClock({ agentId }: SmartAlarmClockProps) {
                 </div>
               ))
             )}
+            
+            {/* Link to full agenda */}
+            <Button
+              variant="ghost"
+              className="w-full mt-2 text-xs text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10"
+              onClick={() => navigate('/agenda')}
+            >
+              <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+              Abrir Agenda Completa
+            </Button>
           </CollapsibleContent>
         </Collapsible>
       </div>

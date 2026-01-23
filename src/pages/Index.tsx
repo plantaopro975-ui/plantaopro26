@@ -49,7 +49,8 @@ import { ForgotPasswordDialog } from '@/components/ForgotPasswordDialog';
 import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, canQuickLogin } from '@/components/auth/SavedCredentials';
 import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDialog';
 import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
-import { QuickLoginCards } from '@/components/QuickLoginCards';
+import { QuickAccessPanel } from '@/components/QuickAccessPanel';
+import { InstitutionalBanner } from '@/components/InstitutionalBanner';
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
 import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
@@ -1205,27 +1206,19 @@ export default function Index() {
 
       {/* Themed Header - Professional Status Bar */}
       <ThemedHeader selectedTeam={selectedTeam} />
+      
+      {/* Institutional Banner - ISE/ACRE */}
+      <div className="relative z-10 animate-fade-in shrink-0">
+        <InstitutionalBanner />
+      </div>
+      
       {/* Teams Grid Section - Optimized for both portrait and landscape */}
       <section className="flex-1 py-2 sm:py-3 px-2 sm:px-4 relative z-10 flex flex-col items-center justify-center min-h-0 overflow-hidden">
-        {/* Prominent Title Above Cards */}
-        <div className="w-full text-center mb-2 sm:mb-3 animate-fade-in" style={{ animationDelay: '200ms' }}>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-none">
-            <span 
-              className="bg-gradient-to-r from-amber-300 via-primary to-amber-500 bg-clip-text text-transparent drop-shadow-[0_0_25px_hsl(var(--primary)/0.6)] animate-[pulse-glow_2s_ease-in-out_infinite]"
-              style={{ textShadow: '0 2px 15px hsl(var(--primary)/0.5)' }}
-            >
-              PlantãoPro
-            </span>
-          </h1>
-          <p className="text-[10px] sm:text-xs text-muted-foreground/80 tracking-[0.3em] uppercase mt-1 animate-fade-in" style={{ animationDelay: '400ms' }}>
-            Sistema de Escalas Operacionais
-          </p>
-        </div>
         
-        {/* Quick Login Cards - Shows when credentials are saved */}
+        {/* Quick Access Panel - Shows when credentials are saved */}
         {getSavedCredentials().length > 0 && (
-          <div className="w-full max-w-md mb-3 sm:mb-4 px-2 animate-fade-in" style={{ animationDelay: '300ms' }}>
-            <QuickLoginCards
+          <div className="w-full mb-3 sm:mb-4 px-2 animate-fade-in" style={{ animationDelay: '300ms' }}>
+            <QuickAccessPanel
               onQuickLogin={handleQuickLogin}
               onSelectCredential={handleQuickLoginSelect}
               isLoading={!!quickLoginLoadingCpf}
