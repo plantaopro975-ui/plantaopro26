@@ -1261,16 +1261,16 @@ export default function Index() {
         {/* Top accent line */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
         
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
           {/* Left: Developer with professional effect */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <div className="relative group">
               <div className="absolute inset-0 blur-lg bg-gradient-to-r from-primary/30 via-amber-400/30 to-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-primary/30 hover:border-primary/50 transition-all">
-                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-lg shadow-primary/30">
-                  <span className="text-[10px] font-black text-black">FD</span>
+              <div className="relative flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/50 border border-primary/30 hover:border-primary/50 transition-all">
+                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-lg shadow-primary/30">
+                  <span className="text-[8px] font-black text-black">FD</span>
                 </div>
-                <span className="text-xs sm:text-sm font-black tracking-[0.1em] uppercase bg-gradient-to-r from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-gradient-x">
+                <span className="text-[10px] sm:text-xs font-black tracking-[0.1em] uppercase bg-gradient-to-r from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-gradient-x">
                   FRANC D'NIS
                 </span>
               </div>
@@ -1278,24 +1278,27 @@ export default function Index() {
             <HomeAudioPlayer />
           </div>
           
-          {/* Center: Themed Analog Clock + Location Badge - Premium */}
-          <div className="flex-1 flex items-center justify-center gap-3">
-            <ThemedAnalogClock size={48} />
-            <div className="flex flex-col items-start">
-              <span className="text-base sm:text-lg font-black text-primary tracking-wider leading-none">
+          {/* Center: Location Badge + Year - Compact */}
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col items-center">
+              <span className="text-sm sm:text-base font-black text-primary tracking-wider leading-none">
                 FEIJÓ
               </span>
-              <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground/70 tracking-widest uppercase">
+              <span className="text-[8px] sm:text-[9px] font-medium text-muted-foreground/60 tracking-widest uppercase">
                 Acre • Brasil
               </span>
             </div>
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30">
-              <span className="text-sm font-bold text-primary tabular-nums">{new Date().getFullYear()}</span>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/30">
+              <span className="text-xs font-bold text-primary tabular-nums">{new Date().getFullYear()}</span>
             </div>
           </div>
           
-          {/* Right: Actions */}
-          <div className="flex items-center gap-1">
+          {/* Right: Clock + Actions */}
+          <div className="flex items-center gap-1.5">
+            {/* Themed Clock - Top Right */}
+            <div className="p-1 rounded-lg bg-slate-800/50 border border-primary/30">
+              <ThemedAnalogClock size={36} />
+            </div>
             {getSavedCredentials().length > 0 && (
               <button
                 onClick={() => setShowCredentialsManager(true)}
