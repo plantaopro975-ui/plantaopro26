@@ -317,7 +317,15 @@ export default function Master() {
         return new Date(a.license_expires_at) < new Date();
       }).length;
       
-      const activeCount = (agentsData || []).filter((a: any) => a.is_active).length;
+      // CRÍTICO: Apenas conta como "ativo" agentes que estão is_active=true E approval_status='approved'
+      const activeCount = (agentsData || []).filter((a: any) => 
+        a.is_active && a.approval_status === 'approved'
+      ).length;
+      
+      // Conta pendentes: approval_status='pending' OU approval_status é null (registros legados)
+      const pendingCount = (agentsData || []).filter((a: any) => 
+        a.approval_status === 'pending' || a.approval_status === null
+      ).length;
 
       setStats({
         totalUsers: usersWithRoles.length,
@@ -326,7 +334,7 @@ export default function Master() {
         pendingTransfers: transfersRes.count || 0,
         activeAgents: activeCount,
         expiredLicenses: expiredCount,
-        pendingApprovals: pendingApprovalsRes.count || 0,
+        pendingApprovals: pendingCount,
       });
     } catch (error) {
       console.error('Error fetching admin data:', error);
