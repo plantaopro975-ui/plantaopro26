@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -9,79 +9,86 @@ interface UseAuthGuardOptions {
 }
 
 export function useAuthGuard(options: UseAuthGuardOptions = {}) {
-  const { user, isLoading, masterSession } = useAuth();
+  const { user, isLoading, masterSession, session } = useAuth();
   const navigate = useNavigate();
   const [isReady, setIsReady] = useState(false);
+  const hasCheckedRef = useRef(false);
 
   const { requireMasterSession = false, requireUserSession = false, allowBoth = true } = options;
 
   useEffect(() => {
-    // Wait for auth to finish loading
+    // Aguardar auth carregar
     if (isLoading) {
       return;
     }
 
-    // CRÍTICO: Se estamos na rota /master, NUNCA redirecionar
-    if (window.location.pathname === '/master') {
+    // Verificar master token no localStorage
+    const storedMasterToken = localStorage.getItem('master_token');
+    const storedMasterUser = localStorage.getItem('master_user');
+
+    // CRÍTICO: Se estamos na rota /master ou /admin, NUNCA redirecionar
+    if (window.location.pathname === '/master' || window.location.pathname === '/admin') {
       setIsReady(true);
       return;
     }
 
-    // CRÍTICO: Se há masterSession, NUNCA redirecionar
-    if (masterSession) {
+    // CRÍTICO: Se há masterSession ou token master armazenado, NUNCA redirecionar
+    if (masterSession || storedMasterToken || storedMasterUser) {
       setIsReady(true);
       return;
     }
 
-    // Give more time for the session to be fully established
-    // This prevents premature redirects during token refresh
-    const timer = setTimeout(() => {
-      let isAuthenticated = false;
+    // CRÍTICO: Se há usuário autenticado, NUNCA redirecionar
+    if (user && session) {
+      setIsReady(true);
+      return;
+    }
 
-      if (requireMasterSession && !requireUserSession) {
-        // Only master session required (Master page)
-        isAuthenticated = !!masterSession;
-      } else if (requireUserSession && !requireMasterSession) {
-        // Only user session required (AgentPanel)
-        isAuthenticated = !!user;
-      } else if (allowBoth) {
-        // Allow either master session or user session (Dashboard, etc)
-        isAuthenticated = !!user || !!masterSession;
-      }
+    // Só marca como pronto se já verificou uma vez
+    if (!hasCheckedRef.current) {
+      hasCheckedRef.current = true;
+      
+      // Dar tempo extra para sessão se estabelecer (evita logout prematuro)
+      const timer = setTimeout(() => {
+        let isAuthenticated = false;
 
-      // CRITICAL: Only redirect if we're SURE there's no session
-      // and enough time has passed for token refresh to complete
-      // NUNCA redirecionar se estamos em /master
-      if (!isAuthenticated && !isLoading && window.location.pathname !== '/master') {
-        // Double-check before redirecting
-        setTimeout(() => {
-          // Re-check auth state before actually redirecting
-          // Check stored master token as well
-          const storedMaster = localStorage.getItem('master_token');
-          if (!user && !masterSession && !storedMaster && window.location.pathname !== '/master') {
-            navigate('/auth', { replace: true });
-          } else {
-            setIsReady(true);
+        if (requireMasterSession && !requireUserSession) {
+          isAuthenticated = !!masterSession || !!storedMasterToken;
+        } else if (requireUserSession && !requireMasterSession) {
+          isAuthenticated = !!user;
+        } else if (allowBoth) {
+          isAuthenticated = !!user || !!masterSession || !!storedMasterToken;
+        }
+
+        if (!isAuthenticated) {
+          // Última verificação antes de redirecionar
+          const finalMasterCheck = localStorage.getItem('master_token');
+          if (!finalMasterCheck && window.location.pathname !== '/' && window.location.pathname !== '/master') {
+            navigate('/', { replace: true });
           }
-        }, 500);
-      } else {
+        }
+        
         setIsReady(true);
-      }
-    }, 300);
+      }, 1000); // Aumentado para 1 segundo
 
-    return () => clearTimeout(timer);
-  }, [isLoading, user, masterSession, navigate, requireMasterSession, requireUserSession, allowBoth]);
+      return () => clearTimeout(timer);
+    } else {
+      setIsReady(true);
+    }
+  }, [isLoading, user, session, masterSession, navigate, requireMasterSession, requireUserSession, allowBoth]);
 
-  // Return ready state only after auth check is complete
+  // Calcular autenticação incluindo tokens armazenados
+  const storedMasterToken = typeof window !== 'undefined' ? localStorage.getItem('master_token') : null;
+  
   const shouldRender = !isLoading && isReady && (
-    (requireMasterSession && !requireUserSession && !!masterSession) ||
+    (requireMasterSession && !requireUserSession && (!!masterSession || !!storedMasterToken)) ||
     (requireUserSession && !requireMasterSession && !!user) ||
-    (allowBoth && (!!user || !!masterSession))
+    (allowBoth && (!!user || !!masterSession || !!storedMasterToken))
   );
 
   return {
     isLoading: isLoading || !isReady,
-    isAuthenticated: shouldRender,
+    isAuthenticated: shouldRender || !!masterSession || !!storedMasterToken,
     user,
     masterSession,
   };

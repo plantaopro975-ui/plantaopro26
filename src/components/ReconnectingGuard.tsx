@@ -52,40 +52,48 @@ export function ReconnectingGuard({
     }
   }, [user, session, masterSession]);
 
-  // Handle session loss - silently redirect to home instead of showing UI
-  // CRÍTICO: NUNCA redirecionar se há masterSession (painel Master)
+  // Handle session loss - NUNCA redirecionar prematuramente
   useEffect(() => {
     // Still loading - do nothing
     if (isLoading) return;
 
+    // Verificar tokens armazenados
+    const storedMasterToken = localStorage.getItem('master_token');
+    const storedMasterUser = localStorage.getItem('master_user');
+
     // CRÍTICO: Master session SEMPRE bypassa tudo - NUNCA redirecionar
-    if (masterSession) {
-      // Garantir que o ref está setado para evitar redirects futuros
+    if (masterSession || storedMasterToken || storedMasterUser) {
       wasAuthenticatedRef.current = true;
       return;
     }
 
     // Has valid session - all good
-    if (user && session) return;
-
-    // CRÍTICO: Se estamos na rota /master, NUNCA redirecionar
-    if (window.location.pathname === '/master') {
+    if (user && session) {
+      wasAuthenticatedRef.current = true;
       return;
     }
 
-    // User was authenticated before but now lost session - redirect silently
+    // CRÍTICO: Se estamos nas rotas protegidas, NUNCA redirecionar automaticamente
+    const protectedRoutes = ['/master', '/admin', '/dashboard', '/agent-panel', '/agents'];
+    if (protectedRoutes.some(route => window.location.pathname.startsWith(route))) {
+      // Dar tempo para sessão se recuperar
+      return;
+    }
+
+    // User was authenticated before but now lost session
     if (wasAuthenticatedRef.current && !user && !session) {
       // Clear any existing grace timeout
       if (graceTimeoutRef.current) {
         clearTimeout(graceTimeoutRef.current);
       }
 
-      // Give Supabase time to recover the session before redirecting
+      // Tempo maior para recuperação
       graceTimeoutRef.current = setTimeout(async () => {
-        // CRITICAL: Re-check masterSession before any redirect
-        // Master token is stored in localStorage under "master_token" (src/lib/masterSession.ts)
-        const storedMaster = localStorage.getItem('master_token');
-        if (storedMaster) {
+        // CRITICAL: Re-check todos os tokens antes de qualquer redirect
+        const finalMasterCheck = localStorage.getItem('master_token');
+        const finalMasterUser = localStorage.getItem('master_user');
+        
+        if (finalMasterCheck || finalMasterUser) {
           return; // Não redirecionar se há token master
         }
 
@@ -93,16 +101,15 @@ export function ReconnectingGuard({
         const hasSession = await verifySession();
         
         if (!hasSession) {
-          // Check context state again (it may have updated)
           const { data: { session: latestSession } } = await supabase.auth.getSession();
           
-          if (!latestSession && window.location.pathname !== '/master') {
-            // Silently redirect to home - no UI shown
+          // Só redirecionar se realmente não há sessão e não estamos em rotas protegidas
+          if (!latestSession && window.location.pathname === '/agent-panel') {
             wasAuthenticatedRef.current = false;
             navigate('/', { replace: true });
           }
         }
-      }, maxWaitTime);
+      }, maxWaitTime + 2000); // Tempo extra de segurança
     }
   }, [user, session, isLoading, masterSession, verifySession, navigate, maxWaitTime]);
 

@@ -73,49 +73,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    // CRÍTICO: Configurar listener ANTES de getSession
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (event, newSession) => {
         // Diagnostics only (no tokens stored)
         pushDiagEvent('info', 'auth_state_change', {
           event,
-          hasSession: !!session,
-          userId: session?.user?.id ?? null,
-          expiresAt: (session as any)?.expires_at ?? null,
-          expiresIn: (session as any)?.expires_in ?? null,
+          hasSession: !!newSession,
+          userId: newSession?.user?.id ?? null,
+          expiresAt: (newSession as any)?.expires_at ?? null,
+          expiresIn: (newSession as any)?.expires_in ?? null,
         });
 
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          setTimeout(() => {
-            fetchUserRole(session.user.id);
-          }, 0);
+        // CRÍTICO: Não fazer nada em eventos de logout forçado durante refresh
+        if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+          setSession(newSession);
+          setUser(newSession?.user ?? null);
+          
+          if (newSession?.user) {
+            setTimeout(() => {
+              fetchUserRole(newSession.user.id);
+            }, 0);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          // Só limpa se realmente foi logout intencional
+          const storedMaster = localStorage.getItem('master_token');
+          if (!storedMaster) {
+            setSession(null);
+            setUser(null);
+            setUserRole(null);
+          }
         } else {
-          setUserRole(null);
+          // Para outros eventos, atualiza normalmente
+          setSession(newSession);
+          setUser(newSession?.user ?? null);
+          
+          if (newSession?.user) {
+            setTimeout(() => {
+              fetchUserRole(newSession.user.id);
+            }, 0);
+          } else if (!newSession) {
+            setUserRole(null);
+          }
         }
 
         // Do not end loading state until the initial getSession() completes.
-        // This avoids a brief window where pages think there's no user and redirect.
         if (hasInitializedRef.current) {
           setIsLoading(false);
         }
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Buscar sessão inicial
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
       pushDiagEvent('info', 'auth_get_session', {
-        hasSession: !!session,
-        userId: session?.user?.id ?? null,
-        expiresAt: (session as any)?.expires_at ?? null,
-        expiresIn: (session as any)?.expires_in ?? null,
+        hasSession: !!initialSession,
+        userId: initialSession?.user?.id ?? null,
+        expiresAt: (initialSession as any)?.expires_at ?? null,
+        expiresIn: (initialSession as any)?.expires_in ?? null,
       });
 
-      setSession(session);
-      setUser(session?.user ?? null);
+      setSession(initialSession);
+      setUser(initialSession?.user ?? null);
 
-      if (session?.user) {
-        fetchUserRole(session.user.id);
+      if (initialSession?.user) {
+        fetchUserRole(initialSession.user.id);
       }
 
       hasInitializedRef.current = true;
