@@ -72,17 +72,23 @@ export function ConnectedDevicesCard() {
   const fetchDevices = async () => {
     if (!user) return;
     
+    // Don't fetch if offline
+    if (!navigator.onLine) {
+      setIsLoading(false);
+      return;
+    }
+    
     setIsLoading(true);
     try {
       // Get current agent
       const cpf = user.email?.split('@')[0];
-      const { data: agent } = await supabase
+      const { data: agent, error: agentError } = await supabase
         .from('agents')
         .select('id')
         .eq('cpf', cpf)
         .single();
 
-      if (!agent) {
+      if (agentError || !agent) {
         setIsLoading(false);
         return;
       }
@@ -94,9 +100,15 @@ export function ConnectedDevicesCard() {
         .eq('is_active', true)
         .order('last_login_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        // Don't throw on network errors
+        console.error('Error fetching devices:', error);
+        setIsLoading(false);
+        return;
+      }
       setDevices(data || []);
     } catch (err) {
+      // Silently handle errors to prevent 404/blank page
       console.error('Error fetching devices:', err);
     } finally {
       setIsLoading(false);

@@ -317,40 +317,127 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
           {/* Top accent stripe */}
           <div className={cn("absolute top-0 left-0 right-0 transition-all duration-300", themeStyle.topAccent)} />
           
-          {/* Security scan sweep effect - always active */}
+          {/* Theme-specific security scan effects - unique per theme */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Horizontal sweep scanner */}
+            {resolvedTheme === 'tactical' && (
+              <>
+                {/* Tactical: Radar sweep */}
+                <div 
+                  className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-amber-500/70 to-transparent"
+                  style={{ animation: 'radarSweep 3s linear infinite', boxShadow: '0 0 20px 4px rgba(251,191,36,0.4)' }}
+                />
+                <div 
+                  className="absolute top-2 left-2 w-2 h-2 rounded-full bg-amber-500/80"
+                  style={{ animation: 'tacticalPulse 1.5s ease-in-out infinite' }}
+                />
+                <div 
+                  className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-amber-500/80"
+                  style={{ animation: 'tacticalPulse 1.5s ease-in-out infinite', animationDelay: '0.75s' }}
+                />
+              </>
+            )}
+            
+            {resolvedTheme === 'cyber' && (
+              <>
+                {/* Cyber: Matrix code rain effect */}
+                <div 
+                  className="absolute h-full w-[1px] bg-gradient-to-b from-cyan-400/80 via-cyan-500/40 to-transparent"
+                  style={{ animation: 'matrixLine 2s linear infinite', left: '20%' }}
+                />
+                <div 
+                  className="absolute h-full w-[1px] bg-gradient-to-b from-purple-400/80 via-purple-500/40 to-transparent"
+                  style={{ animation: 'matrixLine 2.5s linear infinite', left: '60%', animationDelay: '0.5s' }}
+                />
+                <div 
+                  className="absolute h-full w-[1px] bg-gradient-to-b from-cyan-400/60 via-cyan-500/30 to-transparent"
+                  style={{ animation: 'matrixLine 1.8s linear infinite', left: '85%', animationDelay: '1s' }}
+                />
+                <div 
+                  className="absolute inset-0 opacity-20"
+                  style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(6,182,212,0.1) 2px, rgba(6,182,212,0.1) 4px)' }}
+                />
+              </>
+            )}
+            
+            {resolvedTheme === 'crimson' && (
+              <>
+                {/* Crimson: Emergency beacon pulse */}
+                <div 
+                  className="absolute inset-0 bg-gradient-to-t from-red-600/30 via-transparent to-transparent"
+                  style={{ animation: 'emergencyPulse 2s ease-in-out infinite' }}
+                />
+                <div 
+                  className="absolute top-3 right-3 w-3 h-3 rounded-full bg-red-500"
+                  style={{ animation: 'alarmFlash 0.8s ease-in-out infinite' }}
+                />
+                <div 
+                  className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-red-500/60 to-transparent"
+                  style={{ animation: 'alertScan 2.5s ease-in-out infinite' }}
+                />
+              </>
+            )}
+            
+            {resolvedTheme === 'arctic' && (
+              <>
+                {/* Arctic: Frost crystallization effect */}
+                <div 
+                  className="absolute inset-0 bg-gradient-to-br from-sky-400/10 via-transparent to-cyan-400/10"
+                  style={{ animation: 'frostShimmer 4s ease-in-out infinite' }}
+                />
+                <div 
+                  className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-sky-300/50 to-transparent blur-[1px]"
+                  style={{ animation: 'frostLine 5s linear infinite' }}
+                />
+                <div 
+                  className="absolute inset-0 opacity-10"
+                  style={{ backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(56,189,248,0.3) 0%, transparent 20%), radial-gradient(circle at 70% 80%, rgba(34,211,238,0.3) 0%, transparent 20%)' }}
+                />
+              </>
+            )}
+            
+            {resolvedTheme === 'sovereign' && (
+              <>
+                {/* Sovereign: Royal golden shimmer */}
+                <div 
+                  className="absolute inset-0"
+                  style={{ 
+                    background: 'linear-gradient(45deg, transparent 40%, rgba(234,179,8,0.15) 50%, transparent 60%)',
+                    animation: 'royalShimmer 3s ease-in-out infinite'
+                  }}
+                />
+                <div 
+                  className="absolute top-2 left-2 w-1.5 h-1.5 bg-yellow-400/80 rounded-full"
+                  style={{ animation: 'crownGlow 2s ease-in-out infinite' }}
+                />
+                <div 
+                  className="absolute bottom-2 right-2 w-1.5 h-1.5 bg-amber-400/80 rounded-full"
+                  style={{ animation: 'crownGlow 2s ease-in-out infinite', animationDelay: '1s' }}
+                />
+              </>
+            )}
+            
+            {resolvedTheme === 'nexus' && (
+              <>
+                {/* Nexus: Circuit pulse network */}
+                <div 
+                  className="absolute h-[2px] w-full bg-gradient-to-r from-transparent via-emerald-500/70 to-transparent"
+                  style={{ animation: 'circuitPulseH 2.5s linear infinite' }}
+                />
+                <div 
+                  className="absolute w-[2px] h-full bg-gradient-to-b from-transparent via-green-400/60 to-transparent"
+                  style={{ animation: 'circuitPulseV 3s linear infinite', animationDelay: '0.5s' }}
+                />
+                <div 
+                  className="absolute inset-0 opacity-[0.05]"
+                  style={{ backgroundImage: 'linear-gradient(0deg, transparent 49%, rgba(34,197,94,0.3) 50%, transparent 51%), linear-gradient(90deg, transparent 49%, rgba(34,197,94,0.3) 50%, transparent 51%)', backgroundSize: '20px 20px' }}
+                />
+              </>
+            )}
+            
+            {/* Diagonal security grid - all themes */}
             <div 
-              className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent"
-              style={{ 
-                animation: 'securityScanH 4s ease-in-out infinite',
-                boxShadow: '0 0 15px 3px hsl(var(--primary) / 0.4)'
-              }}
-            />
-            {/* Vertical sweep scanner */}
-            <div 
-              className="absolute h-full w-[2px] bg-gradient-to-b from-transparent via-primary/50 to-transparent"
-              style={{ 
-                animation: 'securityScanV 5s ease-in-out infinite',
-                animationDelay: '1.5s',
-                boxShadow: '0 0 12px 2px hsl(var(--primary) / 0.3)'
-              }}
-            />
-            {/* Corner pulse beacons */}
-            <div 
-              className="absolute top-3 left-3 w-1.5 h-1.5 rounded-full bg-primary/70"
-              style={{ animation: 'securityPulse 2s ease-in-out infinite' }}
-            />
-            <div 
-              className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full bg-primary/70"
-              style={{ animation: 'securityPulse 2s ease-in-out infinite', animationDelay: '1s' }}
-            />
-            {/* Diagonal security grid overlay */}
-            <div 
-              className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500"
-              style={{
-                backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, hsl(var(--primary) / 0.2) 10px, hsl(var(--primary) / 0.2) 11px)',
-              }}
+              className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.06] transition-opacity duration-500"
+              style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 12px, currentColor 12px, currentColor 13px)' }}
             />
           </div>
           

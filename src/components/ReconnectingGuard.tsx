@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useNetworkStatus } from '@/hooks/useOfflineCache';
 
 interface ReconnectingGuardProps {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export function ReconnectingGuard({
   maxWaitTime = 8000,
 }: ReconnectingGuardProps) {
   const { user, session, isLoading, masterSession } = useAuth();
-  const navigate = useNavigate();
+  const { isOnline } = useNetworkStatus();
   
   // Track if user was ever authenticated in this component lifecycle
   const wasAuthenticatedRef = useRef(false);
@@ -30,20 +30,75 @@ export function ReconnectingGuard({
     };
   }, []);
 
+  // Prevent pull-to-refresh and accidental navigation when offline
+  useEffect(() => {
+    const preventPullToRefresh = (e: TouchEvent) => {
+      // Only prevent if we're at the top of the page
+      if (window.scrollY === 0 && e.touches.length === 1) {
+        const touch = e.touches[0];
+        const startY = touch.clientY;
+        
+        const handleTouchMove = (moveEvent: TouchEvent) => {
+          const currentY = moveEvent.touches[0].clientY;
+          // If pulling down from top, prevent it
+          if (currentY > startY && window.scrollY === 0) {
+            moveEvent.preventDefault();
+          }
+        };
+        
+        document.addEventListener('touchmove', handleTouchMove, { passive: false });
+        
+        const cleanup = () => {
+          document.removeEventListener('touchmove', handleTouchMove);
+        };
+        
+        document.addEventListener('touchend', cleanup, { once: true });
+        document.addEventListener('touchcancel', cleanup, { once: true });
+      }
+    };
+    
+    // Add offline lock class to body
+    document.body.classList.add('offline-lock');
+    document.addEventListener('touchstart', preventPullToRefresh, { passive: true });
+    
+    return () => {
+      document.body.classList.remove('offline-lock');
+      document.removeEventListener('touchstart', preventPullToRefresh);
+    };
+  }, []);
+
+  // Handle beforeunload to warn users when offline
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!isOnline && wasAuthenticatedRef.current) {
+        e.preventDefault();
+        e.returnValue = 'Você está offline. Tem certeza que deseja sair?';
+        return e.returnValue;
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isOnline]);
+
   // Verify if there's actually a session in Supabase
   const verifySession = useCallback(async (): Promise<boolean> => {
     if (isCheckingSessionRef.current) return true;
+    
+    // If offline, assume session is still valid (don't try to verify)
+    if (!isOnline) return true;
     
     try {
       isCheckingSessionRef.current = true;
       const { data: { session: currentSession } } = await supabase.auth.getSession();
       return !!currentSession;
     } catch {
-      return false;
+      // On error, assume session is valid (don't logout user due to network issues)
+      return true;
     } finally {
       isCheckingSessionRef.current = false;
     }
-  }, []);
+  }, [isOnline]);
 
   // Update wasAuthenticated when we have a valid session
   useEffect(() => {
@@ -52,10 +107,15 @@ export function ReconnectingGuard({
     }
   }, [user, session, masterSession]);
 
-  // Handle session loss - NUNCA redirecionar prematuramente
+  // Handle session loss - NEVER redirect when offline
   useEffect(() => {
     // Still loading - do nothing
     if (isLoading) return;
+
+    // CRITICAL: If offline, NEVER redirect or logout - maintain current state
+    if (!isOnline) {
+      return;
+    }
 
     // Verificar tokens armazenados
     const storedMasterToken = localStorage.getItem('master_token');
@@ -74,14 +134,14 @@ export function ReconnectingGuard({
     }
 
     // CRÍTICO: Se estamos nas rotas protegidas, NUNCA redirecionar automaticamente
-    const protectedRoutes = ['/master', '/admin', '/dashboard', '/agent-panel', '/agents'];
+    const protectedRoutes = ['/master', '/admin', '/dashboard', '/agent-panel', '/agents', '/settings', '/profile'];
     if (protectedRoutes.some(route => window.location.pathname.startsWith(route))) {
       // Dar tempo para sessão se recuperar
       return;
     }
 
-    // User was authenticated before but now lost session
-    if (wasAuthenticatedRef.current && !user && !session) {
+    // User was authenticated before but now lost session - only redirect if online
+    if (wasAuthenticatedRef.current && !user && !session && isOnline) {
       // Clear any existing grace timeout
       if (graceTimeoutRef.current) {
         clearTimeout(graceTimeoutRef.current);
@@ -89,29 +149,36 @@ export function ReconnectingGuard({
 
       // Tempo maior para recuperação
       graceTimeoutRef.current = setTimeout(async () => {
-        // CRITICAL: Re-check todos os tokens antes de qualquer redirect
+        // CRITICAL: Re-check all tokens before any redirect
         const finalMasterCheck = localStorage.getItem('master_token');
         const finalMasterUser = localStorage.getItem('master_user');
         
         if (finalMasterCheck || finalMasterUser) {
-          return; // Não redirecionar se há token master
+          return; // Don't redirect if there's a master token
+        }
+
+        // Check if still online
+        if (!navigator.onLine) {
+          return; // Don't redirect if offline
         }
 
         // Double-check if we still don't have a session
         const hasSession = await verifySession();
         
-        if (!hasSession) {
+        if (!hasSession && navigator.onLine) {
           const { data: { session: latestSession } } = await supabase.auth.getSession();
           
-          // Só redirecionar se realmente não há sessão e não estamos em rotas protegidas
+          // Only redirect if truly no session and online
           if (!latestSession && window.location.pathname === '/agent-panel') {
             wasAuthenticatedRef.current = false;
-            navigate('/', { replace: true });
+            // Use soft navigation - don't force reload
+            window.history.pushState({}, '', '/');
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }
         }
-      }, maxWaitTime + 2000); // Tempo extra de segurança
+      }, maxWaitTime + 2000);
     }
-  }, [user, session, isLoading, masterSession, verifySession, navigate, maxWaitTime]);
+  }, [user, session, isLoading, masterSession, verifySession, maxWaitTime, isOnline]);
 
   // Always render children - no reconnecting UI
   return <>{children}</>;
