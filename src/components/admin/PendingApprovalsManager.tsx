@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { adminClient } from '@/lib/adminClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -64,27 +64,15 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
   const fetchPendingAgents = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('agents')
-        .select(`
-          id,
-          name,
-          cpf,
-          matricula,
-          team,
-          phone,
-          created_at,
-          approval_status,
-          unit:units(id, name, municipality)
-        `)
-        .eq('approval_status', 'pending')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setPendingAgents((data as unknown as PendingAgent[]) || []);
+      // Use admin backend to bypass RLS
+      const result = await adminClient.getPendingAgents();
+      console.log('Pending agents fetched via backend:', result.agents?.length || 0);
+      setPendingAgents(result.agents || []);
     } catch (error: any) {
       console.error('Error fetching pending agents:', error);
-      toast.error('Erro ao carregar cadastros pendentes');
+      toast.error('Erro ao carregar cadastros pendentes', {
+        description: error.message
+      });
     } finally {
       setLoading(false);
     }
@@ -93,42 +81,23 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
   useEffect(() => {
     fetchPendingAgents();
 
-    // Realtime subscription for new registrations
-    const channel = supabase
-      .channel('pending-registrations')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'agents',
-          filter: 'approval_status=eq.pending'
-        },
-        () => {
-          fetchPendingAgents();
-        }
-      )
-      .subscribe();
+    // Poll for updates every 30 seconds (realtime may not work without auth)
+    const interval = setInterval(fetchPendingAgents, 30000);
 
     return () => {
-      supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, []);
 
   const handleApprove = async (agent: PendingAgent) => {
     setProcessing(agent.id);
     try {
-      const { error } = await supabase
-        .from('agents')
-        .update({
-          approval_status: 'approved',
-          approved_at: new Date().toISOString()
-        })
-        .eq('id', agent.id);
+      await adminClient.approveAgent({ agentId: agent.id });
 
-      if (error) throw error;
-
+      console.log('Agent approved successfully:', agent.id);
+      
       toast.success(`Cadastro de ${agent.name} aprovado!`, {
+        description: 'O agente agora pode acessar o sistema.',
         icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />
       });
       
@@ -136,7 +105,9 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
       onApprovalChange?.();
     } catch (error: any) {
       console.error('Error approving agent:', error);
-      toast.error('Erro ao aprovar cadastro');
+      toast.error('Erro ao aprovar cadastro', {
+        description: error.message
+      });
     } finally {
       setProcessing(null);
     }
@@ -147,16 +118,10 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
     
     setProcessing(rejectDialog.agent.id);
     try {
-      // Delete the agent and their auth user
-      const { error } = await supabase
-        .from('agents')
-        .update({
-          approval_status: 'rejected',
-          rejection_reason: rejectDialog.reason || 'Cadastro não autorizado'
-        })
-        .eq('id', rejectDialog.agent.id);
-
-      if (error) throw error;
+      await adminClient.rejectAgent({
+        agentId: rejectDialog.agent.id,
+        reason: rejectDialog.reason || 'Cadastro não autorizado'
+      });
 
       toast.success(`Cadastro de ${rejectDialog.agent.name} rejeitado`, {
         icon: <XCircle className="w-5 h-5 text-red-400" />
@@ -167,7 +132,9 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
       onApprovalChange?.();
     } catch (error: any) {
       console.error('Error rejecting agent:', error);
-      toast.error('Erro ao rejeitar cadastro');
+      toast.error('Erro ao rejeitar cadastro', {
+        description: error.message
+      });
     } finally {
       setProcessing(null);
     }
@@ -188,116 +155,116 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
       <CardHeader className="border-b border-amber-500/20 bg-gradient-to-r from-amber-500/10 to-transparent">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/30">
-              <Bell className="w-5 h-5 text-amber-400" />
+            <div className="p-3 rounded-xl bg-amber-500/20 border border-amber-500/30">
+              <Bell className="w-6 h-6 text-amber-400" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold text-amber-400">
+              <CardTitle className="text-xl font-bold text-amber-400">
                 Aprovação de Cadastros
               </CardTitle>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-sm text-slate-400 mt-0.5">
                 Gerencie solicitações de novos agentes
               </p>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {pendingAgents.length > 0 && (
-              <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 px-3 py-1">
-                <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
+              <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 px-4 py-1.5 text-base">
+                <AlertTriangle className="w-4 h-4 mr-2" />
                 {pendingAgents.length} pendente{pendingAgents.length > 1 ? 's' : ''}
               </Badge>
             )}
             <Button
               variant="outline"
-              size="sm"
+              size="default"
               onClick={fetchPendingAgents}
               disabled={loading}
-              className="border-slate-600 hover:bg-slate-700"
+              className="border-slate-600 hover:bg-slate-700 h-10"
             >
-              <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
+              <RefreshCw className={cn("w-5 h-5", loading && "animate-spin")} />
             </Button>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 space-y-4">
+      <CardContent className="p-5 space-y-5">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
           <Input
             placeholder="Buscar por nome, CPF ou unidade..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 bg-slate-800/50 border-slate-700"
+            className="pl-11 h-12 text-base bg-slate-800/50 border-slate-700"
           />
         </div>
 
         {/* Pending list */}
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <RefreshCw className="w-6 h-6 text-amber-400 animate-spin" />
+          <div className="flex items-center justify-center py-16">
+            <RefreshCw className="w-8 h-8 text-amber-400 animate-spin" />
           </div>
         ) : filteredAgents.length === 0 ? (
-          <div className="text-center py-12 space-y-3">
-            <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center">
-              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+          <div className="text-center py-16 space-y-4">
+            <div className="w-20 h-20 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center">
+              <CheckCircle2 className="w-10 h-10 text-emerald-400" />
             </div>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-400 text-base">
               {searchTerm ? 'Nenhum resultado encontrado' : 'Nenhum cadastro pendente'}
             </p>
           </div>
         ) : (
-          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
             {filteredAgents.map((agent) => (
               <div
                 key={agent.id}
                 className={cn(
-                  "p-4 rounded-xl border transition-all duration-300",
+                  "p-5 rounded-xl border transition-all duration-300",
                   "bg-gradient-to-r from-slate-800/80 to-slate-800/40",
                   "border-amber-500/20 hover:border-amber-500/40",
                   "hover:shadow-lg hover:shadow-amber-500/5"
                 )}
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start justify-between gap-5">
                   {/* Agent info */}
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded-lg bg-slate-700/50">
-                        <Users className="w-4 h-4 text-cyan-400" />
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-slate-700/50">
+                        <Users className="w-5 h-5 text-cyan-400" />
                       </div>
-                      <span className="font-semibold text-white text-sm">
+                      <span className="font-bold text-white text-lg">
                         {agent.name}
                       </span>
-                      <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">
-                        <Clock className="w-3 h-3 mr-1" />
+                      <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-sm px-2.5 py-0.5">
+                        <Clock className="w-3.5 h-3.5 mr-1.5" />
                         PENDENTE
                       </Badge>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="flex items-center gap-1.5 text-slate-400">
-                        <Shield className="w-3.5 h-3.5 text-slate-500" />
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-center gap-2 text-slate-300">
+                        <Shield className="w-4 h-4 text-slate-500" />
                         <span>CPF: {formatCPF(agent.cpf)}</span>
                       </div>
                       {agent.matricula && (
-                        <div className="flex items-center gap-1.5 text-slate-400">
+                        <div className="flex items-center gap-2 text-slate-300">
                           <span>Mat: {agent.matricula}</span>
                         </div>
                       )}
                       {agent.unit && (
-                        <div className="flex items-center gap-1.5 text-slate-400">
-                          <Building2 className="w-3.5 h-3.5 text-slate-500" />
+                        <div className="flex items-center gap-2 text-slate-300">
+                          <Building2 className="w-4 h-4 text-slate-500" />
                           <span>{agent.unit.name}</span>
                         </div>
                       )}
                       {agent.team && (
-                        <div className="flex items-center gap-1.5 text-slate-400">
+                        <div className="flex items-center gap-2 text-slate-300">
                           <span>Equipe: {agent.team}</span>
                         </div>
                       )}
-                      <div className="flex items-center gap-1.5 text-slate-400 col-span-2">
-                        <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      <div className="flex items-center gap-2 text-slate-400 col-span-2">
+                        <Calendar className="w-4 h-4 text-slate-500" />
                         <span>
                           Solicitado em: {format(new Date(agent.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
                         </span>
@@ -306,27 +273,27 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
                   </div>
 
                   {/* Actions */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-3">
                     <Button
-                      size="sm"
+                      size="lg"
                       onClick={() => handleApprove(agent)}
                       disabled={processing === agent.id}
                       className={cn(
-                        "bg-emerald-600 hover:bg-emerald-500 text-white",
+                        "bg-emerald-600 hover:bg-emerald-500 text-white h-11 px-5",
                         "shadow-lg shadow-emerald-500/20"
                       )}
                     >
-                      <UserCheck className="w-4 h-4 mr-1.5" />
+                      <UserCheck className="w-5 h-5 mr-2" />
                       Aprovar
                     </Button>
                     <Button
-                      size="sm"
+                      size="lg"
                       variant="outline"
                       onClick={() => setRejectDialog({ open: true, agent, reason: '' })}
                       disabled={processing === agent.id}
-                      className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                      className="border-red-500/50 text-red-400 hover:bg-red-500/10 h-11 px-5"
                     >
-                      <UserX className="w-4 h-4 mr-1.5" />
+                      <UserX className="w-5 h-5 mr-2" />
                       Rejeitar
                     </Button>
                   </div>
@@ -342,55 +309,55 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
         open={rejectDialog.open} 
         onOpenChange={(open) => !open && setRejectDialog({ open: false, agent: null, reason: '' })}
       >
-        <DialogContent className="bg-slate-900 border-red-500/30 max-w-md">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl bg-red-500/20 border border-red-500/30">
-                <UserX className="w-6 h-6 text-red-400" />
+        <DialogContent className="bg-slate-900 border-red-500/30 max-w-md p-6">
+          <div className="space-y-5">
+            <div className="flex items-center gap-4">
+              <div className="p-4 rounded-xl bg-red-500/20 border border-red-500/30">
+                <UserX className="w-8 h-8 text-red-400" />
               </div>
               <div>
-                <h3 className="font-bold text-red-400">Rejeitar Cadastro</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="font-bold text-xl text-red-400">Rejeitar Cadastro</h3>
+                <p className="text-base text-slate-400">
                   {rejectDialog.agent?.name}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-slate-400 uppercase">
+            <div className="space-y-3">
+              <label className="text-sm font-semibold text-slate-400 uppercase">
                 Motivo da Rejeição (opcional)
               </label>
               <Textarea
                 value={rejectDialog.reason}
                 onChange={(e) => setRejectDialog(prev => ({ ...prev, reason: e.target.value }))}
                 placeholder="Informe o motivo da rejeição..."
-                className="bg-slate-800/50 border-slate-700 resize-none"
+                className="bg-slate-800/50 border-slate-700 resize-none text-base h-24"
                 rows={3}
               />
             </div>
 
-            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-              <p className="text-xs text-red-300">
-                <AlertTriangle className="w-4 h-4 inline mr-1.5" />
+            <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+              <p className="text-sm text-red-300">
+                <AlertTriangle className="w-5 h-5 inline mr-2" />
                 O agente será notificado e não poderá acessar o sistema.
               </p>
             </div>
           </div>
 
-          <DialogFooter className="mt-4">
+          <DialogFooter className="mt-5">
             <Button
               variant="outline"
               onClick={() => setRejectDialog({ open: false, agent: null, reason: '' })}
-              className="border-slate-600"
+              className="border-slate-600 h-11"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleReject}
               disabled={processing === rejectDialog.agent?.id}
-              className="bg-red-600 hover:bg-red-500"
+              className="bg-red-600 hover:bg-red-500 h-11"
             >
-              <XCircle className="w-4 h-4 mr-1.5" />
+              <XCircle className="w-5 h-5 mr-2" />
               Confirmar Rejeição
             </Button>
           </DialogFooter>
