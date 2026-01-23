@@ -56,6 +56,7 @@ import { setMasterToken } from '@/lib/masterSession';
 import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
 import { HomeVideoBackground } from '@/components/HomeVideoBackground';
 import { ThemedAnalogClock } from '@/components/ThemedAnalogClock';
+import { SpectacularClock } from '@/components/SpectacularClock';
 import { ThemedTeamCard } from '@/components/ThemedTeamCard';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
@@ -1204,20 +1205,21 @@ export default function Index() {
         {/* Animated Particles/Stars Effect */}
         <ParticleBackground particleCount={50} />
 
-      {/* Themed Header - Professional Status Bar */}
-      <ThemedHeader selectedTeam={selectedTeam} />
-      
-      {/* Institutional Banner - ISE/ACRE */}
-      <div className="relative z-10 animate-fade-in shrink-0">
+      {/* Header with ISE/ACRE Banner at the very top */}
+      <header className="relative z-20 shrink-0">
+        {/* Institutional Banner - ISE/ACRE - Full top position */}
         <InstitutionalBanner />
-      </div>
+        
+        {/* Themed Header - Professional Status Bar (below banner) */}
+        <ThemedHeader selectedTeam={selectedTeam} />
+      </header>
       
-      {/* Teams Grid Section - Optimized for both portrait and landscape */}
+      {/* Teams Grid Section - Main content area */}
       <section className="flex-1 py-2 sm:py-3 px-2 sm:px-4 relative z-10 flex flex-col items-center justify-center min-h-0 overflow-hidden">
         
         {/* Quick Access Panel - Shows when credentials are saved */}
         {getSavedCredentials().length > 0 && (
-          <div className="w-full mb-3 sm:mb-4 px-2 animate-fade-in" style={{ animationDelay: '300ms' }}>
+          <div className="w-full mb-3 sm:mb-4 px-2 animate-fade-in" style={{ animationDelay: '200ms' }}>
             <QuickAccessPanel
               onQuickLogin={handleQuickLogin}
               onSelectCredential={handleQuickLoginSelect}
@@ -1235,7 +1237,7 @@ export default function Index() {
                 key={team}
                 className="animate-fade-in-scale flex justify-center"
                 style={{
-                  animationDelay: `${400 + index * 80}ms`,
+                  animationDelay: `${300 + index * 80}ms`,
                 }}
               >
                 <ThemedTeamCard
@@ -1249,14 +1251,15 @@ export default function Index() {
       </section>
 
 
-      {/* Footer - Premium Professional Design */}
-      <footer className="py-2 sm:py-2.5 px-3 sm:px-4 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md border-t border-primary/20 relative z-20 shrink-0">
+      {/* Footer - Clean Professional Design */}
+      <footer className="py-2 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md border-t border-primary/20 relative z-20 shrink-0">
         {/* Top accent line */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
         
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
-          {/* Left: Developer with professional effect */}
-          <div className="flex items-center gap-1.5">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+          {/* Left: Developer branding + Audio + Actions */}
+          <div className="flex items-center gap-2">
+            {/* Developer Badge */}
             <div className="relative group">
               <div className="absolute inset-0 blur-lg bg-gradient-to-r from-primary/30 via-amber-400/30 to-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/50 border border-primary/30 hover:border-primary/50 transition-all">
@@ -1269,29 +1272,7 @@ export default function Index() {
               </div>
             </div>
             <HomeAudioPlayer />
-          </div>
-          
-          {/* Center: Location Badge + Year - Compact */}
-          <div className="flex items-center gap-2">
-            <div className="flex flex-col items-center">
-              <span className="text-sm sm:text-base font-black text-primary tracking-wider leading-none">
-                FEIJÓ
-              </span>
-              <span className="text-[8px] sm:text-[9px] font-medium text-muted-foreground/60 tracking-widest uppercase">
-                Acre • Brasil
-              </span>
-            </div>
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/30">
-              <span className="text-xs font-bold text-primary tabular-nums">{new Date().getFullYear()}</span>
-            </div>
-          </div>
-          
-          {/* Right: Clock + Actions */}
-          <div className="flex items-center gap-1.5">
-            {/* Themed Clock - Top Right */}
-            <div className="p-1 rounded-lg bg-slate-800/50 border border-primary/30">
-              <ThemedAnalogClock size={36} />
-            </div>
+            
             {getSavedCredentials().length > 0 && (
               <button
                 onClick={() => setShowCredentialsManager(true)}
@@ -1301,8 +1282,21 @@ export default function Index() {
                 <KeyRound className="h-3.5 w-3.5" />
               </button>
             )}
-            
-            {/* Admin/Master Dropdown - Botão MAIOR */}
+          </div>
+          
+          {/* Center: Copyright */}
+          <div className="flex flex-col items-center">
+            <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground/70 tracking-wider">
+              © 2026 PlantãoPro
+            </span>
+            <span className="text-[8px] text-muted-foreground/50 tracking-widest uppercase">
+              Feijó/AC
+            </span>
+          </div>
+          
+          {/* Right: Spectacular Clock + Admin Actions */}
+          <div className="flex items-center gap-2">
+            {/* Admin/Master Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
@@ -1342,14 +1336,21 @@ export default function Index() {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            {/* Sobre o App - Abaixo do cadeado em mobile, ao lado em desktop */}
+            {/* About App */}
             <button
               onClick={() => setShowAboutDialog(true)}
               className="p-1.5 sm:p-2 text-muted-foreground hover:text-primary rounded hover:bg-primary/10 transition-all duration-200"
               title="Sobre o App"
             >
-              <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <Info className="h-4 w-4" />
             </button>
+            
+            {/* Spectacular Clock - Right side */}
+            <div className="relative">
+              <div className="p-1.5 rounded-xl bg-slate-800/60 border border-primary/40 shadow-lg shadow-primary/10">
+                <SpectacularClock size={56} />
+              </div>
+            </div>
           </div>
         </div>
       </footer>
