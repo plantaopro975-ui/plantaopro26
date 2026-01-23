@@ -1,25 +1,74 @@
-<script>
-      const removeBadge = () => {
-        // 1. Tenta pelo ID conhecido
-        const badge = document.getElementById('lovable-badge');
-        if (badge) badge.remove();
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>PlantaoPro - Gestão de Escalas</title>
+    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    
+    <meta name="description" content="Sistema completo para gestão de escalas e plantões. Simplifique o controle da sua equipe com o PlantaoPro." />
+    <meta name="theme-color" content="#1BA9D2" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PlantãoPro" />
+    
+    <link rel="manifest" href="/manifest.json" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500;600;700&family=Teko:wght@400;500;600;700&family=Exo+2:wght@400;500;600;700;800&family=Bebas+Neue&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        // 2. Tenta por seletores de atributo (mesmo que o ID mude)
-        const selectors = [
-          '[id*="lovable"]',
-          '[class*="lovable"]',
-          'a[href*="lovable.dev"]',
-          'img[src*="lovable"]'
-        ];
-        
-        selectors.forEach(selector => {
-          document.querySelectorAll(selector).forEach(el => el.remove());
-        });
-      };
+    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
 
-      // Roda ao carregar e monitora se o selo tentar voltar
-      removeBadge();
-      setInterval(removeBadge, 1000);
+    <meta property="og:title" content="PlantaoPro - Gestão de Escalas" />
+    <meta property="og:description" content="Sistema completo para gestão de escalas e plantões." />
+    <meta property="og:type" content="website" />
+
+    <style>
+      html, body, #root {
+        background-color: #030712;
+        min-height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+      (function() {
+        const killLovable = () => {
+          const selectors = [
+            '#lovable-badge', 
+            '.lovable-badge', 
+            '[id*="lovable"]', 
+            '[class*="lovable"]',
+            'a[href*="lovable.dev"]',
+            'img[alt*="Lovable"]'
+          ];
+          
+          selectors.forEach(s => {
+            document.querySelectorAll(s).forEach(el => el.remove());
+          });
+
+          // Caso o selo esteja em um Shadow DOM (técnica de ocultação)
+          const allDivs = document.querySelectorAll('div[style*="position: fixed"]');
+          allDivs.forEach(div => {
+            if (div.shadowRoot || div.innerHTML.includes('lovable')) {
+              div.remove();
+            }
+          });
+        };
+
+        // Roda imediatamente, após carregar e a cada 1 segundo
+        killLovable();
+        window.addEventListener('load', killLovable);
+        setInterval(killLovable, 1000);
+      })();
     </script>
   </body>
 </html>
