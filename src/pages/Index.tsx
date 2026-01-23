@@ -1362,204 +1362,219 @@ export default function Index() {
         showSaveOption={false}
       />
 
-      {/* Registration Dialog - Compact Professional */}
+      {/* Registration Dialog - Professional & Responsive */}
       <Dialog open={showRegistration} onOpenChange={(open) => !open && safeCloseRegistration()}>
-        <DialogContent className="bg-gradient-to-br from-card via-card/95 to-background border border-primary/30 w-[95vw] max-w-sm max-h-[85vh] overflow-y-auto shadow-xl shadow-primary/10 p-3">
-          <DialogHeader className="pb-2 border-b border-border/40">
-            <DialogTitle className="flex items-center gap-2 text-sm font-bold text-foreground">
+        <DialogContent className={cn(
+          "bg-gradient-to-br from-slate-900 via-slate-900/98 to-slate-950",
+          "border-2 border-cyan-500/40 shadow-2xl shadow-cyan-900/20",
+          // Responsive sizing - compact on all devices
+          "w-[92vw] max-w-[380px]",
+          "max-h-[80vh] sm:max-h-[85vh] overflow-y-auto",
+          "p-4 sm:p-5"
+        )}>
+          <DialogHeader className="pb-3 border-b border-slate-700/50">
+            <DialogTitle className="flex items-center gap-3 text-base font-bold text-foreground">
               {currentTeamConfig && (
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500/30 to-cyan-500/10 border border-cyan-500/30">
-                  <currentTeamConfig.icon className={`h-4 w-4 ${currentTeamConfig.color}`} />
+                <div className="p-2 rounded-xl bg-gradient-to-br from-cyan-500/25 to-cyan-600/15 border border-cyan-500/40 shadow-lg shadow-cyan-500/10">
+                  <currentTeamConfig.icon className={`h-5 w-5 ${currentTeamConfig.color}`} />
                 </div>
               )}
               <div>
-                <span className="block">Cadastro - {selectedTeam}</span>
-                <span className="text-[10px] font-normal text-cyan-400">Novo Agente</span>
+                <span className="block text-cyan-100">Cadastro - {selectedTeam}</span>
+                <span className="text-[10px] font-medium text-cyan-400/80">Novo Agente</span>
               </div>
             </DialogTitle>
           </DialogHeader>
 
-          <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/30 mb-2">
+          {/* Alert compact */}
+          <div className="p-2.5 bg-amber-500/10 rounded-lg border border-amber-500/30 mt-3">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-              <p className="text-amber-300 text-[10px]">
-                <strong>CPF</strong> = usuário de acesso
+              <AlertTriangle className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+              <p className="text-amber-300/90 text-[10px] font-medium">
+                <strong>CPF</strong> será seu usuário de acesso
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleSignUp} className="space-y-2.5">
+          <form onSubmit={handleSignUp} className="space-y-3 mt-3">
             {/* Nome */}
             <div className="space-y-1">
-              <Label htmlFor="name" className="text-[10px] font-semibold text-foreground uppercase tracking-wide">Nome Completo *</Label>
+              <Label htmlFor="name" className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Nome Completo *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/\d/g, '').toUpperCase() })}
                 placeholder="NOME COMPLETO"
-                className="bg-card/80 border border-border text-foreground text-sm py-2.5 uppercase focus:border-primary/60"
+                className="h-10 text-sm uppercase"
                 required
               />
               {regErrors.name && <p className="text-[10px] text-red-400">{regErrors.name}</p>}
             </div>
             
-            {/* CPF e Matrícula - Grid compacto */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-0.5">
-                <Label className="text-[10px] font-semibold text-foreground uppercase tracking-wide">CPF *</Label>
+            {/* CPF e Matrícula */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">CPF *</Label>
                 <div className="relative">
                   <Input
                     value={formData.cpf}
                     onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
                     placeholder="000.000.000-00"
-                    className={`bg-card/80 border text-foreground text-xs py-2 pr-8 transition-colors ${
-                      formData.cpf.replace(/\D/g, '').length === 11
-                        ? cpfValidation.isValid && !cpfValidation.exists
+                    className={cn(
+                      "h-10 text-sm pr-8",
+                      formData.cpf.replace(/\D/g, '').length === 11 && (
+                        cpfValidation.isValid && !cpfValidation.exists
                           ? 'border-green-500 focus:border-green-500'
                           : cpfValidation.exists
                           ? 'border-amber-500 focus:border-amber-500'
                           : 'border-red-500 focus:border-red-500'
-                        : 'border-border focus:border-primary/60'
-                    }`}
+                      )
+                    )}
                     maxLength={14}
                     required
                   />
                   {formData.cpf.replace(/\D/g, '').length === 11 && (
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       {cpfValidation.isChecking ? (
-                        <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" />
                       ) : cpfValidation.isValid && !cpfValidation.exists ? (
-                        <UserCheck className="h-3 w-3 text-green-400" />
+                        <UserCheck className="h-3.5 w-3.5 text-green-400" />
                       ) : cpfValidation.exists ? (
-                        <AlertTriangle className="h-3 w-3 text-amber-400" />
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
                       ) : (
-                        <AlertTriangle className="h-3 w-3 text-red-400" />
+                        <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
                       )}
                     </div>
                   )}
                 </div>
-                {regErrors.cpf && <p className="text-[9px] text-red-400">{regErrors.cpf}</p>}
+                {regErrors.cpf && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.cpf}</p>}
               </div>
-              <div className="space-y-0.5">
-                <Label className="text-[10px] font-semibold text-foreground uppercase tracking-wide">Matrícula</Label>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Matrícula</Label>
                 <Input
                   value={formData.matricula}
                   onChange={(e) => setFormData({ ...formData, matricula: formatMatricula(e.target.value) })}
                   placeholder="000.000.00"
-                  className="bg-card/80 border border-border text-foreground text-xs py-2 focus:border-primary/60"
+                  className="h-10 text-sm"
                   maxLength={10}
                 />
-                {regErrors.matricula && <p className="text-[9px] text-red-400">{regErrors.matricula}</p>}
+                {regErrors.matricula && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.matricula}</p>}
               </div>
             </div>
             
-            {/* Unidade - Compacto */}
-            <div className="space-y-0.5">
-              <Label className="text-[10px] font-semibold text-foreground uppercase tracking-wide">Unidade *</Label>
+            {/* Unidade */}
+            <div className="space-y-1">
+              <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Unidade *</Label>
               <Select
                 value={formData.unit_id}
                 onValueChange={(value) => setFormData({ ...formData, unit_id: value })}
               >
-                <SelectTrigger className="bg-card/80 border border-border text-foreground text-xs py-2 focus:border-primary/60">
-                  <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione"} />
+                <SelectTrigger className="h-10 text-sm">
+                  <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione a unidade"} />
                 </SelectTrigger>
                 <SelectContent 
-                  className="bg-card border border-border max-h-48"
+                  className="max-h-48"
                   position="popper"
                   sideOffset={4}
                   style={{ zIndex: 9999 }}
                 >
                   {units.length === 0 ? (
-                    <div className="px-2 py-1.5 text-muted-foreground text-xs">Carregando...</div>
+                    <div className="px-3 py-2 text-slate-400 text-sm">Carregando...</div>
                   ) : (
                     units.map((unit) => (
-                      <SelectItem key={unit.id} value={unit.id} className="text-foreground hover:bg-muted focus:bg-muted cursor-pointer py-1.5 text-xs">
+                      <SelectItem key={unit.id} value={unit.id} className="text-sm">
                         <span className="font-medium">{unit.name}</span>
-                        <span className="text-muted-foreground ml-1">({unit.municipality})</span>
+                        <span className="text-slate-400 ml-1.5">({unit.municipality})</span>
                       </SelectItem>
                     ))
                   )}
                 </SelectContent>
               </Select>
-              {regErrors.unit_id && <p className="text-[9px] text-red-400">{regErrors.unit_id}</p>}
+              {regErrors.unit_id && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.unit_id}</p>}
             </div>
 
-            {/* Nascimento, Telefone e Senhas - Compacto */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-0.5">
-                <Label className="text-[10px] font-semibold text-foreground uppercase tracking-wide">Nascimento</Label>
+            {/* Nascimento e Telefone */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Nascimento</Label>
                 <Input
                   value={formData.birth_date}
                   onChange={(e) => setFormData({ ...formData, birth_date: formatBirthDate(e.target.value) })}
                   placeholder="DD-MM-AAAA"
-                  className="bg-card/80 border border-border text-foreground text-xs py-2 focus:border-primary/60"
+                  className="h-10 text-sm"
                   maxLength={10}
                 />
                 {calculatedAge !== null && (
-                  <p className="text-[9px] text-amber-400">{calculatedAge} anos</p>
+                  <p className="text-[9px] text-amber-400 font-medium">{calculatedAge} anos</p>
                 )}
               </div>
-              <div className="space-y-0.5">
-                <Label className="text-[10px] font-semibold text-foreground uppercase tracking-wide">Telefone</Label>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Telefone</Label>
                 <Input
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
                   placeholder="(00) 00000-0000"
-                  className="bg-card/80 border border-border text-foreground text-xs py-2 focus:border-primary/60"
+                  className="h-10 text-sm"
                   maxLength={15}
                 />
               </div>
             </div>
 
-            {/* Senhas - Compacto */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-0.5">
-                <Label className="text-[10px] font-semibold text-foreground uppercase tracking-wide">Senha *</Label>
+            {/* Senhas */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Senha *</Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Min. 6 caracteres"
-                    className="bg-card/80 border border-border text-foreground text-xs py-2 pr-8 focus:border-primary/60"
+                    placeholder="Mín. 6 caracteres"
+                    className="h-10 text-sm pr-9"
                     required
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-slate-400 hover:text-slate-200"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                    {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                   </Button>
                 </div>
-                {regErrors.password && <p className="text-[9px] text-red-400">{regErrors.password}</p>}
+                {regErrors.password && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.password}</p>}
               </div>
-              <div className="space-y-0.5">
-                <Label className="text-[10px] font-semibold text-foreground uppercase tracking-wide">Confirmar *</Label>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Confirmar *</Label>
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  placeholder="Repita"
-                  className="bg-card/80 border border-border text-foreground text-xs py-2 focus:border-primary/60"
+                  placeholder="Repita a senha"
+                  className="h-10 text-sm"
                   required
                 />
-                {regErrors.confirmPassword && <p className="text-[9px] text-red-400">{regErrors.confirmPassword}</p>}
+                {regErrors.confirmPassword && <p className="text-[9px] text-red-400 mt-0.5">{regErrors.confirmPassword}</p>}
               </div>
             </div>
             
+            {/* Submit Button */}
             <Button
               type="submit"
               disabled={isSubmitting}
-              size="sm"
-              className="w-full bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold text-sm py-3"
+              className={cn(
+                "w-full h-11 mt-2",
+                "bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-500 hover:to-cyan-600",
+                "text-white font-bold text-sm tracking-wide",
+                "shadow-lg shadow-cyan-900/30 hover:shadow-cyan-800/40",
+                "transition-all duration-200"
+              )}
             >
               {isSubmitting ? (
-                <><Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> Cadastrando...</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cadastrando...</>
               ) : (
-                <>Cadastrar</>
+                <>Cadastrar Agente</>
               )}
             </Button>
           </form>
