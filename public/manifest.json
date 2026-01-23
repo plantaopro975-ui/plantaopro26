@@ -2,8 +2,8 @@
   "name": "Plantão Pro",
   "short_name": "PlantãoPro",
   "description": "Sistema de gestão de plantões para agentes socioeducativos",
-  "theme_color": "#f59e0b",
-  "background_color": "#0f172a",
+  "theme_color": "#1BA9D2",
+  "background_color": "#030712",
   "display": "standalone",
   "display_override": ["fullscreen", "standalone"],
   "orientation": "any",
@@ -59,10 +59,4 @@
     },
     {
       "name": "Banco de Horas",
-      "short_name": "BH",
-      "description": "Gerenciar banco de horas",
-      "url": "/agent-panel?tab=bh&pwa=1",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
-    }
-  ]
-}
+      "short_name
