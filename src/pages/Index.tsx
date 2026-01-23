@@ -63,6 +63,7 @@ import { getThemeAssets } from '@/lib/themeAssets';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
 import { ThemedHeader } from '@/components/ThemedHeader';
+import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
 import logoShield from '@/assets/logo-shield.png';
 
 
@@ -143,8 +144,15 @@ export default function Index() {
     open: boolean;
     title: string;
     message: string;
-    type: 'error' | 'warning' | 'auth';
+    type: 'error' | 'warning' | 'auth' | 'password' | 'team';
   }>({ open: false, title: '', message: '', type: 'auth' });
+  
+  // Lockout timer state
+  const [lockoutDialog, setLockoutDialog] = useState<{
+    open: boolean;
+    endTime: Date;
+    identifier: string;
+  }>({ open: false, endTime: new Date(), identifier: '' });
   
   // Real-time CPF validation state
   const [cpfValidation, setCpfValidation] = useState<{
@@ -399,8 +407,8 @@ export default function Index() {
           setErrorDialog({
             open: true,
             title: 'ACESSO RESTRITO',
-            message: `⚠️ PROTOCOLO DE SEGURANÇA\n\nAgente identificado como membro da EQUIPE ${existingAgent.team}.\n\nO acesso por equipe divergente não é autorizado.\n\nRetorne à tela inicial e selecione o card da EQUIPE ${existingAgent.team}.`,
-            type: 'warning',
+            message: `Você está registrado na EQUIPE ${existingAgent.team}.\n\nRetorne à tela inicial e selecione o card correto da sua equipe para acessar o sistema.`,
+            type: 'team',
           });
         } else {
           // User belongs to selected team or has no team - show login
@@ -675,14 +683,28 @@ export default function Index() {
     const { error } = await signIn(authEmail, loginPassword);
     
     if (error) {
-      setErrorDialog({
-        open: true,
-        title: 'Falha na Autenticação',
-        message: error.message === 'Invalid login credentials' 
-          ? 'CPF ou senha incorretos. Verifique suas credenciais e tente novamente.' 
-          : error.message || 'Não foi possível autenticar. Tente novamente.',
-        type: 'auth',
-      });
+      // Check if it's a rate limit error
+      if (error.message.includes('Muitas tentativas') || error.message.includes('rate limit') || error.message.includes('15 minutos')) {
+        // Show lockout timer dialog
+        const lockoutEnd = new Date();
+        lockoutEnd.setMinutes(lockoutEnd.getMinutes() + 15);
+        setLockoutDialog({
+          open: true,
+          endTime: lockoutEnd,
+          identifier: formatCPF(cleanCpf)
+        });
+        setShowLogin(false);
+      } else {
+        // Show password error dialog
+        setErrorDialog({
+          open: true,
+          title: 'Senha Incorreta',
+          message: error.message === 'Invalid login credentials' 
+            ? 'A senha digitada está incorreta.\n\nVerifique suas credenciais e tente novamente.' 
+            : error.message || 'Não foi possível autenticar. Tente novamente.',
+          type: 'password',
+        });
+      }
     } else {
       persistLastCpf(cleanCpf);
       // Save credentials if enabled and update last login time
@@ -1862,6 +1884,14 @@ export default function Index() {
         title={errorDialog.title}
         message={errorDialog.message}
         type={errorDialog.type}
+      />
+      
+      {/* Lockout Timer Dialog */}
+      <LockoutTimerDialog
+        open={lockoutDialog.open}
+        onClose={() => setLockoutDialog(prev => ({ ...prev, open: false }))}
+        lockoutEndTime={lockoutDialog.endTime}
+        identifier={lockoutDialog.identifier}
       />
       </div>
     </>
