@@ -180,10 +180,32 @@ export function useAgentProfile() {
 
         if (mountedRef.current) {
           if (foundAgent) {
-            setAgent({
-              ...foundAgent,
-              unit: (foundAgent as any).unit as AgentProfile['unit'],
-            });
+            // Normalize: backend function may return partials; ensure required keys exist
+            const normalized: AgentProfile = {
+              id: (foundAgent as any).id,
+              name: (foundAgent as any).name,
+              cpf: (foundAgent as any).cpf ?? null,
+              matricula: (foundAgent as any).matricula ?? null,
+              email: (foundAgent as any).email ?? null,
+              phone: (foundAgent as any).phone ?? null,
+              address: (foundAgent as any).address ?? null,
+              team: (foundAgent as any).team ?? null,
+              birth_date: (foundAgent as any).birth_date ?? null,
+              age: (foundAgent as any).age ?? null,
+              is_active: (foundAgent as any).is_active ?? null,
+              is_frozen: (foundAgent as any).is_frozen ?? null,
+              approval_status: (foundAgent as any).approval_status ?? null,
+              unit_id: (foundAgent as any).unit_id ?? null,
+              role: (foundAgent as any).role ?? null,
+              blood_type: (foundAgent as any).blood_type ?? null,
+              avatar_url: (foundAgent as any).avatar_url ?? null,
+              license_status: (foundAgent as any).license_status ?? null,
+              license_expires_at: (foundAgent as any).license_expires_at ?? null,
+              license_notes: (foundAgent as any).license_notes ?? null,
+              unit: ((foundAgent as any).unit as AgentProfile['unit']) ?? null,
+            };
+
+            setAgent(normalized);
             // Cache key based on user id + email
             lastEmailRef.current = `${user.id || ''}-${user.email || ''}`;
             retryCountRef.current = 0;
