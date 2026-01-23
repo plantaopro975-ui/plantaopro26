@@ -22,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
+import { setMasterToken } from '@/lib/masterSession';
 import { 
   Loader2, 
   LogOut, 
@@ -54,13 +55,15 @@ interface AdminPermissions {
 }
 
 export default function Admin() {
-  const { user, isLoading, signOut, userRole } = useAuth();
+  const { user, isLoading, signOut, userRole, masterSession, setMasterSession } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [permissions, setPermissions] = useState<AdminPermissions | null>(null);
   const [loadingPermissions, setLoadingPermissions] = useState(true);
-  // Avoid “kick out” while role is still being fetched (race during token refresh)
-  const isRoleResolved = !!userRole;
+  
+  // Accept either Supabase auth user OR master session
+  const hasMasterAccess = !!masterSession;
+  const isRoleResolved = !!userRole || hasMasterAccess;
   
   const { conflicts, hasConflicts, isChecking, checkForConflicts, dismissConflict } = useShiftConflictDetection({
     enabled: true,
@@ -69,9 +72,30 @@ export default function Admin() {
   
   useBackNavigation({ enabled: true, fallbackPath: '/' });
 
-  // Fetch admin permissions
+  // Fetch admin permissions - skip if master session (master has all permissions)
   useEffect(() => {
-    if (!user?.id) return;
+    if (hasMasterAccess) {
+      // Master has full permissions
+      setPermissions({
+        can_manage_agents: true,
+        can_manage_units: true,
+        can_manage_licenses: true,
+        can_manage_screens: true,
+        can_manage_ads: true,
+        can_view_analytics: true,
+        can_manage_roles: true,
+        can_delete_agents: true,
+        can_manage_announcements: true,
+        can_approve_transfers: true,
+      });
+      setLoadingPermissions(false);
+      return;
+    }
+    
+    if (!user?.id) {
+      setLoadingPermissions(false);
+      return;
+    }
     
     const fetchPermissions = async () => {
       setLoadingPermissions(true);
@@ -109,29 +133,31 @@ export default function Admin() {
     };
     
     fetchPermissions();
-  }, [user?.id]);
+  }, [user?.id, hasMasterAccess]);
 
-  // Auth and role check - MUITO MAIS TOLERANTE para evitar redirects prematuros
+  // Auth and role check - Accept master session OR admin role
   useEffect(() => {
-    // Ainda carregando - não fazer nada
+    // Master session is valid - don't redirect
+    if (hasMasterAccess) return;
+    
+    // Still loading - don't do anything
     if (isLoading) return;
     
-    // CRÍTICO: Dar mais tempo para o userRole carregar (até 3 segundos)
-    // antes de decidir redirecionar
+    // Give time for userRole to load
     const timer = setTimeout(() => {
-      // Sem usuário logado após timeout
-      if (!user) {
+      // No user and no master session after timeout
+      if (!user && !hasMasterAccess) {
         navigate('/', { replace: true });
         return;
       }
       
-      // Role ainda não carregou - aguardar mais
-      if (!userRole) {
+      // Role still loading - wait more
+      if (!userRole && !hasMasterAccess) {
         return;
       }
       
-      // Não é admin - redirecionar para painel do agente
-      if (userRole !== 'admin' && userRole !== 'master') {
+      // Not admin and no master access - redirect to agent panel
+      if (!hasMasterAccess && userRole !== 'admin' && userRole !== 'master') {
         toast({
           title: 'Acesso negado',
           description: 'Você não tem permissão para acessar o painel administrativo.',
@@ -142,14 +168,20 @@ export default function Admin() {
     }, 1500);
     
     return () => clearTimeout(timer);
-  }, [user, userRole, isLoading, navigate]);
+  }, [user, userRole, isLoading, navigate, hasMasterAccess]);
 
   const handleExit = async () => {
+    // Clear master session if exists
+    if (hasMasterAccess) {
+      setMasterToken(null);
+      setMasterSession(null);
+    }
     await signOut();
     navigate('/');
   };
 
-  if (isLoading || loadingPermissions || (!!user && !isRoleResolved)) {
+  // Show loading only when truly loading (not when we have master access)
+  if (!hasMasterAccess && (isLoading || loadingPermissions || (!!user && !isRoleResolved))) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900">
         <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
@@ -157,7 +189,10 @@ export default function Admin() {
     );
   }
 
-  if (!user || (userRole !== 'admin' && userRole !== 'master')) {
+  // Allow access if master session OR valid admin role
+  const hasAccess = hasMasterAccess || (user && (userRole === 'admin' || userRole === 'master'));
+  
+  if (!hasAccess) {
     return null;
   }
 
@@ -193,10 +228,12 @@ export default function Admin() {
                     </div>
                     <div>
                       <h1 className="text-xl md:text-2xl font-bold text-white">Painel Administrativo</h1>
-                      <p className="text-xs md:text-sm text-muted-foreground">Gestão operacional do sistema</p>
+                      <p className="text-xs md:text-sm text-muted-foreground">
+                        {hasMasterAccess ? `Sessão Master: ${masterSession}` : 'Gestão operacional do sistema'}
+                      </p>
                     </div>
                     <Badge className="hidden sm:flex bg-blue-500/20 text-blue-400 border-blue-500/40">
-                      ADMIN
+                      {hasMasterAccess ? 'MASTER' : 'ADMIN'}
                     </Badge>
                   </div>
                   
