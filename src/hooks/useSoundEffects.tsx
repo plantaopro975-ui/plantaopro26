@@ -37,48 +37,48 @@ export function useSoundEffects() {
     return (saved as ThemeType) || 'tactical';
   }, []);
 
-  // Theme-specific sound configurations
+  // Theme-specific sound configurations - Professional and pleasant sounds
   const getThemeSoundConfig = useCallback((theme: ThemeType) => {
     const configs = {
       tactical: {
-        themeChange: { freq: [300, 800, 600], type: 'sine' as OscillatorType, duration: 0.3 },
-        hover: { freq: [800, 600], type: 'sine' as OscillatorType, duration: 0.05 },
-        cardSelect: { freqs: [440, 587], type: 'sine' as OscillatorType },
+        themeChange: { notes: [523, 659, 784], type: 'sine' as OscillatorType, duration: 0.12 }, // C5-E5-G5 Major chord
+        hover: { freq: 1200, type: 'sine' as OscillatorType, duration: 0.025 },
+        cardSelect: { notes: [659, 784], type: 'sine' as OscillatorType },
       },
       cyber: {
-        themeChange: { freq: [200, 1200, 800], type: 'sawtooth' as OscillatorType, duration: 0.35 },
-        hover: { freq: [1200, 900], type: 'square' as OscillatorType, duration: 0.04 },
-        cardSelect: { freqs: [523, 784], type: 'square' as OscillatorType },
+        themeChange: { notes: [392, 494, 587], type: 'sine' as OscillatorType, duration: 0.1 }, // G4-B4-D5
+        hover: { freq: 1400, type: 'sine' as OscillatorType, duration: 0.02 },
+        cardSelect: { notes: [587, 698], type: 'sine' as OscillatorType },
       },
       crimson: {
-        themeChange: { freq: [150, 600, 400], type: 'sawtooth' as OscillatorType, duration: 0.4 },
-        hover: { freq: [600, 400], type: 'triangle' as OscillatorType, duration: 0.06 },
-        cardSelect: { freqs: [349, 523], type: 'sawtooth' as OscillatorType },
+        themeChange: { notes: [440, 554, 659], type: 'sine' as OscillatorType, duration: 0.15 }, // A4-C#5-E5
+        hover: { freq: 880, type: 'sine' as OscillatorType, duration: 0.03 },
+        cardSelect: { notes: [554, 659], type: 'sine' as OscillatorType },
       },
       arctic: {
-        themeChange: { freq: [500, 1000, 800], type: 'sine' as OscillatorType, duration: 0.4 },
-        hover: { freq: [1000, 800], type: 'sine' as OscillatorType, duration: 0.03 },
-        cardSelect: { freqs: [659, 880], type: 'sine' as OscillatorType },
+        themeChange: { notes: [698, 880, 1047], type: 'sine' as OscillatorType, duration: 0.18 }, // F5-A5-C6 High crisp
+        hover: { freq: 1500, type: 'sine' as OscillatorType, duration: 0.02 },
+        cardSelect: { notes: [880, 1047], type: 'sine' as OscillatorType },
       },
       sovereign: {
-        themeChange: { freq: [250, 500, 750], type: 'triangle' as OscillatorType, duration: 0.5 },
-        hover: { freq: [700, 550], type: 'triangle' as OscillatorType, duration: 0.05 },
-        cardSelect: { freqs: [392, 523], type: 'triangle' as OscillatorType },
+        themeChange: { notes: [349, 440, 523], type: 'triangle' as OscillatorType, duration: 0.2 }, // F4-A4-C5 Warm
+        hover: { freq: 700, type: 'triangle' as OscillatorType, duration: 0.035 },
+        cardSelect: { notes: [440, 523], type: 'triangle' as OscillatorType },
       },
       nexus: {
-        themeChange: { freq: [400, 1000, 600], type: 'square' as OscillatorType, duration: 0.3 },
-        hover: { freq: [1100, 850], type: 'square' as OscillatorType, duration: 0.04 },
-        cardSelect: { freqs: [494, 659], type: 'square' as OscillatorType },
+        themeChange: { notes: [494, 622, 740], type: 'sine' as OscillatorType, duration: 0.1 }, // B4-D#5-F#5
+        hover: { freq: 1100, type: 'sine' as OscillatorType, duration: 0.02 },
+        cardSelect: { notes: [622, 740], type: 'sine' as OscillatorType },
       },
       ember: {
-        themeChange: { freq: [180, 700, 500], type: 'sawtooth' as OscillatorType, duration: 0.45 },
-        hover: { freq: [650, 450], type: 'triangle' as OscillatorType, duration: 0.05 },
-        cardSelect: { freqs: [370, 554], type: 'sawtooth' as OscillatorType },
+        themeChange: { notes: [415, 523, 622], type: 'triangle' as OscillatorType, duration: 0.16 }, // G#4-C5-D#5
+        hover: { freq: 830, type: 'triangle' as OscillatorType, duration: 0.03 },
+        cardSelect: { notes: [523, 622], type: 'triangle' as OscillatorType },
       },
       system: {
-        themeChange: { freq: [300, 800, 600], type: 'sine' as OscillatorType, duration: 0.3 },
-        hover: { freq: [800, 600], type: 'sine' as OscillatorType, duration: 0.05 },
-        cardSelect: { freqs: [440, 587], type: 'sine' as OscillatorType },
+        themeChange: { notes: [523, 659, 784], type: 'sine' as OscillatorType, duration: 0.12 },
+        hover: { freq: 1200, type: 'sine' as OscillatorType, duration: 0.025 },
+        cardSelect: { notes: [659, 784], type: 'sine' as OscillatorType },
       },
     };
     return configs[theme] || configs.tactical;
@@ -100,52 +100,62 @@ export function useSoundEffects() {
 
     switch (type) {
       case 'theme-change': {
+        // Professional chord sound - play 3 notes simultaneously with soft attack
         const config = themeConfig.themeChange;
-        oscillator.type = config.type;
-        oscillator.frequency.setValueAtTime(config.freq[0], now);
-        oscillator.frequency.exponentialRampToValueAtTime(config.freq[1], now + config.duration * 0.5);
-        oscillator.frequency.exponentialRampToValueAtTime(config.freq[2], now + config.duration * 0.85);
-        gainNode.gain.setValueAtTime(0.15, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + config.duration);
-        oscillator.start(now);
-        oscillator.stop(now + config.duration);
+        const notes = config.notes;
+        
+        notes.forEach((freq: number, index: number) => {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          osc.type = config.type;
+          osc.frequency.setValueAtTime(freq, now);
+          
+          // Soft attack envelope - pleasant sound
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(0.08 - (index * 0.015), now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + config.duration + 0.1);
+          
+          osc.start(now + (index * 0.015)); // Slight stagger for richness
+          osc.stop(now + config.duration + 0.15);
+        });
         break;
       }
 
       case 'hover': {
+        // Subtle, clean tick sound
         const config = themeConfig.hover;
         oscillator.type = config.type;
-        oscillator.frequency.setValueAtTime(config.freq[0], now);
-        oscillator.frequency.exponentialRampToValueAtTime(config.freq[1], now + config.duration * 0.6);
-        gainNode.gain.setValueAtTime(0.04, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + config.duration);
+        oscillator.frequency.setValueAtTime(config.freq, now);
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(0.03, now + 0.005);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + config.duration);
         oscillator.start(now);
         oscillator.stop(now + config.duration);
         break;
       }
 
       case 'card-select': {
+        // Clean two-tone confirmation
         const config = themeConfig.cardSelect;
-        oscillator.type = config.type;
-        oscillator.frequency.setValueAtTime(config.freqs[0], now);
-        gainNode.gain.setValueAtTime(0.15, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-        oscillator.start(now);
-        oscillator.stop(now + 0.1);
+        const notes = config.notes;
         
-        // Second beep (higher pitch)
-        setTimeout(() => {
-          const osc2 = audioContext.createOscillator();
-          const gain2 = audioContext.createGain();
-          osc2.connect(gain2);
-          gain2.connect(audioContext.destination);
-          osc2.type = config.type;
-          osc2.frequency.setValueAtTime(config.freqs[1], audioContext.currentTime);
-          gain2.gain.setValueAtTime(0.18, audioContext.currentTime);
-          gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.12);
-          osc2.start(audioContext.currentTime);
-          osc2.stop(audioContext.currentTime + 0.15);
-        }, 80);
+        notes.forEach((freq: number, index: number) => {
+          setTimeout(() => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.type = config.type;
+            osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+            gain.gain.setValueAtTime(0, audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
+            osc.start(audioContext.currentTime);
+            osc.stop(audioContext.currentTime + 0.1);
+          }, index * 50);
+        });
         break;
       }
 
