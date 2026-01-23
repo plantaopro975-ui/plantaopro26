@@ -126,10 +126,11 @@ export default function AgentPanel() {
     isMasterSession: !!masterSession,
   });
 
-  // License expiry notification - alerts 7 days before
-  const { daysUntilExpiry, isExpiringSoon } = useLicenseExpiryNotification({
+  // License expiry notification - alerts 7 days before with push notifications
+  const { daysUntilExpiry, isExpiringSoon, isPushEnabled } = useLicenseExpiryNotification({
     licenseExpiresAt: agent?.license_expires_at ?? null,
     agentId: agent?.id ?? null,
+    agentName: agent?.name ?? null,
     enabled: !!agent && !masterSession,
     warningDaysBefore: 7,
   });
