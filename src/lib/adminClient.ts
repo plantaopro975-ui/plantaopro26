@@ -24,7 +24,8 @@ type AdminAction =
   | 'freeze_agent'
   | 'reset_password'
   | 'cleanup_orphan_auth'
-  | 'immediate_transfer';
+  | 'immediate_transfer'
+  | 'sync_agent_auth';
 
 /**
  * Unified admin client that works for both Master (token-based) and Admin (session-based)
@@ -126,6 +127,10 @@ export const adminClient = {
   // Transferência imediata (sem logout, sem aprovação)
   immediateTransfer: (input: { agentId: string; toUnitId: string; toTeam: string }) =>
     callAdminBackend<{}>('immediate_transfer', input),
+
+  // Sincronizar usuário auth para agente existente
+  syncAgentAuth: (input: { agentId: string; password: string }) =>
+    callAdminBackend<{ synced: boolean; existed?: boolean; newId?: string }>('sync_agent_auth', input),
 };
 
 /**
