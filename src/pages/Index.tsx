@@ -405,48 +405,36 @@ export default function Index() {
       const cleanCpf = checkCpf.replace(/\D/g, '');
       const { data: existingAgent } = await supabase
         .from('agents')
-        .select('id, cpf, team, name, approval_status')
+        .select('id, cpf, team, name, is_active')
         .eq('cpf', cleanCpf)
         .maybeSingle();
 
       if (existingAgent) {
-        // Check if registration is pending approval
-        if (existingAgent.approval_status === 'pending') {
-          playSound('notification');
-          setShowCpfCheck(false);
-          setPendingApprovalDialog({
-            open: true,
-            agentName: existingAgent.name
-          });
-          return;
-        }
-        
-        // Check if registration was rejected
-        if (existingAgent.approval_status === 'rejected') {
+        // CRÍTICO: Bloquear login se agent.team = null (forçar correção pelo admin)
+        if (!existingAgent.team) {
           playSound('access-denied');
           setShowCpfCheck(false);
           setErrorDialog({
             open: true,
-            title: 'CADASTRO REJEITADO',
-            message: 'Seu cadastro foi rejeitado pelo administrador.\n\nEntre em contato com a coordenação para mais informações.',
+            title: 'CADASTRO INCOMPLETO',
+            message: 'Seu cadastro está sem equipe vinculada.\n\nEntre em contato com o administrador para regularizar sua situação.',
             type: 'error',
           });
           return;
         }
         
-        // Check if agent belongs to a different team
-        if (existingAgent.team && existingAgent.team !== selectedTeam) {
-          // Show professional security-style warning
+        // Check if agent belongs to a different team - cannot switch teams
+        if (existingAgent.team !== selectedTeam) {
           playSound('access-denied');
           setShowCpfCheck(false);
           setErrorDialog({
             open: true,
             title: 'ACESSO RESTRITO',
-            message: `Você está registrado na EQUIPE ${existingAgent.team}.\n\nRetorne à tela inicial e selecione o card correto da sua equipe para acessar o sistema.`,
+            message: `Você está registrado na EQUIPE ${existingAgent.team}.\n\nRetorne à tela inicial e selecione o card correto da sua equipe para acessar o sistema.\n\nPara mudar de equipe, solicite desligamento no seu painel.`,
             type: 'team',
           });
         } else {
-          // User belongs to selected team or has no team - show login
+          // User belongs to selected team - show login
           setShowCpfCheck(false);
           setLoginCpf(checkCpf);
           setFoundAgent({ name: existingAgent.name || '', team: existingAgent.team });
@@ -703,30 +691,33 @@ export default function Index() {
     
     setIsSubmitting(true);
     
-    // First check if agent is approved
+    // Verificar se agente está ativo e tem equipe vinculada
     const { data: agentCheck } = await supabase
       .from('agents')
-      .select('approval_status, name')
+      .select('is_active, name, team')
       .eq('cpf', cleanCpf)
       .maybeSingle();
     
-    if (agentCheck?.approval_status === 'pending') {
-      setIsSubmitting(false);
-      setShowLogin(false);
-      setPendingApprovalDialog({
-        open: true,
-        agentName: agentCheck.name
-      });
-      return;
-    }
-    
-    if (agentCheck?.approval_status === 'rejected') {
+    if (agentCheck?.is_active === false) {
       setIsSubmitting(false);
       setShowLogin(false);
       setErrorDialog({
         open: true,
-        title: 'CADASTRO REJEITADO',
-        message: 'Seu cadastro foi rejeitado pelo administrador.\n\nEntre em contato com a coordenação para mais informações.',
+        title: 'ACESSO BLOQUEADO',
+        message: 'Seu acesso foi desativado pelo administrador.\n\nEntre em contato com a coordenação para regularizar.',
+        type: 'error',
+      });
+      return;
+    }
+    
+    // CRÍTICO: Bloquear login se agent.team = null
+    if (!agentCheck?.team) {
+      setIsSubmitting(false);
+      setShowLogin(false);
+      setErrorDialog({
+        open: true,
+        title: 'CADASTRO INCOMPLETO',
+        message: 'Seu cadastro está sem equipe vinculada.\n\nEntre em contato com o administrador para regularizar sua situação.',
         type: 'error',
       });
       return;
@@ -889,6 +880,34 @@ export default function Index() {
     
     try {
       const cleanCpf = cpf.replace(/\D/g, '');
+      
+      // Verificar se agente está ativo e tem equipe
+      const { data: agentCheck } = await supabase
+        .from('agents')
+        .select('is_active, team')
+        .eq('cpf', cleanCpf)
+        .maybeSingle();
+      
+      if (agentCheck?.is_active === false) {
+        toast({
+          title: 'Acesso Bloqueado',
+          description: 'Seu acesso foi desativado. Contate o administrador.',
+          variant: 'destructive',
+        });
+        setQuickLoginLoadingCpf(null);
+        return;
+      }
+      
+      if (!agentCheck?.team) {
+        toast({
+          title: 'Cadastro Incompleto',
+          description: 'Sem equipe vinculada. Contate o administrador.',
+          variant: 'destructive',
+        });
+        setQuickLoginLoadingCpf(null);
+        return;
+      }
+      
       const authEmail = `${cleanCpf}@agent.plantaopro.com`;
       
       const { error } = await signIn(authEmail, password);
