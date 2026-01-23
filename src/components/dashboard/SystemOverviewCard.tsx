@@ -37,11 +37,12 @@ export function SystemOverviewCard() {
           .from('agents')
           .select('*', { count: 'exact', head: true });
 
-        // Active agents
+        // Active agents - APENAS conta agentes ativos E aprovados
         const { count: activeAgents } = await supabase
           .from('agents')
           .select('*', { count: 'exact', head: true })
-          .eq('is_active', true);
+          .eq('is_active', true)
+          .eq('approval_status', 'approved');
 
         // Total units
         const { count: totalUnits } = await supabase
