@@ -48,6 +48,7 @@ import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
 import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
 import { AdminAnnouncementsPanel } from '@/components/agent-panel/AdminAnnouncementsPanel';
 import { AdDisplaySystem } from '@/components/agent-panel/AdDisplaySystem';
+import { AgentHeroPanel } from '@/components/agent-panel/AgentHeroPanel';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -420,6 +421,13 @@ export default function AgentPanel() {
 
             {/* On Duty Overlay - Discreto e minimizável */}
             <OnDutyOverlay agentId={agent.id} />
+
+            {/* HERO PANEL - Futuristic Status Dashboard */}
+            <AgentHeroPanel 
+              agentId={agent.id}
+              agentName={agent.name}
+              agentTeam={agent.team}
+            />
 
             {/* Main Tabs - REDESIGNED: Modern, Legible, Mobile-First */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
