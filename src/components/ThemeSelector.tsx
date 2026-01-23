@@ -13,9 +13,9 @@ export function ThemeSelector({ onSelect, compact = false }: ThemeSelectorProps)
   const { theme, setTheme, themeConfig } = useTheme();
   const { playSound, isSoundEnabled, toggleSound } = useSoundEffects();
 
-  // Show 6 premium themes + system
+  // Show 7 premium themes + system (including Ember)
   const availableThemes = Object.values(themes).filter(t => 
-    ['tactical', 'cyber', 'crimson', 'arctic', 'sovereign', 'nexus', 'system'].includes(t.id)
+    ['tactical', 'cyber', 'crimson', 'arctic', 'sovereign', 'nexus', 'ember', 'system'].includes(t.id)
   );
 
   const handleSelect = (themeId: ThemeType) => {
