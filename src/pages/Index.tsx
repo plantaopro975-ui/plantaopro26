@@ -1256,31 +1256,45 @@ export default function Index() {
       </section>
 
 
-      {/* Footer - Compacto e Reorganizado */}
-      <footer className="py-1.5 sm:py-2 px-2 sm:px-3 bg-card/90 backdrop-blur-sm border-t border-primary/15 relative z-20 shrink-0">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
-          {/* Left: Developer + Copyright + Year + Audio */}
-          <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
-            <span className="text-[9px] sm:text-[10px] font-bold bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
-              FRANC D'NIS
-            </span>
-            <span className="text-[8px] sm:text-[9px] opacity-50">•</span>
-            <span className="text-[8px] sm:text-[9px] opacity-70">© {new Date().getFullYear()}</span>
+      {/* Footer - Premium Professional Design */}
+      <footer className="py-2 sm:py-2.5 px-3 sm:px-4 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md border-t border-primary/20 relative z-20 shrink-0">
+        {/* Top accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+        
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+          {/* Left: Developer with professional effect */}
+          <div className="flex items-center gap-2">
+            <div className="relative group">
+              <div className="absolute inset-0 blur-lg bg-gradient-to-r from-primary/30 via-amber-400/30 to-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-primary/30 hover:border-primary/50 transition-all">
+                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-lg shadow-primary/30">
+                  <span className="text-[10px] font-black text-black">FD</span>
+                </div>
+                <span className="text-xs sm:text-sm font-black tracking-[0.1em] uppercase bg-gradient-to-r from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-gradient-x">
+                  FRANC D'NIS
+                </span>
+              </div>
+            </div>
             <HomeAudioPlayer />
           </div>
           
-          {/* Center: Themed Analog Clock + Feijó em destaque - CENTRALIZADO */}
-          <div className="flex-1 flex items-center justify-center gap-2">
-            <ThemedAnalogClock size={44} />
-            <div className="px-2 py-0.5 rounded bg-primary/10 border border-primary/30">
-              <span className="text-[10px] sm:text-xs font-bold text-primary tracking-wider">
+          {/* Center: Themed Analog Clock + Location Badge - Premium */}
+          <div className="flex-1 flex items-center justify-center gap-3">
+            <ThemedAnalogClock size={48} />
+            <div className="flex flex-col items-start">
+              <span className="text-base sm:text-lg font-black text-primary tracking-wider leading-none">
                 FEIJÓ
               </span>
-              <span className="text-[8px] sm:text-[9px] text-muted-foreground/70 ml-0.5">/AC</span>
+              <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground/70 tracking-widest uppercase">
+                Acre • Brasil
+              </span>
+            </div>
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30">
+              <span className="text-sm font-bold text-primary tabular-nums">{new Date().getFullYear()}</span>
             </div>
           </div>
           
-          {/* Right: Actions - Cadeado MAIOR + Sobre abaixo */}
+          {/* Right: Actions */}
           <div className="flex items-center gap-1">
             {getSavedCredentials().length > 0 && (
               <button
