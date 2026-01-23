@@ -1,7 +1,7 @@
 // Service Worker for Push Notifications & Offline Cache - Plantão Pro
-const CACHE_NAME = 'plantao-pro-v3';
-const STATIC_CACHE = 'plantao-pro-static-v3';
-const DYNAMIC_CACHE = 'plantao-pro-dynamic-v3';
+const CACHE_NAME = 'plantao-pro-v4';
+const STATIC_CACHE = 'plantao-pro-static-v4';
+const DYNAMIC_CACHE = 'plantao-pro-dynamic-v4';
 
 const STATIC_ASSETS = [
   // Keep the app shell available for offline, but always prefer NETWORK for navigations.
@@ -16,12 +16,14 @@ const CACHEABLE_ROUTES = [
   '/dashboard',
   '/agent-panel',
   '/settings',
-  '/install'
+  '/install',
+  '/agent-profile',
+  '/agent-profile-edit'
 ];
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v3...');
+  console.log('[SW] Installing v4 - Enhanced Offline Support...');
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
       console.log('[SW] Caching static assets');
@@ -35,15 +37,14 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v3...');
+  console.log('[SW] Activating v4...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
           .filter((name) => 
-            name !== STATIC_CACHE && 
-            name !== DYNAMIC_CACHE &&
-            name !== CACHE_NAME
+            !name.includes('v4') && // Keep v4 caches
+            (name.includes('plantao') || name.includes('CACHE'))
           )
           .map((name) => {
             console.log('[SW] Deleting old cache:', name);

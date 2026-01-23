@@ -22,19 +22,23 @@ export default function Settings() {
   
   // Enable ESC key navigation - get goBack function
   const { goBack } = useBackNavigation({ enabled: true, fallbackPath: '/dashboard' });
-  useBackNavigation();
 
-  // Redirect only after loading is complete
+  // Redirect only after loading is complete and ONLY if not offline
   useEffect(() => {
     if (isLoading) return;
     
     // Don't redirect if we have any valid session
     if (user || masterSession) return;
     
+    // Check if offline - don't redirect
+    if (!navigator.onLine) return;
+    
     // Small delay to ensure state is settled
     const timer = setTimeout(() => {
-      navigate('/auth', { replace: true });
-    }, 200);
+      // Final check before redirect
+      if (!navigator.onLine) return;
+      navigate('/', { replace: true });
+    }, 500);
     
     return () => clearTimeout(timer);
   }, [user, isLoading, masterSession, navigate]);

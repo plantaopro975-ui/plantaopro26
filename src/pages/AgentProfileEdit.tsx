@@ -263,10 +263,10 @@ export default function AgentProfileEdit() {
                     const digits = raw.replace(/\D/g, '').slice(0, 8);
                     setFormData(prev => ({ ...prev, matricula: digits }));
                   }}
-                  maxLength={8}
+                  maxLength={10}
                   className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
                 />
-                <p className="text-xs text-slate-500">Opcional, mas deve ter exatamente 8 dígitos.</p>
+                <p className="text-xs text-slate-500">Opcional, deve ter exatamente 8 dígitos numéricos.</p>
               </div>
 
               {/* Phone */}
