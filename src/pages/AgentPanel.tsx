@@ -258,14 +258,77 @@ export default function AgentPanel() {
   }, [user, isAdmin, agent, isLoading, isLoadingAgent, navigate]);
 
 
-  // Loading mínimo - apenas null enquanto carrega
+  // Loading state - mostrar indicador profissional durante carregamento
   if (isLoading || isLoadingAgent) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="p-4 bg-primary/10 border border-primary/30 rounded-2xl animate-pulse">
+              <Shield className="h-10 w-10 text-primary" />
+            </div>
+            <Loader2 className="absolute -bottom-1 -right-1 h-5 w-5 text-primary animate-spin" />
+          </div>
+          <p className="text-zinc-400 text-sm">Carregando painel...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Sem sessão - retorna null (sem tela de carregamento)
+  // Sem sessão - mostrar loading enquanto verifica
   if (!user && !masterSession) {
-    return null;
+    // Se está verificando sessão, mostra loading
+    if (isVerifyingSession) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+          <div className="flex flex-col items-center gap-4">
+            <div className="p-4 bg-primary/10 border border-primary/30 rounded-2xl">
+              <Shield className="h-10 w-10 text-primary animate-pulse" />
+            </div>
+            <p className="text-zinc-400 text-sm">Verificando sessão...</p>
+          </div>
+        </div>
+      );
+    }
+    
+    // Se sessão realmente não existe, redireciona para home
+    if (sessionMissing) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
+          <div className="max-w-md w-full bg-zinc-900/80 backdrop-blur-xl rounded-2xl border border-amber-500/30 p-8 shadow-2xl">
+            <div className="flex flex-col items-center gap-6">
+              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
+                <Shield className="h-10 w-10 text-amber-400" />
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-bold text-zinc-100">Sessão não encontrada</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  Por favor, faça login novamente para acessar seu painel.
+                </p>
+              </div>
+              <Button
+                onClick={() => navigate('/')}
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl"
+              >
+                Ir para Login
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Retornar loading enquanto ainda não determinou o estado
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="p-4 bg-primary/10 border border-primary/30 rounded-2xl">
+            <Shield className="h-10 w-10 text-primary animate-pulse" />
+          </div>
+          <p className="text-zinc-400 text-sm">Conectando...</p>
+        </div>
+      </div>
+    );
   }
 
   // CRÍTICO: Se é admin sem perfil de agente, mostrar loading enquanto redireciona
