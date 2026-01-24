@@ -143,10 +143,10 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
   }, []);
 
   return (
-    <div ref={ref} className={cn("relative min-h-[100dvh] h-[100dvh] flex flex-col overflow-hidden", className)}>
-      {/* Base background - DARKER and MORE VIBRANT */}
+    <div ref={ref} className={cn("relative min-h-[100dvh] h-[100dvh] w-full flex flex-col overflow-hidden", className)}>
+      {/* Base background - DARKER and MORE VIBRANT - GPU accelerated */}
       <div 
-        className="fixed inset-0 pointer-events-none z-0"
+        className="fixed inset-0 pointer-events-none z-0 will-change-auto"
         style={{
           background: `linear-gradient(160deg, 
             hsl(222 47% 8%) 0%, 
@@ -163,11 +163,12 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
         <>
           {/* Main poster image - larger and more visible */}
           <div 
-            className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-opacity duration-500"
+            className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-opacity duration-500 will-change-auto"
             style={{ 
               backgroundImage: `url(${poster})`,
               opacity: 0.18,
               filter: 'saturate(1.3) contrast(1.1)',
+              transform: 'translateZ(0)', // GPU layer
             }}
           />
           {/* Team poster in corner - decorative badge */}
@@ -176,17 +177,19 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
             style={{ 
               borderColor: colors?.primary || 'rgba(251, 191, 36, 0.5)',
               boxShadow: `0 0 30px ${colors?.glow || 'rgba(251, 191, 36, 0.3)'}`,
+              transform: 'translateZ(0)', // GPU layer
             }}
           >
             <img 
               src={poster} 
               alt="Team" 
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           </div>
           {/* Team color overlay - balanced */}
           <div 
-            className="fixed inset-0 pointer-events-none z-0"
+            className="fixed inset-0 pointer-events-none z-0 will-change-auto"
             style={{
               background: `linear-gradient(160deg, 
                 hsl(222 47% 8% / 0.8) 0%, 
@@ -195,6 +198,7 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
                 ${colors?.glow || 'transparent'} 70%,
                 hsl(222 47% 8% / 0.85) 100%
               )`,
+              transform: 'translateZ(0)', // GPU layer
             }}
           />
         </>
@@ -202,13 +206,14 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
       
       {/* Theme-specific ambient glow - MORE INTENSE */}
       <div 
-        className="fixed inset-0 pointer-events-none z-0 transition-all duration-1000"
+        className="fixed inset-0 pointer-events-none z-0 will-change-auto"
         style={{
           background: `
             radial-gradient(ellipse at 5% 15%, ${themeAssets.ambientGlow.primary} 0%, transparent 45%),
             radial-gradient(ellipse at 95% 85%, ${themeAssets.ambientGlow.secondary} 0%, transparent 45%),
             radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 60%)
           `,
+          transform: 'translateZ(0)', // GPU layer
         }}
       />
       
@@ -226,8 +231,8 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
         />
       )}
       
-      {/* Content */}
-      <div className="relative z-10 flex-1 flex flex-col overflow-hidden">
+      {/* Content - Full width, optimized scrolling */}
+      <div className="relative z-10 flex-1 flex flex-col w-full min-w-0 overflow-hidden">
         {children}
       </div>
     </div>

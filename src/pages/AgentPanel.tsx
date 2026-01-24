@@ -393,9 +393,18 @@ export default function AgentPanel() {
       {/* Session Monitor Banner - Visual session status */}
       <SessionMonitorBanner />
 
-      <div className="flex-1 flex flex-col h-[100dvh] overflow-hidden">
-        <main className={`flex-1 px-2 py-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto overflow-x-hidden overscroll-y-auto scroll-smooth pb-safe ${showLicenseWarning ? 'pt-28' : ''}`}>
-          <div className="max-w-7xl mx-auto space-y-3 md:space-y-4 lg:space-y-5 animate-fade-in pb-4 sm:pb-6">
+      <div className="flex-1 flex flex-col w-full min-w-0 h-[100dvh] overflow-hidden">
+        <main 
+          className={`flex-1 w-full min-w-0 px-2 py-2 sm:p-3 md:p-4 lg:p-6 pb-safe overflow-y-auto overflow-x-hidden ${showLicenseWarning ? 'pt-28' : ''}`}
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            scrollBehavior: 'auto', // Avoid scroll-smooth for better performance
+            transform: 'translateZ(0)', // GPU layer for smooth scrolling
+            willChange: 'scroll-position',
+          }}
+        >
+          <div className="max-w-7xl w-full mx-auto space-y-3 md:space-y-4 lg:space-y-5 pb-4 sm:pb-6">
             {/* Professional Header Bar */}
             <AgentPanelHeader 
               agent={{
