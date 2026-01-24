@@ -23,7 +23,7 @@ import { toast } from 'sonner';
 
 export function SessionDiagnosticCard() {
   const { user } = useAuth();
-  const { agent, isLoading, error, refetch, _diagnosticInfo } = useAgentProfile();
+  const { agent, isLoading, error, refetch, _diagnosticInfo } = useAgentProfile() as any;
   const [isVisible, setIsVisible] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sessionCheck, setSessionCheck] = useState<{
