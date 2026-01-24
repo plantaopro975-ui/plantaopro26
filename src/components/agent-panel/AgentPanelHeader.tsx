@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
 import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
-import { Droplet, LogOut, Gift, Building2, Bell, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { Droplet, LogOut, Gift, Building2, Bell, RefreshCw, Wifi, WifiOff, Shield, Sword, Target, Zap, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Agent {
@@ -26,6 +26,50 @@ interface AgentPanelHeaderProps {
   onShowWelcome: () => void;
   onReactivateShiftBanner?: () => void;
   isShiftBannerDismissed?: boolean;
+}
+
+// Team config with icons
+const getTeamConfig = (team: string | null) => {
+  switch (team?.toUpperCase()) {
+    case 'ALFA': return { 
+      color: 'bg-gradient-to-r from-red-500/25 to-rose-500/20 border-red-500/50 text-red-400',
+      icon: Shield
+    };
+    case 'BRAVO': return { 
+      color: 'bg-gradient-to-r from-blue-500/25 to-indigo-500/20 border-blue-500/50 text-blue-400',
+      icon: Sword
+    };
+    case 'CHARLIE': return { 
+      color: 'bg-gradient-to-r from-emerald-500/25 to-green-500/20 border-emerald-500/50 text-emerald-400',
+      icon: Target
+    };
+    case 'DELTA': return { 
+      color: 'bg-gradient-to-r from-amber-500/25 to-orange-500/20 border-amber-500/50 text-amber-400',
+      icon: Zap
+    };
+    default: return { 
+      color: 'bg-gradient-to-r from-slate-500/25 to-zinc-500/20 border-slate-500/50 text-slate-400',
+      icon: Crown
+    };
+  }
+};
+
+// Team Badge with Icon
+function TeamBadge({ team }: { team: string | null }) {
+  if (!team) return null;
+  
+  const config = getTeamConfig(team);
+  const IconComponent = config.icon;
+  
+  return (
+    <div className={cn(
+      "flex items-center gap-1.5 px-2.5 py-1 rounded-lg border font-bold text-xs uppercase tracking-wide",
+      config.color
+    )}>
+      <IconComponent className="h-3.5 w-3.5" />
+      <span>{team}</span>
+    </div>
+  );
 }
 
 // Online Status Badge - Professional Design
@@ -120,8 +164,9 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
             </div>
           </div>
 
-          {/* Center Section: Unit + Blood Type */}
+          {/* Center Section: Team Badge + Unit + Blood Type */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
+            {agent.team && <TeamBadge team={agent.team} />}
             {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
             
             {agent.blood_type && (
@@ -221,9 +266,12 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
           </div>
         </div>
         
-        {/* Mobile: Unit Row */}
+        {/* Mobile: Team + Unit Row */}
         <div className="md:hidden flex items-center justify-between mt-2 pt-2 border-t border-slate-700/50">
-          {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
+          <div className="flex items-center gap-2">
+            {agent.team && <TeamBadge team={agent.team} />}
+            {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
+          </div>
           <OnlineStatusBadge isOnline={isOnline} />
         </div>
       </div>
