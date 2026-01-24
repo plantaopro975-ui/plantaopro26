@@ -15,7 +15,12 @@ import {
   Sparkles,
   Timer,
   CalendarCheck,
-  Shield
+  Shield,
+  Sword,
+  Target,
+  Zap,
+  Crown,
+  Building2
 } from 'lucide-react';
 import { format, differenceInDays, isToday, isTomorrow, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -260,16 +265,34 @@ export function HomeAgentInfoBanner() {
   const currentItem = displayItems[currentIndex % displayItems.length];
   const firstName = agent.name?.split(' ')[0] || 'Agente';
 
-  // Get team color for badge
-  const getTeamColor = (team: string | null) => {
+  // Get team config (color + icon)
+  const getTeamConfig = (team: string | null) => {
     switch (team?.toUpperCase()) {
-      case 'ALFA': return 'bg-red-500/20 text-red-400 border-red-500/40';
-      case 'BRAVO': return 'bg-blue-500/20 text-blue-400 border-blue-500/40';
-      case 'CHARLIE': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40';
-      case 'DELTA': return 'bg-amber-500/20 text-amber-400 border-amber-500/40';
-      default: return 'bg-primary/20 text-primary border-primary/40';
+      case 'ALFA': return { 
+        color: 'bg-red-500/20 text-red-400 border-red-500/40',
+        icon: <Shield className="h-3 w-3" />
+      };
+      case 'BRAVO': return { 
+        color: 'bg-blue-500/20 text-blue-400 border-blue-500/40',
+        icon: <Sword className="h-3 w-3" />
+      };
+      case 'CHARLIE': return { 
+        color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
+        icon: <Target className="h-3 w-3" />
+      };
+      case 'DELTA': return { 
+        color: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
+        icon: <Zap className="h-3 w-3" />
+      };
+      default: return { 
+        color: 'bg-primary/20 text-primary border-primary/40',
+        icon: <Crown className="h-3 w-3" />
+      };
     }
   };
+
+  const teamConfig = getTeamConfig(agent.team);
+  const unitName = agent.unit?.name || null;
 
   return (
     <div className="w-full animate-fade-in">
@@ -317,25 +340,34 @@ export function HomeAgentInfoBanner() {
                 <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-slate-900" />
               </div>
               
-              {/* Name + Team badge - Always visible */}
+              {/* Name + Team badge + Unit - Always visible */}
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-sm font-bold text-primary truncate max-w-[80px] sm:max-w-[100px]">
+                  <p className="text-sm font-bold text-primary truncate max-w-[70px] sm:max-w-[100px]">
                     {firstName}
                   </p>
-                  {/* Team badge - Always visible */}
+                  {/* Team badge with icon - Always visible */}
                   {agent.team && (
                     <span className={cn(
-                      "px-1.5 py-0.5 text-[10px] font-bold rounded border uppercase tracking-wide",
-                      getTeamColor(agent.team)
+                      "flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold rounded border uppercase tracking-wide",
+                      teamConfig.color
                     )}>
+                      {teamConfig.icon}
                       {agent.team}
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 hidden sm:block">
-                  Agente de Segurança
-                </p>
+                {/* Unit name */}
+                {unitName ? (
+                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground/80">
+                    <Building2 className="h-2.5 w-2.5" />
+                    <span className="truncate max-w-[100px] sm:max-w-[150px]">{unitName}</span>
+                  </div>
+                ) : (
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 hidden sm:block">
+                    Agente de Segurança
+                  </p>
+                )}
               </div>
             </div>
 
