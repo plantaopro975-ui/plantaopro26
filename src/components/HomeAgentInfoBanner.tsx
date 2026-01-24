@@ -260,6 +260,17 @@ export function HomeAgentInfoBanner() {
   const currentItem = displayItems[currentIndex % displayItems.length];
   const firstName = agent.name?.split(' ')[0] || 'Agente';
 
+  // Get team color for badge
+  const getTeamColor = (team: string | null) => {
+    switch (team?.toUpperCase()) {
+      case 'ALFA': return 'bg-red-500/20 text-red-400 border-red-500/40';
+      case 'BRAVO': return 'bg-blue-500/20 text-blue-400 border-blue-500/40';
+      case 'CHARLIE': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40';
+      case 'DELTA': return 'bg-amber-500/20 text-amber-400 border-amber-500/40';
+      default: return 'bg-primary/20 text-primary border-primary/40';
+    }
+  };
+
   return (
     <div className="w-full animate-fade-in">
       <div className={cn(
@@ -281,21 +292,48 @@ export function HomeAgentInfoBanner() {
 
         <div className="relative z-10 px-4 py-3">
           <div className="flex items-center justify-between gap-3">
-            {/* Left: User greeting */}
+            {/* Left: Avatar + User greeting + Team badge */}
             <div className="flex items-center gap-2 shrink-0">
-              <div className={cn(
-                "p-1.5 rounded-lg",
-                "bg-gradient-to-br from-primary/20 to-primary/5",
-                "border border-primary/30"
-              )}>
-                <Shield className="h-4 w-4 text-primary" />
+              {/* Avatar */}
+              <div className="relative">
+                {agent.avatar_url ? (
+                  <img 
+                    src={agent.avatar_url} 
+                    alt={agent.name || 'Avatar'}
+                    className="h-10 w-10 rounded-full object-cover border-2 border-primary/50 shadow-lg shadow-primary/20"
+                  />
+                ) : (
+                  <div className={cn(
+                    "h-10 w-10 rounded-full flex items-center justify-center",
+                    "bg-gradient-to-br from-primary/30 to-primary/10",
+                    "border-2 border-primary/50"
+                  )}>
+                    <span className="text-sm font-bold text-primary">
+                      {firstName.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                {/* Online indicator */}
+                <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-slate-900" />
               </div>
-              <div className="hidden sm:block">
+              
+              <div className="hidden sm:flex flex-col">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-bold text-primary truncate max-w-[100px]">
+                    {firstName}
+                  </p>
+                  {/* Team badge */}
+                  {agent.team && (
+                    <span className={cn(
+                      "px-1.5 py-0.5 text-[10px] font-bold rounded border",
+                      getTeamColor(agent.team)
+                    )}>
+                      {agent.team}
+                    </span>
+                  )}
+                </div>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
-                  Olá,
-                </p>
-                <p className="text-sm font-bold text-primary truncate max-w-[100px]">
-                  {firstName}
+                  Agente de Segurança
                 </p>
               </div>
             </div>
