@@ -51,6 +51,7 @@ import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDial
 import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { InstitutionalBanner } from '@/components/InstitutionalBanner';
+import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
 import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
@@ -1205,10 +1206,15 @@ export default function Index() {
         {/* Animated Particles/Stars Effect */}
         <ParticleBackground particleCount={50} />
 
-      {/* Header with ISE/ACRE Banner at the very top */}
+      {/* Header with PLANTÃO PRO Banner at the very top */}
       <header className="relative z-20 shrink-0">
-        {/* Institutional Banner - ISE/ACRE - Full top position */}
+        {/* Institutional Banner - PLANTÃO PRO - Full top position */}
         <InstitutionalBanner />
+        
+        {/* Dynamic Agent Info Banner - Shows personalized info for logged users */}
+        <div className="px-3 sm:px-6 py-2">
+          <HomeAgentInfoBanner />
+        </div>
       </header>
       
       {/* Teams Grid Section - Main content area - FULL HEIGHT */}

@@ -1,6 +1,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
-import { Settings, Monitor } from 'lucide-react';
+import { Shield, Zap, Radio } from 'lucide-react';
+import logoShield from '@/assets/logo-shield.png';
 
 interface InstitutionalBannerProps {
   onSettingsClick?: () => void;
@@ -16,24 +17,24 @@ const themeConfigs: Record<string, {
   animation: string;
 }> = {
   tactical: {
-    gradient: 'from-emerald-500 via-green-400 to-emerald-600',
-    glowColor: 'rgba(16, 185, 129, 0.5)',
+    gradient: 'from-emerald-400 via-green-300 to-emerald-500',
+    glowColor: 'rgba(16, 185, 129, 0.6)',
     accentColor: 'text-emerald-400',
     borderColor: 'border-emerald-500/50',
     pattern: 'military',
     animation: 'animate-pulse',
   },
   cyber: {
-    gradient: 'from-cyan-400 via-blue-500 to-purple-500',
-    glowColor: 'rgba(6, 182, 212, 0.5)',
+    gradient: 'from-cyan-400 via-blue-400 to-purple-500',
+    glowColor: 'rgba(6, 182, 212, 0.6)',
     accentColor: 'text-cyan-400',
     borderColor: 'border-cyan-500/50',
     pattern: 'circuit',
     animation: 'animate-gradient-x',
   },
   crimson: {
-    gradient: 'from-red-500 via-rose-500 to-orange-500',
-    glowColor: 'rgba(239, 68, 68, 0.5)',
+    gradient: 'from-red-400 via-rose-400 to-orange-400',
+    glowColor: 'rgba(239, 68, 68, 0.6)',
     accentColor: 'text-red-400',
     borderColor: 'border-red-500/50',
     pattern: 'fire',
@@ -41,63 +42,63 @@ const themeConfigs: Record<string, {
   },
   arctic: {
     gradient: 'from-blue-300 via-cyan-200 to-white',
-    glowColor: 'rgba(147, 197, 253, 0.5)',
+    glowColor: 'rgba(147, 197, 253, 0.6)',
     accentColor: 'text-blue-300',
     borderColor: 'border-blue-300/50',
     pattern: 'frost',
     animation: 'animate-gradient-x',
   },
   military: {
-    gradient: 'from-amber-500 via-yellow-500 to-amber-600',
-    glowColor: 'rgba(245, 158, 11, 0.5)',
+    gradient: 'from-amber-400 via-yellow-400 to-amber-500',
+    glowColor: 'rgba(245, 158, 11, 0.6)',
     accentColor: 'text-amber-400',
     borderColor: 'border-amber-500/50',
     pattern: 'military',
     animation: 'animate-pulse',
   },
   sentinel: {
-    gradient: 'from-orange-500 via-amber-500 to-yellow-500',
-    glowColor: 'rgba(249, 115, 22, 0.5)',
+    gradient: 'from-orange-400 via-amber-400 to-yellow-400',
+    glowColor: 'rgba(249, 115, 22, 0.6)',
     accentColor: 'text-orange-400',
     borderColor: 'border-orange-500/50',
     pattern: 'military',
     animation: 'animate-pulse',
   },
   stealth: {
-    gradient: 'from-slate-400 via-zinc-400 to-slate-500',
-    glowColor: 'rgba(148, 163, 184, 0.4)',
+    gradient: 'from-slate-300 via-zinc-300 to-slate-400',
+    glowColor: 'rgba(148, 163, 184, 0.5)',
     accentColor: 'text-slate-300',
     borderColor: 'border-slate-500/50',
     pattern: 'hexagon',
     animation: 'animate-gradient-x',
   },
   nightops: {
-    gradient: 'from-indigo-500 via-purple-500 to-violet-500',
-    glowColor: 'rgba(99, 102, 241, 0.5)',
+    gradient: 'from-indigo-400 via-purple-400 to-violet-400',
+    glowColor: 'rgba(99, 102, 241, 0.6)',
     accentColor: 'text-indigo-400',
     borderColor: 'border-indigo-500/50',
     pattern: 'hexagon',
     animation: 'animate-pulse',
   },
   ember: {
-    gradient: 'from-orange-400 via-red-500 to-amber-500',
-    glowColor: 'rgba(251, 146, 60, 0.5)',
+    gradient: 'from-orange-300 via-red-400 to-amber-400',
+    glowColor: 'rgba(251, 146, 60, 0.6)',
     accentColor: 'text-orange-400',
     borderColor: 'border-orange-500/50',
     pattern: 'fire',
     animation: 'animate-gradient-x',
   },
   sovereign: {
-    gradient: 'from-amber-400 via-yellow-500 to-amber-600',
-    glowColor: 'rgba(251, 191, 36, 0.5)',
+    gradient: 'from-amber-300 via-yellow-400 to-amber-500',
+    glowColor: 'rgba(251, 191, 36, 0.6)',
     accentColor: 'text-amber-400',
     borderColor: 'border-amber-500/50',
     pattern: 'classic',
     animation: 'animate-pulse',
   },
   nexus: {
-    gradient: 'from-violet-500 via-purple-500 to-fuchsia-500',
-    glowColor: 'rgba(139, 92, 246, 0.5)',
+    gradient: 'from-violet-400 via-purple-400 to-fuchsia-400',
+    glowColor: 'rgba(139, 92, 246, 0.6)',
     accentColor: 'text-violet-400',
     borderColor: 'border-violet-500/50',
     pattern: 'circuit',
@@ -131,7 +132,7 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
       
       {/* Animated glow effect */}
       <div 
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-40"
         style={{
           background: `radial-gradient(ellipse at center, ${config.glowColor} 0%, transparent 70%)`,
         }}
@@ -142,7 +143,7 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
         "relative z-10 py-3 sm:py-4 px-4 sm:px-6",
         "border-y-2",
         config.borderColor,
-        "bg-gradient-to-r from-slate-900/90 via-slate-800/80 to-slate-900/90"
+        "bg-gradient-to-r from-slate-900/95 via-slate-800/90 to-slate-900/95"
       )}>
         {/* Corner accents */}
         <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 rounded-tl-lg" style={{ borderColor: `hsl(var(--primary))` }} />
@@ -151,59 +152,92 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
         <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 rounded-br-lg" style={{ borderColor: `hsl(var(--primary))` }} />
 
         <div className="flex items-center justify-between max-w-6xl mx-auto">
-          {/* Left spacer for balance */}
-          <div className="w-16 sm:w-20" />
+          {/* Left: Logo + ISE/ACRE badge */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img 
+              src={logoShield}
+              alt="PlantãoPro"
+              className="h-10 sm:h-12 w-auto drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]"
+            />
+            <div className="hidden sm:flex flex-col">
+              <span className={cn(
+                "text-[9px] font-bold tracking-[0.15em] uppercase",
+                config.accentColor,
+                "drop-shadow-[0_0_6px_currentColor]"
+              )}>
+                ISE / ACRE
+              </span>
+              <span className="text-[8px] text-muted-foreground/60 tracking-wider">
+                Socioeducativo
+              </span>
+            </div>
+          </div>
           
-          {/* Center: Title */}
-          <div className="text-center flex-1">
-            {/* Main Title with effects */}
+          {/* Center: PLANTÃO PRO - Main Title */}
+          <div className="text-center flex-1 px-2">
+            {/* Main Title with premium effects */}
             <div className="relative inline-block">
               {/* Glow behind text */}
               <div 
-                className="absolute inset-0 blur-2xl opacity-60"
+                className="absolute inset-0 blur-3xl opacity-70"
                 style={{ background: `linear-gradient(90deg, transparent, ${config.glowColor}, transparent)` }}
               />
               
-              <h1 className={cn(
-                "relative text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-wide",
-                "bg-gradient-to-r bg-clip-text text-transparent",
-                config.gradient,
-                config.animation
-              )}
-              style={{
-                textShadow: `0 0 30px ${config.glowColor}, 0 0 60px ${config.glowColor}`,
-                WebkitBackgroundClip: 'text',
-              }}>
-                ISE / ACRE
-              </h1>
+              <div className="relative flex items-center justify-center gap-2 sm:gap-3">
+                {/* Left decorative element */}
+                <div className="hidden sm:flex items-center gap-1">
+                  <div className="h-px w-6 sm:w-10 bg-gradient-to-r from-transparent to-primary/60" />
+                  <Zap className={cn("h-3 w-3 sm:h-4 sm:w-4", config.accentColor, "animate-pulse")} />
+                </div>
+                
+                {/* App Name */}
+                <h1 className={cn(
+                  "relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight",
+                  "bg-gradient-to-r bg-clip-text text-transparent",
+                  config.gradient
+                )}
+                style={{
+                  textShadow: `0 0 40px ${config.glowColor}, 0 0 80px ${config.glowColor}`,
+                  WebkitBackgroundClip: 'text',
+                }}>
+                  PLANTÃO PRO
+                </h1>
+                
+                {/* Right decorative element */}
+                <div className="hidden sm:flex items-center gap-1">
+                  <Radio className={cn("h-3 w-3 sm:h-4 sm:w-4", config.accentColor, "animate-pulse")} />
+                  <div className="h-px w-6 sm:w-10 bg-gradient-to-l from-transparent to-primary/60" />
+                </div>
+              </div>
             </div>
             
             {/* Subtitle with shimmer */}
-            <div className="relative mt-0.5">
+            <div className="relative mt-0.5 sm:mt-1">
               <p className={cn(
-                "text-[9px] sm:text-xs md:text-sm font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase",
-                config.accentColor,
-                "drop-shadow-[0_0_8px_currentColor]"
+                "text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.15em] sm:tracking-[0.25em] uppercase",
+                "text-muted-foreground/80",
+                "drop-shadow-[0_0_4px_currentColor]"
               )}>
-                Sistema Socioeducativo do Acre
+                Gestão Inteligente de Plantões
               </p>
             </div>
           </div>
           
-          {/* Right: Settings Icons */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <button 
-              className="p-1.5 sm:p-2 rounded-lg bg-slate-800/40 border border-slate-600/40 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all"
-              title="Configurações"
-            >
-              <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
-            </button>
-            <button 
-              className="p-1.5 sm:p-2 rounded-lg bg-slate-800/40 border border-slate-600/40 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all"
-              title="Modo de Exibição"
-            >
-              <Monitor className="h-4 w-4 sm:h-5 sm:w-5" />
-            </button>
+          {/* Right: Status indicator */}
+          <div className="flex items-center gap-2">
+            <div className={cn(
+              "flex items-center gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg",
+              "bg-slate-800/60 border border-slate-600/40",
+              "text-emerald-400"
+            )}>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="text-[9px] sm:text-xs font-bold tracking-wider uppercase hidden sm:inline">
+                Online
+              </span>
+            </div>
           </div>
         </div>
       </div>
