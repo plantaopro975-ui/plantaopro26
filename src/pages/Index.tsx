@@ -1277,11 +1277,11 @@ export default function Index() {
           </div>
           
           {/* Center: Copyright */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-muted-foreground/70 tracking-wide">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-sm sm:text-base font-semibold text-muted-foreground/80 tracking-wide">
               © 2026 PlantãoPro
             </span>
-            <span className="text-[10px] text-muted-foreground/50 tracking-widest uppercase hidden sm:inline">
+            <span className="text-xs sm:text-sm text-muted-foreground/60 tracking-widest uppercase hidden sm:inline font-medium">
               FEIJÓ/AC
             </span>
           </div>
@@ -1304,8 +1304,8 @@ export default function Index() {
               onClick={() => setShowThemeSelector(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all"
             >
-              <Palette className="h-4 w-4" />
-              <span className="text-xs font-semibold tracking-wide">Estilo</span>
+              <Palette className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="text-sm sm:text-base font-semibold tracking-wide">Estilo</span>
             </button>
             
             {/* Admin/Master Dropdown */}
