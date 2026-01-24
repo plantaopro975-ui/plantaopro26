@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,19 +20,21 @@ import {
   Target,
   Zap,
   Crown,
-  Building2
+  Building2,
+  Play
 } from 'lucide-react';
-import { format, differenceInDays, isToday, isTomorrow, parseISO } from 'date-fns';
+import { format, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, isToday, isTomorrow, parseISO, setHours, setMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface AgentInfoItem {
   id: string;
-  type: 'shift' | 'bh' | 'announcement' | 'leave' | 'event';
+  type: 'shift' | 'bh' | 'announcement' | 'leave' | 'event' | 'countdown';
   icon: React.ReactNode;
   title: string;
   subtitle: string;
   accentColor: string;
   priority: number;
+  shiftDateTime?: Date; // For countdown calculation
 }
 
 export function HomeAgentInfoBanner() {
@@ -42,6 +44,33 @@ export function HomeAgentInfoBanner() {
   const [infoItems, setInfoItems] = useState<AgentInfoItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [nextShiftDate, setNextShiftDate] = useState<Date | null>(null);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (!nextShiftDate) return;
+
+    const updateCountdown = () => {
+      const now = new Date();
+      if (nextShiftDate <= now) {
+        setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      const totalSeconds = Math.floor((nextShiftDate.getTime() - now.getTime()) / 1000);
+      const days = Math.floor(totalSeconds / (24 * 60 * 60));
+      const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+      const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+      const seconds = totalSeconds % 60;
+
+      setCountdown({ days, hours, minutes, seconds });
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [nextShiftDate]);
 
   const fetchAgentInfo = useCallback(async () => {
     if (!agent?.id) return;
@@ -50,7 +79,7 @@ export function HomeAgentInfoBanner() {
     const today = format(new Date(), 'yyyy-MM-dd');
 
     try {
-      // 1. Next Shift
+      // 1. Next Shift with countdown
       const { data: shifts } = await supabase
         .from('agent_shifts')
         .select('shift_date, start_time, end_time, shift_type')
@@ -61,6 +90,13 @@ export function HomeAgentInfoBanner() {
 
       if (shifts?.[0]) {
         const shiftDate = parseISO(shifts[0].shift_date);
+        const startTime = shifts[0].start_time?.slice(0, 5) || '07:00';
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        
+        // Create full datetime for countdown
+        const shiftDateTime = setMinutes(setHours(shiftDate, startHour), startMinute);
+        setNextShiftDate(shiftDateTime);
+
         const daysUntil = differenceInDays(shiftDate, new Date());
         let dateLabel = format(shiftDate, "EEEE, dd 'de' MMM", { locale: ptBR });
         
@@ -70,12 +106,24 @@ export function HomeAgentInfoBanner() {
           dateLabel = 'AMANHÃ';
         }
 
+        // Add countdown item as highest priority
+        items.push({
+          id: 'countdown',
+          type: 'countdown',
+          icon: <Play className="h-4 w-4" />,
+          title: `⏱️ Contagem Regressiva`,
+          subtitle: dateLabel,
+          accentColor: isToday(shiftDate) ? 'text-red-400' : isTomorrow(shiftDate) ? 'text-amber-400' : 'text-emerald-400',
+          priority: 110,
+          shiftDateTime,
+        });
+
         items.push({
           id: 'shift',
           type: 'shift',
           icon: <CalendarCheck className="h-4 w-4" />,
           title: `Próximo Plantão: ${dateLabel}`,
-          subtitle: `${shifts[0].start_time?.slice(0, 5) || '07:00'} - ${shifts[0].end_time?.slice(0, 5) || '19:00'}`,
+          subtitle: `${startTime} - ${shifts[0].end_time?.slice(0, 5) || '19:00'}`,
           accentColor: isToday(shiftDate) ? 'text-red-400' : isTomorrow(shiftDate) ? 'text-amber-400' : 'text-primary',
           priority: isToday(shiftDate) ? 100 : isTomorrow(shiftDate) ? 90 : 50,
         });
@@ -371,30 +419,101 @@ export function HomeAgentInfoBanner() {
               </div>
             </div>
 
-            {/* Center: Info Item (rotating) */}
-            <div 
-              key={currentItem.id}
-              className="flex-1 flex items-center gap-3 animate-fade-in min-w-0"
-            >
-              <div className={cn(
-                "p-2 rounded-lg shrink-0",
-                "bg-slate-800/60 border border-slate-700/50",
-                currentItem.accentColor
-              )}>
-                {currentItem.icon}
+            {/* Center: Info Item (rotating) or Countdown */}
+            {currentItem.type === 'countdown' && nextShiftDate ? (
+              <div 
+                key="countdown"
+                className="flex-1 flex items-center gap-2 sm:gap-3 animate-fade-in min-w-0"
+              >
+                <div className={cn(
+                  "p-2 rounded-lg shrink-0",
+                  "bg-gradient-to-br from-emerald-500/20 to-primary/20 border border-emerald-500/40",
+                  "animate-pulse"
+                )}>
+                  <Timer className="h-4 w-4 text-emerald-400" />
+                </div>
+                {/* Countdown Display */}
+                <div className="flex items-center gap-1 sm:gap-2">
+                  {/* Days */}
+                  {countdown.days > 0 && (
+                    <div className="flex flex-col items-center">
+                      <div className="bg-slate-800/80 border border-primary/40 rounded-lg px-2 py-1 min-w-[36px] text-center">
+                        <span className="text-lg sm:text-xl font-bold text-primary font-mono animate-pulse">
+                          {String(countdown.days).padStart(2, '0')}
+                        </span>
+                      </div>
+                      <span className="text-[9px] text-muted-foreground/70 uppercase mt-0.5">Dias</span>
+                    </div>
+                  )}
+                  {countdown.days > 0 && <span className="text-primary/60 font-bold text-lg">:</span>}
+                  {/* Hours */}
+                  <div className="flex flex-col items-center">
+                    <div className="bg-slate-800/80 border border-primary/40 rounded-lg px-2 py-1 min-w-[36px] text-center">
+                      <span className="text-lg sm:text-xl font-bold text-primary font-mono">
+                        {String(countdown.hours).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <span className="text-[9px] text-muted-foreground/70 uppercase mt-0.5">Hrs</span>
+                  </div>
+                  <span className="text-primary/60 font-bold text-lg animate-pulse">:</span>
+                  {/* Minutes */}
+                  <div className="flex flex-col items-center">
+                    <div className="bg-slate-800/80 border border-amber-500/40 rounded-lg px-2 py-1 min-w-[36px] text-center">
+                      <span className="text-lg sm:text-xl font-bold text-amber-400 font-mono">
+                        {String(countdown.minutes).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <span className="text-[9px] text-muted-foreground/70 uppercase mt-0.5">Min</span>
+                  </div>
+                  <span className="text-primary/60 font-bold text-lg animate-pulse">:</span>
+                  {/* Seconds */}
+                  <div className="flex flex-col items-center">
+                    <div className="bg-slate-800/80 border border-red-500/40 rounded-lg px-2 py-1 min-w-[36px] text-center relative overflow-hidden">
+                      <span className="text-lg sm:text-xl font-bold text-red-400 font-mono relative z-10">
+                        {String(countdown.seconds).padStart(2, '0')}
+                      </span>
+                      {/* Animated pulse effect */}
+                      <div className="absolute inset-0 bg-red-500/10 animate-ping" style={{ animationDuration: '1s' }} />
+                    </div>
+                    <span className="text-[9px] text-muted-foreground/70 uppercase mt-0.5">Seg</span>
+                  </div>
+                </div>
+                {/* Status label */}
+                <div className="hidden sm:flex flex-col ml-2">
+                  <span className={cn(
+                    "text-[10px] font-bold uppercase tracking-wider",
+                    currentItem.accentColor
+                  )}>
+                    {currentItem.subtitle}
+                  </span>
+                  <span className="text-[9px] text-muted-foreground/60">Próximo Plantão</span>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className={cn(
-                  "text-sm font-semibold truncate",
+            ) : (
+              <div 
+                key={currentItem.id}
+                className="flex-1 flex items-center gap-3 animate-fade-in min-w-0"
+              >
+                <div className={cn(
+                  "p-2 rounded-lg shrink-0",
+                  "bg-slate-800/60 border border-slate-700/50",
                   currentItem.accentColor
                 )}>
-                  {currentItem.title}
-                </p>
-                <p className="text-xs text-muted-foreground/80 truncate">
-                  {currentItem.subtitle}
-                </p>
+                  {currentItem.icon}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className={cn(
+                    "text-sm font-semibold truncate",
+                    currentItem.accentColor
+                  )}>
+                    {currentItem.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground/80 truncate">
+                    {currentItem.subtitle}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Right: Dots indicator + Action */}
             <div className="flex items-center gap-2 shrink-0">
