@@ -175,7 +175,7 @@ export function HomeAgentInfoBanner() {
       // Sort by priority
       items.sort((a, b) => b.priority - a.priority);
       setInfoItems(items);
-      setIsVisible(items.length > 0);
+      setIsVisible(true); // Always visible when agent is logged in
     } catch (error) {
       console.error('Error fetching agent info:', error);
     }
@@ -199,11 +199,25 @@ export function HomeAgentInfoBanner() {
     return () => clearInterval(interval);
   }, [infoItems.length]);
 
-  if (!user || !agent || !isVisible || infoItems.length === 0) {
+  // Don't render if no user or agent profile
+  if (!user || !agent) {
     return null;
   }
 
-  const currentItem = infoItems[currentIndex];
+  // Default welcome item when no data
+  const defaultItem: AgentInfoItem = {
+    id: 'welcome',
+    type: 'shift',
+    icon: <Shield className="h-4 w-4" />,
+    title: 'Bem-vindo ao sistema!',
+    subtitle: 'Configure seu plantão no painel',
+    accentColor: 'text-primary',
+    priority: 0,
+  };
+
+  const displayItems = infoItems.length > 0 ? infoItems : [defaultItem];
+
+  const currentItem = displayItems[currentIndex % displayItems.length];
   const firstName = agent.name?.split(' ')[0] || 'Agente';
 
   return (
