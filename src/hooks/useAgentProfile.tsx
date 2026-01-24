@@ -133,23 +133,15 @@ export function useAgentProfile() {
 
         let foundAgent = null;
 
-        // 0) Primary: backend function using JWT → avoids transient RLS/hydration issues.
-        // If it succeeds, we can stop immediately.
+        // 0) Primary: backend function (token is automatically attached by the client).
+        // Avoid calling getSession() here because it can trigger refresh-token storms on some devices.
         try {
-          // CRÍTICO: Obter token de sessão explicitamente para garantir autenticação
-          const { data: sessionData } = await supabase.auth.getSession();
-          const accessToken = sessionData?.session?.access_token;
-          
-          if (accessToken) {
-            const { data, error: fnError } = await supabase.functions.invoke('agent-profile', { 
-              body: {},
-              headers: {
-                Authorization: `Bearer ${accessToken}`
-              }
-            });
-            if (!fnError && (data as any)?.success && (data as any)?.data) {
-              foundAgent = (data as any).data;
-            }
+          const { data, error: fnError } = await supabase.functions.invoke('agent-profile', {
+            body: {},
+          });
+
+          if (!fnError && (data as any)?.success && (data as any)?.data) {
+            foundAgent = (data as any).data;
           }
         } catch {
           // Ignore and fall back to direct table queries below.
