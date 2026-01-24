@@ -7,7 +7,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
 import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
-import { Droplet, LogOut, Gift, Building2, Bell, RefreshCw, Wifi, WifiOff, Shield, Sword, Target, Zap, Crown } from 'lucide-react';
+import { Droplet, LogOut, Gift, Building2, Bell, RefreshCw, Wifi, WifiOff, Shield, Sword, Target, Zap, Crown, Type } from 'lucide-react';
+import { FontSizeControl } from '@/components/FontSizeControl';
 import { cn } from '@/lib/utils';
 
 interface Agent {
@@ -191,6 +192,9 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
             
             <AgentRoleSelector agentId={agent.id} currentRole={agent.role || 'agent'} />
             <NotificationsPanel agentId={agent.id} />
+            
+            {/* Font Size Control - Accessibility */}
+            <FontSizeControl />
             
             {/* Trial Badge - Spectacular */}
             <TooltipProvider>

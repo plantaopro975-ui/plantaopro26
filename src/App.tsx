@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { FontSizeProvider } from "@/contexts/FontSizeContext";
 import { useGlobalNavigation } from "@/hooks/useGlobalNavigation";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { GlobalOfflineBanner } from "@/components/OfflineIndicator";
@@ -39,51 +40,53 @@ function GlobalNavigationHandler({ children }: { children: React.ReactNode }) {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <GlobalNavigationHandler>
-              {/* Global Offline Banner */}
-              <GlobalOfflineBanner />
-              {/* Reconnecting Guard - Shows recovery screen instead of redirecting */}
-              <ReconnectingGuard maxWaitTime={15000}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Navigate to="/" replace />} />
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/agent-panel" element={<AgentPanel />} />
-                  <Route path="/agent-profile" element={<AgentProfileEdit />} />
-                  <Route path="/agent-profile-edit" element={<AgentProfileEdit />} />
-                  <Route path="/unit/:unitId" element={<UnitDashboard />} />
-                  <Route path="/agents" element={<Agents />} />
-                  <Route path="/agents/:id" element={<AgentProfile />} />
+    <FontSizeProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <GlobalNavigationHandler>
+                {/* Global Offline Banner */}
+                <GlobalOfflineBanner />
+                {/* Reconnecting Guard - Shows recovery screen instead of redirecting */}
+                <ReconnectingGuard maxWaitTime={15000}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Navigate to="/" replace />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/agent-panel" element={<AgentPanel />} />
+                    <Route path="/agent-profile" element={<AgentProfileEdit />} />
+                    <Route path="/agent-profile-edit" element={<AgentProfileEdit />} />
+                    <Route path="/unit/:unitId" element={<UnitDashboard />} />
+                    <Route path="/agents" element={<Agents />} />
+                    <Route path="/agents/:id" element={<AgentProfile />} />
 
-                  <Route path="/overtime" element={<Overtime />} />
-                  <Route path="/units" element={<Units />} />
-                  <Route path="/settings" element={<Settings />} />
-                  
-                  <Route path="/master" element={<Master />} />
-                  <Route path="/install" element={<Install />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/agenda" element={<Agenda />} />
+                    <Route path="/overtime" element={<Overtime />} />
+                    <Route path="/units" element={<Units />} />
+                    <Route path="/settings" element={<Settings />} />
+                    
+                    <Route path="/master" element={<Master />} />
+                    <Route path="/install" element={<Install />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/agenda" element={<Agenda />} />
 
-                  {/* Debug */}
-                  <Route path="/debug/auth" element={<DebugAuth />} />
+                    {/* Debug */}
+                    <Route path="/debug/auth" element={<DebugAuth />} />
 
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ReconnectingGuard>
-              {/* PWA Install Prompt - Shows on all pages when installable */}
-              <PWAInstallPrompt />
-            </GlobalNavigationHandler>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </ReconnectingGuard>
+                {/* PWA Install Prompt - Shows on all pages when installable */}
+                <PWAInstallPrompt />
+              </GlobalNavigationHandler>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+    </FontSizeProvider>
   </QueryClientProvider>
 );
 
