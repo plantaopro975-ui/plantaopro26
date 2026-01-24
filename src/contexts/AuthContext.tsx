@@ -60,6 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       if (error) {
+        // Ignore abort errors silently - they're expected during cleanup
+        if (error.message?.includes('abort') || error.message?.includes('AbortError')) {
+          return;
+        }
         console.error('Error fetching user role:', error);
         return;
       }
@@ -67,7 +71,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data) {
         setUserRole(data.role as UserRole);
       }
-    } catch (err) {
+    } catch (err: any) {
+      // Ignore abort errors silently - common during component unmount/navigation
+      if (err?.name === 'AbortError' || err?.message?.includes('abort') || err?.message?.includes('signal')) {
+        return;
+      }
       console.error('Error in fetchUserRole:', err);
     }
   };

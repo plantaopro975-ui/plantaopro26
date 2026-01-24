@@ -148,10 +148,11 @@ const getThemeCardStyle = (resolvedTheme: string) => {
 };
 
 export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
-  const { playSound } = useSoundEffects();
+  const { playSound, isSoundEnabled } = useSoundEffects();
   const { theme, resolvedTheme, themeConfig } = useTheme();
   const { ref, transform, glare, handleMouseMove, handleMouseLeave } = use3DTilt();
-  const hasPlayedHover = useRef(false);
+  const hasPlayedHoverRef = useRef(false);
+  const isHovering = useRef(false);
   
   // Get theme-specific styles
   const themeStyle = getThemeCardStyle(resolvedTheme);
@@ -162,20 +163,26 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
   const teamKey = team as 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
   const TeamIcon = activeTheme.teamIcons[teamKey];
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     playSound('card-select');
     onClick();
-  };
+  }, [playSound, onClick]);
 
   const handleMouseEnterCard = useCallback(() => {
-    if (!hasPlayedHover.current) {
+    // Prevent double triggers
+    if (isHovering.current) return;
+    isHovering.current = true;
+    
+    // Play sound only once per mouse enter - check flag before playing
+    if (!hasPlayedHoverRef.current && isSoundEnabled) {
+      hasPlayedHoverRef.current = true;
       playSound('hover');
-      hasPlayedHover.current = true;
     }
-  }, [playSound]);
+  }, [playSound, isSoundEnabled]);
 
   const handleMouseLeaveCard = useCallback(() => {
-    hasPlayedHover.current = false;
+    isHovering.current = false;
+    hasPlayedHoverRef.current = false;
     handleMouseLeave();
   }, [handleMouseLeave]);
 
