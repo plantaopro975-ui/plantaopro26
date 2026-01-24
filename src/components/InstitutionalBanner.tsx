@@ -1,5 +1,10 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
+import { Settings, Monitor } from 'lucide-react';
+
+interface InstitutionalBannerProps {
+  onSettingsClick?: () => void;
+}
 
 // Theme-specific visual effects and styling
 const themeConfigs: Record<string, {
@@ -111,7 +116,7 @@ const patterns: Record<string, string> = {
   classic: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4af37' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E")`,
 };
 
-export function InstitutionalBanner() {
+export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProps) {
   const { theme, resolvedTheme } = useTheme();
   const currentTheme = resolvedTheme || theme;
   const config = themeConfigs[currentTheme] || themeConfigs.tactical;
@@ -145,52 +150,60 @@ export function InstitutionalBanner() {
         <div className="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 rounded-bl-lg" style={{ borderColor: `hsl(var(--primary))` }} />
         <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 rounded-br-lg" style={{ borderColor: `hsl(var(--primary))` }} />
 
-        <div className="text-center space-y-1">
-          {/* Main Title with effects */}
-          <div className="relative inline-block">
-            {/* Glow behind text */}
-            <div 
-              className="absolute inset-0 blur-2xl opacity-60"
-              style={{ background: `linear-gradient(90deg, transparent, ${config.glowColor}, transparent)` }}
-            />
+        <div className="flex items-center justify-between max-w-6xl mx-auto">
+          {/* Left spacer for balance */}
+          <div className="w-16 sm:w-20" />
+          
+          {/* Center: Title */}
+          <div className="text-center flex-1">
+            {/* Main Title with effects */}
+            <div className="relative inline-block">
+              {/* Glow behind text */}
+              <div 
+                className="absolute inset-0 blur-2xl opacity-60"
+                style={{ background: `linear-gradient(90deg, transparent, ${config.glowColor}, transparent)` }}
+              />
+              
+              <h1 className={cn(
+                "relative text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-wide",
+                "bg-gradient-to-r bg-clip-text text-transparent",
+                config.gradient,
+                config.animation
+              )}
+              style={{
+                textShadow: `0 0 30px ${config.glowColor}, 0 0 60px ${config.glowColor}`,
+                WebkitBackgroundClip: 'text',
+              }}>
+                ISE / ACRE
+              </h1>
+            </div>
             
-            <h1 className={cn(
-              "relative text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-wide",
-              "bg-gradient-to-r bg-clip-text text-transparent",
-              config.gradient,
-              config.animation
-            )}
-            style={{
-              textShadow: `0 0 30px ${config.glowColor}, 0 0 60px ${config.glowColor}`,
-              WebkitBackgroundClip: 'text',
-            }}>
-              ISE / ACRE
-            </h1>
+            {/* Subtitle with shimmer */}
+            <div className="relative mt-0.5">
+              <p className={cn(
+                "text-[9px] sm:text-xs md:text-sm font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase",
+                config.accentColor,
+                "drop-shadow-[0_0_8px_currentColor]"
+              )}>
+                Sistema Socioeducativo do Acre
+              </p>
+            </div>
           </div>
           
-          {/* Subtitle with shimmer */}
-          <div className="relative">
-            <p className={cn(
-              "text-[10px] sm:text-xs md:text-sm font-bold tracking-[0.25em] sm:tracking-[0.35em] uppercase",
-              config.accentColor,
-              "drop-shadow-[0_0_8px_currentColor]"
-            )}>
-              Sistema Socioeducativo do Acre
-            </p>
-            
-            {/* Animated underline */}
-            <div className="mt-1 mx-auto w-32 sm:w-48 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent opacity-60" />
-          </div>
-          
-          {/* Decorative elements */}
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <div className="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-            <span className="text-[8px] sm:text-[9px] font-semibold text-muted-foreground/70 uppercase tracking-widest">
-              Estado do Acre
-            </span>
-            <div className="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: '0.5s' }} />
+          {/* Right: Settings Icons */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button 
+              className="p-1.5 sm:p-2 rounded-lg bg-slate-800/40 border border-slate-600/40 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all"
+              title="Configurações"
+            >
+              <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
+            </button>
+            <button 
+              className="p-1.5 sm:p-2 rounded-lg bg-slate-800/40 border border-slate-600/40 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all"
+              title="Modo de Exibição"
+            >
+              <Monitor className="h-4 w-4 sm:h-5 sm:w-5" />
+            </button>
           </div>
         </div>
       </div>

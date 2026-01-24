@@ -64,7 +64,7 @@ import { useSavedCredentialsSync } from '@/hooks/useSavedCredentialsSync';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
-import { ThemedHeader } from '@/components/ThemedHeader';
+import { ThemeSelector } from '@/components/ThemeSelector';
 import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
 import { PendingApprovalDialog } from '@/components/PendingApprovalDialog';
 import { AuthDialog } from '@/components/auth/AuthDialog';
@@ -1209,17 +1209,14 @@ export default function Index() {
       <header className="relative z-20 shrink-0">
         {/* Institutional Banner - ISE/ACRE - Full top position */}
         <InstitutionalBanner />
-        
-        {/* Themed Header - Professional Status Bar (below banner) */}
-        <ThemedHeader selectedTeam={selectedTeam} />
       </header>
       
-      {/* Teams Grid Section - Main content area */}
-      <section className="flex-1 py-2 sm:py-3 px-2 sm:px-4 relative z-10 flex flex-col items-center justify-center min-h-0 overflow-hidden">
+      {/* Teams Grid Section - Main content area - FULL HEIGHT */}
+      <section className="flex-1 py-3 sm:py-4 px-3 sm:px-6 relative z-10 flex flex-col min-h-0 overflow-y-auto overflow-x-hidden">
         
         {/* Quick Access Panel - Shows when credentials are saved */}
         {getSavedCredentials().length > 0 && (
-          <div className="w-full mb-3 sm:mb-4 px-2 animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <div className="w-full mb-3 sm:mb-4 animate-fade-in shrink-0" style={{ animationDelay: '200ms' }}>
             <QuickAccessPanel
               onQuickLogin={handleQuickLogin}
               onSelectCredential={handleQuickLoginSelect}
@@ -1229,15 +1226,15 @@ export default function Index() {
           </div>
         )}
         
-        {/* Teams Grid - Professional balanced sizing */}
-        <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+        {/* Teams Grid - Full width responsive */}
+        <div className="flex-1 w-full max-w-6xl mx-auto flex items-center justify-center">
+          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {teams.map((team, index) => (
               <div
                 key={team}
                 className="animate-fade-in-scale flex justify-center"
                 style={{
-                  animationDelay: `${300 + index * 80}ms`,
+                  animationDelay: `${200 + index * 80}ms`,
                 }}
               >
                 <ThemedTeamCard
@@ -1251,59 +1248,68 @@ export default function Index() {
       </section>
 
 
-      {/* Footer - Clean Professional Design */}
-      <footer className="py-2 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md border-t border-primary/20 relative z-20 shrink-0">
+      {/* Footer - Clean Professional Design (Reference Style) */}
+      <footer className="py-2 px-3 sm:px-4 bg-gradient-to-r from-slate-900/98 via-slate-800/98 to-slate-900/98 backdrop-blur-md border-t border-slate-700/50 relative z-20 shrink-0">
         {/* Top accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-          {/* Left: Developer branding + Audio + Actions */}
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+          {/* Left: Developer Badge + Audio */}
           <div className="flex items-center gap-2">
-            {/* Developer Badge */}
             <div className="relative group">
-              <div className="absolute inset-0 blur-lg bg-gradient-to-r from-primary/30 via-amber-400/30 to-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/50 border border-primary/30 hover:border-primary/50 transition-all">
-                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center shadow-lg shadow-primary/30">
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/60 border border-amber-500/40 hover:border-amber-400/60 transition-all">
+                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
                   <span className="text-[8px] font-black text-black">FD</span>
                 </div>
-                <span className="text-[10px] sm:text-xs font-black tracking-[0.1em] uppercase bg-gradient-to-r from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-gradient-x">
+                <span className="text-xs font-black tracking-wider uppercase text-amber-400">
                   FRANC D'NIS
                 </span>
+                <Zap className="h-3 w-3 text-amber-400" />
               </div>
             </div>
             <HomeMediaPlayer />
-            
-            {getSavedCredentials().length > 0 && (
-              <button
-                onClick={() => setShowCredentialsManager(true)}
-                className="p-1.5 text-muted-foreground hover:text-emerald-400 rounded hover:bg-emerald-500/10 transition-all duration-200"
-                title="Credenciais Salvas"
-              >
-                <KeyRound className="h-3.5 w-3.5" />
-              </button>
-            )}
           </div>
           
           {/* Center: Copyright */}
-          <div className="flex flex-col items-center">
-            <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground/70 tracking-wider">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground/70 tracking-wide">
               © 2026 PlantãoPro
             </span>
-            <span className="text-[8px] text-muted-foreground/50 tracking-widest uppercase">
-              Feijó/AC
+            <span className="text-[10px] text-muted-foreground/50 tracking-widest uppercase hidden sm:inline">
+              FEIJÓ/AC
             </span>
           </div>
           
-          {/* Right: Spectacular Clock + Admin Actions */}
+          {/* Right: Estilo Button + Admin + Tactical Clock */}
           <div className="flex items-center gap-2">
+            {/* Saved Credentials */}
+            {getSavedCredentials().length > 0 && (
+              <button
+                onClick={() => setShowCredentialsManager(true)}
+                className="p-1.5 text-muted-foreground hover:text-emerald-400 rounded hover:bg-emerald-500/10 transition-all hidden sm:block"
+                title="Credenciais Salvas"
+              >
+                <KeyRound className="h-4 w-4" />
+              </button>
+            )}
+            
+            {/* Theme Selector Button - "Estilo" */}
+            <button
+              onClick={() => setShowThemeSelector(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all"
+            >
+              <Palette className="h-4 w-4" />
+              <span className="text-xs font-semibold tracking-wide">Estilo</span>
+            </button>
+            
             {/* Admin/Master Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center justify-center p-2 sm:p-2.5 text-muted-foreground hover:text-primary rounded-lg bg-slate-800/50 hover:bg-slate-700/70 border border-slate-700/50 hover:border-primary/50 transition-all duration-200"
+                  className="flex items-center justify-center p-2 text-muted-foreground hover:text-primary rounded-lg bg-slate-800/50 hover:bg-slate-700/70 border border-slate-700/50 hover:border-primary/50 transition-all"
                   title="Acesso Administrativo"
                 >
-                  <Lock className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <Lock className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
@@ -1339,17 +1345,15 @@ export default function Index() {
             {/* About App */}
             <button
               onClick={() => setShowAboutDialog(true)}
-              className="p-1.5 sm:p-2 text-muted-foreground hover:text-primary rounded hover:bg-primary/10 transition-all duration-200"
+              className="p-1.5 text-muted-foreground hover:text-primary rounded hover:bg-primary/10 transition-all hidden sm:block"
               title="Sobre o App"
             >
               <Info className="h-4 w-4" />
             </button>
             
-            {/* Spectacular Clock - Right side */}
-            <div className="relative">
-              <div className="p-1.5 rounded-xl bg-slate-800/60 border border-primary/40 shadow-lg shadow-primary/10">
-                <SpectacularClock size={56} />
-              </div>
+            {/* Tactical Clock - Compact */}
+            <div className="p-1 rounded-xl bg-slate-800/60 border border-primary/40">
+              <SpectacularClock size={44} />
             </div>
           </div>
         </div>
@@ -1856,6 +1860,12 @@ export default function Index() {
               </div>
             </div>
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+      {/* Theme Selector Dialog */}
+      <Dialog open={showThemeSelector} onOpenChange={setShowThemeSelector}>
+        <DialogContent className="bg-transparent border-0 p-0 shadow-none max-w-sm">
+          <ThemeSelector onSelect={() => setShowThemeSelector(false)} />
         </DialogContent>
       </Dialog>
 

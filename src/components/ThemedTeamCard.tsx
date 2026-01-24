@@ -297,7 +297,7 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
           }}
         />
         
-        {/* Main Card - Mobile Optimized & Professional */}
+        {/* Main Card - Full Responsive Height */}
         <div 
           className={cn(
             "relative overflow-hidden transition-all duration-300",
@@ -305,16 +305,14 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
             themeStyle.borderStyle,
             themeStyle.glowEffect,
             // Full width cards
-            "w-full",
-            // Balanced aspect ratio for all screens
+            "w-full h-full",
+            // Flexible aspect ratio - fills container
             "aspect-[3/4]",
-            "sm:aspect-[3/4]",
-            "md:aspect-[3/4]",
-            // Increased height limits for better visibility - LARGER
-            "min-h-[200px] max-h-[260px]",
-            "sm:min-h-[240px] sm:max-h-[320px]",
-            "md:min-h-[280px] md:max-h-[400px]",
-            "lg:min-h-[320px] lg:max-h-[480px]"
+            // Minimum heights for readability
+            "min-h-[180px]",
+            "sm:min-h-[220px]",
+            "md:min-h-[280px]",
+            "lg:min-h-[320px]"
           )}
           style={{ 
             borderColor: teamColors[team as keyof typeof teamColors]?.primary,
