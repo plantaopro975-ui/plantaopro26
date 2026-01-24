@@ -209,8 +209,8 @@ export function HomeAgentInfoBanner() {
     id: 'welcome',
     type: 'shift',
     icon: <Shield className="h-4 w-4" />,
-    title: 'Bem-vindo ao sistema!',
-    subtitle: 'Configure seu plantão no painel',
+    title: 'Agente de Segurança Pública',
+    subtitle: 'Pronto para o serviço',
     accentColor: 'text-primary',
     priority: 0,
   };
