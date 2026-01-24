@@ -38,6 +38,7 @@ import { LicenseWarningBanner } from '@/components/LicenseWarningBanner';
 import { TacticalRadar } from '@/components/dashboard/TacticalRadar';
 import { SessionMonitorBanner } from '@/components/SessionMonitorBanner';
 import { DiagnosticReportButton } from '@/components/DiagnosticReportButton';
+import { SessionDiagnosticCard } from '@/components/agent-panel/SessionDiagnosticCard';
 import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
@@ -741,6 +742,9 @@ export default function AgentPanel() {
                     <ChatAndAlertSettings agentId={agent.id} />
                     <NotificationSettings />
                     <BHReminderSettings agentId={agent.id} />
+                    
+                    {/* Session Diagnostic Card */}
+                    <SessionDiagnosticCard />
                     
                     {/* Diagnostic Tools Section - IMPROVED */}
                     <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-2 border-slate-600/60 rounded-2xl p-4 md:p-5 space-y-3 shadow-xl">

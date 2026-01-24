@@ -1,9 +1,10 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useBannerCache } from '@/hooks/useBannerCache';
 import { 
   Clock, 
   Calendar, 
@@ -37,6 +38,11 @@ interface AgentInfoItem {
   shiftDateTime?: Date; // For countdown calculation
 }
 
+interface CachedBannerData {
+  items: Omit<AgentInfoItem, 'icon'>[];
+  nextShiftDateTime?: number; // timestamp
+}
+
 export function HomeAgentInfoBanner() {
   const { user } = useAuth();
   const { agent } = useAgentProfile();
@@ -46,6 +52,11 @@ export function HomeAgentInfoBanner() {
   const [isVisible, setIsVisible] = useState(false);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [nextShiftDate, setNextShiftDate] = useState<Date | null>(null);
+  
+  // Cache for 30 seconds to reduce repeated queries
+  const cacheKey = `banner-${agent?.id || 'none'}`;
+  const { getCachedData, setCachedData, isCacheValid, getCacheAge } = useBannerCache<CachedBannerData>(cacheKey);
+  const lastFetchRef = useRef<number>(0);
 
   // Countdown timer effect
   useEffect(() => {
@@ -72,11 +83,39 @@ export function HomeAgentInfoBanner() {
     return () => clearInterval(interval);
   }, [nextShiftDate]);
 
-  const fetchAgentInfo = useCallback(async () => {
-    if (!agent?.id) return;
+  // Helper to add icon to cached item
+  const addIconToItem = useCallback((item: Omit<AgentInfoItem, 'icon'>): AgentInfoItem => {
+    const iconMap: Record<string, React.ReactNode> = {
+      'countdown': <Play className="h-4 w-4" />,
+      'shift': <CalendarCheck className="h-4 w-4" />,
+      'bh': <TrendingUp className="h-4 w-4" />,
+      'event': <Bell className="h-4 w-4" />,
+      'leave': <Timer className="h-4 w-4" />,
+      'announcement': <AlertCircle className="h-4 w-4" />,
+    };
+    return { ...item, icon: iconMap[item.type] || <Shield className="h-4 w-4" /> };
+  }, []);
 
-    const items: AgentInfoItem[] = [];
+  const fetchAgentInfo = useCallback(async (forceRefresh = false) => {
+    if (!agent?.id) return;
+    
+    // Check cache first (unless force refresh)
+    if (!forceRefresh && isCacheValid()) {
+      const cached = getCachedData();
+      if (cached) {
+        const itemsWithIcons = cached.items.map(addIconToItem);
+        setInfoItems(itemsWithIcons);
+        if (cached.nextShiftDateTime) {
+          setNextShiftDate(new Date(cached.nextShiftDateTime));
+        }
+        setIsVisible(true);
+        return;
+      }
+    }
+
+    const items: Omit<AgentInfoItem, 'icon'>[] = [];
     const today = format(new Date(), 'yyyy-MM-dd');
+    let nextShiftDateTime: number | undefined;
 
     try {
       // 1. Next Shift with countdown
@@ -96,6 +135,7 @@ export function HomeAgentInfoBanner() {
         // Create full datetime for countdown
         const shiftDateTime = setMinutes(setHours(shiftDate, startHour), startMinute);
         setNextShiftDate(shiftDateTime);
+        nextShiftDateTime = shiftDateTime.getTime();
 
         const daysUntil = differenceInDays(shiftDate, new Date());
         let dateLabel = format(shiftDate, "EEEE, dd 'de' MMM", { locale: ptBR });
@@ -110,18 +150,15 @@ export function HomeAgentInfoBanner() {
         items.push({
           id: 'countdown',
           type: 'countdown',
-          icon: <Play className="h-4 w-4" />,
           title: `⏱️ Contagem Regressiva`,
           subtitle: dateLabel,
           accentColor: isToday(shiftDate) ? 'text-red-400' : isTomorrow(shiftDate) ? 'text-amber-400' : 'text-emerald-400',
           priority: 110,
-          shiftDateTime,
         });
 
         items.push({
           id: 'shift',
           type: 'shift',
-          icon: <CalendarCheck className="h-4 w-4" />,
           title: `Próximo Plantão: ${dateLabel}`,
           subtitle: `${startTime} - ${shifts[0].end_time?.slice(0, 5) || '19:00'}`,
           accentColor: isToday(shiftDate) ? 'text-red-400' : isTomorrow(shiftDate) ? 'text-amber-400' : 'text-primary',
@@ -143,7 +180,6 @@ export function HomeAgentInfoBanner() {
         items.push({
           id: 'bh',
           type: 'bh',
-          icon: <TrendingUp className="h-4 w-4" />,
           title: `Banco de Horas: ${balance >= 0 ? '+' : ''}${balance.toFixed(0)}h`,
           subtitle: balance >= 0 ? 'Saldo positivo' : 'Saldo a compensar',
           accentColor: balance >= 0 ? 'text-emerald-400' : 'text-amber-400',
@@ -167,7 +203,6 @@ export function HomeAgentInfoBanner() {
         items.push({
           id: 'event',
           type: 'event',
-          icon: <Bell className="h-4 w-4" />,
           title: events[0].title,
           subtitle: daysUntil === 0 ? 'Hoje' : daysUntil === 1 ? 'Amanhã' : `Em ${daysUntil} dias`,
           accentColor: 'text-violet-400',
@@ -195,7 +230,6 @@ export function HomeAgentInfoBanner() {
         items.push({
           id: 'leave',
           type: 'leave',
-          icon: <Timer className="h-4 w-4" />,
           title: leaveTypes[leaves[0].leave_type] || 'Afastamento',
           subtitle: `Até ${format(parseISO(leaves[0].end_date), "dd 'de' MMM", { locale: ptBR })}`,
           accentColor: 'text-cyan-400',
@@ -217,7 +251,6 @@ export function HomeAgentInfoBanner() {
         items.push({
           id: 'announcement',
           type: 'announcement',
-          icon: <AlertCircle className="h-4 w-4" />,
           title: announcements[0].title,
           subtitle: 'Comunicado oficial',
           accentColor: announcements[0].priority === 'urgent' ? 'text-red-400' : 'text-amber-400',
@@ -227,17 +260,24 @@ export function HomeAgentInfoBanner() {
 
       // Sort by priority
       items.sort((a, b) => b.priority - a.priority);
-      setInfoItems(items);
+      
+      // Cache the data (without icons, they're added on read)
+      setCachedData({ items, nextShiftDateTime });
+      lastFetchRef.current = Date.now();
+      
+      // Add icons and set state
+      const itemsWithIcons = items.map(addIconToItem);
+      setInfoItems(itemsWithIcons);
       setIsVisible(true); // Always visible when agent is logged in
     } catch (error) {
       console.error('Error fetching agent info:', error);
     }
-  }, [agent?.id]);
+  }, [agent?.id, isCacheValid, getCachedData, setCachedData, addIconToItem]);
 
   useEffect(() => {
     fetchAgentInfo();
-    // Refresh every 5 minutes
-    const interval = setInterval(fetchAgentInfo, 5 * 60 * 1000);
+    // Refresh every 5 minutes (cache handles short-term duplicates)
+    const interval = setInterval(() => fetchAgentInfo(true), 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchAgentInfo]);
 

@@ -3,6 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatCPF } from '@/lib/validators';
 
+export interface DiagnosticInfo {
+  source: 'edge-function' | 'direct-id' | 'direct-cpf' | 'direct-email' | 'cached' | 'unknown';
+  fetchedAt: number | null;
+  attempts: number;
+}
+
 interface AgentProfile {
   id: string;
   name: string;
@@ -63,6 +69,11 @@ export function useAgentProfile() {
   const [agent, setAgent] = useState<AgentProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [diagnosticInfo, setDiagnosticInfo] = useState<DiagnosticInfo>({
+    source: 'unknown',
+    fetchedAt: null,
+    attempts: 0,
+  });
   
   // Prevent duplicate fetches
   const fetchingRef = useRef(false);
@@ -132,6 +143,7 @@ export function useAgentProfile() {
         setError(null);
 
         let foundAgent = null;
+        let dataSource: DiagnosticInfo['source'] = 'unknown';
 
         // 0) Primary: backend function (token is automatically attached by the client).
         // Avoid calling getSession() here because it can trigger refresh-token storms on some devices.
@@ -142,6 +154,7 @@ export function useAgentProfile() {
 
           if (!fnError && (data as any)?.success && (data as any)?.data) {
             foundAgent = (data as any).data;
+            dataSource = 'edge-function';
           }
         } catch {
           // Ignore and fall back to direct table queries below.
@@ -158,6 +171,7 @@ export function useAgentProfile() {
           if (idError) throw idError;
           if (idData) {
             foundAgent = idData;
+            dataSource = 'direct-id';
           }
         }
 
@@ -179,6 +193,7 @@ export function useAgentProfile() {
 
             if (data) {
               foundAgent = data;
+              dataSource = 'direct-cpf';
             } else {
               // Try formatted CPF (legacy format: 000.000.000-00)
               const cpfFormatted = formatCPF(cpfDigits);
@@ -189,7 +204,10 @@ export function useAgentProfile() {
                 .maybeSingle();
 
               if (formattedError) throw formattedError;
-              if (formattedData) foundAgent = formattedData;
+              if (formattedData) {
+                foundAgent = formattedData;
+                dataSource = 'direct-cpf';
+              }
             }
           }
         }
@@ -203,7 +221,10 @@ export function useAgentProfile() {
             .maybeSingle();
 
           if (emailError) throw emailError;
-          if (emailData) foundAgent = emailData;
+          if (emailData) {
+            foundAgent = emailData;
+            dataSource = 'direct-email';
+          }
         }
 
         if (mountedRef.current) {
@@ -238,6 +259,13 @@ export function useAgentProfile() {
             // Cache key based on user id + email
             lastEmailRef.current = `${user.id || ''}-${user.email || ''}`;
             retryCountRef.current = 0;
+            
+            // Update diagnostic info
+            setDiagnosticInfo({
+              source: dataSource,
+              fetchedAt: Date.now(),
+              attempts: retryCountRef.current + 1,
+            });
           } else {
             // CRÍTICO: Evitar mostrar "Perfil não carregou" por flutuação temporária.
             // Faz até 3 retentativas com backoff antes de assumir "não encontrado".
@@ -309,5 +337,5 @@ export function useAgentProfile() {
     setIsLoading(true);
   };
 
-  return { agent, isLoading, error, refetch };
+  return { agent, isLoading, error, refetch, _diagnosticInfo: diagnosticInfo };
 }
