@@ -52,7 +52,7 @@ import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecover
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { InstitutionalBanner } from '@/components/InstitutionalBanner';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
-import { HomeAgentDashboardBanner } from '@/components/HomeAgentDashboardBanner';
+
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
 import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
@@ -1212,9 +1212,9 @@ export default function Index() {
         {/* Institutional Banner - PLANTÃO PRO - Full top position */}
         <InstitutionalBanner />
         
-        {/* Dynamic Agent Dashboard Banner - Shows personalized dashboard for logged users */}
+        {/* Dynamic Agent Info Banner - Shows rotating critical info for logged agents */}
         <div className="px-3 sm:px-6 py-2">
-          <HomeAgentDashboardBanner />
+          <HomeAgentInfoBanner />
         </div>
       </header>
       
