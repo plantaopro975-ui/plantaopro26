@@ -199,12 +199,52 @@ export function HomeAgentInfoBanner() {
     return () => clearInterval(interval);
   }, [infoItems.length]);
 
-  // Don't render if no user or agent profile
+  // Show generic banner for visitors (not logged in)
   if (!user || !agent) {
-    return null;
+    return (
+      <div className="w-full animate-fade-in">
+        <div className={cn(
+          "relative overflow-hidden rounded-xl",
+          "bg-gradient-to-r from-slate-900/95 via-slate-800/90 to-slate-900/95",
+          "border border-primary/30 shadow-lg shadow-primary/10",
+          "backdrop-blur-md"
+        )}>
+          {/* Animated gradient border */}
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-50" />
+          
+          {/* Glow effect */}
+          <div 
+            className="absolute inset-0 opacity-20"
+            style={{
+              background: `radial-gradient(ellipse at center, ${themeConfig.colors.primary} 0%, transparent 70%)`,
+            }}
+          />
+
+          <div className="relative z-10 px-4 py-3">
+            <div className="flex items-center justify-center gap-3">
+              <div className={cn(
+                "p-1.5 rounded-lg",
+                "bg-gradient-to-br from-primary/20 to-primary/5",
+                "border border-primary/30"
+              )}>
+                <Shield className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-bold text-primary">
+                  Sistema de Gestão de Plantões
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Selecione sua equipe para acessar
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  // Default welcome item when no data
+  // Default welcome item when no data for logged user
   const defaultItem: AgentInfoItem = {
     id: 'welcome',
     type: 'shift',
