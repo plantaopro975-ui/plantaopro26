@@ -31,6 +31,7 @@ import ShiftPlannerCard from '@/components/agent-panel/ShiftPlannerCard';
 import { ShiftCalendarOverview } from '@/components/agent-panel/ShiftCalendarOverview';
 import { BHReminderSettings } from '@/components/agent-panel/BHReminderSettings';
 import { BHEvolutionChart } from '@/components/agent-panel/BHEvolutionChart';
+import { BHHistoryTracker } from '@/components/agent-panel/BHHistoryTracker';
 import { BirthdayCard } from '@/components/agent-panel/BirthdayCard';
 import { ProfileCompletionAlert } from '@/components/agent-panel/ProfileCompletionAlert';
 import { LicenseWarningBanner } from '@/components/LicenseWarningBanner';
@@ -683,6 +684,10 @@ export default function AgentPanel() {
 
               <TabsContent value="bh" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 <BHTracker agentId={agent.id} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
+                  <BHEvolutionChart agentId={agent.id} />
+                  <BHHistoryTracker agentId={agent.id} />
+                </div>
               </TabsContent>
 
               <TabsContent value="folgas" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
