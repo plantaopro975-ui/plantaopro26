@@ -615,6 +615,68 @@ export type Database = {
           },
         ]
       }
+      bh_monthly_cycles: {
+        Row: {
+          agent_id: string
+          closed_at: string | null
+          created_at: string
+          credit_hours: number
+          debit_hours: number
+          estimated_value: number | null
+          fortnight_1_hours: number
+          fortnight_2_hours: number
+          hourly_rate: number | null
+          id: string
+          month: number
+          total_entries: number
+          total_hours: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          agent_id: string
+          closed_at?: string | null
+          created_at?: string
+          credit_hours?: number
+          debit_hours?: number
+          estimated_value?: number | null
+          fortnight_1_hours?: number
+          fortnight_2_hours?: number
+          hourly_rate?: number | null
+          id?: string
+          month: number
+          total_entries?: number
+          total_hours?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          agent_id?: string
+          closed_at?: string | null
+          created_at?: string
+          credit_hours?: number
+          debit_hours?: number
+          estimated_value?: number | null
+          fortnight_1_hours?: number
+          fortnight_2_hours?: number
+          hourly_rate?: number | null
+          id?: string
+          month?: number
+          total_entries?: number
+          total_hours?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bh_monthly_cycles_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           content: string
@@ -1762,7 +1824,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_old_bh_data: { Args: { p_agent_id?: string }; Returns: number }
       cleanup_orphan_auth_user: { Args: { p_email: string }; Returns: boolean }
+      close_bh_month: {
+        Args: { p_agent_id: string; p_month: number; p_year: number }
+        Returns: string
+      }
       create_shift_reminder: {
         Args: { p_agent_id: string; p_shift_date: string; p_shift_id?: string }
         Returns: undefined
