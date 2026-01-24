@@ -497,10 +497,21 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
             />
           </div>
           
-          {/* Status indicator */}
-          <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
-            <AccentIcon className="w-3 h-3 text-primary opacity-60 hidden sm:block" />
-            <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+          {/* Status indicator - PRONTO badge */}
+          <div className="absolute top-2 right-2 flex items-center gap-1.5 z-10">
+            <div className={cn(
+              "flex items-center gap-1 px-2 py-1 rounded-full",
+              "bg-emerald-500/20 border border-emerald-500/50",
+              "backdrop-blur-sm"
+            )}>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_6px_rgba(34,197,94,0.8)]" />
+              </span>
+              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                Pronto
+              </span>
+            </div>
           </div>
           
           {/* Theme badge - top left */}

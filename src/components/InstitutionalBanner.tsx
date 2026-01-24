@@ -161,13 +161,13 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
             />
             <div className="hidden sm:flex flex-col">
               <span className={cn(
-                "text-[9px] font-bold tracking-[0.15em] uppercase",
+                "text-sm sm:text-base md:text-lg font-black tracking-[0.15em] uppercase",
                 config.accentColor,
-                "drop-shadow-[0_0_6px_currentColor]"
+                "drop-shadow-[0_0_8px_currentColor]"
               )}>
                 ISE / ACRE
               </span>
-              <span className="text-[8px] text-muted-foreground/60 tracking-wider">
+              <span className="text-[10px] sm:text-xs text-muted-foreground/70 tracking-wider font-medium">
                 Socioeducativo
               </span>
             </div>
