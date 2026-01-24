@@ -456,9 +456,9 @@ export default function AgentPanel() {
       {/* Session Monitor Banner - Visual session status */}
       <SessionMonitorBanner />
 
-      <div className="flex-1 flex flex-col w-full min-w-0 h-[100dvh] overflow-hidden no-swipe-back">
+      <div className="flex-1 flex flex-col w-full min-w-0 min-h-[100dvh] no-swipe-back">
         <main 
-          className={`flex-1 w-full min-w-0 px-2 py-2 sm:p-3 md:p-4 lg:p-6 pb-safe overflow-y-auto overflow-x-hidden no-swipe-back ${showLicenseWarning ? 'pt-28' : ''}`}
+          className={`flex-1 w-full min-w-0 px-2 py-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto overflow-x-hidden no-swipe-back ${showLicenseWarning ? 'pt-28' : ''}`}
           style={{
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
@@ -467,9 +467,10 @@ export default function AgentPanel() {
             transform: 'translateZ(0)',
             willChange: 'scroll-position',
             touchAction: 'pan-y pinch-zoom',
+            paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 24px)',
           }}
         >
-          <div className="max-w-7xl w-full mx-auto space-y-3 md:space-y-4 lg:space-y-5 pb-4 sm:pb-6">
+          <div className="max-w-7xl w-full mx-auto space-y-3 md:space-y-4 lg:space-y-5 pb-16 sm:pb-20">
             {/* Professional Header Bar */}
             <AgentPanelHeader 
               agent={{

@@ -162,34 +162,19 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
       {mounted && showTeamImage && poster && (
         <>
           {/* Main poster image - larger and more visible */}
+          {/* Team image background - uses absolute positioning to not block scrolling */}
           <div 
-            className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-opacity duration-500 will-change-auto"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-opacity duration-500 will-change-auto"
             style={{ 
               backgroundImage: `url(${poster})`,
-              opacity: 0.18,
-              filter: 'saturate(1.3) contrast(1.1)',
-              transform: 'translateZ(0)', // GPU layer
+              opacity: 0.12,
+              filter: 'saturate(1.2) contrast(1.05)',
+              transform: 'translateZ(0)',
             }}
           />
-          {/* Team poster in corner - decorative badge */}
-          <div 
-            className="fixed bottom-4 right-4 w-20 h-20 md:w-28 md:h-28 pointer-events-none z-0 rounded-xl overflow-hidden border-2 shadow-xl opacity-60"
-            style={{ 
-              borderColor: colors?.primary || 'rgba(251, 191, 36, 0.5)',
-              boxShadow: `0 0 30px ${colors?.glow || 'rgba(251, 191, 36, 0.3)'}`,
-              transform: 'translateZ(0)', // GPU layer
-            }}
-          >
-            <img 
-              src={poster} 
-              alt="Team" 
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
           {/* Team color overlay - balanced */}
           <div 
-            className="fixed inset-0 pointer-events-none z-0 will-change-auto"
+            className="absolute inset-0 pointer-events-none z-0 will-change-auto"
             style={{
               background: `linear-gradient(160deg, 
                 hsl(222 47% 8% / 0.8) 0%, 
@@ -198,7 +183,7 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
                 ${colors?.glow || 'transparent'} 70%,
                 hsl(222 47% 8% / 0.85) 100%
               )`,
-              transform: 'translateZ(0)', // GPU layer
+              transform: 'translateZ(0)',
             }}
           />
         </>
@@ -206,33 +191,33 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
       
       {/* Theme-specific ambient glow - MORE INTENSE */}
       <div 
-        className="fixed inset-0 pointer-events-none z-0 will-change-auto"
+        className="absolute inset-0 pointer-events-none z-0 will-change-auto"
         style={{
           background: `
             radial-gradient(ellipse at 5% 15%, ${themeAssets.ambientGlow.primary} 0%, transparent 45%),
             radial-gradient(ellipse at 95% 85%, ${themeAssets.ambientGlow.secondary} 0%, transparent 45%),
             radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 60%)
           `,
-          transform: 'translateZ(0)', // GPU layer
+          transform: 'translateZ(0)',
         }}
       />
       
       {/* Theme-specific panel effects */}
       {mounted && <ThemePanelEffects theme={resolvedTheme} />}
       
-      {/* Team color accent line at top - THICKER and MORE VISIBLE */}
+      {/* Team color accent line at top */}
       {colors && (
         <div 
-          className="fixed top-0 left-0 right-0 h-1.5 z-20 pointer-events-none"
+          className="absolute top-0 left-0 right-0 h-1 z-20 pointer-events-none"
           style={{
             background: `linear-gradient(90deg, transparent 5%, ${colors.primary} 25%, ${colors.primary} 75%, transparent 95%)`,
-            boxShadow: `0 0 20px ${colors.primary}40, 0 0 40px ${colors.primary}20`,
+            boxShadow: `0 0 15px ${colors.primary}30`,
           }}
         />
       )}
       
-      {/* Content - Full width, optimized scrolling */}
-      <div className="relative z-10 flex-1 flex flex-col w-full min-w-0 overflow-hidden">
+      {/* Content - Full width, allows scrolling */}
+      <div className="relative z-10 flex-1 flex flex-col w-full min-w-0 min-h-full">
         {children}
       </div>
     </div>
