@@ -317,22 +317,23 @@ export function HomeAgentInfoBanner() {
                 <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-slate-900" />
               </div>
               
-              <div className="hidden sm:flex flex-col">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-bold text-primary truncate max-w-[100px]">
+              {/* Name + Team badge - Always visible */}
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-bold text-primary truncate max-w-[80px] sm:max-w-[100px]">
                     {firstName}
                   </p>
-                  {/* Team badge */}
+                  {/* Team badge - Always visible */}
                   {agent.team && (
                     <span className={cn(
-                      "px-1.5 py-0.5 text-[10px] font-bold rounded border",
+                      "px-1.5 py-0.5 text-[10px] font-bold rounded border uppercase tracking-wide",
                       getTeamColor(agent.team)
                     )}>
                       {agent.team}
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 hidden sm:block">
                   Agente de Segurança
                 </p>
               </div>
