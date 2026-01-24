@@ -69,13 +69,8 @@ export function useAgentProfile() {
   const [agent, setAgent] = useState<AgentProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [diagnosticInfo, setDiagnosticInfo] = useState<DiagnosticInfo>({
-    source: 'unknown',
-    fetchedAt: null,
-    attempts: 0,
-  });
   
-  // Prevent duplicate fetches
+  // Prevent duplicate fetches - MUST be refs before any other state to maintain hook order
   const fetchingRef = useRef(false);
   const lastEmailRef = useRef<string | null>(null);
   const mountedRef = useRef(true);
@@ -84,6 +79,13 @@ export function useAgentProfile() {
   
   // CRÍTICO: Mantém o agente em cache para evitar "piscar" durante refresh de token
   const cachedAgentRef = useRef<AgentProfile | null>(null);
+  
+  // Diagnostic info - added after refs to maintain hook order stability
+  const diagnosticInfoRef = useRef<DiagnosticInfo>({
+    source: 'unknown',
+    fetchedAt: null,
+    attempts: 0,
+  });
 
   useEffect(() => {
     mountedRef.current = true;
@@ -261,11 +263,11 @@ export function useAgentProfile() {
             retryCountRef.current = 0;
             
             // Update diagnostic info
-            setDiagnosticInfo({
+            diagnosticInfoRef.current = {
               source: dataSource,
               fetchedAt: Date.now(),
               attempts: retryCountRef.current + 1,
-            });
+            };
           } else {
             // CRÍTICO: Evitar mostrar "Perfil não carregou" por flutuação temporária.
             // Faz até 3 retentativas com backoff antes de assumir "não encontrado".
@@ -337,5 +339,5 @@ export function useAgentProfile() {
     setIsLoading(true);
   };
 
-  return { agent, isLoading, error, refetch, _diagnosticInfo: diagnosticInfo };
+  return { agent, isLoading, error, refetch, _diagnosticInfo: diagnosticInfoRef.current };
 }
