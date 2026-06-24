@@ -94,12 +94,3 @@ export function getTeamIcon(team: TeamName) {
 export function getTeamColor(team: TeamName) {
   return teamConfig[team].color;
 }
-
-
-export function getTeamIcon(team: TeamName) {
-  return teamConfig[team].icon;
-}
-
-export function getTeamColor(team: TeamName) {
-  return teamConfig[team].color;
-}
