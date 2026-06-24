@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, Swords, Target, Users } from 'lucide-react';
+import { getTeamEmblem } from '@/lib/teamAssets';
 
 interface TeamSelectionCardProps {
   team: string;
@@ -7,48 +7,44 @@ interface TeamSelectionCardProps {
   onClick: () => void;
 }
 
-const teamConfig: Record<string, { icon: any; color: string; bgColor: string; borderColor: string; description: string }> = {
+const teamConfig: Record<string, { bgColor: string; borderColor: string; ringColor: string; description: string }> = {
   ALFA: {
-    icon: Shield,
-    color: 'text-blue-400',
-    bgColor: 'from-blue-600/20 to-blue-700/10',
-    borderColor: 'border-blue-500/50 hover:border-blue-400',
-    description: 'Primeira linha de defesa',
+    bgColor: 'from-emerald-600/20 to-emerald-800/10',
+    borderColor: 'border-emerald-500/50 hover:border-emerald-400',
+    ringColor: 'ring-emerald-400',
+    description: 'Escudo — primeira linha de defesa',
   },
   BRAVO: {
-    icon: Swords,
-    color: 'text-red-400',
-    bgColor: 'from-red-600/20 to-red-700/10',
-    borderColor: 'border-red-500/50 hover:border-red-400',
-    description: 'Força de resposta tática',
+    bgColor: 'from-orange-600/20 to-orange-800/10',
+    borderColor: 'border-orange-500/50 hover:border-orange-400',
+    ringColor: 'ring-orange-400',
+    description: 'Espada — força de resposta tática',
   },
   CHARLIE: {
-    icon: Target,
-    color: 'text-green-400',
-    bgColor: 'from-green-600/20 to-green-700/10',
-    borderColor: 'border-green-500/50 hover:border-green-400',
-    description: 'Operações especializadas',
+    bgColor: 'from-blue-600/20 to-blue-800/10',
+    borderColor: 'border-blue-500/50 hover:border-blue-400',
+    ringColor: 'ring-blue-400',
+    description: 'Mira — operações de precisão',
   },
   DELTA: {
-    icon: Users,
-    color: 'text-purple-400',
-    bgColor: 'from-purple-600/20 to-purple-700/10',
-    borderColor: 'border-purple-500/50 hover:border-purple-400',
-    description: 'Suporte e coordenação',
+    bgColor: 'from-amber-600/20 to-amber-800/10',
+    borderColor: 'border-amber-500/50 hover:border-amber-400',
+    ringColor: 'ring-amber-400',
+    description: 'Raio — suporte e coordenação',
   },
 };
 
 export function TeamSelectionCard({ team, selected, onClick }: TeamSelectionCardProps) {
   const config = teamConfig[team] || teamConfig.ALFA;
-  const Icon = config.icon;
+  const emblem = getTeamEmblem(team);
 
   return (
     <Card
       className={`
-        cursor-pointer transition-all duration-300 transform hover:scale-105 
+        cursor-pointer transition-all duration-300 transform hover:scale-105
         bg-slate-800/50 backdrop-blur-sm
-        ${selected 
-          ? 'ring-2 ring-amber-500 shadow-lg shadow-amber-500/20 bg-gradient-to-br ' + config.bgColor
+        ${selected
+          ? `ring-2 ${config.ringColor} shadow-lg bg-gradient-to-br ${config.bgColor}`
           : config.borderColor + ' border'
         }
       `}
@@ -56,19 +52,25 @@ export function TeamSelectionCard({ team, selected, onClick }: TeamSelectionCard
     >
       <CardContent className="p-6 text-center">
         <div className={`
-          w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center
+          w-24 h-24 mx-auto mb-4 rounded-2xl flex items-center justify-center
           bg-gradient-to-br ${config.bgColor} border ${config.borderColor}
         `}>
-          <Icon className={`h-8 w-8 ${config.color}`} />
+          {emblem ? (
+            <img
+              src={emblem}
+              alt={`Brasão Equipe ${team}`}
+              className="w-20 h-20 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]"
+            />
+          ) : null}
         </div>
         <h3 className={`text-xl font-bold ${selected ? 'text-amber-400' : 'text-white'}`}>
-          {team}
+          EQUIPE {team}
         </h3>
         <p className="text-sm text-slate-400 mt-1">
           {config.description}
         </p>
         {selected && (
-          <div className="mt-3 px-3 py-1 bg-amber-500/20 rounded-full text-xs text-amber-400 font-medium">
+          <div className="mt-3 px-3 py-1 bg-amber-500/20 rounded-full text-xs text-amber-400 font-medium inline-block">
             Selecionado
           </div>
         )}
@@ -76,3 +78,4 @@ export function TeamSelectionCard({ team, selected, onClick }: TeamSelectionCard
     </Card>
   );
 }
+
