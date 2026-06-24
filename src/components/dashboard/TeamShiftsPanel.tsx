@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { format, addDays, startOfWeek, isSameDay, isToday, isTomorrow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { TeamEmblem } from '@/components/TeamEmblem';
 
 interface ShiftWithAgent {
   id: string;
@@ -199,9 +200,10 @@ export const TeamShiftsPanel = forwardRef<HTMLDivElement>(function TeamShiftsPan
                   key={team}
                   variant={selectedTeam === team ? 'default' : 'outline'}
                   size="sm"
-                  className="h-7 text-xs"
+                  className="h-7 text-xs gap-1.5 pl-1.5"
                   onClick={() => setSelectedTeam(team)}
                 >
+                  <TeamEmblem team={team} size="xs" />
                   {team}
                 </Button>
               ))}
@@ -315,8 +317,8 @@ export const TeamShiftsPanel = forwardRef<HTMLDivElement>(function TeamShiftsPan
         <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-border/50">
           {teams.slice(0, 4).map(team => (
             <div key={team} className="flex items-center gap-1.5">
-              <div className={`w-2.5 h-2.5 rounded-full ${getTeamColor(team).split(' ')[0]}`} />
-              <span className="text-[10px] text-muted-foreground">{team}</span>
+              <TeamEmblem team={team} size="xs" />
+              <span className="text-[11px] font-semibold text-muted-foreground">{team}</span>
             </div>
           ))}
         </div>
