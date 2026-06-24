@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Settings as SettingsIcon, Shield, Loader2, Palette, Sparkles, ArrowLeft, Bell, Volume2 } from 'lucide-react';
 import { ChangePasswordDialog } from '@/components/ChangePasswordDialog';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
-import { ThemeSelector } from '@/components/ThemeSelector';
+
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
 import { ConnectedDevicesCard } from '@/components/settings/ConnectedDevicesCard';
@@ -94,13 +94,17 @@ export default function Settings() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6 space-y-4">
-                <div className="flex items-center gap-3 mb-4">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  <span className="text-sm text-muted-foreground">
-                    Tema atual: <span className="font-medium text-primary">{themeConfig.emoji} {themeConfig.name}</span>
-                  </span>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/40 border border-slate-700/50">
+                  <Sparkles className="h-5 w-5 text-primary shrink-0" />
+                  <div className="text-sm">
+                    <div className="text-muted-foreground">
+                      Tema atual: <span className="font-medium text-primary">{themeConfig.emoji} {themeConfig.name}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground/70 mt-1">
+                      A personalização do tema visual do sistema é definida pelo administrador no painel administrativo.
+                    </p>
+                  </div>
                 </div>
-                <ThemeSelector />
               </CardContent>
             </Card>
 

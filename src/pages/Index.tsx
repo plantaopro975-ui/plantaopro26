@@ -1311,14 +1311,7 @@ export default function Index() {
               </button>
             )}
             
-            {/* Theme Selector Button - "Estilo" */}
-            <button
-              onClick={() => setShowThemeSelector(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all"
-            >
-              <Palette className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="text-sm sm:text-base font-semibold tracking-wide">Estilo</span>
-            </button>
+            
             
             {/* Admin/Master Dropdown */}
             <DropdownMenu>
@@ -1878,12 +1871,6 @@ export default function Index() {
               </div>
             </div>
           </ScrollArea>
-        </DialogContent>
-      </Dialog>
-      {/* Theme Selector Dialog */}
-      <Dialog open={showThemeSelector} onOpenChange={setShowThemeSelector}>
-        <DialogContent className="bg-transparent border-0 p-0 shadow-none max-w-sm">
-          <ThemeSelector onSelect={() => setShowThemeSelector(false)} />
         </DialogContent>
       </Dialog>
 
