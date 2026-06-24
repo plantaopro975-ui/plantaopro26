@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { ThemeSelector } from '@/components/ThemeSelector';
+import { useTheme } from '@/contexts/ThemeContext';
 import { toast } from '@/hooks/use-toast';
 import { setMasterToken } from '@/lib/masterSession';
 import { 
@@ -38,7 +40,9 @@ import {
   Megaphone,
   Monitor,
   LayoutDashboard,
-  Settings2
+  Settings2,
+  Palette,
+  Sparkles
 } from 'lucide-react';
 
 interface AdminPermissions {

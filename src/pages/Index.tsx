@@ -21,7 +21,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Palette, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown, User } from 'lucide-react';
+import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,7 +68,7 @@ import { useSavedCredentialsSync } from '@/hooks/useSavedCredentialsSync';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
-import { ThemeSelector } from '@/components/ThemeSelector';
+
 import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
 import { PendingApprovalDialog } from '@/components/PendingApprovalDialog';
 import { AuthDialog } from '@/components/auth/AuthDialog';
@@ -102,7 +102,7 @@ export default function Index() {
   const [showLogin, setShowLogin] = useState(false);
   const [showMasterLogin, setShowMasterLogin] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [showThemeSelector, setShowThemeSelector] = useState(false);
+  
   const [showCredentialsManager, setShowCredentialsManager] = useState(false);
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [units, setUnits] = useState<Unit[]>([]);
