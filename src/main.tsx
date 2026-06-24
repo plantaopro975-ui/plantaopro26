@@ -43,6 +43,25 @@ if ("serviceWorker" in navigator && !isSafeModeActive()) {
   if (!w.__pp_sw_registered) {
     w.__pp_sw_registered = true;
 
+    // Guarded one-time reload when a new SW takes control. Uses sessionStorage
+    // so a refresh storm cannot loop: we only reload once per tab session.
+    const RELOAD_FLAG = "pp_sw_reloaded_once";
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data?.type === "SW_ACTIVATED") {
+        try {
+          if (sessionStorage.getItem(RELOAD_FLAG)) return;
+          sessionStorage.setItem(RELOAD_FLAG, "1");
+        } catch {
+          return;
+        }
+        // Only reload if we already had a controller (i.e. it's an UPDATE,
+        // not the very first install) — avoids the boot-time double load.
+        if (navigator.serviceWorker.controller) {
+          window.location.reload();
+        }
+      }
+    });
+
     navigator.serviceWorker
       .register("/sw.js", { scope: "/" })
       .then(async (registration) => {
@@ -57,12 +76,10 @@ if ("serviceWorker" in navigator && !isSafeModeActive()) {
           // ignore
         }
 
-        // If there's a waiting SW, activate it immediately
         if (registration.waiting) {
           registration.waiting.postMessage({ type: "SKIP_WAITING" });
         }
 
-        // When a new SW is found, activate it immediately
         registration.addEventListener("updatefound", () => {
           const newWorker = registration.installing;
           if (!newWorker) return;
@@ -74,8 +91,6 @@ if ("serviceWorker" in navigator && !isSafeModeActive()) {
           });
         });
 
-        // IMPORTANT: do NOT auto-reload on controllerchange.
-        // Reload loops can trigger multiple auth refresh attempts.
         console.log("Service Worker registered successfully");
       })
       .catch((error) => {
