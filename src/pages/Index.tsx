@@ -54,11 +54,11 @@ import { InstitutionalBanner } from '@/components/InstitutionalBanner';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 import { InstitutionalPillars } from '@/components/home/InstitutionalPillars';
+import { OperationsTeamCard } from '@/components/home/OperationsTeamCard';
+import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
-import { ThemedHomeBackground } from '@/components/ThemedHomeBackground';
-import { HomeVideoBackground } from '@/components/HomeVideoBackground';
 import { ThemedAnalogClock } from '@/components/ThemedAnalogClock';
 import { SpectacularClock } from '@/components/SpectacularClock';
 import { ThemedTeamCard } from '@/components/ThemedTeamCard';
@@ -1200,14 +1200,8 @@ export default function Index() {
   return (
     <>
       <div className="min-h-[100dvh] flex flex-col bg-background relative overflow-x-hidden overscroll-none">
-        {/* Video Background with Security/Surveillance footage */}
-        <HomeVideoBackground />
-        
-        {/* Themed Animated Background with Rotating Team Images */}
-        <ThemedHomeBackground />
-        
-        {/* Animated Particles/Stars Effect */}
-        <ParticleBackground particleCount={50} />
+        {/* Sober command-room background — SVG only, no posters */}
+        <CommandRoomBackground />
 
       {/* Header with PLANTÃO PRO Banner at the very top */}
       <header className="relative z-20 shrink-0">
@@ -1256,8 +1250,8 @@ export default function Index() {
                   animationDelay: `${200 + index * 80}ms`,
                 }}
               >
-                <ThemedTeamCard
-                  team={team}
+                <OperationsTeamCard
+                  team={team as 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA'}
                   onClick={() => handleTeamClick(team)}
                 />
               </div>
