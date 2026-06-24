@@ -265,8 +265,8 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
             <div className="flex items-center justify-between">
               <CollapsibleTrigger asChild>
                 <button className="flex items-center gap-2 text-left group/btn flex-1 min-w-0">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500/25 to-orange-500/15 border border-amber-500/30 shrink-0">
-                    <Users className="h-4 w-4 text-amber-400" />
+                  <div className="shrink-0">
+                    <TeamEmblem team={team} size="md" />
                   </div>
                   <div className="flex items-center gap-2 min-w-0 flex-1">
                     <span className="font-bold text-base bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate">
