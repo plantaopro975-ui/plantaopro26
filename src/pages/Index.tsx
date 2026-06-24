@@ -52,6 +52,7 @@ import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecover
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { InstitutionalBanner } from '@/components/InstitutionalBanner';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
+import { HeroCinematic } from '@/components/home/HeroCinematic';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
@@ -1211,7 +1212,17 @@ export default function Index() {
       <header className="relative z-20 shrink-0">
         {/* Institutional Banner - PLANTÃO PRO - Full top position */}
         <InstitutionalBanner />
-        
+
+        {/* Cinematic institutional hero (Navy Trust + Amber) */}
+        <div className="px-3 sm:px-6 pt-3">
+          <HeroCinematic
+            onPrimaryAction={() => {
+              const first = document.querySelector<HTMLElement>('[data-team-card]');
+              first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }}
+          />
+        </div>
+
         {/* Dynamic Agent Info Banner - Shows rotating critical info for logged agents */}
         <div className="px-3 sm:px-6 py-2">
           <HomeAgentInfoBanner />

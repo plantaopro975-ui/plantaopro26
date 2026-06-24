@@ -2,26 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @layer base {
   :root {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --primary: 187 85% 53%;
-    --primary-foreground: 222 47% 6%;
+    /* ================================
+       NAVY TRUST + TACTICAL AMBER
+       Institutional palette — Sistema Socioeducativo do Acre
+       ================================ */
+    --background: 222 60% 5%;            /* #060a14 — deep institutional navy */
+    --foreground: 215 30% 92%;           /* #e8edf3 — crisp readable white */
+
+    --card: 222 50% 9%;                  /* #0f1b3d depth */
+    --card-foreground: 215 30% 95%;
+
+    --popover: 222 55% 7%;
+    --popover-foreground: 215 30% 95%;
+
+    --primary: 38 92% 50%;               /* #f59e0b — tactical amber */
+    --primary-foreground: 222 60% 5%;
+
+    --secondary: 217 45% 18%;            /* deep institutional steel */
+    --secondary-foreground: 215 30% 92%;
+
+    --muted: 222 40% 14%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 214 60% 30%;               /* navy accent */
+    --accent-foreground: 215 30% 95%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 70% 42%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 60% 5%;
+
+    --border: 217 35% 20%;
+    --input: 222 45% 12%;
+    --ring: 38 92% 50%;
+
+    --sidebar-background: 222 55% 7%;
+    --sidebar-foreground: 215 30% 92%;
+    --sidebar-primary: 38 92% 50%;
+    --sidebar-primary-foreground: 222 60% 5%;
+    --sidebar-accent: 217 45% 18%;
+    --sidebar-accent-foreground: 215 30% 95%;
+    --sidebar-border: 217 35% 20%;
+    --sidebar-ring: 38 92% 50%;
+
     --radius: 0.75rem;
-    --gradient-primary: linear-gradient(135deg, hsl(187 85% 53%) 0%, hsl(200 100% 60%) 100%);
-    --gradient-dark: linear-gradient(180deg, hsl(222 47% 8%) 0%, hsl(222 47% 4%) 100%);
+
+    /* Institutional gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(28 95% 55%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(222 60% 5%) 0%, hsl(222 65% 3%) 100%);
+    --gradient-navy-depth: linear-gradient(135deg, hsl(222 60% 8%) 0%, hsl(217 70% 14%) 50%, hsl(222 60% 5%) 100%);
+    --gradient-amber-command: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(28 95% 55%) 50%, hsl(20 90% 45%) 100%);
+    --gradient-hero-overlay: linear-gradient(90deg, hsl(222 70% 4% / 0.95) 0%, hsl(222 60% 8% / 0.7) 50%, hsl(222 50% 12% / 0.3) 100%);
+
+    /* Institutional shadows */
+    --shadow-command: 0 20px 60px -15px hsl(38 92% 50% / 0.35), 0 8px 24px -8px hsl(222 60% 0% / 0.5);
+    --shadow-elevated: 0 25px 50px -12px hsl(222 70% 0% / 0.7), 0 0 0 1px hsl(217 35% 20% / 0.5);
+    --glow-amber: 0 0 40px hsl(38 92% 50% / 0.4), 0 0 80px hsl(38 92% 50% / 0.2);
+    --glow-navy: 0 0 40px hsl(217 70% 30% / 0.5);
   }
 
-  /* Improved base font size for better legibility */
   html {
     font-size: 16px;
   }
-  
+
   @media (max-width: 640px) {
     html {
       font-size: 15px;
@@ -30,20 +79,75 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
     background: var(--gradient-dark);
     min-height: 100dvh;
+    font-feature-settings: 'ss01', 'cv11';
   }
-  
-  /* Global label/input improvements for professional panels */
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
   label {
     @apply text-sm font-semibold;
+    font-family: 'Sora', system-ui, sans-serif;
+    letter-spacing: 0.01em;
   }
-  
+
   input, select, textarea {
     @apply text-base;
   }
 }
+
+/* ================================
+   INSTITUTIONAL UTILITIES
+   ================================ */
+@layer components {
+  .hero-cinematic {
+    background: var(--gradient-navy-depth);
+    box-shadow: var(--shadow-elevated);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .institutional-card {
+    @apply rounded-2xl border border-border/60 bg-card/80 backdrop-blur-md;
+    background-image: linear-gradient(135deg, hsl(var(--card) / 0.9) 0%, hsl(217 45% 12% / 0.7) 100%);
+    box-shadow: var(--shadow-elevated);
+    transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease, border-color .35s ease;
+  }
+
+  .institutional-card:hover {
+    transform: translateY(-3px);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: var(--shadow-command);
+  }
+
+  .command-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.2em];
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.35);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.05);
+    font-family: 'Sora', system-ui, sans-serif;
+  }
+
+  .tactical-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.5) 50%, transparent 100%);
+  }
+
+  .text-glow-amber {
+    text-shadow: 0 0 24px hsl(38 92% 50% / 0.5), 0 0 60px hsl(38 92% 50% / 0.2);
+  }
+
+  .glow-ring-amber {
+    box-shadow: var(--glow-amber);
+  }
+}
+
 
 /* ================================
    THEME-SPECIFIC SECURITY ANIMATIONS
