@@ -1,7 +1,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Shield, Zap, Radio } from 'lucide-react';
-import logoShield from '@/assets/logo-shield.png';
+import logoShield from '@/assets/ise-acre-badge.png';
 
 interface InstitutionalBannerProps {
   onSettingsClick?: () => void;
@@ -156,8 +156,8 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
           <div className="flex items-center gap-2 sm:gap-3">
             <img 
               src={logoShield}
-              alt="PlantãoPro"
-              className="h-10 sm:h-12 w-auto drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]"
+              alt="Instituto Socioeducativo do Acre"
+              className="h-12 sm:h-14 md:h-16 w-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
             />
             <div className="hidden sm:flex flex-col">
               <span className={cn(

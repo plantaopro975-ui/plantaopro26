@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import logoShield from '@/assets/logo-shield.png';
+import logoShield from '@/assets/ise-acre-badge.png';
 
 type AuthDialogVariant = 'agent' | 'master' | 'admin' | 'register' | 'check';
 
