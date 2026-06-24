@@ -53,6 +53,7 @@ import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { InstitutionalBanner } from '@/components/InstitutionalBanner';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
+import { InstitutionalPillars } from '@/components/home/InstitutionalPillars';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
@@ -1264,6 +1265,11 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Institutional pillars — bento grid (Phase 4) */}
+      <InstitutionalPillars />
+
+
 
 
       {/* Footer - Clean Professional Design (Reference Style) */}
