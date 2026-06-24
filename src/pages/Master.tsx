@@ -74,6 +74,7 @@ import { cn } from '@/lib/utils';
 import { getMasterToken, setMasterToken } from '@/lib/masterSession';
 import { adminClient } from '@/lib/adminClient';
 import { Bell } from 'lucide-react';
+import iseAcreBadge from '@/assets/ise-acre-badge.png';
 
 interface UserWithRole {
   id: string;
