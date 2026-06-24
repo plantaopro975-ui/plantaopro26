@@ -13,6 +13,7 @@ import { toast } from '@/hooks/use-toast';
 import { TeamMemberDialog } from './TeamMemberDialog';
 import { TeamUnlinkDialog } from '@/components/agents/TeamUnlinkDialog';
 import { TransferRequestDialog } from '@/components/agents/TransferRequestDialog';
+import { TeamEmblem } from '@/components/TeamEmblem';
 
 interface TeamMember {
   id: string;
