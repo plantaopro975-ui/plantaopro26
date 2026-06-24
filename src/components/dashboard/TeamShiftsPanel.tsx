@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { format, addDays, startOfWeek, isSameDay, isToday, isTomorrow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { TeamEmblem } from '@/components/TeamEmblem';
 
 interface ShiftWithAgent {
   id: string;
