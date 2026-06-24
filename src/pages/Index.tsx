@@ -1230,7 +1230,7 @@ export default function Index() {
       </header>
       
       {/* Teams Grid Section - Main content area - FULL HEIGHT */}
-      <section className="flex-1 py-3 sm:py-4 px-3 sm:px-6 relative z-10 flex flex-col min-h-0 overflow-y-auto overflow-x-hidden">
+      <section className="flex-1 py-3 sm:py-4 px-3 sm:px-6 relative z-10 flex flex-col min-h-0">
         
         {/* Quick Access Panel - Shows when credentials are saved */}
         {getSavedCredentials().length > 0 && (
