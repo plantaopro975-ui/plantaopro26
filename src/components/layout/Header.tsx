@@ -18,6 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { MobileSidebar } from './MobileSidebar';
 import { OperationalStatus } from './OperationalStatus';
 import { cn } from '@/lib/utils';
+import iseAcreBadge from '@/assets/ise-acre-badge.png';
 
 export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const { user, signOut, userRole, masterSession } = useAuth();
@@ -103,16 +104,19 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         </SheetContent>
       </Sheet>
 
-      {/* Search / Title - placeholder for now */}
-      <div className="hidden lg:flex items-center gap-4">
-        <h2 className="text-sm font-medium text-muted-foreground">
-          {new Date().toLocaleDateString('pt-BR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </h2>
+      {/* ISE/Acre badge + date */}
+      <div className="flex items-center gap-3">
+        <img
+          src={iseAcreBadge}
+          alt="Instituto Socioeducativo do Acre"
+          className="h-10 w-10 lg:h-11 lg:w-11 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]"
+        />
+        <div className="hidden lg:flex flex-col leading-tight">
+          <span className="text-[10px] font-bold tracking-[0.18em] text-primary uppercase">ISE / Acre</span>
+          <span className="text-[10px] text-muted-foreground">
+            {new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })}
+          </span>
+        </div>
       </div>
 
       {/* Operational Status - Center */}

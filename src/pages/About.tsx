@@ -14,8 +14,10 @@ import {
   Mail,
   Building2,
   Award,
-  CheckCircle2
+  CheckCircle2,
+  Download
 } from 'lucide-react';
+import iseAcreBadge from '@/assets/ise-acre-badge.png';
 
 const features = [
   {
@@ -114,6 +116,44 @@ export default function About() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </section>
+
+        <Separator className="my-8" />
+
+        {/* Identidade Visual / Créditos */}
+        <section className="mb-12">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-semibold text-foreground md:text-2xl">Identidade Visual</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Brasão oficial do Instituto Socioeducativo do Acre e variações usadas no sistema.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              { label: 'Brasão Oficial', bg: 'bg-gradient-to-br from-slate-100 to-slate-200', size: 'h-32 w-32' },
+              { label: 'Aplicação Escura', bg: 'bg-gradient-to-br from-slate-900 to-slate-800', size: 'h-32 w-32' },
+              { label: 'Monograma App', bg: 'bg-gradient-to-br from-primary/20 to-amber-500/10', size: 'h-24 w-24' },
+            ].map((v) => (
+              <Card key={v.label} className="border-border/50 bg-card/50">
+                <CardContent className="p-5 flex flex-col items-center gap-3">
+                  <div className={`flex items-center justify-center rounded-xl ${v.bg} h-40 w-full border border-border/40`}>
+                    <img src={iseAcreBadge} alt={v.label} className={`${v.size} object-contain drop-shadow-lg`} />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">{v.label}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <Button asChild variant="outline" className="gap-2">
+              <a href={iseAcreBadge} download="ise-acre-brasao.png">
+                <Download className="h-4 w-4" />
+                Baixar Brasão em Alta Resolução (PNG)
+              </a>
+            </Button>
           </div>
         </section>
 

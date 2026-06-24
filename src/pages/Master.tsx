@@ -74,6 +74,7 @@ import { cn } from '@/lib/utils';
 import { getMasterToken, setMasterToken } from '@/lib/masterSession';
 import { adminClient } from '@/lib/adminClient';
 import { Bell } from 'lucide-react';
+import iseAcreBadge from '@/assets/ise-acre-badge.png';
 
 interface UserWithRole {
   id: string;
@@ -512,9 +513,11 @@ export default function Master() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-              <Shield className="h-6 w-6 text-primary-foreground" />
-            </div>
+            <img
+              src={iseAcreBadge}
+              alt="Instituto Socioeducativo do Acre"
+              className="h-12 w-12 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+            />
             <div>
               <h1 className="text-2xl font-bold text-gradient">Painel Master</h1>
               <p className="text-muted-foreground">
