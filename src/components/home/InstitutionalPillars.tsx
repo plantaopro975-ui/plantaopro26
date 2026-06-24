@@ -47,7 +47,7 @@ const pillars: Array<{
     desc: 'Alarmes inteligentes, notificações push e modo offline.',
     span: '',
   },
-] as const;
+];
 
 export function InstitutionalPillars() {
   return (
