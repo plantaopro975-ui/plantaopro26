@@ -1198,7 +1198,7 @@ export default function Index() {
 
   return (
     <>
-      <div className="h-[100dvh] flex flex-col bg-background relative overflow-hidden touch-none overscroll-none">
+      <div className="min-h-[100dvh] flex flex-col bg-background relative overflow-x-hidden overscroll-none">
         {/* Video Background with Security/Surveillance footage */}
         <HomeVideoBackground />
         
