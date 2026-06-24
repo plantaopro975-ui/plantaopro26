@@ -8,6 +8,7 @@ import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { TeamEmblem } from '@/components/TeamEmblem';
 import { WelcomeTrialDialog } from '@/components/WelcomeTrialDialog';
 import { 
   Loader2, 
@@ -256,9 +257,7 @@ export default function UnitDashboard() {
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
                   <CardHeader className="p-3 pb-2">
                     <CardTitle className="flex items-center gap-2 text-sm">
-                      <div className={`p-1.5 rounded ${team.bgColor}`}>
-                        <team.icon className={`h-3.5 w-3.5 ${team.color}`} />
-                      </div>
+                      <TeamEmblem team={team.name} size="sm" />
                       <span className="text-white text-sm">Equipe {team.name}</span>
                       <Badge variant="secondary" className="ml-auto text-[10px] h-5">
                         {team.agents.length}
