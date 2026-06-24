@@ -200,9 +200,10 @@ export const TeamShiftsPanel = forwardRef<HTMLDivElement>(function TeamShiftsPan
                   key={team}
                   variant={selectedTeam === team ? 'default' : 'outline'}
                   size="sm"
-                  className="h-7 text-xs"
+                  className="h-7 text-xs gap-1.5 pl-1.5"
                   onClick={() => setSelectedTeam(team)}
                 >
+                  <TeamEmblem team={team} size="xs" />
                   {team}
                 </Button>
               ))}
