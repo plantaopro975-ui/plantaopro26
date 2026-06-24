@@ -16,7 +16,7 @@ export function HeroCinematic({ onPrimaryAction, agentCount = 248, unitsCount = 
     <section
       className="relative w-full overflow-hidden rounded-2xl border-2 border-primary/40 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
-      style={{ minHeight: 'clamp(360px, 48vh, 520px)' }}
+      style={{ minHeight: 'clamp(280px, 36vh, 400px)' }}
     >
       {/* Realistic tactical photo */}
       <img
@@ -112,7 +112,7 @@ export function HeroCinematic({ onPrimaryAction, agentCount = 248, unitsCount = 
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent scan-line-y pointer-events-none" aria-hidden />
 
       {/* === CONTENT === */}
-      <div className="relative z-10 h-full flex flex-col justify-between px-5 sm:px-10 lg:px-14 py-6 sm:py-8 lg:py-10">
+      <div className="relative z-10 h-full flex flex-col justify-between px-4 sm:px-8 lg:px-12 py-4 sm:py-5 lg:py-6">
 
         {/* TOP STATUS BAR */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -143,25 +143,25 @@ export function HeroCinematic({ onPrimaryAction, agentCount = 248, unitsCount = 
             </div>
 
             <h1 className="font-stencil font-bold leading-[0.9] text-foreground">
-              <span className="block text-4xl sm:text-6xl lg:text-7xl text-glow-amber uppercase">
+              <span className="block text-3xl sm:text-5xl lg:text-6xl text-glow-amber uppercase">
                 Comando
               </span>
-              <span className="block text-3xl sm:text-5xl lg:text-6xl mt-1 bg-gradient-to-r from-primary via-amber-300 to-primary bg-clip-text text-transparent uppercase">
+              <span className="block text-2xl sm:text-4xl lg:text-5xl mt-0.5 bg-gradient-to-r from-primary via-amber-300 to-primary bg-clip-text text-transparent uppercase">
                 Socioeducativo
               </span>
-              <span className="block font-tactical text-base sm:text-xl lg:text-2xl mt-2 text-muted-foreground font-semibold">
+              <span className="block font-tactical text-sm sm:text-lg lg:text-xl mt-1.5 text-muted-foreground font-semibold">
                 / Sistema Integrado · Estado do Acre /
               </span>
             </h1>
 
-            <p className="mt-4 max-w-xl text-xs sm:text-sm lg:text-base text-muted-foreground/90 leading-relaxed font-mono-mil">
+            <p className="mt-3 max-w-xl text-[11px] sm:text-xs lg:text-sm text-muted-foreground/90 leading-relaxed font-mono-mil">
               &gt; Plataforma operacional dos agentes em serviço.
               Escalas, banco de horas, comunicação tática e controle institucional
               sob arquitetura segura, 24/7.
             </p>
 
             {onPrimaryAction && (
-              <div className="mt-5 sm:mt-7 flex flex-wrap items-center gap-3 sm:gap-5">
+              <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-3 sm:gap-4">
                 <button
                   type="button"
                   onClick={onPrimaryAction}
