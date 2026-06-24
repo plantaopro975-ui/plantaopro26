@@ -176,8 +176,8 @@ export function ResolveConflictDialog({
                     {format(originalDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className={getTeamColor(conflict.team)}>
-                      <Users className="h-3 w-3 mr-1" />
+                    <Badge variant="outline" className={`${getTeamColor(conflict.team)} gap-1.5 pl-1`}>
+                      <TeamEmblem team={conflict.team} size="xs" />
                       Equipe {conflict.team}
                     </Badge>
                     <span className="text-xs text-muted-foreground">
