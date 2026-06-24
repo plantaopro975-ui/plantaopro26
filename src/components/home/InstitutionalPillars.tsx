@@ -4,8 +4,13 @@ import { Shield, Calendar, Clock, MessageSquare, BarChart3, Radio } from 'lucide
  * Institutional pillars bento grid — surfaces the platform capabilities
  * to visitors on the public homepage without exposing authenticated routes.
  */
-const pillars = [
-  {
+const pillars: Array<{
+  icon: typeof Shield;
+  title: string;
+  desc: string;
+  span: string;
+  accent?: boolean;
+}> = [
     icon: Shield,
     title: 'Controle Tático',
     desc: 'Equipes ALFA, BRAVO, CHARLIE e DELTA com isolamento por unidade e RLS auditável.',
