@@ -377,6 +377,14 @@ body {
   pointer-events: none;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift, .amber-pulse, .animate-fade-in, .animate-fade-in-scale {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
 /* ================================
    BLOQUEIO FINAL DO SELO LOVABLE
    ================================ */
