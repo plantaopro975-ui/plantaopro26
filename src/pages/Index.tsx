@@ -1313,45 +1313,7 @@ export default function Index() {
             
             
             
-            {/* Admin/Master Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  className="flex items-center justify-center p-2 text-muted-foreground hover:text-primary rounded-lg bg-slate-800/50 hover:bg-slate-700/70 border border-slate-700/50 hover:border-primary/50 transition-all"
-                  title="Acesso Administrativo"
-                >
-                  <Lock className="h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                className="w-44 bg-slate-900 border border-slate-700/80 shadow-xl z-[100] p-1"
-              >
-                <DropdownMenuItem 
-                  onClick={() => setShowAdminLogin(true)}
-                  className="flex items-center gap-2 py-2 px-2.5 cursor-pointer rounded text-xs hover:bg-blue-500/10 focus:bg-blue-500/10 group"
-                >
-                  <KeyRound className="h-3.5 w-3.5 text-blue-400" />
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-blue-400 group-hover:text-blue-300">Admin</span>
-                    <span className="text-[9px] text-slate-500">Gestão operacional</span>
-                  </div>
-                </DropdownMenuItem>
-                
-                <DropdownMenuSeparator className="bg-slate-700/50 my-0.5" />
-                
-                <DropdownMenuItem 
-                  onClick={() => setShowMasterLogin(true)}
-                  className="flex items-center gap-2 py-2 px-2.5 cursor-pointer rounded text-xs hover:bg-amber-500/10 focus:bg-amber-500/10 group"
-                >
-                  <Shield className="h-3.5 w-3.5 text-amber-400" />
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-amber-400 group-hover:text-amber-300">Master</span>
-                    <span className="text-[9px] text-slate-500">Controle total</span>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Admin/Master access removed — triple-click no logo do banner abre o login do super-usuário */}
             
             {/* About App */}
             <button
