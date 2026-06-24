@@ -18,7 +18,7 @@ export function ReconnectingGuard({
   
   // Track if user was ever authenticated in this component lifecycle
   const wasAuthenticatedRef = useRef(false);
-  const graceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const graceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isCheckingSessionRef = useRef(false);
 
   // Clear timeouts on unmount

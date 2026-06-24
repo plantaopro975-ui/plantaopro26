@@ -209,7 +209,14 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
     try {
       setIsSaving(true);
       
-      const updateData: Record<string, unknown> = {
+      const updateData: {
+        status: string;
+        notes: string | null;
+        compensation_date: string | null;
+        is_vacation: boolean;
+        updated_at: string;
+        completed_at?: string;
+      } = {
         status: editStatus,
         notes: editNotes || null,
         compensation_date: compensationDate ? format(compensationDate, 'yyyy-MM-dd') : null,

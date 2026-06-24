@@ -22,7 +22,7 @@ export function useAlarmNotifications({
   alarmBeforeMinutes = 60 // 1 hour before by default
 }: UseAlarmNotificationsProps) {
   const alarmsRef = useRef<ScheduledAlarm[]>([]);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Play alarm sound
