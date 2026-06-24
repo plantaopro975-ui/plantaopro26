@@ -1,7 +1,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Shield, Zap, Radio } from 'lucide-react';
-import logoShield from '@/assets/logo-shield.png';
+import logoShield from '@/assets/ise-acre-badge.png';
 
 interface InstitutionalBannerProps {
   onSettingsClick?: () => void;
