@@ -11,6 +11,7 @@ const pillars: Array<{
   span: string;
   accent?: boolean;
 }> = [
+  {
     icon: Shield,
     title: 'Controle Tático',
     desc: 'Equipes ALFA, BRAVO, CHARLIE e DELTA com isolamento por unidade e RLS auditável.',
