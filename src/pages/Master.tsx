@@ -507,8 +507,8 @@ export default function Master() {
   if (!masterSession) return null;
 
   return (
-    <div className="min-h-screen p-4 md:p-6">
-      <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
+    <div className="min-h-dvh p-4 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-6 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
