@@ -53,6 +53,7 @@ import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { InstitutionalBanner } from '@/components/InstitutionalBanner';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
+import { InstitutionalPillars } from '@/components/home/InstitutionalPillars';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
