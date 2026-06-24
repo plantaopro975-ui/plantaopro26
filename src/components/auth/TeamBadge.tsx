@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { Shield, Target, Radio, Zap } from 'lucide-react';
+import { getTeamEmblem } from '@/lib/teamAssets';
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
@@ -11,7 +11,7 @@ interface TeamBadgeProps {
   className?: string;
 }
 
-const teamConfig: Record<TeamName, { 
+const teamConfig: Record<TeamName, {
   icon: typeof Shield;
   color: string;
   bg: string;
@@ -20,56 +20,44 @@ const teamConfig: Record<TeamName, {
 }> = {
   ALFA: {
     icon: Shield,
-    color: 'text-red-400',
-    bg: 'from-red-500/20 to-red-600/10',
-    border: 'border-red-500/40',
-    glow: 'shadow-red-500/30',
-  },
-  BRAVO: {
-    icon: Target,
-    color: 'text-blue-400',
-    bg: 'from-blue-500/20 to-blue-600/10',
-    border: 'border-blue-500/40',
-    glow: 'shadow-blue-500/30',
-  },
-  CHARLIE: {
-    icon: Radio,
-    color: 'text-emerald-400',
-    bg: 'from-emerald-500/20 to-emerald-600/10',
+    color: 'text-emerald-300',
+    bg: 'from-emerald-500/20 to-emerald-700/10',
     border: 'border-emerald-500/40',
     glow: 'shadow-emerald-500/30',
   },
+  BRAVO: {
+    icon: Target,
+    color: 'text-orange-300',
+    bg: 'from-orange-500/20 to-orange-700/10',
+    border: 'border-orange-500/40',
+    glow: 'shadow-orange-500/30',
+  },
+  CHARLIE: {
+    icon: Radio,
+    color: 'text-blue-300',
+    bg: 'from-blue-500/20 to-blue-700/10',
+    border: 'border-blue-500/40',
+    glow: 'shadow-blue-500/30',
+  },
   DELTA: {
     icon: Zap,
-    color: 'text-amber-400',
-    bg: 'from-amber-500/20 to-amber-600/10',
+    color: 'text-amber-300',
+    bg: 'from-amber-500/20 to-amber-700/10',
     border: 'border-amber-500/40',
     glow: 'shadow-amber-500/30',
   },
 };
 
 const sizeStyles = {
-  sm: {
-    container: 'px-3 py-1.5 gap-2',
-    icon: 'w-4 h-4',
-    text: 'text-sm',
-  },
-  md: {
-    container: 'px-4 py-2 gap-2.5',
-    icon: 'w-5 h-5',
-    text: 'text-base',
-  },
-  lg: {
-    container: 'px-5 py-2.5 gap-3',
-    icon: 'w-6 h-6',
-    text: 'text-lg',
-  },
+  sm: { container: 'px-3 py-1.5 gap-2', emblem: 'w-5 h-5', text: 'text-sm' },
+  md: { container: 'px-4 py-2 gap-2.5', emblem: 'w-7 h-7', text: 'text-base' },
+  lg: { container: 'px-5 py-2.5 gap-3', emblem: 'w-9 h-9', text: 'text-lg' },
 };
 
 export function TeamBadge({ team, size = 'md', showIcon = true, className }: TeamBadgeProps) {
   const config = teamConfig[team];
   const sizes = sizeStyles[size];
-  const Icon = config.icon;
+  const emblem = getTeamEmblem(team);
 
   return (
     <div
@@ -85,14 +73,14 @@ export function TeamBadge({ team, size = 'md', showIcon = true, className }: Tea
         className
       )}
     >
-      {showIcon && (
-        <Icon className={cn(sizes.icon, config.color)} />
+      {showIcon && emblem && (
+        <img
+          src={emblem}
+          alt={`Brasão Equipe ${team}`}
+          className={cn(sizes.emblem, "object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]")}
+        />
       )}
-      <span className={cn(
-        "font-bold tracking-wider",
-        config.color,
-        sizes.text
-      )}>
+      <span className={cn("font-bold tracking-wider", config.color, sizes.text)}>
         EQUIPE {team}
       </span>
     </div>

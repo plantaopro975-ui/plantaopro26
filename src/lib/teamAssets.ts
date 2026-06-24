@@ -3,6 +3,10 @@ import alfaPoster from '@/assets/teams/alfa-poster.jpg';
 import bravoPoster from '@/assets/teams/bravo-poster.png';
 import charliePoster from '@/assets/teams/charlie-poster.jpg';
 import deltaPoster from '@/assets/teams/delta-poster.jpg';
+import alfaEmblem from '@/assets/teams/alfa-emblem.png';
+import bravoEmblem from '@/assets/teams/bravo-emblem.png';
+import charlieEmblem from '@/assets/teams/charlie-emblem.png';
+import deltaEmblem from '@/assets/teams/delta-emblem.png';
 import panelsBg from '@/assets/teams/panels-bg.png';
 import homeBackground from '@/assets/home-background.png';
 import loginBackground from '@/assets/login-background.jpg';
@@ -12,6 +16,18 @@ export const teamPosters: Record<string, string> = {
   BRAVO: bravoPoster,
   CHARLIE: charliePoster,
   DELTA: deltaPoster,
+};
+
+export const teamEmblems: Record<string, string> = {
+  ALFA: alfaEmblem,
+  BRAVO: bravoEmblem,
+  CHARLIE: charlieEmblem,
+  DELTA: deltaEmblem,
+};
+
+export const getTeamEmblem = (team: string | null): string | null => {
+  if (!team) return null;
+  return teamEmblems[team.toUpperCase()] || null;
 };
 
 export const teamColors: Record<string, { primary: string; secondary: string; glow: string }> = {
