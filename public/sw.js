@@ -85,12 +85,13 @@ self.addEventListener('fetch', (event) => {
 
   // Handle same-origin requests
   if (url.origin === self.location.origin) {
-    // Static assets (images/fonts/etc.) - Cache first
+    // Static binary assets (images/fonts/audio) - Cache first
     if (isStaticAsset(url.pathname)) {
       event.respondWith(cacheFirst(request));
     } else {
-      // Everything else - Network first
-      event.respondWith(networkFirst(request));
+      // JS/CSS/HTML/JSON: pass through to network; never cache so theme
+      // and layout changes propagate immediately without reload loops.
+      event.respondWith(fetch(request));
     }
     return;
   }
