@@ -510,7 +510,7 @@ export default function AgentPanel() {
             {/* Main Tabs - REDESIGNED: Modern, Legible, Mobile-First */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
               {/* Control Panel Container - Modern Glass Design */}
-              <div className="relative bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-2xl md:rounded-3xl border-2 md:border-3 border-amber-500/50 shadow-2xl shadow-amber-500/15 backdrop-blur-xl overflow-hidden">
+              <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-2xl md:rounded-3xl border-2 md:border-3 border-amber-500/50 shadow-2xl shadow-amber-500/15 backdrop-blur-xl overflow-hidden hover-lift">
                 {/* Decorative glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5 pointer-events-none" />
                 

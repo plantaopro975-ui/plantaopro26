@@ -343,6 +343,41 @@ body {
 }
 
 /* ================================
+   PHASE 6 — Global motion primitives (Navy + Amber)
+   ================================ */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  will-change: transform;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-command);
+  border-color: hsl(var(--primary) / 0.55);
+}
+
+@keyframes amber-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.55), 0 0 0 0 hsl(var(--primary) / 0.0); }
+  50% { box-shadow: 0 0 0 6px hsl(var(--primary) / 0.0), 0 0 24px 4px hsl(var(--primary) / 0.35); }
+}
+.amber-pulse {
+  animation: amber-pulse 2.6s ease-in-out infinite;
+}
+
+/* Tactical command strip — top accent for institutional panels */
+.tactical-strip {
+  position: relative;
+}
+.tactical-strip::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--gradient-amber-command);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* ================================
    BLOQUEIO FINAL DO SELO LOVABLE
    ================================ */
 #lovable-badge, 
