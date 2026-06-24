@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Stardos+Stencil:wght@400;700&family=Saira+Condensed:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -146,6 +148,45 @@
   .glow-ring-amber {
     box-shadow: var(--glow-amber);
   }
+
+  /* ===== ARMED-FORCES TYPOGRAPHY ===== */
+  .font-stencil {
+    font-family: 'Stardos Stencil', 'Saira Condensed', 'Impact', sans-serif;
+    letter-spacing: 0.04em;
+  }
+  .font-tactical {
+    font-family: 'Saira Condensed', 'Oswald', 'Impact', sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .font-mono-mil {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .bg-scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      hsl(var(--primary) / 0.04) 0px,
+      hsl(var(--primary) / 0.04) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  }
+
+  @keyframes scan-line-y {
+    0% { transform: translateY(-10%); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(110%); opacity: 0; }
+  }
+  .scan-line-y { animation: scan-line-y 5s linear infinite; }
+
+  @keyframes radar-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .radar-rotate { animation: radar-rotate 8s linear infinite; transform-origin: center; }
 }
 
 
