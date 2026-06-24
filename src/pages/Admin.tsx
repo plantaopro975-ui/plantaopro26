@@ -218,7 +218,7 @@ export default function Admin() {
           <Header />
           
           <main className="flex-1 overflow-y-auto">
-            <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+            <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto tactical-strip hover-lift rounded-2xl">
               {/* Header Section */}
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
