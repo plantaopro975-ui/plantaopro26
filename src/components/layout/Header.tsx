@@ -91,7 +91,21 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
   };
 
   return (
-    <header ref={ref} {...props} className={cn("header-bar h-16 border-b border-border bg-gradient-to-r from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-md flex items-center justify-between px-4 lg:px-6 shadow-lg", props.className)}>
+    <header
+      ref={ref}
+      {...props}
+      className={cn(
+        "header-bar relative h-16 flex items-center justify-between px-4 lg:px-6",
+        "border-b border-primary/20 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.6)]",
+        "bg-[linear-gradient(135deg,hsl(220_25%_8%/0.98),hsl(222_22%_12%/0.95)_50%,hsl(220_25%_8%/0.98))]",
+        "backdrop-blur-xl",
+        props.className,
+      )}
+    >
+      {/* Institutional accent stripe (BR-inspired green→yellow→primary) */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,#15803d_0%,#facc15_50%,hsl(var(--primary))_100%)] opacity-80" />
+      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
       {/* Mobile Menu */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild className="lg:hidden">
@@ -104,17 +118,27 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         </SheetContent>
       </Sheet>
 
-      {/* ISE/Acre badge + date */}
+      {/* Institutional identity */}
       <div className="flex items-center gap-3">
-        <img
-          src={iseAcreBadge}
-          alt="Instituto Socioeducativo do Acre"
-          className="h-10 w-10 lg:h-11 lg:w-11 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]"
-        />
-        <div className="hidden lg:flex flex-col leading-tight">
-          <span className="text-[10px] font-bold tracking-[0.18em] text-primary uppercase">ISE / Acre</span>
-          <span className="text-[10px] text-muted-foreground">
-            {new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })}
+        <div className="relative shrink-0">
+          <div className="absolute inset-0 rounded-full bg-primary/15 blur-md" aria-hidden />
+          <div className="relative h-11 w-11 lg:h-12 lg:w-12 rounded-full bg-gradient-to-br from-slate-700/60 to-slate-900/80 ring-1 ring-primary/40 shadow-inner flex items-center justify-center p-1">
+            <img
+              src={iseAcreBadge}
+              alt="Instituto Socioeducativo do Acre"
+              className="h-full w-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
+            />
+          </div>
+        </div>
+        <div className="hidden md:flex flex-col leading-tight border-l border-primary/20 pl-3">
+          <span className="text-[10px] font-black tracking-[0.22em] text-primary uppercase">
+            ISE · Acre
+          </span>
+          <span className="text-[11px] font-semibold text-foreground/90 -mt-0.5">
+            Sistema de Plantões
+          </span>
+          <span className="text-[9px] text-muted-foreground tracking-wide uppercase">
+            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
           </span>
         </div>
       </div>
