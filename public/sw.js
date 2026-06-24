@@ -1,59 +1,53 @@
 // Service Worker for Push Notifications & Offline Cache - Plantão Pro
-const CACHE_NAME = 'plantao-pro-v4';
-const STATIC_CACHE = 'plantao-pro-static-v4';
-const DYNAMIC_CACHE = 'plantao-pro-dynamic-v4';
+// IMPORTANT: bump APP_VERSION on every UI/theme/header/footer release so that
+// installed clients evict the previous cached shell and apply changes without
+// reload loops.
+const APP_VERSION = 'v5-2026-06-24';
+const STATIC_CACHE = `plantao-pro-static-${APP_VERSION}`;
+const DYNAMIC_CACHE = `plantao-pro-dynamic-${APP_VERSION}`;
+const VALID_CACHES = new Set([STATIC_CACHE, DYNAMIC_CACHE]);
 
+// Only truly static binary assets are precached. HTML, JS and CSS are NEVER
+// precached/cached so theme + layout changes always reach the user.
 const STATIC_ASSETS = [
-  // Keep the app shell available for offline, but always prefer NETWORK for navigations.
-  '/',
   '/manifest.json',
   '/icon-192.png',
-  '/icon-512.png'
+  '/icon-512.png',
+  '/favicon.png',
+  '/apple-touch-icon.png'
 ];
 
-// URLs to cache for offline access
-const CACHEABLE_ROUTES = [
-  '/dashboard',
-  '/agent-panel',
-  '/settings',
-  '/install',
-  '/agent-profile',
-  '/agent-profile-edit'
-];
-
-// Install event - cache static assets
+// Install: precache only safe binary assets, then activate immediately.
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v4 - Enhanced Offline Support...');
+  console.log('[SW] Installing', APP_VERSION);
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => {
-      console.log('[SW] Caching static assets');
-      return cache.addAll(STATIC_ASSETS).catch((err) => {
+    caches.open(STATIC_CACHE).then((cache) =>
+      cache.addAll(STATIC_ASSETS).catch((err) => {
         console.log('[SW] Some static assets failed to cache:', err);
-      });
-    })
+      })
+    )
   );
   self.skipWaiting();
 });
 
-// Activate event - clean old caches
+// Activate: nuke every cache that doesn't match the current APP_VERSION,
+// then notify open clients ONCE so they can refresh without loops.
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v4...');
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => 
-            !name.includes('v4') && // Keep v4 caches
-            (name.includes('plantao') || name.includes('CACHE'))
-          )
-          .map((name) => {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
-          })
-      );
-    })
-  );
-  event.waitUntil(clients.claim());
+  console.log('[SW] Activating', APP_VERSION);
+  event.waitUntil((async () => {
+    const cacheNames = await caches.keys();
+    await Promise.all(
+      cacheNames
+        .filter((name) => !VALID_CACHES.has(name))
+        .map((name) => {
+          console.log('[SW] Deleting old cache:', name);
+          return caches.delete(name);
+        })
+    );
+    await self.clients.claim();
+    const wins = await self.clients.matchAll({ type: 'window' });
+    wins.forEach((client) => client.postMessage({ type: 'SW_ACTIVATED', version: APP_VERSION }));
+  })());
 });
 
 // Fetch event - Network first with fallback to cache
@@ -64,10 +58,14 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // Navigations (HTML/doc requests): ALWAYS prefer network to avoid serving stale app shells
-  // that can create duplicate clients and trigger refresh-token storms.
+  // Navigations (HTML): ALWAYS network, NEVER cache the response.
+  // Stale HTML pointing at deleted JS chunks is the root cause of reload loops.
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(request));
+    event.respondWith(
+      fetch(request).catch(() =>
+        caches.match('/manifest.json').then(() => new Response('Offline', { status: 503 }))
+      )
+    );
     return;
   }
 
