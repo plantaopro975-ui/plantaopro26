@@ -21,7 +21,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Palette, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown, User } from 'lucide-react';
+import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,7 +68,7 @@ import { useSavedCredentialsSync } from '@/hooks/useSavedCredentialsSync';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
-import { ThemeSelector } from '@/components/ThemeSelector';
+
 import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
 import { PendingApprovalDialog } from '@/components/PendingApprovalDialog';
 import { AuthDialog } from '@/components/auth/AuthDialog';
@@ -102,7 +102,7 @@ export default function Index() {
   const [showLogin, setShowLogin] = useState(false);
   const [showMasterLogin, setShowMasterLogin] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [showThemeSelector, setShowThemeSelector] = useState(false);
+  
   const [showCredentialsManager, setShowCredentialsManager] = useState(false);
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [units, setUnits] = useState<Unit[]>([]);
@@ -1311,14 +1311,7 @@ export default function Index() {
               </button>
             )}
             
-            {/* Theme Selector Button - "Estilo" */}
-            <button
-              onClick={() => setShowThemeSelector(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all"
-            >
-              <Palette className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="text-sm sm:text-base font-semibold tracking-wide">Estilo</span>
-            </button>
+            
             
             {/* Admin/Master Dropdown */}
             <DropdownMenu>
@@ -1878,12 +1871,6 @@ export default function Index() {
               </div>
             </div>
           </ScrollArea>
-        </DialogContent>
-      </Dialog>
-      {/* Theme Selector Dialog */}
-      <Dialog open={showThemeSelector} onOpenChange={setShowThemeSelector}>
-        <DialogContent className="bg-transparent border-0 p-0 shadow-none max-w-sm">
-          <ThemeSelector onSelect={() => setShowThemeSelector(false)} />
         </DialogContent>
       </Dialog>
 

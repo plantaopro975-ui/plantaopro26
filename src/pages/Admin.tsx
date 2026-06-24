@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { ThemeSelector } from '@/components/ThemeSelector';
+import { useTheme } from '@/contexts/ThemeContext';
 import { toast } from '@/hooks/use-toast';
 import { setMasterToken } from '@/lib/masterSession';
 import { 
@@ -38,7 +40,9 @@ import {
   Megaphone,
   Monitor,
   LayoutDashboard,
-  Settings2
+  Settings2,
+  Palette,
+  Sparkles
 } from 'lucide-react';
 
 interface AdminPermissions {
@@ -366,6 +370,14 @@ export default function Admin() {
                         Telas Dinâmicas
                       </TabsTrigger>
                     )}
+
+                    <TabsTrigger
+                      value="appearance"
+                      className="px-4 py-2 data-[state=active]:bg-pink-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
+                    >
+                      <Palette className="h-4 w-4 mr-2" />
+                      Aparência
+                    </TabsTrigger>
                   </TabsList>
                   <ScrollBar orientation="horizontal" />
                 </ScrollArea>
@@ -431,6 +443,23 @@ export default function Admin() {
                     <DynamicScreensManager />
                   </TabsContent>
                 )}
+
+                <TabsContent value="appearance" className="mt-4">
+                  <Card className="bg-slate-800/50 border-slate-700">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-pink-400" />
+                        Tema Visual do Sistema
+                      </CardTitle>
+                      <CardDescription>
+                        Defina o tema visual aplicado a todos os usuários. Esta configuração é exclusiva do administrador.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ThemeSelector />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
               </Tabs>
             </div>
           </main>
