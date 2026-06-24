@@ -1266,6 +1266,11 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Institutional pillars — bento grid (Phase 4) */}
+      <InstitutionalPillars />
+
+
+
 
       {/* Footer - Clean Professional Design (Reference Style) */}
       <footer className="py-2 px-3 sm:px-4 bg-gradient-to-r from-slate-900/98 via-slate-800/98 to-slate-900/98 backdrop-blur-md border-t border-slate-700/50 relative z-20 shrink-0">
