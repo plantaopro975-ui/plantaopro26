@@ -80,12 +80,12 @@ export default function Dashboard() {
 
   return (
     <ThemedPanelBackground team={null} showTeamImage={false}>
-      <div className="min-h-screen flex">
+      <div className="min-h-dvh flex">
         <Sidebar />
         <div className="flex-1 flex flex-col">
           <Header />
           <main className="flex-1 p-3 md:p-4 overflow-auto">
-            <div className="max-w-7xl mx-auto space-y-4 animate-fade-in">
+            <div className="max-w-7xl mx-auto space-y-4 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
               {/* Page Header */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <div className="flex items-center gap-3">
