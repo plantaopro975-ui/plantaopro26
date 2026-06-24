@@ -157,7 +157,19 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
             <img 
               src={logoShield}
               alt="Instituto Socioeducativo do Acre"
-              className="h-12 sm:h-14 md:h-16 w-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
+              className="h-12 sm:h-14 md:h-16 w-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] cursor-pointer select-none"
+              title="ISE / ACRE"
+              draggable={false}
+              onClick={() => {
+                const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
+                w.__logoClicks = (w.__logoClicks || 0) + 1;
+                if (w.__logoTimer) window.clearTimeout(w.__logoTimer);
+                w.__logoTimer = window.setTimeout(() => { w.__logoClicks = 0; }, 800);
+                if (w.__logoClicks >= 3) {
+                  w.__logoClicks = 0;
+                  window.dispatchEvent(new CustomEvent('open-master-login'));
+                }
+              }}
             />
             <div className="hidden sm:flex flex-col">
               <span className={cn(
