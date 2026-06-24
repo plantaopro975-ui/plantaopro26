@@ -190,6 +190,13 @@ export default function Index() {
     formData.password
   );
 
+  // Triple-click no logo do banner abre o login Master unificado
+  useEffect(() => {
+    const handler = () => setShowMasterLogin(true);
+    window.addEventListener('open-master-login', handler);
+    return () => window.removeEventListener('open-master-login', handler);
+  }, []);
+
   useEffect(() => {
     if (!isLoading && user) {
       // Route by role to avoid admins being sent to the agent panel (which requires an agent profile)
