@@ -7,67 +7,68 @@
 @layer base {
   :root {
     /* ================================
-       NOIR & GOLD — Premium Institutional
+       OBSIDIAN STEEL — Tactical Public Safety
        Sistema Socioeducativo do Acre
        ================================ */
-    --background: 0 0% 5%;               /* #0d0d0d obsidian */
-    --foreground: 40 25% 92%;            /* warm off-white */
+    --background: 222 35% 6%;            /* deep obsidian navy */
+    --foreground: 210 30% 94%;
 
-    --card: 0 0% 8%;                     /* #141414 */
-    --card-foreground: 40 25% 95%;
+    --card: 220 30% 9%;
+    --card-foreground: 210 30% 96%;
 
-    --popover: 0 0% 7%;
-    --popover-foreground: 40 25% 95%;
+    --popover: 220 32% 8%;
+    --popover-foreground: 210 30% 96%;
 
-    --primary: 43 55% 54%;               /* #c9a84c muted gold */
-    --primary-foreground: 0 0% 5%;
+    --primary: 199 75% 52%;              /* steel cyan #2ea3d8 */
+    --primary-foreground: 222 40% 6%;
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 40 20% 90%;
+    --secondary: 220 25% 13%;
+    --secondary-foreground: 210 25% 92%;
 
-    --muted: 0 0% 11%;
-    --muted-foreground: 40 10% 62%;
+    --muted: 220 22% 12%;
+    --muted-foreground: 215 15% 64%;
 
-    --accent: 43 45% 45%;
-    --accent-foreground: 0 0% 5%;
+    --accent: 199 70% 45%;
+    --accent-foreground: 222 40% 6%;
 
-    --destructive: 0 65% 50%;
+    --destructive: 0 72% 52%;            /* tactical crimson alert */
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 55% 42%;
+    --success: 152 60% 44%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 43 55% 54%;
-    --warning-foreground: 0 0% 5%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 222 40% 6%;
 
-    --border: 40 15% 18%;
-    --input: 0 0% 10%;
-    --ring: 43 55% 54%;
+    --border: 215 25% 18%;
+    --input: 220 25% 11%;
+    --ring: 199 75% 52%;
 
-    --sidebar-background: 0 0% 6%;
-    --sidebar-foreground: 40 25% 92%;
-    --sidebar-primary: 43 55% 54%;
-    --sidebar-primary-foreground: 0 0% 5%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 40 25% 95%;
-    --sidebar-border: 40 15% 18%;
-    --sidebar-ring: 43 55% 54%;
+    --sidebar-background: 222 35% 5%;
+    --sidebar-foreground: 210 30% 94%;
+    --sidebar-primary: 199 75% 52%;
+    --sidebar-primary-foreground: 222 40% 6%;
+    --sidebar-accent: 220 25% 13%;
+    --sidebar-accent-foreground: 210 30% 96%;
+    --sidebar-border: 215 25% 18%;
+    --sidebar-ring: 199 75% 52%;
 
-    --radius: 0.75rem;
+    --radius: 0.625rem;
 
-    /* Premium gradients — restrained, no harsh glow */
-    --gradient-primary: linear-gradient(135deg, hsl(43 55% 54%) 0%, hsl(40 50% 60%) 100%);
-    --gradient-dark: linear-gradient(180deg, hsl(0 0% 5%) 0%, hsl(0 0% 3%) 100%);
-    --gradient-navy-depth: linear-gradient(135deg, hsl(0 0% 7%) 0%, hsl(0 0% 10%) 50%, hsl(0 0% 5%) 100%);
-    --gradient-amber-command: linear-gradient(135deg, hsl(43 55% 54%) 0%, hsl(40 50% 48%) 100%);
-    --gradient-hero-overlay: linear-gradient(90deg, hsl(0 0% 4% / 0.96) 0%, hsl(0 0% 6% / 0.75) 55%, hsl(0 0% 8% / 0.35) 100%);
+    /* Tactical gradients — sophisticated, depth-driven */
+    --gradient-primary: linear-gradient(135deg, hsl(199 75% 52%) 0%, hsl(210 80% 42%) 100%);
+    --gradient-dark: radial-gradient(ellipse at top, hsl(220 35% 10%) 0%, hsl(222 38% 5%) 100%);
+    --gradient-navy-depth: linear-gradient(160deg, hsl(220 32% 11%) 0%, hsl(222 38% 6%) 60%, hsl(224 40% 4%) 100%);
+    --gradient-amber-command: linear-gradient(135deg, hsl(199 75% 52%) 0%, hsl(210 80% 42%) 100%);
+    --gradient-hero-overlay: linear-gradient(95deg, hsl(222 40% 4% / 0.94) 0%, hsl(222 38% 6% / 0.7) 55%, hsl(220 35% 10% / 0.25) 100%);
 
-    /* Premium shadows — soft, no neon glow */
-    --shadow-command: 0 24px 60px -20px hsl(0 0% 0% / 0.7), 0 2px 8px hsl(43 55% 54% / 0.12);
-    --shadow-elevated: 0 30px 60px -20px hsl(0 0% 0% / 0.85), 0 0 0 1px hsl(40 15% 18% / 0.6);
-    --glow-amber: 0 0 0 1px hsl(43 55% 54% / 0.35), 0 12px 32px -12px hsl(43 55% 54% / 0.25);
-    --glow-navy: 0 12px 32px -12px hsl(0 0% 0% / 0.8);
+    /* Tactical shadows — depth without glow noise */
+    --shadow-command: 0 24px 60px -20px hsl(222 60% 2% / 0.85), 0 2px 8px hsl(199 75% 52% / 0.18);
+    --shadow-elevated: 0 30px 60px -20px hsl(222 60% 2% / 0.9), 0 0 0 1px hsl(215 25% 18% / 0.7);
+    --glow-amber: 0 0 0 1px hsl(199 75% 52% / 0.4), 0 12px 32px -12px hsl(199 75% 52% / 0.35);
+    --glow-navy: 0 12px 32px -12px hsl(222 60% 2% / 0.9);
   }
+
 
 
   html {
