@@ -23,6 +23,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown, User } from 'lucide-react';
 import { HomeMediaPlayer } from '@/components/HomeMediaPlayer';
+import { Header } from '@/components/layout/Header';
+
 import { DeveloperFooter } from '@/components/DeveloperFooter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -1205,8 +1207,11 @@ export default function Index() {
 
       {/* Header with PLANTÃO PRO Banner at the very top */}
       <header className="relative z-20 shrink-0">
+        {/* Tactical top navigation (Obsidian Steel) */}
+        <Header />
         {/* Institutional Banner - PLANTÃO PRO - Full top position */}
         <InstitutionalBanner />
+
 
         {/* Cinematic institutional hero (Navy Trust + Amber) */}
         <div className="px-3 sm:px-6 pt-3">
