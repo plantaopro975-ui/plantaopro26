@@ -1,5 +1,7 @@
 import React, { useState, forwardRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { Home, LayoutDashboard, Shield } from 'lucide-react';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
