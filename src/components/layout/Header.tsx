@@ -1,5 +1,7 @@
 import React, { useState, forwardRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { Home, LayoutDashboard, Shield } from 'lucide-react';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
@@ -144,10 +146,45 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       </div>
 
 
-      {/* Operational Status - Center */}
-      <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
+      {/* Primary Navigation */}
+      <nav className="hidden lg:flex items-center gap-1 ml-6" aria-label="Navegação principal">
+        {[
+          { to: '/', label: 'Home', icon: Home, end: true },
+          { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { to: '/master', label: 'Master', icon: Shield },
+        ].map(({ to, label, icon: Icon, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            onClick={() => playSound('tactical-click')}
+            className={({ isActive }) =>
+              cn(
+                'relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-semibold tracking-wide transition-all',
+                'text-muted-foreground hover:text-foreground hover:bg-primary/10',
+                isActive &&
+                  'text-primary bg-primary/10 ring-1 ring-primary/30 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.15)]',
+              )
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+                {isActive && (
+                  <span className="absolute -bottom-[1px] left-2 right-2 h-[2px] rounded-full bg-primary" aria-hidden />
+                )}
+              </>
+            )}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Operational Status - Center (hidden on lg to leave room for nav) */}
+      <div className="absolute left-1/2 -translate-x-1/2 hidden md:block lg:hidden">
         <OperationalStatus />
       </div>
+
 
       {/* Right Side */}
       <div className="flex items-center gap-2">
