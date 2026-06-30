@@ -67,6 +67,8 @@
     --shadow-elevated: 0 30px 60px -20px hsl(0 0% 0% / 0.85), 0 0 0 1px hsl(40 15% 18% / 0.6);
     --glow-amber: 0 0 0 1px hsl(43 55% 54% / 0.35), 0 12px 32px -12px hsl(43 55% 54% / 0.25);
     --glow-navy: 0 12px 32px -12px hsl(0 0% 0% / 0.8);
+  }
+
 
   html {
     font-size: 16px;
