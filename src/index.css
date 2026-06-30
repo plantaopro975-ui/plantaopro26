@@ -7,67 +7,66 @@
 @layer base {
   :root {
     /* ================================
-       NAVY TRUST + TACTICAL AMBER
-       Institutional palette — Sistema Socioeducativo do Acre
+       NOIR & GOLD — Premium Institutional
+       Sistema Socioeducativo do Acre
        ================================ */
-    --background: 222 60% 5%;            /* #060a14 — deep institutional navy */
-    --foreground: 215 30% 92%;           /* #e8edf3 — crisp readable white */
+    --background: 0 0% 5%;               /* #0d0d0d obsidian */
+    --foreground: 40 25% 92%;            /* warm off-white */
 
-    --card: 222 50% 9%;                  /* #0f1b3d depth */
-    --card-foreground: 215 30% 95%;
+    --card: 0 0% 8%;                     /* #141414 */
+    --card-foreground: 40 25% 95%;
 
-    --popover: 222 55% 7%;
-    --popover-foreground: 215 30% 95%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 40 25% 95%;
 
-    --primary: 38 92% 50%;               /* #f59e0b — tactical amber */
-    --primary-foreground: 222 60% 5%;
+    --primary: 43 55% 54%;               /* #c9a84c muted gold */
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 217 45% 18%;            /* deep institutional steel */
-    --secondary-foreground: 215 30% 92%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 40 20% 90%;
 
-    --muted: 222 40% 14%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 0 0% 11%;
+    --muted-foreground: 40 10% 62%;
 
-    --accent: 214 60% 30%;               /* navy accent */
-    --accent-foreground: 215 30% 95%;
+    --accent: 43 45% 45%;
+    --accent-foreground: 0 0% 5%;
 
-    --destructive: 0 75% 55%;
+    --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 70% 42%;
+    --success: 142 55% 42%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 222 60% 5%;
+    --warning: 43 55% 54%;
+    --warning-foreground: 0 0% 5%;
 
-    --border: 217 35% 20%;
-    --input: 222 45% 12%;
-    --ring: 38 92% 50%;
+    --border: 40 15% 18%;
+    --input: 0 0% 10%;
+    --ring: 43 55% 54%;
 
-    --sidebar-background: 222 55% 7%;
-    --sidebar-foreground: 215 30% 92%;
-    --sidebar-primary: 38 92% 50%;
-    --sidebar-primary-foreground: 222 60% 5%;
-    --sidebar-accent: 217 45% 18%;
-    --sidebar-accent-foreground: 215 30% 95%;
-    --sidebar-border: 217 35% 20%;
-    --sidebar-ring: 38 92% 50%;
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 40 25% 92%;
+    --sidebar-primary: 43 55% 54%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 40 25% 95%;
+    --sidebar-border: 40 15% 18%;
+    --sidebar-ring: 43 55% 54%;
 
     --radius: 0.75rem;
 
-    /* Institutional gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(28 95% 55%) 100%);
-    --gradient-dark: linear-gradient(180deg, hsl(222 60% 5%) 0%, hsl(222 65% 3%) 100%);
-    --gradient-navy-depth: linear-gradient(135deg, hsl(222 60% 8%) 0%, hsl(217 70% 14%) 50%, hsl(222 60% 5%) 100%);
-    --gradient-amber-command: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(28 95% 55%) 50%, hsl(20 90% 45%) 100%);
-    --gradient-hero-overlay: linear-gradient(90deg, hsl(222 70% 4% / 0.95) 0%, hsl(222 60% 8% / 0.7) 50%, hsl(222 50% 12% / 0.3) 100%);
+    /* Premium gradients — restrained, no harsh glow */
+    --gradient-primary: linear-gradient(135deg, hsl(43 55% 54%) 0%, hsl(40 50% 60%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(0 0% 5%) 0%, hsl(0 0% 3%) 100%);
+    --gradient-navy-depth: linear-gradient(135deg, hsl(0 0% 7%) 0%, hsl(0 0% 10%) 50%, hsl(0 0% 5%) 100%);
+    --gradient-amber-command: linear-gradient(135deg, hsl(43 55% 54%) 0%, hsl(40 50% 48%) 100%);
+    --gradient-hero-overlay: linear-gradient(90deg, hsl(0 0% 4% / 0.96) 0%, hsl(0 0% 6% / 0.75) 55%, hsl(0 0% 8% / 0.35) 100%);
 
-    /* Institutional shadows */
-    --shadow-command: 0 20px 60px -15px hsl(38 92% 50% / 0.35), 0 8px 24px -8px hsl(222 60% 0% / 0.5);
-    --shadow-elevated: 0 25px 50px -12px hsl(222 70% 0% / 0.7), 0 0 0 1px hsl(217 35% 20% / 0.5);
-    --glow-amber: 0 0 40px hsl(38 92% 50% / 0.4), 0 0 80px hsl(38 92% 50% / 0.2);
-    --glow-navy: 0 0 40px hsl(217 70% 30% / 0.5);
-  }
+    /* Premium shadows — soft, no neon glow */
+    --shadow-command: 0 24px 60px -20px hsl(0 0% 0% / 0.7), 0 2px 8px hsl(43 55% 54% / 0.12);
+    --shadow-elevated: 0 30px 60px -20px hsl(0 0% 0% / 0.85), 0 0 0 1px hsl(40 15% 18% / 0.6);
+    --glow-amber: 0 0 0 1px hsl(43 55% 54% / 0.35), 0 12px 32px -12px hsl(43 55% 54% / 0.25);
+    --glow-navy: 0 12px 32px -12px hsl(0 0% 0% / 0.8);
 
   html {
     font-size: 16px;
