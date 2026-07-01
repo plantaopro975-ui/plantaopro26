@@ -4,6 +4,8 @@ import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadar from '@/assets/icons-3d/noir-radar.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconCommand from '@/assets/icons-3d/noir-command.png';
+import agentFigure from '@/assets/tactical-agent-figure.png';
+
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
