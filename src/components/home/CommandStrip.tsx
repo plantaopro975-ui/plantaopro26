@@ -84,13 +84,9 @@ export function CommandStrip() {
             )}
           >
             <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center p-1">
-              <img
-                src={iseAcreBadge}
-                alt=""
-                draggable={false}
-                className="h-full w-full object-contain select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.55)]"
-              />
+              <Shield className="h-5 w-5 text-primary" strokeWidth={2.2} />
             </div>
+
             {/* Progresso do triple-click */}
             {pulse > 0 && !confirmed && (
               <span className="pointer-events-none absolute -bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
