@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { ArrowRight, ShieldCheck, Radio } from 'lucide-react';
 import heroImage from '@/assets/hero-noir-gold.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
@@ -35,8 +36,34 @@ export function HeroCinematic({
   agentCount = 248,
   unitsCount = 9,
 }: HeroCinematicProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const mx = ((e.clientX - rect.left) / rect.width) * 2 - 1;  // -1..1
+    const my = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      el.style.setProperty('--mx', mx.toFixed(3));
+      el.style.setProperty('--my', my.toFixed(3));
+    });
+  };
+
+  const handleMouseLeave = () => {
+    const el = sectionRef.current;
+    if (!el) return;
+    el.style.setProperty('--mx', '0');
+    el.style.setProperty('--my', '0');
+  };
+
   return (
     <section
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className="relative w-full overflow-hidden rounded-xl border border-border/60 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
       style={{ minHeight: 'clamp(360px, 46vh, 520px)' }}
@@ -64,7 +91,7 @@ export function HeroCinematic({
         style={{ animationDuration: '6s' }}
       />
 
-      {/* Viatura policial 3D — desktop only, interage com o hover das equipes */}
+      {/* Viatura policial 3D — desktop only, interage com hover das equipes E com o mouse */}
       <img
         src={policeVehicle}
         alt=""
@@ -73,7 +100,7 @@ export function HeroCinematic({
         height={768}
         loading="lazy"
         style={{ width: 'clamp(180px, 15vw, 280px)' }}
-        className="police-vehicle hidden xl:block pointer-events-none select-none absolute z-10 bottom-4 left-6 2xl:left-10 object-contain origin-bottom-left opacity-90 [transform:perspective(900px)_rotateY(-14deg)_rotateX(6deg)]"
+        className="police-vehicle police-vehicle--mouse hidden xl:block pointer-events-none select-none absolute z-10 bottom-4 left-6 2xl:left-10 object-contain origin-bottom-left opacity-90"
       />
 
 
