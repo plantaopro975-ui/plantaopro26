@@ -1265,7 +1265,7 @@ export default function Index() {
         {/* Soft gold halo */}
         <span aria-hidden className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-40 w-[50%] rounded-full bg-primary/10 blur-3xl" />
 
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-5 py-2.5 flex items-center justify-between gap-3">
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-5 py-1.5 flex items-center justify-between gap-3">
           {/* Left: Signature */}
           <div className="flex items-center gap-2 min-w-0">
             <div className="relative flex items-center gap-2 px-2.5 py-1 rounded-md bg-card/50 ring-1 ring-primary/30">
