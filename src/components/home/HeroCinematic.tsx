@@ -6,7 +6,6 @@ import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
-import agentIdleVideo from '@/assets/tactical-agent-idle.mp4.asset.json';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
 
 
@@ -134,15 +133,14 @@ export function HeroCinematic({
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
 
       {/* Agente tático interativo — desktop only, arrastável */}
-      <video
-        src={agentIdleVideo.url}
-        poster={agentFigure}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
+      <img
+        src={agentFigure}
+        alt=""
         aria-hidden
+        width={768}
+        height={1280}
+        loading="lazy"
+        draggable={false}
         onPointerDown={(e) => {
           const el = e.currentTarget;
           const rect = el.getBoundingClientRect();
@@ -168,7 +166,8 @@ export function HeroCinematic({
           el.addEventListener('pointermove', move);
           el.addEventListener('pointerup', up);
         }}
-        className="agent-alive block sm:block select-none absolute z-30 bottom-0 left-1/2 h-[52%] xl:h-[58%] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] cursor-grab touch-none"
+        className="block sm:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[52%] xl:h-[58%] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] cursor-grab touch-none"
+        style={{ animationDuration: '6s' }}
       />
 
 
