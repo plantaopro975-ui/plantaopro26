@@ -6,6 +6,7 @@ import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
+import agentIdleVideo from '@/assets/tactical-agent-idle.mp4.asset.json';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
 
 
@@ -133,14 +134,15 @@ export function HeroCinematic({
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
 
       {/* Agente tático interativo — desktop only, arrastável */}
-      <img
-        src={agentFigure}
-        alt=""
+      <video
+        src={agentIdleVideo.url}
+        poster={agentFigure}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
         aria-hidden
-        width={768}
-        height={1280}
-        loading="lazy"
-        draggable={false}
         onPointerDown={(e) => {
           const el = e.currentTarget;
           const rect = el.getBoundingClientRect();
