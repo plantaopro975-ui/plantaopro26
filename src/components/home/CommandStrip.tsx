@@ -126,20 +126,6 @@ export function CommandStrip() {
             </span>
           )}
 
-          {/* Identidade (mesma tipografia do Header) */}
-          <div className="min-w-0 border-l border-border/50 pl-3 leading-tight">
-            <div className="flex items-baseline gap-2">
-              <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
-                ISE · Acre
-              </span>
-            </div>
-            <span className="block text-[13px] sm:text-sm font-bold text-foreground font-serif -mt-0.5 truncate">
-              Plantão<span className="text-primary">Pro</span> · Comando Operacional
-            </span>
-            <span className="hidden sm:block text-[10px] text-muted-foreground/80 tracking-wider uppercase font-mono">
-              Gestão inteligente de plantões
-            </span>
-          </div>
         </div>
 
         {/* Espaçador flexível */}
@@ -149,10 +135,8 @@ export function CommandStrip() {
         <div className="flex items-center gap-3 sm:gap-4 ml-auto">
           <div className="text-right leading-tight">
             <div className="font-mono text-sm sm:text-base tabular-nums text-foreground">{time}</div>
-            <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono">
-              {date}
-            </div>
           </div>
+
           <div className="hidden sm:flex items-center gap-2 rounded-md bg-card/60 px-2.5 py-1 ring-1 ring-border/60">
             <span className="relative flex h-2 w-2">
               <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
