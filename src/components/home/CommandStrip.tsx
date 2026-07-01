@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Radio, Shield } from 'lucide-react';
-import { RadarSweep } from './RadarSweep';
+import { SignalUplink } from './SignalUplink';
 
 
 import { cn } from '@/lib/utils';
@@ -113,7 +113,7 @@ export function CommandStrip() {
             </div>
           </div>
 
-          <RadarSweep size={28} className="hidden sm:block" />
+          <SignalUplink />
 
           <div className="hidden sm:flex items-center gap-2 rounded-md bg-card/60 px-2.5 py-1 ring-1 ring-border/60">
             <span className="relative flex h-2 w-2">
