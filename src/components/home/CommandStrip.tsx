@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ShieldCheck, Radio, Shield } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import bannerBg from '@/assets/institutional-banner-bg.jpg';
 
 /**
  * CommandStrip — faixa institucional Noir & Gold.
@@ -54,10 +55,21 @@ export function CommandStrip() {
       className={cn(
         'relative mx-2 sm:mx-6 mt-0 overflow-hidden rounded-b-lg rounded-t-none',
         'border border-border/60 backdrop-blur-xl',
-        'bg-[linear-gradient(180deg,hsl(222_38%_7%/0.96),hsl(220_32%_9%/0.92))]',
         'shadow-[0_8px_28px_-12px_hsl(222_60%_2%/0.85)]',
       )}
     >
+      {/* Foto realista de fundo */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${bannerBg})` }}
+      />
+      {/* Overlay Noir para legibilidade */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[linear-gradient(90deg,hsl(222_38%_6%/0.95)_0%,hsl(220_32%_8%/0.78)_55%,hsl(222_38%_6%/0.95)_100%)]"
+      />
+
       {/* Gold accents (mesmos do Header/Footer) */}
       <span
         aria-hidden
