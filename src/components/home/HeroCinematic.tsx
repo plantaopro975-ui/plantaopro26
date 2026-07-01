@@ -115,7 +115,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         aria-hidden
         loading="lazy"
         draggable={false}
-        className="police-vehicle absolute z-10 bottom-1 left-1 sm:bottom-0 sm:left-2 lg:left-6 h-[55%] sm:h-[78%] lg:h-[92%] max-h-full w-auto object-contain pointer-events-none select-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
+        style={{ maxHeight: 'calc(100% - 170px)', maxWidth: '48%' }}
+        className="police-vehicle absolute z-10 bottom-[160px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[55%] sm:h-[72%] lg:h-[80%] w-auto object-contain pointer-events-none select-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
       />
 
       {/* Agente tático — arrastável */}
