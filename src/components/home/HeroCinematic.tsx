@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ArrowRight, ShieldCheck, Radio } from 'lucide-react';
 import heroImage from '@/assets/hero-noir-gold.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
