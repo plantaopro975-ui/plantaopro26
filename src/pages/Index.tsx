@@ -1246,71 +1246,82 @@ export default function Index() {
 
 
 
-      {/* Footer - Clean Professional Design (Reference Style) */}
-      <footer className="py-2 px-3 sm:px-4 bg-gradient-to-r from-slate-900/98 via-slate-800/98 to-slate-900/98 backdrop-blur-md border-t border-slate-700/50 relative z-20 shrink-0">
-        {/* Top accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-        
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
-          {/* Left: Developer Badge + Audio */}
-          <div className="flex items-center gap-2">
-            <div className="relative group">
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/60 border border-amber-500/40 hover:border-amber-400/60 transition-all">
-                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                  <span className="text-[8px] font-black text-black">FD</span>
-                </div>
-                <span className="text-xs font-black tracking-wider uppercase text-amber-400">
-                  FRANC D'NIS
-                </span>
-                <Zap className="h-3 w-3 text-amber-400" />
-              </div>
+      {/* Footer — Noir & Gold Command Signature */}
+      <footer className="relative z-20 shrink-0 overflow-hidden border-t border-primary/20 bg-[linear-gradient(180deg,hsl(222_38%_6%/0.96)_0%,hsl(220_35%_4%/0.99)_100%)] backdrop-blur-xl">
+        {/* Gold accent line */}
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-80" />
+        {/* Micro grid */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
+          }}
+        />
+        {/* Soft gold halo */}
+        <span aria-hidden className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-40 w-[50%] rounded-full bg-primary/10 blur-3xl" />
+
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-5 py-2.5 flex items-center justify-between gap-3">
+          {/* Left: Signature */}
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="relative flex items-center gap-2 px-2.5 py-1 rounded-md bg-card/50 ring-1 ring-primary/30">
+              <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
+              <span className="text-[11px] font-bold tracking-[0.24em] uppercase text-primary font-serif">
+                Franc D'Nis
+              </span>
             </div>
-            <HomeMediaPlayer />
-          </div>
-          
-          {/* Center: Copyright */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-sm sm:text-base font-semibold text-muted-foreground/80 tracking-wide">
-              © 2026 PlantãoPro
+            <span className="hidden md:inline text-[9px] uppercase tracking-[0.22em] text-muted-foreground/60 font-mono">
+              Engenharia
             </span>
-            <span className="text-xs sm:text-sm text-muted-foreground/60 tracking-widest uppercase hidden sm:inline font-medium">
-              FEIJÓ/AC
+            <div className="ml-1"><HomeMediaPlayer /></div>
+          </div>
+
+          {/* Center: Institutional */}
+          <div className="hidden sm:flex flex-col items-center leading-tight">
+            <span className="text-[11px] font-bold text-foreground/90 font-serif italic tracking-wide">
+              Plantão<span className="text-primary">Pro</span>
+            </span>
+            <span className="text-[8.5px] uppercase tracking-[0.28em] text-muted-foreground/60 font-mono">
+              © {new Date().getFullYear()} · Feijó / AC
             </span>
           </div>
-          
-          {/* Right: Estilo Button + Admin + Tactical Clock */}
-          <div className="flex items-center gap-2">
-            {/* Saved Credentials */}
+
+          {/* Right: Actions + Clock */}
+          <div className="flex items-center gap-1.5">
             {getSavedCredentials().length > 0 && (
               <button
                 onClick={() => setShowCredentialsManager(true)}
-                className="p-1.5 text-muted-foreground hover:text-emerald-400 rounded hover:bg-emerald-500/10 transition-all hidden sm:block"
+                className="p-1.5 text-muted-foreground/70 hover:text-primary rounded hover:bg-primary/10 transition-all hidden sm:block"
                 title="Credenciais Salvas"
               >
-                <KeyRound className="h-4 w-4" />
+                <KeyRound className="h-3.5 w-3.5" />
               </button>
             )}
-            
-            
-            
-            {/* Admin/Master access removed — triple-click no logo do banner abre o login do super-usuário */}
-            
-            {/* About App */}
             <button
               onClick={() => setShowAboutDialog(true)}
-              className="p-1.5 text-muted-foreground hover:text-primary rounded hover:bg-primary/10 transition-all hidden sm:block"
+              className="p-1.5 text-muted-foreground/70 hover:text-primary rounded hover:bg-primary/10 transition-all hidden sm:block"
               title="Sobre o App"
             >
-              <Info className="h-4 w-4" />
+              <Info className="h-3.5 w-3.5" />
             </button>
-            
-            {/* Tactical Clock - Compact */}
-            <div className="p-1 rounded-xl bg-slate-800/60 border border-primary/40">
-              <SpectacularClock size={44} />
+            <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/50">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
+                <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
+              </span>
+              <span className="text-[9px] font-semibold tracking-[0.20em] uppercase text-success/90 font-mono">
+                Ativo
+              </span>
+            </div>
+            <div className="p-0.5 rounded-md bg-card/60 ring-1 ring-primary/30">
+              <SpectacularClock size={38} />
             </div>
           </div>
         </div>
       </footer>
+
 
       {/* CPF Check Dialog - Ultra Professional */}
       <AuthDialog
