@@ -65,6 +65,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
   return (
     <section
+      ref={sectionRef}
       className="relative h-full min-h-0 w-full flex-1 overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
       aria-label="Sistema Socioeducativo do Acre — Comando Operacional"
       style={{ maxHeight: '100%' }}
