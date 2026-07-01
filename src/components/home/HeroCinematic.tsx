@@ -1,4 +1,5 @@
 import { ShieldCheck, Radio, MapPin } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import heroImage from '@/assets/hero-noir-gold.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadio from '@/assets/icons-3d/noir-radio.png';
@@ -28,8 +29,43 @@ const TEAMS: { name: TeamName; icon: string; kicker: string }[] = [
  * Hero full-viewport com brasão SVG, topografia amazônica e cards oficiais.
  */
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [agentPos, setAgentPos] = useState<{ x: number; y: number } | null>(() => {
+    try {
+      const v = localStorage.getItem('hero_agent_pos');
+      return v ? JSON.parse(v) : null;
+    } catch { return null; }
+  });
+  const dragging = useRef(false);
+  const offset = useRef({ x: 0, y: 0 });
+
+  const onPointerDown = (e: React.PointerEvent<HTMLImageElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    dragging.current = true;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLImageElement>) => {
+    if (!dragging.current || !sectionRef.current) return;
+    const sec = sectionRef.current.getBoundingClientRect();
+    const img = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - sec.left - offset.current.x;
+    const y = e.clientY - sec.top - offset.current.y;
+    const clamped = {
+      x: Math.max(0, Math.min(x, sec.width - img.width)),
+      y: Math.max(0, Math.min(y, sec.height - img.height)),
+    };
+    setAgentPos(clamped);
+  };
+  const onPointerUp = (e: React.PointerEvent<HTMLImageElement>) => {
+    dragging.current = false;
+    try { if (agentPos) localStorage.setItem('hero_agent_pos', JSON.stringify(agentPos)); } catch {}
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+  };
+
   return (
     <section
+      ref={sectionRef}
       className="relative h-full min-h-0 w-full flex-1 overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
       aria-label="Sistema Socioeducativo do Acre — Comando Operacional"
       style={{ maxHeight: '100%' }}
@@ -125,15 +161,25 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         className="police-vehicle absolute z-10 bottom-1 left-1 sm:bottom-2 sm:left-4 lg:left-8 object-contain pointer-events-none select-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
       />
 
-      {/* Agente tático — centralizado */}
+      {/* Agente tático — arrastável */}
       <img
         src={agentFigure}
-        alt=""
-        aria-hidden
+        alt="Arraste para posicionar"
+        title="Arraste para posicionar"
         loading="lazy"
         draggable={false}
-        className="absolute z-20 bottom-24 right-0 translate-x-2 sm:bottom-0 sm:right-auto sm:left-1/2 sm:translate-x-0 sm:-translate-x-1/2 h-[34%] sm:h-[58%] lg:h-[68%] max-h-full w-auto object-contain object-bottom pointer-events-none select-none opacity-90 sm:opacity-100 [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))]"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        style={
+          agentPos
+            ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
+            : undefined
+        }
+        className="agent-figure absolute z-40 bottom-20 right-1 sm:bottom-0 sm:left-1/2 sm:-translate-x-1/2 h-[38%] sm:h-[58%] lg:h-[68%] max-h-full w-auto object-contain object-bottom select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_28px_hsl(var(--accent)/0.55))_drop-shadow(0_20px_44px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
       />
+
 
       {/* Foreground content */}
       <div className="relative z-30 h-full min-h-0 flex flex-col justify-between gap-2 sm:gap-3 px-3 sm:px-5 lg:px-8 py-3 sm:py-5">
