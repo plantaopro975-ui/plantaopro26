@@ -89,8 +89,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       />
 
       {/* Foreground content */}
-      <div className="relative z-30 h-full flex flex-col justify-between gap-6 px-4 sm:px-6 lg:px-10 py-5 sm:py-7"
-           style={{ minHeight: 'inherit' }}>
+      <div className="relative z-30 h-full flex flex-col justify-between gap-6 px-4 sm:px-6 lg:px-10 py-5 sm:py-7">
+
         {/* Top eyebrow */}
         <div className="flex items-center justify-between gap-3">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-primary/40 bg-background/60 backdrop-blur-md">
