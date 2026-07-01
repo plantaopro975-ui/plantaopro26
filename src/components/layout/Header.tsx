@@ -101,7 +101,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       ref={ref}
       {...props}
       className={cn(
-        "header-bar relative h-16 flex items-center gap-4 px-4 lg:px-6",
+        "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6",
         "border-b border-border/60 shadow-[0_8px_28px_-12px_hsl(222_60%_2%/0.85)]",
         "bg-[linear-gradient(180deg,hsl(222_38%_7%/0.96),hsl(220_32%_9%/0.92))]",
         "backdrop-blur-xl",
@@ -115,7 +115,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
 
       {/* Logo — leftmost, maximized within bar height */}
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <div className="relative shrink-0 [perspective:600px]">
           <span className="absolute inset-0 rounded-full bg-primary/25 blur-lg animate-pulse" aria-hidden />
           <img
@@ -123,7 +123,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             alt="Plantão Pro"
             width={56}
             height={56}
-            className="relative h-14 w-14 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] animate-logo-sway origin-center will-change-transform"
+            className="relative h-12 w-12 sm:h-14 sm:w-14 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] animate-logo-sway origin-center will-change-transform"
           />
         </div>
 
@@ -158,7 +158,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
 
       {/* Primary Navigation */}
-      <nav className="hidden lg:flex items-center gap-1 ml-6" aria-label="Navegação principal">
+      <nav className="hidden lg:flex items-center gap-1 ml-4 xl:ml-6 shrink-0" aria-label="Navegação principal">
         {[
           { to: '/', label: 'Home', icon: Home, end: true },
           { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -192,36 +192,11 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       </nav>
 
       {/* Tagline institucional — QSL Feijó (clique → /about) */}
-      <button
-        type="button"
-        onClick={() => handleNavigate('/about')}
-        className="group hidden xl:flex flex-1 min-w-0 justify-center items-center gap-2 select-none whitespace-nowrap rounded-md px-2 py-1 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors cursor-pointer"
-        aria-label="Sobre o app — QSL Feijó, feito por agente para agente"
-        title="Sobre o app"
-      >
-        <span className="h-px w-6 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
-        <p className="text-[12px] font-mono tracking-[0.2em] uppercase text-foreground/90 truncate group-hover:text-foreground">
-          <span className="text-primary font-bold">QSL</span>
-          <span className="text-muted-foreground">, </span>
-          <span className="text-foreground">Feijó!</span>
-          <span className="mx-2 text-muted-foreground/60">·</span>
-          <span className="text-muted-foreground normal-case tracking-normal font-sans italic">
-            Feito por agente para agente
-          </span>
-          <span className="mx-2 text-primary/50">·</span>
-          <span className="text-primary/90 font-semibold normal-case tracking-normal">
-            &lt;dev/&gt; Franc.D'nis
-          </span>
-        </p>
-        <span className="h-px w-6 bg-gradient-to-l from-transparent to-primary/60" aria-hidden />
-      </button>
-
-      {/* Spacer para telas < xl mantendo lado direito alinhado */}
-      <div className="flex-1 xl:hidden" aria-hidden />
+      <div className="flex-1 min-w-0" aria-hidden />
 
       {/* Right Side */}
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
         {/* Sound Toggle */}
         <Button 
           variant="ghost" 
@@ -289,6 +264,35 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Tagline institucional — sempre visível, sem disputar espaço com ações */}
+      <button
+        type="button"
+        onClick={() => handleNavigate('/about')}
+        className={cn(
+          "group absolute inset-x-2 bottom-1 z-10 flex h-4 items-center justify-center gap-1 overflow-hidden rounded-sm",
+          "sm:inset-x-40 sm:bottom-1/2 sm:h-auto sm:translate-y-1/2 sm:rounded-md sm:px-2 sm:py-1",
+          "select-none whitespace-nowrap hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors cursor-pointer",
+        )}
+        aria-label="Sobre o app — QSL, Feijó! Feito por agente para Agente; Franc.D'nis"
+        title="Sobre o app"
+      >
+        <span className="hidden lg:block h-px w-6 shrink-0 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
+        <p className="min-w-0 truncate text-center text-[9px] sm:text-[10px] md:text-[11px] xl:text-[13px] font-mono font-semibold tracking-[0.08em] sm:tracking-[0.16em] uppercase text-foreground/90 group-hover:text-foreground">
+          <span className="text-primary font-bold">QSL</span>
+          <span className="text-muted-foreground">, </span>
+          <span className="text-foreground">Feijó!</span>
+          <span className="mx-1 sm:mx-2 text-muted-foreground/60">·</span>
+          <span className="text-muted-foreground normal-case tracking-normal font-sans italic">
+            Feito por agente para Agente;
+          </span>
+          <span className="mx-1 sm:mx-2 text-primary/50">·</span>
+          <span className="text-primary/90 font-semibold normal-case tracking-normal">
+            Franc.D'nis
+          </span>
+        </p>
+        <span className="hidden lg:block h-px w-6 shrink-0 bg-gradient-to-l from-transparent to-primary/60" aria-hidden />
+      </button>
     </header>
   );
 });
