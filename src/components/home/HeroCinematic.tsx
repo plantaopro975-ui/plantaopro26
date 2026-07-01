@@ -119,7 +119,7 @@ export function HeroCinematic({
       ref={sectionRef}
       className="relative w-full overflow-hidden rounded-xl border border-border/60 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
-      style={{ minHeight: 'clamp(240px, 32vh, 360px)' }}
+      style={{ minHeight: 'clamp(200px, 26vh, 300px)' }}
     >
       <img
         src={heroImage}
