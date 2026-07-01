@@ -14,9 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Sora', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['IBM Plex Sans', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Libre Baskerville', 'Georgia', 'serif'],
+        serif: ['Libre Baskerville', 'Georgia', 'serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
