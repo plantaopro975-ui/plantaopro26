@@ -134,7 +134,7 @@ export function AuthDialog({
 
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
-          <div className="relative h-32 w-full overflow-hidden">
+          <div className="relative h-28 sm:h-32 md:h-36 w-full overflow-hidden">
             <img
               src={teamPoster}
               alt={`Equipe ${teamKey}`}
@@ -151,37 +151,37 @@ export function AuthDialog({
                  style={{ background: `linear-gradient(180deg, transparent, ${teamColor!.primary}, transparent)` }} />
 
             {/* Top status row */}
-            <div className="absolute top-2.5 inset-x-4 flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <div className="h-1.5 w-1.5 rounded-full animate-pulse"
+            <div className="absolute top-2 sm:top-2.5 inset-x-3 sm:inset-x-4 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <div className="h-1.5 w-1.5 rounded-full animate-pulse shrink-0"
                      style={{ background: teamColor!.primary, boxShadow: `0 0 8px ${teamColor!.primary}` }} />
-                <span className="text-[9px] tracking-[0.28em] font-mono font-semibold text-white/75 uppercase">
+                <span className="text-[9px] sm:text-[10px] tracking-[0.24em] sm:tracking-[0.28em] font-mono font-semibold text-white/75 uppercase truncate">
                   Secure · {teamKey}
                 </span>
               </div>
-              <span className="text-[9px] tracking-[0.22em] font-mono text-white/45">CLASSIFIED</span>
+              <span className="text-[9px] sm:text-[10px] tracking-[0.2em] font-mono text-white/45 shrink-0">CLASSIFIED</span>
             </div>
 
             {/* Emblem + title — horizontal compact */}
-            <div className="absolute bottom-0 inset-x-0 px-4 pb-3 flex items-center gap-3">
+            <div className="absolute bottom-0 inset-x-0 px-3 sm:px-4 pb-2.5 sm:pb-3 flex items-center gap-2.5 sm:gap-3">
               {teamEmblem && (
                 <div className="relative shrink-0">
                   <div className="absolute -inset-0.5 rounded-full blur-sm opacity-60"
                        style={{ background: teamColor!.primary }} />
                   <img src={teamEmblem} alt=""
-                    className="relative h-11 w-11 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]" />
+                    className="relative h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]" />
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <div className="text-[9px] tracking-[0.32em] font-mono font-bold uppercase leading-none"
+                <div className="text-[9px] sm:text-[10px] tracking-[0.28em] sm:tracking-[0.32em] font-mono font-bold uppercase leading-none"
                      style={{ color: teamColor!.primary }}>
                   Equipe {teamKey}
                 </div>
-                <h2 className="text-lg font-bold tracking-tight text-white leading-tight mt-1 font-stencil truncate">
+                <h2 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-white leading-tight mt-1 font-stencil truncate">
                   {title}
                 </h2>
                 {subtitle && (
-                  <p className="text-[11px] text-white/65 leading-tight mt-0.5 truncate">{subtitle}</p>
+                  <p className="text-[10px] sm:text-[11px] text-white/65 leading-tight mt-0.5 truncate">{subtitle}</p>
                 )}
               </div>
             </div>
