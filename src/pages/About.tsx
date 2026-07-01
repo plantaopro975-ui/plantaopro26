@@ -195,14 +195,29 @@ export default function About() {
                         className="h-full w-full object-contain"
                       />
                     </div>
-                    <a
-                      href={logoPlantaoPro}
-                      download="logo-plantao-pro.png"
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(logoPlantaoPro);
+                          const blob = await res.blob();
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = 'logo-plantao-pro.png';
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          URL.revokeObjectURL(url);
+                        } catch {
+                          window.open(logoPlantaoPro, '_blank');
+                        }
+                      }}
                       className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors"
                     >
                       <Download className="h-2.5 w-2.5" />
                       Baixar
-                    </a>
+                    </button>
                   </div>
                   <p className="text-xs leading-snug text-slate-300">
                     Idealizado por um <strong className="text-amber-300">Agente Socioeducativo</strong> de{' '}
