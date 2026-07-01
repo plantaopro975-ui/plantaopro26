@@ -342,10 +342,25 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                       className="absolute inset-0 h-full w-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
                       style={{ filter: 'saturate(1.05) contrast(1.05)' }}
                     />
-                    {/* Vinheta radial suave — mantém foco sem obscurecer a foto */}
-                    <span className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.45)_100%)]" />
-                    {/* Faixa inferior mínima só para legibilidade do nome */}
-                    <span className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.65))]" />
+                    {/* Overlay consistente — vinheta radial + gradiente inferior responsivo para legibilidade */}
+                    <span
+                      aria-hidden
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.35) 100%)',
+                      }}
+                    />
+                    <span
+                      aria-hidden
+                      className="absolute inset-x-0 bottom-0 h-[45%] sm:h-[42%] lg:h-[38%]"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.8) 100%)',
+                      }}
+                    />
+                    {/* Borda interna sutil para acabamento consistente */}
+                    <span aria-hidden className="absolute inset-0 ring-1 ring-inset ring-white/5 rounded-md" />
                   </span>
                   {/* Canto oficial (cobre) */}
                   <span
