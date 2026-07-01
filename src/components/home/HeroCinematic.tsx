@@ -255,10 +255,8 @@ export function HeroCinematic({
                     <div className="text-lg sm:text-xl lg:text-2xl uppercase tracking-[0.22em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                       {t.name}
                     </div>
-                    <div className="text-[10px] sm:text-[11px] lg:text-xs uppercase tracking-[0.3em] text-muted-foreground font-medium font-sans leading-[1.2]">
-                      {t.motto}
-                    </div>
                   </div>
+
 
 
                 </button>
