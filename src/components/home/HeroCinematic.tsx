@@ -5,24 +5,28 @@ import iconRadar from '@/assets/icons-3d/noir-radar.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconCommand from '@/assets/icons-3d/noir-command.png';
 
+type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
+
 interface HeroCinematicProps {
   onPrimaryAction?: () => void;
+  onTeamClick?: (team: TeamName) => void;
   agentCount?: number;
   unitsCount?: number;
 }
 
-const BENTO = [
-  { icon: iconShield, label: 'Proteção', value: 'RLS · AES-256' },
-  { icon: iconRadar, label: 'Monitoramento', value: 'Tempo real' },
-  { icon: iconHelmet, label: 'Operações', value: '24/7 ativo' },
-  { icon: iconCommand, label: 'Comando', value: 'Integrado' },
+const TEAMS: { name: TeamName; icon: string; motto: string; accent: string }[] = [
+  { name: 'ALFA',    icon: iconShield,  motto: 'Escudo · Proteção', accent: 'from-emerald-400/25 to-transparent' },
+  { name: 'BRAVO',   icon: iconHelmet,  motto: 'Espada · Ação',     accent: 'from-orange-400/25 to-transparent' },
+  { name: 'CHARLIE', icon: iconRadar,   motto: 'Mira · Precisão',   accent: 'from-sky-400/25 to-transparent' },
+  { name: 'DELTA',   icon: iconCommand, motto: 'Raio · Resposta',   accent: 'from-amber-400/25 to-transparent' },
 ];
 
 /**
- * Noir & Gold — Hero + Bento layout, editorial premium.
+ * Noir & Gold — Hero + Bento (equipes 3D).
  */
 export function HeroCinematic({
   onPrimaryAction,
+  onTeamClick,
   agentCount = 248,
   unitsCount = 9,
 }: HeroCinematicProps) {
@@ -43,7 +47,7 @@ export function HeroCinematic({
       <div className="absolute inset-0" style={{ background: 'var(--gradient-hero-overlay)' }} aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
 
-      <div className="relative z-10 h-full flex flex-col justify-between px-5 sm:px-8 lg:px-12 py-6 sm:py-8">
+      <div className="relative z-10 h-full flex flex-col gap-6 px-5 sm:px-8 lg:px-12 py-6 sm:py-8">
         {/* eyebrow */}
         <div className="flex items-center justify-between gap-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border border-primary/30 bg-background/50 backdrop-blur-md">
@@ -58,16 +62,16 @@ export function HeroCinematic({
           </div>
         </div>
 
-        {/* Headline + Bento */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr,1fr] gap-6 lg:gap-10 items-end">
+        {/* Headline + Team Bento */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.05fr,1.15fr] gap-6 lg:gap-10 items-center flex-1">
           <div className="max-w-2xl">
             <h1 className="text-[2rem] sm:text-[2.6rem] lg:text-[3rem] leading-[1.05] tracking-tight text-foreground font-serif">
               Segurança Socioeducativa,{' '}
               <span className="italic text-primary">refinada</span>.
             </h1>
             <p className="mt-4 max-w-lg text-sm sm:text-[15px] text-muted-foreground/90 leading-relaxed font-sans">
-              Plataforma institucional de escalas, banco de horas e comando
-              operacional — arquitetura blindada, estética editorial.
+              Selecione sua equipe para acessar o comando operacional —
+              arquitetura blindada, estética editorial.
             </p>
 
             {onPrimaryAction && (
@@ -91,43 +95,43 @@ export function HeroCinematic({
             )}
           </div>
 
-          {/* Bento — 3D noir & gold icons */}
-          <ul className="grid grid-cols-2 gap-2.5 sm:gap-3">
-            {BENTO.map((p, i) => (
-              <li
-                key={p.label}
-                className={`group relative flex items-center gap-3 p-3 sm:p-4 rounded-sm border border-border/60 bg-background/50 backdrop-blur-md hover:border-primary/50 hover:bg-background/65 transition-all ${
-                  i === 0 ? 'col-span-2 sm:col-span-1' : ''
-                }`}
-              >
-                <img
-                  src={p.icon}
-                  alt=""
-                  loading="lazy"
-                  className="h-12 w-12 sm:h-14 sm:w-14 object-contain shrink-0 drop-shadow-[0_4px_12px_rgba(201,168,76,0.35)] transition-transform group-hover:scale-105"
-                />
-                <div className="min-w-0">
-                  <div className="text-[13px] sm:text-sm font-semibold text-foreground tracking-tight font-serif">
-                    {p.label}
+          {/* Teams — 3D noir & gold, clicáveis */}
+          <ul className="grid grid-cols-2 gap-2.5 sm:gap-3" role="list" aria-label="Equipes operacionais">
+            {TEAMS.map((t) => (
+              <li key={t.name}>
+                <button
+                  type="button"
+                  data-team-card
+                  onClick={() => onTeamClick?.(t.name)}
+                  className="group relative w-full text-left flex items-center gap-3 p-3 sm:p-4 rounded-sm border border-border/60 bg-background/55 backdrop-blur-md hover:border-primary/60 hover:bg-background/70 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  aria-label={`Acessar equipe ${t.name}`}
+                >
+                  <span
+                    aria-hidden
+                    className={`pointer-events-none absolute inset-0 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br ${t.accent}`}
+                  />
+                  <img
+                    src={t.icon}
+                    alt=""
+                    loading="lazy"
+                    className="relative h-14 w-14 sm:h-16 sm:w-16 object-contain shrink-0 drop-shadow-[0_4px_14px_rgba(201,168,76,0.4)] transition-transform group-hover:scale-110 group-hover:-translate-y-0.5"
+                  />
+                  <div className="relative min-w-0">
+                    <div className="text-[10px] uppercase tracking-[0.28em] text-primary/80 font-sans">
+                      Equipe
+                    </div>
+                    <div className="text-lg sm:text-xl font-bold text-foreground tracking-tight font-serif leading-tight">
+                      {t.name}
+                    </div>
+                    <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground/80 mt-0.5 font-sans">
+                      {t.motto}
+                    </div>
                   </div>
-                  <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-muted-foreground/75 leading-none mt-1 font-sans">
-                    {p.value}
-                  </div>
-                </div>
+                  <ArrowRight className="relative ml-auto h-4 w-4 text-primary/60 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                </button>
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* footer status */}
-        <div className="flex items-center justify-between gap-3 text-[10px] text-muted-foreground/65 tracking-[0.22em] uppercase font-sans">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-            Status nominal
-          </span>
-          <span className="hidden md:inline font-mono text-[9px] text-muted-foreground/55">
-            ENC-AES256 · RLS-VERIFIED
-          </span>
         </div>
       </div>
     </section>
