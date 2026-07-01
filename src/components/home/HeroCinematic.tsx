@@ -91,7 +91,7 @@ export function HeroCinematic({
         style={{ animationDuration: '6s' }}
       />
 
-      {/* Viatura policial 3D — desktop only, interage com o hover das equipes */}
+      {/* Viatura policial 3D — desktop only, interage com hover das equipes E com o mouse */}
       <img
         src={policeVehicle}
         alt=""
@@ -100,7 +100,7 @@ export function HeroCinematic({
         height={768}
         loading="lazy"
         style={{ width: 'clamp(180px, 15vw, 280px)' }}
-        className="police-vehicle hidden xl:block pointer-events-none select-none absolute z-10 bottom-4 left-6 2xl:left-10 object-contain origin-bottom-left opacity-90 [transform:perspective(900px)_rotateY(-14deg)_rotateX(6deg)]"
+        className="police-vehicle police-vehicle--mouse hidden xl:block pointer-events-none select-none absolute z-10 bottom-4 left-6 2xl:left-10 object-contain origin-bottom-left opacity-90"
       />
 
 
