@@ -120,13 +120,8 @@ export function HeroCinematic({
                     <div className="text-[10px] uppercase tracking-[0.28em] text-primary/80 font-sans">
                       Equipe
                     </div>
-                    <div className="text-lg sm:text-xl font-bold text-foreground tracking-tight font-serif leading-tight">
-                      {t.name}
-                    </div>
-                    <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground/80 mt-0.5 font-sans">
-                      {t.motto}
-                    </div>
                   </div>
+
                   <ArrowRight className="relative ml-auto h-4 w-4 text-primary/60 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                 </button>
               </li>
