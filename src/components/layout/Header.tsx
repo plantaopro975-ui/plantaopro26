@@ -122,17 +122,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
       {/* Institutional identity */}
       <div className="flex items-center gap-3">
-        <div className="relative shrink-0">
-          <div className="absolute inset-0 rounded-md bg-primary/10 blur-md" aria-hidden />
-          <div className="relative h-11 w-11 lg:h-12 lg:w-12 rounded-md bg-gradient-to-br from-card to-background ring-1 ring-primary/30 shadow-inner flex items-center justify-center p-1">
-            <img
-              src={iseAcreBadge}
-              alt="Instituto Socioeducativo do Acre"
-              className="h-full w-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
-            />
-          </div>
-        </div>
-        <div className="hidden md:flex flex-col leading-tight border-l border-border/50 pl-3">
+        <div className="hidden md:flex flex-col leading-tight">
           <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
             ISE · Acre
           </span>
@@ -144,6 +134,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           </span>
         </div>
       </div>
+
 
 
       {/* Primary Navigation */}
