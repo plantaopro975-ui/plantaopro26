@@ -97,10 +97,8 @@ export function OperationsTeamCard({ team, onClick }: OperationsTeamCardProps) {
             {meta.callsign}
           </h3>
 
-          {/* Motto */}
-          <p className="font-mono-mil text-[10px] sm:text-[11px] text-muted-foreground mt-2 uppercase tracking-widest">
-            {meta.motto}
-          </p>
+
+
 
           {/* Divider */}
           <div className="w-12 h-px my-3" style={{ backgroundColor: `${meta.hex}80` }} />
