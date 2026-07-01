@@ -228,13 +228,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   </span>
 
                   <span
-                    className="relative inline-flex items-center justify-center rounded-full p-1 transition-all duration-300 group-hover:bg-accent/10 group-hover:shadow-[0_0_24px_hsl(var(--accent)/0.45)]"
+                    className="relative inline-flex items-center justify-center"
                     title={`Equipe ${t.name} — clique para acessar`}
                   >
-                    <span
-                      aria-hidden
-                      className="absolute inset-0 rounded-full ring-1 ring-accent/0 group-hover:ring-accent/50 transition-all duration-300"
-                    />
                     <img
                       src={t.icon}
                       alt=""
