@@ -525,61 +525,45 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   will-change: transform;
 }
 
-/* Shield — realistic pendulum sway (never full spin) */
+/* Shield — sway suave */
 @keyframes team-shield-sway {
-  0%, 100% { transform: translateY(0) rotate(-12deg); }
-  50%      { transform: translateY(-4px) rotate(12deg); }
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%      { transform: translateY(-2px) rotate(4deg); }
 }
 .animate-team-shield {
-  animation: team-shield-sway 3.8s ease-in-out infinite;
+  animation: team-shield-sway 6s ease-in-out infinite;
   transform-origin: 50% 15%;
   will-change: transform;
 }
 
-/* Helmet — subtle head-turn tilt */
+/* Helmet — inclinação sutil */
 @keyframes team-helmet-tilt {
-  0%, 100% { transform: translateY(0) rotate(-8deg) skewX(-1deg); }
-  50%      { transform: translateY(-5px) rotate(8deg) skewX(1deg); }
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-2px) rotate(3deg); }
 }
 .animate-team-helmet {
-  animation: team-helmet-tilt 4.6s ease-in-out infinite;
+  animation: team-helmet-tilt 6.5s ease-in-out infinite;
   transform-origin: 50% 60%;
   will-change: transform;
 }
 
-/* Radio — pulsing transmission glow + tiny shake (glow reduzido) */
+/* Radio — respiração leve */
 @keyframes team-radio-pulse {
-  0%, 100% { transform: translate(0,0) rotate(-2deg); filter: drop-shadow(0 3px 8px rgba(0,0,0,0.35)); }
-  25%      { transform: translate(-1px,-3px) rotate(1deg); }
-  50%      { transform: translate(1px,-6px) rotate(2deg); filter: drop-shadow(0 5px 12px rgba(46,163,216,0.28)); }
-  75%      { transform: translate(1px,-3px) rotate(-1deg); }
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-2px) rotate(1deg); }
 }
 .animate-team-radio {
-  animation: team-radio-pulse 3s ease-in-out infinite;
-  will-change: transform, filter;
+  animation: team-radio-pulse 5.5s ease-in-out infinite;
+  will-change: transform;
 }
 
-/* Beacon (giroflex) — strobe suave, halo enxuto */
-@keyframes team-beacon-strobe {
-  0%   { transform: translateY(0) rotate(-3deg) scale(1);      filter: drop-shadow(0 0 4px rgba(239,68,68,0.55))  drop-shadow(0 4px 10px rgba(0,0,0,0.35)); }
-  25%  { transform: translateY(-3px) rotate(0deg) scale(1.02); filter: drop-shadow(0 0 6px rgba(239,68,68,0.7))   drop-shadow(0 5px 12px rgba(0,0,0,0.35)); }
-  50%  { transform: translateY(-5px) rotate(3deg) scale(1);    filter: drop-shadow(0 0 4px rgba(59,130,246,0.55)) drop-shadow(0 4px 10px rgba(0,0,0,0.35)); }
-  75%  { transform: translateY(-3px) rotate(0deg) scale(1.02); filter: drop-shadow(0 0 6px rgba(59,130,246,0.7))  drop-shadow(0 5px 12px rgba(0,0,0,0.35)); }
-  100% { transform: translateY(0) rotate(-3deg) scale(1);      filter: drop-shadow(0 0 4px rgba(239,68,68,0.55))  drop-shadow(0 4px 10px rgba(0,0,0,0.35)); }
-}
-.animate-team-beacon {
-  animation: team-beacon-strobe 1.8s ease-in-out infinite;
-  transform-origin: 50% 80%;
-  will-change: transform, filter;
-}
-
-/* Handcuffs — swing pendular como par de aros balançando */
+/* Handcuffs — swing discreto */
 @keyframes team-handcuffs-swing {
-  0%, 100% { transform: rotate(-14deg) translateY(0); }
-  50%      { transform: rotate(14deg) translateY(-3px); }
+  0%, 100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(5deg) translateY(-1px); }
 }
 .animate-team-handcuffs {
-  animation: team-handcuffs-swing 3.4s ease-in-out infinite;
+  animation: team-handcuffs-swing 5.8s ease-in-out infinite;
   transform-origin: 50% 10%;
   will-change: transform;
 }
@@ -638,13 +622,10 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   0%, 100% { transform: translateY(0) translateX(0); }
   50%      { transform: translateY(-4px) translateX(2px); }
 }
-@keyframes police-strobe {
-  0%, 100% { filter: drop-shadow(0 18px 30px rgba(0,0,0,0.55)) drop-shadow(0 -6px 22px rgba(239,68,68,0.75)); }
-  50%      { filter: drop-shadow(0 18px 30px rgba(0,0,0,0.55)) drop-shadow(0 -6px 22px rgba(59,130,246,0.75)); }
-}
 .police-vehicle {
-  animation: police-drift 6s ease-in-out infinite, police-strobe 1.4s ease-in-out infinite;
+  animation: police-drift 6s ease-in-out infinite;
   transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 18px 30px rgba(0,0,0,0.55));
   will-change: transform, filter;
   max-width: none;
   right: auto;
