@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ArrowRight, ShieldCheck, Radio } from 'lucide-react';
 import heroImage from '@/assets/hero-noir-gold.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
@@ -37,33 +37,66 @@ export function HeroCinematic({
   unitsCount = 9,
 }: HeroCinematicProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const rafRef = useRef<number | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+  // Parallax otimizado: listener passivo, rect cacheado, rAF único, sem re-render.
+  useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const mx = ((e.clientX - rect.left) / rect.width) * 2 - 1;  // -1..1
-    const my = ((e.clientY - rect.top) / rect.height) * 2 - 1;
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
+    if (typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+    let rect = el.getBoundingClientRect();
+    let clientX = 0, clientY = 0;
+    let lastMx = 0, lastMy = 0;
+    let ticking = false;
+    let visible = true;
+
+    const refreshRect = () => { rect = el.getBoundingClientRect(); };
+
+    const flush = () => {
+      ticking = false;
+      const mx = ((clientX - rect.left) / rect.width) * 2 - 1;
+      const my = ((clientY - rect.top) / rect.height) * 2 - 1;
+      // Ignora movimento imperceptível para evitar style writes redundantes
+      if (Math.abs(mx - lastMx) < 0.005 && Math.abs(my - lastMy) < 0.005) return;
+      lastMx = mx; lastMy = my;
       el.style.setProperty('--mx', mx.toFixed(3));
       el.style.setProperty('--my', my.toFixed(3));
-    });
-  };
+    };
 
-  const handleMouseLeave = () => {
-    const el = sectionRef.current;
-    if (!el) return;
-    el.style.setProperty('--mx', '0');
-    el.style.setProperty('--my', '0');
-  };
+    const onMove = (e: MouseEvent) => {
+      clientX = e.clientX; clientY = e.clientY;
+      if (ticking || !visible) return;
+      ticking = true;
+      requestAnimationFrame(flush);
+    };
+
+    const onLeave = () => {
+      lastMx = 0; lastMy = 0;
+      el.style.setProperty('--mx', '0');
+      el.style.setProperty('--my', '0');
+    };
+
+    const onVisibility = () => { visible = !document.hidden; };
+
+    el.addEventListener('mousemove', onMove, { passive: true });
+    el.addEventListener('mouseleave', onLeave, { passive: true });
+    window.addEventListener('scroll', refreshRect, { passive: true });
+    window.addEventListener('resize', refreshRect, { passive: true });
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      el.removeEventListener('mousemove', onMove);
+      el.removeEventListener('mouseleave', onLeave);
+      window.removeEventListener('scroll', refreshRect);
+      window.removeEventListener('resize', refreshRect);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       className="relative w-full overflow-hidden rounded-xl border border-border/60 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
       style={{ minHeight: 'clamp(360px, 46vh, 520px)' }}
