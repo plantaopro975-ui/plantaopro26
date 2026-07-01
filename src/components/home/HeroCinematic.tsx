@@ -119,7 +119,7 @@ export function HeroCinematic({
       ref={sectionRef}
       className="relative w-full overflow-hidden rounded-xl border border-border/60 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
-      style={{ minHeight: 'clamp(300px, 38vh, 440px)' }}
+      style={{ minHeight: 'clamp(240px, 32vh, 360px)' }}
     >
       <img
         src={heroImage}
@@ -132,7 +132,7 @@ export function HeroCinematic({
       <div className="absolute inset-0" style={{ background: 'var(--gradient-hero-overlay)' }} aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
 
-      {/* Agente tático interativo — desktop only, arrastável */}
+      {/* Agente tático — desktop only, menor */}
       <img
         src={agentFigure}
         alt=""
@@ -141,12 +141,10 @@ export function HeroCinematic({
         height={1280}
         loading="lazy"
         draggable={false}
-        className="agent-figure block sm:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[52%] xl:h-[58%] w-auto object-contain object-bottom pointer-events-none [filter:drop-shadow(0_20px_40px_rgba(0,0,0,0.6))]"
+        className="agent-figure hidden lg:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[70%] xl:h-[78%] w-auto object-contain object-bottom pointer-events-none [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.6))]"
       />
 
-
-
-      {/* Viatura policial 3D — desktop only, interage com hover das equipes E com o mouse */}
+      {/* Viatura policial 3D — desktop only */}
       <img
         src={policeVehicle}
         alt=""
@@ -154,50 +152,38 @@ export function HeroCinematic({
         width={1536}
         height={768}
         loading="lazy"
-        style={{ width: 'clamp(180px, 15vw, 280px)' }}
-        className="police-vehicle police-vehicle--mouse hidden xl:block pointer-events-none select-none absolute z-10 bottom-4 left-6 2xl:left-10 object-contain origin-bottom-left opacity-90"
+        style={{ width: 'clamp(140px, 12vw, 220px)' }}
+        className="police-vehicle police-vehicle--mouse hidden xl:block pointer-events-none select-none absolute z-10 bottom-3 left-4 2xl:left-8 object-contain origin-bottom-left opacity-90"
       />
 
-
-      <div className="relative z-10 h-full flex flex-col gap-3 sm:gap-4 px-3 sm:px-6 lg:px-10 py-3 sm:py-5">
-        {/* eyebrow */}
-        <div className="flex items-center justify-between gap-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border border-primary/30 bg-background/50 backdrop-blur-md">
+      <div className="relative z-10 h-full flex flex-col gap-2 px-3 sm:px-5 lg:px-8 py-2.5 sm:py-3">
+        {/* eyebrow compacto */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border border-primary/30 bg-background/50 backdrop-blur-md">
             <ShieldCheck className="h-3 w-3 text-primary" />
-            <span className="text-[10px] font-semibold tracking-[0.28em] uppercase text-primary/95 font-sans">
+            <span className="text-[9px] font-semibold tracking-[0.24em] uppercase text-primary/95 font-sans">
               ISE · Acre · Comando
             </span>
           </div>
-          <div className="hidden sm:inline-flex items-center gap-1.5 text-[10px] tracking-[0.24em] uppercase text-muted-foreground/70 font-medium font-sans">
+          <div className="hidden sm:inline-flex items-center gap-1.5 text-[9px] tracking-[0.22em] uppercase text-muted-foreground/70 font-medium font-sans">
             <Radio className="h-3 w-3 text-primary/70" />
-            Op. 24/7
+            24/7
           </div>
         </div>
 
-        {/* Headline + Team Bento */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.05fr,1.15fr] gap-6 lg:gap-10 items-center flex-1">
-          <div className="max-w-2xl xl:pb-[clamp(180px,15vw,280px)]">
-            <h1 className="text-[2rem] sm:text-[2.6rem] lg:text-[3rem] leading-[1.05] tracking-tight text-foreground font-serif">
+        {/* Headline + Team Bento — compacto */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr,1.2fr] gap-3 lg:gap-6 items-center flex-1">
+          <div className="max-w-2xl hidden lg:block">
+            <h1 className="text-[1.6rem] xl:text-[2rem] leading-[1.05] tracking-tight text-foreground font-serif">
               Segurança Socioeducativa,{' '}
               <span className="italic text-primary">refinada</span>.
             </h1>
-            <p className="mt-4 max-w-lg text-sm sm:text-[15px] text-muted-foreground/90 leading-relaxed font-sans">
-              Selecione sua equipe para acessar o comando operacional —
-              arquitetura blindada, estética editorial.
+            <p className="mt-2 max-w-md text-[12px] xl:text-[13px] text-muted-foreground/90 leading-snug font-sans">
+              Selecione sua equipe para acessar o comando operacional.
             </p>
 
             {onPrimaryAction && (
-              <div className="mt-6 flex flex-wrap items-center gap-4">
-                <button
-                  type="button"
-                  onClick={onPrimaryAction}
-                  className="group inline-flex items-center gap-2 px-6 py-3 rounded-sm bg-primary text-primary-foreground text-[13px] font-semibold tracking-[0.14em] uppercase font-sans transition-all hover:bg-primary/90 hover:translate-y-[-1px] shadow-[0_10px_28px_-10px_hsl(42_55%_54%/0.55)]"
-                  aria-label="Acessar plataforma"
-                >
-                  Acessar plataforma
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                </button>
-
+              <div className="mt-3 flex flex-wrap items-center gap-3">
                 <div className="flex items-stretch gap-px rounded-sm overflow-hidden border border-border/60 bg-background/40 backdrop-blur-md">
                   <Stat value={agentCount} label="Agentes" />
                   <Stat value={unitsCount} label="Unidades" />
@@ -207,8 +193,8 @@ export function HeroCinematic({
             )}
           </div>
 
-          {/* Teams — 3D noir & gold, clicáveis */}
-          <ul className="hero-team-grid grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full" role="list" aria-label="Equipes operacionais">
+          {/* Teams — compactos */}
+          <ul className="hero-team-grid grid grid-cols-2 gap-2 sm:gap-2.5 w-full" role="list" aria-label="Equipes operacionais">
             {TEAMS.map((t) => (
               <li key={t.name} className="flex">
                 <button
@@ -237,7 +223,7 @@ export function HeroCinematic({
                     el.style.setProperty('--tilt-x', '0deg');
                     el.style.setProperty('--tilt-y', '0deg');
                   }}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-2 p-2.5 sm:p-3.5 lg:p-4 min-h-[110px] sm:min-h-[130px] lg:min-h-[150px] rounded-sm border border-border/50 bg-background/55 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2 sm:p-2.5 min-h-[74px] sm:min-h-[86px] lg:min-h-[96px] rounded-sm border border-border/50 bg-background/55 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   <span
@@ -249,19 +235,11 @@ export function HeroCinematic({
                     alt=""
                     loading="lazy"
                     style={{ animationDelay: `${TEAMS.indexOf(t) * 0.6}s` }}
-                    className={`${t.anim} team-icon-3d relative h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 object-contain shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]`}
+                    className={`${t.anim} team-icon-3d relative h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12 object-contain shrink-0 drop-shadow-[0_3px_8px_rgba(0,0,0,0.4)]`}
                   />
-
-
-                  <div className="relative flex flex-col items-center gap-1">
-                    <div className="text-sm sm:text-base lg:text-lg uppercase tracking-[0.22em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
-                      {t.name}
-                    </div>
-
+                  <div className="relative text-[11px] sm:text-xs lg:text-sm uppercase tracking-[0.2em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                    {t.name}
                   </div>
-
-
-
                 </button>
               </li>
             ))}
@@ -274,13 +252,14 @@ export function HeroCinematic({
 
 function Stat({ value, label }: { value: string | number; label: string }) {
   return (
-    <div className="px-4 py-2 bg-background/30 text-center">
-      <div className="text-base font-bold text-primary leading-none font-serif">
+    <div className="px-2.5 py-1 bg-background/30 text-center">
+      <div className="text-sm font-bold text-primary leading-none font-serif">
         {value}
       </div>
-      <div className="mt-1 text-[9px] tracking-[0.2em] uppercase text-muted-foreground/80 font-sans">
+      <div className="mt-0.5 text-[8px] tracking-[0.2em] uppercase text-muted-foreground/80 font-sans">
         {label}
       </div>
     </div>
   );
 }
+

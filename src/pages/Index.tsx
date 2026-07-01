@@ -1210,7 +1210,7 @@ export default function Index() {
 
 
         {/* Cinematic institutional hero — teams integradas como bento 3D */}
-        <div className="px-3 sm:px-6 pt-3">
+        <div className="px-2 sm:px-4 pt-2">
           <HeroCinematic
             onPrimaryAction={() => {
               const first = document.querySelector<HTMLElement>('[data-team-card]');
@@ -1220,14 +1220,15 @@ export default function Index() {
           />
         </div>
 
-        {/* Dynamic Agent Info Banner - Shows rotating critical info for logged agents */}
-        <div className="px-3 sm:px-6 py-2">
+        {/* Dynamic Agent Info Banner */}
+        <div className="px-2 sm:px-4 py-1">
           <HomeAgentInfoBanner />
         </div>
+
       </header>
 
       {/* Quick Access — apenas quando há credenciais salvas */}
-      <section className="px-3 sm:px-6 pb-3 relative z-10">
+      <section className="px-2 sm:px-4 pb-2 relative z-10">
         {getSavedCredentials().length > 0 && (
           <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
             <QuickAccessPanel
@@ -1239,6 +1240,7 @@ export default function Index() {
           </div>
         )}
       </section>
+
 
 
 
