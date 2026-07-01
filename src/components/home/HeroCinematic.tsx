@@ -188,7 +188,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[104px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border border-primary/30 bg-[linear-gradient(160deg,hsl(var(--card)/0.85),hsl(var(--background)/0.7))] backdrop-blur-xl hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[124px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border border-primary/30 bg-[linear-gradient(160deg,hsl(var(--card)/0.85),hsl(var(--background)/0.7))] backdrop-blur-xl hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   {/* Canto oficial (cobre) */}
