@@ -186,11 +186,30 @@ export default function About() {
                     Origem do Projeto
                   </h2>
                 </div>
-                <p className="text-xs leading-snug text-slate-300 flex-1">
-                  Idealizado por um <strong className="text-amber-300">Agente Socioeducativo</strong> de{' '}
-                  <strong className="text-amber-300">Feijó/AC</strong>, para trazer praticidade a
-                  quem atua na linha de frente.
-                </p>
+                <div className="flex items-start gap-2 flex-1">
+                  <div className="flex-shrink-0 flex flex-col items-center gap-1">
+                    <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-amber-500/10 to-transparent ring-1 ring-amber-400/25 p-1.5 flex items-center justify-center">
+                      <img
+                        src={logoPlantaoPro}
+                        alt="Logo PlantãoPro"
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                    <a
+                      href={logoPlantaoPro}
+                      download="logo-plantao-pro.png"
+                      className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors"
+                    >
+                      <Download className="h-2.5 w-2.5" />
+                      Baixar
+                    </a>
+                  </div>
+                  <p className="text-xs leading-snug text-slate-300">
+                    Idealizado por um <strong className="text-amber-300">Agente Socioeducativo</strong> de{' '}
+                    <strong className="text-amber-300">Feijó/AC</strong>, para trazer praticidade a
+                    quem atua na linha de frente.
+                  </p>
+                </div>
                 <div className="flex flex-wrap gap-1.5">
                   <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-300">
                     <Award className="h-2.5 w-2.5" />
