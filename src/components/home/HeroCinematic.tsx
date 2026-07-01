@@ -9,6 +9,7 @@ import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
 import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
+import teamsHubBg from '@/assets/hero-teams-hub.jpg';
 import { getTeamPoster } from '@/lib/teamAssets';
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
