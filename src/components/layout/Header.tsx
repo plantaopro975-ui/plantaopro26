@@ -265,33 +265,32 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         </DropdownMenu>
       </div>
 
-      {/* Tagline institucional — sempre visível, sem disputar espaço com ações */}
+      {/* Tagline institucional — faixa inferior centralizada, sem sobreposição */}
       <button
         type="button"
         onClick={() => handleNavigate('/about')}
         className={cn(
-          "group absolute inset-x-2 bottom-1 z-10 flex h-4 items-center justify-center gap-1 overflow-hidden rounded-sm",
-          "sm:inset-x-40 sm:bottom-1/2 sm:h-auto sm:translate-y-1/2 sm:rounded-md sm:px-2 sm:py-1",
-          "select-none whitespace-nowrap hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors cursor-pointer",
+          "group absolute left-0 right-0 bottom-0 z-10 mx-auto flex w-full max-w-[95%] items-center justify-center gap-1.5 px-2 py-1",
+          "select-none hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors cursor-pointer",
         )}
         aria-label="Sobre o app — QSL, Feijó! Feito por agente para Agente; Franc.D'nis"
         title="Sobre o app"
       >
-        <span className="hidden lg:block h-px w-6 shrink-0 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
-        <p className="min-w-0 truncate text-center text-[9px] sm:text-[10px] md:text-[11px] xl:text-[13px] font-mono font-semibold tracking-[0.08em] sm:tracking-[0.16em] uppercase text-foreground/90 group-hover:text-foreground">
+        <span className="hidden md:block h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent to-primary/50" aria-hidden />
+        <p className="text-center leading-tight text-[9px] sm:text-[10px] md:text-[11px] xl:text-[12px] font-mono font-semibold tracking-[0.1em] uppercase text-foreground/90 group-hover:text-foreground whitespace-normal sm:whitespace-nowrap">
           <span className="text-primary font-bold">QSL</span>
           <span className="text-muted-foreground">, </span>
           <span className="text-foreground">Feijó!</span>
           <span className="mx-1 sm:mx-2 text-muted-foreground/60">·</span>
           <span className="text-muted-foreground normal-case tracking-normal font-sans italic">
-            Feito por agente para Agente;
+            Feito por agente para Agente
           </span>
           <span className="mx-1 sm:mx-2 text-primary/50">·</span>
           <span className="text-primary/90 font-semibold normal-case tracking-normal">
             Franc.D'nis
           </span>
         </p>
-        <span className="hidden lg:block h-px w-6 shrink-0 bg-gradient-to-l from-transparent to-primary/60" aria-hidden />
+        <span className="hidden md:block h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent to-primary/50" aria-hidden />
       </button>
     </header>
   );
