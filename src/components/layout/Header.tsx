@@ -139,13 +139,13 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           </SheetContent>
         </Sheet>
 
-        <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-border/50">
-          <RadarSweep size={32} />
+        <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 ml-1 border-l border-border/50">
+          <RadarSweep size={28} />
           <div className="flex flex-col leading-tight">
-            <span className="text-[10px] font-bold tracking-[0.28em] text-success uppercase font-mono">
+            <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-success uppercase font-mono">
               Radar Ativo
             </span>
-            <span className="text-[11px] font-semibold text-foreground/90 font-mono tabular-nums">
+            <span className="text-[10px] sm:text-[11px] font-semibold text-foreground/90 font-mono tabular-nums">
               <span className="text-primary">{onlineCount}</span>
               <span className="text-muted-foreground"> online · </span>
               <span className="tracking-[0.2em] uppercase text-[9px]">Rede 24/7</span>
