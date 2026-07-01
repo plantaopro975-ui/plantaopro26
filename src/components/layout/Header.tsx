@@ -123,6 +123,17 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
       {/* Institutional identity */}
       <div className="flex items-center gap-3">
+        <div className="relative shrink-0">
+          <span className="absolute inset-0 rounded-full bg-primary/20 blur-md" aria-hidden />
+          <img
+            src={logoEmblem}
+            alt="Plantão Pro"
+            width={40}
+            height={40}
+            loading="lazy"
+            className="relative h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
+          />
+        </div>
         <div className="hidden md:flex flex-col leading-tight">
           <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
             ISE · Acre
