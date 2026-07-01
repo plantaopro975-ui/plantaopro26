@@ -45,7 +45,7 @@ import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuick
 import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDialog';
 import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
-import { InstitutionalBanner } from '@/components/InstitutionalBanner';
+import { CommandStrip } from '@/components/home/CommandStrip';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 import { InstitutionalPillars } from '@/components/home/InstitutionalPillars';
@@ -1207,7 +1207,7 @@ export default function Index() {
 
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 shrink-0">
-        <InstitutionalBanner />
+        <CommandStrip />
 
 
         {/* Cinematic institutional hero (Navy Trust + Amber) */}
