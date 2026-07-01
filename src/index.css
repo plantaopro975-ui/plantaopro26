@@ -573,6 +573,33 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   will-change: transform, filter;
 }
 
+/* Handcuffs — swing pendular como par de aros balançando */
+@keyframes team-handcuffs-swing {
+  0%, 100% { transform: rotate(-14deg) translateY(0); }
+  50%      { transform: rotate(14deg) translateY(-3px); }
+}
+.animate-team-handcuffs {
+  animation: team-handcuffs-swing 3.4s ease-in-out infinite;
+  transform-origin: 50% 10%;
+  will-change: transform;
+}
+
+/* Giroflex funcional — luzes vermelha/azul alternando */
+.giroflex-wrap { position: absolute; pointer-events: none; display: flex; gap: 4px; }
+.giroflex-light {
+  width: 8px; height: 8px; border-radius: 9999px;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor, 0 0 22px currentColor;
+  opacity: 0.25;
+  animation: giroflex-blink 0.55s steps(2, jump-none) infinite;
+}
+.giroflex-light.red  { color: #ef4444; }
+.giroflex-light.blue { color: #3b82f6; animation-delay: 0.275s; }
+@keyframes giroflex-blink {
+  0%, 45%   { opacity: 1; transform: scale(1.15); }
+  50%, 100% { opacity: 0.15; transform: scale(0.9); }
+}
+
 /* Card tático — tilt 3D suave, sem "pulo" */
 .team-card-3d {
   position: relative;
