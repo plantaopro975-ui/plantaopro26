@@ -1262,8 +1262,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Institutional pillars — bento grid (Phase 4) */}
-      <InstitutionalPillars />
 
 
 
