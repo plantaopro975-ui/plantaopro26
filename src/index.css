@@ -501,12 +501,33 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   will-change: transform, filter;
 }
 
+/* Police vehicle — idle drift + strobe glow, nudges when team hovered */
+@keyframes police-drift {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50%      { transform: translateY(-4px) translateX(2px); }
+}
+@keyframes police-strobe {
+  0%, 100% { filter: drop-shadow(0 18px 30px rgba(0,0,0,0.55)) drop-shadow(0 -6px 22px rgba(239,68,68,0.75)); }
+  50%      { filter: drop-shadow(0 18px 30px rgba(0,0,0,0.55)) drop-shadow(0 -6px 22px rgba(59,130,246,0.75)); }
+}
+.police-vehicle {
+  animation: police-drift 6s ease-in-out infinite, police-strobe 1.4s ease-in-out infinite;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, filter;
+}
+.hero-team-grid:hover ~ .police-vehicle,
+.hero-team-grid:focus-within ~ .police-vehicle {
+  transform: translateX(-14px) translateY(-6px) scale(1.02);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-team-float,
   .animate-team-shield,
   .animate-team-helmet,
   .animate-team-radio,
-  .animate-team-beacon { animation: none; }
+  .animate-team-beacon,
+  .police-vehicle { animation: none; }
 }
+
 
 
