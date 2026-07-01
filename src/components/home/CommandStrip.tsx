@@ -126,15 +126,10 @@ export function CommandStrip() {
             </span>
           )}
 
-          {/* Identidade (mesma tipografia do Header) */}
+          {/* Identidade (sem redundância com o Header) */}
           <div className="min-w-0 border-l border-border/50 pl-3 leading-tight">
-            <div className="flex items-baseline gap-2">
-              <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
-                ISE · Acre
-              </span>
-            </div>
-            <span className="block text-[13px] sm:text-sm font-bold text-foreground font-serif -mt-0.5 truncate">
-              Plantão<span className="text-primary">Pro</span> · Comando Operacional
+            <span className="block text-[13px] sm:text-sm font-bold text-foreground font-serif truncate">
+              Comando <span className="text-primary">Operacional</span>
             </span>
             <span className="hidden sm:block text-[10px] text-muted-foreground/80 tracking-wider uppercase font-mono">
               Gestão inteligente de plantões
