@@ -119,7 +119,7 @@ export function HeroCinematic({
       ref={sectionRef}
       className="relative w-full overflow-hidden rounded-xl border border-border/60 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
-      style={{ minHeight: 'clamp(240px, 32vh, 360px)' }}
+      style={{ minHeight: 'clamp(200px, 26vh, 300px)' }}
     >
       <img
         src={heroImage}
@@ -171,27 +171,9 @@ export function HeroCinematic({
           </div>
         </div>
 
-        {/* Headline + Team Bento — compacto */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr,1.2fr] gap-3 lg:gap-6 items-center flex-1">
-          <div className="max-w-2xl hidden lg:block">
-            <h1 className="text-[1.6rem] xl:text-[2rem] leading-[1.05] tracking-tight text-foreground font-serif">
-              Segurança Socioeducativa,{' '}
-              <span className="italic text-primary">refinada</span>.
-            </h1>
-            <p className="mt-2 max-w-md text-[12px] xl:text-[13px] text-muted-foreground/90 leading-snug font-sans">
-              Selecione sua equipe para acessar o comando operacional.
-            </p>
+        {/* Team Bento — compacto (headline removido para caber em uma tela) */}
+        <div className="flex-1 flex items-center">
 
-            {onPrimaryAction && (
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <div className="flex items-stretch gap-px rounded-sm overflow-hidden border border-border/60 bg-background/40 backdrop-blur-md">
-                  <Stat value={agentCount} label="Agentes" />
-                  <Stat value={unitsCount} label="Unidades" />
-                  <Stat value="24/7" label="Ativo" />
-                </div>
-              </div>
-            )}
-          </div>
 
           {/* Teams — compactos */}
           <ul className="hero-team-grid grid grid-cols-2 gap-2 sm:gap-2.5 w-full" role="list" aria-label="Equipes operacionais">
