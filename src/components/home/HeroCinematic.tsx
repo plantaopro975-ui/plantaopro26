@@ -114,7 +114,7 @@ export function HeroCinematic({
                     src={t.icon}
                     alt=""
                     loading="lazy"
-                    className="relative h-14 w-14 sm:h-16 sm:w-16 object-contain shrink-0 drop-shadow-[0_4px_14px_rgba(201,168,76,0.4)] transition-transform group-hover:scale-110 group-hover:-translate-y-0.5"
+                    className="relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_6px_18px_rgba(201,168,76,0.45)] transition-transform group-hover:scale-110 group-hover:-translate-y-0.5"
                   />
                   <div className="relative min-w-0">
                     <div className="text-[10px] uppercase tracking-[0.28em] text-primary/80 font-sans">
