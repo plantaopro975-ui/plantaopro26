@@ -1205,11 +1205,8 @@ export default function Index() {
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
-      {/* Header with PLANTÃO PRO Banner at the very top */}
+      {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 shrink-0">
-        {/* Tactical top navigation (Obsidian Steel) */}
-        <Header />
-        {/* Institutional Banner - PLANTÃO PRO - Full top position */}
         <InstitutionalBanner />
 
 
