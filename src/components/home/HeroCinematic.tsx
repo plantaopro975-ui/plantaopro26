@@ -215,15 +215,20 @@ export function HeroCinematic({
                   onClick={() => onTeamClick?.(t.name)}
                   onMouseMove={(e) => {
                     const el = e.currentTarget;
-                    const r = el.getBoundingClientRect();
-                    const px = ((e.clientX - r.left) / r.width) * 100;
-                    const py = ((e.clientY - r.top) / r.height) * 100;
-                    const rx = ((py - 50) / 50) * -6; // tilt X
-                    const ry = ((px - 50) / 50) * 8;  // tilt Y
-                    el.style.setProperty('--tilt-x', `${rx.toFixed(2)}deg`);
-                    el.style.setProperty('--tilt-y', `${ry.toFixed(2)}deg`);
-                    el.style.setProperty('--px', `${px}%`);
-                    el.style.setProperty('--py', `${py}%`);
+                    if ((el as any)._raf) return;
+                    const cx = e.clientX, cy = e.clientY;
+                    (el as any)._raf = requestAnimationFrame(() => {
+                      (el as any)._raf = 0;
+                      const r = el.getBoundingClientRect();
+                      const px = ((cx - r.left) / r.width) * 100;
+                      const py = ((cy - r.top) / r.height) * 100;
+                      const rx = ((py - 50) / 50) * -3;
+                      const ry = ((px - 50) / 50) * 4;
+                      el.style.setProperty('--tilt-x', `${rx.toFixed(2)}deg`);
+                      el.style.setProperty('--tilt-y', `${ry.toFixed(2)}deg`);
+                      el.style.setProperty('--px', `${px}%`);
+                      el.style.setProperty('--py', `${py}%`);
+                    });
                   }}
                   onMouseLeave={(e) => {
                     const el = e.currentTarget;
