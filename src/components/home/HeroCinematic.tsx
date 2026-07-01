@@ -132,7 +132,7 @@ export function HeroCinematic({
       <div className="absolute inset-0" style={{ background: 'var(--gradient-hero-overlay)' }} aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
 
-      {/* Agente tático — desktop only, menor */}
+      {/* Agente tático — visível em todos os breakpoints */}
       <img
         src={agentFigure}
         alt=""
@@ -141,10 +141,10 @@ export function HeroCinematic({
         height={1280}
         loading="lazy"
         draggable={false}
-        className="agent-figure hidden lg:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[70%] xl:h-[78%] w-auto object-contain object-bottom pointer-events-none [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.6))]"
+        className="agent-figure block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[55%] sm:h-[65%] lg:h-[75%] xl:h-[80%] w-auto object-contain object-bottom pointer-events-none [filter:drop-shadow(0_12px_28px_rgba(0,0,0,0.6))]"
       />
 
-      {/* Viatura policial 3D — desktop only */}
+      {/* Viatura policial 3D — visível em todos os breakpoints */}
       <img
         src={policeVehicle}
         alt=""
@@ -152,9 +152,10 @@ export function HeroCinematic({
         width={1536}
         height={768}
         loading="lazy"
-        style={{ width: 'clamp(140px, 12vw, 220px)' }}
-        className="police-vehicle police-vehicle--mouse hidden xl:block pointer-events-none select-none absolute z-10 bottom-3 left-4 2xl:left-8 object-contain origin-bottom-left opacity-90"
+        style={{ width: 'clamp(90px, 14vw, 220px)' }}
+        className="police-vehicle police-vehicle--mouse block pointer-events-none select-none absolute z-10 bottom-2 left-2 sm:left-4 xl:left-8 object-contain origin-bottom-left opacity-90"
       />
+
 
       <div className="relative z-10 h-full flex flex-col gap-2 px-3 sm:px-5 lg:px-8 py-2.5 sm:py-3">
         {/* eyebrow compacto */}
