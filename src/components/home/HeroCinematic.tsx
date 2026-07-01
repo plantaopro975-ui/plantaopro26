@@ -141,11 +141,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           {...vehicleHandlers}
           className="h-full w-auto object-contain cursor-grab active:cursor-grabbing opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
         />
-        {/* Giroflex — luzes vermelha/azul alternando no teto */}
-        <span className="giroflex-wrap" style={{ top: '12%', left: '50%', transform: 'translateX(-50%)' }} aria-hidden>
-          <span className="giroflex-light red" />
-          <span className="giroflex-light blue" />
-        </span>
       </div>
 
       {/* Agente tático — arrastável */}
