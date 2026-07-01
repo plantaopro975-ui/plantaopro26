@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ShieldCheck, Radio, Shield } from 'lucide-react';
+import { Radio, Shield } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import bannerBg from '@/assets/institutional-banner-bg.jpg';
