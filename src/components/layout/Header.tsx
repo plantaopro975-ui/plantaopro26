@@ -126,7 +126,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
             ISE · Acre
           </span>
-          <span className="text-[13px] font-bold text-foreground -mt-0.5 font-serif italic">
+          <span className="text-[13px] font-bold text-foreground -mt-0.5 font-serif">
             Comando Tático
           </span>
           <span className="text-[9px] text-muted-foreground/80 tracking-wider uppercase font-mono">
