@@ -163,25 +163,25 @@ export function AuthDialog({
             </div>
 
             {/* Emblem + title — horizontal compact */}
-            <div className="absolute bottom-0 inset-x-0 px-4 pb-3 flex items-center gap-3">
+            <div className="absolute bottom-0 inset-x-0 px-3 sm:px-4 pb-2.5 sm:pb-3 flex items-center gap-2.5 sm:gap-3">
               {teamEmblem && (
                 <div className="relative shrink-0">
                   <div className="absolute -inset-0.5 rounded-full blur-sm opacity-60"
                        style={{ background: teamColor!.primary }} />
                   <img src={teamEmblem} alt=""
-                    className="relative h-11 w-11 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]" />
+                    className="relative h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]" />
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <div className="text-[9px] tracking-[0.32em] font-mono font-bold uppercase leading-none"
+                <div className="text-[9px] sm:text-[10px] tracking-[0.28em] sm:tracking-[0.32em] font-mono font-bold uppercase leading-none"
                      style={{ color: teamColor!.primary }}>
                   Equipe {teamKey}
                 </div>
-                <h2 className="text-lg font-bold tracking-tight text-white leading-tight mt-1 font-stencil truncate">
+                <h2 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-white leading-tight mt-1 font-stencil truncate">
                   {title}
                 </h2>
                 {subtitle && (
-                  <p className="text-[11px] text-white/65 leading-tight mt-0.5 truncate">{subtitle}</p>
+                  <p className="text-[10px] sm:text-[11px] text-white/65 leading-tight mt-0.5 truncate">{subtitle}</p>
                 )}
               </div>
             </div>
