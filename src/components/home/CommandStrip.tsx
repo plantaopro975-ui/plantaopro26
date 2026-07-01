@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ShieldCheck, Radio } from 'lucide-react';
-import iseAcreBadge from '@/assets/ise-acre-badge.png';
+import { ShieldCheck, Radio, Shield } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 
 /**
