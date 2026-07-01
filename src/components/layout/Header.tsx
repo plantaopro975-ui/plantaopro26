@@ -21,7 +21,7 @@ import { MobileSidebar } from './MobileSidebar';
 import { OperationalStatus } from './OperationalStatus';
 import { cn } from '@/lib/utils';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
-import logoEmblem from '@/assets/logo-plantao-pro-emblem.png';
+import logoEmblem from '@/assets/logo-plantao-pro.png';
 
 export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const { user, signOut, userRole, masterSession } = useAuth();
