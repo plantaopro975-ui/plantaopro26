@@ -16,7 +16,7 @@ import {
   CheckCircle2,
   Download,
 } from 'lucide-react';
-import iseAcreBadge from '@/assets/ise-acre-badge.png';
+import iseAcreBadge from '@/assets/logo-plantao-pro.png';
 
 const features = [
   { icon: Calendar, title: 'Plantões', description: 'Visualização e alertas automáticos.' },
