@@ -21,25 +21,66 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
         <div
           ref={ref}
           className={cn(
-            'relative w-full text-center py-1.5',
-            'border-t border-border/50 bg-background/60 backdrop-blur-sm',
+            'relative w-full overflow-hidden',
+            'border-t border-primary/20',
+            'bg-[linear-gradient(180deg,hsl(220_35%_6%/0.92)_0%,hsl(222_40%_4%/0.98)_100%)]',
+            'backdrop-blur-md',
             className,
           )}
         >
+          {/* Steel accent line */}
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary))_50%,transparent)] opacity-80"
           />
-          <p className="text-[9px] text-muted-foreground/70 flex items-center justify-center gap-1.5 font-medium tracking-wide">
-            <ShieldCheck className="h-3 w-3 text-primary/80" />
-            <span className="uppercase tracking-[0.18em]">ISE · Acre</span>
-            <span className="text-muted-foreground/30">·</span>
-            <span className="font-bold text-primary tracking-[0.16em]">FRANC D'NIS</span>
-            <span className="text-muted-foreground/40">© {year}</span>
-          </p>
+          {/* Micro grid */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage:
+                'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
+              backgroundSize: '24px 24px',
+            }}
+          />
+
+          <div className="relative mx-auto max-w-6xl px-4 py-2 flex items-center justify-between gap-3">
+            {/* Left: Signature */}
+            <div className="flex items-center gap-2 min-w-0">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="text-[10px] font-bold tracking-[0.22em] uppercase text-primary font-serif truncate">
+                Franc D'Nis
+              </span>
+              <span className="hidden sm:inline text-[9px] text-muted-foreground/50 tracking-widest">
+                / ENGENHARIA
+              </span>
+            </div>
+
+            {/* Center: Status */}
+            <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/40">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
+                <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
+              </span>
+              <span className="text-[9px] font-semibold tracking-[0.20em] uppercase text-success/90">
+                Operacional
+              </span>
+            </div>
+
+            {/* Right: Meta */}
+            <div className="flex items-center gap-2 text-[9px] text-muted-foreground/70 tracking-[0.18em] uppercase">
+              <Lock className="h-3 w-3 text-primary/60" />
+              <span className="hidden sm:inline">LGPD · TLS 1.3</span>
+              <span className="text-muted-foreground/40">·</span>
+              <span className="font-semibold text-foreground/80">v2.7</span>
+              <span className="text-muted-foreground/40 hidden xs:inline">·</span>
+              <span className="hidden xs:inline">© {year}</span>
+            </div>
+          </div>
         </div>
       );
     }
+
 
     return (
       <footer
