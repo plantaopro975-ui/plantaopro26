@@ -80,7 +80,7 @@ export function CommandStrip() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
       />
 
-      <div className="relative flex flex-wrap items-center gap-x-4 gap-y-2 px-3 sm:px-5 py-2.5 sm:py-3">
+      <div className="relative flex items-center gap-x-4 px-4 lg:px-6 h-12 sm:h-14">
         {/* Brasão + triple-click */}
         <div className="relative flex items-center gap-3 min-w-0">
           <button
@@ -95,9 +95,10 @@ export function CommandStrip() {
                 : 'ring-border/60 hover:ring-primary/40',
             )}
           >
-            <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center p-1">
-              <Shield className="h-5 w-5 text-primary" strokeWidth={2.2} />
+            <div className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center">
+              <Shield className="h-4 w-4 text-primary" strokeWidth={2.2} />
             </div>
+
 
             {/* Progresso do triple-click */}
             {pulse > 0 && !confirmed && (
@@ -128,26 +129,25 @@ export function CommandStrip() {
 
           {/* Identidade (sem redundância com o Header) */}
           <div className="min-w-0 border-l border-border/50 pl-3 leading-tight">
-            <span className="block text-[13px] sm:text-sm font-bold text-foreground font-serif truncate">
+            <span className="block text-[12px] sm:text-[13px] font-bold text-foreground font-serif truncate">
               Comando <span className="text-primary">Operacional</span>
             </span>
-            <span className="hidden sm:block text-[10px] text-muted-foreground/80 tracking-wider uppercase font-mono">
+            <span className="hidden md:block text-[9px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono">
               Gestão inteligente de plantões
             </span>
           </div>
         </div>
 
-        {/* Espaçador flexível */}
-        <div className="flex-1" />
 
         {/* Relógio + status (mesmo padrão do Footer) */}
         <div className="flex items-center gap-3 sm:gap-4 ml-auto">
           <div className="text-right leading-tight">
-            <div className="font-mono text-sm sm:text-base tabular-nums text-foreground">{time}</div>
-            <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono">
+            <div className="font-mono text-[13px] sm:text-sm tabular-nums text-foreground">{time}</div>
+            <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground font-mono">
               {date}
             </div>
           </div>
+
           <div className="hidden sm:flex items-center gap-2 rounded-md bg-card/60 px-2.5 py-1 ring-1 ring-border/60">
             <span className="relative flex h-2 w-2">
               <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
