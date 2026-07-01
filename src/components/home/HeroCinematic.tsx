@@ -72,7 +72,8 @@ export function HeroCinematic({
         width={1536}
         height={768}
         loading="lazy"
-        className="police-vehicle hidden xl:block pointer-events-none select-none absolute z-10 bottom-3 xl:left-6 2xl:left-10 w-[16%] 2xl:w-[14%] max-w-[280px] object-contain origin-bottom-left opacity-90 [transform:perspective(900px)_rotateY(-14deg)_rotateX(6deg)]"
+        style={{ width: 'clamp(180px, 15vw, 280px)' }}
+        className="police-vehicle hidden xl:block pointer-events-none select-none absolute z-10 bottom-4 left-6 2xl:left-10 object-contain origin-bottom-left opacity-90 [transform:perspective(900px)_rotateY(-14deg)_rotateX(6deg)]"
       />
 
 
@@ -93,7 +94,7 @@ export function HeroCinematic({
 
         {/* Headline + Team Bento */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.05fr,1.15fr] gap-6 lg:gap-10 items-center flex-1">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl xl:pb-[clamp(180px,15vw,280px)]">
             <h1 className="text-[2rem] sm:text-[2.6rem] lg:text-[3rem] leading-[1.05] tracking-tight text-foreground font-serif">
               Segurança Socioeducativa,{' '}
               <span className="italic text-primary">refinada</span>.
