@@ -1315,9 +1315,8 @@ export default function Index() {
                 Ativo
               </span>
             </div>
-            <div className="p-0.5 rounded-md bg-card/60 ring-1 ring-primary/30">
-              <SpectacularClock size={38} />
-            </div>
+
+
           </div>
         </div>
       </footer>
