@@ -188,15 +188,27 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         {/* Top eyebrow */}
         <div
           className="relative rounded-lg overflow-hidden border border-accent/40 p-3 sm:p-4"
-          style={{
-            background:
-              'linear-gradient(135deg, hsl(var(--card)/0.95) 0%, hsl(var(--primary)/0.35) 55%, hsl(var(--accent)/0.25) 100%)',
-          }}
         >
-          {/* SVG tático institucional (mesma linguagem do hub) */}
+          {/* Capa realista — sala de comando */}
+          <img
+            src={comandoCover}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover object-right"
+          />
+          {/* Overlays para legibilidade */}
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(90deg, hsl(var(--card)/0.94) 0%, hsl(var(--card)/0.82) 35%, hsl(var(--primary)/0.45) 70%, hsl(var(--accent)/0.25) 100%)',
+            }}
+          />
           <svg
             aria-hidden
-            className="absolute inset-0 h-full w-full pointer-events-none opacity-70"
+            className="absolute inset-0 h-full w-full pointer-events-none opacity-60"
             viewBox="0 0 800 300"
             preserveAspectRatio="xMidYMid slice"
           >
@@ -204,10 +216,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               <pattern id="top-grid" width="24" height="24" patternUnits="userSpaceOnUse">
                 <path d="M24 0 H0 V24" fill="none" stroke="hsl(var(--accent))" strokeOpacity="0.18" strokeWidth="0.6" />
               </pattern>
-              <radialGradient id="top-glow" cx="20%" cy="50%" r="60%">
-                <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="hsl(var(--background))" stopOpacity="0" />
-              </radialGradient>
               <linearGradient id="top-stripe" x1="0" y1="0" x2="1" y2="0">
                 <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0" />
                 <stop offset="50%" stopColor="hsl(var(--accent))" stopOpacity="0.6" />
@@ -215,10 +223,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               </linearGradient>
             </defs>
             <rect width="800" height="300" fill="url(#top-grid)" />
-            <rect width="800" height="300" fill="url(#top-glow)" />
             <rect x="0" y="2" width="800" height="1" fill="url(#top-stripe)" />
             <rect x="0" y="297" width="800" height="1" fill="url(#top-stripe)" />
           </svg>
+
 
           <div className="relative flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
