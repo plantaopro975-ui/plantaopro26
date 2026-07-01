@@ -249,10 +249,21 @@ export function AuthDialog({
           </div>
         </div>
 
-        {/* Content */}
-        <div className="px-6 py-6">
+        {/* Content — hierarquia tipográfica consistente + tokens da equipe */}
+        <div
+          className="px-6 py-6 space-y-5 [&_label]:text-[11px] [&_label]:tracking-[0.14em] [&_label]:uppercase [&_label]:font-semibold [&_label]:text-white/75 [&_input]:h-11 [&_input]:text-[14px]"
+          style={teamBranded && teamColor ? ({
+            ['--team-primary' as string]: teamColor.primary,
+            ['--team-secondary' as string]: teamColor.secondary,
+            ['--team-ring' as string]: teamColor.ring,
+            ['--team-hover' as string]: teamColor.hover,
+            ['--team-on-primary' as string]: teamColor.onPrimary,
+            ['--team-glow' as string]: teamColor.glow,
+          } as React.CSSProperties) : undefined}
+        >
           {children}
         </div>
+
 
         {/* Bottom accent */}
         <div
