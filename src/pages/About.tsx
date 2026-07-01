@@ -33,7 +33,7 @@ export default function About() {
 
   return (
     <div
-      className="min-h-screen relative bg-[#050810]"
+      className="h-screen overflow-hidden relative bg-[#050810] flex flex-col"
       style={{
         fontFamily: '"IBM Plex Sans", "Inter", system-ui, sans-serif',
       }}
@@ -50,13 +50,13 @@ export default function About() {
       />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-amber-500/20 bg-[#050810]/80 backdrop-blur-xl">
-        <div className="container flex h-12 max-w-5xl items-center justify-between px-3">
+      <header className="w-full border-b border-amber-500/20 bg-[#050810]/80 backdrop-blur-xl flex-shrink-0">
+        <div className="container flex h-10 max-w-6xl items-center justify-between px-3">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="h-8 gap-1.5 px-2 text-xs text-slate-200 hover:bg-amber-500/10 hover:text-amber-300"
+            className="h-7 gap-1.5 px-2 text-xs text-slate-200 hover:bg-amber-500/10 hover:text-amber-300"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Voltar
@@ -70,7 +70,8 @@ export default function About() {
         </div>
       </header>
 
-      <main className="container relative max-w-5xl px-3 py-6 md:py-10 space-y-6">
+      <main className="container relative max-w-6xl px-3 py-2 space-y-2 flex-1 overflow-hidden flex flex-col min-h-0">
+
         {/* HERO com capa realista */}
         <section className="relative overflow-hidden rounded-3xl border border-amber-500/25 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)]">
           <div className="absolute inset-0">
