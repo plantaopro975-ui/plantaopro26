@@ -1237,8 +1237,8 @@ export default function Index() {
       </header>
 
       {/* Quick Access — apenas quando há credenciais salvas */}
-      <section className="shrink-0 px-2 sm:px-4 pb-1 relative z-10 overflow-hidden">
-        {getSavedCredentials().length > 0 && (
+      {getSavedCredentials().length > 0 && (
+        <section className="shrink-0 px-2 sm:px-4 pb-1 relative z-10 overflow-hidden">
           <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
             <QuickAccessPanel
               onQuickLogin={handleQuickLogin}
@@ -1247,8 +1247,8 @@ export default function Index() {
               loadingCpf={quickLoginLoadingCpf || undefined}
             />
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
 
 
@@ -1271,9 +1271,9 @@ export default function Index() {
           }}
         />
         {/* Soft gold halo */}
-        <span aria-hidden className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-40 w-[50%] rounded-full bg-primary/10 blur-3xl" />
+        <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 h-16 w-[40%] rounded-full bg-primary/5 blur-2xl" />
 
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-5 py-1.5 flex items-center justify-between gap-3">
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-5 py-1 flex items-center justify-between gap-3">
           {/* Left: Signature */}
           <div className="flex items-center gap-2 min-w-0">
             <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
