@@ -52,7 +52,7 @@ export function CommandStrip() {
     <section
       aria-label="Faixa institucional"
       className={cn(
-        'relative mx-3 sm:mx-6 mt-3 overflow-hidden rounded-lg',
+        'relative mx-2 sm:mx-6 mt-0 overflow-hidden rounded-b-lg rounded-t-none',
         'border border-border/60 backdrop-blur-xl',
         'bg-[linear-gradient(180deg,hsl(222_38%_7%/0.96),hsl(220_32%_9%/0.92))]',
         'shadow-[0_8px_28px_-12px_hsl(222_60%_2%/0.85)]',
