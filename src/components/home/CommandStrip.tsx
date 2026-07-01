@@ -95,9 +95,10 @@ export function CommandStrip() {
                 : 'ring-border/60 hover:ring-primary/40',
             )}
           >
-            <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center p-1">
-              <Shield className="h-5 w-5 text-primary" strokeWidth={2.2} />
+            <div className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center">
+              <Shield className="h-4 w-4 text-primary" strokeWidth={2.2} />
             </div>
+
 
             {/* Progresso do triple-click */}
             {pulse > 0 && !confirmed && (
