@@ -13,10 +13,26 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
     
-    <!-- Google Fonts - Tema específico -->
+    <!-- Google Fonts — preconnect + preload async para eliminar render-blocking e FOIT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500;600;700&family=Teko:wght@400;500;600;700&family=Exo+2:wght@400;500;600;700;800&family=Bebas+Neue&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Saira+Condensed:wght@500;600;700&family=Stardos+Stencil:wght@400;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Saira+Condensed:wght@500;600;700&family=Stardos+Stencil:wght@400;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+      />
+    </noscript>
 
     <!-- Favicon - ISE Acre -->
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
