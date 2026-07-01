@@ -134,14 +134,15 @@ export function HeroCinematic({
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
 
       {/* Agente tático interativo — desktop only, arrastável */}
-      <img
-        src={agentFigure}
-        alt=""
+      <video
+        src={agentIdleVideo.url}
+        poster={agentFigure}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
         aria-hidden
-        width={768}
-        height={1280}
-        loading="lazy"
-        draggable={false}
         onPointerDown={(e) => {
           const el = e.currentTarget;
           const rect = el.getBoundingClientRect();
