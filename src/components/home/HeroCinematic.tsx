@@ -339,32 +339,13 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     <img
                       src={getTeamPoster(t.name)}
                       alt=""
-                      className="absolute inset-0 h-full w-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
-                      style={{ filter: 'saturate(1.1) contrast(1.1) brightness(0.92)' }}
+                      className="absolute inset-0 h-full w-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
+                      style={{ filter: 'saturate(1.05) contrast(1.05)' }}
                     />
-                    {/* Tinta da cor oficial da equipe */}
-                    <span
-                      className="absolute inset-0 mix-blend-multiply opacity-40 group-hover:opacity-30 transition-opacity duration-500"
-                      style={{
-                        background: `linear-gradient(160deg, ${tc.secondary}CC 0%, transparent 55%, ${tc.primary}33 100%)`,
-                      }}
-                    />
-                    {/* Vinheta radial para focar no ícone */}
-                    <span className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_28%,hsl(var(--background)/0.55)_95%)]" />
-                    {/* Base sólida para legibilidade do nome */}
-                    <span
-                      className="absolute inset-x-0 bottom-0 h-1/2"
-                      style={{
-                        background: `linear-gradient(180deg, transparent 0%, hsl(var(--background)/0.55) 55%, hsl(var(--background)/0.92) 100%)`,
-                      }}
-                    />
-                    {/* Brilho superior sutil na cor da equipe (hover) */}
-                    <span
-                      className="absolute inset-x-0 top-0 h-16 opacity-0 group-hover:opacity-60 transition-opacity duration-500"
-                      style={{
-                        background: `linear-gradient(180deg, ${tc.glow}, transparent)`,
-                      }}
-                    />
+                    {/* Vinheta radial suave — mantém foco sem obscurecer a foto */}
+                    <span className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.45)_100%)]" />
+                    {/* Faixa inferior mínima só para legibilidade do nome */}
+                    <span className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.65))]" />
                   </span>
                   {/* Canto oficial (cobre) */}
                   <span
