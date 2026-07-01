@@ -43,6 +43,7 @@ import { ForgotPasswordDialog } from '@/components/ForgotPasswordDialog';
 import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, canQuickLogin } from '@/components/auth/SavedCredentials';
 import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDialog';
 import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
+import { MasterLoginDialog } from '@/components/auth/MasterLoginDialog';
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { CommandStrip } from '@/components/home/CommandStrip';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
