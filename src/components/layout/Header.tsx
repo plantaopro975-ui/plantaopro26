@@ -189,14 +189,16 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         ))}
       </nav>
 
-      {/* Tagline institucional — QSL Feijó */}
-      <div
-        className="flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 items-center gap-2 pointer-events-none select-none whitespace-nowrap max-w-[92vw]"
-        aria-label="QSL Feijó — feito por agente para agente"
-      
+      {/* Tagline institucional — QSL Feijó (clique → /about) */}
+      <button
+        type="button"
+        onClick={() => handleNavigate('/about')}
+        className="group flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 items-center gap-2 select-none whitespace-nowrap max-w-[92vw] rounded-md px-2 py-1 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors cursor-pointer"
+        aria-label="Sobre o app — QSL Feijó, feito por agente para agente"
+        title="Sobre o app"
       >
         <span className="hidden md:block h-px w-6 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
-        <p className="text-[9px] sm:text-[10px] lg:text-[11px] font-mono tracking-[0.18em] lg:tracking-[0.22em] uppercase text-foreground/90 truncate">
+        <p className="text-[11px] sm:text-[12px] lg:text-[13px] font-mono tracking-[0.18em] lg:tracking-[0.22em] uppercase text-foreground/90 truncate group-hover:text-foreground">
           <span className="text-primary font-bold">QSL</span>
           <span className="text-muted-foreground">, </span>
           <span className="text-foreground">Feijó!</span>
@@ -212,7 +214,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           </span>
         </p>
         <span className="hidden md:block h-px w-6 bg-gradient-to-l from-transparent to-primary/60" aria-hidden />
-      </div>
+      </button>
+
 
 
 
