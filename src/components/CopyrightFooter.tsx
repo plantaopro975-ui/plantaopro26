@@ -129,7 +129,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
                 <span className="text-[10px] font-bold tracking-[0.24em] text-primary uppercase">
                   Instituto Socioeducativo
                 </span>
-                <span className="text-[13px] font-bold text-foreground tracking-wide font-serif italic">
+                <span className="text-[13px] font-bold text-foreground tracking-wide font-serif">
                   PlantãoPro · Comando Tático
                 </span>
                 <span className="text-[10px] text-muted-foreground/80 flex items-center gap-1 mt-0.5">

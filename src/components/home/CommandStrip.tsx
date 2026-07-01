@@ -121,7 +121,7 @@ export function CommandStrip() {
                 ISE · Acre
               </span>
             </div>
-            <span className="block text-[13px] sm:text-sm font-bold text-foreground font-serif italic -mt-0.5 truncate">
+            <span className="block text-[13px] sm:text-sm font-bold text-foreground font-serif -mt-0.5 truncate">
               Plantão<span className="text-primary">Pro</span> · Comando Operacional
             </span>
             <span className="hidden sm:block text-[10px] text-muted-foreground/80 tracking-wider uppercase font-mono">

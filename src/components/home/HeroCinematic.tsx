@@ -174,7 +174,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               </span>
             </div>
             <h1 className="font-serif text-[20px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
-              Comando <span className="italic text-accent">Operacional</span>
+              Comando <span className="text-accent">Operacional</span>
               <br />
               <span className="text-primary-glow">Socioeducativo</span>
             </h1>
