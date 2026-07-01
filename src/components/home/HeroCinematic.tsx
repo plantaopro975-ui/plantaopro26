@@ -118,9 +118,10 @@ export function HeroCinematic({
                   />
                   <div className="relative min-w-0">
                     <div className="text-[10px] uppercase tracking-[0.28em] text-primary/80 font-sans">
-                      Equipe
+                      {t.name}
                     </div>
                   </div>
+
 
                   <ArrowRight className="relative ml-auto h-4 w-4 text-primary/60 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                 </button>
