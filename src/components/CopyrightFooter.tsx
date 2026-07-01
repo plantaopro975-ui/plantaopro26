@@ -59,7 +59,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
             {/* Center: Status */}
             <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/40">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
+                <span className="absolute inset-0 rounded-full bg-success opacity-60" />
                 <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
               </span>
               <span className="text-[9px] font-semibold tracking-[0.20em] uppercase text-success/90">
@@ -146,7 +146,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
             <div className="md:col-span-3 flex md:justify-center">
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-card/60 ring-1 ring-border/60">
                 <span className="relative flex h-2 w-2">
-                  <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
+                  <span className="absolute inset-0 rounded-full bg-success opacity-60" />
                   <span className="relative h-2 w-2 rounded-full bg-success" />
                 </span>
                 <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-success/95">
