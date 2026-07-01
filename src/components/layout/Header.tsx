@@ -101,7 +101,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       ref={ref}
       {...props}
       className={cn(
-        "header-bar relative h-16 flex items-center justify-between px-4 lg:px-6",
+        "header-bar relative h-16 flex items-center gap-4 px-4 lg:px-6",
         "border-b border-border/60 shadow-[0_8px_28px_-12px_hsl(222_60%_2%/0.85)]",
         "bg-[linear-gradient(180deg,hsl(222_38%_7%/0.96),hsl(220_32%_9%/0.92))]",
         "backdrop-blur-xl",
@@ -111,6 +111,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       {/* Steel cyan accent strip */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-80" />
       <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+
 
       {/* Logo — leftmost, maximized within bar height */}
       <div className="flex items-center gap-3 shrink-0">
