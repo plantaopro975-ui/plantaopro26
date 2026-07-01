@@ -132,7 +132,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         aria-hidden
         loading="lazy"
         draggable={false}
-        className="absolute z-20 bottom-0 left-1/2 -translate-x-1/2 h-[48%] sm:h-[58%] lg:h-[68%] max-h-full w-auto object-contain object-bottom pointer-events-none select-none [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))]"
+        className="absolute z-20 bottom-24 right-0 translate-x-2 sm:bottom-0 sm:right-auto sm:left-1/2 sm:translate-x-0 sm:-translate-x-1/2 h-[34%] sm:h-[58%] lg:h-[68%] max-h-full w-auto object-contain object-bottom pointer-events-none select-none opacity-90 sm:opacity-100 [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))]"
       />
 
       {/* Foreground content */}
