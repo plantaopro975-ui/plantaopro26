@@ -20,7 +20,7 @@ const TEAMS: { name: TeamName; icon: string; motto: string; accent: string; anim
   { name: 'ALFA',    icon: iconShield,  motto: 'Escudo · Proteção',   accent: 'from-emerald-400/25 to-transparent', anim: 'animate-team-shield' },
   { name: 'BRAVO',   icon: iconHelmet,  motto: 'Espada · Ação',       accent: 'from-orange-400/25 to-transparent', anim: 'animate-team-helmet' },
   { name: 'CHARLIE', icon: iconRadio,   motto: 'Rádio · Comunicação', accent: 'from-sky-400/25 to-transparent',    anim: 'animate-team-radio'  },
-  { name: 'DELTA',   icon: iconCommand, motto: 'Raio · Resposta',     accent: 'from-amber-400/25 to-transparent',  anim: 'animate-team-float'  },
+  { name: 'DELTA',   icon: iconBeacon,  motto: 'Sirene · Resposta',   accent: 'from-red-500/25 to-transparent',    anim: 'animate-team-float'  },
 ];
 
 
