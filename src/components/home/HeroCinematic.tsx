@@ -132,7 +132,7 @@ export function HeroCinematic({
       <div className="absolute inset-0" style={{ background: 'var(--gradient-hero-overlay)' }} aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
 
-      {/* Agente tático interativo — desktop only */}
+      {/* Agente tático interativo — desktop only, arrastável */}
       <img
         src={agentFigure}
         alt=""
@@ -140,9 +140,36 @@ export function HeroCinematic({
         width={768}
         height={1280}
         loading="lazy"
-        className="hidden lg:block pointer-events-none select-none absolute z-20 bottom-0 left-1/2 -translate-x-1/2 h-[38%] xl:h-[44%] w-auto object-contain object-bottom animate-team-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+        draggable={false}
+        onPointerDown={(e) => {
+          const el = e.currentTarget;
+          const rect = el.getBoundingClientRect();
+          const parentRect = el.parentElement!.getBoundingClientRect();
+          const offsetX = e.clientX - rect.left;
+          const offsetY = e.clientY - rect.top;
+          el.setPointerCapture(e.pointerId);
+          el.style.cursor = 'grabbing';
+          const move = (ev: PointerEvent) => {
+            const x = ev.clientX - parentRect.left - offsetX;
+            const y = ev.clientY - parentRect.top - offsetY;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            el.style.right = 'auto';
+            el.style.bottom = 'auto';
+            el.style.transform = 'none';
+          };
+          const up = () => {
+            el.style.cursor = 'grab';
+            el.removeEventListener('pointermove', move);
+            el.removeEventListener('pointerup', up);
+          };
+          el.addEventListener('pointermove', move);
+          el.addEventListener('pointerup', up);
+        }}
+        className="hidden lg:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[38%] xl:h-[44%] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] cursor-grab touch-none"
         style={{ animationDuration: '6s' }}
       />
+
 
       {/* Viatura policial 3D — desktop only, interage com hover das equipes E com o mouse */}
       <img
