@@ -37,6 +37,8 @@ const TEAMS: { name: TeamName; icon: string; kicker: string; motion: string }[] 
  */
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const onlineCount = useOnlinePresence();
+
   const [agentPos, setAgentPos] = useState<{ x: number; y: number } | null>(() => {
     try {
       const v = localStorage.getItem('hero_agent_pos');
