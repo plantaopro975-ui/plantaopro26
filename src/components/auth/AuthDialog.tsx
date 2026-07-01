@@ -141,8 +141,15 @@ export function AuthDialog({
             <img
               src={teamPoster}
               alt={`Equipe ${teamKey}`}
-              className="absolute inset-0 h-full w-full object-cover object-[50%_35%] sm:object-[50%_30%] md:object-[50%_25%]"
-              style={{ filter: 'contrast(1.08) saturate(1.05) brightness(0.9)' }}
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{
+                filter: 'contrast(1.08) saturate(1.05) brightness(0.9)',
+                objectPosition:
+                  teamKey === 'CHARLIE' ? '50% 18%' :
+                  teamKey === 'BRAVO'   ? '50% 22%' :
+                  teamKey === 'DELTA'   ? '50% 28%' :
+                                          '50% 30%',
+              }}
             />
             {teamPattern && (
               <div className="absolute inset-0 opacity-25 mix-blend-overlay pointer-events-none"

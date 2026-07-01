@@ -8,6 +8,7 @@ import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
 import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
+import { getTeamPoster } from '@/lib/teamAssets';
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
@@ -217,6 +218,20 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[124px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border border-primary/30 bg-[linear-gradient(160deg,hsl(var(--card)/0.85),hsl(var(--background)/0.7))] backdrop-blur-xl hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
+                  {/* Capa hero sutil — poster oficial da equipe (background) */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-md overflow-hidden"
+                  >
+                    <img
+                      src={getTeamPoster(t.name)}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover opacity-[0.18] group-hover:opacity-[0.28] transition-opacity duration-500"
+                      style={{ filter: 'saturate(0.85) contrast(1.05)' }}
+                    />
+                    <span className="absolute inset-0 bg-[linear-gradient(160deg,hsl(var(--card)/0.82),hsl(var(--background)/0.92))]" />
+                    <span className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,hsl(var(--background)/0.55)_75%)]" />
+                  </span>
                   {/* Canto oficial (cobre) */}
                   <span
                     aria-hidden
