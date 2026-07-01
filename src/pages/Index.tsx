@@ -1268,7 +1268,7 @@ export default function Index() {
           <div className="flex items-center gap-2 min-w-0">
             <div className="relative flex items-center gap-2 px-2.5 py-1 rounded-md bg-card/50 ring-1 ring-primary/30">
               <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
-              <span className="text-[11px] font-bold tracking-[0.24em] uppercase text-primary font-serif">
+              <span className="font-stencil text-[13px] font-bold tracking-[0.32em] uppercase text-primary [text-shadow:0_0_8px_hsl(var(--primary)/0.35)]">
                 CS FEIJÓ
               </span>
             </div>
