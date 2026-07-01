@@ -104,7 +104,7 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
       {/* Footer */}
       <div className="p-4 border-t border-sidebar-border">
         <p className="text-xs text-muted-foreground text-center">
-          Desenvolvido por <span className="text-primary">Franc D'nis</span>
+          Desenvolvido por <span className="text-primary">CS FEIJÓ</span>
         </p>
         <p className="text-xs text-muted-foreground text-center mt-1">
           PlantaoPro v1.0

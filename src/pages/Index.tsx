@@ -1269,7 +1269,7 @@ export default function Index() {
             <div className="relative flex items-center gap-2 px-2.5 py-1 rounded-md bg-card/50 ring-1 ring-primary/30">
               <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
               <span className="text-[11px] font-bold tracking-[0.24em] uppercase text-primary font-serif">
-                Franc D'Nis
+                CS FEIJÓ
               </span>
             </div>
             <span className="hidden md:inline text-[9px] uppercase tracking-[0.22em] text-muted-foreground/60 font-mono">
@@ -1778,7 +1778,7 @@ export default function Index() {
                     <div>
                       <h4 className="text-sm font-semibold text-foreground mb-1">Desenvolvedor</h4>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        <strong className="text-foreground text-sm">Franc D'nis</strong>
+                        <strong className="text-foreground text-sm">CS FEIJÓ</strong>
                         <br />
                         <span className="text-primary">Agente Socioeducativo</span> • <strong className="text-foreground">Feijó, Acre</strong>
                       </p>

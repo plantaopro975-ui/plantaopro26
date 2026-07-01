@@ -49,7 +49,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
             <div className="flex items-center gap-2 min-w-0">
               <ShieldCheck className="h-3.5 w-3.5 text-primary shrink-0" />
               <span className="text-[10px] font-bold tracking-[0.22em] uppercase text-primary font-serif truncate">
-                Franc D'Nis
+                CS FEIJÓ
               </span>
               <span className="hidden sm:inline text-[9px] text-muted-foreground/50 tracking-widest">
                 / ENGENHARIA

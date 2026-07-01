@@ -304,7 +304,7 @@ export default function AgentProfile() {
 
             {/* Developer Credit */}
             <p className="text-center text-xs text-muted-foreground mt-8">
-              Desenvolvido por <span className="text-primary font-medium">Franc D'nis</span>
+              Desenvolvido por <span className="text-primary font-medium">CS FEIJÓ</span>
             </p>
           </div>
         </main>
