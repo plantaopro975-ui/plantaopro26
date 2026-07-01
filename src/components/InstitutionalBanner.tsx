@@ -2,6 +2,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Shield, Zap, Radio } from 'lucide-react';
 import logoShield from '@/assets/ise-acre-badge.png';
+import bannerBg from '@/assets/institutional-banner-bg.jpg';
 
 interface InstitutionalBannerProps {
   onSettingsClick?: () => void;
@@ -124,15 +125,24 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
 
   return (
     <div className="relative w-full overflow-hidden">
+      {/* Realistic photo background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${bannerBg})` }}
+        aria-hidden="true"
+      />
+      {/* Darkening overlay for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/95" />
+
       {/* Background with pattern */}
       <div 
-        className="absolute inset-0 opacity-50"
+        className="absolute inset-0 opacity-30 mix-blend-overlay"
         style={{ backgroundImage: patterns[config.pattern] }}
       />
       
       {/* Animated glow effect */}
       <div 
-        className="absolute inset-0 opacity-40"
+        className="absolute inset-0 opacity-30"
         style={{
           background: `radial-gradient(ellipse at center, ${config.glowColor} 0%, transparent 70%)`,
         }}
@@ -143,7 +153,7 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
         "relative z-10 py-3 sm:py-4 px-4 sm:px-6",
         "border-y-2",
         config.borderColor,
-        "bg-gradient-to-r from-slate-900/95 via-slate-800/90 to-slate-900/95"
+        "bg-transparent"
       )}>
         {/* Corner accents */}
         <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 rounded-tl-lg" style={{ borderColor: `hsl(var(--primary))` }} />
