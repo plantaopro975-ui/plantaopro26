@@ -101,7 +101,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       ref={ref}
       {...props}
       className={cn(
-        "header-bar relative h-16 flex items-center justify-between px-4 lg:px-6",
+        "header-bar relative h-16 flex items-center gap-4 px-4 lg:px-6",
         "border-b border-border/60 shadow-[0_8px_28px_-12px_hsl(222_60%_2%/0.85)]",
         "bg-[linear-gradient(180deg,hsl(222_38%_7%/0.96),hsl(220_32%_9%/0.92))]",
         "backdrop-blur-xl",
@@ -111,6 +111,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       {/* Steel cyan accent strip */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-80" />
       <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+
 
       {/* Logo — leftmost, maximized within bar height */}
       <div className="flex items-center gap-3 shrink-0">
@@ -193,34 +195,32 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       <button
         type="button"
         onClick={() => handleNavigate('/about')}
-        className="group flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 items-center gap-2 select-none whitespace-nowrap max-w-[92vw] rounded-md px-2 py-1 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors cursor-pointer"
+        className="group hidden xl:flex flex-1 min-w-0 justify-center items-center gap-2 select-none whitespace-nowrap rounded-md px-2 py-1 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors cursor-pointer"
         aria-label="Sobre o app — QSL Feijó, feito por agente para agente"
         title="Sobre o app"
       >
-        <span className="hidden md:block h-px w-6 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
-        <p className="text-[11px] sm:text-[12px] lg:text-[13px] font-mono tracking-[0.18em] lg:tracking-[0.22em] uppercase text-foreground/90 truncate group-hover:text-foreground">
+        <span className="h-px w-6 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
+        <p className="text-[12px] font-mono tracking-[0.2em] uppercase text-foreground/90 truncate group-hover:text-foreground">
           <span className="text-primary font-bold">QSL</span>
           <span className="text-muted-foreground">, </span>
           <span className="text-foreground">Feijó!</span>
-          <span className="hidden sm:inline">
-            <span className="mx-2 text-muted-foreground/60">·</span>
-            <span className="text-muted-foreground normal-case tracking-normal font-sans italic">
-              Feito por agente para agente
-            </span>
+          <span className="mx-2 text-muted-foreground/60">·</span>
+          <span className="text-muted-foreground normal-case tracking-normal font-sans italic">
+            Feito por agente para agente
           </span>
           <span className="mx-2 text-primary/50">·</span>
           <span className="text-primary/90 font-semibold normal-case tracking-normal">
             &lt;dev/&gt; Franc.D'nis
           </span>
         </p>
-        <span className="hidden md:block h-px w-6 bg-gradient-to-l from-transparent to-primary/60" aria-hidden />
+        <span className="h-px w-6 bg-gradient-to-l from-transparent to-primary/60" aria-hidden />
       </button>
 
-
-
-
+      {/* Spacer para telas < xl mantendo lado direito alinhado */}
+      <div className="flex-1 xl:hidden" aria-hidden />
 
       {/* Right Side */}
+
       <div className="flex items-center gap-2">
         {/* Sound Toggle */}
         <Button 
