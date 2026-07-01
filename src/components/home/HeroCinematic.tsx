@@ -159,7 +159,7 @@ export function HeroCinematic({
       />
 
 
-      <div className="relative z-10 h-full flex flex-col gap-6 px-5 sm:px-8 lg:px-12 py-6 sm:py-8">
+      <div className="relative z-10 h-full flex flex-col gap-3 sm:gap-4 px-3 sm:px-6 lg:px-10 py-3 sm:py-5">
         {/* eyebrow */}
         <div className="flex items-center justify-between gap-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border border-primary/30 bg-background/50 backdrop-blur-md">
