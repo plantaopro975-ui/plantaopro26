@@ -11,8 +11,6 @@ import bannerBg from '@/assets/institutional-banner-bg.jpg';
  */
 export function CommandStrip() {
   const [now, setNow] = useState<Date>(new Date());
-  const [pulse, setPulse] = useState(0); // 0..3 progresso do triple-click
-  const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), 1000);
@@ -22,18 +20,13 @@ export function CommandStrip() {
   const handleShieldClick = () => {
     const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
     w.__logoClicks = (w.__logoClicks || 0) + 1;
-    setPulse(Math.min(w.__logoClicks, 3));
     if (w.__logoTimer) window.clearTimeout(w.__logoTimer);
     w.__logoTimer = window.setTimeout(() => {
       w.__logoClicks = 0;
-      setPulse(0);
     }, 800);
     if ((w.__logoClicks ?? 0) >= 3) {
       w.__logoClicks = 0;
-      setPulse(0);
-      setConfirmed(true);
       window.dispatchEvent(new CustomEvent('open-master-login'));
-      window.setTimeout(() => setConfirmed(false), 1600);
     }
   };
 
@@ -48,6 +41,7 @@ export function CommandStrip() {
     minute: '2-digit',
     second: '2-digit',
   });
+
 
   return (
     <section
@@ -81,53 +75,21 @@ export function CommandStrip() {
       />
 
       <div className="relative flex items-center gap-x-4 px-4 lg:px-6 h-12 sm:h-14">
-        {/* Brasão + triple-click */}
+        {/* Brasão */}
         <div className="relative flex items-center gap-3 min-w-0">
           <button
             type="button"
             onClick={handleShieldClick}
-            aria-label="Instituto Socioeducativo do Acre — toque 3× para acesso master"
+            aria-label="Instituto Socioeducativo do Acre"
             title="ISE / Acre"
-            className={cn(
-              'group relative shrink-0 rounded-md p-0.5 ring-1 transition-all',
-              confirmed
-                ? 'ring-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.35)]'
-                : 'ring-border/60 hover:ring-primary/40',
-            )}
+            className="group relative shrink-0 rounded-md p-0.5 ring-1 ring-border/60 hover:ring-primary/40 transition-all"
           >
             <div className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center">
               <Shield className="h-4 w-4 text-primary" strokeWidth={2.2} />
             </div>
-
-
-            {/* Progresso do triple-click */}
-            {pulse > 0 && !confirmed && (
-              <span className="pointer-events-none absolute -bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
-                {[0, 1, 2].map((i) => (
-                  <span
-                    key={i}
-                    className={cn(
-                      'h-0.5 w-2 rounded-full transition-colors',
-                      i < pulse ? 'bg-primary' : 'bg-border/60',
-                    )}
-                  />
-                ))}
-              </span>
-            )}
           </button>
 
-          {/* Confirmação */}
-          {confirmed && (
-            <span
-              role="status"
-              className="absolute -top-2 left-12 z-10 inline-flex items-center gap-1 rounded-md border border-primary/40 bg-background/95 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary shadow-md animate-in fade-in slide-in-from-top-1"
-            >
-              <ShieldCheck className="h-3 w-3" />
-              Acesso Master
-            </span>
-          )}
-
-          {/* Identidade (sem redundância com o Header) */}
+          {/* Identidade */}
           <div className="min-w-0 border-l border-border/50 pl-3 leading-tight">
             <span className="block text-[12px] sm:text-[13px] font-bold text-foreground font-serif truncate">
               Comando <span className="text-primary">Operacional</span>
@@ -138,12 +100,13 @@ export function CommandStrip() {
           </div>
         </div>
 
-
-        {/* Relógio + status (mesmo padrão do Footer) */}
+        {/* Relógio + status */}
         <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-          <div className="text-right leading-tight">
-            <div className="font-mono text-[13px] sm:text-sm tabular-nums text-foreground">{time}</div>
-            <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground font-mono">
+          <div className="min-w-[92px] sm:min-w-[124px] text-right leading-tight tabular-nums">
+            <div className="font-mono text-[13px] sm:text-[14px] font-semibold text-foreground tracking-tight">
+              {time}
+            </div>
+            <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono truncate">
               {date}
             </div>
           </div>
@@ -163,3 +126,4 @@ export function CommandStrip() {
     </section>
   );
 }
+
