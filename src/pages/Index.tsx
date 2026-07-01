@@ -43,6 +43,7 @@ import { ForgotPasswordDialog } from '@/components/ForgotPasswordDialog';
 import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, canQuickLogin } from '@/components/auth/SavedCredentials';
 import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDialog';
 import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
+import { MasterLoginDialog } from '@/components/auth/MasterLoginDialog';
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { CommandStrip } from '@/components/home/CommandStrip';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
@@ -1633,16 +1634,12 @@ export default function Index() {
         </form>
       </AuthDialog>
 
-      {/* Master Admin Login Dialog - Ultra Professional */}
-      <AuthDialog
+      {/* Master Admin Login Dialog - Noir & Gold Editorial */}
+      <MasterLoginDialog
         open={showMasterLogin}
         onOpenChange={(open) => !open && closeAllDialogs()}
-        variant="master"
-        title="Acesso Master"
-        subtitle="Área restrita para administradores"
-        icon={<Lock className="h-6 w-6 text-amber-400" />}
       >
-        <form onSubmit={handleMasterLogin} className="space-y-5">
+        <form onSubmit={handleMasterLogin} className="space-y-4">
           <AuthInput
             label="Usuário"
             value={masterUsername}
@@ -1670,7 +1667,8 @@ export default function Index() {
             Acessar Painel
           </AuthButton>
         </form>
-      </AuthDialog>
+      </MasterLoginDialog>
+
 
       {/* Admin Login Dialog - Ultra Professional */}
       <AuthDialog
