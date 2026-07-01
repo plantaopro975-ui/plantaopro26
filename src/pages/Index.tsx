@@ -1210,13 +1210,14 @@ export default function Index() {
         <CommandStrip />
 
 
-        {/* Cinematic institutional hero (Navy Trust + Amber) */}
+        {/* Cinematic institutional hero — teams integradas como bento 3D */}
         <div className="px-3 sm:px-6 pt-3">
           <HeroCinematic
             onPrimaryAction={() => {
               const first = document.querySelector<HTMLElement>('[data-team-card]');
               first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }}
+            onTeamClick={(team) => handleTeamClick(team)}
           />
         </div>
 
@@ -1225,13 +1226,11 @@ export default function Index() {
           <HomeAgentInfoBanner />
         </div>
       </header>
-      
-      {/* Teams Grid Section - Main content area - FULL HEIGHT */}
-      <section className="flex-1 py-3 sm:py-4 px-3 sm:px-6 relative z-10 flex flex-col min-h-0">
-        
-        {/* Quick Access Panel - Shows when credentials are saved */}
+
+      {/* Quick Access — apenas quando há credenciais salvas */}
+      <section className="px-3 sm:px-6 pb-3 relative z-10">
         {getSavedCredentials().length > 0 && (
-          <div className="w-full mb-3 sm:mb-4 animate-fade-in shrink-0" style={{ animationDelay: '200ms' }}>
+          <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
             <QuickAccessPanel
               onQuickLogin={handleQuickLogin}
               onSelectCredential={handleQuickLoginSelect}
@@ -1240,27 +1239,8 @@ export default function Index() {
             />
           </div>
         )}
-        
-        {/* Teams Grid - Full width responsive */}
-        <div className="flex-1 w-full max-w-6xl mx-auto flex items-center justify-center">
-          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {teams.map((team, index) => (
-              <div
-                key={team}
-                className="animate-fade-in-scale flex justify-center"
-                style={{
-                  animationDelay: `${200 + index * 80}ms`,
-                }}
-              >
-                <OperationsTeamCard
-                  team={team as 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA'}
-                  onClick={() => handleTeamClick(team)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
+
 
 
 
