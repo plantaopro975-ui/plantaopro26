@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { 
-  ArrowLeft, 
-  Shield, 
-  Calendar, 
-  Clock, 
-  Users, 
+import {
+  ArrowLeft,
+  Shield,
+  Calendar,
+  Clock,
+  Users,
   RefreshCw,
   BarChart3,
   Target,
@@ -15,41 +14,17 @@ import {
   Building2,
   Award,
   CheckCircle2,
-  Download
+  Download,
 } from 'lucide-react';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
 
 const features = [
-  {
-    icon: Calendar,
-    title: 'Organização de Plantões',
-    description: 'Gerencie seus plantões de forma visual e organizada, com alertas e notificações automáticas.'
-  },
-  {
-    icon: BarChart3,
-    title: 'Controle de Escalas',
-    description: 'Visualize e acompanhe escalas da sua equipe com precisão e clareza operacional.'
-  },
-  {
-    icon: Clock,
-    title: 'Gestão de Banco de Horas',
-    description: 'Controle completo do seu BH com registro de créditos, débitos e evolução mensal.'
-  },
-  {
-    icon: RefreshCw,
-    title: 'Registro de Permutas',
-    description: 'Solicite e acompanhe trocas de plantão com outros agentes de forma simples e documentada.'
-  },
-  {
-    icon: Users,
-    title: 'Organização de Equipes',
-    description: 'Conecte-se com sua equipe através de chat integrado e visualização de membros.'
-  },
-  {
-    icon: Target,
-    title: 'Planejamento da Rotina',
-    description: 'Planeje sua vida funcional com antecedência, visualizando compromissos e folgas.'
-  }
+  { icon: Calendar, title: 'Plantões', description: 'Visualização e alertas automáticos.' },
+  { icon: BarChart3, title: 'Escalas', description: 'Acompanhamento da equipe com clareza.' },
+  { icon: Clock, title: 'Banco de Horas', description: 'Créditos, débitos e evolução mensal.' },
+  { icon: RefreshCw, title: 'Permutas', description: 'Trocas documentadas e rastreáveis.' },
+  { icon: Users, title: 'Equipes', description: 'Chat integrado e membros ativos.' },
+  { icon: Target, title: 'Rotina', description: 'Planeje folgas e compromissos.' },
 ];
 
 export default function About() {
@@ -57,194 +32,178 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 max-w-4xl items-center px-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
+      {/* Header compacto */}
+      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/85 backdrop-blur">
+        <div className="container flex h-11 max-w-5xl items-center justify-between px-3">
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="h-8 gap-1.5 px-2 text-xs">
+            <ArrowLeft className="h-3.5 w-3.5" />
             Voltar
           </Button>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            Sobre · PlantãoPro
+          </span>
         </div>
       </header>
 
-      <main className="container max-w-4xl px-4 py-8 md:py-12">
-        {/* Hero Section */}
-        <section className="mb-12 text-center">
-          <div className="mb-6 inline-flex items-center justify-center rounded-2xl bg-primary/10 p-4">
-            <Shield className="h-12 w-12 text-primary" />
-          </div>
-          
-          <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            PlantãoPro
-          </h1>
-          
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground leading-relaxed">
-            Solução desenvolvida para auxiliar profissionais da <strong className="text-foreground">Segurança Pública</strong> a 
-            organizarem sua vida funcional de forma prática, segura e eficiente.
-          </p>
-        </section>
+      <main className="container max-w-5xl px-3 py-6 md:py-8 space-y-6">
+        {/* Hero */}
+        <section className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card via-card to-primary/5 p-5 md:p-7">
+          {/* SVG grid overlay */}
+          <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="about-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                <path d="M 24 0 L 0 0 0 24" fill="none" stroke="currentColor" strokeWidth="0.5" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#about-grid)" />
+          </svg>
 
-        <Separator className="my-8" />
-
-        {/* Features Grid */}
-        <section className="mb-12">
-          <h2 className="mb-6 text-center text-xl font-semibold text-foreground md:text-2xl">
-            Funcionalidades Principais
-          </h2>
-          
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <Card 
-                key={feature.title} 
-                className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-lg"
-              >
-                <CardContent className="p-5">
-                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                    <feature.icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="mb-2 font-semibold text-foreground">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <Separator className="my-8" />
-
-        {/* Identidade Visual / Créditos */}
-        <section className="mb-12">
-          <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold text-foreground md:text-2xl">Identidade Visual</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Brasão oficial do Instituto Socioeducativo do Acre e variações usadas no sistema.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              { label: 'Brasão Oficial', bg: 'bg-gradient-to-br from-slate-100 to-slate-200', size: 'h-32 w-32' },
-              { label: 'Aplicação Escura', bg: 'bg-gradient-to-br from-slate-900 to-slate-800', size: 'h-32 w-32' },
-              { label: 'Monograma App', bg: 'bg-gradient-to-br from-primary/20 to-amber-500/10', size: 'h-24 w-24' },
-            ].map((v) => (
-              <Card key={v.label} className="border-border/50 bg-card/50">
-                <CardContent className="p-5 flex flex-col items-center gap-3">
-                  <div className={`flex items-center justify-center rounded-xl ${v.bg} h-40 w-full border border-border/40`}>
-                    <img src={iseAcreBadge} alt={v.label} className={`${v.size} object-contain drop-shadow-lg`} />
-                  </div>
-                  <p className="text-sm font-semibold text-foreground">{v.label}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-6 flex justify-center">
-            <Button asChild variant="outline" className="gap-2">
-              <a href={iseAcreBadge} download="ise-acre-brasao.png">
-                <Download className="h-4 w-4" />
-                Baixar Brasão em Alta Resolução (PNG)
-              </a>
-            </Button>
-          </div>
-        </section>
-
-        <Separator className="my-8" />
-
-        {/* Origin Story */}
-        <section className="mb-12">
-          <Card className="border-border/50 bg-gradient-to-br from-card via-card to-primary/5">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex flex-col gap-6 md:flex-row md:items-start">
-                <div className="flex-shrink-0">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
-                    <Building2 className="h-7 w-7 text-primary" />
-                  </div>
-                </div>
-                
-                <div className="flex-1 space-y-4">
-                  <h2 className="text-xl font-semibold text-foreground md:text-2xl">
-                    Origem do Projeto
-                  </h2>
-                  
-                  <p className="leading-relaxed text-muted-foreground">
-                    O <strong className="text-foreground">PlantãoPro</strong> foi idealizado e desenvolvido por um 
-                    <strong className="text-foreground"> Agente de Segurança Pública</strong> e 
-                    <strong className="text-foreground"> Agente Socioeducativo</strong> do município de 
-                    <strong className="text-foreground"> Feijó</strong>, no estado do 
-                    <strong className="text-foreground"> Acre</strong>.
-                  </p>
-                  
-                  <p className="leading-relaxed text-muted-foreground">
-                    O aplicativo nasceu da necessidade real de resolver problemas enfrentados no dia a dia da 
-                    categoria, trazendo praticidade e organização para a rotina profissional de quem atua na 
-                    linha de frente da segurança pública.
-                  </p>
-
-                  <div className="flex flex-wrap gap-3 pt-2">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary">
-                      <Award className="h-4 w-4" />
-                      Feito por quem entende
-                    </div>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-sm font-medium text-success">
-                      <CheckCircle2 className="h-4 w-4" />
-                      Foco em problemas reais
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        <Separator className="my-8" />
-
-        {/* Contact Section */}
-        <section className="text-center">
-          <h2 className="mb-6 text-xl font-semibold text-foreground md:text-2xl">
-            Contato
-          </h2>
-          
-          <Card className="mx-auto max-w-md border-border/50 bg-card/50">
-            <CardContent className="p-6">
-              <div className="mb-4 flex justify-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Mail className="h-6 w-6 text-primary" />
-                </div>
-              </div>
-              
-              <p className="mb-4 text-sm text-muted-foreground">
-                Para dúvidas, sugestões ou suporte técnico:
+          <div className="relative flex flex-col items-center gap-3 text-center md:flex-row md:items-center md:gap-5 md:text-left">
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-amber-500/10 ring-1 ring-primary/30">
+              <Shield className="h-8 w-8 text-primary drop-shadow" />
+              <span className="absolute -inset-1 rounded-2xl border border-primary/20 animate-pulse" />
+            </div>
+            <div className="flex-1 space-y-1">
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-primary/80">
+                Segurança Pública · Acre
               </p>
-              
-              <div className="space-y-2">
-                <a 
-                  href="mailto:plantaopro@proton.me"
-                  className="block rounded-lg bg-secondary/50 px-4 py-2.5 font-mono text-sm text-foreground transition-colors hover:bg-secondary"
-                >
-                  plantaopro@proton.me
+              <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+                PlantãoPro
+              </h1>
+              <p className="text-sm text-muted-foreground md:max-w-xl">
+                Ferramenta operacional para agentes da segurança pública organizarem plantões,
+                escalas e rotina com precisão.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Funcionalidades — bento compacto */}
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+              Funcionalidades
+            </h2>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              06 módulos
+            </span>
+          </div>
+          <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((f) => (
+              <Card
+                key={f.title}
+                className="group border-border/50 bg-card/60 backdrop-blur transition-all hover:border-primary/40 hover:bg-card"
+              >
+                <CardContent className="flex items-start gap-3 p-3.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20 transition-colors group-hover:bg-primary/15">
+                    <f.icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="min-w-0 space-y-0.5">
+                    <h3 className="text-sm font-semibold leading-tight text-foreground">{f.title}</h3>
+                    <p className="text-xs leading-snug text-muted-foreground">{f.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Identidade + Origem lado a lado */}
+        <section className="grid gap-4 lg:grid-cols-5">
+          {/* Identidade Visual */}
+          <Card className="border-border/50 bg-card/60 lg:col-span-2">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+                  Identidade
+                </h2>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                  ISE · AC
+                </span>
+              </div>
+              <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 ring-1 ring-border/40">
+                <img src={iseAcreBadge} alt="Brasão ISE Acre" className="h-28 w-28 object-contain drop-shadow-2xl" />
+              </div>
+              <Button asChild variant="outline" size="sm" className="w-full gap-2 text-xs">
+                <a href={iseAcreBadge} download="ise-acre-brasao.png">
+                  <Download className="h-3.5 w-3.5" />
+                  Baixar Brasão (PNG)
                 </a>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Origem */}
+          <Card className="border-border/50 bg-gradient-to-br from-card via-card to-primary/5 lg:col-span-3">
+            <CardContent className="p-4 md:p-5 space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
+                  <Building2 className="h-4 w-4 text-primary" />
+                </div>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+                  Origem do Projeto
+                </h2>
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Idealizado por um <strong className="text-foreground">Agente Socioeducativo</strong> de{' '}
+                <strong className="text-foreground">Feijó/AC</strong>, nasceu da necessidade real de
+                trazer praticidade à rotina de quem atua na linha de frente.
+              </p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary ring-1 ring-primary/20">
+                  <Award className="h-3 w-3" />
+                  Feito por quem entende
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success ring-1 ring-success/20">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Problemas reais
+                </span>
               </div>
             </CardContent>
           </Card>
         </section>
 
-        {/* Footer com desenvolvedor */}
-        <footer className="mt-12 text-center space-y-2">
-          <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
-            <span className="font-black bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent tracking-wide">FRANC D'NIS</span>
-            <span className="text-muted-foreground/40">|</span>
-            <span className="text-muted-foreground/70">Feijó/AC</span>
+        {/* Contato */}
+        <section>
+          <Card className="border-border/50 bg-card/60">
+            <CardContent className="flex flex-col items-center justify-between gap-3 p-4 sm:flex-row">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
+                  <Mail className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Suporte / Sugestões</p>
+                  <a
+                    href="mailto:plantaopro@proton.me"
+                    className="font-mono text-sm font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    plantaopro@proton.me
+                  </a>
+                </div>
+              </div>
+              <Button asChild size="sm" variant="outline" className="gap-1.5 text-xs">
+                <a href="mailto:plantaopro@proton.me">
+                  <Mail className="h-3.5 w-3.5" />
+                  Enviar mensagem
+                </a>
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Footer */}
+        <footer className="border-t border-border/40 pt-4 text-center space-y-1">
+          <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-2">
+            <span className="font-mono uppercase tracking-[0.2em] text-muted-foreground/60">dev</span>
+            <span className="font-black bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent tracking-wide">
+              FRANC D'NIS
+            </span>
+            <span className="text-muted-foreground/40">·</span>
+            <span className="text-muted-foreground/70">Feijó / AC</span>
           </p>
-          <p className="text-[10px] text-muted-foreground/50">© {new Date().getFullYear()} PlantãoPro</p>
+          <p className="text-[10px] text-muted-foreground/50">
+            © {new Date().getFullYear()} PlantãoPro · QSL, Feijó!
+          </p>
         </footer>
       </main>
     </div>
