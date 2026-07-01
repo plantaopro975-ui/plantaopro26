@@ -125,7 +125,7 @@ export function HeroCinematic({
           </div>
 
           {/* Teams — 3D noir & gold, clicáveis */}
-          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full" role="list" aria-label="Equipes operacionais">
+          <ul className="hero-team-grid grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full" role="list" aria-label="Equipes operacionais">
             {TEAMS.map((t) => (
               <li key={t.name} className="flex">
                 <button
