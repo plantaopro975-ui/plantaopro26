@@ -18,6 +18,30 @@ import {
 } from 'lucide-react';
 import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
 import aboutHero from '@/assets/about-hero.jpg';
+import { toast } from 'sonner';
+
+async function downloadLogo(url: string, filename: string) {
+  try {
+    const res = await fetch(url, { credentials: 'omit', cache: 'force-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    toast.success('Download iniciado', { description: filename });
+  } catch (err) {
+    console.error('[downloadLogo] falhou:', err);
+    toast.error('Não foi possível baixar a logo', {
+      description: 'Tente novamente ou use o botão direito › Salvar imagem como…',
+    });
+  }
+}
 
 const features = [
   { icon: Calendar, title: 'Plantões', description: 'Visualização e alertas automáticos.' },
