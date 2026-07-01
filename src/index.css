@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Saira+Condensed:wght@500;600;700&family=Stardos+Stencil:wght@400;700&display=swap');
+/* Fontes carregadas via <link rel="preload"> em index.html (evita render-blocking @import).
+   Fallbacks system-ui/Georgia definidos em tailwind.config.ts font-family stacks. */
+
 
 @tailwind base;
 @tailwind components;
