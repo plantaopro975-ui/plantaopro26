@@ -140,7 +140,7 @@ export function HeroCinematic({
         width={768}
         height={1280}
         loading="lazy"
-        className="hidden lg:block pointer-events-none select-none absolute z-20 bottom-0 right-4 xl:right-8 h-[62%] xl:h-[68%] w-auto object-contain object-bottom animate-team-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+        className="hidden lg:block pointer-events-none select-none absolute z-20 bottom-0 left-1/2 -translate-x-1/2 h-[58%] xl:h-[64%] w-auto object-contain object-bottom animate-team-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
         style={{ animationDuration: '6s' }}
       />
 
