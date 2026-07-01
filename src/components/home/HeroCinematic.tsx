@@ -1,7 +1,7 @@
 import { ArrowRight, ShieldCheck, Radio } from 'lucide-react';
 import heroImage from '@/assets/hero-noir-gold.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
-import iconRadar from '@/assets/icons-3d/noir-radar.png';
+import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconCommand from '@/assets/icons-3d/noir-command.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
@@ -16,12 +16,13 @@ interface HeroCinematicProps {
   unitsCount?: number;
 }
 
-const TEAMS: { name: TeamName; icon: string; motto: string; accent: string }[] = [
-  { name: 'ALFA',    icon: iconShield,  motto: 'Escudo · Proteção', accent: 'from-emerald-400/25 to-transparent' },
-  { name: 'BRAVO',   icon: iconHelmet,  motto: 'Espada · Ação',     accent: 'from-orange-400/25 to-transparent' },
-  { name: 'CHARLIE', icon: iconRadar,   motto: 'Mira · Precisão',   accent: 'from-sky-400/25 to-transparent' },
-  { name: 'DELTA',   icon: iconCommand, motto: 'Raio · Resposta',   accent: 'from-amber-400/25 to-transparent' },
+const TEAMS: { name: TeamName; icon: string; motto: string; accent: string; anim: string }[] = [
+  { name: 'ALFA',    icon: iconShield,  motto: 'Escudo · Proteção',   accent: 'from-emerald-400/25 to-transparent', anim: 'animate-team-shield' },
+  { name: 'BRAVO',   icon: iconHelmet,  motto: 'Espada · Ação',       accent: 'from-orange-400/25 to-transparent', anim: 'animate-team-helmet' },
+  { name: 'CHARLIE', icon: iconRadio,   motto: 'Rádio · Comunicação', accent: 'from-sky-400/25 to-transparent',    anim: 'animate-team-radio'  },
+  { name: 'DELTA',   icon: iconCommand, motto: 'Raio · Resposta',     accent: 'from-amber-400/25 to-transparent',  anim: 'animate-team-float'  },
 ];
+
 
 /**
  * Noir & Gold — Hero + Bento (equipes 3D).
@@ -131,8 +132,9 @@ export function HeroCinematic({
                     alt=""
                     loading="lazy"
                     style={{ animationDelay: `${TEAMS.indexOf(t) * 0.6}s` }}
-                    className="animate-team-float relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_6px_18px_rgba(201,168,76,0.45)] transition-transform group-hover:scale-110 group-hover:-translate-y-1"
+                    className={`${t.anim} relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_6px_18px_rgba(201,168,76,0.45)] transition-transform group-hover:scale-110 group-hover:-translate-y-1`}
                   />
+
 
                   <div className="relative flex flex-col items-center gap-1.5">
                     <div className="text-lg sm:text-xl lg:text-2xl uppercase tracking-[0.22em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">

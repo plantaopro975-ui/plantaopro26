@@ -452,6 +452,45 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   animation: team-icon-float 4s ease-in-out infinite;
   will-change: transform;
 }
-@media (prefers-reduced-motion: reduce) {
-  .animate-team-float { animation: none; }
+
+/* Shield — realistic pendulum sway (never full spin) */
+@keyframes team-shield-sway {
+  0%, 100% { transform: translateY(0) rotate(-12deg); }
+  50%      { transform: translateY(-4px) rotate(12deg); }
 }
+.animate-team-shield {
+  animation: team-shield-sway 3.8s ease-in-out infinite;
+  transform-origin: 50% 15%;
+  will-change: transform;
+}
+
+/* Helmet — subtle head-turn tilt */
+@keyframes team-helmet-tilt {
+  0%, 100% { transform: translateY(0) rotate(-8deg) skewX(-1deg); }
+  50%      { transform: translateY(-5px) rotate(8deg) skewX(1deg); }
+}
+.animate-team-helmet {
+  animation: team-helmet-tilt 4.6s ease-in-out infinite;
+  transform-origin: 50% 60%;
+  will-change: transform;
+}
+
+/* Radio — pulsing transmission glow + tiny shake */
+@keyframes team-radio-pulse {
+  0%, 100% { transform: translate(0,0) rotate(-2deg); filter: drop-shadow(0 6px 18px rgba(201,168,76,0.35)); }
+  25%      { transform: translate(-1px,-3px) rotate(1deg); }
+  50%      { transform: translate(1px,-6px) rotate(2deg); filter: drop-shadow(0 10px 24px rgba(46,163,216,0.55)); }
+  75%      { transform: translate(1px,-3px) rotate(-1deg); }
+}
+.animate-team-radio {
+  animation: team-radio-pulse 3s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-team-float,
+  .animate-team-shield,
+  .animate-team-helmet,
+  .animate-team-radio { animation: none; }
+}
+
