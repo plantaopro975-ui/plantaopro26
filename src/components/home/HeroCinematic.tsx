@@ -107,48 +107,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         ))}
       </svg>
 
-      {/* Brasão institucional SVG — canto superior direito */}
-      <svg
-        aria-hidden
-        viewBox="0 0 100 100"
-        className="absolute top-4 right-4 h-14 w-14 sm:h-16 sm:w-16 z-30 opacity-90"
-      >
-        <defs>
-          <linearGradient id="crest" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--accent))" />
-            <stop offset="100%" stopColor="hsl(var(--primary))" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M50 4 L88 20 V52 Q88 78 50 96 Q12 78 12 52 V20 Z"
-          fill="hsl(var(--card) / 0.7)"
-          stroke="url(#crest)"
-          strokeWidth="2"
-        />
-        <text
-          x="50"
-          y="46"
-          textAnchor="middle"
-          fontFamily="Fraunces, serif"
-          fontWeight="900"
-          fontSize="22"
-          fill="hsl(var(--accent))"
-        >
-          ISE
-        </text>
-        <text
-          x="50"
-          y="66"
-          textAnchor="middle"
-          fontFamily="Inter Tight, sans-serif"
-          fontWeight="700"
-          fontSize="8"
-          letterSpacing="1.5"
-          fill="hsl(var(--foreground))"
-        >
-          ACRE
-        </text>
-      </svg>
 
       {/* Viatura policial */}
       <img
