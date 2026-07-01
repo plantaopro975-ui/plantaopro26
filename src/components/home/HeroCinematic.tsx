@@ -402,7 +402,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   </div>
                 </button>
               </li>
-            ))}
+            );})}
           </ul>
           </div>
         </div>
