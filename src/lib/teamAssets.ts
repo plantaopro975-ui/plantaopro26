@@ -30,26 +30,49 @@ export const getTeamEmblem = (team: string | null): string | null => {
   return teamEmblems[team.toUpperCase()] || null;
 };
 
-export const teamColors: Record<string, { primary: string; secondary: string; glow: string }> = {
+export const teamColors: Record<string, {
+  primary: string;      // Acento principal (títulos, brasão glow, borda foco)
+  secondary: string;    // Tom profundo (gradientes, hover pressionado)
+  glow: string;         // Sombra difusa
+  onPrimary: string;    // Texto sobre cor primária (contraste AA)
+  ring: string;         // Cor do anel de foco
+  hover: string;        // Fundo de hover mais claro
+}> = {
   ALFA: {
-    primary: '#22c55e', // green
-    secondary: '#166534',
-    glow: 'rgba(34, 197, 94, 0.4)',
+    // Verde esmeralda de alta luminância — contraste AA sobre fundo escuro
+    primary: '#34d399',
+    secondary: '#065f46',
+    glow: 'rgba(52, 211, 153, 0.45)',
+    onPrimary: '#052e1a',
+    ring: '#6ee7b7',
+    hover: '#10b981',
   },
   BRAVO: {
-    primary: '#f97316', // orange
-    secondary: '#c2410c',
-    glow: 'rgba(249, 115, 22, 0.4)',
+    // Âmbar profundo — melhor contraste que laranja puro
+    primary: '#fb923c',
+    secondary: '#7c2d12',
+    glow: 'rgba(251, 146, 60, 0.45)',
+    onPrimary: '#2a0f00',
+    ring: '#fdba74',
+    hover: '#f97316',
   },
   CHARLIE: {
-    primary: '#3b82f6', // blue
-    secondary: '#1d4ed8',
-    glow: 'rgba(59, 130, 246, 0.4)',
+    // Azul céu vibrante — melhor legibilidade sobre navy
+    primary: '#60a5fa',
+    secondary: '#1e40af',
+    glow: 'rgba(96, 165, 250, 0.45)',
+    onPrimary: '#08122e',
+    ring: '#93c5fd',
+    hover: '#3b82f6',
   },
   DELTA: {
-    primary: '#eab308', // yellow/gold
-    secondary: '#a16207',
-    glow: 'rgba(234, 179, 8, 0.4)',
+    // Dourado quente — reforçado para contraste
+    primary: '#fcd34d',
+    secondary: '#78350f',
+    glow: 'rgba(252, 211, 77, 0.5)',
+    onPrimary: '#2a1a00',
+    ring: '#fde68a',
+    hover: '#eab308',
   },
 };
 
