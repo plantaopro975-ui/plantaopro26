@@ -12,6 +12,8 @@ import policeVehicle from '@/assets/police-vehicle-3d.png';
 import teamsHubBg from '@/assets/hero-teams-hub.jpg';
 import comandoCover from '@/assets/comando-operacional-cover.jpg';
 import { getTeamPoster, getTeamColors } from '@/lib/teamAssets';
+import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
