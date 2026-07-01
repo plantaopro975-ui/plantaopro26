@@ -29,6 +29,40 @@ const TEAMS: { name: TeamName; icon: string; kicker: string }[] = [
  * Hero full-viewport com brasão SVG, topografia amazônica e cards oficiais.
  */
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [agentPos, setAgentPos] = useState<{ x: number; y: number } | null>(() => {
+    try {
+      const v = localStorage.getItem('hero_agent_pos');
+      return v ? JSON.parse(v) : null;
+    } catch { return null; }
+  });
+  const dragging = useRef(false);
+  const offset = useRef({ x: 0, y: 0 });
+
+  const onPointerDown = (e: React.PointerEvent<HTMLImageElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    dragging.current = true;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLImageElement>) => {
+    if (!dragging.current || !sectionRef.current) return;
+    const sec = sectionRef.current.getBoundingClientRect();
+    const img = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - sec.left - offset.current.x;
+    const y = e.clientY - sec.top - offset.current.y;
+    const clamped = {
+      x: Math.max(0, Math.min(x, sec.width - img.width)),
+      y: Math.max(0, Math.min(y, sec.height - img.height)),
+    };
+    setAgentPos(clamped);
+  };
+  const onPointerUp = (e: React.PointerEvent<HTMLImageElement>) => {
+    dragging.current = false;
+    try { if (agentPos) localStorage.setItem('hero_agent_pos', JSON.stringify(agentPos)); } catch {}
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+  };
+
   return (
     <section
       className="relative h-full min-h-0 w-full flex-1 overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
