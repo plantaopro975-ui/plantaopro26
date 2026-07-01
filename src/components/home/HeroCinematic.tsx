@@ -141,46 +141,9 @@ export function HeroCinematic({
         height={1280}
         loading="lazy"
         draggable={false}
-        onPointerDown={(e) => {
-          const el = e.currentTarget;
-          const rect = el.getBoundingClientRect();
-          const parentRect = el.parentElement!.getBoundingClientRect();
-          const offsetX = e.clientX - rect.left;
-          const offsetY = e.clientY - rect.top;
-          el.setPointerCapture(e.pointerId);
-          el.style.cursor = 'grabbing';
-          el.classList.add('is-dragging');
-          let nx = 0, ny = 0, raf = 0;
-          const apply = () => {
-            raf = 0;
-            el.style.transform = `translate3d(${nx}px, ${ny}px, 0)`;
-          };
-          // baseline: posição atual relativa ao pai
-          const startLeft = rect.left - parentRect.left;
-          const startTop = rect.top - parentRect.top;
-          el.style.left = `${startLeft}px`;
-          el.style.top = `${startTop}px`;
-          el.style.right = 'auto';
-          el.style.bottom = 'auto';
-          el.style.transform = 'translate3d(0,0,0)';
-          const move = (ev: PointerEvent) => {
-            nx = ev.clientX - parentRect.left - offsetX - startLeft;
-            ny = ev.clientY - parentRect.top - offsetY - startTop;
-            if (!raf) raf = requestAnimationFrame(apply);
-          };
-          const up = () => {
-            el.style.cursor = 'grab';
-            el.classList.remove('is-dragging');
-            if (raf) cancelAnimationFrame(raf);
-            el.removeEventListener('pointermove', move);
-            el.removeEventListener('pointerup', up);
-          };
-          el.addEventListener('pointermove', move, { passive: true });
-          el.addEventListener('pointerup', up);
-        }}
-        className="agent-figure block sm:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[52%] xl:h-[58%] w-auto object-contain object-bottom cursor-grab touch-none will-change-transform [transition:filter_300ms_ease-out] hover:[filter:drop-shadow(0_22px_44px_rgba(0,0,0,0.65))_drop-shadow(0_0_18px_hsl(var(--primary)/0.55))] [&.is-dragging]:transition-none [&.is-dragging]:[filter:drop-shadow(0_24px_48px_rgba(0,0,0,0.7))_drop-shadow(0_0_22px_hsl(var(--primary)/0.6))] [filter:drop-shadow(0_20px_40px_rgba(0,0,0,0.6))]"
-        style={{ animationDuration: '6s' }}
+        className="agent-figure block sm:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[52%] xl:h-[58%] w-auto object-contain object-bottom pointer-events-none [filter:drop-shadow(0_20px_40px_rgba(0,0,0,0.6))]"
       />
+
 
 
       {/* Viatura policial 3D — desktop only, interage com hover das equipes E com o mouse */}
