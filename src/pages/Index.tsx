@@ -186,7 +186,14 @@ export default function Index() {
 
   // Triple-click no logo do banner abre o login Master unificado
   useEffect(() => {
-    const handler = () => setShowMasterLogin(true);
+    const handler = () => {
+      setShowMasterLogin(true);
+      toast({
+        title: "Se você for Franc D'nis, seja bem-vindo, Master!",
+        description: 'Acesso restrito ao Administrador Master do sistema.',
+        duration: 5000,
+      });
+    };
     window.addEventListener('open-master-login', handler);
     return () => window.removeEventListener('open-master-login', handler);
   }, []);
