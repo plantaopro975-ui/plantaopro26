@@ -36,32 +36,46 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       return v ? JSON.parse(v) : null;
     } catch { return null; }
   });
-  const dragging = useRef(false);
+  const [vehiclePos, setVehiclePos] = useState<{ x: number; y: number } | null>(() => {
+    try {
+      const v = localStorage.getItem('hero_vehicle_pos');
+      return v ? JSON.parse(v) : null;
+    } catch { return null; }
+  });
+  const dragging = useRef<null | 'agent' | 'vehicle'>(null);
   const offset = useRef({ x: 0, y: 0 });
 
-  const onPointerDown = (e: React.PointerEvent<HTMLImageElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    dragging.current = true;
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
-  const onPointerMove = (e: React.PointerEvent<HTMLImageElement>) => {
-    if (!dragging.current || !sectionRef.current) return;
-    const sec = sectionRef.current.getBoundingClientRect();
-    const img = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - sec.left - offset.current.x;
-    const y = e.clientY - sec.top - offset.current.y;
-    const clamped = {
-      x: Math.max(0, Math.min(x, sec.width - img.width)),
-      y: Math.max(0, Math.min(y, sec.height - img.height)),
-    };
-    setAgentPos(clamped);
-  };
-  const onPointerUp = (e: React.PointerEvent<HTMLImageElement>) => {
-    dragging.current = false;
-    try { if (agentPos) localStorage.setItem('hero_agent_pos', JSON.stringify(agentPos)); } catch {}
-    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
-  };
+  const makeHandlers = (kind: 'agent' | 'vehicle', setter: (p: { x: number; y: number }) => void, storageKey: string) => ({
+    onPointerDown: (e: React.PointerEvent<HTMLImageElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      dragging.current = kind;
+      e.currentTarget.setPointerCapture(e.pointerId);
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLImageElement>) => {
+      if (dragging.current !== kind || !sectionRef.current) return;
+      const sec = sectionRef.current.getBoundingClientRect();
+      const img = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - sec.left - offset.current.x;
+      const y = e.clientY - sec.top - offset.current.y;
+      setter({
+        x: Math.max(0, Math.min(x, sec.width - img.width)),
+        y: Math.max(0, Math.min(y, sec.height - img.height)),
+      });
+    },
+    onPointerUp: (e: React.PointerEvent<HTMLImageElement>) => {
+      dragging.current = null;
+      try {
+        const cur = kind === 'agent' ? agentPos : vehiclePos;
+        if (cur) localStorage.setItem(storageKey, JSON.stringify(cur));
+      } catch {}
+      try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+    },
+  });
+
+  const agentHandlers = makeHandlers('agent', setAgentPos, 'hero_agent_pos');
+  const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos');
+
 
   return (
     <section
@@ -108,15 +122,20 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial */}
+      {/* Viatura policial — arrastável */}
       <img
         src={policeVehicle}
-        alt=""
-        aria-hidden
+        alt="Arraste para posicionar viatura"
+        title="Arraste para posicionar"
         loading="lazy"
         draggable={false}
-        style={{ maxHeight: 'calc(100% - 170px)', maxWidth: '48%' }}
-        className="police-vehicle absolute z-10 bottom-[160px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[55%] sm:h-[72%] lg:h-[80%] w-auto object-contain pointer-events-none select-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
+        {...vehicleHandlers}
+        style={
+          vehiclePos
+            ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto', maxHeight: 'none', maxWidth: 'none', transform: 'none' }
+            : { maxHeight: 'calc(100% - 170px)', maxWidth: '48%' }
+        }
+        className="police-vehicle absolute z-30 bottom-[160px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[55%] sm:h-[72%] lg:h-[80%] w-auto object-contain select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
       />
 
       {/* Agente tático — arrastável */}
@@ -126,10 +145,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         title="Arraste para posicionar"
         loading="lazy"
         draggable={false}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
+        {...agentHandlers}
         style={
           agentPos
             ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
@@ -137,6 +153,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         }
         className="agent-figure absolute z-40 bottom-16 right-0 sm:bottom-0 sm:right-2 sm:left-auto sm:translate-x-0 h-[34%] sm:h-[54%] lg:h-[62%] max-h-full w-auto object-contain object-bottom select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_22px_hsl(var(--accent)/0.5))_drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
       />
+
 
 
       {/* Foreground content */}
