@@ -191,25 +191,27 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
       {/* Tagline institucional — QSL Feijó */}
       <div
-        className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 items-center gap-2 pointer-events-none select-none whitespace-nowrap"
+        className="flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 items-center gap-2 pointer-events-none select-none whitespace-nowrap max-w-[92vw]"
         aria-label="QSL Feijó — feito por agente para agente"
       
       >
-        <span className="h-px w-6 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
-        <p className="text-[11px] font-mono tracking-[0.22em] uppercase text-foreground/90">
+        <span className="hidden md:block h-px w-6 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
+        <p className="text-[9px] sm:text-[10px] lg:text-[11px] font-mono tracking-[0.18em] lg:tracking-[0.22em] uppercase text-foreground/90 truncate">
           <span className="text-primary font-bold">QSL</span>
           <span className="text-muted-foreground">, </span>
           <span className="text-foreground">Feijó!</span>
-          <span className="mx-2 text-muted-foreground/60">·</span>
-          <span className="text-muted-foreground normal-case tracking-normal font-sans italic">
-            Feito por agente para agente
+          <span className="hidden sm:inline">
+            <span className="mx-2 text-muted-foreground/60">·</span>
+            <span className="text-muted-foreground normal-case tracking-normal font-sans italic">
+              Feito por agente para agente
+            </span>
           </span>
           <span className="mx-2 text-primary/50">·</span>
           <span className="text-primary/90 font-semibold normal-case tracking-normal">
             &lt;dev/&gt; Franc.D'nis
           </span>
         </p>
-        <span className="h-px w-6 bg-gradient-to-l from-transparent to-primary/60" aria-hidden />
+        <span className="hidden md:block h-px w-6 bg-gradient-to-l from-transparent to-primary/60" aria-hidden />
       </div>
 
 
