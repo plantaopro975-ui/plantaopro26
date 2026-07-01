@@ -72,7 +72,7 @@ export function HeroCinematic({
         width={1536}
         height={768}
         loading="lazy"
-        className="police-vehicle hidden lg:block pointer-events-none select-none absolute z-10 bottom-3 left-3 lg:left-5 xl:left-8 w-[22%] xl:w-[19%] 2xl:w-[17%] max-w-[360px] object-contain origin-bottom-left [transform:perspective(900px)_rotateY(-14deg)_rotateX(6deg)]"
+        className="police-vehicle hidden xl:block pointer-events-none select-none absolute z-10 bottom-3 xl:left-6 2xl:left-10 w-[16%] 2xl:w-[14%] max-w-[280px] object-contain origin-bottom-left opacity-90 [transform:perspective(900px)_rotateY(-14deg)_rotateX(6deg)]"
       />
 
 
