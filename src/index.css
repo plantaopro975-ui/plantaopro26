@@ -711,3 +711,13 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 .bg-emerald-500\/10, .bg-emerald-500\/20 { background-color: hsl(var(--success) / 0.15) !important; }
 .border-emerald-500\/30, .border-emerald-500\/40 { border-color: hsl(var(--success) / 0.4) !important; }
 
+
+/* Logo sway — pêndulo 3D sutil, sem rotação completa */
+@keyframes logo-sway {
+  0%, 100% { transform: rotate(-6deg) rotateY(-8deg); }
+  50%      { transform: rotate(6deg)  rotateY(8deg); }
+}
+.animate-logo-sway {
+  animation: logo-sway 4.5s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
