@@ -30,9 +30,9 @@ const TEAMS: { name: TeamName; icon: string; kicker: string }[] = [
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   return (
     <section
-      className="relative w-full overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
+      className="relative w-full min-h-0 overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
       aria-label="Sistema Socioeducativo do Acre — Comando Operacional"
-      style={{ height: 'max(560px, calc(100dvh - 150px))', maxHeight: '980px' }}
+      style={{ height: '100%', maxHeight: '100%' }}
     >
       {/* Background */}
       <img
@@ -122,7 +122,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         loading="lazy"
         draggable={false}
         style={{ width: 'clamp(130px, 24vw, 340px)' }}
-        className="absolute z-10 bottom-2 left-2 sm:left-4 lg:left-8 object-contain pointer-events-none select-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
+        className="police-vehicle absolute z-10 bottom-1 left-1 sm:bottom-2 sm:left-4 lg:left-8 object-contain pointer-events-none select-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
       />
 
       {/* Agente tático — centralizado */}
@@ -132,26 +132,26 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         aria-hidden
         loading="lazy"
         draggable={false}
-        className="absolute z-20 bottom-0 left-1/2 -translate-x-1/2 h-[58%] sm:h-[66%] lg:h-[76%] w-auto object-contain object-bottom pointer-events-none select-none [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))]"
+        className="absolute z-20 bottom-0 left-1/2 -translate-x-1/2 h-[48%] sm:h-[58%] lg:h-[68%] max-h-full w-auto object-contain object-bottom pointer-events-none select-none [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))]"
       />
 
       {/* Foreground content */}
-      <div className="relative z-30 h-full flex flex-col justify-between gap-4 px-4 sm:px-6 lg:px-10 py-5 sm:py-7">
+      <div className="relative z-30 h-full min-h-0 flex flex-col justify-between gap-2 sm:gap-3 px-3 sm:px-5 lg:px-8 py-3 sm:py-5">
         {/* Top eyebrow */}
         <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-col gap-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-accent/50 bg-background/70 backdrop-blur-md w-fit">
+          <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-sm border border-accent/50 bg-background/70 backdrop-blur-md w-fit max-w-full">
               <ShieldCheck className="h-3.5 w-3.5 text-accent" strokeWidth={2.5} />
-              <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.3em] uppercase text-accent font-sans">
+              <span className="text-[9px] sm:text-[11px] font-bold tracking-[0.22em] sm:tracking-[0.3em] uppercase text-accent font-sans truncate">
                 Instituto Socioeducativo · Acre
               </span>
             </div>
-            <h1 className="font-serif text-[22px] sm:text-[30px] lg:text-[42px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
+            <h1 className="font-serif text-[20px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
               Comando <span className="italic text-accent">Operacional</span>
               <br />
               <span className="text-primary-glow">Socioeducativo</span>
             </h1>
-            <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-muted-foreground font-mono">
+            <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[11px] uppercase tracking-[0.18em] sm:tracking-[0.25em] text-muted-foreground font-mono">
               <MapPin className="h-3 w-3 text-accent" />
               Feijó · AC · Amazônia Ocidental
             </div>
@@ -170,15 +170,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         </div>
 
         {/* Cards — 2x2 mobile, 4x1 desktop */}
-        <div className="mt-auto">
-          <div className="mb-2 flex items-center gap-2 text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.32em] text-muted-foreground/80 font-mono">
+        <div className="mt-auto min-h-0">
+          <div className="mb-1.5 sm:mb-2 flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.32em] text-muted-foreground/80 font-mono">
             <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/60" />
             Selecione sua equipe operacional
             <span className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/60" />
           </div>
 
           <ul
-            className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 w-full max-w-6xl mx-auto"
+            className="hero-team-grid grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 w-full max-w-6xl mx-auto"
             role="list"
             aria-label="Equipes operacionais"
           >
@@ -188,7 +188,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-3 sm:p-4 min-h-[128px] sm:min-h-[152px] lg:min-h-[170px] rounded-md border border-primary/30 bg-[linear-gradient(160deg,hsl(var(--card)/0.85),hsl(var(--background)/0.7))] backdrop-blur-xl hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[104px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border border-primary/30 bg-[linear-gradient(160deg,hsl(var(--card)/0.85),hsl(var(--background)/0.7))] backdrop-blur-xl hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   {/* Canto oficial (cobre) */}
@@ -209,14 +209,14 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     src={t.icon}
                     alt=""
                     loading="lazy"
-                    className="relative h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-0.5"
+                    className="team-icon-3d relative h-11 w-11 sm:h-14 sm:w-14 lg:h-18 lg:w-18 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-0.5"
                   />
                   <div className="relative mt-0.5">
-                    <div className="font-serif text-lg sm:text-xl lg:text-2xl font-black text-foreground leading-none tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    <div className="font-serif text-base sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                       {t.name}
                     </div>
                     <div className="mt-1 h-px w-8 mx-auto bg-gradient-to-r from-transparent via-accent to-transparent" />
-                    <div className="mt-1 text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.32em] text-muted-foreground font-mono">
+                    <div className="mt-1 text-[8px] sm:text-[9px] uppercase tracking-[0.24em] sm:tracking-[0.32em] text-muted-foreground font-mono">
                       Equipe
                     </div>
                   </div>
