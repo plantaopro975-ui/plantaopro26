@@ -132,72 +132,60 @@ export function AuthDialog({
                style={{ animationDuration: '3s' }} />
         </div>
 
-        {/* HERO — team-branded when team is provided */}
+        {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
-          <div className="relative h-52 sm:h-56 w-full overflow-hidden">
-            {/* Poster background */}
+          <div className="relative h-32 w-full overflow-hidden">
             <img
               src={teamPoster}
               alt={`Equipe ${teamKey}`}
-              className="absolute inset-0 h-full w-full object-cover scale-105"
-              style={{ filter: 'contrast(1.05) saturate(1.1)' }}
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ filter: 'contrast(1.1) saturate(0.7) brightness(0.5)' }}
             />
-            {/* Tactical pattern overlay */}
             {teamPattern && (
-              <div className="absolute inset-0 opacity-70 mix-blend-overlay"
+              <div className="absolute inset-0 opacity-30 mix-blend-overlay"
                    style={{ backgroundImage: teamPattern }} />
             )}
-            {/* Color wash */}
             <div className="absolute inset-0"
-                 style={{
-                   background: `linear-gradient(180deg, ${teamColor!.secondary}30 0%, transparent 40%, rgba(2,6,23,0.55) 75%, rgba(2,6,23,0.95) 100%)`,
-                 }} />
-            {/* Radial vignette pulse (team accent) */}
-            <div className="absolute inset-0"
-                 style={{
-                   background: `radial-gradient(ellipse at 50% 30%, ${teamColor!.primary}25 0%, transparent 60%)`,
-                 }} />
+                 style={{ background: `linear-gradient(180deg, rgba(2,6,23,0.3) 0%, rgba(2,6,23,0.7) 55%, rgba(2,6,23,0.98) 100%)` }} />
+            <div className="absolute left-0 top-0 bottom-0 w-[3px]"
+                 style={{ background: `linear-gradient(180deg, transparent, ${teamColor!.primary}, transparent)` }} />
 
-            {/* Corner decorations */}
-            <div className="absolute top-3 left-3 flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full animate-pulse"
-                   style={{ background: teamColor!.primary, boxShadow: `0 0 12px ${teamColor!.primary}` }} />
-              <span className="text-[10px] tracking-[0.3em] font-mono font-bold text-white/90 uppercase">
-                Ch·{teamKey} · SEC
-              </span>
-            </div>
-            <div className="absolute top-3 right-3 text-[10px] tracking-[0.25em] font-mono text-white/70">
-              OP · CLASSIFIED
+            {/* Top status row */}
+            <div className="absolute top-2.5 inset-x-4 flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <div className="h-1.5 w-1.5 rounded-full animate-pulse"
+                     style={{ background: teamColor!.primary, boxShadow: `0 0 8px ${teamColor!.primary}` }} />
+                <span className="text-[9px] tracking-[0.28em] font-mono font-semibold text-white/75 uppercase">
+                  Secure · {teamKey}
+                </span>
+              </div>
+              <span className="text-[9px] tracking-[0.22em] font-mono text-white/45">CLASSIFIED</span>
             </div>
 
-            {/* Emblem + title stack */}
-            <div className="absolute bottom-0 inset-x-0 px-6 pb-4 flex items-end gap-4">
+            {/* Emblem + title — horizontal compact */}
+            <div className="absolute bottom-0 inset-x-0 px-4 pb-3 flex items-center gap-3">
               {teamEmblem && (
                 <div className="relative shrink-0">
-                  <div className="absolute -inset-1 rounded-full blur-md opacity-70"
+                  <div className="absolute -inset-0.5 rounded-full blur-sm opacity-60"
                        style={{ background: teamColor!.primary }} />
-                  <img
-                    src={teamEmblem}
-                    alt=""
-                    className="relative h-16 w-16 object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
-                  />
+                  <img src={teamEmblem} alt=""
+                    className="relative h-11 w-11 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]" />
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <div className="text-[10px] tracking-[0.35em] font-mono font-bold uppercase"
+                <div className="text-[9px] tracking-[0.32em] font-mono font-bold uppercase leading-none"
                      style={{ color: teamColor!.primary }}>
-                  Equipe Operacional
+                  Equipe {teamKey}
                 </div>
-                <h2 className="text-3xl font-black tracking-tight text-white leading-none mt-1 font-stencil">
+                <h2 className="text-lg font-bold tracking-tight text-white leading-tight mt-1 font-stencil truncate">
                   {title}
                 </h2>
                 {subtitle && (
-                  <p className="text-sm text-white/80 mt-1.5 leading-tight">{subtitle}</p>
+                  <p className="text-[11px] text-white/65 leading-tight mt-0.5 truncate">{subtitle}</p>
                 )}
               </div>
             </div>
 
-            {/* Bottom edge divider glow */}
             <div className="absolute bottom-0 inset-x-0 h-px"
                  style={{ background: `linear-gradient(90deg, transparent, ${teamColor!.primary}, transparent)` }} />
           </div>
