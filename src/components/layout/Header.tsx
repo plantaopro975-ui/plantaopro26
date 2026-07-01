@@ -239,8 +239,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
-              <div className="hidden md:block text-left">
-                <p className="text-xs font-semibold truncate max-w-[120px] text-foreground">{getDisplayName()}</p>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs font-semibold truncate max-w-[90px] md:max-w-[120px] text-foreground">{getDisplayName()}</p>
                 <p className="text-[10px] text-primary/80 font-medium">{getRoleBadge()}</p>
               </div>
             </Button>
