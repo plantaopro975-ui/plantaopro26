@@ -134,17 +134,20 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             className="relative h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
           />
         </div>
-        <div className="hidden md:flex flex-col leading-tight">
-          <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
-            ISE · Acre
-          </span>
-          <span className="text-[13px] font-bold text-foreground -mt-0.5 font-serif">
-            Comando Tático
-          </span>
-          <span className="text-[9px] text-muted-foreground/80 tracking-wider uppercase font-mono">
-            {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-          </span>
+        <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-border/50">
+          <RadarSweep size={32} />
+          <div className="flex flex-col leading-tight">
+            <span className="text-[10px] font-bold tracking-[0.28em] text-success uppercase font-mono">
+              Radar Ativo
+            </span>
+            <span className="text-[11px] font-semibold text-foreground/90 font-mono tabular-nums">
+              <span className="text-primary">{onlineCount}</span>
+              <span className="text-muted-foreground"> online · </span>
+              <span className="tracking-[0.2em] uppercase text-[9px]">Rede 24/7</span>
+            </span>
+          </div>
         </div>
+
       </div>
 
 
