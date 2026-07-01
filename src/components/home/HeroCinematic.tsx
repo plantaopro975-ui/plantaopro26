@@ -96,14 +96,15 @@ export function HeroCinematic({
           </div>
 
           {/* Teams — 3D noir & gold, clicáveis */}
-          <ul className="grid grid-cols-2 gap-2.5 sm:gap-3" role="list" aria-label="Equipes operacionais">
+          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full" role="list" aria-label="Equipes operacionais">
             {TEAMS.map((t) => (
-              <li key={t.name}>
+              <li key={t.name} className="flex">
                 <button
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="group relative w-full text-left flex items-center gap-3 p-3 sm:p-4 rounded-sm border border-border/60 bg-background/55 backdrop-blur-md hover:border-primary/60 hover:bg-background/70 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  className="group relative w-full flex flex-col items-center justify-center text-center gap-3 p-4 sm:p-5 lg:p-6 min-h-[160px] sm:min-h-[180px] lg:min-h-[200px] rounded-sm border border-border/60 bg-background/55 backdrop-blur-md hover:border-primary/60 hover:bg-background/70 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   <span
