@@ -487,10 +487,26 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   will-change: transform, filter;
 }
 
+/* Beacon (giroflex) — realistic alternating red/blue strobe with subtle sway */
+@keyframes team-beacon-strobe {
+  0%   { transform: translateY(0) rotate(-3deg) scale(1);    filter: drop-shadow(0 0 10px rgba(239,68,68,0.85))  drop-shadow(0 8px 20px rgba(239,68,68,0.35)); }
+  25%  { transform: translateY(-3px) rotate(0deg) scale(1.03); filter: drop-shadow(0 0 14px rgba(239,68,68,1))    drop-shadow(0 10px 22px rgba(239,68,68,0.5)); }
+  50%  { transform: translateY(-5px) rotate(3deg) scale(1);    filter: drop-shadow(0 0 10px rgba(59,130,246,0.85)) drop-shadow(0 8px 20px rgba(59,130,246,0.35)); }
+  75%  { transform: translateY(-3px) rotate(0deg) scale(1.03); filter: drop-shadow(0 0 14px rgba(59,130,246,1))   drop-shadow(0 10px 22px rgba(59,130,246,0.5)); }
+  100% { transform: translateY(0) rotate(-3deg) scale(1);      filter: drop-shadow(0 0 10px rgba(239,68,68,0.85)) drop-shadow(0 8px 20px rgba(239,68,68,0.35)); }
+}
+.animate-team-beacon {
+  animation: team-beacon-strobe 1.6s ease-in-out infinite;
+  transform-origin: 50% 80%;
+  will-change: transform, filter;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-team-float,
   .animate-team-shield,
   .animate-team-helmet,
-  .animate-team-radio { animation: none; }
+  .animate-team-radio,
+  .animate-team-beacon { animation: none; }
 }
+
 
