@@ -170,7 +170,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         </div>
 
         {/* Cards — 2x2 mobile, 4x1 desktop */}
-        <div className="mt-auto min-h-0">
+        <div className="mt-2 sm:mt-auto min-h-0">
           <div className="mb-1.5 sm:mb-2 flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.32em] text-muted-foreground/80 font-mono">
             <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/60" />
             Selecione sua equipe operacional
@@ -188,7 +188,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[104px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border border-primary/30 bg-[linear-gradient(160deg,hsl(var(--card)/0.85),hsl(var(--background)/0.7))] backdrop-blur-xl hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[124px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border border-primary/30 bg-[linear-gradient(160deg,hsl(var(--card)/0.85),hsl(var(--background)/0.7))] backdrop-blur-xl hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   {/* Canto oficial (cobre) */}
@@ -209,7 +209,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     src={t.icon}
                     alt=""
                     loading="lazy"
-                    className="team-icon-3d relative h-11 w-11 sm:h-14 sm:w-14 lg:h-[4.5rem] lg:w-[4.5rem] object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-0.5"
+                    className="team-icon-3d relative h-16 w-16 sm:h-16 sm:w-16 lg:h-[4.5rem] lg:w-[4.5rem] object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-0.5"
                   />
                   <div className="relative mt-0.5">
                     <div className="font-serif text-base sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
