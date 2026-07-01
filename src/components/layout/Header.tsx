@@ -140,15 +140,15 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         </Sheet>
 
         <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 ml-1 border-l border-border/50">
-          <RadarSweep size={28} />
+          <RadarSweep size={30} />
           <div className="flex flex-col leading-tight">
-            <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-success uppercase font-mono">
+            <span className="text-[11px] sm:text-[11px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-success uppercase font-mono">
               Radar Ativo
             </span>
-            <span className="text-[10px] sm:text-[11px] font-semibold text-foreground/90 font-mono tabular-nums">
+            <span className="text-[12px] sm:text-[12px] font-semibold text-foreground/90 font-mono tabular-nums">
               <span className="text-primary">{onlineCount}</span>
               <span className="text-muted-foreground"> online · </span>
-              <span className="tracking-[0.2em] uppercase text-[9px]">Rede 24/7</span>
+              <span className="tracking-[0.2em] uppercase text-[10px]">Rede 24/7</span>
             </span>
           </div>
         </div>
@@ -171,7 +171,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             onClick={() => playSound('tactical-click')}
             className={({ isActive }) =>
               cn(
-                'relative inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-[11px] sm:text-[12px] font-semibold tracking-wide transition-all',
+                'relative inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-[13px] sm:text-[13px] font-semibold tracking-wide transition-all',
                 'text-muted-foreground hover:text-foreground hover:bg-primary/10',
                 isActive &&
                   'text-primary bg-primary/10 ring-1 ring-primary/30 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.15)]',
@@ -180,7 +180,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           >
             {({ isActive }) => (
               <>
-                <Icon className="h-3.5 w-3.5" />
+                <Icon className="h-4 w-4" />
                 <span className="hidden sm:inline">{label}</span>
                 {isActive && (
                   <span className="absolute -bottom-[1px] left-2 right-2 h-[2px] rounded-full bg-primary" aria-hidden />
@@ -240,8 +240,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
                 </AvatarFallback>
               </Avatar>
               <div className="hidden sm:block text-left">
-                <p className="text-xs font-semibold truncate max-w-[90px] md:max-w-[120px] text-foreground">{getDisplayName()}</p>
-                <p className="text-[10px] text-primary/80 font-medium">{getRoleBadge()}</p>
+                <p className="text-[13px] font-semibold truncate max-w-[90px] md:max-w-[120px] text-foreground">{getDisplayName()}</p>
+                <p className="text-[11px] text-primary/80 font-medium">{getRoleBadge()}</p>
               </div>
             </Button>
           </DropdownMenuTrigger>
@@ -277,7 +277,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         title="Sobre o app"
       >
         <span className="hidden md:block h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent to-primary/50" aria-hidden />
-        <p className="text-center leading-tight text-[9px] sm:text-[10px] md:text-[11px] xl:text-[12px] font-mono font-semibold tracking-[0.1em] uppercase text-foreground/90 group-hover:text-foreground whitespace-normal sm:whitespace-nowrap">
+        <p className="text-center leading-tight text-[11px] sm:text-[11px] md:text-[12px] xl:text-[13px] font-mono font-semibold tracking-[0.1em] uppercase text-foreground/90 group-hover:text-foreground whitespace-normal sm:whitespace-nowrap">
           <span className="text-primary font-bold">QSL</span>
           <span className="text-muted-foreground">, </span>
           <span className="text-foreground">Feijó!</span>

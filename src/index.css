@@ -444,6 +444,15 @@ body {
   max-height: var(--home-viewport-height);
   overflow: hidden;
   contain: layout paint;
+  overscroll-behavior: none;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+@media (max-width: 640px) {
+  .home-viewport-shell {
+    touch-action: none;
+    overscroll-behavior: none;
+  }
 }
 
 

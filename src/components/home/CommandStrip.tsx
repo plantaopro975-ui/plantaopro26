@@ -93,10 +93,10 @@ export function CommandStrip() {
 
           {/* Identidade */}
           <div className="min-w-0 border-l border-border/50 pl-3 leading-tight">
-            <span className="block text-[12px] sm:text-[13px] font-bold text-foreground font-serif truncate">
+            <span className="block text-[14px] sm:text-[15px] font-bold text-foreground font-serif truncate">
               Comando <span className="text-primary">Operacional</span>
             </span>
-            <span className="hidden md:block text-[9px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono">
+            <span className="hidden md:block text-[10px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono">
               Gestão inteligente de plantões
             </span>
           </div>
@@ -104,11 +104,11 @@ export function CommandStrip() {
 
         {/* Relógio + radar + status */}
         <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-          <div className="min-w-[92px] sm:min-w-[124px] text-right leading-tight tabular-nums">
-            <div className="font-mono text-[13px] sm:text-[14px] font-semibold text-foreground tracking-tight">
+          <div className="min-w-[104px] sm:min-w-[130px] text-right leading-tight tabular-nums">
+            <div className="font-mono text-[15px] sm:text-[16px] font-semibold text-foreground tracking-tight">
               {time}
             </div>
-            <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono truncate">
+            <div className="text-[11px] sm:text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-mono truncate">
               {date}
             </div>
           </div>
