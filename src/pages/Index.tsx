@@ -1320,7 +1320,7 @@ export default function Index() {
         variant="check"
         title={`Equipe ${selectedTeam}`}
         subtitle="Digite seu CPF para identificação"
-        teamBadge={selectedTeam && <TeamBadge team={selectedTeam as any} size="lg" />}
+        team={selectedTeam}
       >
         <div className="space-y-5">
           <AuthInput
@@ -1401,7 +1401,7 @@ export default function Index() {
         variant="agent"
         title={`Equipe ${selectedTeam}`}
         subtitle="Autenticação de Agente"
-        teamBadge={selectedTeam && <TeamBadge team={selectedTeam as any} size="md" />}
+        team={selectedTeam}
       >
         <form onSubmit={handleLogin} className="space-y-5" data-login-form="true">
           <AuthInput
@@ -1472,7 +1472,7 @@ export default function Index() {
         variant="register"
         title={`Cadastro - ${selectedTeam}`}
         subtitle="Novo Agente"
-        teamBadge={selectedTeam && <TeamBadge team={selectedTeam as any} size="md" />}
+        team={selectedTeam}
       >
         {/* Info alerts */}
         <div className="space-y-3 mb-6">

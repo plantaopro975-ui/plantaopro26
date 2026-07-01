@@ -2,8 +2,10 @@ import { ReactNode } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import logoShield from '@/assets/ise-acre-badge.png';
+import { getTeamPoster, getTeamEmblem, getTeamColors } from '@/lib/teamAssets';
 
 type AuthDialogVariant = 'agent' | 'master' | 'admin' | 'register' | 'check';
+type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
 interface AuthDialogProps {
   open: boolean;
@@ -14,6 +16,8 @@ interface AuthDialogProps {
   children: ReactNode;
   icon?: ReactNode;
   teamBadge?: ReactNode;
+  /** When provided, renders the team-branded hero (poster + emblem + team colors). */
+  team?: TeamName | string | null;
 }
 
 const variantStyles = {
@@ -69,6 +73,14 @@ const variantStyles = {
   },
 };
 
+// Team-specific tactical patterns overlay (SVG data URI)
+const teamPatterns: Record<string, string> = {
+  ALFA: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M0 20L20 0L40 20L20 40Z' fill='none' stroke='rgba(34,197,94,0.15)' stroke-width='1'/></svg>\")",
+  BRAVO: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='6' fill='none' stroke='rgba(249,115,22,0.18)' stroke-width='1'/></svg>\")",
+  CHARLIE: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M0 0h40v40H0z' fill='none' stroke='rgba(59,130,246,0.12)' stroke-width='0.5'/><path d='M10 20h20M20 10v20' stroke='rgba(59,130,246,0.15)' stroke-width='0.5'/></svg>\")",
+  DELTA: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M20 4L34 30H6z' fill='none' stroke='rgba(234,179,8,0.18)' stroke-width='1'/></svg>\")",
+};
+
 export function AuthDialog({
   open,
   onOpenChange,
@@ -78,115 +90,175 @@ export function AuthDialog({
   children,
   icon,
   teamBadge,
+  team,
 }: AuthDialogProps) {
   const styles = variantStyles[variant];
+  const teamKey = team ? String(team).toUpperCase() : null;
+  const teamPoster = teamKey ? getTeamPoster(teamKey) : null;
+  const teamEmblem = teamKey ? getTeamEmblem(teamKey) : null;
+  const teamColor = teamKey ? getTeamColors(teamKey) : null;
+  const teamPattern = teamKey ? teamPatterns[teamKey] : null;
+  const teamBranded = Boolean(teamPoster && teamColor);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          // Base structure
           "w-[94vw] max-w-[440px] p-0 gap-0 overflow-hidden",
-          // Dark premium background
           "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950",
-          // Border and glow
           "border-2",
-          styles.border,
+          !teamBranded && styles.border,
           "shadow-2xl",
-          styles.glow,
-          // Registration needs scrolling
+          !teamBranded && styles.glow,
           variant === 'register' && "max-h-[90vh] overflow-y-auto"
         )}
+        style={teamBranded && teamColor ? {
+          borderColor: `${teamColor.primary}80`,
+          boxShadow: `0 25px 60px -12px ${teamColor.glow}, 0 0 0 1px ${teamColor.primary}30`,
+        } : undefined}
       >
-        {/* A11y: Radix requires DialogTitle/Description inside DialogContent */}
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">{subtitle || title}</DialogDescription>
 
-        {/* Animated accent line at top */}
-        <div className={cn(
-          "h-1.5 w-full bg-gradient-to-r",
-          styles.accent,
-          "relative overflow-hidden"
-        )}>
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" 
+        {/* Top accent bar */}
+        <div
+          className={cn("h-1.5 w-full relative overflow-hidden",
+            !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
+          style={teamBranded && teamColor ? {
+            background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
+          } : undefined}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"
                style={{ animationDuration: '3s' }} />
         </div>
 
-        {/* Header section */}
-        <div className={cn(
-          "relative px-6 pt-8 pb-6",
-          "bg-gradient-to-b",
-          styles.headerBg
-        )}>
-          {/* Decorative elements */}
-          <div className="absolute top-4 right-4 flex gap-1.5">
-            <div className={cn("w-2 h-2 rounded-full animate-pulse", styles.decorColor)} />
-            <div className={cn("w-2 h-2 rounded-full animate-pulse opacity-60", styles.decorColor)} 
-                 style={{ animationDelay: '0.3s' }} />
-            <div className={cn("w-2 h-2 rounded-full animate-pulse opacity-30", styles.decorColor)}
-                 style={{ animationDelay: '0.6s' }} />
-          </div>
+        {/* HERO — team-branded when team is provided */}
+        {teamBranded && teamPoster ? (
+          <div className="relative h-52 sm:h-56 w-full overflow-hidden">
+            {/* Poster background */}
+            <img
+              src={teamPoster}
+              alt={`Equipe ${teamKey}`}
+              className="absolute inset-0 h-full w-full object-cover scale-105"
+              style={{ filter: 'contrast(1.05) saturate(1.1)' }}
+            />
+            {/* Tactical pattern overlay */}
+            {teamPattern && (
+              <div className="absolute inset-0 opacity-70 mix-blend-overlay"
+                   style={{ backgroundImage: teamPattern }} />
+            )}
+            {/* Color wash */}
+            <div className="absolute inset-0"
+                 style={{
+                   background: `linear-gradient(180deg, ${teamColor!.secondary}30 0%, transparent 40%, rgba(2,6,23,0.55) 75%, rgba(2,6,23,0.95) 100%)`,
+                 }} />
+            {/* Radial vignette pulse (team accent) */}
+            <div className="absolute inset-0"
+                 style={{
+                   background: `radial-gradient(ellipse at 50% 30%, ${teamColor!.primary}25 0%, transparent 60%)`,
+                 }} />
 
-          {/* Logo */}
-          <div className="flex justify-center mb-5">
-            <div className={cn(
-              "p-4 rounded-2xl bg-gradient-to-br backdrop-blur-sm",
-              styles.logoBg,
-              "border border-white/10",
-              "shadow-lg"
-            )}>
-              <img
-                src={logoShield}
-                alt="Plantão Pro"
-                className="w-16 h-16 object-contain drop-shadow-lg"
-              />
+            {/* Corner decorations */}
+            <div className="absolute top-3 left-3 flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full animate-pulse"
+                   style={{ background: teamColor!.primary, boxShadow: `0 0 12px ${teamColor!.primary}` }} />
+              <span className="text-[10px] tracking-[0.3em] font-mono font-bold text-white/90 uppercase">
+                Ch·{teamKey} · SEC
+              </span>
             </div>
-          </div>
-
-          {/* Team badge */}
-          {teamBadge && (
-            <div className="flex justify-center mb-4">
-              {teamBadge}
+            <div className="absolute top-3 right-3 text-[10px] tracking-[0.25em] font-mono text-white/70">
+              OP · CLASSIFIED
             </div>
-          )}
 
-          {/* Title area */}
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center gap-3">
-              {icon && (
-                <div className={cn(
-                  "p-2.5 rounded-xl bg-gradient-to-br",
-                  styles.logoBg,
-                  "border border-white/10"
-                )}>
-                  {icon}
+            {/* Emblem + title stack */}
+            <div className="absolute bottom-0 inset-x-0 px-6 pb-4 flex items-end gap-4">
+              {teamEmblem && (
+                <div className="relative shrink-0">
+                  <div className="absolute -inset-1 rounded-full blur-md opacity-70"
+                       style={{ background: teamColor!.primary }} />
+                  <img
+                    src={teamEmblem}
+                    alt=""
+                    className="relative h-16 w-16 object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+                  />
                 </div>
               )}
-              <h2 className={cn(
-                "text-2xl font-bold tracking-tight",
-                styles.titleColor
-              )}>
-                {title}
-              </h2>
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] tracking-[0.35em] font-mono font-bold uppercase"
+                     style={{ color: teamColor!.primary }}>
+                  Equipe Operacional
+                </div>
+                <h2 className="text-3xl font-black tracking-tight text-white leading-none mt-1 font-stencil">
+                  {title}
+                </h2>
+                {subtitle && (
+                  <p className="text-sm text-white/80 mt-1.5 leading-tight">{subtitle}</p>
+                )}
+              </div>
             </div>
-            {subtitle && (
-              <p className={cn("text-base", styles.subtitleColor)}>
-                {subtitle}
-              </p>
+
+            {/* Bottom edge divider glow */}
+            <div className="absolute bottom-0 inset-x-0 h-px"
+                 style={{ background: `linear-gradient(90deg, transparent, ${teamColor!.primary}, transparent)` }} />
+          </div>
+        ) : (
+          <>
+            {/* Legacy header (non-team dialogs) */}
+            <div className={cn("relative px-6 pt-8 pb-6 bg-gradient-to-b", styles.headerBg)}>
+              <div className="absolute top-4 right-4 flex gap-1.5">
+                <div className={cn("w-2 h-2 rounded-full animate-pulse", styles.decorColor)} />
+                <div className={cn("w-2 h-2 rounded-full animate-pulse opacity-60", styles.decorColor)}
+                     style={{ animationDelay: '0.3s' }} />
+                <div className={cn("w-2 h-2 rounded-full animate-pulse opacity-30", styles.decorColor)}
+                     style={{ animationDelay: '0.6s' }} />
+              </div>
+              <div className="flex justify-center mb-5">
+                <div className={cn("p-4 rounded-2xl bg-gradient-to-br backdrop-blur-sm",
+                  styles.logoBg, "border border-white/10 shadow-lg")}>
+                  <img src={logoShield} alt="Plantão Pro" className="w-16 h-16 object-contain drop-shadow-lg" />
+                </div>
+              </div>
+              {teamBadge && (
+                <div className="flex justify-center mb-4">{teamBadge}</div>
+              )}
+              <div className="text-center space-y-2">
+                <div className="flex items-center justify-center gap-3">
+                  {icon && (
+                    <div className={cn("p-2.5 rounded-xl bg-gradient-to-br", styles.logoBg, "border border-white/10")}>
+                      {icon}
+                    </div>
+                  )}
+                  <h2 className={cn("text-2xl font-bold tracking-tight", styles.titleColor)}>
+                    {title}
+                  </h2>
+                </div>
+                {subtitle && (
+                  <p className={cn("text-base", styles.subtitleColor)}>{subtitle}</p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Separator */}
+        <div className="relative h-px bg-slate-800">
+          <div
+            className="absolute inset-0 opacity-60"
+            style={teamBranded && teamColor ? {
+              background: `linear-gradient(90deg, transparent, ${teamColor.primary}, transparent)`,
+            } : undefined}
+          >
+            {!teamBranded && (
+              <div className={cn(
+                "absolute inset-0 bg-gradient-to-r from-transparent via-current to-transparent opacity-50",
+                variant === 'agent' && "text-blue-500",
+                variant === 'master' && "text-amber-500",
+                variant === 'admin' && "text-indigo-500",
+                variant === 'register' && "text-cyan-500",
+                variant === 'check' && "text-emerald-500"
+              )} />
             )}
           </div>
-        </div>
-
-        {/* Separator line */}
-        <div className="relative h-px bg-slate-800">
-          <div className={cn(
-            "absolute inset-0 bg-gradient-to-r from-transparent via-current to-transparent opacity-50",
-            variant === 'agent' && "text-blue-500",
-            variant === 'master' && "text-amber-500",
-            variant === 'admin' && "text-indigo-500",
-            variant === 'register' && "text-cyan-500",
-            variant === 'check' && "text-emerald-500"
-          )} />
         </div>
 
         {/* Content */}
@@ -195,16 +267,18 @@ export function AuthDialog({
         </div>
 
         {/* Bottom accent */}
-        <div className={cn(
-          "h-1 w-full bg-gradient-to-r opacity-60",
-          styles.accent
-        )} />
+        <div
+          className={cn("h-1 w-full opacity-70", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
+          style={teamBranded && teamColor ? {
+            background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
+          } : undefined}
+        />
       </DialogContent>
     </Dialog>
   );
 }
 
-// Add shimmer animation to globals
+// shimmer keyframes injected once
 const shimmerKeyframes = `
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
@@ -213,9 +287,9 @@ const shimmerKeyframes = `
 `;
 
 if (typeof document !== 'undefined') {
-  const style = document.createElement('style');
-  style.textContent = shimmerKeyframes;
   if (!document.head.querySelector('[data-shimmer-animation]')) {
+    const style = document.createElement('style');
+    style.textContent = shimmerKeyframes;
     style.setAttribute('data-shimmer-animation', 'true');
     document.head.appendChild(style);
   }
