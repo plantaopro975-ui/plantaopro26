@@ -239,7 +239,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           </div>
 
           <ul
-            className="hero-team-grid grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 w-full max-w-6xl mx-auto"
+            className="relative hero-team-grid grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 w-full max-w-6xl mx-auto"
             role="list"
             aria-label="Equipes operacionais"
           >
