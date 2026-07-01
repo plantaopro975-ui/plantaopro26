@@ -218,7 +218,21 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
         {/* Cards — 2x2 mobile, 4x1 desktop */}
         <div className="mt-2 sm:mt-auto min-h-0">
-          <div className="mb-1.5 sm:mb-2 flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.32em] text-muted-foreground/80 font-mono">
+          <div className="relative rounded-lg overflow-hidden border border-primary/25 p-2 sm:p-3">
+            {/* Background profissional do hub de cards */}
+            <img
+              src={teamsHubBg}
+              alt=""
+              aria-hidden
+              loading="lazy"
+              width={1920}
+              height={640}
+              className="absolute inset-0 h-full w-full object-cover opacity-60"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(var(--background)/0.55),hsl(var(--background)/0.85))]" aria-hidden />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,hsl(var(--background)/0.55)_85%)]" aria-hidden />
+
+          <div className="relative mb-1.5 sm:mb-2 flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.32em] text-muted-foreground/80 font-mono">
             <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/60" />
             Selecione sua equipe operacional
             <span className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/60" />
