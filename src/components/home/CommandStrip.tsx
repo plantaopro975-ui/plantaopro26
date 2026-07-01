@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Radio, Shield } from 'lucide-react';
+import { RadarSweep } from './RadarSweep';
+
 
 import { cn } from '@/lib/utils';
 import bannerBg from '@/assets/institutional-banner-bg.jpg';
@@ -100,7 +102,7 @@ export function CommandStrip() {
           </div>
         </div>
 
-        {/* Relógio + status */}
+        {/* Relógio + radar + status */}
         <div className="flex items-center gap-3 sm:gap-4 ml-auto">
           <div className="min-w-[92px] sm:min-w-[124px] text-right leading-tight tabular-nums">
             <div className="font-mono text-[13px] sm:text-[14px] font-semibold text-foreground tracking-tight">
@@ -110,6 +112,8 @@ export function CommandStrip() {
               {date}
             </div>
           </div>
+
+          <RadarSweep size={28} className="hidden sm:block" />
 
           <div className="hidden sm:flex items-center gap-2 rounded-md bg-card/60 px-2.5 py-1 ring-1 ring-border/60">
             <span className="relative flex h-2 w-2">
@@ -121,6 +125,7 @@ export function CommandStrip() {
             </span>
             <Radio className="h-3 w-3 text-success/70" />
           </div>
+
         </div>
       </div>
     </section>
