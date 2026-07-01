@@ -221,22 +221,7 @@ export default function About() {
                     </div>
                     <button
                       type="button"
-                      onClick={async () => {
-                        try {
-                          const res = await fetch(logoPlantaoPro);
-                          const blob = await res.blob();
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = 'logo-plantao-pro.png';
-                          document.body.appendChild(a);
-                          a.click();
-                          document.body.removeChild(a);
-                          URL.revokeObjectURL(url);
-                        } catch {
-                          window.open(logoPlantaoPro, '_blank');
-                        }
-                      }}
+                      onClick={() => downloadLogo(logoPlantaoPro, 'logo-plantao-pro.png')}
                       className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors"
                     >
                       <Download className="h-2.5 w-2.5" />
