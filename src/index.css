@@ -11,44 +11,45 @@
        Marinho profundo (camisa) + Caqui/Areia (calça) + Dourado (brasão)
        ================================ */
 
-    /* Superfícies — marinho profundo com leve viés cinza-azulado */
-    --background: 215 45% 7%;
-    --foreground: 38 32% 95%;
+    /* Superfícies — marinho profundo, alto contraste */
+    --background: 216 50% 6%;
+    --foreground: 40 30% 96%;
 
-    --card: 215 40% 11%;
-    --card-foreground: 38 28% 96%;
+    --card: 216 42% 10%;
+    --card-foreground: 40 28% 97%;
 
-    --popover: 215 42% 10%;
-    --popover-foreground: 38 28% 96%;
+    --popover: 216 44% 9%;
+    --popover-foreground: 40 28% 97%;
 
     /* Primary — marinho institucional (camisa operacional) */
-    --primary: 216 62% 34%;
-    --primary-foreground: 38 32% 97%;
-    --primary-glow: 216 78% 52%;
+    --primary: 216 68% 40%;
+    --primary-foreground: 40 32% 98%;
+    --primary-glow: 216 82% 58%;
 
-    /* Secondary — caqui / areia (calça tática) — agora protagonista */
-    --secondary: 34 34% 60%;
-    --secondary-foreground: 215 50% 10%;
+    /* Secondary — caqui / areia (calça tática) */
+    --secondary: 34 32% 56%;
+    --secondary-foreground: 216 55% 8%;
 
-    --muted: 215 28% 15%;
-    --muted-foreground: 34 18% 72%;
+    --muted: 216 26% 14%;
+    --muted-foreground: 40 14% 68%;
 
     /* Accent — dourado do brasão ISE */
-    --accent: 42 72% 54%;
-    --accent-foreground: 215 55% 8%;
+    --accent: 42 78% 56%;
+    --accent-foreground: 216 60% 6%;
 
-    --destructive: 0 72% 52%;
+    --destructive: 0 74% 54%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 148 52% 42%;
+    --success: 148 56% 44%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 42 88% 58%;
-    --warning-foreground: 215 55% 10%;
+    --warning: 42 90% 60%;
+    --warning-foreground: 216 60% 8%;
 
-    --border: 215 28% 20%;
-    --input: 215 38% 13%;
-    --ring: 42 72% 54%;
+    --border: 216 26% 18%;
+    --input: 216 36% 12%;
+    --ring: 42 78% 56%;
+
 
     --sidebar-background: 215 55% 6%;
     --sidebar-foreground: 38 28% 94%;
