@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Bell, LogOut, Menu, Settings, User, Volume2, VolumeX } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { MobileSidebar } from './MobileSidebar';
-import { OperationalStatus } from './OperationalStatus';
+
 import { cn } from '@/lib/utils';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
 import logoEmblem from '@/assets/logo-plantao-pro.png';
@@ -183,10 +183,6 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         ))}
       </nav>
 
-      {/* Operational Status - Center (hidden on lg to leave room for nav) */}
-      <div className="absolute left-1/2 -translate-x-1/2 hidden md:block lg:hidden">
-        <OperationalStatus />
-      </div>
 
 
       {/* Right Side */}
