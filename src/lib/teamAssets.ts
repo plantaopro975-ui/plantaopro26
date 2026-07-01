@@ -1,6 +1,6 @@
 // Team image assets
 import alfaPoster from '@/assets/teams/alfa-poster.jpg';
-import bravoPoster from '@/assets/teams/bravo-poster.png';
+import bravoPoster from '@/assets/teams/bravo-poster.jpg';
 import charliePoster from '@/assets/teams/charlie-poster.jpg';
 import deltaPoster from '@/assets/teams/delta-poster.jpg';
 import alfaEmblem from '@/assets/teams/alfa-emblem.png';
