@@ -119,7 +119,7 @@ export function HeroCinematic({
       ref={sectionRef}
       className="relative w-full overflow-hidden rounded-xl border border-border/60 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
-      style={{ minHeight: 'clamp(360px, 46vh, 520px)' }}
+      style={{ minHeight: 'clamp(300px, 38vh, 440px)' }}
     >
       <img
         src={heroImage}
@@ -159,7 +159,7 @@ export function HeroCinematic({
       />
 
 
-      <div className="relative z-10 h-full flex flex-col gap-6 px-5 sm:px-8 lg:px-12 py-6 sm:py-8">
+      <div className="relative z-10 h-full flex flex-col gap-3 sm:gap-4 px-3 sm:px-6 lg:px-10 py-3 sm:py-5">
         {/* eyebrow */}
         <div className="flex items-center justify-between gap-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border border-primary/30 bg-background/50 backdrop-blur-md">
@@ -237,7 +237,7 @@ export function HeroCinematic({
                     el.style.setProperty('--tilt-x', '0deg');
                     el.style.setProperty('--tilt-y', '0deg');
                   }}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-3 p-4 sm:p-5 lg:p-6 min-h-[160px] sm:min-h-[180px] lg:min-h-[200px] rounded-sm border border-border/50 bg-background/55 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-2 p-2.5 sm:p-3.5 lg:p-4 min-h-[110px] sm:min-h-[130px] lg:min-h-[150px] rounded-sm border border-border/50 bg-background/55 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   <span
@@ -249,14 +249,15 @@ export function HeroCinematic({
                     alt=""
                     loading="lazy"
                     style={{ animationDelay: `${TEAMS.indexOf(t) * 0.6}s` }}
-                    className={`${t.anim} team-icon-3d relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]`}
+                    className={`${t.anim} team-icon-3d relative h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 object-contain shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]`}
                   />
 
 
-                  <div className="relative flex flex-col items-center gap-1.5">
-                    <div className="text-lg sm:text-xl lg:text-2xl uppercase tracking-[0.22em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                  <div className="relative flex flex-col items-center gap-1">
+                    <div className="text-sm sm:text-base lg:text-lg uppercase tracking-[0.22em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                       {t.name}
                     </div>
+
                   </div>
 
 
