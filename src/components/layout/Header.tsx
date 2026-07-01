@@ -112,31 +112,31 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-80" />
       <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
-      {/* Mobile Menu */}
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild className="lg:hidden">
-          <Button variant="ghost" size="icon" className="tactical-btn">
-            <Menu className="h-5 w-5" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64 bg-card border-r border-border/60">
-          <MobileSidebar onNavigate={() => setIsOpen(false)} />
-        </SheetContent>
-      </Sheet>
-
-      {/* Institutional identity */}
-      <div className="flex items-center gap-3">
-        <div className="relative shrink-0">
-          <span className="absolute inset-0 rounded-full bg-primary/20 blur-md" aria-hidden />
+      {/* Logo — leftmost, maximized within bar height */}
+      <div className="flex items-center gap-3 shrink-0">
+        <div className="relative shrink-0 [perspective:600px]">
+          <span className="absolute inset-0 rounded-full bg-primary/25 blur-lg animate-pulse" aria-hidden />
           <img
             src={logoEmblem}
             alt="Plantão Pro"
-            width={40}
-            height={40}
-            loading="lazy"
-            className="relative h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
+            width={56}
+            height={56}
+            className="relative h-14 w-14 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] animate-logo-sway origin-center will-change-transform"
           />
         </div>
+
+        {/* Mobile Menu */}
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild className="lg:hidden">
+            <Button variant="ghost" size="icon" className="tactical-btn">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64 bg-card border-r border-border/60">
+            <MobileSidebar onNavigate={() => setIsOpen(false)} />
+          </SheetContent>
+        </Sheet>
+
         <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-border/50">
           <RadarSweep size={32} />
           <div className="flex flex-col leading-tight">
@@ -150,8 +150,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             </span>
           </div>
         </div>
-
       </div>
+
 
 
 
