@@ -18,11 +18,11 @@ interface HeroCinematicProps {
   unitsCount?: number;
 }
 
-const TEAMS: { name: TeamName; icon: string; kicker: string }[] = [
-  { name: 'ALFA',    icon: iconShield, kicker: '01' },
-  { name: 'BRAVO',   icon: iconHelmet, kicker: '02' },
-  { name: 'CHARLIE', icon: iconRadio,  kicker: '03' },
-  { name: 'DELTA',   icon: iconHandcuffs, kicker: '04' },
+const TEAMS: { name: TeamName; icon: string; kicker: string; motion: string }[] = [
+  { name: 'ALFA',    icon: iconShield,    kicker: '01', motion: 'animate-team-shield' },
+  { name: 'BRAVO',   icon: iconHelmet,    kicker: '02', motion: 'animate-team-helmet' },
+  { name: 'CHARLIE', icon: iconRadio,     kicker: '03', motion: 'animate-team-radio' },
+  { name: 'DELTA',   icon: iconHandcuffs, kicker: '04', motion: 'animate-team-handcuffs' },
 ];
 
 /**
