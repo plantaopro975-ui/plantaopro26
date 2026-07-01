@@ -176,7 +176,7 @@ export function HeroCinematic({
 
 
           {/* Teams — compactos */}
-          <ul className="hero-team-grid grid grid-cols-2 gap-2 sm:gap-2.5 w-full" role="list" aria-label="Equipes operacionais">
+          <ul className="hero-team-grid grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full" role="list" aria-label="Equipes operacionais">
             {TEAMS.map((t) => (
               <li key={t.name} className="flex">
                 <button
@@ -205,7 +205,7 @@ export function HeroCinematic({
                     el.style.setProperty('--tilt-x', '0deg');
                     el.style.setProperty('--tilt-y', '0deg');
                   }}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2 sm:p-2.5 min-h-[74px] sm:min-h-[86px] lg:min-h-[96px] rounded-sm border border-border/50 bg-background/55 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-1.5 sm:p-2 min-h-[64px] sm:min-h-[78px] lg:min-h-[92px] rounded-sm border border-border/50 bg-background/55 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   <span
@@ -217,15 +217,16 @@ export function HeroCinematic({
                     alt=""
                     loading="lazy"
                     style={{ animationDelay: `${TEAMS.indexOf(t) * 0.6}s` }}
-                    className={`${t.anim} team-icon-3d relative h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12 object-contain shrink-0 drop-shadow-[0_3px_8px_rgba(0,0,0,0.4)]`}
+                    className={`${t.anim} team-icon-3d relative h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain shrink-0 drop-shadow-[0_3px_8px_rgba(0,0,0,0.4)]`}
                   />
-                  <div className="relative text-[11px] sm:text-xs lg:text-sm uppercase tracking-[0.2em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                  <div className="relative text-[10px] sm:text-[11px] lg:text-xs uppercase tracking-[0.18em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                     {t.name}
                   </div>
                 </button>
               </li>
             ))}
           </ul>
+
         </div>
       </div>
     </section>
