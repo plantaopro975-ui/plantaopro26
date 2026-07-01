@@ -101,35 +101,50 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter Tight', 'Inter', system-ui, sans-serif;
+    font-family: 'Inter Tight', 'IBM Plex Sans', 'Inter', system-ui, sans-serif;
     background:
       radial-gradient(ellipse 70% 45% at 50% 0%, hsl(152 58% 18% / 0.42) 0%, transparent 70%),
       radial-gradient(ellipse 45% 35% at 90% 100%, hsl(28 68% 40% / 0.10) 0%, transparent 70%),
       var(--gradient-dark);
     background-attachment: fixed;
     min-height: 100dvh;
-    font-feature-settings: 'ss01', 'cv11';
+    font-feature-settings: 'ss01', 'cv11', 'kern', 'liga';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
   }
-
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Fraunces', 'Georgia', serif;
-    letter-spacing: -0.02em;
-    font-weight: 800;
-
+    letter-spacing: -0.022em;
+    font-weight: 700;
+    line-height: 1.15;
   }
+
+  h1 { font-weight: 800; }
+
+  p { line-height: 1.65; }
 
   label {
     @apply text-sm font-semibold;
     font-family: 'IBM Plex Sans', system-ui, sans-serif;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.015em;
   }
 
-  input, select, textarea {
-    @apply text-base;
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  input, select, textarea, button {
+    font-family: 'IBM Plex Sans', 'Inter Tight', system-ui, sans-serif;
+    letter-spacing: -0.003em;
+  }
+
+  /* Números tabulares (relógios, contadores, tabelas) */
+  .tabular-nums, time, [data-tabular] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum', 'zero';
   }
 }
+
 
 
 /* ================================
