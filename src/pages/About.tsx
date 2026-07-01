@@ -73,7 +73,7 @@ export default function About() {
       <main className="container relative max-w-6xl px-3 py-2 space-y-2 flex-1 overflow-hidden flex flex-col min-h-0">
 
         {/* HERO com capa realista */}
-        <section className="relative overflow-hidden rounded-3xl border border-amber-500/25 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)]">
+        <section className="relative overflow-hidden rounded-2xl border border-amber-500/25 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] flex-shrink-0">
           <div className="absolute inset-0">
             <img
               src={aboutHero}
@@ -86,7 +86,6 @@ export default function About() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(217,168,63,0.18),transparent_60%)]" />
           </div>
 
-          {/* Grid overlay */}
           <svg
             className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
             xmlns="http://www.w3.org/2000/svg"
@@ -99,31 +98,33 @@ export default function About() {
             <rect width="100%" height="100%" fill="url(#about-grid)" />
           </svg>
 
-          <div className="relative flex flex-col items-center gap-4 p-6 text-center md:flex-row md:items-center md:gap-6 md:p-10 md:text-left">
-            <div className="relative flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/20 via-amber-500/5 to-transparent ring-1 ring-amber-400/40 shadow-[0_0_40px_rgba(217,168,63,0.25)]">
-              <img src={logoPlantaoPro} alt="PlantãoPro" className="h-14 w-14 object-contain drop-shadow-lg" />
-              <span className="absolute -inset-1 rounded-2xl border border-amber-400/20 animate-pulse" />
-            </div>
-            <div className="flex-1 space-y-2">
+          <div className="relative flex flex-row items-center gap-4 px-5 py-3 md:gap-6 md:px-8 md:py-4 text-left">
+            <img
+              src={logoPlantaoPro}
+              alt="PlantãoPro"
+              className="h-14 w-14 md:h-16 md:w-16 flex-shrink-0 object-contain drop-shadow-[0_0_20px_rgba(217,168,63,0.5)]"
+            />
+            <div className="flex-1 min-w-0 space-y-1">
               <p
-                className="inline-block rounded-full bg-amber-400/15 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-amber-200 ring-1 ring-amber-400/40"
+                className="inline-block rounded-full bg-amber-400/15 px-2.5 py-0.5 text-[9px] uppercase tracking-[0.3em] text-amber-200 ring-1 ring-amber-400/40"
                 style={{ fontFamily: '"IBM Plex Mono", monospace' }}
               >
                 Segurança Pública · Acre
               </p>
               <h1
-                className="text-3xl font-normal tracking-tight text-slate-50 md:text-5xl"
+                className="text-2xl font-normal tracking-tight text-slate-50 md:text-3xl leading-none"
                 style={{ fontFamily: '"Libre Baskerville", Georgia, serif' }}
               >
                 Plantão<span className="text-amber-400">Pro</span>
               </h1>
-              <p className="max-w-xl text-sm leading-relaxed text-slate-300 md:text-base">
+              <p className="text-xs leading-snug text-slate-300 md:text-sm">
                 Ferramenta operacional para agentes da segurança pública organizarem plantões,
                 escalas e rotina com precisão tática.
               </p>
             </div>
           </div>
         </section>
+
 
         {/* Funcionalidades */}
         <section>
