@@ -133,10 +133,10 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           </div>
         </div>
         <div className="hidden md:flex flex-col leading-tight border-l border-border/50 pl-3">
-          <span className="text-[10px] font-bold tracking-[0.24em] text-primary uppercase">
+          <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
             ISE · Acre
           </span>
-          <span className="text-[12px] font-semibold text-foreground -mt-0.5" style={{ fontFamily: "'Sora', system-ui, sans-serif" }}>
+          <span className="text-[13px] font-bold text-foreground -mt-0.5 font-serif italic">
             Comando Tático
           </span>
           <span className="text-[9px] text-muted-foreground/80 tracking-wider uppercase font-mono">

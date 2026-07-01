@@ -91,7 +91,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
                 <span className="text-[10px] font-bold tracking-[0.24em] text-primary uppercase">
                   Instituto Socioeducativo
                 </span>
-                <span className="text-[13px] font-semibold text-foreground tracking-wide" style={{ fontFamily: "'Sora', system-ui, sans-serif" }}>
+                <span className="text-[13px] font-bold text-foreground tracking-wide font-serif italic">
                   PlantãoPro · Comando Tático
                 </span>
                 <span className="text-[10px] text-muted-foreground/80 flex items-center gap-1 mt-0.5">
@@ -125,8 +125,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               </div>
               <div className="flex items-center gap-2">
                 <span
-                  className="text-base font-bold tracking-[0.18em] text-primary"
-                  style={{ fontFamily: "'Sora', system-ui, sans-serif" }}
+                  className="text-base font-bold tracking-[0.22em] text-primary font-serif"
                 >
                   FRANC D'NIS
                 </span>
