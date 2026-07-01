@@ -98,7 +98,7 @@ export default function Index() {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   
   const [showCredentialsManager, setShowCredentialsManager] = useState(false);
-  const [showAboutDialog, setShowAboutDialog] = useState(false);
+  
   const [units, setUnits] = useState<Unit[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingCpf, setIsCheckingCpf] = useState(false);
@@ -1708,114 +1708,6 @@ export default function Index() {
         onOpenChange={setShowCredentialsManager} 
       />
 
-      {/* About Dialog */}
-      <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
-        <DialogContent className="bg-card border-border max-w-2xl max-h-[85vh] p-0 overflow-hidden">
-          <ScrollArea className="max-h-[85vh]">
-            <div className="p-6">
-              <DialogHeader className="mb-6">
-                <div className="flex items-center justify-center mb-4">
-                  <img 
-                    src={logoShield} 
-                    alt="Plantão Pro" 
-                    className="w-28 h-auto drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]"
-                  />
-                </div>
-                <DialogTitle className="text-center text-2xl font-bold text-foreground">
-                  PlantãoPro
-                </DialogTitle>
-                <DialogDescription className="text-center text-muted-foreground max-w-md mx-auto">
-                  Solução para profissionais da Segurança Pública organizarem sua vida funcional de forma prática e eficiente.
-                </DialogDescription>
-              </DialogHeader>
-
-              <Separator className="my-4" />
-
-              {/* Features Grid */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
-                  Funcionalidades
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {[
-                    { icon: Calendar, title: 'Plantões', desc: 'Organize visualmente' },
-                    { icon: BarChart3, title: 'Escalas', desc: 'Acompanhe equipe' },
-                    { icon: Clock, title: 'Banco de Horas', desc: 'Controle completo' },
-                    { icon: RefreshCw, title: 'Permutas', desc: 'Trocas simples' },
-                    { icon: Users, title: 'Equipes', desc: 'Chat integrado' },
-                    { icon: Target, title: 'Planejamento', desc: 'Rotina organizada' },
-                  ].map((feature) => (
-                    <div 
-                      key={feature.title}
-                      className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center"
-                    >
-                      <feature.icon className="h-5 w-5 text-primary mx-auto mb-1.5" />
-                      <p className="text-xs font-medium text-foreground">{feature.title}</p>
-                      <p className="text-[10px] text-muted-foreground">{feature.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Separator className="my-4" />
-
-              {/* Origin */}
-              <Card className="border-border/50 bg-muted/20 mb-6">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-                      <Building2 className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground mb-1">Desenvolvedor</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        <strong className="text-foreground text-sm">CS FEIJÓ</strong>
-                        <br />
-                        <span className="text-primary">Agente Socioeducativo</span> • <strong className="text-foreground">Feijó, Acre</strong>
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Desenvolvido para resolver problemas reais do dia a dia da categoria.
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                          <Award className="h-3 w-3" /> Feito por quem entende
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full">
-                          <CheckCircle2 className="h-3 w-3" /> Problemas reais
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Contact - Apenas email do app */}
-              <div className="text-center">
-                <h4 className="text-sm font-semibold text-foreground mb-2">Contato</h4>
-                <a 
-                  href="mailto:plantaopro@proton.me"
-                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg bg-muted/30 hover:bg-muted/50"
-                >
-                  <Mail className="h-3.5 w-3.5" />
-                  plantaopro@proton.me
-                </a>
-              </div>
-
-              {/* Footer com desenvolvedor */}
-              <div className="mt-6 pt-4 border-t border-border/30 text-center space-y-1">
-                <p className="text-[10px] text-muted-foreground/80 flex items-center justify-center gap-1.5">
-                  <span className="font-bold bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">FRANC D'NIS</span>
-                  <span className="text-muted-foreground/50">•</span>
-                  <span>Feijó/AC</span>
-                </p>
-                <p className="text-[9px] text-muted-foreground/50">
-                  © {new Date().getFullYear()} PlantãoPro
-                </p>
-              </div>
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
 
       {/* Error Dialog - Professional */}
       <ErrorDialog
