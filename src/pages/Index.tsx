@@ -1237,8 +1237,8 @@ export default function Index() {
       </header>
 
       {/* Quick Access — apenas quando há credenciais salvas */}
-      <section className="shrink-0 px-2 sm:px-4 pb-1 relative z-10 overflow-hidden">
-        {getSavedCredentials().length > 0 && (
+      {getSavedCredentials().length > 0 && (
+        <section className="shrink-0 px-2 sm:px-4 pb-1 relative z-10 overflow-hidden">
           <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
             <QuickAccessPanel
               onQuickLogin={handleQuickLogin}
@@ -1247,8 +1247,8 @@ export default function Index() {
               loadingCpf={quickLoginLoadingCpf || undefined}
             />
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
 
 
