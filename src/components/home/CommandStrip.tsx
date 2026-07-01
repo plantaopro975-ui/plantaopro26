@@ -80,7 +80,7 @@ export function CommandStrip() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
       />
 
-      <div className="relative flex flex-wrap items-center gap-x-4 gap-y-2 px-3 sm:px-5 py-2.5 sm:py-3">
+      <div className="relative flex items-center gap-x-4 px-4 lg:px-6 h-12 sm:h-14">
         {/* Brasão + triple-click */}
         <div className="relative flex items-center gap-3 min-w-0">
           <button
