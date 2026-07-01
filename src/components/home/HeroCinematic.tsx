@@ -204,7 +204,7 @@ export function HeroCinematic({
                     el.style.setProperty('--tilt-x', '0deg');
                     el.style.setProperty('--tilt-y', '0deg');
                   }}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-2 sm:p-2.5 min-h-[72px] sm:min-h-[84px] lg:min-h-[96px] rounded-sm border border-border/50 bg-background/60 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-1.5 sm:p-2 min-h-[60px] sm:min-h-[72px] lg:min-h-[80px] rounded-sm border border-border/50 bg-background/60 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   <span
