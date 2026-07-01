@@ -185,34 +185,69 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {/* Foreground content */}
       <div className="pointer-events-none relative z-20 h-full min-h-0 flex flex-col justify-between gap-2 sm:gap-3 px-3 sm:px-5 lg:px-8 py-3 sm:py-5 [&_button]:pointer-events-auto [&_a]:pointer-events-auto">
         {/* Top eyebrow */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-sm border border-accent/50 bg-background/70 backdrop-blur-md w-fit max-w-full">
-              <ShieldCheck className="h-3.5 w-3.5 text-accent" strokeWidth={2.5} />
-              <span className="text-[9px] sm:text-[11px] font-bold tracking-[0.22em] sm:tracking-[0.3em] uppercase text-accent font-sans truncate">
-                Instituto Socioeducativo · Acre
+        <div
+          className="relative rounded-lg overflow-hidden border border-accent/40 p-3 sm:p-4"
+          style={{
+            background:
+              'linear-gradient(135deg, hsl(var(--card)/0.95) 0%, hsl(var(--primary)/0.35) 55%, hsl(var(--accent)/0.25) 100%)',
+          }}
+        >
+          {/* SVG tático institucional (mesma linguagem do hub) */}
+          <svg
+            aria-hidden
+            className="absolute inset-0 h-full w-full pointer-events-none opacity-70"
+            viewBox="0 0 800 300"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <pattern id="top-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                <path d="M24 0 H0 V24" fill="none" stroke="hsl(var(--accent))" strokeOpacity="0.18" strokeWidth="0.6" />
+              </pattern>
+              <radialGradient id="top-glow" cx="20%" cy="50%" r="60%">
+                <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="hsl(var(--background))" stopOpacity="0" />
+              </radialGradient>
+              <linearGradient id="top-stripe" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0" />
+                <stop offset="50%" stopColor="hsl(var(--accent))" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <rect width="800" height="300" fill="url(#top-grid)" />
+            <rect width="800" height="300" fill="url(#top-glow)" />
+            <rect x="0" y="2" width="800" height="1" fill="url(#top-stripe)" />
+            <rect x="0" y="297" width="800" height="1" fill="url(#top-stripe)" />
+          </svg>
+
+          <div className="relative flex items-start justify-between gap-3">
+            <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-sm border border-accent/50 bg-background/70 backdrop-blur-md w-fit max-w-full">
+                <ShieldCheck className="h-3.5 w-3.5 text-accent" strokeWidth={2.5} />
+                <span className="text-[9px] sm:text-[11px] font-bold tracking-[0.22em] sm:tracking-[0.3em] uppercase text-accent font-sans truncate">
+                  Instituto Socioeducativo · Acre
+                </span>
+              </div>
+              <h1 className="font-serif text-[20px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
+                Comando <span className="text-accent">Operacional</span>
+                <br />
+                <span className="text-primary-glow">Socioeducativo</span>
+              </h1>
+              <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[11px] uppercase tracking-[0.18em] sm:tracking-[0.25em] text-muted-foreground font-mono">
+                <MapPin className="h-3 w-3 text-accent" />
+                Feijó · AC · Amazônia Ocidental
+              </div>
+            </div>
+
+            <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-primary/40 bg-background/70 backdrop-blur-md">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
+                <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
+              </span>
+              <Radio className="h-3.5 w-3.5 text-success" />
+              <span className="text-[10px] font-bold tracking-[0.28em] uppercase text-success font-mono">
+                Rede 24/7
               </span>
             </div>
-            <h1 className="font-serif text-[20px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
-              Comando <span className="text-accent">Operacional</span>
-              <br />
-              <span className="text-primary-glow">Socioeducativo</span>
-            </h1>
-            <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[11px] uppercase tracking-[0.18em] sm:tracking-[0.25em] text-muted-foreground font-mono">
-              <MapPin className="h-3 w-3 text-accent" />
-              Feijó · AC · Amazônia Ocidental
-            </div>
-          </div>
-
-          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-primary/40 bg-background/70 backdrop-blur-md mt-14">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
-              <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
-            </span>
-            <Radio className="h-3.5 w-3.5 text-success" />
-            <span className="text-[10px] font-bold tracking-[0.28em] uppercase text-success font-mono">
-              Rede 24/7
-            </span>
           </div>
         </div>
 
