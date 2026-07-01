@@ -30,9 +30,9 @@ const TEAMS: { name: TeamName; icon: string; kicker: string }[] = [
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   return (
     <section
-      className="relative w-full min-h-0 overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
+      className="relative h-full min-h-0 w-full flex-1 overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
       aria-label="Sistema Socioeducativo do Acre — Comando Operacional"
-      style={{ height: '100%', maxHeight: '100%' }}
+      style={{ maxHeight: '100%' }}
     >
       {/* Background */}
       <img
