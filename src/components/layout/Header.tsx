@@ -171,7 +171,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             onClick={() => playSound('tactical-click')}
             className={({ isActive }) =>
               cn(
-                'relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-semibold tracking-wide transition-all',
+                'relative inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-[11px] sm:text-[12px] font-semibold tracking-wide transition-all',
                 'text-muted-foreground hover:text-foreground hover:bg-primary/10',
                 isActive &&
                   'text-primary bg-primary/10 ring-1 ring-primary/30 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.15)]',
