@@ -202,12 +202,12 @@
   }
 
   .command-badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.2em];
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-[0.22em];
     background: hsl(var(--primary) / 0.12);
     color: hsl(var(--primary));
     border: 1px solid hsl(var(--primary) / 0.35);
     box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.05);
-    font-family: 'Sora', system-ui, sans-serif;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   .tactical-divider {
@@ -234,8 +234,13 @@
     text-transform: uppercase;
   }
   .font-mono-mil {
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Courier New', monospace;
     letter-spacing: 0.05em;
+  }
+
+  .font-display {
+    font-family: 'Libre Baskerville', 'Georgia', serif;
+    letter-spacing: -0.02em;
   }
 
   .bg-scanlines {
