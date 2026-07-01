@@ -4,6 +4,8 @@ import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadar from '@/assets/icons-3d/noir-radar.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconCommand from '@/assets/icons-3d/noir-command.png';
+import agentFigure from '@/assets/tactical-agent-figure.png';
+
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
@@ -46,6 +48,19 @@ export function HeroCinematic({
       />
       <div className="absolute inset-0" style={{ background: 'var(--gradient-hero-overlay)' }} aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
+
+      {/* Agente tático interativo — desktop only */}
+      <img
+        src={agentFigure}
+        alt=""
+        aria-hidden
+        width={768}
+        height={1280}
+        loading="lazy"
+        className="hidden lg:block pointer-events-none select-none absolute z-20 bottom-0 left-[38%] xl:left-[42%] h-[92%] w-auto object-contain object-bottom animate-team-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)]"
+        style={{ animationDuration: '6s' }}
+      />
+
 
       <div className="relative z-10 h-full flex flex-col gap-6 px-5 sm:px-8 lg:px-12 py-6 sm:py-8">
         {/* eyebrow */}
