@@ -48,7 +48,7 @@ import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { CommandStrip } from '@/components/home/CommandStrip';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
-import { InstitutionalPillars } from '@/components/home/InstitutionalPillars';
+
 import { OperationsTeamCard } from '@/components/home/OperationsTeamCard';
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
 
@@ -1262,8 +1262,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Institutional pillars — bento grid (Phase 4) */}
-      <InstitutionalPillars />
 
 
 
