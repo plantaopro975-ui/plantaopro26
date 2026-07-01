@@ -10,7 +10,7 @@ import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
 import teamsHubBg from '@/assets/hero-teams-hub.jpg';
-import { getTeamPoster } from '@/lib/teamAssets';
+import { getTeamPoster, getTeamColors } from '@/lib/teamAssets';
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
@@ -315,13 +315,20 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             role="list"
             aria-label="Equipes operacionais"
           >
-            {TEAMS.map((t) => (
+            {TEAMS.map((t) => {
+              const tc = getTeamColors(t.name);
+              return (
               <li key={t.name} className="flex">
                 <button
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[124px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border border-primary/30 overflow-hidden hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[124px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
+                  style={{
+                    borderColor: `${tc.primary}55`,
+                    // @ts-ignore CSS var
+                    ['--team-ring' as any]: tc.ring,
+                  }}
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   {/* Capa hero realista — poster oficial da equipe (background) */}
@@ -333,11 +340,31 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                       src={getTeamPoster(t.name)}
                       alt=""
                       className="absolute inset-0 h-full w-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
-                      style={{ filter: 'saturate(1.05) contrast(1.08)' }}
+                      style={{ filter: 'saturate(1.1) contrast(1.1) brightness(0.92)' }}
                     />
-                    {/* Vinheta sutil para legibilidade sem esconder a foto */}
-                    <span className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,hsl(var(--background)/0.55)_100%)]" />
-                    <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(180deg,transparent,hsl(var(--background)/0.85))]" />
+                    {/* Tinta da cor oficial da equipe */}
+                    <span
+                      className="absolute inset-0 mix-blend-multiply opacity-40 group-hover:opacity-30 transition-opacity duration-500"
+                      style={{
+                        background: `linear-gradient(160deg, ${tc.secondary}CC 0%, transparent 55%, ${tc.primary}33 100%)`,
+                      }}
+                    />
+                    {/* Vinheta radial para focar no ícone */}
+                    <span className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_28%,hsl(var(--background)/0.55)_95%)]" />
+                    {/* Base sólida para legibilidade do nome */}
+                    <span
+                      className="absolute inset-x-0 bottom-0 h-1/2"
+                      style={{
+                        background: `linear-gradient(180deg, transparent 0%, hsl(var(--background)/0.55) 55%, hsl(var(--background)/0.92) 100%)`,
+                      }}
+                    />
+                    {/* Brilho superior sutil na cor da equipe (hover) */}
+                    <span
+                      className="absolute inset-x-0 top-0 h-16 opacity-0 group-hover:opacity-60 transition-opacity duration-500"
+                      style={{
+                        background: `linear-gradient(180deg, ${tc.glow}, transparent)`,
+                      }}
+                    />
                   </span>
                   {/* Canto oficial (cobre) */}
                   <span
@@ -375,7 +402,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   </div>
                 </button>
               </li>
-            ))}
+            );})}
           </ul>
           </div>
         </div>
