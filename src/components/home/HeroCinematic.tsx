@@ -166,7 +166,7 @@ export function HeroCinematic({
           el.addEventListener('pointermove', move);
           el.addEventListener('pointerup', up);
         }}
-        className="hidden lg:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[38%] xl:h-[44%] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] cursor-grab touch-none"
+        className="block sm:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[38%] xl:h-[44%] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] cursor-grab touch-none"
         style={{ animationDuration: '6s' }}
       />
 
