@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
+import { ShieldCheck, Radio } from 'lucide-react';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
+import { cn } from '@/lib/utils';
 
 /**
- * Professional compact command strip — replaces the old InstitutionalBanner.
- * Noir & Gold editorial style, single row, low visual noise.
- * Triple-click on the shield still triggers the master login modal.
+ * CommandStrip — faixa institucional Noir & Gold.
+ * Tipografia/cores alinhadas ao Header e Footer.
+ * Triple-click no brasão abre o login master (com feedback visual).
  */
 export function CommandStrip() {
   const [now, setNow] = useState<Date>(new Date());
+  const [pulse, setPulse] = useState(0); // 0..3 progresso do triple-click
+  const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), 1000);
@@ -17,13 +21,18 @@ export function CommandStrip() {
   const handleShieldClick = () => {
     const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
     w.__logoClicks = (w.__logoClicks || 0) + 1;
+    setPulse(Math.min(w.__logoClicks, 3));
     if (w.__logoTimer) window.clearTimeout(w.__logoTimer);
     w.__logoTimer = window.setTimeout(() => {
       w.__logoClicks = 0;
+      setPulse(0);
     }, 800);
     if ((w.__logoClicks ?? 0) >= 3) {
       w.__logoClicks = 0;
+      setPulse(0);
+      setConfirmed(true);
       window.dispatchEvent(new CustomEvent('open-master-login'));
+      window.setTimeout(() => setConfirmed(false), 1600);
     }
   };
 
@@ -42,66 +51,110 @@ export function CommandStrip() {
   return (
     <section
       aria-label="Faixa institucional"
-      className="relative mx-3 sm:mx-6 mt-3 overflow-hidden rounded-lg border border-border/50 bg-[linear-gradient(180deg,hsl(var(--card)/0.85),hsl(var(--background)/0.75))] backdrop-blur-md"
+      className={cn(
+        'relative mx-3 sm:mx-6 mt-3 overflow-hidden rounded-lg',
+        'border border-border/60 backdrop-blur-xl',
+        'bg-[linear-gradient(180deg,hsl(222_38%_7%/0.96),hsl(220_32%_9%/0.92))]',
+        'shadow-[0_8px_28px_-12px_hsl(222_60%_2%/0.85)]',
+      )}
     >
-      {/* thin gold accent */}
+      {/* Gold accents (mesmos do Header/Footer) */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary)/0.7),transparent)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-85"
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary)/0.35),transparent)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
       />
 
-      <div className="relative flex items-center gap-4 px-4 sm:px-6 py-3">
-        {/* Shield (triple-click preserved) */}
-        <button
-          type="button"
-          onClick={handleShieldClick}
-          className="group shrink-0 rounded-md p-0.5 ring-1 ring-border/60 hover:ring-primary/40 transition"
-          title="ISE / Acre"
-          aria-label="Instituto Socioeducativo do Acre"
-        >
-          <img
-            src={iseAcreBadge}
-            alt="Instituto Socioeducativo do Acre"
-            draggable={false}
-            className="h-10 w-10 sm:h-11 sm:w-11 object-contain select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.55)]"
-          />
-        </button>
+      <div className="relative flex flex-wrap items-center gap-x-4 gap-y-2 px-3 sm:px-5 py-2.5 sm:py-3">
+        {/* Brasão + triple-click */}
+        <div className="relative flex items-center gap-3 min-w-0">
+          <button
+            type="button"
+            onClick={handleShieldClick}
+            aria-label="Instituto Socioeducativo do Acre — toque 3× para acesso master"
+            title="ISE / Acre"
+            className={cn(
+              'group relative shrink-0 rounded-md p-0.5 ring-1 transition-all',
+              confirmed
+                ? 'ring-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.35)]'
+                : 'ring-border/60 hover:ring-primary/40',
+            )}
+          >
+            <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center p-1">
+              <img
+                src={iseAcreBadge}
+                alt=""
+                draggable={false}
+                className="h-full w-full object-contain select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.55)]"
+              />
+            </div>
+            {/* Progresso do triple-click */}
+            {pulse > 0 && !confirmed && (
+              <span className="pointer-events-none absolute -bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className={cn(
+                      'h-0.5 w-2 rounded-full transition-colors',
+                      i < pulse ? 'bg-primary' : 'bg-border/60',
+                    )}
+                  />
+                ))}
+              </span>
+            )}
+          </button>
 
-        {/* Identity */}
-        <div className="min-w-0 flex-1 border-l border-border/50 pl-4">
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-base sm:text-lg font-bold tracking-tight text-foreground">
-              Plantão<span className="text-primary">Pro</span>
+          {/* Confirmação */}
+          {confirmed && (
+            <span
+              role="status"
+              className="absolute -top-2 left-12 z-10 inline-flex items-center gap-1 rounded-md border border-primary/40 bg-background/95 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary shadow-md animate-in fade-in slide-in-from-top-1"
+            >
+              <ShieldCheck className="h-3 w-3" />
+              Acesso Master
             </span>
-            <span className="hidden sm:inline text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-              · Comando Operacional
+          )}
+
+          {/* Identidade (mesma tipografia do Header) */}
+          <div className="min-w-0 border-l border-border/50 pl-3 leading-tight">
+            <div className="flex items-baseline gap-2">
+              <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
+                ISE · Acre
+              </span>
+            </div>
+            <span className="block text-[13px] sm:text-sm font-bold text-foreground font-serif italic -mt-0.5 truncate">
+              Plantão<span className="text-primary">Pro</span> · Comando Operacional
+            </span>
+            <span className="hidden sm:block text-[10px] text-muted-foreground/80 tracking-wider uppercase font-mono">
+              Gestão inteligente de plantões
             </span>
           </div>
-          <p className="text-[11px] sm:text-xs text-muted-foreground/80 truncate">
-            Instituto Socioeducativo do Acre · Gestão inteligente de plantões
-          </p>
         </div>
 
-        {/* Clock + status */}
-        <div className="hidden md:flex items-center gap-4 shrink-0">
+        {/* Espaçador flexível */}
+        <div className="flex-1" />
+
+        {/* Relógio + status (mesmo padrão do Footer) */}
+        <div className="flex items-center gap-3 sm:gap-4 ml-auto">
           <div className="text-right leading-tight">
-            <div className="font-mono text-sm tabular-nums text-foreground">{time}</div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{date}</div>
+            <div className="font-mono text-sm sm:text-base tabular-nums text-foreground">{time}</div>
+            <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono">
+              {date}
+            </div>
           </div>
-          <span
-            className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-400"
-            aria-label="Sistema online"
-          >
+          <div className="hidden sm:flex items-center gap-2 rounded-md bg-card/60 px-2.5 py-1 ring-1 ring-border/60">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70 animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+              <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
+              <span className="relative h-2 w-2 rounded-full bg-success" />
             </span>
-            Online
-          </span>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-success/95">
+              Ativo
+            </span>
+            <Radio className="h-3 w-3 text-success/70" />
+          </div>
         </div>
       </div>
     </section>
