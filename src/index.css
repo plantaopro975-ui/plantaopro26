@@ -637,3 +637,30 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 .bg-emerald-500\/10, .bg-emerald-500\/20 { background-color: hsl(var(--success) / 0.15) !important; }
 .border-emerald-500\/30, .border-emerald-500\/40 { border-color: hsl(var(--success) / 0.4) !important; }
 
+
+/* ===== Agente tático "vivo" — respiração + micro-movimentos ===== */
+@keyframes agent-breathe {
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+  50%      { transform: translateX(-50%) translateY(-4px) scale(1.008); }
+}
+@keyframes agent-sway {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  25%      { transform: translateX(calc(-50% - 3px)) rotate(-0.4deg); }
+  75%      { transform: translateX(calc(-50% + 3px)) rotate(0.4deg); }
+}
+.agent-alive {
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  will-change: transform, filter;
+  animation:
+    agent-breathe 4.2s ease-in-out infinite,
+    agent-sway 9s ease-in-out infinite;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+  transition: filter .3s ease;
+}
+.agent-alive:hover {
+  filter: drop-shadow(0 24px 48px rgba(0,0,0,0.7)) drop-shadow(0 0 18px hsl(var(--primary) / 0.35));
+}
+@media (prefers-reduced-motion: reduce) {
+  .agent-alive { animation: none; }
+}
