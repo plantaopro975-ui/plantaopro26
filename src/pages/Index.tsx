@@ -1268,24 +1268,16 @@ export default function Index() {
         <div className="relative mx-auto max-w-6xl px-4 sm:px-5 py-1.5 flex items-center justify-between gap-3">
           {/* Left: Signature */}
           <div className="flex items-center gap-2 min-w-0">
-            <div className="relative flex items-center gap-2 px-2.5 py-1 rounded-md bg-card/50 ring-1 ring-primary/30">
-              <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
-              <span className="font-stencil text-[13px] font-bold tracking-[0.32em] uppercase text-primary/90">
-                PlantãoPro
-              </span>
-            </div>
+            <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
           </div>
-
 
           {/* Center: Institutional */}
           <div className="hidden sm:flex flex-col items-center leading-tight">
-            <span className="text-[11px] font-bold text-foreground/90 font-serif italic tracking-wide">
-              Plantão<span className="text-primary">Pro</span>
-            </span>
             <span className="text-[8.5px] uppercase tracking-[0.28em] text-muted-foreground/60 font-mono">
               © {new Date().getFullYear()} · Feijó / AC
             </span>
           </div>
+
 
           {/* Right: Actions + Clock */}
           <div className="flex items-center gap-1.5">
