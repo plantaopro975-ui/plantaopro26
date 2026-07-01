@@ -1,4 +1,4 @@
-import { ShieldCheck, Radio } from 'lucide-react';
+import { ShieldCheck, Radio, MapPin } from 'lucide-react';
 import heroImage from '@/assets/hero-noir-gold.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadio from '@/assets/icons-3d/noir-radio.png';
@@ -16,25 +16,25 @@ interface HeroCinematicProps {
   unitsCount?: number;
 }
 
-const TEAMS: { name: TeamName; icon: string; accent: string }[] = [
-  { name: 'ALFA',    icon: iconShield, accent: 'from-emerald-400/30 to-transparent' },
-  { name: 'BRAVO',   icon: iconHelmet, accent: 'from-amber-400/30 to-transparent' },
-  { name: 'CHARLIE', icon: iconRadio,  accent: 'from-sky-400/30 to-transparent' },
-  { name: 'DELTA',   icon: iconBeacon, accent: 'from-primary/40 to-transparent' },
+const TEAMS: { name: TeamName; icon: string; kicker: string }[] = [
+  { name: 'ALFA',    icon: iconShield, kicker: '01' },
+  { name: 'BRAVO',   icon: iconHelmet, kicker: '02' },
+  { name: 'CHARLIE', icon: iconRadio,  kicker: '03' },
+  { name: 'DELTA',   icon: iconBeacon, kicker: '04' },
 ];
 
 /**
- * CRIMSON STEEL — Hero full-viewport com cards de equipes.
- * Preenche a tela em mobile e desktop, mantém agente + viatura.
+ * INSTITUCIONAL AMAZÔNICO — Sistema Socioeducativo do Acre.
+ * Hero full-viewport com brasão SVG, topografia amazônica e cards oficiais.
  */
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   return (
     <section
-      className="relative w-full overflow-hidden rounded-xl border border-primary/25 hero-cinematic"
-      aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
-      style={{ height: 'max(420px, calc(100dvh - 160px))', maxHeight: '900px' }}
+      className="relative w-full overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
+      aria-label="Sistema Socioeducativo do Acre — Comando Operacional"
+      style={{ height: 'max(560px, calc(100dvh - 150px))', maxHeight: '980px' }}
     >
-      {/* Background image */}
+      {/* Background */}
       <img
         src={heroImage}
         alt=""
@@ -44,77 +44,141 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         width={1920}
         height={1024}
       />
-      {/* Overlays */}
       <div className="absolute inset-0" style={{ background: 'var(--gradient-hero-overlay)' }} aria-hidden />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20" aria-hidden />
-      {/* Crimson vignette */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(60% 40% at 50% 100%, hsl(var(--primary) / 0.28) 0%, transparent 70%), radial-gradient(40% 30% at 10% 0%, hsl(var(--accent) / 0.14) 0%, transparent 70%)',
-        }}
-      />
-      {/* Scanline grid */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none opacity-[0.06]"
-        style={{
-          backgroundImage:
-            'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/78 to-background/25" aria-hidden />
 
-      {/* Viatura — canto inferior esquerdo */}
+      {/* Topografia amazônica — SVG orgânico (curvas de nível) */}
+      <svg
+        aria-hidden
+        className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.12] mix-blend-screen"
+        viewBox="0 0 800 600"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          <linearGradient id="topo" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--accent))" />
+            <stop offset="100%" stopColor="hsl(var(--primary-glow))" />
+          </linearGradient>
+        </defs>
+        {Array.from({ length: 9 }).map((_, i) => (
+          <path
+            key={i}
+            d={`M0 ${120 + i * 55} Q 200 ${80 + i * 55} 400 ${140 + i * 55} T 800 ${110 + i * 55}`}
+            fill="none"
+            stroke="url(#topo)"
+            strokeWidth="1"
+          />
+        ))}
+      </svg>
+
+      {/* Brasão institucional SVG — canto superior direito */}
+      <svg
+        aria-hidden
+        viewBox="0 0 100 100"
+        className="absolute top-4 right-4 h-14 w-14 sm:h-16 sm:w-16 z-30 opacity-90"
+      >
+        <defs>
+          <linearGradient id="crest" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--accent))" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 4 L88 20 V52 Q88 78 50 96 Q12 78 12 52 V20 Z"
+          fill="hsl(var(--card) / 0.7)"
+          stroke="url(#crest)"
+          strokeWidth="2"
+        />
+        <text
+          x="50"
+          y="46"
+          textAnchor="middle"
+          fontFamily="Fraunces, serif"
+          fontWeight="900"
+          fontSize="22"
+          fill="hsl(var(--accent))"
+        >
+          ISE
+        </text>
+        <text
+          x="50"
+          y="66"
+          textAnchor="middle"
+          fontFamily="Inter Tight, sans-serif"
+          fontWeight="700"
+          fontSize="8"
+          letterSpacing="1.5"
+          fill="hsl(var(--foreground))"
+        >
+          ACRE
+        </text>
+      </svg>
+
+      {/* Viatura policial */}
       <img
         src={policeVehicle}
         alt=""
         aria-hidden
         loading="lazy"
         draggable={false}
-        style={{ width: 'clamp(120px, 22vw, 320px)' }}
-        className="absolute z-10 bottom-3 left-2 sm:left-4 lg:left-8 object-contain pointer-events-none select-none opacity-90 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.7))]"
+        style={{ width: 'clamp(130px, 24vw, 340px)' }}
+        className="absolute z-10 bottom-2 left-2 sm:left-4 lg:left-8 object-contain pointer-events-none select-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
       />
 
-      {/* Agente tático — centralizado atrás dos cards */}
+      {/* Agente tático — centralizado */}
       <img
         src={agentFigure}
         alt=""
         aria-hidden
         loading="lazy"
         draggable={false}
-        className="absolute z-20 bottom-0 left-1/2 -translate-x-1/2 h-[60%] sm:h-[68%] lg:h-[78%] w-auto object-contain object-bottom pointer-events-none select-none [filter:drop-shadow(0_18px_40px_rgba(0,0,0,0.75))]"
+        className="absolute z-20 bottom-0 left-1/2 -translate-x-1/2 h-[58%] sm:h-[66%] lg:h-[76%] w-auto object-contain object-bottom pointer-events-none select-none [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))]"
       />
 
       {/* Foreground content */}
-      <div className="relative z-30 h-full flex flex-col justify-between gap-6 px-4 sm:px-6 lg:px-10 py-5 sm:py-7">
-
+      <div className="relative z-30 h-full flex flex-col justify-between gap-4 px-4 sm:px-6 lg:px-10 py-5 sm:py-7">
         {/* Top eyebrow */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-primary/40 bg-background/60 backdrop-blur-md">
-            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.28em] uppercase text-primary font-sans">
-              ISE · Acre · Comando
-            </span>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-accent/50 bg-background/70 backdrop-blur-md w-fit">
+              <ShieldCheck className="h-3.5 w-3.5 text-accent" strokeWidth={2.5} />
+              <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.3em] uppercase text-accent font-sans">
+                Instituto Socioeducativo · Acre
+              </span>
+            </div>
+            <h1 className="font-serif text-[22px] sm:text-[30px] lg:text-[42px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
+              Comando <span className="italic text-accent">Operacional</span>
+              <br />
+              <span className="text-primary-glow">Socioeducativo</span>
+            </h1>
+            <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-muted-foreground font-mono">
+              <MapPin className="h-3 w-3 text-accent" />
+              Feijó · AC · Amazônia Ocidental
+            </div>
           </div>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-accent/40 bg-background/60 backdrop-blur-md">
+
+          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-primary/40 bg-background/70 backdrop-blur-md mt-14">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inset-0 rounded-full bg-accent animate-ping opacity-60" />
-              <span className="relative h-1.5 w-1.5 rounded-full bg-accent" />
+              <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
+              <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
             </span>
-            <Radio className="h-3.5 w-3.5 text-accent" />
-            <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.28em] uppercase text-accent font-sans">
-              24/7
+            <Radio className="h-3.5 w-3.5 text-success" />
+            <span className="text-[10px] font-bold tracking-[0.28em] uppercase text-success font-mono">
+              Rede 24/7
             </span>
           </div>
         </div>
 
-        {/* Team cards — dispostos abaixo, preenchendo a tela */}
+        {/* Cards — 2x2 mobile, 4x1 desktop */}
         <div className="mt-auto">
+          <div className="mb-2 flex items-center gap-2 text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.32em] text-muted-foreground/80 font-mono">
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/60" />
+            Selecione sua equipe operacional
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/60" />
+          </div>
+
           <ul
-            className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-6xl mx-auto"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 w-full max-w-6xl mx-auto"
             role="list"
             aria-label="Equipes operacionais"
           >
@@ -124,48 +188,37 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  onMouseMove={(e) => {
-                    const el = e.currentTarget;
-                    if ((el as any)._raf) return;
-                    const cx = e.clientX, cy = e.clientY;
-                    (el as any)._raf = requestAnimationFrame(() => {
-                      (el as any)._raf = 0;
-                      const r = el.getBoundingClientRect();
-                      const px = ((cx - r.left) / r.width) * 100;
-                      const py = ((cy - r.top) / r.height) * 100;
-                      const rx = ((py - 50) / 50) * -4;
-                      const ry = ((px - 50) / 50) * 5;
-                      el.style.setProperty('--tilt-x', `${rx.toFixed(2)}deg`);
-                      el.style.setProperty('--tilt-y', `${ry.toFixed(2)}deg`);
-                      el.style.setProperty('--px', `${px}%`);
-                      el.style.setProperty('--py', `${py}%`);
-                    });
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget;
-                    el.style.setProperty('--tilt-x', '0deg');
-                    el.style.setProperty('--tilt-y', '0deg');
-                  }}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-2 p-4 sm:p-5 min-h-[130px] sm:min-h-[150px] lg:min-h-[170px] rounded-lg border border-primary/25 bg-background/70 backdrop-blur-xl hover:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 transition-colors"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-3 sm:p-4 min-h-[128px] sm:min-h-[152px] lg:min-h-[170px] rounded-md border border-primary/30 bg-[linear-gradient(160deg,hsl(var(--card)/0.85),hsl(var(--background)/0.7))] backdrop-blur-xl hover:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-all duration-300"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
+                  {/* Canto oficial (cobre) */}
                   <span
                     aria-hidden
-                    className={`pointer-events-none absolute inset-0 rounded-lg opacity-0 group-hover:opacity-70 transition-opacity bg-gradient-to-br ${t.accent}`}
+                    className="pointer-events-none absolute top-0 left-0 h-6 w-6 border-t-2 border-l-2 border-accent/70 rounded-tl-md"
                   />
-                  {/* Top crimson bar */}
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-primary/70 to-transparent"
+                    className="pointer-events-none absolute bottom-0 right-0 h-6 w-6 border-b-2 border-r-2 border-accent/50 rounded-br-md"
                   />
+                  {/* Kicker número */}
+                  <span className="absolute top-1.5 right-2 text-[9px] font-mono tracking-[0.2em] text-accent/80">
+                    /{t.kicker}
+                  </span>
+
                   <img
                     src={t.icon}
                     alt=""
                     loading="lazy"
-                    className="relative h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] transition-transform duration-300 group-hover:scale-110"
+                    className="relative h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-0.5"
                   />
-                  <div className="relative text-sm sm:text-base lg:text-lg uppercase tracking-[0.24em] text-foreground font-black font-sans leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                    {t.name}
+                  <div className="relative mt-0.5">
+                    <div className="font-serif text-lg sm:text-xl lg:text-2xl font-black text-foreground leading-none tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                      {t.name}
+                    </div>
+                    <div className="mt-1 h-px w-8 mx-auto bg-gradient-to-r from-transparent via-accent to-transparent" />
+                    <div className="mt-1 text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.32em] text-muted-foreground font-mono">
+                      Equipe
+                    </div>
                   </div>
                 </button>
               </li>
