@@ -46,13 +46,12 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
 
           <div className="relative mx-auto max-w-6xl px-4 py-2 flex items-center justify-between gap-3">
             {/* Left: Signature */}
-            <div className="flex items-center gap-2 min-w-0">
-              <ShieldCheck className="h-3.5 w-3.5 text-primary shrink-0" />
-              <span className="font-serif text-[13px] font-semibold tracking-[0.18em] uppercase text-primary truncate">
-                CS FEIJÓ
+            <div className="flex items-baseline gap-2 min-w-0 font-sans">
+              <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground/60">
+                by
               </span>
-              <span className="hidden sm:inline text-[9px] text-muted-foreground/50 tracking-widest">
-                / ENGENHARIA
+              <span className="text-[13px] font-semibold tracking-tight text-foreground">
+                CS Feijó
               </span>
             </div>
 
