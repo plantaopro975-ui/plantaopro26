@@ -170,7 +170,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         </div>
 
         {/* Cards — 2x2 mobile, 4x1 desktop */}
-        <div className="mt-auto min-h-0">
+        <div className="mt-2 sm:mt-auto min-h-0">
           <div className="mb-1.5 sm:mb-2 flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.32em] text-muted-foreground/80 font-mono">
             <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/60" />
             Selecione sua equipe operacional
