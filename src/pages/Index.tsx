@@ -1291,7 +1291,7 @@ export default function Index() {
               </button>
             )}
             <button
-              onClick={() => setShowAboutDialog(true)}
+              onClick={() => navigate('/about')}
               className="p-1.5 text-muted-foreground/70 hover:text-primary rounded hover:bg-primary/10 transition-all hidden sm:block"
               title="Sobre o App"
             >
