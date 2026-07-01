@@ -1210,7 +1210,7 @@ export default function Index() {
 
 
         {/* Cinematic institutional hero — teams integradas como bento 3D */}
-        <div className="px-2 sm:px-4 pt-2">
+        <div className="px-2 sm:px-4 pt-1">
           <HeroCinematic
             onPrimaryAction={() => {
               const first = document.querySelector<HTMLElement>('[data-team-card]');
@@ -1221,9 +1221,10 @@ export default function Index() {
         </div>
 
         {/* Dynamic Agent Info Banner */}
-        <div className="px-2 sm:px-4 py-1">
+        <div className="px-2 sm:px-4">
           <HomeAgentInfoBanner />
         </div>
+
 
       </header>
 
