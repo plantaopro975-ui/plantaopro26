@@ -118,9 +118,10 @@ export function HeroCinematic({
                     className="relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_6px_18px_rgba(201,168,76,0.45)] transition-transform group-hover:scale-110 group-hover:-translate-y-0.5"
                   />
                   <div className="relative">
-                    <div className="text-sm sm:text-base lg:text-lg uppercase tracking-[0.28em] sm:tracking-[0.32em] text-primary font-semibold font-sans leading-none">
+                    <div className="text-base sm:text-lg lg:text-xl uppercase tracking-[0.2em] sm:tracking-[0.24em] text-foreground font-bold font-sans leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                       {t.name}
                     </div>
+
 
                   </div>
 
