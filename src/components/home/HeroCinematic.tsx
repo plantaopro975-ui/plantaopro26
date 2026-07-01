@@ -236,12 +236,12 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   Instituto Socioeducativo · Acre
                 </span>
               </div>
-              <h1 className="font-serif text-[30px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
+              <h1 className="font-serif text-[22px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
                 Comando <span className="text-accent">Operacional</span>
                 <br />
                 <span className="text-primary-glow">Socioeducativo</span>
               </h1>
-              <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] sm:tracking-[0.25em] text-muted-foreground font-mono">
+              <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-muted-foreground font-mono">
                 <MapPin className="h-3.5 w-3.5 text-accent" />
                 Feijó · AC · Amazônia Ocidental
               </div>
@@ -337,7 +337,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-4 sm:p-3 lg:p-4 min-h-[180px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-3 sm:p-3 lg:p-4 min-h-[140px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
                     borderColor: `${tc.primary}55`,
                     // @ts-ignore CSS var
@@ -398,15 +398,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                       src={t.icon}
                       alt=""
                       loading="lazy"
-                      className={`team-icon-3d ${t.motion} relative h-24 w-24 sm:h-16 sm:w-16 lg:h-[4.5rem] lg:w-[4.5rem] object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
+                      className={`team-icon-3d ${t.motion} relative h-16 w-16 sm:h-16 sm:w-16 lg:h-[4.5rem] lg:w-[4.5rem] object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
                     />
                   </span>
                   <div className="relative mt-0.5">
-                    <div className="font-serif text-xl sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight">
+                    <div className="font-serif text-base sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight">
                       {t.name}
                     </div>
                     <div className="mt-1 h-px w-8 mx-auto bg-gradient-to-r from-transparent via-accent to-transparent" />
-                    <div className="mt-1 text-[10px] sm:text-[9px] uppercase tracking-[0.28em] sm:tracking-[0.32em] text-muted-foreground font-mono">
+                    <div className="mt-1 text-[9px] sm:text-[9px] uppercase tracking-[0.24em] sm:tracking-[0.32em] text-muted-foreground font-mono">
                       Equipe
                     </div>
                   </div>
