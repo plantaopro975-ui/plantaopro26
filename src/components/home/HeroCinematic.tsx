@@ -61,22 +61,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       if (dragging.current !== kind || !sectionRef.current) return;
       const sec = sectionRef.current.getBoundingClientRect();
       const img = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - sec.left - offset.current.x;
-      const y = e.clientY - sec.top - offset.current.y;
-      setter({
-        x: Math.max(0, Math.min(x, sec.width - img.width)),
-        y: Math.max(0, Math.min(y, sec.height - img.height)),
-      });
+      const x = Math.max(0, Math.min(e.clientX - sec.left - offset.current.x, sec.width - img.width));
+      const y = Math.max(0, Math.min(e.clientY - sec.top - offset.current.y, sec.height - img.height));
+      const next = { x, y };
+      setter(next);
+      try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
     },
     onPointerUp: (e: React.PointerEvent<HTMLImageElement>) => {
       dragging.current = null;
-      try {
-        const cur = kind === 'agent' ? agentPos : vehiclePos;
-        if (cur) localStorage.setItem(storageKey, JSON.stringify(cur));
-      } catch {}
       try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
     },
   });
+
 
   const agentHandlers = makeHandlers('agent', setAgentPos, 'hero_agent_pos');
   const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos');
