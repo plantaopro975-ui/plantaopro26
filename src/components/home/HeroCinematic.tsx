@@ -166,7 +166,7 @@ export function HeroCinematic({
           el.addEventListener('pointermove', move);
           el.addEventListener('pointerup', up);
         }}
-        className="block sm:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[52%] xl:h-[58%] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] cursor-grab touch-none"
+        className="agent-figure block sm:block select-none absolute z-30 bottom-0 left-1/2 -translate-x-1/2 h-[52%] xl:h-[58%] w-auto object-contain object-bottom cursor-grab touch-none transition-[filter] duration-300 ease-out hover:[filter:drop-shadow(0_22px_44px_rgba(0,0,0,0.65))_drop-shadow(0_0_18px_hsl(var(--primary)/0.55))_drop-shadow(0_0_36px_hsl(var(--primary)/0.28))] active:[filter:drop-shadow(0_24px_48px_rgba(0,0,0,0.7))_drop-shadow(0_0_26px_hsl(var(--primary)/0.7))_drop-shadow(0_0_52px_hsl(var(--primary)/0.35))] [filter:drop-shadow(0_20px_40px_rgba(0,0,0,0.6))]"
         style={{ animationDuration: '6s' }}
       />
 
