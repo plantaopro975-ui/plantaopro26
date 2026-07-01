@@ -5,6 +5,7 @@ import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
+import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
 
@@ -21,7 +22,7 @@ const TEAMS: { name: TeamName; icon: string; kicker: string }[] = [
   { name: 'ALFA',    icon: iconShield, kicker: '01' },
   { name: 'BRAVO',   icon: iconHelmet, kicker: '02' },
   { name: 'CHARLIE', icon: iconRadio,  kicker: '03' },
-  { name: 'DELTA',   icon: policeVehicle, kicker: '04' },
+  { name: 'DELTA',   icon: iconHandcuffs, kicker: '04' },
 ];
 
 /**
