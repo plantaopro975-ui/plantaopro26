@@ -188,7 +188,8 @@ export default function Index() {
   useEffect(() => {
     const handler = () => {
       setShowMasterLogin(true);
-      toast.success("Se você for Franc D'nis, seja bem-vindo, Master!", {
+      toast({
+        title: "Se você for Franc D'nis, seja bem-vindo, Master!",
         description: 'Acesso restrito ao Administrador Master do sistema.',
         duration: 5000,
       });
