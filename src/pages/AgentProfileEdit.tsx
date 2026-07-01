@@ -399,7 +399,7 @@ export default function AgentProfileEdit() {
 
         {/* Credits */}
         <p className="text-center text-xs text-slate-500">
-          Desenvolvido por Franc D'nis
+          Desenvolvido por CS FEIJÓ
         </p>
       </div>
     </div>
