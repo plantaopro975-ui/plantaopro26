@@ -117,14 +117,12 @@ export function HeroCinematic({
                     loading="lazy"
                     className="relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_6px_18px_rgba(201,168,76,0.45)] transition-transform group-hover:scale-110 group-hover:-translate-y-0.5"
                   />
-                  <div className="relative min-w-0">
-                    <div className="text-[10px] uppercase tracking-[0.28em] text-primary/80 font-sans">
+                  <div className="relative">
+                    <div className="text-xs sm:text-sm uppercase tracking-[0.32em] text-primary font-semibold font-sans">
                       {t.name}
                     </div>
                   </div>
 
-
-                  <ArrowRight className="relative ml-auto h-4 w-4 text-primary/60 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                 </button>
               </li>
             ))}
