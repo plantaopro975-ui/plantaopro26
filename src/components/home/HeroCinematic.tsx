@@ -96,14 +96,15 @@ export function HeroCinematic({
           </div>
 
           {/* Teams — 3D noir & gold, clicáveis */}
-          <ul className="grid grid-cols-2 gap-2.5 sm:gap-3" role="list" aria-label="Equipes operacionais">
+          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full" role="list" aria-label="Equipes operacionais">
             {TEAMS.map((t) => (
-              <li key={t.name}>
+              <li key={t.name} className="flex">
                 <button
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="group relative w-full text-left flex items-center gap-3 p-3 sm:p-4 rounded-sm border border-border/60 bg-background/55 backdrop-blur-md hover:border-primary/60 hover:bg-background/70 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  className="group relative w-full flex flex-col items-center justify-center text-center gap-3 p-4 sm:p-5 lg:p-6 min-h-[160px] sm:min-h-[180px] lg:min-h-[200px] rounded-sm border border-border/60 bg-background/55 backdrop-blur-md hover:border-primary/60 hover:bg-background/70 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   <span
@@ -116,14 +117,12 @@ export function HeroCinematic({
                     loading="lazy"
                     className="relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_6px_18px_rgba(201,168,76,0.45)] transition-transform group-hover:scale-110 group-hover:-translate-y-0.5"
                   />
-                  <div className="relative min-w-0">
-                    <div className="text-[10px] uppercase tracking-[0.28em] text-primary/80 font-sans">
+                  <div className="relative">
+                    <div className="text-xs sm:text-sm uppercase tracking-[0.32em] text-primary font-semibold font-sans">
                       {t.name}
                     </div>
                   </div>
 
-
-                  <ArrowRight className="relative ml-auto h-4 w-4 text-primary/60 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                 </button>
               </li>
             ))}
