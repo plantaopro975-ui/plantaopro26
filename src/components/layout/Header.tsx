@@ -181,7 +181,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             {({ isActive }) => (
               <>
                 <Icon className="h-3.5 w-3.5" />
-                {label}
+                <span className="hidden sm:inline">{label}</span>
                 {isActive && (
                   <span className="absolute -bottom-[1px] left-2 right-2 h-[2px] rounded-full bg-primary" aria-hidden />
                 )}
