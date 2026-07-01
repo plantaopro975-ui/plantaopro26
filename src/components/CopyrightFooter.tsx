@@ -45,15 +45,13 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
           />
 
           <div className="relative mx-auto max-w-6xl px-4 py-2 flex items-center justify-between gap-3">
-            {/* Left: Signature */}
+            {/* Left: Brand */}
             <div className="flex items-baseline gap-2 min-w-0 font-sans">
-              <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground/60">
-                by
-              </span>
-              <span className="text-[13px] font-semibold tracking-tight text-foreground">
-                CS Feijó
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/80">
+                PlantãoPro
               </span>
             </div>
+
 
             {/* Center: Status */}
             <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/40">
@@ -155,21 +153,16 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               </div>
             </div>
 
-            {/* Developer credit */}
+            {/* Version credit */}
             <div className="md:col-span-4 flex flex-col items-start md:items-end leading-tight gap-1">
               <div className="flex items-center gap-2">
                 <Cpu className="h-3.5 w-3.5 text-primary/80" />
                 <span className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground/70 font-semibold">
-                  Engenharia & Desenvolvimento
+                  Sistema Institucional
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span
-                  className="text-base font-bold tracking-[0.22em] text-primary font-serif"
-                >
-                  FRANC D'NIS
-                </span>
-                <span className="px-1.5 py-0.5 rounded-sm text-[8px] font-bold tracking-widest bg-primary/12 text-primary ring-1 ring-primary/30">
+                <span className="px-1.5 py-0.5 rounded-sm text-[9px] font-bold tracking-widest bg-primary/12 text-primary ring-1 ring-primary/30">
                   v2.7
                 </span>
               </div>
@@ -177,6 +170,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
                 Feijó · AC · © {year} PlantãoPro
               </p>
             </div>
+
           </div>
 
           {/* Bottom hairline */}
