@@ -96,10 +96,10 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'IBM Plex Sans', 'Inter', system-ui, sans-serif;
+    font-family: 'Inter Tight', 'Inter', system-ui, sans-serif;
     background:
-      radial-gradient(ellipse 60% 40% at 50% 0%, hsl(216 62% 22% / 0.35) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 30% at 90% 100%, hsl(34 34% 60% / 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 45% at 50% 0%, hsl(152 58% 18% / 0.42) 0%, transparent 70%),
+      radial-gradient(ellipse 45% 35% at 90% 100%, hsl(28 68% 40% / 0.10) 0%, transparent 70%),
       var(--gradient-dark);
     background-attachment: fixed;
     min-height: 100dvh;
@@ -108,9 +108,10 @@
 
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Libre Baskerville', 'Georgia', serif;
-    letter-spacing: -0.015em;
-    font-weight: 700;
+    font-family: 'Fraunces', 'Georgia', serif;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+
   }
 
   label {
