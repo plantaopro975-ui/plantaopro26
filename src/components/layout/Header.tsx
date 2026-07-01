@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Bell, LogOut, Menu, Settings, User, Volume2, VolumeX } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { MobileSidebar } from './MobileSidebar';
-import { OperationalStatus } from './OperationalStatus';
+
 import { cn } from '@/lib/utils';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
 import logoEmblem from '@/assets/logo-plantao-pro.png';
