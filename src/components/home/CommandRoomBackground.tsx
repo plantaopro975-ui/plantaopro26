@@ -12,16 +12,16 @@ export function CommandRoomBackground() {
 
       {/* Hero image */}
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-55"
+        className="absolute inset-0 bg-cover bg-center opacity-40"
         style={{ backgroundImage: `url(${heroCommand})` }}
       />
 
-      {/* Khaki + royal blue tonal wash to unify with the uniform palette */}
+      {/* Navy + Gold tonal wash — Obsidian Command */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(135deg, hsl(40 30% 55% / 0.55) 0%, hsl(40 22% 45% / 0.35) 45%, hsl(220 70% 25% / 0.55) 100%)',
+            'linear-gradient(135deg, hsl(222 65% 4% / 0.85) 0%, hsl(220 45% 10% / 0.55) 45%, hsl(42 60% 22% / 0.45) 100%)',
         }}
       />
 
@@ -30,7 +30,7 @@ export function CommandRoomBackground() {
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse at center, transparent 0%, hsl(40 22% 25% / 0.45) 65%, hsl(40 22% 15% / 0.75) 100%)',
+            'radial-gradient(ellipse at center, transparent 0%, hsl(222 65% 3% / 0.55) 65%, hsl(222 70% 2% / 0.88) 100%)',
         }}
       />
 
