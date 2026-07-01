@@ -38,59 +38,79 @@ export function HeroCinematic({
 }: HeroCinematicProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  // Parallax otimizado: listener passivo, rect cacheado, rAF único, sem re-render.
+  // Parallax otimizado: só ativa a partir de xl (onde a viatura aparece);
+  // em md e abaixo, listeners não são registrados e o cálculo é evitado.
   useEffect(() => {
     const el = sectionRef.current;
-    if (!el) return;
-    if (typeof window !== 'undefined' &&
-        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    if (!el || typeof window === 'undefined') return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    // Coarse pointers (touch) e viewports pequenas: nada a fazer.
+    if (window.matchMedia?.('(pointer: coarse)').matches) return;
 
-    let rect = el.getBoundingClientRect();
-    let clientX = 0, clientY = 0;
-    let lastMx = 0, lastMy = 0;
-    let ticking = false;
-    let visible = true;
+    const mql = window.matchMedia('(min-width: 1280px)');
+    let cleanupActive: (() => void) | null = null;
 
-    const refreshRect = () => { rect = el.getBoundingClientRect(); };
+    const activate = () => {
+      let rect = el.getBoundingClientRect();
+      let clientX = 0, clientY = 0;
+      let lastMx = 0, lastMy = 0;
+      let ticking = false;
+      let visible = true;
 
-    const flush = () => {
-      ticking = false;
-      const mx = ((clientX - rect.left) / rect.width) * 2 - 1;
-      const my = ((clientY - rect.top) / rect.height) * 2 - 1;
-      // Ignora movimento imperceptível para evitar style writes redundantes
-      if (Math.abs(mx - lastMx) < 0.005 && Math.abs(my - lastMy) < 0.005) return;
-      lastMx = mx; lastMy = my;
-      el.style.setProperty('--mx', mx.toFixed(3));
-      el.style.setProperty('--my', my.toFixed(3));
+      const refreshRect = () => { rect = el.getBoundingClientRect(); };
+      const flush = () => {
+        ticking = false;
+        const mx = ((clientX - rect.left) / rect.width) * 2 - 1;
+        const my = ((clientY - rect.top) / rect.height) * 2 - 1;
+        if (Math.abs(mx - lastMx) < 0.005 && Math.abs(my - lastMy) < 0.005) return;
+        lastMx = mx; lastMy = my;
+        el.style.setProperty('--mx', mx.toFixed(3));
+        el.style.setProperty('--my', my.toFixed(3));
+      };
+      const onMove = (e: MouseEvent) => {
+        clientX = e.clientX; clientY = e.clientY;
+        if (ticking || !visible) return;
+        ticking = true;
+        requestAnimationFrame(flush);
+      };
+      const onLeave = () => {
+        lastMx = 0; lastMy = 0;
+        el.style.setProperty('--mx', '0');
+        el.style.setProperty('--my', '0');
+      };
+      const onVisibility = () => { visible = !document.hidden; };
+
+      el.addEventListener('mousemove', onMove, { passive: true });
+      el.addEventListener('mouseleave', onLeave, { passive: true });
+      window.addEventListener('scroll', refreshRect, { passive: true });
+      window.addEventListener('resize', refreshRect, { passive: true });
+      document.addEventListener('visibilitychange', onVisibility);
+
+      return () => {
+        el.removeEventListener('mousemove', onMove);
+        el.removeEventListener('mouseleave', onLeave);
+        window.removeEventListener('scroll', refreshRect);
+        window.removeEventListener('resize', refreshRect);
+        document.removeEventListener('visibilitychange', onVisibility);
+        el.style.setProperty('--mx', '0');
+        el.style.setProperty('--my', '0');
+      };
     };
 
-    const onMove = (e: MouseEvent) => {
-      clientX = e.clientX; clientY = e.clientY;
-      if (ticking || !visible) return;
-      ticking = true;
-      requestAnimationFrame(flush);
+    const sync = () => {
+      if (mql.matches && !cleanupActive) {
+        cleanupActive = activate();
+      } else if (!mql.matches && cleanupActive) {
+        cleanupActive();
+        cleanupActive = null;
+      }
     };
-
-    const onLeave = () => {
-      lastMx = 0; lastMy = 0;
-      el.style.setProperty('--mx', '0');
-      el.style.setProperty('--my', '0');
-    };
-
-    const onVisibility = () => { visible = !document.hidden; };
-
-    el.addEventListener('mousemove', onMove, { passive: true });
-    el.addEventListener('mouseleave', onLeave, { passive: true });
-    window.addEventListener('scroll', refreshRect, { passive: true });
-    window.addEventListener('resize', refreshRect, { passive: true });
-    document.addEventListener('visibilitychange', onVisibility);
+    sync();
+    mql.addEventListener('change', sync);
 
     return () => {
-      el.removeEventListener('mousemove', onMove);
-      el.removeEventListener('mouseleave', onLeave);
-      window.removeEventListener('scroll', refreshRect);
-      window.removeEventListener('resize', refreshRect);
-      document.removeEventListener('visibilitychange', onVisibility);
+      mql.removeEventListener('change', sync);
+      cleanupActive?.();
     };
   }, []);
 
