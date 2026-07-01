@@ -239,7 +239,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     />
                   </span>
                   <div className="relative mt-0.5">
-                    <div className="font-serif text-base sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    <div className="font-serif text-base sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight">
                       {t.name}
                     </div>
                     <div className="mt-1 h-px w-8 mx-auto bg-gradient-to-r from-transparent via-accent to-transparent" />
