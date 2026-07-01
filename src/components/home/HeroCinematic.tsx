@@ -123,21 +123,30 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial — arrastável */}
-      <img
-        src={policeVehicle}
-        alt="Arraste para posicionar viatura"
-        title="Arraste para posicionar"
-        loading="lazy"
-        draggable={false}
-        {...vehicleHandlers}
+      {/* Viatura policial — arrastável, com giroflex funcional */}
+      <div
+        className="police-vehicle absolute z-30 bottom-[160px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[22%] sm:h-[30%] lg:h-[36%] w-auto select-none touch-none"
         style={
           vehiclePos
-            ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto', transform: 'none' }
+            ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto' }
             : undefined
         }
-        className="police-vehicle absolute z-30 bottom-[160px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[22%] sm:h-[30%] lg:h-[36%] w-auto object-contain select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
-      />
+      >
+        <img
+          src={policeVehicle}
+          alt="Arraste para posicionar viatura"
+          title="Arraste para posicionar"
+          loading="lazy"
+          draggable={false}
+          {...vehicleHandlers}
+          className="h-full w-auto object-contain cursor-grab active:cursor-grabbing opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
+        />
+        {/* Giroflex — luzes vermelha/azul alternando no teto */}
+        <span className="giroflex-wrap" style={{ top: '12%', left: '50%', transform: 'translateX(-50%)' }} aria-hidden>
+          <span className="giroflex-light red" />
+          <span className="giroflex-light blue" />
+        </span>
+      </div>
 
       {/* Agente tático — arrastável */}
       <img
