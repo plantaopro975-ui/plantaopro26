@@ -249,14 +249,15 @@ export function HeroCinematic({
                     alt=""
                     loading="lazy"
                     style={{ animationDelay: `${TEAMS.indexOf(t) * 0.6}s` }}
-                    className={`${t.anim} team-icon-3d relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]`}
+                    className={`${t.anim} team-icon-3d relative h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 object-contain shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]`}
                   />
 
 
-                  <div className="relative flex flex-col items-center gap-1.5">
-                    <div className="text-lg sm:text-xl lg:text-2xl uppercase tracking-[0.22em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                  <div className="relative flex flex-col items-center gap-1">
+                    <div className="text-sm sm:text-base lg:text-lg uppercase tracking-[0.22em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                       {t.name}
                     </div>
+
                   </div>
 
 
