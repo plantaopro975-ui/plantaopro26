@@ -144,20 +144,30 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         />
       </div>
 
-      {/* Agente tático — arrastável */}
+      {/* Agente tático — arrastável (triple-click abre login master/admin) */}
       <img
         src={agentFigure}
-        alt="Arraste para posicionar"
-        title="Arraste para posicionar"
+        alt="Arraste para posicionar · toque 3× para acesso administrador"
+        title="Toque 3× para acesso do administrador"
         loading="lazy"
         draggable={false}
         {...agentHandlers}
+        onClick={() => {
+          const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
+          w.__agentClicks = (w.__agentClicks || 0) + 1;
+          if (w.__agentTimer) window.clearTimeout(w.__agentTimer);
+          w.__agentTimer = window.setTimeout(() => { w.__agentClicks = 0; }, 700);
+          if ((w.__agentClicks ?? 0) >= 3) {
+            w.__agentClicks = 0;
+            window.dispatchEvent(new CustomEvent('open-master-login'));
+          }
+        }}
         style={
           agentPos
             ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
             : undefined
         }
-        className="agent-figure absolute z-40 hidden sm:block sm:bottom-0 sm:right-2 h-[54%] lg:h-[62%] max-h-full w-auto object-contain object-bottom select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_22px_hsl(var(--accent)/0.5))_drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
+        className="agent-figure absolute z-40 hidden sm:block sm:bottom-0 sm:right-2 h-[54%] lg:h-[62%] max-h-full w-auto object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_22px_hsl(var(--accent)/0.5))_drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
       />
 
 
