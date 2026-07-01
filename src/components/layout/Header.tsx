@@ -31,6 +31,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
   const { playSound, isSoundEnabled, toggleSound } = useSoundEffects();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const onlineCount = useOnlinePresence();
 
   const handleNavigate = (path: string) => {
     playSound('tactical-click');
