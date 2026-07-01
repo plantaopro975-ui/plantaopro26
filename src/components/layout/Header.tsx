@@ -158,7 +158,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
 
       {/* Primary Navigation */}
-      <nav className="hidden lg:flex items-center gap-1 ml-4 xl:ml-6 shrink-0" aria-label="Navegação principal">
+      <nav className="flex items-center gap-1 ml-2 sm:ml-4 xl:ml-6 shrink-0" aria-label="Navegação principal">
         {[
           { to: '/', label: 'Home', icon: Home, end: true },
           { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
