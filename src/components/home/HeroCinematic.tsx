@@ -22,7 +22,7 @@ const TEAMS: { name: TeamName; icon: string; kicker: string }[] = [
   { name: 'ALFA',    icon: iconShield, kicker: '01' },
   { name: 'BRAVO',   icon: iconHelmet, kicker: '02' },
   { name: 'CHARLIE', icon: iconRadio,  kicker: '03' },
-  { name: 'DELTA',   icon: policeVehicle, kicker: '04' },
+  { name: 'DELTA',   icon: iconHandcuffs, kicker: '04' },
 ];
 
 /**
