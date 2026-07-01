@@ -1229,7 +1229,7 @@ export default function Index() {
       </header>
 
       {/* Quick Access — apenas quando há credenciais salvas */}
-      <section className="px-2 sm:px-4 pb-2 relative z-10">
+      <section className="px-2 sm:px-4 pb-1 relative z-10">
         {getSavedCredentials().length > 0 && (
           <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
             <QuickAccessPanel
