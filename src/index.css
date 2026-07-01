@@ -442,3 +442,16 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
     pointer-events: none !important;
     z-index: -9999 !important;
 }
+
+/* 3D Team Icons — Idle Float */
+@keyframes team-icon-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-6px) rotate(1deg); }
+}
+.animate-team-float {
+  animation: team-icon-float 4s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-team-float { animation: none; }
+}
