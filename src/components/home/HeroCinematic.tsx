@@ -304,6 +304,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               </li>
             ))}
           </ul>
+          </div>
         </div>
       </div>
     </section>
