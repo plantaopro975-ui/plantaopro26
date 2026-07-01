@@ -48,7 +48,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
             {/* Left: Signature */}
             <div className="flex items-center gap-2 min-w-0">
               <ShieldCheck className="h-3.5 w-3.5 text-primary shrink-0" />
-              <span className="text-[10px] font-bold tracking-[0.22em] uppercase text-primary font-serif truncate">
+              <span className="font-stencil text-[12px] font-bold tracking-[0.3em] uppercase text-primary truncate [text-shadow:0_0_6px_hsl(var(--primary)/0.3)]">
                 CS FEIJÓ
               </span>
               <span className="hidden sm:inline text-[9px] text-muted-foreground/50 tracking-widest">
