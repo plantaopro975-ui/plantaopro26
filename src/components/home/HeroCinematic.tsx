@@ -337,7 +337,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-2.5 sm:p-3 lg:p-4 min-h-[124px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-4 sm:p-3 lg:p-4 min-h-[180px] sm:min-h-[128px] lg:min-h-[148px] rounded-md border overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
                     borderColor: `${tc.primary}55`,
                     // @ts-ignore CSS var
