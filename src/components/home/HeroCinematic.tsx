@@ -94,7 +94,7 @@ export function HeroCinematic({
 
         {/* Headline + Team Bento */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.05fr,1.15fr] gap-6 lg:gap-10 items-center flex-1">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl xl:pb-[clamp(180px,15vw,280px)]">
             <h1 className="text-[2rem] sm:text-[2.6rem] lg:text-[3rem] leading-[1.05] tracking-tight text-foreground font-serif">
               Segurança Socioeducativa,{' '}
               <span className="italic text-primary">refinada</span>.
