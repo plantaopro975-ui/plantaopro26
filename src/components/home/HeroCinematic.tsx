@@ -32,7 +32,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     <section
       className="relative w-full overflow-hidden rounded-xl border border-primary/25 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
-      style={{ minHeight: 'clamp(520px, 78vh, 820px)' }}
+      style={{ height: 'max(420px, calc(100dvh - 160px))', maxHeight: '900px' }}
     >
       {/* Background image */}
       <img
