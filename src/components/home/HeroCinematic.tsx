@@ -152,8 +152,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         loading="lazy"
         draggable={false}
         {...agentHandlers}
-        onClick={(e) => {
-          agentHandlers?.onClick?.(e);
+        onClick={() => {
           const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
           w.__agentClicks = (w.__agentClicks || 0) + 1;
           if (w.__agentTimer) window.clearTimeout(w.__agentTimer);
