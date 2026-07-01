@@ -248,11 +248,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                 <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
                 <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
               </span>
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-success font-mono tabular-nums">
+                {onlineCount} online
+              </span>
+              <span className="h-3 w-px bg-success/30" aria-hidden />
               <Radio className="h-3.5 w-3.5 text-success" />
               <span className="text-[10px] font-bold tracking-[0.28em] uppercase text-success font-mono">
                 Rede 24/7
               </span>
             </div>
+
           </div>
         </div>
 
