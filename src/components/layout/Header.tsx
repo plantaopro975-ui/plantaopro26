@@ -183,10 +183,6 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         ))}
       </nav>
 
-      {/* Operational Status - Center (hidden on lg to leave room for nav) */}
-      <div className="absolute left-1/2 -translate-x-1/2 hidden md:block lg:hidden">
-        <OperationalStatus />
-      </div>
 
 
       {/* Right Side */}
