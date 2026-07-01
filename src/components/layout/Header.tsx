@@ -109,40 +109,45 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-80" />
       <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
-      {/* Mobile Menu */}
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild className="lg:hidden">
-          <Button variant="ghost" size="icon" className="tactical-btn">
-            <Menu className="h-5 w-5" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64 bg-card border-r border-border/60">
-          <MobileSidebar onNavigate={() => setIsOpen(false)} />
-        </SheetContent>
-      </Sheet>
+      {/* Left cluster: menu (mobile) + logo + identity */}
+      <div className="relative z-20 flex items-center gap-2 min-w-0">
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild className="lg:hidden">
+            <Button variant="ghost" size="icon" className="tactical-btn shrink-0">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64 bg-card border-r border-border/60">
+            <MobileSidebar onNavigate={() => setIsOpen(false)} />
+          </SheetContent>
+        </Sheet>
 
-      {/* Institutional identity */}
-      <div className="flex items-center gap-3">
-        <div className="relative shrink-0">
-          <span className="absolute inset-0 rounded-full bg-primary/20 blur-md" aria-hidden />
-          <img
-            src={logoEmblem}
-            alt="Plantão Pro"
-            width={40}
-            height={40}
-            loading="lazy"
-            className="relative h-10 w-10 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
-          />
-        </div>
-        <div className="hidden md:flex flex-col leading-tight">
-          <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans">
-            ISE · Acre
-          </span>
-          <span className="text-[13px] font-bold text-foreground -mt-0.5 font-serif">
-            Comando Tático
-          </span>
-          <span className="text-[9px] text-muted-foreground/80 tracking-wider uppercase font-mono">
-            {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+        {/* Institutional identity */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="relative shrink-0">
+            <span className="absolute inset-0 rounded-full bg-primary/25 blur-md" aria-hidden />
+            <img
+              src={logoEmblem}
+              alt="Plantão Pro"
+              width={40}
+              height={40}
+              loading="eager"
+              className="relative h-9 w-9 md:h-10 md:w-10 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
+            />
+          </div>
+          <div className="hidden md:flex flex-col leading-tight min-w-0">
+            <span className="text-[10px] font-bold tracking-[0.28em] text-primary uppercase font-sans truncate">
+              ISE · Acre
+            </span>
+            <span className="text-[13px] font-bold text-foreground -mt-0.5 font-serif truncate">
+              Comando Tático
+            </span>
+            <span className="text-[9px] text-muted-foreground/80 tracking-wider uppercase font-mono truncate">
+              {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+            </span>
+          </div>
+          <span className="md:hidden text-sm font-bold text-foreground font-serif truncate">
+            Plantão<span className="text-primary">Pro</span>
           </span>
         </div>
       </div>
