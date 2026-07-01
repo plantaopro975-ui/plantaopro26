@@ -5,6 +5,8 @@ import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
+import policeVehicle from '@/assets/police-vehicle-3d.png';
+
 
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
@@ -62,6 +64,17 @@ export function HeroCinematic({
         style={{ animationDuration: '6s' }}
       />
 
+      {/* Viatura policial 3D — desktop only, interage com o hover das equipes */}
+      <img
+        src={policeVehicle}
+        alt=""
+        aria-hidden
+        width={1536}
+        height={768}
+        loading="lazy"
+        className="police-vehicle hidden md:block pointer-events-none select-none absolute z-10 bottom-2 left-2 md:left-4 lg:left-6 w-[38%] md:w-[34%] lg:w-[30%] xl:w-[26%] max-w-[520px] object-contain"
+      />
+
 
       <div className="relative z-10 h-full flex flex-col gap-6 px-5 sm:px-8 lg:px-12 py-6 sm:py-8">
         {/* eyebrow */}
@@ -112,7 +125,7 @@ export function HeroCinematic({
           </div>
 
           {/* Teams — 3D noir & gold, clicáveis */}
-          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full" role="list" aria-label="Equipes operacionais">
+          <ul className="hero-team-grid grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full" role="list" aria-label="Equipes operacionais">
             {TEAMS.map((t) => (
               <li key={t.name} className="flex">
                 <button
