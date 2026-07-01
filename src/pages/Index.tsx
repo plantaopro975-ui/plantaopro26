@@ -1200,17 +1200,17 @@ export default function Index() {
 
   return (
     <>
-      <div className="min-h-[100dvh] flex flex-col bg-background relative overflow-x-hidden overscroll-none">
+      <div className="home-viewport-shell flex flex-col bg-background relative overflow-hidden overscroll-none">
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 shrink-0">
+      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
         <CommandStrip />
 
 
         {/* Cinematic institutional hero — teams integradas como bento 3D */}
-        <div className="px-2 sm:px-4 pt-1">
+        <div className="min-h-0 flex-1 px-2 sm:px-4 pt-1">
           <HeroCinematic
             onPrimaryAction={() => {
               const first = document.querySelector<HTMLElement>('[data-team-card]');
@@ -1221,7 +1221,7 @@ export default function Index() {
         </div>
 
         {/* Dynamic Agent Info Banner */}
-        <div className="px-2 sm:px-4">
+        <div className="shrink-0 px-2 sm:px-4 overflow-hidden">
           <HomeAgentInfoBanner />
         </div>
 
@@ -1229,7 +1229,7 @@ export default function Index() {
       </header>
 
       {/* Quick Access — apenas quando há credenciais salvas */}
-      <section className="px-2 sm:px-4 pb-1 relative z-10">
+      <section className="shrink-0 px-2 sm:px-4 pb-1 relative z-10 overflow-hidden">
         {getSavedCredentials().length > 0 && (
           <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
             <QuickAccessPanel
