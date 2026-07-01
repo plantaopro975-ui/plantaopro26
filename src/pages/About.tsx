@@ -126,159 +126,113 @@ export default function About() {
         </section>
 
 
-        {/* Funcionalidades */}
-        <section>
-          <div className="mb-4 flex items-center justify-between">
-            <h2
-              className="text-xl font-normal tracking-wide text-slate-100"
-              style={{ fontFamily: '"Libre Baskerville", Georgia, serif' }}
-            >
-              Funcionalidades
-            </h2>
-            <span
-              className="text-[10px] uppercase tracking-[0.25em] text-amber-400/70"
-              style={{ fontFamily: '"IBM Plex Mono", monospace' }}
-            >
-              06 módulos
-            </span>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <Card
-                key={f.title}
-                className="group border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md transition-all hover:border-amber-400/50 hover:bg-[#0f1e3a]/80 hover:shadow-[0_10px_30px_-10px_rgba(217,168,63,0.3)]"
+        {/* Grid principal: features + origem lado a lado */}
+        <div className="grid gap-2 flex-1 min-h-0 lg:grid-cols-3">
+          {/* Funcionalidades: 6 mini-cards */}
+          <section className="lg:col-span-2 flex flex-col min-h-0">
+            <div className="mb-1.5 flex items-center justify-between">
+              <h2
+                className="text-sm font-normal tracking-wide text-slate-100"
+                style={{ fontFamily: '"Libre Baskerville", Georgia, serif' }}
               >
-                <CardContent className="flex items-start gap-3 p-4">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30 transition-all group-hover:ring-amber-400/60">
-                    <f.icon className="h-4 w-4 text-amber-400" />
-                  </div>
-                  <div className="min-w-0 space-y-0.5">
-                    <h3
-                      className="text-sm font-semibold leading-tight text-slate-100"
-                      style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}
-                    >
-                      {f.title}
-                    </h3>
-                    <p className="text-xs leading-snug text-slate-400">{f.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Identidade + Origem */}
-        <section className="grid gap-4 lg:grid-cols-5">
-          <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md lg:col-span-2">
-            <CardContent className="p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <h2
-                  className="text-base font-normal tracking-wide text-slate-100"
-                  style={{ fontFamily: '"Libre Baskerville", Georgia, serif' }}
-                >
-                  Identidade
-                </h2>
-                <span
-                  className="text-[10px] uppercase tracking-[0.25em] text-amber-400/70"
-                  style={{ fontFamily: '"IBM Plex Mono", monospace' }}
-                >
-                  ISE · AC
-                </span>
-              </div>
-              <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-[#0f1e3a] via-[#0a1428] to-[#050810] p-8 ring-1 ring-amber-500/20">
-                <img
-                  src={logoPlantaoPro}
-                  alt="Logomarca PlantãoPro"
-                  className="h-28 w-28 object-contain drop-shadow-[0_0_25px_rgba(217,168,63,0.4)]"
-                />
-              </div>
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="w-full gap-2 border-amber-500/30 bg-transparent text-xs text-amber-300 hover:bg-amber-500/10 hover:text-amber-200"
+                Funcionalidades
+              </h2>
+              <span
+                className="text-[9px] uppercase tracking-[0.25em] text-amber-400/70"
+                style={{ fontFamily: '"IBM Plex Mono", monospace' }}
               >
-                <a href={logoPlantaoPro} download="plantao-pro-logo.png">
-                  <Download className="h-3.5 w-3.5" />
-                  Baixar Logomarca
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border-amber-500/15 bg-gradient-to-br from-[#0a1428]/80 via-[#0f1e3a]/70 to-[#0a1428]/80 backdrop-blur-md lg:col-span-3">
-            <CardContent className="p-5 space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30">
-                  <Building2 className="h-4 w-4 text-amber-400" />
-                </div>
-                <h2
-                  className="text-base font-normal tracking-wide text-slate-100"
-                  style={{ fontFamily: '"Libre Baskerville", Georgia, serif' }}
+                06 módulos
+              </span>
+            </div>
+            <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 flex-1 min-h-0">
+              {features.map((f) => (
+                <Card
+                  key={f.title}
+                  className="group border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md transition-all hover:border-amber-400/50 hover:bg-[#0f1e3a]/80"
                 >
-                  Origem do Projeto
-                </h2>
-              </div>
-              <p className="text-sm leading-relaxed text-slate-300">
-                Idealizado por um <strong className="text-amber-300">Agente Socioeducativo</strong> de{' '}
-                <strong className="text-amber-300">Feijó/AC</strong>, nasceu da necessidade real de
-                trazer praticidade à rotina de quem atua na linha de frente.
-              </p>
-              <div className="flex flex-wrap gap-2 pt-1">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-300">
-                  <Award className="h-3 w-3" />
-                  Feito por quem entende
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
-                  <CheckCircle2 className="h-3 w-3" />
-                  Problemas reais
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+                  <CardContent className="flex items-center gap-2 p-2.5 h-full">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30">
+                      <f.icon className="h-3.5 w-3.5 text-amber-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3
+                        className="text-xs font-semibold leading-tight text-slate-100"
+                        style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}
+                      >
+                        {f.title}
+                      </h3>
+                      <p className="text-[10px] leading-snug text-slate-400 truncate">
+                        {f.description}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
 
-        {/* Contato */}
-        <section>
-          <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md">
-            <CardContent className="flex flex-col items-center justify-between gap-3 p-4 sm:flex-row">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30">
-                  <Mail className="h-4 w-4 text-amber-400" />
-                </div>
-                <div>
-                  <p
-                    className="text-[10px] uppercase tracking-[0.25em] text-amber-400/70"
-                    style={{ fontFamily: '"IBM Plex Mono", monospace' }}
+          {/* Origem + Contato */}
+          <section className="flex flex-col gap-2 min-h-0">
+            <Card className="border-amber-500/15 bg-gradient-to-br from-[#0a1428]/80 via-[#0f1e3a]/70 to-[#0a1428]/80 backdrop-blur-md flex-1">
+              <CardContent className="p-3 space-y-1.5 h-full flex flex-col">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30">
+                    <Building2 className="h-3.5 w-3.5 text-amber-400" />
+                  </div>
+                  <h2
+                    className="text-sm font-normal tracking-wide text-slate-100"
+                    style={{ fontFamily: '"Libre Baskerville", Georgia, serif' }}
                   >
-                    Suporte / Sugestões
-                  </p>
+                    Origem do Projeto
+                  </h2>
+                </div>
+                <p className="text-xs leading-snug text-slate-300 flex-1">
+                  Idealizado por um <strong className="text-amber-300">Agente Socioeducativo</strong> de{' '}
+                  <strong className="text-amber-300">Feijó/AC</strong>, para trazer praticidade a
+                  quem atua na linha de frente.
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-300">
+                    <Award className="h-2.5 w-2.5" />
+                    Por quem entende
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+                    <CheckCircle2 className="h-2.5 w-2.5" />
+                    Real
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md">
+              <CardContent className="flex items-center justify-between gap-2 p-2.5">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30">
+                    <Mail className="h-3.5 w-3.5 text-amber-400" />
+                  </div>
                   <a
                     href="mailto:plantaopro@proton.me"
-                    className="text-sm font-medium text-slate-100 hover:text-amber-300 transition-colors"
+                    className="text-[11px] font-medium text-slate-100 hover:text-amber-300 transition-colors truncate"
                     style={{ fontFamily: '"IBM Plex Mono", monospace' }}
                   >
                     plantaopro@proton.me
                   </a>
                 </div>
-              </div>
-              <Button
-                asChild
-                size="sm"
-                className="gap-1.5 bg-amber-500 text-[#050810] text-xs font-semibold hover:bg-amber-400"
-              >
-                <a href="mailto:plantaopro@proton.me">
-                  <Mail className="h-3.5 w-3.5" />
-                  Enviar mensagem
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
-        </section>
+                <Button
+                  asChild
+                  size="sm"
+                  className="h-7 gap-1 bg-amber-500 text-[#050810] text-[10px] px-2 font-semibold hover:bg-amber-400"
+                >
+                  <a href="mailto:plantaopro@proton.me">Enviar</a>
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
+        </div>
 
         {/* Footer */}
-        <footer className="border-t border-amber-500/15 pt-4 text-center space-y-1">
-          <p className="text-[11px] text-slate-400 flex items-center justify-center gap-2">
+        <footer className="border-t border-amber-500/15 pt-1.5 text-center flex-shrink-0">
+          <p className="text-[10px] text-slate-400 flex items-center justify-center gap-2">
             <span
               className="uppercase tracking-[0.25em] text-amber-400/60"
               style={{ fontFamily: '"IBM Plex Mono", monospace' }}
@@ -293,11 +247,11 @@ export default function About() {
             </span>
             <span className="text-amber-500/40">·</span>
             <span className="text-slate-400">Feijó / AC</span>
-          </p>
-          <p className="text-[10px] text-slate-500">
-            © {new Date().getFullYear()} PlantãoPro · QSL, Feijó!
+            <span className="text-amber-500/40">·</span>
+            <span className="text-slate-500">© {new Date().getFullYear()} · QSL, Feijó!</span>
           </p>
         </footer>
+
       </main>
     </div>
   );
