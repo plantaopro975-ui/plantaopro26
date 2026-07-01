@@ -8,65 +8,66 @@
   :root {
     /* ================================
        SOCIOEDUCATIVO ACRE — Institutional
-       Verde Esmeralda (camisa) + Azul Marinho (calça) + Dourado (brasão)
+       Azul Marinho (camisa) + Caqui/Bege (calça) + Dourado (brasão)
        ================================ */
-    --background: 217 55% 8%;
-    --foreground: 150 25% 96%;
+    --background: 217 55% 9%;
+    --foreground: 36 30% 94%;
 
-    --card: 217 45% 11%;
-    --card-foreground: 150 20% 96%;
+    --card: 217 45% 12%;
+    --card-foreground: 36 25% 95%;
 
-    --popover: 217 50% 10%;
-    --popover-foreground: 150 20% 96%;
+    --popover: 217 50% 11%;
+    --popover-foreground: 36 25% 95%;
 
-    --primary: 152 65% 42%;
-    --primary-foreground: 217 55% 8%;
+    --primary: 217 60% 32%;
+    --primary-foreground: 36 30% 96%;
 
-    --secondary: 217 40% 16%;
-    --secondary-foreground: 150 20% 94%;
+    --secondary: 32 30% 62%;
+    --secondary-foreground: 217 55% 12%;
 
-    --muted: 217 35% 15%;
-    --muted-foreground: 210 15% 68%;
+    --muted: 217 30% 16%;
+    --muted-foreground: 36 15% 70%;
 
-    --accent: 43 78% 58%;
-    --accent-foreground: 217 55% 8%;
+    --accent: 42 65% 55%;
+    --accent-foreground: 217 55% 10%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 152 65% 42%;
+    --success: 152 55% 42%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 43 85% 58%;
-    --warning-foreground: 217 55% 8%;
+    --warning: 42 85% 58%;
+    --warning-foreground: 217 55% 10%;
 
-    --border: 217 35% 20%;
-    --input: 217 40% 13%;
-    --ring: 152 65% 42%;
+    --border: 217 30% 22%;
+    --input: 217 40% 14%;
+    --ring: 42 65% 55%;
 
-    --sidebar-background: 217 60% 7%;
-    --sidebar-foreground: 150 20% 94%;
-    --sidebar-primary: 152 65% 42%;
-    --sidebar-primary-foreground: 217 55% 8%;
-    --sidebar-accent: 217 40% 14%;
-    --sidebar-accent-foreground: 150 20% 96%;
-    --sidebar-border: 217 35% 18%;
-    --sidebar-ring: 152 65% 42%;
+    --sidebar-background: 217 60% 8%;
+    --sidebar-foreground: 36 25% 94%;
+    --sidebar-primary: 217 60% 32%;
+    --sidebar-primary-foreground: 36 30% 96%;
+    --sidebar-accent: 217 40% 15%;
+    --sidebar-accent-foreground: 36 25% 95%;
+    --sidebar-border: 217 30% 20%;
+    --sidebar-ring: 42 65% 55%;
 
     --radius: 0.5rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(152 65% 42%) 0%, hsl(152 70% 32%) 100%);
-    --gradient-dark: radial-gradient(ellipse at top, hsl(217 50% 12%) 0%, hsl(217 60% 5%) 100%);
-    --gradient-navy-depth: linear-gradient(160deg, hsl(217 50% 14%) 0%, hsl(217 55% 8%) 60%, hsl(217 65% 5%) 100%);
-    --gradient-amber-command: linear-gradient(135deg, hsl(152 65% 42%) 0%, hsl(43 78% 58%) 100%);
-    --gradient-hero-overlay: linear-gradient(95deg, hsl(217 60% 5% / 0.95) 0%, hsl(217 55% 8% / 0.72) 55%, hsl(217 45% 11% / 0.28) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(217 60% 32%) 0%, hsl(217 65% 22%) 100%);
+    --gradient-dark: radial-gradient(ellipse at top, hsl(217 50% 13%) 0%, hsl(217 60% 6%) 100%);
+    --gradient-navy-depth: linear-gradient(160deg, hsl(217 55% 15%) 0%, hsl(217 60% 9%) 60%, hsl(217 65% 5%) 100%);
+    --gradient-amber-command: linear-gradient(135deg, hsl(42 65% 55%) 0%, hsl(32 55% 65%) 100%);
+    --gradient-hero-overlay: linear-gradient(95deg, hsl(217 65% 5% / 0.95) 0%, hsl(217 55% 9% / 0.72) 55%, hsl(217 45% 12% / 0.28) 100%);
 
-    --shadow-command: 0 24px 60px -20px hsl(217 70% 3% / 0.9), 0 2px 8px hsl(152 65% 42% / 0.2);
-    --shadow-elevated: 0 30px 60px -20px hsl(217 70% 3% / 0.95), 0 0 0 1px hsl(217 35% 20% / 0.7);
-    --glow-amber: 0 0 0 1px hsl(152 65% 42% / 0.45), 0 12px 32px -12px hsl(152 65% 42% / 0.4);
+    --shadow-command: 0 24px 60px -20px hsl(217 70% 3% / 0.9), 0 2px 8px hsl(42 65% 55% / 0.22);
+    --shadow-elevated: 0 30px 60px -20px hsl(217 70% 3% / 0.95), 0 0 0 1px hsl(217 30% 22% / 0.7);
+    --glow-amber: 0 0 0 1px hsl(42 65% 55% / 0.45), 0 12px 32px -12px hsl(42 65% 55% / 0.42);
     --glow-navy: 0 12px 32px -12px hsl(217 70% 3% / 0.9);
 
   }
+
 
   html {
     font-size: 16px;
