@@ -36,8 +36,34 @@ export function HeroCinematic({
   agentCount = 248,
   unitsCount = 9,
 }: HeroCinematicProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const mx = ((e.clientX - rect.left) / rect.width) * 2 - 1;  // -1..1
+    const my = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      el.style.setProperty('--mx', mx.toFixed(3));
+      el.style.setProperty('--my', my.toFixed(3));
+    });
+  };
+
+  const handleMouseLeave = () => {
+    const el = sectionRef.current;
+    if (!el) return;
+    el.style.setProperty('--mx', '0');
+    el.style.setProperty('--my', '0');
+  };
+
   return (
     <section
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className="relative w-full overflow-hidden rounded-xl border border-border/60 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
       style={{ minHeight: 'clamp(360px, 46vh, 520px)' }}
