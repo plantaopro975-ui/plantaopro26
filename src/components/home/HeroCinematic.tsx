@@ -213,20 +213,36 @@ export function HeroCinematic({
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="group relative w-full flex flex-col items-center justify-center text-center gap-3 p-4 sm:p-5 lg:p-6 min-h-[160px] sm:min-h-[180px] lg:min-h-[200px] rounded-sm border border-border/60 bg-background/55 backdrop-blur-md hover:border-primary/60 hover:bg-background/70 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-
+                  onMouseMove={(e) => {
+                    const el = e.currentTarget;
+                    const r = el.getBoundingClientRect();
+                    const px = ((e.clientX - r.left) / r.width) * 100;
+                    const py = ((e.clientY - r.top) / r.height) * 100;
+                    const rx = ((py - 50) / 50) * -6; // tilt X
+                    const ry = ((px - 50) / 50) * 8;  // tilt Y
+                    el.style.setProperty('--tilt-x', `${rx.toFixed(2)}deg`);
+                    el.style.setProperty('--tilt-y', `${ry.toFixed(2)}deg`);
+                    el.style.setProperty('--px', `${px}%`);
+                    el.style.setProperty('--py', `${py}%`);
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.setProperty('--tilt-x', '0deg');
+                    el.style.setProperty('--tilt-y', '0deg');
+                  }}
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-3 p-4 sm:p-5 lg:p-6 min-h-[160px] sm:min-h-[180px] lg:min-h-[200px] rounded-sm border border-border/50 bg-background/55 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   <span
                     aria-hidden
-                    className={`pointer-events-none absolute inset-0 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br ${t.accent}`}
+                    className={`pointer-events-none absolute inset-0 rounded-sm opacity-0 group-hover:opacity-60 transition-opacity bg-gradient-to-br ${t.accent}`}
                   />
                   <img
                     src={t.icon}
                     alt=""
                     loading="lazy"
                     style={{ animationDelay: `${TEAMS.indexOf(t) * 0.6}s` }}
-                    className={`${t.anim} relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_6px_18px_rgba(201,168,76,0.45)] transition-transform group-hover:scale-110 group-hover:-translate-y-1`}
+                    className={`${t.anim} team-icon-3d relative h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 object-contain shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]`}
                   />
 
 

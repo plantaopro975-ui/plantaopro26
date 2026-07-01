@@ -475,11 +475,11 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   will-change: transform;
 }
 
-/* Radio — pulsing transmission glow + tiny shake */
+/* Radio — pulsing transmission glow + tiny shake (glow reduzido) */
 @keyframes team-radio-pulse {
-  0%, 100% { transform: translate(0,0) rotate(-2deg); filter: drop-shadow(0 6px 18px rgba(201,168,76,0.35)); }
+  0%, 100% { transform: translate(0,0) rotate(-2deg); filter: drop-shadow(0 3px 8px rgba(0,0,0,0.35)); }
   25%      { transform: translate(-1px,-3px) rotate(1deg); }
-  50%      { transform: translate(1px,-6px) rotate(2deg); filter: drop-shadow(0 10px 24px rgba(46,163,216,0.55)); }
+  50%      { transform: translate(1px,-6px) rotate(2deg); filter: drop-shadow(0 5px 12px rgba(46,163,216,0.28)); }
   75%      { transform: translate(1px,-3px) rotate(-1deg); }
 }
 .animate-team-radio {
@@ -487,19 +487,49 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   will-change: transform, filter;
 }
 
-/* Beacon (giroflex) — realistic alternating red/blue strobe with subtle sway */
+/* Beacon (giroflex) — strobe suave, halo enxuto */
 @keyframes team-beacon-strobe {
-  0%   { transform: translateY(0) rotate(-3deg) scale(1);    filter: drop-shadow(0 0 10px rgba(239,68,68,0.85))  drop-shadow(0 8px 20px rgba(239,68,68,0.35)); }
-  25%  { transform: translateY(-3px) rotate(0deg) scale(1.03); filter: drop-shadow(0 0 14px rgba(239,68,68,1))    drop-shadow(0 10px 22px rgba(239,68,68,0.5)); }
-  50%  { transform: translateY(-5px) rotate(3deg) scale(1);    filter: drop-shadow(0 0 10px rgba(59,130,246,0.85)) drop-shadow(0 8px 20px rgba(59,130,246,0.35)); }
-  75%  { transform: translateY(-3px) rotate(0deg) scale(1.03); filter: drop-shadow(0 0 14px rgba(59,130,246,1))   drop-shadow(0 10px 22px rgba(59,130,246,0.5)); }
-  100% { transform: translateY(0) rotate(-3deg) scale(1);      filter: drop-shadow(0 0 10px rgba(239,68,68,0.85)) drop-shadow(0 8px 20px rgba(239,68,68,0.35)); }
+  0%   { transform: translateY(0) rotate(-3deg) scale(1);      filter: drop-shadow(0 0 4px rgba(239,68,68,0.55))  drop-shadow(0 4px 10px rgba(0,0,0,0.35)); }
+  25%  { transform: translateY(-3px) rotate(0deg) scale(1.02); filter: drop-shadow(0 0 6px rgba(239,68,68,0.7))   drop-shadow(0 5px 12px rgba(0,0,0,0.35)); }
+  50%  { transform: translateY(-5px) rotate(3deg) scale(1);    filter: drop-shadow(0 0 4px rgba(59,130,246,0.55)) drop-shadow(0 4px 10px rgba(0,0,0,0.35)); }
+  75%  { transform: translateY(-3px) rotate(0deg) scale(1.02); filter: drop-shadow(0 0 6px rgba(59,130,246,0.7))  drop-shadow(0 5px 12px rgba(0,0,0,0.35)); }
+  100% { transform: translateY(0) rotate(-3deg) scale(1);      filter: drop-shadow(0 0 4px rgba(239,68,68,0.55))  drop-shadow(0 4px 10px rgba(0,0,0,0.35)); }
 }
 .animate-team-beacon {
-  animation: team-beacon-strobe 1.6s ease-in-out infinite;
+  animation: team-beacon-strobe 1.8s ease-in-out infinite;
   transform-origin: 50% 80%;
   will-change: transform, filter;
 }
+
+/* Card tático — tilt 3D realista, sheen e sombra de contato */
+.team-card-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 380ms cubic-bezier(0.22,1,0.36,1),
+              box-shadow 380ms ease, border-color 380ms ease;
+  --tilt-x: 0deg; --tilt-y: 0deg; --lift: 0px;
+  transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(var(--lift));
+}
+.team-card-3d:hover {
+  --lift: -4px;
+  border-color: hsl(var(--primary) / 0.55);
+  box-shadow:
+    0 22px 44px -22px hsl(var(--primary) / 0.35),
+    inset 0 1px 0 hsl(var(--primary) / 0.18);
+}
+.team-card-3d::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(220px circle at var(--px,50%) var(--py,50%),
+              hsl(var(--primary) / 0.14), transparent 60%);
+  opacity: 0; transition: opacity 240ms ease;
+  pointer-events: none;
+}
+.team-card-3d:hover::after { opacity: 1; }
+.team-card-3d:active { transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-1px) scale(0.995); }
+.team-card-3d .team-icon-3d { transition: transform 380ms cubic-bezier(0.22,1,0.36,1); transform: translateZ(0); }
+.team-card-3d:hover .team-icon-3d { transform: translateZ(30px) scale(1.06); }
 
 /* Police vehicle — idle drift + strobe glow, nudges when team hovered */
 @keyframes police-drift {
