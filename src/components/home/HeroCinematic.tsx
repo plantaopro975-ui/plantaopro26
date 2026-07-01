@@ -36,32 +36,46 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       return v ? JSON.parse(v) : null;
     } catch { return null; }
   });
-  const dragging = useRef(false);
+  const [vehiclePos, setVehiclePos] = useState<{ x: number; y: number } | null>(() => {
+    try {
+      const v = localStorage.getItem('hero_vehicle_pos');
+      return v ? JSON.parse(v) : null;
+    } catch { return null; }
+  });
+  const dragging = useRef<null | 'agent' | 'vehicle'>(null);
   const offset = useRef({ x: 0, y: 0 });
 
-  const onPointerDown = (e: React.PointerEvent<HTMLImageElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    dragging.current = true;
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
-  const onPointerMove = (e: React.PointerEvent<HTMLImageElement>) => {
-    if (!dragging.current || !sectionRef.current) return;
-    const sec = sectionRef.current.getBoundingClientRect();
-    const img = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - sec.left - offset.current.x;
-    const y = e.clientY - sec.top - offset.current.y;
-    const clamped = {
-      x: Math.max(0, Math.min(x, sec.width - img.width)),
-      y: Math.max(0, Math.min(y, sec.height - img.height)),
-    };
-    setAgentPos(clamped);
-  };
-  const onPointerUp = (e: React.PointerEvent<HTMLImageElement>) => {
-    dragging.current = false;
-    try { if (agentPos) localStorage.setItem('hero_agent_pos', JSON.stringify(agentPos)); } catch {}
-    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
-  };
+  const makeHandlers = (kind: 'agent' | 'vehicle', setter: (p: { x: number; y: number }) => void, storageKey: string) => ({
+    onPointerDown: (e: React.PointerEvent<HTMLImageElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      dragging.current = kind;
+      e.currentTarget.setPointerCapture(e.pointerId);
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLImageElement>) => {
+      if (dragging.current !== kind || !sectionRef.current) return;
+      const sec = sectionRef.current.getBoundingClientRect();
+      const img = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - sec.left - offset.current.x;
+      const y = e.clientY - sec.top - offset.current.y;
+      setter({
+        x: Math.max(0, Math.min(x, sec.width - img.width)),
+        y: Math.max(0, Math.min(y, sec.height - img.height)),
+      });
+    },
+    onPointerUp: (e: React.PointerEvent<HTMLImageElement>) => {
+      dragging.current = null;
+      try {
+        const cur = kind === 'agent' ? agentPos : vehiclePos;
+        if (cur) localStorage.setItem(storageKey, JSON.stringify(cur));
+      } catch {}
+      try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+    },
+  });
+
+  const agentHandlers = makeHandlers('agent', setAgentPos, 'hero_agent_pos');
+  const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos');
+
 
   return (
     <section
