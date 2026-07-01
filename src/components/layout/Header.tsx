@@ -139,13 +139,13 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           </SheetContent>
         </Sheet>
 
-        <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-border/50">
-          <RadarSweep size={32} />
+        <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 ml-1 border-l border-border/50">
+          <RadarSweep size={28} />
           <div className="flex flex-col leading-tight">
-            <span className="text-[10px] font-bold tracking-[0.28em] text-success uppercase font-mono">
+            <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-success uppercase font-mono">
               Radar Ativo
             </span>
-            <span className="text-[11px] font-semibold text-foreground/90 font-mono tabular-nums">
+            <span className="text-[10px] sm:text-[11px] font-semibold text-foreground/90 font-mono tabular-nums">
               <span className="text-primary">{onlineCount}</span>
               <span className="text-muted-foreground"> online · </span>
               <span className="tracking-[0.2em] uppercase text-[9px]">Rede 24/7</span>
@@ -158,7 +158,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
 
       {/* Primary Navigation */}
-      <nav className="hidden lg:flex items-center gap-1 ml-4 xl:ml-6 shrink-0" aria-label="Navegação principal">
+      <nav className="flex items-center gap-1 ml-2 sm:ml-4 xl:ml-6 shrink-0" aria-label="Navegação principal">
         {[
           { to: '/', label: 'Home', icon: Home, end: true },
           { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -171,7 +171,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             onClick={() => playSound('tactical-click')}
             className={({ isActive }) =>
               cn(
-                'relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-semibold tracking-wide transition-all',
+                'relative inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-[11px] sm:text-[12px] font-semibold tracking-wide transition-all',
                 'text-muted-foreground hover:text-foreground hover:bg-primary/10',
                 isActive &&
                   'text-primary bg-primary/10 ring-1 ring-primary/30 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.15)]',
@@ -181,7 +181,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             {({ isActive }) => (
               <>
                 <Icon className="h-3.5 w-3.5" />
-                {label}
+                <span className="hidden sm:inline">{label}</span>
                 {isActive && (
                   <span className="absolute -bottom-[1px] left-2 right-2 h-[2px] rounded-full bg-primary" aria-hidden />
                 )}
@@ -239,8 +239,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
-              <div className="hidden md:block text-left">
-                <p className="text-xs font-semibold truncate max-w-[120px] text-foreground">{getDisplayName()}</p>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs font-semibold truncate max-w-[90px] md:max-w-[120px] text-foreground">{getDisplayName()}</p>
                 <p className="text-[10px] text-primary/80 font-medium">{getRoleBadge()}</p>
               </div>
             </Button>
