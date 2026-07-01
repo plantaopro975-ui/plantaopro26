@@ -5,6 +5,7 @@ import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
+import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
 
