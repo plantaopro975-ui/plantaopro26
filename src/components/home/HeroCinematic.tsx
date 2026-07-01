@@ -133,7 +133,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         style={
           vehiclePos
             ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto', maxHeight: 'none', maxWidth: 'none', transform: 'none' }
-            : { maxHeight: 'calc(100% - 170px)', maxWidth: '48%' }
+            : { maxHeight: 'calc(100% - 200px)', maxWidth: '30%' }
         }
         className="police-vehicle absolute z-30 bottom-[160px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[55%] sm:h-[72%] lg:h-[80%] w-auto object-contain select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
       />
