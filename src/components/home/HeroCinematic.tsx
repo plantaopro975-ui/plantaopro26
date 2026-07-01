@@ -157,27 +157,25 @@ export function HeroCinematic({
       />
 
 
-      <div className="relative z-10 h-full flex flex-col gap-2 px-3 sm:px-5 lg:px-8 py-2.5 sm:py-3">
-        {/* eyebrow compacto */}
+      <div className="relative z-10 h-full flex flex-col gap-2.5 px-3 sm:px-5 lg:px-8 py-3">
+        {/* eyebrow */}
         <div className="flex items-center justify-between gap-3">
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border border-primary/30 bg-background/50 backdrop-blur-md">
             <ShieldCheck className="h-3 w-3 text-primary" />
-            <span className="text-[9px] font-semibold tracking-[0.24em] uppercase text-primary/95 font-sans">
+            <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.24em] uppercase text-primary/95 font-sans">
               ISE · Acre · Comando
             </span>
           </div>
-          <div className="hidden sm:inline-flex items-center gap-1.5 text-[9px] tracking-[0.22em] uppercase text-muted-foreground/70 font-medium font-sans">
+          <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] tracking-[0.22em] uppercase text-muted-foreground/70 font-medium font-sans">
             <Radio className="h-3 w-3 text-primary/70" />
             24/7
           </div>
         </div>
 
-        {/* Team Bento — compacto (headline removido para caber em uma tela) */}
-        <div className="flex-1 flex items-center">
+        {/* Team Bento */}
+        <div className="flex-1 flex items-end">
+          <ul className="hero-team-grid grid grid-cols-4 gap-2 sm:gap-3 w-full" role="list" aria-label="Equipes operacionais">
 
-
-          {/* Teams — compactos */}
-          <ul className="hero-team-grid grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full" role="list" aria-label="Equipes operacionais">
             {TEAMS.map((t) => (
               <li key={t.name} className="flex">
                 <button
