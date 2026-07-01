@@ -1275,7 +1275,7 @@ export default function Index() {
             <span className="hidden md:inline text-[9px] uppercase tracking-[0.22em] text-muted-foreground/60 font-mono">
               Engenharia
             </span>
-            <div className="ml-1"><HomeMediaPlayer /></div>
+            
           </div>
 
           {/* Center: Institutional */}
