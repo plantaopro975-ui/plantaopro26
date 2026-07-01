@@ -134,12 +134,15 @@ export function AuthDialog({
 
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
-          <div className="relative h-36 sm:h-40 md:h-44 w-full overflow-hidden bg-slate-950">
+          <div
+            className="relative w-full overflow-hidden bg-slate-950"
+            style={{ aspectRatio: '16 / 6' }}
+          >
             <img
               src={teamPoster}
               alt={`Equipe ${teamKey}`}
-              className="absolute inset-0 h-full w-full object-cover object-center"
-              style={{ filter: 'contrast(1.08) saturate(1.05) brightness(0.9)', objectPosition: '50% 30%' }}
+              className="absolute inset-0 h-full w-full object-cover object-[50%_35%] sm:object-[50%_30%] md:object-[50%_25%]"
+              style={{ filter: 'contrast(1.08) saturate(1.05) brightness(0.9)' }}
             />
             {teamPattern && (
               <div className="absolute inset-0 opacity-25 mix-blend-overlay pointer-events-none"
