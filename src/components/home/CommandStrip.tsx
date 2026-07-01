@@ -129,14 +129,15 @@ export function CommandStrip() {
 
           {/* Identidade (sem redundância com o Header) */}
           <div className="min-w-0 border-l border-border/50 pl-3 leading-tight">
-            <span className="block text-[13px] sm:text-sm font-bold text-foreground font-serif truncate">
+            <span className="block text-[12px] sm:text-[13px] font-bold text-foreground font-serif truncate">
               Comando <span className="text-primary">Operacional</span>
             </span>
-            <span className="hidden sm:block text-[10px] text-muted-foreground/80 tracking-wider uppercase font-mono">
+            <span className="hidden md:block text-[9px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono">
               Gestão inteligente de plantões
             </span>
           </div>
         </div>
+
 
         {/* Espaçador flexível */}
         <div className="flex-1" />
