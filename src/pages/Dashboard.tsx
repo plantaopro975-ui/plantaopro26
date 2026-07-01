@@ -83,7 +83,7 @@ export default function Dashboard() {
       <div className="min-h-dvh flex">
         <Sidebar />
         <div className="flex-1 flex flex-col">
-          <Header />
+          {/* Header is rendered by AppShell layout */}
           <main className="flex-1 p-3 md:p-4 overflow-auto">
             <div className="max-w-7xl mx-auto space-y-4 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
               {/* Page Header */}
