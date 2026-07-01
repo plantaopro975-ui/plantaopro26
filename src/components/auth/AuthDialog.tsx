@@ -134,19 +134,23 @@ export function AuthDialog({
 
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
-          <div className="relative h-28 sm:h-32 md:h-36 w-full overflow-hidden">
+          <div className="relative h-36 sm:h-40 md:h-44 w-full overflow-hidden bg-slate-950">
             <img
               src={teamPoster}
               alt={`Equipe ${teamKey}`}
-              className="absolute inset-0 h-full w-full object-cover"
-              style={{ filter: 'contrast(1.1) saturate(0.7) brightness(0.5)' }}
+              className="absolute inset-0 h-full w-full object-cover object-center"
+              style={{ filter: 'contrast(1.08) saturate(1.05) brightness(0.9)', objectPosition: '50% 30%' }}
             />
             {teamPattern && (
-              <div className="absolute inset-0 opacity-30 mix-blend-overlay"
+              <div className="absolute inset-0 opacity-25 mix-blend-overlay pointer-events-none"
                    style={{ backgroundImage: teamPattern }} />
             )}
-            <div className="absolute inset-0"
-                 style={{ background: `linear-gradient(180deg, rgba(2,6,23,0.3) 0%, rgba(2,6,23,0.7) 55%, rgba(2,6,23,0.98) 100%)` }} />
+            {/* Gradiente apenas na base — preserva a imagem no topo */}
+            <div className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
+                 style={{ background: `linear-gradient(180deg, transparent 0%, rgba(2,6,23,0.55) 55%, rgba(2,6,23,0.96) 100%)` }} />
+            {/* Leve wash lateral com a cor da equipe */}
+            <div className="absolute inset-0 pointer-events-none"
+                 style={{ background: `linear-gradient(90deg, ${teamColor!.secondary}22 0%, transparent 45%)` }} />
             <div className="absolute left-0 top-0 bottom-0 w-[3px]"
                  style={{ background: `linear-gradient(180deg, transparent, ${teamColor!.primary}, transparent)` }} />
 
