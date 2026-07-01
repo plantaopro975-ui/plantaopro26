@@ -25,7 +25,7 @@ import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Fingerprint, Shie
 import { HomeMediaPlayer } from '@/components/HomeMediaPlayer';
 import { Header } from '@/components/layout/Header';
 
-import { DeveloperFooter } from '@/components/DeveloperFooter';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
