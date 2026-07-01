@@ -157,7 +157,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
 
       {/* Foreground content */}
-      <div className="relative z-30 h-full min-h-0 flex flex-col justify-between gap-2 sm:gap-3 px-3 sm:px-5 lg:px-8 py-3 sm:py-5">
+      <div className="pointer-events-none relative z-20 h-full min-h-0 flex flex-col justify-between gap-2 sm:gap-3 px-3 sm:px-5 lg:px-8 py-3 sm:py-5 [&_button]:pointer-events-auto [&_a]:pointer-events-auto">
         {/* Top eyebrow */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
