@@ -191,8 +191,9 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
       {/* Tagline institucional — QSL Feijó */}
       <div
-        className="hidden xl:flex absolute left-1/2 -translate-x-1/2 items-center gap-2 pointer-events-none select-none"
+        className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 items-center gap-2 pointer-events-none select-none whitespace-nowrap"
         aria-label="QSL Feijó — feito por agente para agente"
+      
       >
         <span className="h-px w-6 bg-gradient-to-r from-transparent to-primary/60" aria-hidden />
         <p className="text-[11px] font-mono tracking-[0.22em] uppercase text-foreground/90">
