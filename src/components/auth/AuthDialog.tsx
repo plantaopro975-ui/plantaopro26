@@ -134,7 +134,7 @@ export function AuthDialog({
 
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
-          <div className="relative h-32 w-full overflow-hidden">
+          <div className="relative h-28 sm:h-32 md:h-36 w-full overflow-hidden">
             <img
               src={teamPoster}
               alt={`Equipe ${teamKey}`}
