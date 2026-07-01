@@ -29,6 +29,7 @@ import About from "./pages/About";
 import Agenda from "./pages/Agenda";
 import NotFound from "./pages/NotFound";
 import DebugAuth from "./pages/DebugAuth";
+import { AppShell } from "@/components/layout/AppShell";
 
 const queryClient = new QueryClient();
 
@@ -53,10 +54,15 @@ const App = () => (
                 {/* Reconnecting Guard - Shows recovery screen instead of redirecting */}
                 <ReconnectingGuard maxWaitTime={15000}>
                   <Routes>
-                    <Route path="/" element={<Index />} />
+                    {/* Shared shell: Header rendered globally on these routes */}
+                    <Route element={<AppShell />}>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/master" element={<Master />} />
+                    </Route>
+
                     <Route path="/auth" element={<Navigate to="/" replace />} />
                     <Route path="/admin" element={<Admin />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/agent-panel" element={<AgentPanel />} />
                     <Route path="/agent-profile" element={<AgentProfileEdit />} />
                     <Route path="/agent-profile-edit" element={<AgentProfileEdit />} />
@@ -67,8 +73,7 @@ const App = () => (
                     <Route path="/overtime" element={<Overtime />} />
                     <Route path="/units" element={<Units />} />
                     <Route path="/settings" element={<Settings />} />
-                    
-                    <Route path="/master" element={<Master />} />
+
                     <Route path="/install" element={<Install />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/agenda" element={<Agenda />} />
