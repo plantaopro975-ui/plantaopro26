@@ -218,19 +218,56 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
         {/* Cards — 2x2 mobile, 4x1 desktop */}
         <div className="mt-2 sm:mt-auto min-h-0">
-          <div className="relative rounded-lg overflow-hidden border border-primary/25 p-2 sm:p-3">
-            {/* Background profissional do hub de cards */}
-            <img
-              src={teamsHubBg}
-              alt=""
+          <div
+            className="relative rounded-lg overflow-hidden border border-accent/40 p-2 sm:p-3"
+            style={{
+              background:
+                'linear-gradient(135deg, hsl(var(--card)/0.95) 0%, hsl(var(--primary)/0.35) 55%, hsl(var(--accent)/0.25) 100%)',
+            }}
+          >
+            {/* SVG tático institucional */}
+            <svg
               aria-hidden
-              loading="lazy"
-              width={1920}
-              height={640}
-              className="absolute inset-0 h-full w-full object-cover opacity-95"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(var(--background)/0.25),hsl(var(--background)/0.55))]" aria-hidden />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_10%,hsl(var(--background)/0.35)_95%)]" aria-hidden />
+              className="absolute inset-0 h-full w-full pointer-events-none opacity-70"
+              viewBox="0 0 800 300"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <defs>
+                <pattern id="hub-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                  <path d="M24 0 H0 V24" fill="none" stroke="hsl(var(--accent))" strokeOpacity="0.18" strokeWidth="0.6" />
+                </pattern>
+                <radialGradient id="hub-glow" cx="50%" cy="50%" r="60%">
+                  <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="hsl(var(--background))" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="hub-stripe" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0" />
+                  <stop offset="50%" stopColor="hsl(var(--accent))" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <rect width="800" height="300" fill="url(#hub-grid)" />
+              <rect width="800" height="300" fill="url(#hub-glow)" />
+              {/* Escudo institucional central */}
+              <g opacity="0.09" transform="translate(400 150)">
+                <path
+                  d="M0 -90 L75 -55 L75 30 Q75 75 0 105 Q-75 75 -75 30 L-75 -55 Z"
+                  fill="none"
+                  stroke="hsl(var(--accent))"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M0 -65 L55 -38 L55 25 Q55 60 0 82 Q-55 60 -55 25 L-55 -38 Z"
+                  fill="none"
+                  stroke="hsl(var(--primary-glow))"
+                  strokeWidth="1"
+                />
+              </g>
+              {/* Faixas superiores/inferiores */}
+              <rect x="0" y="2" width="800" height="1" fill="url(#hub-stripe)" />
+              <rect x="0" y="297" width="800" height="1" fill="url(#hub-stripe)" />
+            </svg>
+
 
           <div className="relative mb-1.5 sm:mb-2 flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.32em] text-muted-foreground/80 font-mono">
             <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/60" />
