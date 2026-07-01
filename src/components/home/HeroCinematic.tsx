@@ -230,19 +230,19 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
           <div className="relative flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-sm border border-accent/50 bg-background/70 backdrop-blur-md w-fit max-w-full">
-                <ShieldCheck className="h-3.5 w-3.5 text-accent" strokeWidth={2.5} />
-                <span className="text-[9px] sm:text-[11px] font-bold tracking-[0.22em] sm:tracking-[0.3em] uppercase text-accent font-sans truncate">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-accent/50 bg-background/70 backdrop-blur-md w-fit max-w-full">
+                <ShieldCheck className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-accent" strokeWidth={2.5} />
+                <span className="text-[11px] font-bold tracking-[0.26em] sm:tracking-[0.3em] uppercase text-accent font-sans truncate">
                   Instituto Socioeducativo · Acre
                 </span>
               </div>
-              <h1 className="font-serif text-[20px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
+              <h1 className="font-serif text-[30px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
                 Comando <span className="text-accent">Operacional</span>
                 <br />
                 <span className="text-primary-glow">Socioeducativo</span>
               </h1>
-              <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[11px] uppercase tracking-[0.18em] sm:tracking-[0.25em] text-muted-foreground font-mono">
-                <MapPin className="h-3 w-3 text-accent" />
+              <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] sm:tracking-[0.25em] text-muted-foreground font-mono">
+                <MapPin className="h-3.5 w-3.5 text-accent" />
                 Feijó · AC · Amazônia Ocidental
               </div>
             </div>
