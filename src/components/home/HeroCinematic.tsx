@@ -398,15 +398,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                       src={t.icon}
                       alt=""
                       loading="lazy"
-                      className={`team-icon-3d ${t.motion} relative h-16 w-16 sm:h-16 sm:w-16 lg:h-[4.5rem] lg:w-[4.5rem] object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
+                      className={`team-icon-3d ${t.motion} relative h-24 w-24 sm:h-16 sm:w-16 lg:h-[4.5rem] lg:w-[4.5rem] object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
                     />
                   </span>
                   <div className="relative mt-0.5">
-                    <div className="font-serif text-base sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight">
+                    <div className="font-serif text-xl sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight">
                       {t.name}
                     </div>
                     <div className="mt-1 h-px w-8 mx-auto bg-gradient-to-r from-transparent via-accent to-transparent" />
-                    <div className="mt-1 text-[8px] sm:text-[9px] uppercase tracking-[0.24em] sm:tracking-[0.32em] text-muted-foreground font-mono">
+                    <div className="mt-1 text-[10px] sm:text-[9px] uppercase tracking-[0.28em] sm:tracking-[0.32em] text-muted-foreground font-mono">
                       Equipe
                     </div>
                   </div>
