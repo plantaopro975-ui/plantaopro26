@@ -7,12 +7,9 @@ export function CommandRoomBackground() {
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
       {/* Base graphite gradient */}
       <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(160deg, hsl(220 20% 10%) 0%, hsl(222 22% 7%) 45%, hsl(224 24% 5%) 100%)',
-        }}
+        className="absolute inset-0 bg-background"
       />
+
 
       {/* Soft diagonal light beam */}
       <div
