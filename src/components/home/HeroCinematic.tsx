@@ -119,7 +119,7 @@ export function HeroCinematic({
       ref={sectionRef}
       className="relative w-full overflow-hidden rounded-xl border border-border/60 hero-cinematic"
       aria-label="Comando Operacional — Sistema Socioeducativo do Acre"
-      style={{ minHeight: 'clamp(200px, 26vh, 300px)' }}
+      style={{ minHeight: 'clamp(260px, 32vh, 340px)' }}
     >
       <img
         src={heroImage}
@@ -157,27 +157,25 @@ export function HeroCinematic({
       />
 
 
-      <div className="relative z-10 h-full flex flex-col gap-2 px-3 sm:px-5 lg:px-8 py-2.5 sm:py-3">
-        {/* eyebrow compacto */}
+      <div className="relative z-10 h-full flex flex-col gap-2.5 px-3 sm:px-5 lg:px-8 py-3">
+        {/* eyebrow */}
         <div className="flex items-center justify-between gap-3">
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border border-primary/30 bg-background/50 backdrop-blur-md">
             <ShieldCheck className="h-3 w-3 text-primary" />
-            <span className="text-[9px] font-semibold tracking-[0.24em] uppercase text-primary/95 font-sans">
+            <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.24em] uppercase text-primary/95 font-sans">
               ISE · Acre · Comando
             </span>
           </div>
-          <div className="hidden sm:inline-flex items-center gap-1.5 text-[9px] tracking-[0.22em] uppercase text-muted-foreground/70 font-medium font-sans">
+          <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] tracking-[0.22em] uppercase text-muted-foreground/70 font-medium font-sans">
             <Radio className="h-3 w-3 text-primary/70" />
             24/7
           </div>
         </div>
 
-        {/* Team Bento — compacto (headline removido para caber em uma tela) */}
-        <div className="flex-1 flex items-center">
+        {/* Team Bento */}
+        <div className="flex-1 flex items-end">
+          <ul className="hero-team-grid grid grid-cols-4 gap-2 sm:gap-3 w-full" role="list" aria-label="Equipes operacionais">
 
-
-          {/* Teams — compactos */}
-          <ul className="hero-team-grid grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full" role="list" aria-label="Equipes operacionais">
             {TEAMS.map((t) => (
               <li key={t.name} className="flex">
                 <button
@@ -206,7 +204,7 @@ export function HeroCinematic({
                     el.style.setProperty('--tilt-x', '0deg');
                     el.style.setProperty('--tilt-y', '0deg');
                   }}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1 p-1.5 sm:p-2 min-h-[64px] sm:min-h-[78px] lg:min-h-[92px] rounded-sm border border-border/50 bg-background/55 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-2 sm:p-2.5 min-h-[72px] sm:min-h-[84px] lg:min-h-[96px] rounded-sm border border-border/50 bg-background/60 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                   aria-label={`Acessar equipe ${t.name}`}
                 >
                   <span
@@ -218,11 +216,12 @@ export function HeroCinematic({
                     alt=""
                     loading="lazy"
                     style={{ animationDelay: `${TEAMS.indexOf(t) * 0.6}s` }}
-                    className={`${t.anim} team-icon-3d relative h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain shrink-0 drop-shadow-[0_3px_8px_rgba(0,0,0,0.4)]`}
+                    className={`${t.anim} team-icon-3d relative h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12 object-contain shrink-0 drop-shadow-[0_3px_8px_rgba(0,0,0,0.4)]`}
                   />
-                  <div className="relative text-[10px] sm:text-[11px] lg:text-xs uppercase tracking-[0.18em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                  <div className="relative text-[10px] sm:text-[11px] lg:text-xs uppercase tracking-[0.2em] text-foreground font-bold font-sans leading-[1] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                     {t.name}
                   </div>
+
                 </button>
               </li>
             ))}
