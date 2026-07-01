@@ -139,17 +139,15 @@ export function CommandStrip() {
         </div>
 
 
-        {/* Espaçador flexível */}
-        <div className="flex-1" />
-
         {/* Relógio + status (mesmo padrão do Footer) */}
         <div className="flex items-center gap-3 sm:gap-4 ml-auto">
           <div className="text-right leading-tight">
-            <div className="font-mono text-sm sm:text-base tabular-nums text-foreground">{time}</div>
-            <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono">
+            <div className="font-mono text-[13px] sm:text-sm tabular-nums text-foreground">{time}</div>
+            <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground font-mono">
               {date}
             </div>
           </div>
+
           <div className="hidden sm:flex items-center gap-2 rounded-md bg-card/60 px-2.5 py-1 ring-1 ring-border/60">
             <span className="relative flex h-2 w-2">
               <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
