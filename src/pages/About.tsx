@@ -105,7 +105,7 @@ export default function About() {
             </div>
             <div className="flex-1 space-y-2">
               <p
-                className="text-[10px] uppercase tracking-[0.35em] text-amber-400"
+                className="inline-block rounded-full bg-amber-400/15 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-amber-200 ring-1 ring-amber-400/40"
                 style={{ fontFamily: '"IBM Plex Mono", monospace' }}
               >
                 Segurança Pública · Acre
