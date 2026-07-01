@@ -153,21 +153,16 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               </div>
             </div>
 
-            {/* Developer credit */}
+            {/* Version credit */}
             <div className="md:col-span-4 flex flex-col items-start md:items-end leading-tight gap-1">
               <div className="flex items-center gap-2">
                 <Cpu className="h-3.5 w-3.5 text-primary/80" />
                 <span className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground/70 font-semibold">
-                  Engenharia & Desenvolvimento
+                  Sistema Institucional
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span
-                  className="text-base font-bold tracking-[0.22em] text-primary font-serif"
-                >
-                  FRANC D'NIS
-                </span>
-                <span className="px-1.5 py-0.5 rounded-sm text-[8px] font-bold tracking-widest bg-primary/12 text-primary ring-1 ring-primary/30">
+                <span className="px-1.5 py-0.5 rounded-sm text-[9px] font-bold tracking-widest bg-primary/12 text-primary ring-1 ring-primary/30">
                   v2.7
                 </span>
               </div>
@@ -175,6 +170,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
                 Feijó · AC · © {year} PlantãoPro
               </p>
             </div>
+
           </div>
 
           {/* Bottom hairline */}
