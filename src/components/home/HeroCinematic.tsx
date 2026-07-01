@@ -12,6 +12,8 @@ import policeVehicle from '@/assets/police-vehicle-3d.png';
 import teamsHubBg from '@/assets/hero-teams-hub.jpg';
 import comandoCover from '@/assets/comando-operacional-cover.jpg';
 import { getTeamPoster, getTeamColors } from '@/lib/teamAssets';
+import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
@@ -35,6 +37,8 @@ const TEAMS: { name: TeamName; icon: string; kicker: string; motion: string }[] 
  */
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const onlineCount = useOnlinePresence();
+
   const [agentPos, setAgentPos] = useState<{ x: number; y: number } | null>(() => {
     try {
       const v = localStorage.getItem('hero_agent_pos');
@@ -248,11 +252,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                 <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
                 <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
               </span>
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-success font-mono tabular-nums">
+                {onlineCount} online
+              </span>
+              <span className="h-3 w-px bg-success/30" aria-hidden />
               <Radio className="h-3.5 w-3.5 text-success" />
               <span className="text-[10px] font-bold tracking-[0.28em] uppercase text-success font-mono">
                 Rede 24/7
               </span>
             </div>
+
           </div>
         </div>
 
