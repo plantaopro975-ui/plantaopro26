@@ -1,5 +1,6 @@
 import { ShieldCheck, Radio, MapPin } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import heroImage from '@/assets/hero-command.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadio from '@/assets/icons-3d/noir-radio.png';
@@ -159,7 +160,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           w.__agentTimer = window.setTimeout(() => { w.__agentClicks = 0; }, 700);
           if ((w.__agentClicks ?? 0) >= 3) {
             w.__agentClicks = 0;
-            window.dispatchEvent(new CustomEvent('open-master-login'));
+            toast('Acesso do administrador', {
+              description: 'Confirme para abrir o login restrito.',
+              duration: 6000,
+              action: {
+                label: 'Confirmar',
+                onClick: () => window.dispatchEvent(new CustomEvent('open-master-login')),
+              },
+              cancel: { label: 'Cancelar', onClick: () => {} },
+            });
           }
         }}
         style={
