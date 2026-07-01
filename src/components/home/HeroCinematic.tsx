@@ -132,10 +132,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         {...vehicleHandlers}
         style={
           vehiclePos
-            ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto', maxHeight: 'none', maxWidth: 'none', transform: 'none' }
-            : { maxHeight: 'calc(100% - 200px)', maxWidth: '30%' }
+            ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto', transform: 'none' }
+            : undefined
         }
-        className="police-vehicle absolute z-30 bottom-[160px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[32%] sm:h-[42%] lg:h-[48%] w-auto object-contain select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
+        className="police-vehicle absolute z-30 bottom-[160px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[22%] sm:h-[30%] lg:h-[36%] w-auto object-contain select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
       />
 
       {/* Agente tático — arrastável */}
