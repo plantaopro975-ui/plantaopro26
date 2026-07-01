@@ -161,15 +161,25 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         className="police-vehicle absolute z-10 bottom-1 left-1 sm:bottom-2 sm:left-4 lg:left-8 object-contain pointer-events-none select-none opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
       />
 
-      {/* Agente tático — centralizado */}
+      {/* Agente tático — arrastável */}
       <img
         src={agentFigure}
-        alt=""
-        aria-hidden
+        alt="Arraste para posicionar"
+        title="Arraste para posicionar"
         loading="lazy"
         draggable={false}
-        className="absolute z-20 bottom-24 right-0 translate-x-2 sm:bottom-0 sm:right-auto sm:left-1/2 sm:translate-x-0 sm:-translate-x-1/2 h-[34%] sm:h-[58%] lg:h-[68%] max-h-full w-auto object-contain object-bottom pointer-events-none select-none opacity-90 sm:opacity-100 [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))]"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        style={
+          agentPos
+            ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
+            : undefined
+        }
+        className="agent-figure absolute z-40 bottom-20 right-1 sm:bottom-0 sm:left-1/2 sm:-translate-x-1/2 h-[38%] sm:h-[58%] lg:h-[68%] max-h-full w-auto object-contain object-bottom select-none cursor-grab active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_20px_44px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_28px_hsl(var(--accent)/0.55))_drop-shadow(0_20px_44px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
       />
+
 
       {/* Foreground content */}
       <div className="relative z-30 h-full min-h-0 flex flex-col justify-between gap-2 sm:gap-3 px-3 sm:px-5 lg:px-8 py-3 sm:py-5">
