@@ -129,59 +129,63 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>}
 
 
-      {/* Viatura policial — arrastável, com giroflex funcional */}
-      <div
-        className="police-vehicle absolute z-30 block bottom-[130px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[22%] sm:h-[30%] lg:h-[36%] w-auto select-none touch-none"
-        style={
-          vehiclePos
-            ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto' }
-            : undefined
-        }
-      >
-        <img
-          src={policeVehicle}
-          alt="Arraste para posicionar viatura"
-          title="Arraste para posicionar"
-          loading="lazy"
-          draggable={false}
-          {...vehicleHandlers}
-          className="h-full w-auto object-contain cursor-grab active:cursor-grabbing opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
-        />
-      </div>
+      {/* Viatura policial — omitida no Android leve para evitar decode de PNG grande. */}
+      {!lowMotion && (
+        <div
+          className="police-vehicle absolute z-30 block bottom-[130px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[22%] sm:h-[30%] lg:h-[36%] w-auto select-none touch-none"
+          style={
+            vehiclePos
+              ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto' }
+              : undefined
+          }
+        >
+          <img
+            src={policeVehicle}
+            alt="Arraste para posicionar viatura"
+            title="Arraste para posicionar"
+            loading="lazy"
+            draggable={false}
+            {...vehicleHandlers}
+            className="h-full w-auto object-contain cursor-grab active:cursor-grabbing opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
+          />
+        </div>
+      )}
 
       {/* Agente tático — arrastável (triple-click abre login master/admin) */}
-      <img
-        src={agentFigure}
-        alt="Arraste para posicionar · toque 3× para acesso administrador"
-        title="Toque 3× para acesso do administrador"
-        loading="lazy"
-        draggable={false}
-        {...agentHandlers}
-        onClick={() => {
-          const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
-          w.__agentClicks = (w.__agentClicks || 0) + 1;
-          if (w.__agentTimer) window.clearTimeout(w.__agentTimer);
-          w.__agentTimer = window.setTimeout(() => { w.__agentClicks = 0; }, 700);
-          if ((w.__agentClicks ?? 0) >= 3) {
-            w.__agentClicks = 0;
-            toast('Acesso do administrador', {
-              description: 'Confirme para abrir o login restrito.',
-              duration: 6000,
-              action: {
-                label: 'Confirmar',
-                onClick: () => window.dispatchEvent(new CustomEvent('open-master-login')),
-              },
-              cancel: { label: 'Cancelar', onClick: () => {} },
-            });
+      {!lowMotion && (
+        <img
+          src={agentFigure}
+          alt="Arraste para posicionar · toque 3× para acesso administrador"
+          title="Toque 3× para acesso do administrador"
+          loading="lazy"
+          draggable={false}
+          {...agentHandlers}
+          onClick={() => {
+            const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
+            w.__agentClicks = (w.__agentClicks || 0) + 1;
+            if (w.__agentTimer) window.clearTimeout(w.__agentTimer);
+            w.__agentTimer = window.setTimeout(() => { w.__agentClicks = 0; }, 700);
+            if ((w.__agentClicks ?? 0) >= 3) {
+              w.__agentClicks = 0;
+              toast('Acesso do administrador', {
+                description: 'Confirme para abrir o login restrito.',
+                duration: 6000,
+                action: {
+                  label: 'Confirmar',
+                  onClick: () => window.dispatchEvent(new CustomEvent('open-master-login')),
+                },
+                cancel: { label: 'Cancelar', onClick: () => {} },
+              });
+            }
+          }}
+          style={
+            agentPos
+              ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
+              : undefined
           }
-        }}
-        style={
-          agentPos
-            ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
-            : undefined
-        }
-        className="agent-figure absolute z-40 block bottom-0 right-1 sm:right-2 h-[40%] sm:h-[54%] lg:h-[62%] max-h-full w-auto object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_22px_hsl(var(--accent)/0.5))_drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
-      />
+          className="agent-figure absolute z-40 block bottom-0 right-1 sm:right-2 h-[40%] sm:h-[54%] lg:h-[62%] max-h-full w-auto object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_22px_hsl(var(--accent)/0.5))_drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
+        />
+      )}
 
 
 
@@ -400,12 +404,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     className="relative inline-flex items-center justify-center"
                     title={`Equipe ${t.name} — clique para acessar`}
                   >
-                    <img
-                      src={t.icon}
-                      alt=""
-                      loading="lazy"
-                      className={`team-icon-3d ${t.motion} relative h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
-                    />
+                    {lowMotion ? (
+                      <span className="relative flex h-16 w-16 items-center justify-center rounded-md border border-accent/35 bg-card/80 font-serif text-xl font-black text-accent">
+                        {t.name.slice(0, 1)}
+                      </span>
+                    ) : (
+                      <img
+                        src={t.icon}
+                        alt=""
+                        loading="lazy"
+                        className={`team-icon-3d ${t.motion} relative h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
+                      />
+                    )}
                   </span>
                   <div className="relative mt-0.5">
                     <div className="font-serif text-base sm:text-lg lg:text-xl font-black text-foreground leading-none tracking-tight">
