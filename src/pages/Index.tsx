@@ -1507,9 +1507,24 @@ export default function Index() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                localStorage.removeItem('plantao_pro_saved_credentials');
+                try {
+                  // Remove all credential-related keys definitively
+                  localStorage.removeItem('plantao_pro_saved_credentials');
+                  localStorage.removeItem('plantao_pro_device_key');
+                  localStorage.removeItem(LAST_CPF_KEY);
+                  // Sweep any legacy/related keys
+                  Object.keys(localStorage).forEach((k) => {
+                    if (/credent|last_cpf|saved.?cred|remember|autofill/i.test(k)) {
+                      localStorage.removeItem(k);
+                    }
+                  });
+                  sessionStorage.clear();
+                } catch {
+                  // ignore
+                }
                 setLoginCpf('');
                 setLoginPassword('');
+                setSavePasswordEnabled(false);
                 setShowClearCredsConfirm(false);
                 toast({
                   title: 'Credenciais limpas',
