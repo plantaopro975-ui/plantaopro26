@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import {
-  Radar, Shield, ShieldAlert, ShieldCheck, ClipboardCheck,
+  Radar, ShieldAlert, ShieldCheck, ClipboardCheck,
   FileDown, VolumeX, Volume2, Sparkles, Zap, Users, Clock,
 } from 'lucide-react';
 import {
@@ -51,73 +51,8 @@ const DEFAULT_CHECKLIST = [
   { id: 'ready', label: 'Status operacional: PRONTO' },
 ];
 
-// ---------- tactical beep via WebAudio (no assets) ----------
-function beep(freq = 880, ms = 120, gain = 0.08) {
-  try {
-    const AC: typeof AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
-    const ctx = new AC();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = 'square';
-    o.frequency.value = freq;
-    g.gain.value = gain;
-    o.connect(g).connect(ctx.destination);
-    o.start();
-    setTimeout(() => { o.stop(); ctx.close(); }, ms);
-  } catch { /* silent */ }
-}
 
-// ---------- Full-screen HUD 3-2-1 ----------
-function ShiftStartHUD({ onDone, silent }: { onDone: () => void; silent: boolean }) {
-  const [count, setCount] = useState(3);
 
-  useEffect(() => {
-    if (!silent) beep(660, 140);
-    const id = setInterval(() => {
-      setCount((c) => {
-        const next = c - 1;
-        if (next <= 0) {
-          clearInterval(id);
-          if (!silent) beep(1200, 400, 0.12);
-          setTimeout(onDone, 700);
-          return 0;
-        }
-        if (!silent) beep(660 + (3 - next) * 120, 140);
-        return next;
-      });
-    }, 1000);
-    return () => clearInterval(id);
-  }, [onDone, silent]);
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md animate-fade-in">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.15),transparent_60%)]" />
-      </div>
-
-      <div className="relative flex flex-col items-center gap-6 px-6 text-center">
-        <div className="flex items-center gap-3 text-emerald-400">
-          <Shield className="h-7 w-7 animate-pulse" />
-          <span className="font-mono text-sm tracking-[0.4em] uppercase">Inicializando Plantão</span>
-        </div>
-
-        <div key={count} className="relative">
-          <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-2xl animate-ping" />
-          <div className="relative flex items-center justify-center h-48 w-48 md:h-64 md:w-64 rounded-full border-4 border-emerald-500/60 bg-slate-950/80 shadow-[0_0_60px_rgba(16,185,129,0.5)]">
-            <span className="font-mono text-8xl md:text-9xl font-black text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.8)]">
-              {count > 0 ? count : 'GO'}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-2">
-          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-mono text-xs uppercase tracking-widest text-emerald-300">EM SERVIÇO — {format(new Date(), 'HH:mm:ss')}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ---------- Animated Radar ----------
 function OperationsRadar({ members, myId, lowMotion }: { members: TeamMember[]; myId: string; lowMotion: boolean }) {
@@ -187,7 +122,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
   const { lowMotion, toggle: toggleLowMotion } = useLowMotion();
   const [currentShift, setCurrentShift] = useState<Shift | null>(null);
   const [isOnDuty, setIsOnDuty] = useState(false);
-  const [showHUD, setShowHUD] = useState(false);
+  
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [observations, setObservations] = useState('');
@@ -197,7 +132,6 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
   const shiftKey = currentShift?.id ?? '';
   const checklistStorageKey = shiftKey ? `shift_checklist_${agentId}_${shiftKey}` : '';
   const obsStorageKey = shiftKey ? `shift_obs_${agentId}_${shiftKey}` : '';
-  const hudShownKey = shiftKey ? `shift_hud_${agentId}_${shiftKey}` : '';
 
   // Fetch current/next shift
   useEffect(() => {
@@ -249,13 +183,6 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
     } catch { /* noop */ }
   }, [checklistStorageKey, obsStorageKey]);
 
-  // Trigger HUD on first entry to duty (per-shift)
-  useEffect(() => {
-    if (!isOnDuty || !hudShownKey) return;
-    if (localStorage.getItem(hudShownKey) === '1') return;
-    setShowHUD(true);
-    localStorage.setItem(hudShownKey, '1');
-  }, [isOnDuty, hudShownKey]);
 
   // Elapsed timer
   useEffect(() => {
