@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Shield, AlertTriangle, Heart, Lock, Server, Users, X } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
+
 
 const SEEN_KEY = 'beta-notice-seen-v1';
 const HIDDEN_KEY = 'beta-notice-hidden-v1';
@@ -190,7 +190,15 @@ export function BetaNoticeFooter() {
     }
   });
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const isMobile = useIsMobile();
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false
+  );
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)');
+    const on = () => setIsMobile(mql.matches);
+    mql.addEventListener('change', on);
+    return () => mql.removeEventListener('change', on);
+  }, []);
 
   useEffect(() => {
     try {
