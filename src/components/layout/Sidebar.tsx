@@ -121,6 +121,12 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
           PlantaoPro v1.0
         </p>
       </div>
+
+      <RestrictedAccessDialog
+        open={!!restricted}
+        onOpenChange={(o) => !o && setRestricted(null)}
+        targetLabel={restricted ?? undefined}
+      />
     </aside>
   );
 });
