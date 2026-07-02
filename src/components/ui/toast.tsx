@@ -48,7 +48,7 @@ const toastVariants = cva(
 type ToastVariant = "default" | "success" | "warning" | "info" | "destructive";
 
 function ToastIcon({ variant = "default" }: { variant?: ToastVariant | null }) {
-  const common = "h-5 w-5 shrink-0 drop-shadow-[0_0_6px_var(--toast-accent)]";
+  const common = "h-4 w-4 sm:h-5 sm:w-5 shrink-0 drop-shadow-[0_0_6px_var(--toast-accent)]";
   const stroke = "var(--toast-accent)";
   switch (variant) {
     case "success":
