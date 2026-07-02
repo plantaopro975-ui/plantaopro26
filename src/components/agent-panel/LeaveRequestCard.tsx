@@ -72,7 +72,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedType, setSelectedType] = useState('special');
-  const [selectedPeriod, setSelectedPeriod] = useState<'manha' | 'tarde' | 'noite' | 'integral'>('integral');
+  const [selectedPeriod, setSelectedPeriod] = useState<'24h' | '12h' | 'dia' | 'noite'>('24h');
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [leaveDates, setLeaveDates] = useState<Date[]>([]);
   const [teamLeaveDates, setTeamLeaveDates] = useState<Date[]>([]);
