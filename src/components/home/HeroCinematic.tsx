@@ -187,11 +187,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {/* Agente tático — arrastável (triple-click abre login master/admin) */}
       <img
         src={agentFigure}
-        alt="Arraste para mover · scroll para redimensionar · toque 3× para acesso admin"
-        title="Arrastar / Scroll = zoom / Duplo clique = reset / 3 cliques = admin"
+        alt="Agente tático — toque 3× para acesso admin"
+        title="3 cliques = admin"
         loading="lazy"
         draggable={false}
-        {...agentHandlers}
         onClick={() => {
           const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
           w.__agentClicks = (w.__agentClicks || 0) + 1;
@@ -216,9 +215,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           top: `${agentT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${agentT.scale})`,
           transformOrigin: 'center',
-          touchAction: 'none',
         }}
-        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none cursor-grab active:cursor-grabbing opacity-95 pointer-events-auto"
+        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none opacity-95 cursor-pointer"
       />
 
 
