@@ -172,15 +172,17 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial — posição travada */}
+      {/* Viatura policial — desktop: arrastar + wheel para redimensionar; mobile: travada */}
       <div
-        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none pointer-events-none"
+        {...vehicleDesktop}
+        className={`police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none ${isMobile ? 'pointer-events-none' : ''}`}
         style={{
           position: 'absolute',
           left: `${vehicleT.xPct}%`,
           top: `${vehicleT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
           transformOrigin: 'center',
+          ...(vehicleDesktop.style || {}),
         }}
       >
         <img
