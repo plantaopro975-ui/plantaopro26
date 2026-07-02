@@ -8,29 +8,16 @@ import { pushDiagEvent } from "@/lib/diagLog";
  */
 const SPLASH_SHOWN_KEY = "plantaopro_splash_shown";
 
-function shouldSkipSplashForPerformance(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    const stored = window.localStorage.getItem("agent_low_motion");
-    const isAndroid = /Android/i.test(window.navigator.userAgent);
-    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    return stored === "1" || (stored !== "0" && (isAndroid || reducedMotion));
-  } catch {
-    return false;
-  }
-}
-
 // Module-level guard: survives StrictMode double-invoke and any parent remounts
 // within the same JS runtime (SPA lifetime). Only a full page reload resets it.
 let splashMountedThisRuntime = false;
 let splashMountCount = 0;
 
 export function SplashScreen() {
-  const skipForPerformance = shouldSkipSplashForPerformance();
   const alreadyShownInTab =
     typeof window !== "undefined" &&
     window.sessionStorage.getItem(SPLASH_SHOWN_KEY) === "1";
-  const shouldRender = !skipForPerformance && !alreadyShownInTab && !splashMountedThisRuntime;
+  const shouldRender = !alreadyShownInTab && !splashMountedThisRuntime;
 
   const [visible, setVisible] = useState(shouldRender);
   const [fadeOut, setFadeOut] = useState(false);
@@ -42,7 +29,6 @@ export function SplashScreen() {
       alreadyShownInTab,
       moduleGuard: splashMountedThisRuntime,
       willRender: shouldRender,
-      skipForPerformance,
       referrer: typeof document !== "undefined" ? document.referrer : "",
       visibility: typeof document !== "undefined" ? document.visibilityState : "",
     });
@@ -61,7 +47,7 @@ export function SplashScreen() {
       window.clearTimeout(t2);
       pushDiagEvent("info", "splash_unmount", { count: splashMountCount });
     };
-  }, [shouldRender, alreadyShownInTab, skipForPerformance]);
+  }, [shouldRender, alreadyShownInTab]);
 
   if (!visible) return null;
 

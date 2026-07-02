@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Radio, Shield } from 'lucide-react';
 import { SignalUplink } from './SignalUplink';
-import { useLowMotion } from '@/hooks/useLowMotion';
 
 
 import { cn } from '@/lib/utils';
@@ -14,13 +13,12 @@ import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
  * Triple-click no brasão abre o login master (com feedback visual).
  */
 export function CommandStrip() {
-  const { lowMotion } = useLowMotion();
   const [now, setNow] = useState<Date>(new Date());
 
   useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), lowMotion ? 60_000 : 1000);
+    const id = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(id);
-  }, [lowMotion]);
+  }, []);
 
   const handleShieldClick = () => {
     const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
@@ -44,7 +42,7 @@ export function CommandStrip() {
   const time = now.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
-    ...(lowMotion ? {} : { second: '2-digit' as const }),
+    second: '2-digit',
   });
 
 
@@ -53,19 +51,16 @@ export function CommandStrip() {
       aria-label="Faixa institucional"
       className={cn(
         'relative mx-2 sm:mx-6 mt-0 overflow-hidden rounded-b-lg rounded-t-none',
-        'border border-border/60',
-        !lowMotion && 'backdrop-blur-xl',
+        'border border-border/60 backdrop-blur-xl',
         'shadow-[0_8px_28px_-12px_hsl(222_60%_2%/0.85)]',
       )}
     >
       {/* Foto realista de fundo */}
-      {!lowMotion && (
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${bannerBg})` }}
-        />
-      )}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${bannerBg})` }}
+      />
       {/* Overlay quente (âmbar/caqui) para contraste com foto golden hour */}
       <div
         aria-hidden
@@ -112,11 +107,11 @@ export function CommandStrip() {
             </div>
           </div>
 
-          {!lowMotion && <SignalUplink />}
+          <SignalUplink />
 
           <div className="hidden sm:flex items-center gap-2 rounded-md bg-card/60 px-2.5 py-1 ring-1 ring-border/60">
             <span className="relative flex h-2 w-2">
-              {!lowMotion && <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />}
+              <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
               <span className="relative h-2 w-2 rounded-full bg-success" />
             </span>
             <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-success/95">

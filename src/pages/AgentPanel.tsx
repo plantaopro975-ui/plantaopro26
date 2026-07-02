@@ -526,9 +526,7 @@ export default function AgentPanel() {
               agentName={agent.name}
               agentTeam={agent.team}
               unitId={agent.unit_id}
-              agentRole={(agent as any).role}
             />
-
 
 
             {/* HERO PANEL - Futuristic Status Dashboard */}

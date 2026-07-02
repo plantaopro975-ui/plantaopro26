@@ -61,7 +61,6 @@ import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
-import { OperationsTeamCard } from '@/components/home/OperationsTeamCard';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
@@ -77,7 +76,6 @@ import { AuthDialog } from '@/components/auth/AuthDialog';
 import { AuthInput } from '@/components/auth/AuthInput';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TeamBadge } from '@/components/auth/TeamBadge';
-import { useLowMotion } from '@/hooks/useLowMotion';
 
 
 
@@ -95,7 +93,6 @@ export default function Index() {
   const { toast } = useToast();
   const { playSound } = useSoundEffects();
   const { themeConfig, theme, resolvedTheme } = useTheme();
-  const { lowMotion } = useLowMotion();
   const themeAssets = getThemeAssets(theme, resolvedTheme);
   const { isAvailable: isBiometricAvailable, isEnrolled: isBiometricEnrolled, enrolledCpf, enrollBiometric, authenticateBiometric } = useBiometricAuth();
   const { saveCredential, updateLastLogin } = useSavedCredentialsSync();
@@ -1242,8 +1239,8 @@ export default function Index() {
   return (
     <>
       <div className="home-viewport-shell flex flex-col bg-background relative overflow-hidden overscroll-none">
-        {/* Android/low-performance: remove backdrop duplicado e SVG grid para evitar aquecimento. */}
-        {!lowMotion && <CommandRoomBackground />}
+        {/* Sober command-room background — SVG only, no posters */}
+        <CommandRoomBackground />
 
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -1282,25 +1279,6 @@ export default function Index() {
           </div>
         </section>
       )}
-
-      {/* Teams Grid — 4 cards operacionais */}
-      <section className="shrink-0 px-2 sm:px-4 pb-3 relative z-10">
-        <div className="w-full max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          {teams.map((team, index) => (
-            <div
-              key={team}
-              data-team-card
-              className="animate-fade-in-scale flex justify-center"
-              style={{ animationDelay: `${200 + index * 80}ms` }}
-            >
-              <OperationsTeamCard
-                team={team as 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA'}
-                onClick={() => handleTeamClick(team)}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
 
 
 

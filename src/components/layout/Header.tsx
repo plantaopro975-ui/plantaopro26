@@ -20,7 +20,6 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { MobileSidebar } from './MobileSidebar';
 import { RadarSweep } from '@/components/home/RadarSweep';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
-import { useLowMotion } from '@/hooks/useLowMotion';
 
 import { cn } from '@/lib/utils';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
@@ -33,8 +32,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
   const { playSound, isSoundEnabled, toggleSound } = useSoundEffects();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const { lowMotion } = useLowMotion();
-  const onlineCount = useOnlinePresence('online-users', !lowMotion);
+  const onlineCount = useOnlinePresence();
 
   const handleNavigate = (path: string) => {
     playSound('tactical-click');
@@ -106,13 +104,11 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       className={cn(
         "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6 overflow-hidden",
         "border-b border-border/60 shadow-[0_8px_28px_-12px_hsl(28_60%_2%/0.85)]",
-        !lowMotion && "backdrop-blur-xl",
+        "backdrop-blur-xl",
         props.className,
       )}
       style={{
-        backgroundImage: lowMotion
-          ? 'linear-gradient(180deg,hsl(28 38% 6% / 0.98),hsl(30 30% 9% / 0.98))'
-          : `linear-gradient(180deg,hsl(28_38%_6%/0.88),hsl(30_30%_9%/0.92)), url(${headerBg})`,
+        backgroundImage: `linear-gradient(180deg,hsl(28_38%_6%/0.88),hsl(30_30%_9%/0.92)), url(${headerBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -126,7 +122,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       {/* Brand — leftmost */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <div className="relative shrink-0">
-          {!lowMotion && <span className="absolute inset-0 rounded-full bg-primary/25 blur-lg animate-pulse" aria-hidden />}
+          <span className="absolute inset-0 rounded-full bg-primary/25 blur-lg animate-pulse" aria-hidden />
           <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-gradient-to-br from-primary/25 to-primary/5 ring-1 ring-primary/40 flex items-center justify-center shadow-glow">
             <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-primary drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" strokeWidth={2.2} />
           </div>
@@ -146,11 +142,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         </Sheet>
 
         <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 ml-1 border-l border-border/50">
-          {lowMotion ? (
-            <Shield className="h-6 w-6 text-success" strokeWidth={2.2} />
-          ) : (
-            <RadarSweep size={30} />
-          )}
+          <RadarSweep size={30} />
           <div className="flex flex-col leading-tight">
             <span className="text-[11px] sm:text-[11px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-success uppercase font-mono">
               Radar Ativo

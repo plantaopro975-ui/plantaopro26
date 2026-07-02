@@ -36,14 +36,10 @@ function ensureChannel(channelName: string) {
   return channel;
 }
 
-export function useOnlinePresence(channelName = 'online-users', enabled = true) {
+export function useOnlinePresence(channelName = 'online-users') {
   const [count, setCount] = useState(lastCount);
 
   useEffect(() => {
-    if (!enabled) {
-      setCount(lastCount);
-      return;
-    }
     ensureChannel(channelName);
     refCount += 1;
     listeners.add(setCount);
@@ -58,7 +54,7 @@ export function useOnlinePresence(channelName = 'online-users', enabled = true) 
         refCount = 0;
       }
     };
-  }, [channelName, enabled]);
+  }, [channelName]);
 
   return count;
 }

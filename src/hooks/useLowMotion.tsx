@@ -3,30 +3,14 @@ import { useEffect, useState, useCallback } from 'react';
 const KEY = 'agent_low_motion';
 const EVT = 'low-motion-change';
 
-function isAndroidDevice(): boolean {
-  if (typeof navigator === 'undefined') return false;
-  return /Android/i.test(navigator.userAgent);
-}
-
-function isMobileDevice(): boolean {
-  if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
-  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
-    window.matchMedia?.('(max-width: 768px)').matches;
-}
-
 function detectSlowDevice(): boolean {
   if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
   try {
     const ua = navigator.userAgent;
-    const isMobile = isMobileDevice();
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
     const cores = (navigator as any).hardwareConcurrency as number | undefined;
     const mem = (navigator as any).deviceMemory as number | undefined;
     const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-
-    // Android/WebView é o ambiente com maior risco de aquecimento neste app:
-    // vários fundos, filtros e animações compostadas podem manter GPU/CPU ativos.
-    // O usuário ainda pode desativar manualmente salvando KEY = '0'.
-    if (isAndroidDevice()) return true;
 
     // Score-based: needs 2+ points to activate (reduces false positives)
     let score = 0;
@@ -62,12 +46,6 @@ function read(): boolean {
   return detectSlowDevice();
 }
 
-function applyPerformanceClasses(enabled: boolean) {
-  if (typeof document === 'undefined') return;
-  document.documentElement.classList.toggle('android-performance-mode', enabled && isAndroidDevice());
-  document.documentElement.classList.toggle('low-performance-mode', enabled);
-}
-
 export function useLowMotion() {
   const [lowMotion, setLowMotion] = useState<boolean>(() => read());
 
@@ -80,13 +58,6 @@ export function useLowMotion() {
       window.removeEventListener('storage', onChange);
     };
   }, []);
-
-  useEffect(() => {
-    applyPerformanceClasses(lowMotion);
-    return () => {
-      applyPerformanceClasses(read());
-    };
-  }, [lowMotion]);
 
   const toggle = useCallback(() => {
     const next = !read();

@@ -104,16 +104,6 @@
   html, body, #root {
     min-height: 100dvh;
     background-color: hsl(var(--background));
-    /* Android/Capacitor: impedir bounce, pull-to-refresh e travamentos por overscroll */
-    overscroll-behavior: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  html, body {
-    max-width: 100vw;
-    overflow-x: hidden;
-    /* respeitar safe-areas (notch/gesture bar) sem deslocar layout */
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 
   body {
@@ -124,7 +114,7 @@
       radial-gradient(ellipse 60% 45% at 100% 100%, hsl(210 78% 40% / 0.10) 0%, transparent 70%),
       radial-gradient(ellipse 50% 40% at 0% 100%, hsl(220 60% 20% / 0.35) 0%, transparent 70%),
       var(--gradient-dark);
-    background-attachment: scroll;
+    background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
     font-feature-settings: 'kern', 'liga', 'calt', 'ss01';
@@ -554,132 +544,6 @@ body {
     transform: none !important;
   }
 }
-
-/* ================================
-   ANDROID / WEBVIEW PERFORMANCE MODE
-   ================================
-   Reduz composição GPU/CPU: filtros, backdrop blur, sombras animadas,
-   will-change permanente e animações infinitas são as maiores fontes de
-   aquecimento em celulares Android no carregamento inicial.
-*/
-.low-performance-mode *,
-.android-performance-mode * {
-  scroll-behavior: auto !important;
-}
-
-.android-performance-mode *,
-.android-performance-mode *::before,
-.android-performance-mode *::after {
-  animation-duration: 0.001ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.001ms !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  text-shadow: none !important;
-  will-change: auto !important;
-}
-
-.android-performance-mode .hero-cinematic,
-.android-performance-mode .institutional-card,
-.android-performance-mode .header-bar,
-.android-performance-mode .team-card-3d,
-.android-performance-mode .police-vehicle,
-.android-performance-mode .agent-figure,
-.android-performance-mode .team-icon-3d {
-  filter: none !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
-
-.android-performance-mode .bg-scanlines,
-.android-performance-mode .scan-line-y,
-.android-performance-mode .radar-rotate,
-.android-performance-mode [class*="blur-"],
-.android-performance-mode [class*="backdrop-blur"],
-.android-performance-mode .splash-scan,
-.android-performance-mode .splash-grid {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-.android-performance-mode .bg-scanlines,
-.android-performance-mode .scan-line-y,
-.android-performance-mode .radar-rotate,
-.android-performance-mode .splash-scan,
-.android-performance-mode .splash-grid {
-  display: none !important;
-}
-
-.android-performance-mode body {
-  background: hsl(var(--background)) !important;
-}
-
-@media (max-width: 768px) {
-  .home-viewport-shell {
-    contain: layout paint style;
-  }
-
-  .smooth-scroll {
-    transform: none;
-    will-change: auto;
-  }
-
-  /* -----------------------------------------------------------------
-     MOBILE SCROLL RESPONSIVENESS
-     -----------------------------------------------------------------
-     Em celulares, as maiores fontes de lag ao rolar são:
-     1) backdrop-filter/blur em cards → força repaint de tela cheia
-     2) box-shadow grande em muitos cards → composição custosa
-     3) background-attachment: fixed → jank em scroll
-     4) animações infinitas fora da viewport
-     Tudo abaixo é forçado para o caminho rápido do compositor.
-  */
-  html, body {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: auto; /* smooth scroll trava em Android antigo */
-    text-rendering: optimizeSpeed;
-  }
-
-  * {
-    background-attachment: scroll !important;
-  }
-
-  /* Desliga blur pesado em mobile — mantém apenas transparência */
-  [class*="backdrop-blur"] {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  /* Sombras grandes viram sombras leves — reduz custo de compositing */
-  .tactical-card,
-  .institutional-card,
-  [class*="shadow-2xl"],
-  [class*="shadow-xl"] {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
-  }
-
-  /* content-visibility: pula render de seções fora da viewport (scroll fluido) */
-  main > section,
-  .tactical-card,
-  .institutional-card {
-    content-visibility: auto;
-    contain-intrinsic-size: 320px;
-  }
-
-  /* Pausa animações infinitas quando o elemento sai da viewport */
-  .amber-pulse,
-  .animate-pulse,
-  .radar-rotate,
-  [class*="animate-[pulse"] {
-    animation-play-state: paused;
-  }
-  .amber-pulse:hover,
-  .animate-pulse:focus-within {
-    animation-play-state: running;
-  }
-}
-
-
 
 /* ================================
    BLOQUEIO FINAL DO SELO LOVABLE

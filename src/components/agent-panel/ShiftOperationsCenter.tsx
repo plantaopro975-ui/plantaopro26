@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import {
-  Radar, ShieldAlert, ShieldCheck, ClipboardCheck,
+  Radar, Shield, ShieldAlert, ShieldCheck, ClipboardCheck,
   FileDown, VolumeX, Volume2, Sparkles, Zap, Users, Clock,
 } from 'lucide-react';
 import {
@@ -25,7 +25,6 @@ interface Props {
   agentName: string;
   agentTeam?: string | null;
   unitId?: string | null;
-  agentRole?: string | null;
 }
 
 interface Shift {
@@ -43,41 +42,82 @@ interface TeamMember {
   role?: string | null;
 }
 
-interface ChecklistItem {
-  id: string;
-  label: string;
-  restrictedTo?: Array<'team_leader' | 'support'>;
-}
-
-const DEFAULT_CHECKLIST: ChecklistItem[] = [
-  { id: 'handover', label: 'Recebimento do plantão da equipe anterior (07:00)' },
-  { id: 'headcount', label: 'Contagem dos adolescentes' },
-  { id: 'equipment', label: 'Contagem de algemas e tonfas' },
-  { id: 'keys', label: 'Conferência das chaves de algemas' },
-  { id: 'radio', label: 'Rádios carregados e operacionais' },
-  { id: 'briefing', label: 'Briefing/passagem de serviço recebida' },
-  { id: 'logbook', label: 'Registros no livro oficial de ocorrências', restrictedTo: ['team_leader', 'support'] },
+const DEFAULT_CHECKLIST = [
+  { id: 'access', label: 'Acesso liberado à unidade' },
+  { id: 'scale', label: 'Escala confirmada com o chefe' },
+  { id: 'radio', label: 'Rádio / comunicação operacional' },
+  { id: 'uniform', label: 'Fardamento e EPI conforme' },
+  { id: 'briefing', label: 'Briefing/passagem recebida' },
   { id: 'ready', label: 'Status operacional: PRONTO' },
 ];
 
-type CheckState = { done: boolean; at?: string };
-type ChecklistMap = Record<string, CheckState>;
-
-function normalizeChecklist(raw: unknown): ChecklistMap {
-  if (!raw || typeof raw !== 'object') return {};
-  const out: ChecklistMap = {};
-  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof v === 'boolean') out[k] = { done: v };
-    else if (v && typeof v === 'object' && 'done' in (v as any)) {
-      out[k] = { done: !!(v as any).done, at: (v as any).at };
-    }
-  }
-  return out;
+// ---------- tactical beep via WebAudio (no assets) ----------
+function beep(freq = 880, ms = 120, gain = 0.08) {
+  try {
+    const AC: typeof AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
+    const ctx = new AC();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'square';
+    o.frequency.value = freq;
+    g.gain.value = gain;
+    o.connect(g).connect(ctx.destination);
+    o.start();
+    setTimeout(() => { o.stop(); ctx.close(); }, ms);
+  } catch { /* silent */ }
 }
 
+// ---------- Full-screen HUD 3-2-1 ----------
+function ShiftStartHUD({ onDone, silent }: { onDone: () => void; silent: boolean }) {
+  const [count, setCount] = useState(3);
 
+  useEffect(() => {
+    if (!silent) beep(660, 140);
+    const id = setInterval(() => {
+      setCount((c) => {
+        const next = c - 1;
+        if (next <= 0) {
+          clearInterval(id);
+          if (!silent) beep(1200, 400, 0.12);
+          setTimeout(onDone, 700);
+          return 0;
+        }
+        if (!silent) beep(660 + (3 - next) * 120, 140);
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [onDone, silent]);
 
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md animate-fade-in">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.15),transparent_60%)]" />
+      </div>
 
+      <div className="relative flex flex-col items-center gap-6 px-6 text-center">
+        <div className="flex items-center gap-3 text-emerald-400">
+          <Shield className="h-7 w-7 animate-pulse" />
+          <span className="font-mono text-sm tracking-[0.4em] uppercase">Inicializando Plantão</span>
+        </div>
+
+        <div key={count} className="relative">
+          <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-2xl animate-ping" />
+          <div className="relative flex items-center justify-center h-48 w-48 md:h-64 md:w-64 rounded-full border-4 border-emerald-500/60 bg-slate-950/80 shadow-[0_0_60px_rgba(16,185,129,0.5)]">
+            <span className="font-mono text-8xl md:text-9xl font-black text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.8)]">
+              {count > 0 ? count : 'GO'}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-2">
+          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-mono text-xs uppercase tracking-widest text-emerald-300">EM SERVIÇO — {format(new Date(), 'HH:mm:ss')}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ---------- Animated Radar ----------
 function OperationsRadar({ members, myId, lowMotion }: { members: TeamMember[]; myId: string; lowMotion: boolean }) {
@@ -143,13 +183,13 @@ function OperationsRadar({ members, myId, lowMotion }: { members: TeamMember[]; 
 }
 
 // ---------- Main Component ----------
-export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, agentRole }: Props) {
+export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }: Props) {
   const { lowMotion, toggle: toggleLowMotion } = useLowMotion();
   const [currentShift, setCurrentShift] = useState<Shift | null>(null);
   const [isOnDuty, setIsOnDuty] = useState(false);
-  
+  const [showHUD, setShowHUD] = useState(false);
   const [members, setMembers] = useState<TeamMember[]>([]);
-  const [checklist, setChecklist] = useState<ChecklistMap>({});
+  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [observations, setObservations] = useState('');
   const [signature, setSignature] = useState('');
   const [elapsed, setElapsed] = useState({ h: 0, m: 0, s: 0 });
@@ -157,6 +197,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
   const shiftKey = currentShift?.id ?? '';
   const checklistStorageKey = shiftKey ? `shift_checklist_${agentId}_${shiftKey}` : '';
   const obsStorageKey = shiftKey ? `shift_obs_${agentId}_${shiftKey}` : '';
+  const hudShownKey = shiftKey ? `shift_hud_${agentId}_${shiftKey}` : '';
 
   // Fetch current/next shift
   useEffect(() => {
@@ -197,32 +238,24 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
     })();
   }, [agentTeam, unitId]);
 
-  // Load persisted checklist & obs (DB first, localStorage fallback)
+  // Load persisted checklist & obs
   useEffect(() => {
-    if (!shiftKey) return;
-    let cancelled = false;
-    (async () => {
-      // fallback local imediato para UX
-      try {
-        const c = localStorage.getItem(checklistStorageKey);
-        if (c && !cancelled) setChecklist(normalizeChecklist(JSON.parse(c)));
-        const o = localStorage.getItem(obsStorageKey);
-        if (o && !cancelled) setObservations(o);
-      } catch { /* noop */ }
+    if (!checklistStorageKey) return;
+    try {
+      const c = localStorage.getItem(checklistStorageKey);
+      if (c) setChecklist(JSON.parse(c));
+      const o = localStorage.getItem(obsStorageKey);
+      if (o) setObservations(o);
+    } catch { /* noop */ }
+  }, [checklistStorageKey, obsStorageKey]);
 
-      const { data, error } = await supabase
-        .from('shift_checklists')
-        .select('checklist, observations')
-        .eq('agent_id', agentId)
-        .eq('shift_id', shiftKey)
-        .maybeSingle();
-      if (!cancelled && !error && data) {
-        setChecklist(normalizeChecklist(data.checklist));
-        setObservations(data.observations || '');
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [shiftKey, agentId, checklistStorageKey, obsStorageKey]);
+  // Trigger HUD on first entry to duty (per-shift)
+  useEffect(() => {
+    if (!isOnDuty || !hudShownKey) return;
+    if (localStorage.getItem(hudShownKey) === '1') return;
+    setShowHUD(true);
+    localStorage.setItem(hudShownKey, '1');
+  }, [isOnDuty, hudShownKey]);
 
   // Elapsed timer
   useEffect(() => {
@@ -237,48 +270,22 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
     return () => clearInterval(id);
   }, [currentShift, isOnDuty]);
 
-  const visibleChecklist = useMemo(() => {
-    return DEFAULT_CHECKLIST.filter((i) => {
-      if (!i.restrictedTo) return true;
-      return agentRole ? i.restrictedTo.includes(agentRole as 'team_leader' | 'support') : false;
-    });
-  }, [agentRole]);
-
   const checklistProgress = useMemo(() => {
-    const total = visibleChecklist.length;
-    const done = visibleChecklist.filter((i) => checklist[i.id]?.done).length;
-    return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
-  }, [checklist, visibleChecklist]);
-
-  const persist = async (nextChecklist: ChecklistMap, nextObs: string) => {
-    if (!shiftKey) return;
-    try {
-      await supabase
-        .from('shift_checklists')
-        .upsert(
-          { agent_id: agentId, shift_id: shiftKey, checklist: nextChecklist as any, observations: nextObs },
-          { onConflict: 'agent_id,shift_id' }
-        );
-    } catch { /* offline: mantém localStorage */ }
-  };
+    const total = DEFAULT_CHECKLIST.length;
+    const done = DEFAULT_CHECKLIST.filter((i) => checklist[i.id]).length;
+    return { total, done, pct: Math.round((done / total) * 100) };
+  }, [checklist]);
 
   const toggleCheck = (id: string) => {
-    const wasDone = !!checklist[id]?.done;
-    const next: ChecklistMap = {
-      ...checklist,
-      [id]: wasDone ? { done: false } : { done: true, at: new Date().toISOString() },
-    };
+    const next = { ...checklist, [id]: !checklist[id] };
     setChecklist(next);
     if (checklistStorageKey) localStorage.setItem(checklistStorageKey, JSON.stringify(next));
-    void persist(next, observations);
   };
 
   const saveObs = (v: string) => {
     setObservations(v);
     if (obsStorageKey) localStorage.setItem(obsStorageKey, v);
-    void persist(checklist, v);
   };
-
 
   const exportPDF = () => {
     if (!currentShift) {
@@ -302,19 +309,12 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
 
     autoTable(doc, {
       startY: 62,
-      head: [['Checklist de Início', 'Concluído em']],
-      body: visibleChecklist.map((i) => {
-        const s = checklist[i.id];
-        return [
-          i.label,
-          s?.done ? (s.at ? format(new Date(s.at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR }) : 'OK') : '—',
-        ];
-      }),
+      head: [['Checklist de Início', 'Status']],
+      body: DEFAULT_CHECKLIST.map((i) => [i.label, checklist[i.id] ? 'OK' : '—']),
       theme: 'grid',
       headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 10, cellPadding: 3 },
+      styles: { fontSize: 9, cellPadding: 3 },
     });
-
 
     const y1 = (doc as any).lastAutoTable.finalY + 8;
     autoTable(doc, {
@@ -423,37 +423,27 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {visibleChecklist.map((item) => {
-                  const state = checklist[item.id];
-                  const done = !!state?.done;
-                  const at = state?.at ? format(new Date(state.at), 'dd/MM HH:mm:ss', { locale: ptBR }) : null;
+                {DEFAULT_CHECKLIST.map((item) => {
+                  const done = !!checklist[item.id];
                   return (
                     <label
                       key={item.id}
                       className={cn(
-                        'flex items-start gap-2.5 rounded-md border px-3 py-2.5 cursor-pointer transition-colors',
+                        'flex items-center gap-2 rounded-md border px-2.5 py-2 cursor-pointer transition-colors',
                         done
                           ? 'border-emerald-500/40 bg-emerald-500/10'
                           : 'border-slate-700 bg-slate-800/40 hover:border-slate-600'
                       )}
                     >
-                      <Checkbox checked={done} onCheckedChange={() => toggleCheck(item.id)} className="mt-0.5" />
-                      <div className="flex-1 min-w-0">
-                        <div className={cn('text-sm font-medium leading-snug', done ? 'text-emerald-200 line-through decoration-emerald-500/50' : 'text-slate-100')}>
-                          {item.label}
-                        </div>
-                        {at && (
-                          <div className="mt-0.5 text-[11px] font-mono text-emerald-400/80 flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> Concluído em {at}
-                          </div>
-                        )}
-                      </div>
-                      {done ? <ShieldCheck className="h-4 w-4 mt-0.5 text-emerald-400" /> : <ShieldAlert className="h-4 w-4 mt-0.5 text-slate-500" />}
+                      <Checkbox checked={done} onCheckedChange={() => toggleCheck(item.id)} />
+                      <span className={cn('text-xs', done ? 'text-emerald-200 line-through decoration-emerald-500/50' : 'text-slate-200')}>
+                        {item.label}
+                      </span>
+                      {done ? <ShieldCheck className="h-3.5 w-3.5 ml-auto text-emerald-400" /> : <ShieldAlert className="h-3.5 w-3.5 ml-auto text-slate-500" />}
                     </label>
                   );
                 })}
               </div>
-
 
               <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-md bg-slate-800/60 border border-slate-700 p-2">
