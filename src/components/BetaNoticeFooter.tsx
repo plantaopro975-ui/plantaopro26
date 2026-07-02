@@ -235,21 +235,8 @@ export function BetaNoticeFooter() {
 
   return (
     <>
-      {!hidden && !open && (
-        isMobile ? (
-          <StaticBetaPill
-            onOpen={() => setOpen(true)}
-            onHide={hidePermanently}
-            retracted={seen}
-          />
-        ) : (
-          <DraggableBetaPill
-            onOpen={() => setOpen(true)}
-            onHide={hidePermanently}
-            retracted={seen}
-          />
-        )
-      )}
+      {/* Pill removida — o aviso agora aparece só na primeira visita. */}
+
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
