@@ -50,6 +50,7 @@ import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
 import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
 import { AdminAnnouncementsPanel } from '@/components/agent-panel/AdminAnnouncementsPanel';
 import { AdDisplaySystem } from '@/components/agent-panel/AdDisplaySystem';
+import { usePromosEnabled } from '@/hooks/usePromosEnabled';
 import { AgentHeroPanel } from '@/components/agent-panel/AgentHeroPanel';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import { SmartAlarmClock } from '@/components/agent-panel/SmartAlarmClock';
