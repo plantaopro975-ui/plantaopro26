@@ -646,7 +646,8 @@ export default function Master() {
             </TabsTrigger>
             <TabsTrigger value="credentials">Credenciais</TabsTrigger>
             <TabsTrigger value="password-requests">Senhas</TabsTrigger>
-            <TabsTrigger value="licenses" className="relative">
+            <TabsTrigger value="licenses" className="relative gap-1.5">
+              <Icon3D src={icon3dClock} fallback={Clock} size={14} className="hidden sm:inline-flex" />
               Licenças
               {stats.expiredLicenses > 0 && (
                 <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center animate-pulse">
