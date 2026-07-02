@@ -62,11 +62,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       e.currentTarget.setPointerCapture(e.pointerId);
     },
     onPointerMove: (e: React.PointerEvent<HTMLImageElement>) => {
-      if (dragging.current !== kind || !sectionRef.current) return;
-      const sec = sectionRef.current.getBoundingClientRect();
+      if (dragging.current !== kind) return;
       const img = e.currentTarget.getBoundingClientRect();
-      const x = Math.max(0, Math.min(e.clientX - sec.left - offset.current.x, sec.width - img.width));
-      const y = Math.max(0, Math.min(e.clientY - sec.top - offset.current.y, sec.height - img.height));
+      const x = Math.max(0, Math.min(e.clientX - offset.current.x, window.innerWidth - img.width));
+      const y = Math.max(0, Math.min(e.clientY - offset.current.y, window.innerHeight - img.height));
       const next = { x, y };
       setter(next);
       try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
