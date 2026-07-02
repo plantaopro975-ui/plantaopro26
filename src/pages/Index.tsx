@@ -83,7 +83,7 @@ interface Unit {
 const teams = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const;
 
 export default function Index() {
-  const { user, isLoading, signIn, signUp, setMasterSession, isAdmin } = useAuth();
+  const { user, isLoading, signIn, signUp, setMasterSession, isAdmin, isMaster, userRole } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { playSound } = useSoundEffects();
