@@ -87,14 +87,14 @@ export function CommandStrip() {
             className="group relative shrink-0 rounded-md p-0.5 ring-1 ring-border/60 hover:ring-primary/40 transition-all"
           >
             <div className="relative h-10 w-10 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center">
-              <Shield className="h-5 w-5 sm:h-4 sm:w-4 text-primary" strokeWidth={2.2} />
+              <Shield className="h-5 w-5 sm:h-4 sm:w-4 text-amber-400 drop-shadow-[0_0_6px_hsl(42_85%_55%/0.6)]" strokeWidth={2.2} />
             </div>
           </button>
 
           {/* Identidade */}
-          <div className="shrink-0 border-l border-border/50 pl-3 leading-tight">
-            <span className="block text-[15px] sm:text-[15px] font-bold text-foreground font-serif whitespace-nowrap">
-              Comando <span className="text-primary">Operacional</span>
+          <div className="shrink-0 border-l border-amber-500/30 pl-3 leading-tight">
+            <span className="block text-[15px] sm:text-[15px] font-bold text-amber-50 font-serif whitespace-nowrap tracking-wide">
+              Comando <span className="text-amber-400 drop-shadow-[0_0_8px_hsl(42_85%_55%/0.35)]">Operacional</span>
             </span>
             <span className="hidden md:block text-[10px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono whitespace-nowrap">
               Gestão inteligente de plantões
