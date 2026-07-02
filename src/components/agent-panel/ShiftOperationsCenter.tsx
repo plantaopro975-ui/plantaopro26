@@ -205,7 +205,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
       // fallback local imediato para UX
       try {
         const c = localStorage.getItem(checklistStorageKey);
-        if (c && !cancelled) setChecklist(JSON.parse(c));
+        if (c && !cancelled) setChecklist(normalizeChecklist(JSON.parse(c)));
         const o = localStorage.getItem(obsStorageKey);
         if (o && !cancelled) setObservations(o);
       } catch { /* noop */ }
