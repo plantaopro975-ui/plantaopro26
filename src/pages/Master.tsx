@@ -6,6 +6,9 @@ import icon3dTeam from '@/assets/icon3d-team.png';
 import icon3dClock from '@/assets/icon3d-clock.png';
 import icon3dShield from '@/assets/icon3d-shield.png';
 import icon3dCalendar from '@/assets/icon3d-calendar.png';
+import icon3dBell from '@/assets/icon-3d-bell.png';
+import icon3dTypography from '@/assets/icon-3d-typography.png';
+import icon3dLogout from '@/assets/icon-3d-logout.png';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -905,7 +908,7 @@ export default function Master() {
                                 className="text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
                                 title="Enviar Mensagem"
                               >
-                                <MessageSquare className="h-4 w-4" />
+                                <Icon3D src={icon3dBell} fallback={MessageSquare} size={18} />
                               </Button>
                               <Button
                                 variant="ghost"
@@ -918,7 +921,7 @@ export default function Master() {
                                 )}
                                 title={agent.is_active ? 'Desativar' : 'Ativar'}
                               >
-                              {agent.is_active ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
+                              {agent.is_active ? <Icon3D src={icon3dShield} fallback={Lock} size={18} /> : <Icon3D src={icon3dShield} fallback={Unlock} size={18} />}
                               </Button>
                               <Button
                                 variant="ghost"
@@ -930,7 +933,7 @@ export default function Master() {
                                 className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
                                 title="Editar"
                               >
-                                <Pencil className="h-4 w-4" />
+                                <Icon3D src={icon3dTypography} fallback={Pencil} size={18} />
                               </Button>
                               {agent.cpf && (
                                 <AdminResetPasswordDialog 
@@ -1104,7 +1107,7 @@ export default function Master() {
                                   }
                                 }}
                               >
-                                <LogOut className="h-4 w-4" />
+                                <Icon3D src={icon3dLogout} fallback={LogOut} size={18} />
                               </Button>
                               <DeleteUserDialog 
                                 userId={u.id} 

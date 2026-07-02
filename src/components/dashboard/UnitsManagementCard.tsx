@@ -16,6 +16,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useActivityLog } from '@/hooks/useActivityLog';
 import { Building2, Pencil, Loader2, User, Shield, MapPin, Phone, Mail, RefreshCw, Users } from 'lucide-react';
+import { Icon3D } from '@/components/ui/Icon3D';
+import icon3dTypography from '@/assets/icon-3d-typography.png';
 
 interface Unit {
   id: string;
@@ -186,7 +188,7 @@ export function UnitsManagementCard() {
                       onClick={() => handleEdit(unit)}
                       className="shrink-0"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Icon3D src={icon3dTypography} fallback={Pencil} size={18} />
                     </Button>
                   </div>
                 ))}
