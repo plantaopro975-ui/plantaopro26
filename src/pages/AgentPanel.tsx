@@ -290,12 +290,13 @@ export default function AgentPanel() {
     // Se está verificando sessão, mostra loading
     if (isVerifyingSession) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
-          <div className="flex flex-col items-center gap-4">
+        <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          <LoadingBackdrop />
+          <div className="relative flex flex-col items-center gap-4">
             <div className="p-4 bg-primary/10 border border-primary/30 rounded-2xl">
               <Shield className="h-10 w-10 text-primary animate-pulse" />
             </div>
-            <p className="text-zinc-400 text-sm">Verificando sessão...</p>
+            <p className="text-zinc-300 text-sm tracking-wide">Verificando sessão...</p>
           </div>
         </div>
       );
