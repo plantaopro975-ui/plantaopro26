@@ -155,6 +155,10 @@ export const adminClient = {
   // Sincronizar usuário auth para agente existente
   syncAgentAuth: (input: { agentId: string; password: string }) =>
     callAdminBackend<{ synced: boolean; existed?: boolean; newId?: string }>('sync_agent_auth', input),
+
+  // Force global logout of a user
+  forceLogout: (userId: string) =>
+    callAdminBackend<{}>('force_logout', { user_id: userId }),
 };
 
 /**
