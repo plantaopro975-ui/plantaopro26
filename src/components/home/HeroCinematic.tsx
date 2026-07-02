@@ -47,7 +47,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   });
   const [vehiclePos, setVehiclePos] = useState<{ x: number; y: number } | null>(() => {
     try {
-      const v = localStorage.getItem('hero_vehicle_pos');
+      const v = localStorage.getItem('hero_vehicle_pos_v2');
       return v ? JSON.parse(v) : null;
     } catch { return null; }
   });
@@ -76,7 +76,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   });
 
   const agentHandlers = makeHandlers('agent', setAgentPos, 'hero_agent_pos');
-  const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos');
+  const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos_v2');
 
 
   return (
@@ -126,7 +126,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
-        className="police-vehicle z-30 block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none"
+        className="police-vehicle z-50 block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none"
         style={
           vehiclePos
             ? { position: 'fixed', left: vehiclePos.x, top: vehiclePos.y }
