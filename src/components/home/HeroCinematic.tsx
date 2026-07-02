@@ -140,7 +140,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           loading="lazy"
           draggable={false}
           {...vehicleHandlers}
-          className="h-full w-auto object-contain cursor-grab active:cursor-grabbing opacity-95 [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.75))]"
+          className="h-full w-auto object-contain cursor-grab active:cursor-grabbing"
         />
         {/* Giroflex realista */}
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
