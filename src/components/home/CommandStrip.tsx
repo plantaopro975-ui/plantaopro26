@@ -87,8 +87,12 @@ export function CommandStrip() {
             title="ISE / Acre"
             className="group relative shrink-0 rounded-md p-0.5 ring-1 ring-border/60 hover:ring-primary/40 transition-all"
           >
-            <div className="relative h-10 w-10 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center">
-              <Shield className="h-5 w-5 sm:h-4 sm:w-4 text-amber-400 drop-shadow-[0_0_6px_hsl(42_85%_55%/0.6)]" strokeWidth={2.2} />
+            <div className="relative h-10 w-10 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center overflow-hidden">
+              <img
+                src={logoPlantaoPro}
+                alt="PlantãoPro"
+                className="h-full w-full object-contain p-0.5 drop-shadow-[0_0_6px_hsl(42_85%_55%/0.5)]"
+              />
             </div>
           </button>
 
