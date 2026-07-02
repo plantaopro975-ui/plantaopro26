@@ -41,6 +41,7 @@ import { DiagnosticReportButton } from '@/components/DiagnosticReportButton';
 import { SessionDiagnosticCard } from '@/components/agent-panel/SessionDiagnosticCard';
 import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
+import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { WelcomeTrialDialog, shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
 import { PasswordChangeRequest } from '@/components/agent-panel/PasswordChangeRequest';
@@ -801,8 +802,11 @@ export default function AgentPanel() {
               </TabsContent>
             </Tabs>
 
+            {/* Mural de Comunicados Rápidos */}
+            <AnnouncementsMural className="mt-4" />
+
             {/* Footer Copyright - Compacto */}
-            <CopyrightFooter className="border-t border-border/30 mt-4" />
+            <CopyrightFooter className="border-t border-border/30 mt-2" />
           </div>
         </main>
       </div>

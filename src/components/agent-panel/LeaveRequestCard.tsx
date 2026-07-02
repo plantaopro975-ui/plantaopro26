@@ -53,10 +53,10 @@ const leaveTypes = [
 ];
 
 const PERIODS = [
-  { v: '24h' as const, l: '24 horas', emoji: '🕛', hours: 24, start: '07:00', end: '07:00' },
-  { v: '12h' as const, l: '12 horas', emoji: '⏱️', hours: 12, start: '07:00', end: '19:00' },
-  { v: 'dia' as const, l: 'Diurno', emoji: '🌅', hours: 12, start: '07:00', end: '19:00' },
-  { v: 'noite' as const, l: 'Noturno', emoji: '🌙', hours: 12, start: '19:00', end: '07:00' },
+  { v: '24h' as const, l: '24 horas', emoji: '🕛', hours: 24, start: '07:00', end: '07:00', hint: '24h corridas' },
+  { v: '12h' as const, l: '12 horas', emoji: '⏱️', hours: 12, start: '07:00', end: '19:00', hint: 'sob demanda' },
+  { v: 'dia' as const, l: 'Diurno', emoji: '🌅', hours: 12, start: '07:00', end: '19:00', hint: '07h → 19h' },
+  { v: 'noite' as const, l: 'Noturno', emoji: '🌙', hours: 12, start: '19:00', end: '07:00', hint: '19h → 07h' },
 ];
 const PERIOD_MAP = Object.fromEntries(PERIODS.map(p => [p.v, p])) as Record<string, typeof PERIODS[number]>;
 
@@ -839,7 +839,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                         >
                           {icons[p.v]}
                           <span className="text-[10px] font-semibold leading-tight">{p.l}</span>
-                          <span className="text-[9px] font-mono opacity-70 leading-tight">{p.hours}h</span>
+                          <span className="text-[9px] font-mono opacity-70 leading-tight">{p.hint}</span>
                         </button>
                       );
                     })}
