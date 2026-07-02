@@ -193,11 +193,9 @@ export function AuthDialog({
             {/* Legacy header (non-team dialogs) */}
             <div className={cn("relative px-6 pt-8 pb-6 bg-gradient-to-b", styles.headerBg)}>
               <div className="absolute top-4 right-4 flex gap-1.5">
-                <div className={cn("w-2 h-2 rounded-full animate-pulse", styles.decorColor)} />
-                <div className={cn("w-2 h-2 rounded-full animate-pulse opacity-60", styles.decorColor)}
-                     style={{ animationDelay: '0.3s' }} />
-                <div className={cn("w-2 h-2 rounded-full animate-pulse opacity-30", styles.decorColor)}
-                     style={{ animationDelay: '0.6s' }} />
+                <div className={cn("w-1.5 h-1.5 rounded-full", styles.decorColor)} />
+                <div className={cn("w-1.5 h-1.5 rounded-full opacity-60", styles.decorColor)} />
+                <div className={cn("w-1.5 h-1.5 rounded-full opacity-30", styles.decorColor)} />
               </div>
               <div className="flex justify-center mb-5">
                 <div className={cn("p-4 rounded-2xl bg-gradient-to-br backdrop-blur-sm",
