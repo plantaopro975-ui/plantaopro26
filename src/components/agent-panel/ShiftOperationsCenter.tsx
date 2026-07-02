@@ -149,7 +149,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
   const [isOnDuty, setIsOnDuty] = useState(false);
   
   const [members, setMembers] = useState<TeamMember[]>([]);
-  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
+  const [checklist, setChecklist] = useState<ChecklistMap>({});
   const [observations, setObservations] = useState('');
   const [signature, setSignature] = useState('');
   const [elapsed, setElapsed] = useState({ h: 0, m: 0, s: 0 });
