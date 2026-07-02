@@ -53,7 +53,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const clampT = (t: Transform): Transform => ({
     xPct: Math.min(90, Math.max(10, t.xPct)),
     yPct: Math.min(92, Math.max(20, t.yPct)),
-    scale: Math.min(isMobile ? 1 : 2.5, Math.max(0.4, t.scale)),
+    scale: Math.min(isMobile ? 1.6 : 2.5, Math.max(0.45, t.scale)),
   });
   const [agentT, setAgentT] = useState<Transform>(() =>
     clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
@@ -70,80 +70,131 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     try { localStorage.setItem('hero_vehicle_t', JSON.stringify(vehicleT)); } catch {}
   }, [vehicleT]);
 
+  type GestureState = {
+    dragging: boolean;
+    moved: boolean;
+    pointerId: number | null;
+    startX: number;
+    startY: number;
+    startT: Transform;
+    pinchStartDist: number;
+    pinchStartScale: number;
+    pinchRaf: number;
+    suppressClickUntil: number;
+  };
+
+  const createGestureState = (initial: Transform): GestureState => ({
+    dragging: false,
+    moved: false,
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    startT: initial,
+    pinchStartDist: 0,
+    pinchStartScale: initial.scale,
+    pinchRaf: 0,
+    suppressClickUntil: 0,
+  });
+
+  const agentGestureRef = useRef<GestureState>(createGestureState(agentT));
+  const vehicleGestureRef = useRef<GestureState>(createGestureState(vehicleT));
+
   const makeHandlers = (
     t: Transform,
-    setT: (t: Transform) => void,
+    setT: React.Dispatch<React.SetStateAction<Transform>>,
+    gestureRef: React.MutableRefObject<GestureState>,
   ) => {
     const rect = () => sectionRef.current?.getBoundingClientRect();
-    let dragging = false;
-    let start = { x: 0, y: 0, xPct: t.xPct, yPct: t.yPct };
     return {
       onPointerDown: (e: React.PointerEvent) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (e.pointerType === 'touch' && !e.isPrimary) return;
         const r = rect(); if (!r) return;
-        dragging = true;
-        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-        start = { x: e.clientX, y: e.clientY, xPct: t.xPct, yPct: t.yPct };
+        if (e.cancelable) e.preventDefault();
+        const g = gestureRef.current;
+        g.dragging = true;
+        g.moved = false;
+        g.pointerId = e.pointerId;
+        g.startX = e.clientX;
+        g.startY = e.clientY;
+        g.startT = t;
+        try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch {}
       },
       onPointerMove: (e: React.PointerEvent) => {
-        if (!dragging) return;
+        const g = gestureRef.current;
+        if (!g.dragging || g.pointerId !== e.pointerId) return;
         const r = rect(); if (!r) return;
-        const dx = ((e.clientX - start.x) / r.width) * 100;
-        const dy = ((e.clientY - start.y) / r.height) * 100;
-        setT(clampT({ xPct: start.xPct + dx, yPct: start.yPct + dy, scale: t.scale }));
+        if (e.cancelable) e.preventDefault();
+        const dxPx = e.clientX - g.startX;
+        const dyPx = e.clientY - g.startY;
+        if (Math.abs(dxPx) + Math.abs(dyPx) > 4) g.moved = true;
+        const dx = (dxPx / r.width) * 100;
+        const dy = (dyPx / r.height) * 100;
+        setT(prev => clampT({ ...prev, xPct: g.startT.xPct + dx, yPct: g.startT.yPct + dy }));
       },
       onPointerUp: (e: React.PointerEvent) => {
-        dragging = false;
+        const g = gestureRef.current;
+        if (g.pointerId !== e.pointerId) return;
+        if (g.moved) g.suppressClickUntil = Date.now() + 350;
+        g.dragging = false;
+        g.pointerId = null;
+        try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+      },
+      onPointerCancel: (e: React.PointerEvent) => {
+        const g = gestureRef.current;
+        if (g.pointerId !== e.pointerId) return;
+        g.dragging = false;
+        g.pointerId = null;
         try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
       },
       onWheel: (e: React.WheelEvent) => {
         e.preventDefault();
         const delta = -e.deltaY * 0.0015;
-        setT(clampT({ ...t, scale: t.scale + delta }));
+        setT(prev => clampT({ ...prev, scale: prev.scale + delta }));
       },
       onDoubleClick: () => {
         setT(clampT({ xPct: 50, yPct: 55, scale: 1 }));
       },
+      onTouchStart: (e: React.TouchEvent) => {
+        if (e.touches.length < 2) return;
+        if (e.cancelable) e.preventDefault();
+        const [a, b] = [e.touches[0], e.touches[1]];
+        const g = gestureRef.current;
+        g.dragging = false;
+        g.pointerId = null;
+        g.pinchStartDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        setT(prev => {
+          g.pinchStartScale = prev.scale;
+          return prev;
+        });
+      },
+      onTouchMove: (e: React.TouchEvent) => {
+        const g = gestureRef.current;
+        if (e.touches.length < 2 || g.pinchStartDist <= 0) return;
+        if (e.cancelable) e.preventDefault();
+        const [a, b] = [e.touches[0], e.touches[1]];
+        const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        const ratio = distance / g.pinchStartDist;
+        if (g.pinchRaf) cancelAnimationFrame(g.pinchRaf);
+        g.pinchRaf = requestAnimationFrame(() => {
+          setT(prev => clampT({ ...prev, scale: g.pinchStartScale * ratio }));
+          g.pinchRaf = 0;
+        });
+      },
+      onTouchEnd: (e: React.TouchEvent) => {
+        const g = gestureRef.current;
+        if (e.touches.length >= 2) return;
+        g.pinchStartDist = 0;
+        if (g.pinchRaf) {
+          cancelAnimationFrame(g.pinchRaf);
+          g.pinchRaf = 0;
+        }
+      },
     };
   };
 
-  const agentHandlers = makeHandlers(agentT, setAgentT);
-  const vehicleHandlers = makeHandlers(vehicleT, setVehicleT);
-
-  // Pinch-to-zoom (mobile) — 2 dedos. Ref persistente para não zerar entre renders.
-  const agentPinchRef = useRef({ startDist: 0, startScale: 1, raf: 0 });
-  const vehiclePinchRef = useRef({ startDist: 0, startScale: 1, raf: 0 });
-
-  const makePinch = (
-    ref: React.MutableRefObject<{ startDist: number; startScale: number; raf: number }>,
-    setT: React.Dispatch<React.SetStateAction<Transform>>,
-  ) => ({
-    onTouchStart: (e: React.TouchEvent) => {
-      if (e.touches.length >= 2) {
-        const a = e.touches[0], b = e.touches[1];
-        ref.current.startDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-        setT(prev => { ref.current.startScale = prev.scale; return prev; });
-      }
-    },
-    onTouchMove: (e: React.TouchEvent) => {
-      if (e.touches.length < 2 || ref.current.startDist === 0) return;
-      e.preventDefault();
-      const a = e.touches[0], b = e.touches[1];
-      const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-      const ratio = d / ref.current.startDist;
-      if (ref.current.raf) cancelAnimationFrame(ref.current.raf);
-      ref.current.raf = requestAnimationFrame(() => {
-        setT(prev => clampT({ ...prev, scale: ref.current.startScale * ratio }));
-      });
-    },
-    onTouchEnd: (e: React.TouchEvent) => {
-      if (e.touches.length < 2) {
-        ref.current.startDist = 0;
-        if (ref.current.raf) { cancelAnimationFrame(ref.current.raf); ref.current.raf = 0; }
-      }
-    },
-  });
-  const agentPinch = makePinch(agentPinchRef, setAgentT);
-  const vehiclePinch = makePinch(vehiclePinchRef, setVehicleT);
+  const agentHandlers = makeHandlers(agentT, setAgentT, agentGestureRef);
+  const vehicleHandlers = makeHandlers(vehicleT, setVehicleT, vehicleGestureRef);
 
 
 
