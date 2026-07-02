@@ -1,17 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Shield, AlertTriangle, Heart, Lock, Server, Users } from 'lucide-react';
+import { Shield, AlertTriangle, Heart, Lock, Server, Users, X } from 'lucide-react';
 
 const SEEN_KEY = 'beta-notice-seen-v1';
+const HIDDEN_KEY = 'beta-notice-hidden-v1';
 
 /**
  * BetaNoticeFooter
- * Mobile-only. Abre modal automaticamente 1x (persistido em localStorage).
- * Depois fica como micro-selo discreto no canto inferior direito.
+ * Mobile-only. Abre modal automaticamente na 1ª visita e depois
+ * fica como micro-selo discreto no canto inferior direito. Suporta
+ * ocultação permanente e navegação completa por teclado.
  */
 export function BetaNoticeFooter() {
   const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(HIDDEN_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     try {
@@ -35,57 +45,101 @@ export function BetaNoticeFooter() {
     }
   };
 
+  const hidePermanently = () => {
+    try {
+      localStorage.setItem(HIDDEN_KEY, '1');
+      localStorage.setItem(SEEN_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+    setHidden(true);
+  };
+
   return (
     <>
-      {/* Micro-selo fixo no canto — só mobile */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="Sobre esta versão beta"
-        className="md:hidden fixed bottom-2 right-2 z-40 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-background/85 px-2 py-0.5 text-[9px] font-mono uppercase tracking-[0.18em] text-primary/90 backdrop-blur-sm shadow-md active:scale-95"
-      >
-        <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden>
-          <path
-            d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
-            fill="hsl(var(--primary))"
-            opacity="0.2"
-            stroke="hsl(var(--primary))"
-            strokeWidth="1.6"
-          />
-          <circle cx="18.5" cy="5.5" r="1.6" fill="hsl(var(--destructive))">
-            <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-        <span className="font-bold">BETA</span>
-      </button>
+      {!hidden && (
+        <div
+          className="md:hidden fixed bottom-2 right-2 z-40 flex items-center gap-1 rounded-full border border-primary/30 bg-background/85 pl-2 pr-1 py-0.5 shadow-md backdrop-blur-sm animate-fade-in motion-reduce:animate-none"
+          role="group"
+          aria-label="Aviso de versão beta"
+        >
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Abrir aviso sobre versão beta"
+            className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-[0.18em] text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-full px-1 py-0.5"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
+                fill="hsl(var(--primary))"
+                opacity="0.2"
+                stroke="hsl(var(--primary))"
+                strokeWidth="1.6"
+              />
+              <circle cx="18.5" cy="5.5" r="1.6" fill="hsl(var(--destructive))">
+                <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
+              </circle>
+            </svg>
+            <span className="font-bold">BETA</span>
+          </button>
+          <button
+            type="button"
+            onClick={hidePermanently}
+            aria-label="Ocultar permanentemente o selo beta"
+            title="Ocultar"
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+          >
+            <X className="h-3 w-3" strokeWidth={2.5} />
+          </button>
+        </div>
+      )}
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-primary/30">
+        <DialogContent
+          className="max-w-md p-0 overflow-hidden border-primary/30"
+          aria-labelledby="beta-notice-title"
+          aria-describedby="beta-notice-desc"
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            closeBtnRef.current?.focus();
+          }}
+        >
           <div className="relative border-b border-primary/20 bg-gradient-to-br from-primary/15 via-background to-background px-5 pt-5 pb-4">
             <DialogHeader className="relative">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-md bg-primary/15 ring-1 ring-primary/40">
-                  <Shield className="h-6 w-6 text-primary" />
+                  <Shield className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-primary">
                     Termos · Responsabilidades
                   </span>
-                  <DialogTitle className="font-serif text-lg leading-tight">
+                  <DialogTitle id="beta-notice-title" className="font-serif text-lg leading-tight">
                     Sobre o PlantãoPro
                   </DialogTitle>
                 </div>
               </div>
-              <DialogDescription className="sr-only">
-                Informações sobre o aplicativo, termos de uso e responsabilidades.
+              <DialogDescription id="beta-notice-desc" className="sr-only">
+                Informações sobre o aplicativo, termos de uso e responsabilidades. Pressione Escape para fechar.
               </DialogDescription>
             </DialogHeader>
           </div>
 
           <ScrollArea className="max-h-[65vh]">
-            <div className="space-y-4 px-5 py-4 text-[13px] leading-relaxed text-foreground/90">
+            <div
+              ref={(node) => {
+                // Radix já expõe close via DialogPrimitive.Close; guardamos referência
+                // ao primeiro botão de fechar renderizado pelo DialogContent.
+                if (node) {
+                  const btn = node.closest('[role="dialog"]')?.querySelector<HTMLButtonElement>('[aria-label="Fechar"]');
+                  if (btn) closeBtnRef.current = btn;
+                }
+              }}
+              className="space-y-4 px-5 py-4 text-[13px] leading-relaxed text-foreground/90"
+            >
               <section className="flex gap-3">
-                <Users className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <Users className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 <div>
                   <h4 className="font-bold text-foreground">Iniciativa independente</h4>
                   <p className="text-muted-foreground">
@@ -96,7 +150,7 @@ export function BetaNoticeFooter() {
               </section>
 
               <section className="flex gap-3">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
                 <div>
                   <h4 className="font-bold text-foreground">Não é oficial</h4>
                   <p className="text-muted-foreground">
@@ -107,7 +161,7 @@ export function BetaNoticeFooter() {
               </section>
 
               <section className="flex gap-3">
-                <Heart className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <Heart className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 <div>
                   <h4 className="font-bold text-foreground">Uso gratuito</h4>
                   <p className="text-muted-foreground">
@@ -118,7 +172,7 @@ export function BetaNoticeFooter() {
               </section>
 
               <section className="flex gap-3">
-                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 <div>
                   <h4 className="font-bold text-foreground">Segurança</h4>
                   <p className="text-muted-foreground">
@@ -129,7 +183,7 @@ export function BetaNoticeFooter() {
               </section>
 
               <section className="flex gap-3">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
                 <div>
                   <h4 className="font-bold text-foreground">Responsabilidade</h4>
                   <p className="text-muted-foreground">
@@ -140,7 +194,7 @@ export function BetaNoticeFooter() {
               </section>
 
               <section className="flex gap-3">
-                <Server className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <Server className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 <div>
                   <h4 className="font-bold text-foreground">Disponibilidade</h4>
                   <p className="text-muted-foreground">
