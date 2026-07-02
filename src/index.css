@@ -756,3 +756,42 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   animation: logo-sway 4.5s ease-in-out infinite;
   transform-style: preserve-3d;
 }
+
+/* ==================== ON-DUTY PROFESSIONAL ANIMATIONS ==================== */
+@keyframes duty-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--success) / 0.55), 0 0 40px 0 hsl(var(--success) / 0.15); }
+  50%      { box-shadow: 0 0 0 8px hsl(var(--success) / 0), 0 0 60px 4px hsl(var(--success) / 0.35); }
+}
+.animate-duty-glow { animation: duty-glow-pulse 2.4s ease-in-out infinite; }
+
+@keyframes duty-scanline {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+.animate-duty-scanline { animation: duty-scanline 3s linear infinite; }
+
+@keyframes duty-radar-sweep {
+  0%   { transform: rotate(0deg); opacity: 0.9; }
+  100% { transform: rotate(360deg); opacity: 0.9; }
+}
+.animate-duty-radar { animation: duty-radar-sweep 3.5s linear infinite; transform-origin: center; }
+
+@keyframes duty-shield-beat {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px hsl(var(--success) / 0.5)); }
+  50%      { transform: scale(1.08); filter: drop-shadow(0 0 14px hsl(var(--success) / 0.85)); }
+}
+.animate-duty-shield { animation: duty-shield-beat 1.6s ease-in-out infinite; }
+
+@keyframes duty-critical-flash {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--destructive) / 0.5), 0 0 40px 0 hsl(var(--destructive) / 0.2); }
+  50%      { box-shadow: 0 0 0 6px hsl(var(--destructive) / 0), 0 0 70px 6px hsl(var(--destructive) / 0.55); }
+}
+.animate-duty-critical { animation: duty-critical-flash 1.2s ease-in-out infinite; }
+
+@keyframes duty-bar-shimmer {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+.animate-duty-bar-shimmer { animation: duty-bar-shimmer 2.2s ease-in-out infinite; }

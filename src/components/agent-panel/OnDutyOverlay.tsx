@@ -226,21 +226,38 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
     return (
       <div className="relative mb-4 animate-fade-in">
         <div className={cn(
-          "rounded-2xl border-3 p-4 md:p-5 backdrop-blur-md transition-all duration-500",
-          isCritical 
-            ? "bg-gradient-to-r from-amber-900/40 via-orange-900/30 to-red-900/40 border-amber-500/60 shadow-2xl shadow-amber-500/20"
-            : "bg-gradient-to-r from-emerald-900/40 via-green-900/30 to-teal-900/40 border-emerald-500/60 shadow-2xl shadow-emerald-500/20"
+          "relative overflow-hidden rounded-2xl border-3 p-4 md:p-5 backdrop-blur-md transition-all duration-500",
+          isCritical
+            ? "bg-gradient-to-r from-amber-900/40 via-orange-900/30 to-red-900/40 border-amber-500/60 animate-duty-critical"
+            : "bg-gradient-to-r from-emerald-900/40 via-green-900/30 to-teal-900/40 border-emerald-500/60 animate-duty-glow"
         )}>
+          {/* Scanline sweep */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+            <div className={cn(
+              "absolute top-0 h-full w-1/3 animate-duty-scanline",
+              isCritical
+                ? "bg-gradient-to-r from-transparent via-amber-400/15 to-transparent"
+                : "bg-gradient-to-r from-transparent via-emerald-400/15 to-transparent"
+            )} />
+          </div>
+
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="relative flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className={cn(
                 "relative p-2.5 rounded-xl shadow-lg",
                 isCritical ? "bg-amber-500/30" : "bg-emerald-500/30"
               )}>
-                <Shield className={cn("h-6 w-6", isCritical ? "text-amber-400" : "text-emerald-400")} />
+                <Shield className={cn(
+                  "h-6 w-6 animate-duty-shield",
+                  isCritical ? "text-amber-400" : "text-emerald-400"
+                )} />
                 <span className={cn(
-                  "absolute -top-1 -right-1 h-3 w-3 rounded-full animate-pulse",
+                  "absolute -top-1 -right-1 h-3 w-3 rounded-full animate-ping",
+                  isCritical ? "bg-amber-400" : "bg-emerald-400"
+                )} />
+                <span className={cn(
+                  "absolute -top-1 -right-1 h-3 w-3 rounded-full",
                   isCritical ? "bg-amber-400" : "bg-emerald-400"
                 )} />
               </div>
@@ -347,17 +364,18 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
           </div>
 
           {/* Progress Bar */}
-          <div className="mt-4">
-            <div className="h-2 bg-slate-700/60 rounded-full overflow-hidden">
-              <div 
+          <div className="relative mt-4">
+            <div className="relative h-2 bg-slate-700/60 rounded-full overflow-hidden">
+              <div
                 className={cn(
                   "h-full transition-all duration-1000 rounded-full",
-                  isCritical 
+                  isCritical
                     ? "bg-gradient-to-r from-amber-500 to-orange-500"
                     : "bg-gradient-to-r from-emerald-500 to-green-500"
                 )}
                 style={{ width: `${progress}%` }}
               />
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent animate-duty-bar-shimmer" />
             </div>
             <div className="flex justify-between mt-1 text-[10px] text-slate-500">
               <span>{currentShift.start_time}</span>
