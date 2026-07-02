@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { pushDiagEvent } from "@/lib/diagLog";
 
 /**
  * Cinematic splash — Command Center boot sequence.
@@ -7,15 +8,33 @@ import { useEffect, useState } from "react";
  */
 const SPLASH_SHOWN_KEY = "plantaopro_splash_shown";
 
+// Module-level guard: survives StrictMode double-invoke and any parent remounts
+// within the same JS runtime (SPA lifetime). Only a full page reload resets it.
+let splashMountedThisRuntime = false;
+let splashMountCount = 0;
+
 export function SplashScreen() {
-  const alreadyShown =
+  const alreadyShownInTab =
     typeof window !== "undefined" &&
     window.sessionStorage.getItem(SPLASH_SHOWN_KEY) === "1";
-  const [visible, setVisible] = useState(!alreadyShown);
+  const shouldRender = !alreadyShownInTab && !splashMountedThisRuntime;
+
+  const [visible, setVisible] = useState(shouldRender);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    if (alreadyShown) return;
+    splashMountCount += 1;
+    pushDiagEvent("info", "splash_mount", {
+      count: splashMountCount,
+      alreadyShownInTab,
+      moduleGuard: splashMountedThisRuntime,
+      willRender: shouldRender,
+      referrer: typeof document !== "undefined" ? document.referrer : "",
+      visibility: typeof document !== "undefined" ? document.visibilityState : "",
+    });
+
+    if (!shouldRender) return;
+    splashMountedThisRuntime = true;
     try {
       window.sessionStorage.setItem(SPLASH_SHOWN_KEY, "1");
     } catch {
@@ -26,10 +45,12 @@ export function SplashScreen() {
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
+      pushDiagEvent("info", "splash_unmount", { count: splashMountCount });
     };
-  }, [alreadyShown]);
+  }, [shouldRender, alreadyShownInTab]);
 
   if (!visible) return null;
+
 
   return (
     <div
