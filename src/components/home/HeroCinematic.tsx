@@ -1,4 +1,4 @@
-import { ShieldCheck, Radio, MapPin } from 'lucide-react';
+import { Minus, Plus, Radio, RotateCcw, MapPin } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/hero-command.jpg';
@@ -53,7 +53,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const clampT = (t: Transform): Transform => ({
     xPct: Math.min(90, Math.max(10, t.xPct)),
     yPct: Math.min(92, Math.max(20, t.yPct)),
-    scale: Math.min(isMobile ? 1 : 2.5, Math.max(0.4, t.scale)),
+    scale: Math.min(isMobile ? 1.6 : 2.5, Math.max(0.45, t.scale)),
   });
   const [agentT, setAgentT] = useState<Transform>(() =>
     clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
@@ -70,80 +70,177 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     try { localStorage.setItem('hero_vehicle_t', JSON.stringify(vehicleT)); } catch {}
   }, [vehicleT]);
 
+  type GestureState = {
+    dragging: boolean;
+    moved: boolean;
+    pointerId: number | null;
+    startX: number;
+    startY: number;
+    startT: Transform;
+    pinchStartDist: number;
+    pinchStartScale: number;
+    pinchRaf: number;
+    suppressClickUntil: number;
+  };
+
+  const createGestureState = (initial: Transform): GestureState => ({
+    dragging: false,
+    moved: false,
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    startT: initial,
+    pinchStartDist: 0,
+    pinchStartScale: initial.scale,
+    pinchRaf: 0,
+    suppressClickUntil: 0,
+  });
+
+  const agentGestureRef = useRef<GestureState>(createGestureState(agentT));
+  const vehicleGestureRef = useRef<GestureState>(createGestureState(vehicleT));
+
   const makeHandlers = (
     t: Transform,
-    setT: (t: Transform) => void,
+    setT: React.Dispatch<React.SetStateAction<Transform>>,
+    gestureRef: React.MutableRefObject<GestureState>,
   ) => {
     const rect = () => sectionRef.current?.getBoundingClientRect();
-    let dragging = false;
-    let start = { x: 0, y: 0, xPct: t.xPct, yPct: t.yPct };
     return {
       onPointerDown: (e: React.PointerEvent) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (e.pointerType === 'touch' && !e.isPrimary) return;
         const r = rect(); if (!r) return;
-        dragging = true;
-        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-        start = { x: e.clientX, y: e.clientY, xPct: t.xPct, yPct: t.yPct };
+        if (e.cancelable) e.preventDefault();
+        const g = gestureRef.current;
+        g.dragging = true;
+        g.moved = false;
+        g.pointerId = e.pointerId;
+        g.startX = e.clientX;
+        g.startY = e.clientY;
+        g.startT = t;
+        try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch {}
       },
       onPointerMove: (e: React.PointerEvent) => {
-        if (!dragging) return;
+        const g = gestureRef.current;
+        if (!g.dragging || g.pointerId !== e.pointerId) return;
         const r = rect(); if (!r) return;
-        const dx = ((e.clientX - start.x) / r.width) * 100;
-        const dy = ((e.clientY - start.y) / r.height) * 100;
-        setT(clampT({ xPct: start.xPct + dx, yPct: start.yPct + dy, scale: t.scale }));
+        if (e.cancelable) e.preventDefault();
+        const dxPx = e.clientX - g.startX;
+        const dyPx = e.clientY - g.startY;
+        if (Math.abs(dxPx) + Math.abs(dyPx) > 4) g.moved = true;
+        const dx = (dxPx / r.width) * 100;
+        const dy = (dyPx / r.height) * 100;
+        setT(prev => clampT({ ...prev, xPct: g.startT.xPct + dx, yPct: g.startT.yPct + dy }));
       },
       onPointerUp: (e: React.PointerEvent) => {
-        dragging = false;
+        const g = gestureRef.current;
+        if (g.pointerId !== e.pointerId) return;
+        if (g.moved) g.suppressClickUntil = Date.now() + 350;
+        g.dragging = false;
+        g.pointerId = null;
+        try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+      },
+      onPointerCancel: (e: React.PointerEvent) => {
+        const g = gestureRef.current;
+        if (g.pointerId !== e.pointerId) return;
+        g.dragging = false;
+        g.pointerId = null;
         try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
       },
       onWheel: (e: React.WheelEvent) => {
         e.preventDefault();
         const delta = -e.deltaY * 0.0015;
-        setT(clampT({ ...t, scale: t.scale + delta }));
+        setT(prev => clampT({ ...prev, scale: prev.scale + delta }));
       },
       onDoubleClick: () => {
         setT(clampT({ xPct: 50, yPct: 55, scale: 1 }));
       },
+      onTouchStart: (e: React.TouchEvent) => {
+        const g = gestureRef.current;
+        if (e.touches.length === 1) {
+          if (e.cancelable) e.preventDefault();
+          const a = e.touches[0];
+          g.dragging = true;
+          g.moved = false;
+          g.pointerId = null;
+          g.startX = a.clientX;
+          g.startY = a.clientY;
+          g.startT = t;
+          return;
+        }
+        if (e.touches.length >= 2) {
+          if (e.cancelable) e.preventDefault();
+          const [a, b] = [e.touches[0], e.touches[1]];
+          g.dragging = false;
+          g.pointerId = null;
+          g.pinchStartDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+          setT(prev => {
+            g.pinchStartScale = prev.scale;
+            return prev;
+          });
+        }
+      },
+      onTouchMove: (e: React.TouchEvent) => {
+        const g = gestureRef.current;
+        if (e.touches.length === 1 && g.dragging) {
+          const r = rect(); if (!r) return;
+          if (e.cancelable) e.preventDefault();
+          const a = e.touches[0];
+          const dxPx = a.clientX - g.startX;
+          const dyPx = a.clientY - g.startY;
+          if (Math.abs(dxPx) + Math.abs(dyPx) > 4) g.moved = true;
+          const dx = (dxPx / r.width) * 100;
+          const dy = (dyPx / r.height) * 100;
+          setT(prev => clampT({ ...prev, xPct: g.startT.xPct + dx, yPct: g.startT.yPct + dy }));
+          return;
+        }
+        if (e.touches.length >= 2 && g.pinchStartDist > 0) {
+          if (e.cancelable) e.preventDefault();
+          const [a, b] = [e.touches[0], e.touches[1]];
+          const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+          const ratio = distance / g.pinchStartDist;
+          if (g.pinchRaf) cancelAnimationFrame(g.pinchRaf);
+          g.pinchRaf = requestAnimationFrame(() => {
+            setT(prev => clampT({ ...prev, scale: g.pinchStartScale * ratio }));
+            g.pinchRaf = 0;
+          });
+        }
+      },
+      onTouchEnd: (e: React.TouchEvent) => {
+        const g = gestureRef.current;
+        if (e.touches.length >= 2) return;
+        if (g.moved) g.suppressClickUntil = Date.now() + 350;
+        g.dragging = false;
+        g.pinchStartDist = 0;
+        if (g.pinchRaf) {
+          cancelAnimationFrame(g.pinchRaf);
+          g.pinchRaf = 0;
+        }
+      },
     };
   };
 
-  const agentHandlers = makeHandlers(agentT, setAgentT);
-  const vehicleHandlers = makeHandlers(vehicleT, setVehicleT);
+  const agentHandlers = makeHandlers(agentT, setAgentT, agentGestureRef);
+  const vehicleHandlers = makeHandlers(vehicleT, setVehicleT, vehicleGestureRef);
 
-  // Pinch-to-zoom (mobile) — 2 dedos. Ref persistente para não zerar entre renders.
-  const agentPinchRef = useRef({ startDist: 0, startScale: 1, raf: 0 });
-  const vehiclePinchRef = useRef({ startDist: 0, startScale: 1, raf: 0 });
+  const stopControlGesture = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
-  const makePinch = (
-    ref: React.MutableRefObject<{ startDist: number; startScale: number; raf: number }>,
+  const scaleAsset = (
     setT: React.Dispatch<React.SetStateAction<Transform>>,
-  ) => ({
-    onTouchStart: (e: React.TouchEvent) => {
-      if (e.touches.length >= 2) {
-        const a = e.touches[0], b = e.touches[1];
-        ref.current.startDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-        setT(prev => { ref.current.startScale = prev.scale; return prev; });
-      }
-    },
-    onTouchMove: (e: React.TouchEvent) => {
-      if (e.touches.length < 2 || ref.current.startDist === 0) return;
-      e.preventDefault();
-      const a = e.touches[0], b = e.touches[1];
-      const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-      const ratio = d / ref.current.startDist;
-      if (ref.current.raf) cancelAnimationFrame(ref.current.raf);
-      ref.current.raf = requestAnimationFrame(() => {
-        setT(prev => clampT({ ...prev, scale: ref.current.startScale * ratio }));
-      });
-    },
-    onTouchEnd: (e: React.TouchEvent) => {
-      if (e.touches.length < 2) {
-        ref.current.startDist = 0;
-        if (ref.current.raf) { cancelAnimationFrame(ref.current.raf); ref.current.raf = 0; }
-      }
-    },
-  });
-  const agentPinch = makePinch(agentPinchRef, setAgentT);
-  const vehiclePinch = makePinch(vehiclePinchRef, setVehicleT);
+    amount: number,
+  ) => {
+    setT(prev => clampT({ ...prev, scale: prev.scale + amount }));
+  };
+
+  const resetAsset = (
+    setT: React.Dispatch<React.SetStateAction<Transform>>,
+    next: Transform,
+  ) => {
+    setT(clampT(next));
+  };
 
 
 
@@ -200,7 +297,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
         {...vehicleHandlers}
-        {...vehiclePinch}
         className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none cursor-grab active:cursor-grabbing"
         style={{
           position: 'absolute',
@@ -222,16 +318,47 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         {/* Giroflex realista */}
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
+
+        <div
+          className="absolute bottom-1 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 rounded-md border border-primary/40 bg-background/85 p-1 shadow-lg backdrop-blur-md sm:hidden"
+          aria-label="Controles de tamanho da viatura"
+          onPointerDown={stopControlGesture}
+          onTouchStart={stopControlGesture}
+        >
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Reduzir viatura"
+            onClick={(e) => { stopControlGesture(e); scaleAsset(setVehicleT, -0.12); }}
+          >
+            <Minus className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Ampliar viatura"
+            onClick={(e) => { stopControlGesture(e); scaleAsset(setVehicleT, 0.12); }}
+          >
+            <Plus className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-primary/20 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Resetar viatura"
+            onClick={(e) => { stopControlGesture(e); resetAsset(setVehicleT, { xPct: 30, yPct: 56, scale: 1.1 }); }}
+          >
+            <RotateCcw className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
       </div>
 
       {/* Agente tático — arrastável (triple-click abre login master/admin) */}
-      <img
-        src={agentFigure}
-        alt="Agente tático — toque 3× para acesso admin"
+      <div
+        role="img"
+        aria-label="Agente tático — toque 3 vezes para acesso admin"
         title="3 cliques = admin"
-        loading="lazy"
-        draggable={false}
         onClick={() => {
+          if (Date.now() < agentGestureRef.current.suppressClickUntil) return;
           const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
           w.__agentClicks = (w.__agentClicks || 0) + 1;
           if (w.__agentTimer) window.clearTimeout(w.__agentTimer);
@@ -252,11 +379,12 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         onPointerDown={agentHandlers.onPointerDown}
         onPointerMove={agentHandlers.onPointerMove}
         onPointerUp={agentHandlers.onPointerUp}
+        onPointerCancel={agentHandlers.onPointerCancel}
         onWheel={agentHandlers.onWheel}
         onDoubleClick={agentHandlers.onDoubleClick}
-        onTouchStart={agentPinch.onTouchStart}
-        onTouchMove={agentPinch.onTouchMove}
-        onTouchEnd={agentPinch.onTouchEnd}
+        onTouchStart={agentHandlers.onTouchStart}
+        onTouchMove={agentHandlers.onTouchMove}
+        onTouchEnd={agentHandlers.onTouchEnd}
         style={{
           position: 'absolute',
           left: `${agentT.xPct}%`,
@@ -265,8 +393,48 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           transformOrigin: 'center',
           touchAction: 'none',
         }}
-        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none opacity-95 cursor-grab active:cursor-grabbing"
-      />
+        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-grab active:cursor-grabbing"
+      >
+        <img
+          src={agentFigure}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          draggable={false}
+          className="h-full w-auto object-contain object-bottom pointer-events-none"
+        />
+        <div
+          className="absolute bottom-1 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 rounded-md border border-primary/40 bg-background/85 p-1 shadow-lg backdrop-blur-md sm:hidden"
+          aria-label="Controles de tamanho do agente"
+          onPointerDown={stopControlGesture}
+          onTouchStart={stopControlGesture}
+        >
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Reduzir agente"
+            onClick={(e) => { stopControlGesture(e); scaleAsset(setAgentT, -0.12); }}
+          >
+            <Minus className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Ampliar agente"
+            onClick={(e) => { stopControlGesture(e); scaleAsset(setAgentT, 0.12); }}
+          >
+            <Plus className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-primary/20 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Resetar agente"
+            onClick={(e) => { stopControlGesture(e); resetAsset(setAgentT, { xPct: 74, yPct: 58, scale: 1.05 }); }}
+          >
+            <RotateCcw className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+      </div>
 
 
 
