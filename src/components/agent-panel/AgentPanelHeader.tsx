@@ -146,11 +146,19 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
   };
 
   return (
-    <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-xl border border-slate-600/50 shadow-xl overflow-hidden">
+    <div className="relative bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-xl border border-slate-600/50 shadow-xl overflow-hidden">
+      {/* Realistic tactical operations background */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
+        style={{ backgroundImage: `url(${panelHeaderBg})` }}
+      />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/70 to-slate-950/85 pointer-events-none" />
+
       {/* Top accent line */}
-      <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-      
-      <div className="p-2.5 md:p-3">
+      <div className="relative h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
+
+      <div className="relative p-2.5 md:p-3">
         <div className="flex items-center justify-between gap-2">
           {/* Left Section: Avatar + Name */}
           <div 
