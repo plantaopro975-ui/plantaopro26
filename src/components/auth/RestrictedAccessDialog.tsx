@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, KeyRound } from 'lucide-react';
 import restrictedScene from '@/assets/restricted-access-scene.jpg';
-import logoEmblem from '@/assets/logo-plantao-pro.png';
+import logoAsset from '@/assets/logo-plantao-pro-official.png.asset.json';
+const logoEmblem = logoAsset.url;
 
 interface RestrictedAccessDialogProps {
   open: boolean;
