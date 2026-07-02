@@ -553,87 +553,65 @@ export default function Master() {
           </div>
         </div>
 
-        {/* System Stats */}
+        {/* System Stats — cada card abre a aba correspondente (HUD) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          <Card className="glass glass-border">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Users className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Usuários</p>
-                  <p className="text-xl font-bold">{stats.totalUsers}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="glass glass-border">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-emerald-500/10">
-                  <Users className="h-5 w-5 text-emerald-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Agentes</p>
-                  <p className="text-xl font-bold">{stats.totalAgents}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="glass glass-border">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/10">
-                  <Check className="h-5 w-5 text-green-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Ativos</p>
-                  <p className="text-xl font-bold">{stats.activeAgents}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="glass glass-border">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-red-500/10">
-                  <Clock className="h-5 w-5 text-red-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Expirados</p>
-                  <p className="text-xl font-bold">{stats.expiredLicenses}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="glass glass-border">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/10">
-                  <Building2 className="h-5 w-5 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Unidades</p>
-                  <p className="text-xl font-bold">{stats.totalUnits}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="glass glass-border">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-yellow-500/10">
-                  <ArrowRightLeft className="h-5 w-5 text-yellow-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Transferências</p>
-                  <p className="text-xl font-bold">{stats.pendingTransfers}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {([
+            { key: 'users',      label: 'Usuários',        value: stats.totalUsers,      icon: Users,          tint: 'primary',   tab: 'users' },
+            { key: 'agents',     label: 'Agentes',         value: stats.totalAgents,     icon: Users,          tint: 'emerald',   tab: 'agents' },
+            { key: 'active',     label: 'Ativos',          value: stats.activeAgents,    icon: Check,          tint: 'green',     tab: 'agents' },
+            { key: 'expired',    label: 'Expirados',       value: stats.expiredLicenses, icon: Clock,          tint: 'red',       tab: 'licenses' },
+            { key: 'units',      label: 'Unidades',        value: stats.totalUnits,      icon: Building2,      tint: 'blue',      tab: 'overview' },
+            { key: 'transfers',  label: 'Transferências',  value: stats.pendingTransfers,icon: ArrowRightLeft, tint: 'yellow',    tab: 'transfers' },
+          ] as const).map(({ key, label, value, icon: Icon, tint, tab }) => {
+            const tintMap: Record<string, string> = {
+              primary: 'bg-primary/10 text-primary',
+              emerald: 'bg-emerald-500/10 text-emerald-500',
+              green:   'bg-green-500/10 text-green-500',
+              red:     'bg-red-500/10 text-red-500',
+              blue:    'bg-blue-500/10 text-blue-500',
+              yellow:  'bg-yellow-500/10 text-yellow-500',
+            };
+            return (
+              <Card
+                key={key}
+                onClick={() => {
+                  setActiveTab(tab);
+                  requestAnimationFrame(() => {
+                    document.querySelector('[role="tablist"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  });
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setActiveTab(tab);
+                  }
+                }}
+                className={cn(
+                  'glass glass-border cursor-pointer transition-all hover-lift',
+                  'hover:border-primary/60 hover:shadow-[0_0_0_1px_hsl(var(--primary)/0.35)]',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                  activeTab === tab && 'border-primary/70 shadow-[0_0_0_1px_hsl(var(--primary)/0.5)]'
+                )}
+                aria-label={`Abrir ${label}`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className={cn('p-2 rounded-lg', tintMap[tint])}>
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">{label}</p>
+                      <p className="text-xl font-bold">{value}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
+
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
