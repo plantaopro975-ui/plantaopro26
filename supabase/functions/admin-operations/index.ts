@@ -684,6 +684,22 @@ serve(async (req) => {
       return json({ success: true, data: { synced: true, existed: false } });
     }
 
+    // ===== FORCE LOGOUT =====
+    if (action === "force_logout") {
+      const { user_id } = body ?? {};
+      if (!user_id) return json({ success: false, error: "user_id obrigatório." }, 400);
+      const { error } = await admin.auth.admin.signOut(user_id, "global");
+      if (error) return json({ success: false, error: error.message }, 500);
+      try {
+        await admin.from("access_logs").insert({
+          user_id,
+          action: "force_logout",
+          details: { by: auth.userId ?? "master" },
+        });
+      } catch { /* ignore */ }
+      return json({ success: true });
+    }
+
     return json({ success: false, error: "Ação desconhecida." }, 400);
   } catch (err) {
     console.error("admin-operations error", err);

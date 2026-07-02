@@ -28,7 +28,8 @@ type AdminAction =
   | 'sync_agent_auth'
   | 'approve_agent'
   | 'reject_agent'
-  | 'get_pending_agents';
+  | 'get_pending_agents'
+  | 'force_logout';
 
 /**
  * Unified admin client that works for both Master (token-based) and Admin (session-based)
@@ -154,6 +155,10 @@ export const adminClient = {
   // Sincronizar usuário auth para agente existente
   syncAgentAuth: (input: { agentId: string; password: string }) =>
     callAdminBackend<{ synced: boolean; existed?: boolean; newId?: string }>('sync_agent_auth', input),
+
+  // Force global logout of a user
+  forceLogout: (userId: string) =>
+    callAdminBackend<{}>('force_logout', { user_id: userId }),
 };
 
 /**

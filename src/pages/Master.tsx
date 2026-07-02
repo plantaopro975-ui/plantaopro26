@@ -1080,11 +1080,28 @@ export default function Master() {
                             </Select>
                           </TableCell>
                           <TableCell>
-                            <DeleteUserDialog 
-                              userId={u.id} 
-                              userName={u.email} 
-                              onSuccess={fetchData} 
-                            />
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                title="Forçar logout"
+                                onClick={async () => {
+                                  try {
+                                    await adminClient.forceLogout(u.id);
+                                    toast({ title: 'Sessões encerradas', description: `${u.email} foi deslogado.` });
+                                  } catch (e: any) {
+                                    toast({ title: 'Erro', description: e?.message || 'Falha ao deslogar', variant: 'destructive' });
+                                  }
+                                }}
+                              >
+                                <LogOut className="h-4 w-4" />
+                              </Button>
+                              <DeleteUserDialog 
+                                userId={u.id} 
+                                userName={u.email} 
+                                onSuccess={fetchData} 
+                              />
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
