@@ -12,6 +12,10 @@
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
+
+    <!-- Preload backdrop de carregamento (baixo custo, ~55KB, cache-forever no CDN) -->
+    <link rel="preload" as="image" href="/__l5e/assets-v1/42788cce-196f-4a9e-ac3e-175e0f810f4e/loading-backdrop.webp" fetchpriority="low" />
+
     
     <!-- Google Fonts — preconnect + preload async para eliminar render-blocking e FOIT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
