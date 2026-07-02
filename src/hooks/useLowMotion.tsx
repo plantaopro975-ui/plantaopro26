@@ -62,6 +62,12 @@ function read(): boolean {
   return detectSlowDevice();
 }
 
+function applyPerformanceClasses(enabled: boolean) {
+  if (typeof document === 'undefined') return;
+  document.documentElement.classList.toggle('android-performance-mode', enabled && isAndroidDevice());
+  document.documentElement.classList.toggle('low-performance-mode', enabled);
+}
+
 export function useLowMotion() {
   const [lowMotion, setLowMotion] = useState<boolean>(() => read());
 
@@ -76,11 +82,9 @@ export function useLowMotion() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('android-performance-mode', lowMotion && isAndroidDevice());
-    document.documentElement.classList.toggle('low-performance-mode', lowMotion);
+    applyPerformanceClasses(lowMotion);
     return () => {
-      document.documentElement.classList.remove('android-performance-mode');
-      document.documentElement.classList.remove('low-performance-mode');
+      applyPerformanceClasses(read());
     };
   }, [lowMotion]);
 
