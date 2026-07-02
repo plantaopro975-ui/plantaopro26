@@ -15,6 +15,7 @@ import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCa
 import { format, parseISO, differenceInDays, isAfter, startOfDay, isSameDay, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { TeamMemberDialog } from './TeamMemberDialog';
+import leaveDialogBg from '@/assets/leave-dialog-bg.jpg';
 
 interface LeaveRequestCardProps {
   agentId: string;
@@ -757,9 +758,17 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
       {/* Confirmation Dialog — Compact / Pro */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="bg-slate-900 border-slate-700 p-0 gap-0 max-w-md w-[calc(100vw-1rem)] max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden font-['IBM_Plex_Sans',_system-ui,_sans-serif]">
+        <DialogContent className="border-slate-700 p-0 gap-0 max-w-md w-[calc(100vw-1rem)] max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden font-['IBM_Plex_Sans',_system-ui,_sans-serif] relative">
+          {/* Background image + overlay */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${leaveDialogBg})` }}
+          />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-slate-950/92 via-slate-950/88 to-slate-950/95" />
+
           {/* Header */}
-          <DialogHeader className="px-4 py-3 border-b border-slate-800 bg-slate-950/60 shrink-0">
+          <DialogHeader className="relative px-4 py-3 border-b border-slate-800/80 bg-slate-950/50 backdrop-blur-sm shrink-0">
             <div className="flex items-center gap-2.5">
               <svg viewBox="0 0 24 24" className="h-5 w-5 text-amber-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <rect x="3" y="5" width="18" height="16" rx="2" />
@@ -780,7 +789,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           </DialogHeader>
 
           {/* Scrollable body */}
-          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
+          <div className="relative flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
             {selectedDate && (
               <>
                 {/* Leave Type */}
@@ -862,7 +871,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           </div>
 
           {/* Sticky Footer */}
-          <DialogFooter className="px-4 py-3 border-t border-slate-800 bg-slate-950/80 backdrop-blur shrink-0 gap-2 flex-row justify-end">
+          <DialogFooter className="relative px-4 py-3 border-t border-slate-800/80 bg-slate-950/70 backdrop-blur shrink-0 gap-2 flex-row justify-end">
             <Button
               variant="outline"
               size="sm"
