@@ -134,88 +134,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </div>
 
 
-      {/* Agente tático — posição travada; triple-tap abre login master/admin sem bloquear rolagem */}
+      {/* Agente tático — triple-tap tolerante a rolagem abre login master/admin */}
       <AgentFigure agentT={agentT} />
-    </section>
-  );
-}
 
-/** Boneco com triple-tap tolerante a rolagem. Um dedo desliza a página normalmente; só conta como toque se o dedo mover < 8px. */
-function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: number } }) {
-  const startRef = useRef<{ x: number; y: number; t: number } | null>(null);
-  const clicksRef = useRef(0);
-  const timerRef = useRef<number | null>(null);
 
-  const registerTap = () => {
-    clicksRef.current += 1;
-    if (timerRef.current) window.clearTimeout(timerRef.current);
-    timerRef.current = window.setTimeout(() => { clicksRef.current = 0; }, 700);
-    if (clicksRef.current >= 3) {
-      clicksRef.current = 0;
-      toast('Acesso do administrador', {
-        description: 'Confirme para abrir o login restrito.',
-        duration: 6000,
-        action: { label: 'Confirmar', onClick: () => window.dispatchEvent(new CustomEvent('open-master-login')) },
-        cancel: { label: 'Cancelar', onClick: () => {} },
-      });
-    }
-  };
-
-  return (
-    <div
-      role="img"
-      aria-label="Agente tático — toque 3 vezes para acesso admin"
-      title="3 cliques = admin"
-      onTouchStart={(e) => {
-        const t = e.touches[0];
-        startRef.current = { x: t.clientX, y: t.clientY, t: Date.now() };
-      }}
-      onTouchEnd={(e) => {
-        const s = startRef.current;
-        startRef.current = null;
-        if (!s) return;
-        const t = e.changedTouches[0];
-        const dx = t.clientX - s.x;
-        const dy = t.clientY - s.y;
-        const moved = Math.hypot(dx, dy);
-        const dur = Date.now() - s.t;
-        if (moved < 8 && dur < 400) registerTap();
-      }}
-      onClick={(e) => {
-        // Desktop only — no mobile o toque já foi tratado em onTouchEnd
-        if ((e as unknown as { pointerType?: string }).pointerType === 'touch') return;
-        registerTap();
-      }}
-      style={{
-        position: 'absolute',
-        left: `${agentT.xPct}%`,
-        top: `${agentT.yPct}%`,
-        transform: `translate(-50%, -50%) scale(${agentT.scale})`,
-        transformOrigin: 'center',
-        touchAction: 'pan-y',
-      }}
-      className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-pointer"
-    >
-      <img
-        src={agentFigure}
-        alt=""
-        aria-hidden
-        loading="lazy"
-        draggable={false}
-        className="h-full w-auto object-contain object-bottom pointer-events-none"
-      />
-    </div>
-  );
-}
-
-// Original component continues below (unused stub removed by refactor):
-function _HeroCinematicTail() {
-  return null;
-}
-void _HeroCinematicTail;
-
-// preserve trailing markup rendered by original component
-function _keep() {
 
 
 
