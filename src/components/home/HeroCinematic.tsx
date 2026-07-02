@@ -53,11 +53,70 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     yPct: Math.min(92, Math.max(20, t.yPct)),
     scale: Math.min(isMobile ? 1.6 : 2.5, Math.max(0.45, t.scale)),
   });
-  const [agentT] = useState<Transform>(() =>
+  const [agentT, setAgentT] = useState<Transform>(() =>
     clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
-  const [vehicleT] = useState<Transform>(() =>
+  const [vehicleT, setVehicleT] = useState<Transform>(() =>
     clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
+  );
+
+  // Desktop-only drag + wheel-scale. Mobile permanece travado.
+  const makeDesktopHandlers = (
+    current: Transform,
+    setT: (t: Transform) => void,
+    storageKey: string,
+    defaults: Transform,
+  ) => {
+    if (isMobile) return {};
+    return {
+      onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
+        if (e.pointerType === 'touch') return;
+        const el = sectionRef.current;
+        if (!el) return;
+        e.preventDefault();
+        (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+        const rect = el.getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const start = { ...current };
+        let moved = false;
+        const move = (ev: PointerEvent) => {
+          const dx = ((ev.clientX - startX) / rect.width) * 100;
+          const dy = ((ev.clientY - startY) / rect.height) * 100;
+          if (Math.abs(dx) + Math.abs(dy) > 0.5) moved = true;
+          const next = clampT({ xPct: start.xPct + dx, yPct: start.yPct + dy, scale: start.scale });
+          setT(next);
+        };
+        const up = () => {
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+          try { if (moved) localStorage.setItem(storageKey, JSON.stringify(current)); } catch {}
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up, { once: true });
+      },
+      onWheel: (e: React.WheelEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const delta = -e.deltaY * 0.0015;
+        const next = clampT({ ...current, scale: current.scale + delta });
+        setT(next);
+        try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
+      },
+      onDoubleClick: () => {
+        setT(clampT(defaults));
+        try { localStorage.removeItem(storageKey); } catch {}
+      },
+      style: { cursor: 'grab' as const, touchAction: 'none' as const },
+    };
+  };
+
+  const agentDesktop = makeDesktopHandlers(
+    agentT, setAgentT, 'hero_agent_t',
+    { xPct: 82, yPct: 62, scale: 1 },
+  );
+  const vehicleDesktop = makeDesktopHandlers(
+    vehicleT, setVehicleT, 'hero_vehicle_t',
+    { xPct: 18, yPct: 55, scale: 1 },
   );
 
 
