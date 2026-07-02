@@ -56,10 +56,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     scale: Math.min(isMobile ? 1 : 2.5, Math.max(0.4, t.scale)),
   });
   const [agentT, setAgentT] = useState<Transform>(() =>
-    clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 72 : 82, yPct: 62, scale: isMobile ? 0.85 : 1 }))
+    clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
   const [vehicleT, setVehicleT] = useState<Transform>(() =>
-    clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 28 : 18, yPct: 55, scale: isMobile ? 0.85 : 1 }))
+    clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
   );
 
   // Assets travados: sem drag/scroll/reset. setAgentT/setVehicleT ficam disponíveis
@@ -179,7 +179,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       <div className="pointer-events-none relative z-20 h-full min-h-0 flex flex-col justify-start sm:justify-between gap-2 sm:gap-3 px-3 sm:px-5 lg:px-8 py-3 sm:py-5 [&_button]:pointer-events-auto [&_a]:pointer-events-auto">
         {/* Top eyebrow */}
         <div
-          className="relative rounded-lg overflow-hidden border border-accent/40 p-3 sm:p-4"
+          className="relative rounded-lg overflow-hidden border border-accent/40 p-2 sm:p-4"
         >
           {/* Capa realista — sala de comando */}
           <img
@@ -222,20 +222,20 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
           <div className="relative flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
-              <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] uppercase tracking-[0.32em] text-accent/90 font-mono">
-                <span className="h-px w-6 bg-accent/60" />
-                Segurança Pública · Sistema Socioeducativo
+              <div className="inline-flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.28em] sm:tracking-[0.32em] text-accent/90 font-mono">
+                <span className="h-px w-4 sm:w-6 bg-accent/60" />
+                Segurança Pública · Socioeducativo
               </div>
-              <h1 className="font-mono uppercase text-[20px] sm:text-[26px] lg:text-[34px] leading-[1] font-extrabold text-foreground tracking-[0.04em] max-w-[18ch]">
+              <h1 className="font-mono uppercase text-[14px] sm:text-[26px] lg:text-[34px] leading-[1.05] font-extrabold text-foreground tracking-[0.04em] max-w-[18ch]">
                 Comando <span className="text-accent">Operacional</span>
                 <br />
                 <span className="text-primary-glow">para quem está na linha de frente</span>
               </h1>
-              <p className="max-w-[46ch] text-[11px] sm:text-[13px] leading-snug text-muted-foreground font-mono">
+              <p className="hidden sm:block max-w-[46ch] text-[11px] sm:text-[13px] leading-snug text-muted-foreground font-mono">
                 Coordenação tática em tempo real, escalas inteligentes e comunicação segura entre equipes — feito por agentes, para agentes.
               </p>
-              <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-muted-foreground font-mono">
-                <MapPin className="h-3.5 w-3.5 text-accent" />
+              <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-muted-foreground font-mono">
+                <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-accent" />
                 Feijó · AC · Amazônia Ocidental
               </div>
             </div>
@@ -330,7 +330,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-3 sm:p-3 lg:p-4 min-h-[140px] sm:min-h-[144px] lg:min-h-[172px] rounded-md border border-accent/40 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-2 sm:p-3 lg:p-4 min-h-[130px] sm:min-h-[144px] lg:min-h-[172px] rounded-md border border-accent/40 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
                     // @ts-ignore CSS var
                     ['--team-ring' as any]: tc.ring,
@@ -403,7 +403,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                       src={t.icon}
                       alt=""
                       loading="lazy"
-                      className={`team-icon-3d ${t.motion} relative h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
+                      className={`team-icon-3d ${t.motion} relative h-14 w-14 sm:h-20 sm:w-20 lg:h-24 lg:w-24 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
                     />
                   </span>
                   <div className="relative mt-0.5">
