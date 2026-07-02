@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Radar, Users, Activity, Wifi, Building2, Signal } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import radarBg from '@/assets/radar-bg.jpg';
+
 
 interface AgentBlip {
   id: string;
