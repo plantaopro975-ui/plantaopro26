@@ -105,10 +105,10 @@ export function CommandStrip() {
         {/* Relógio + radar + status */}
         <div className="flex items-center gap-2 sm:gap-4 ml-auto shrink-0">
           <div className="text-right leading-tight tabular-nums shrink-0">
-            <div className="font-mono text-[15px] sm:text-[16px] font-semibold text-foreground tracking-tight whitespace-nowrap">
+            <div className="font-mono text-[15px] sm:text-[16px] font-semibold text-amber-50 tracking-tight whitespace-nowrap">
               {time}
             </div>
-            <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-mono whitespace-nowrap">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-amber-200/70 font-mono whitespace-nowrap">
               {date}
             </div>
           </div>
