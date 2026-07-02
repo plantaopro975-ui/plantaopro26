@@ -31,7 +31,10 @@ interface MobileSidebarProps {
 
 export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
   const location = useLocation();
-  const { masterSession } = useAuth();
+  const { masterSession, user } = useAuth();
+  const [restricted, setRestricted] = useState<string | null>(null);
+  const isAuthed = !!user || !!masterSession;
+
 
   return (
     <div className="flex flex-col h-full bg-sidebar">
