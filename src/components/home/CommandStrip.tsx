@@ -76,9 +76,9 @@ export function CommandStrip() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
       />
 
-      <div className="relative flex items-center gap-x-4 px-4 lg:px-6 h-12 sm:h-14">
+      <div className="relative flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-1 px-3 sm:px-4 lg:px-6 py-2 sm:py-0 sm:h-14 min-h-12">
         {/* Brasão */}
-        <div className="relative flex items-center gap-3 min-w-0">
+        <div className="relative flex items-center gap-3 shrink-0">
           <button
             type="button"
             onClick={handleShieldClick}
@@ -103,9 +103,9 @@ export function CommandStrip() {
         </div>
 
         {/* Relógio + radar + status */}
-        <div className="flex items-center gap-2 sm:gap-4 ml-auto min-w-0">
-          <div className="text-right leading-tight tabular-nums min-w-0">
-            <div className="font-mono text-[15px] sm:text-[16px] font-semibold text-foreground tracking-tight">
+        <div className="flex items-center gap-2 sm:gap-4 ml-auto shrink-0">
+          <div className="text-right leading-tight tabular-nums shrink-0">
+            <div className="font-mono text-[15px] sm:text-[16px] font-semibold text-foreground tracking-tight whitespace-nowrap">
               {time}
             </div>
             <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-mono whitespace-nowrap">
