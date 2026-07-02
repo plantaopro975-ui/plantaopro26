@@ -16,7 +16,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useActivityLog } from '@/hooks/useActivityLog';
 import { Building2, Pencil, Loader2, User, Shield, MapPin, Phone, Mail, RefreshCw, Users } from 'lucide-react';
-import { Icon3D } from '@/components/ui/Icon3D';
+import { Icon3DAction } from '@/components/ui/Icon3D';
 import icon3dTypography from '@/assets/icon-3d-typography.png';
 
 interface Unit {
