@@ -364,17 +364,18 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
           </div>
 
           {/* Progress Bar */}
-          <div className="mt-4">
-            <div className="h-2 bg-slate-700/60 rounded-full overflow-hidden">
-              <div 
+          <div className="relative mt-4">
+            <div className="relative h-2 bg-slate-700/60 rounded-full overflow-hidden">
+              <div
                 className={cn(
                   "h-full transition-all duration-1000 rounded-full",
-                  isCritical 
+                  isCritical
                     ? "bg-gradient-to-r from-amber-500 to-orange-500"
                     : "bg-gradient-to-r from-emerald-500 to-green-500"
                 )}
                 style={{ width: `${progress}%` }}
               />
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent animate-duty-bar-shimmer" />
             </div>
             <div className="flex justify-between mt-1 text-[10px] text-slate-500">
               <span>{currentShift.start_time}</span>
