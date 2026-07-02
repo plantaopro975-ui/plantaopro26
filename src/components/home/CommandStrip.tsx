@@ -5,6 +5,7 @@ import { SignalUplink } from './SignalUplink';
 
 import { cn } from '@/lib/utils';
 import bannerBg from '@/assets/institutional-banner-bg.jpg';
+import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
 
 /**
  * CommandStrip — faixa institucional Noir & Gold.
