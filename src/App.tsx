@@ -77,8 +77,22 @@ const App = () => (
                     </Route>
 
                     <Route path="/auth" element={<Navigate to="/" replace />} />
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="/agent-panel" element={<AgentPanel />} />
+                    <Route
+                      path="/admin"
+                      element={
+                        <RequireAuth mode="block">
+                          <Admin />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/agent-panel"
+                      element={
+                        <RequireAuth mode="redirect" redirectTo="/">
+                          <AgentPanel />
+                        </RequireAuth>
+                      }
+                    />
                     <Route path="/agent-profile" element={<AgentProfileEdit />} />
                     <Route path="/agent-profile-edit" element={<AgentProfileEdit />} />
                     <Route path="/unit/:unitId" element={<UnitDashboard />} />
@@ -87,7 +101,14 @@ const App = () => (
 
                     <Route path="/overtime" element={<Overtime />} />
                     <Route path="/units" element={<Units />} />
-                    <Route path="/settings" element={<Settings />} />
+                    <Route
+                      path="/settings"
+                      element={
+                        <RequireAuth mode="redirect" redirectTo="/">
+                          <Settings />
+                        </RequireAuth>
+                      }
+                    />
 
                     <Route path="/install" element={<Install />} />
                     <Route path="/about" element={<About />} />
