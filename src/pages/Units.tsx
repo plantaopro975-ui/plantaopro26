@@ -367,16 +367,19 @@ export default function Units() {
                         return (
                           <Card 
                             key={unit.id} 
-                            className="bg-slate-800/50 border-slate-700 hover:border-amber-500/50 transition-all cursor-pointer group"
+                            className="hud-card cursor-pointer group border-0"
                             onClick={() => navigate(`/unit/${unit.id}`)}
                           >
+                            <div className="hud-scan" />
                             <CardHeader className="pb-3">
-                              <div className="flex items-center justify-between">
-                                <CardTitle className="text-lg text-white flex items-center gap-2">
-                                  <Building2 className="h-5 w-5 text-amber-400" />
-                                  {unit.name}
-                                </CardTitle>
-                                <ChevronRight className="h-5 w-5 text-slate-500 group-hover:text-amber-400 transition-colors" />
+                              <div className="flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <HUDIcon3D name="building" className="!w-11 !h-11 shrink-0" />
+                                  <CardTitle className="hud-display text-base md:text-lg text-white truncate">
+                                    {unit.name}
+                                  </CardTitle>
+                                </div>
+                                <ChevronRight className="h-5 w-5 text-[rgb(201,168,76)]/60 group-hover:text-[rgb(240,215,140)] transition-colors shrink-0" />
                               </div>
                             </CardHeader>
                             <CardContent className="space-y-3">
