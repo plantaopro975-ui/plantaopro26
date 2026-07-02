@@ -197,7 +197,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
     setSelectedDate(date);
     setSelectedType('special');
-    setSelectedPeriod('integral');
+    setSelectedPeriod('24h');
     setLeaveDescription('');
     setShowConfirmDialog(true);
   };
