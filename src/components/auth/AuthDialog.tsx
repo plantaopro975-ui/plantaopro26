@@ -120,17 +120,13 @@ export function AuthDialog({
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">{subtitle || title}</DialogDescription>
 
-        {/* Top accent bar */}
+        {/* Top accent bar (flat) */}
         <div
-          className={cn("h-1.5 w-full relative overflow-hidden",
-            !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
+          className={cn("h-1 w-full", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
           style={teamBranded && teamColor ? {
             background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
           } : undefined}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"
-               style={{ animationDuration: '3s' }} />
-        </div>
+        />
 
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
