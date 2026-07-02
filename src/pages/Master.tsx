@@ -496,8 +496,10 @@ export default function Master() {
   };
 
   const filteredAgents = agents.filter((agent) => {
-    if (!agentSearchTerm) return true;
-    const searchTerm = agentSearchTerm.toLowerCase().trim();
+  const debouncedAgentSearch = useDebouncedValue(agentSearchTerm, 200);
+  const filteredAgents = agents.filter((agent) => {
+    if (!debouncedAgentSearch) return true;
+    const searchTerm = debouncedAgentSearch.toLowerCase().trim();
     const searchNumbers = searchTerm.replace(/\D/g, '');
     const name = agent.name.toLowerCase();
     if (name.includes(searchTerm)) return true;
@@ -505,6 +507,7 @@ export default function Master() {
     if (searchNumbers && agent.matricula && agent.matricula.includes(searchNumbers)) return true;
     return false;
   });
+
 
   if (isLoading || loadingData) {
     return (
