@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { TeamEmblem } from '@/components/TeamEmblem';
 import { WelcomeTrialDialog } from '@/components/WelcomeTrialDialog';
+import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import { 
   Loader2, 
   MapPin, 
@@ -172,7 +173,7 @@ export default function UnitDashboard() {
   const totalAgents = teamStats.reduce((acc, team) => acc + team.agents.length, 0);
 
   return (
-    <div className="min-h-screen flex bg-slate-900">
+    <div className="min-h-screen flex bg-slate-900 hud-scope">
       {/* Welcome Trial Dialog */}
       {showWelcomeDialog && (
         <WelcomeTrialDialog 
@@ -184,49 +185,41 @@ export default function UnitDashboard() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 p-3 md:p-4 overflow-auto">
-          <div className="max-w-6xl mx-auto space-y-3 md:space-y-4 animate-fade-in">
+        <main className="flex-1 p-3 md:p-5 overflow-auto">
+          <div className="max-w-6xl mx-auto space-y-4 animate-fade-in">
+            <PanelHeroHUD
+              variant="units"
+              icon="building"
+              eyebrow={unit?.municipality || 'Unidade'}
+              title={unit?.name || 'Unidade Socioeducativa'}
+              subtitle={`${totalAgents} agentes ativos • ${teamStats.length} equipes operacionais`}
+              right={
+                <span className="hud-chip">
+                  <MapPin className="h-3.5 w-3.5" /> {unit?.municipality}
+                </span>
+              }
+            />
+
             {/* Welcome Card for Current Agent - Compact */}
             {currentAgent && currentAgent.unit_id === unitId && (
-              <div className="p-3 bg-gradient-to-r from-amber-500/15 via-amber-600/5 to-transparent rounded-lg border border-amber-500/20">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
-                    <User className="h-5 w-5 text-amber-400" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs text-slate-400">Bem-vindo(a),</p>
-                    <h2 className="text-base md:text-lg font-bold text-white truncate">{currentAgent.name}</h2>
-                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                      {currentAgent.team && (
-                        <Badge className={`${teamConfigs[currentAgent.team]?.bgColor} ${teamConfigs[currentAgent.team]?.color} text-[10px] px-1.5 py-0`}>
-                          {currentAgent.team}
-                        </Badge>
-                      )}
-                      <span className="text-[10px] text-slate-500">Mat: {currentAgent.matricula}</span>
-                    </div>
+              <div className="hud-card p-3 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[rgba(201,168,76,0.15)] flex items-center justify-center shrink-0 border border-[rgba(201,168,76,0.3)]">
+                  <User className="h-5 w-5 text-[rgb(240,215,140)]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-slate-400">Bem-vindo(a),</p>
+                  <h2 className="text-base md:text-lg font-bold text-white truncate hud-display">{currentAgent.name}</h2>
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    {currentAgent.team && (
+                      <Badge className={`${teamConfigs[currentAgent.team]?.bgColor} ${teamConfigs[currentAgent.team]?.color} text-[10px] px-1.5 py-0`}>
+                        {currentAgent.team}
+                      </Badge>
+                    )}
+                    <span className="text-[10px] text-slate-500">Mat: {currentAgent.matricula}</span>
                   </div>
                 </div>
               </div>
             )}
-
-            {/* Unit Header - Compact */}
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md shrink-0">
-                  <Building2 className="h-6 w-6 text-slate-900" />
-                </div>
-                <div className="min-w-0">
-                  <h1 className="text-lg md:text-xl font-bold text-white truncate">{unit?.name}</h1>
-                  <div className="flex items-center gap-1.5 text-slate-400">
-                    <MapPin className="h-3 w-3" />
-                    <span className="text-xs">{unit?.municipality}</span>
-                  </div>
-                </div>
-              </div>
-              <Badge variant="outline" className="text-amber-400 border-amber-400/40 text-xs shrink-0">
-                {totalAgents} Agentes
-              </Badge>
-            </div>
 
             {/* Stats Cards - Compact with tactical animations */}
             <div className="grid grid-cols-4 gap-2">

@@ -51,6 +51,7 @@ import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
 import { AdminAnnouncementsPanel } from '@/components/agent-panel/AdminAnnouncementsPanel';
 import { AdDisplaySystem } from '@/components/agent-panel/AdDisplaySystem';
 import { AgentHeroPanel } from '@/components/agent-panel/AgentHeroPanel';
+import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import { SmartAlarmClock } from '@/components/agent-panel/SmartAlarmClock';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone } from 'lucide-react';
@@ -440,6 +441,7 @@ export default function AgentPanel() {
   return (
     <>
     <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
+      <div className="hud-scope">
       {/* License Warning Banner */}
       {showLicenseWarning && (
         <LicenseWarningBanner
@@ -473,6 +475,15 @@ export default function AgentPanel() {
           }}
         >
           <div className="max-w-7xl w-full mx-auto space-y-3 md:space-y-4 lg:space-y-5 pb-16 sm:pb-20">
+            {/* Futuristic HUD Hero */}
+            <PanelHeroHUD
+              variant="command"
+              icon="shield"
+              eyebrow="Painel do Agente"
+              title={`Bem-vindo, ${agent.name?.split(' ')[0] || 'Agente'}`}
+              subtitle={`Equipe ${agent.team || '—'} • Sistema Operacional Ativo`}
+            />
+
             {/* Professional Header Bar */}
             <AgentPanelHeader 
               agent={{
@@ -788,6 +799,7 @@ export default function AgentPanel() {
             <CopyrightFooter className="border-t border-border/30 mt-4" />
           </div>
         </main>
+      </div>
       </div>
     </ThemedPanelBackground>
 
