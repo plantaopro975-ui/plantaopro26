@@ -23,7 +23,7 @@ import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 import { cn } from '@/lib/utils';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
-import logoEmblem from '@/assets/logo-plantao-pro.png';
+
 import headerBg from '@/assets/header-bg.jpg';
 
 export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
