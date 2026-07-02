@@ -251,7 +251,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
         {...vehicleHandlers}
-        {...vehiclePinch}
         className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none cursor-grab active:cursor-grabbing"
         style={{
           position: 'absolute',
@@ -303,11 +302,12 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         onPointerDown={agentHandlers.onPointerDown}
         onPointerMove={agentHandlers.onPointerMove}
         onPointerUp={agentHandlers.onPointerUp}
+        onPointerCancel={agentHandlers.onPointerCancel}
         onWheel={agentHandlers.onWheel}
         onDoubleClick={agentHandlers.onDoubleClick}
-        onTouchStart={agentPinch.onTouchStart}
-        onTouchMove={agentPinch.onTouchMove}
-        onTouchEnd={agentPinch.onTouchEnd}
+        onTouchStart={agentHandlers.onTouchStart}
+        onTouchMove={agentHandlers.onTouchMove}
+        onTouchEnd={agentHandlers.onTouchEnd}
         style={{
           position: 'absolute',
           left: `${agentT.xPct}%`,
