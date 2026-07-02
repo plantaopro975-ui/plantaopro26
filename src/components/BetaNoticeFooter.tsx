@@ -1,123 +1,47 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Shield, AlertTriangle, Heart, Lock, Server, Users } from 'lucide-react';
+import { Shield, AlertTriangle, Heart, Lock, Server, Users, Info } from 'lucide-react';
 
 /**
  * BetaNoticeFooter
- * Rodapé exclusivo para versão mobile: informa que se trata de app não-oficial em beta,
- * abre modal detalhado ao clique. Puro SVG + tokens semânticos.
+ * Micro-pill discreto (somente mobile). Abre modal com termos completos.
  */
 export function BetaNoticeFooter() {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <div className="md:hidden w-full px-3 pt-3 pb-4">
+      <div className="md:hidden w-full flex justify-center px-3 pt-1 pb-2">
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="group relative w-full overflow-hidden rounded-lg border border-primary/25 bg-gradient-to-br from-card/90 via-background/80 to-card/90 px-3 py-3 text-left shadow-[0_4px_18px_hsl(220_45%_2%/0.55)] backdrop-blur-md transition-all active:scale-[0.98]"
-          aria-label="Sobre esta versão beta do aplicativo"
+          aria-label="Sobre esta versão beta"
+          className="group inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-card/70 px-2.5 py-1 text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground/90 backdrop-blur-sm transition-all active:scale-95 hover:border-primary/50"
         >
-          {/* SVG decorativo — faixa hexagonal tática */}
-          <svg
-            aria-hidden
-            className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.10]"
-            viewBox="0 0 400 100"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <pattern id="beta-hex" width="20" height="18" patternUnits="userSpaceOnUse">
-                <polygon
-                  points="10,1 19,6 19,14 10,19 1,14 1,6"
-                  fill="none"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth="0.6"
-                />
-              </pattern>
-              <linearGradient id="beta-glow" x1="0" x2="1" y1="0" y2="0">
-                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <rect width="400" height="100" fill="url(#beta-hex)" />
-            <rect x="0" y="0" width="400" height="1" fill="url(#beta-glow)" />
-            <rect x="0" y="99" width="400" height="1" fill="url(#beta-glow)" />
+          {/* Micro-selo BETA em SVG */}
+          <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden className="text-primary">
+            <path
+              d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
+              fill="currentColor"
+              opacity="0.15"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <circle cx="18.5" cy="5.5" r="1.6" fill="hsl(var(--destructive))">
+              <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
+            </circle>
           </svg>
-
-          <div className="relative flex items-start gap-3">
-            {/* Ícone SVG "BETA" custom */}
-            <div className="relative shrink-0">
-              <svg width="42" height="42" viewBox="0 0 42 42" className="drop-shadow-[0_2px_4px_hsl(var(--primary)/0.35)]">
-                <defs>
-                  <linearGradient id="beta-shield" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" />
-                    <stop offset="100%" stopColor="hsl(var(--primary) / 0.55)" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M21 3 L37 9 V22 C37 30 30 37 21 39 C12 37 5 30 5 22 V9 Z"
-                  fill="url(#beta-shield)"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth="1"
-                  opacity="0.95"
-                />
-                <text
-                  x="21"
-                  y="24"
-                  textAnchor="middle"
-                  fontSize="9"
-                  fontWeight="900"
-                  fill="hsl(var(--primary-foreground))"
-                  fontFamily="'IBM Plex Sans', ui-sans-serif"
-                  letterSpacing="1"
-                >
-                  BETA
-                </text>
-                <circle cx="34" cy="8" r="3.5" fill="hsl(var(--destructive))">
-                  <animate attributeName="opacity" values="1;0.35;1" dur="1.6s" repeatCount="indefinite" />
-                </circle>
-              </svg>
-            </div>
-
-            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary">
-                  Aviso · Versão Beta
-                </span>
-              </div>
-              <p className="text-[12px] leading-snug text-foreground/90 font-medium">
-                App <span className="text-primary font-bold">não oficial</span> · Iniciativa de agente para agentes
-              </p>
-              <p className="text-[10px] leading-tight text-muted-foreground/85">
-                Toque para ver os termos completos e responsabilidades
-              </p>
-            </div>
-
-            <svg width="14" height="14" viewBox="0 0 24 24" className="mt-1 shrink-0 text-primary/70">
-              <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
+          <span className="text-primary font-bold">BETA</span>
+          <span className="text-muted-foreground/70">·</span>
+          <span>App não oficial</span>
+          <Info className="h-2.5 w-2.5 text-primary/70" />
         </button>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md p-0 overflow-hidden border-primary/30">
-          {/* Header cinematográfico */}
           <div className="relative border-b border-primary/20 bg-gradient-to-br from-primary/15 via-background to-background px-5 pt-5 pb-4">
-            <svg
-              aria-hidden
-              className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
-              viewBox="0 0 200 60"
-              preserveAspectRatio="none"
-            >
-              <pattern id="beta-modal-grid" width="12" height="12" patternUnits="userSpaceOnUse">
-                <path d="M12 0 L0 0 0 12" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5" />
-              </pattern>
-              <rect width="200" height="60" fill="url(#beta-modal-grid)" />
-            </svg>
             <DialogHeader className="relative">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-md bg-primary/15 ring-1 ring-primary/40">
