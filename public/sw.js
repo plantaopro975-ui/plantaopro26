@@ -2,7 +2,7 @@
 // IMPORTANT: bump APP_VERSION on every UI/theme/header/footer release so that
 // installed clients evict the previous cached shell and apply changes without
 // reload loops.
-const APP_VERSION = 'v7-2026-07-02-swr';
+const APP_VERSION = 'v9-2026-07-02-android-cooldown';
 const STATIC_CACHE = `plantao-pro-static-${APP_VERSION}`;
 const DYNAMIC_CACHE = `plantao-pro-dynamic-${APP_VERSION}`;
 const VALID_CACHES = new Set([STATIC_CACHE, DYNAMIC_CACHE]);
@@ -55,7 +55,7 @@ self.addEventListener('activate', (event) => {
 // ---------------------------------------------------------------------------
 // - Navigations (HTML)   : network-first with 4s timeout, no caching
 // - Supabase /auth/v1    : pass-through (never cache, never intercept errors)
-// - Supabase other GETs  : stale-while-revalidate (SWR) with 6s timeout
+// - Supabase other GETs  : pass-through (evita CPU/cache extra no Android)
 // - Same-origin static   : cache-first (images/fonts/audio)
 // - Same-origin JS/CSS   : stale-while-revalidate (fast repeat loads)
 // - Everything else      : network pass-through
@@ -100,9 +100,9 @@ self.addEventListener('fetch', (event) => {
     return; // let the browser handle it directly
   }
 
-  // 3) Supabase data GETs: stale-while-revalidate
+  // 3) Supabase data GETs: pass-through. Cache de API em SW aquece WebView
+  // em aparelhos fracos e pode manter rede/CPU ativos em background.
   if (url.hostname.includes('supabase.co')) {
-    event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE, API_TIMEOUT_MS));
     return;
   }
 

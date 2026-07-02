@@ -33,6 +33,24 @@ function isSafeModeActive(): boolean {
   }
 }
 
+function installInitialPerformanceModeClass() {
+  try {
+    const stored = localStorage.getItem('agent_low_motion');
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const forced = stored === '1';
+    const disabled = stored === '0';
+    const active = forced || (!disabled && (isAndroid || reducedMotion));
+
+    document.documentElement.classList.toggle('low-performance-mode', active);
+    document.documentElement.classList.toggle('android-performance-mode', active && isAndroid);
+  } catch {
+    // ignore
+  }
+}
+
+installInitialPerformanceModeClass();
+
 // Register the Service Worker ONCE (avoids multiple registrations and reload loops)
 // that can cause auth refresh storms.
 if ("serviceWorker" in navigator && !isSafeModeActive()) {

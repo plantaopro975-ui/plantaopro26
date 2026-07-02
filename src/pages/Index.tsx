@@ -76,6 +76,7 @@ import { AuthDialog } from '@/components/auth/AuthDialog';
 import { AuthInput } from '@/components/auth/AuthInput';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TeamBadge } from '@/components/auth/TeamBadge';
+import { useLowMotion } from '@/hooks/useLowMotion';
 
 
 
@@ -93,6 +94,7 @@ export default function Index() {
   const { toast } = useToast();
   const { playSound } = useSoundEffects();
   const { themeConfig, theme, resolvedTheme } = useTheme();
+  const { lowMotion } = useLowMotion();
   const themeAssets = getThemeAssets(theme, resolvedTheme);
   const { isAvailable: isBiometricAvailable, isEnrolled: isBiometricEnrolled, enrolledCpf, enrollBiometric, authenticateBiometric } = useBiometricAuth();
   const { saveCredential, updateLastLogin } = useSavedCredentialsSync();
@@ -1239,8 +1241,8 @@ export default function Index() {
   return (
     <>
       <div className="home-viewport-shell flex flex-col bg-background relative overflow-hidden overscroll-none">
-        {/* Sober command-room background — SVG only, no posters */}
-        <CommandRoomBackground />
+        {/* Android/low-performance: remove backdrop duplicado e SVG grid para evitar aquecimento. */}
+        {!lowMotion && <CommandRoomBackground />}
 
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
