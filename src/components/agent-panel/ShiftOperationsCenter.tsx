@@ -183,17 +183,32 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
     })();
   }, [agentTeam, unitId]);
 
-  // Load persisted checklist & obs
+  // Load persisted checklist & obs (DB first, localStorage fallback)
   useEffect(() => {
-    if (!checklistStorageKey) return;
-    try {
-      const c = localStorage.getItem(checklistStorageKey);
-      if (c) setChecklist(JSON.parse(c));
-      const o = localStorage.getItem(obsStorageKey);
-      if (o) setObservations(o);
-    } catch { /* noop */ }
-  }, [checklistStorageKey, obsStorageKey]);
+    if (!shiftKey) return;
+    let cancelled = false;
+    (async () => {
+      // fallback local imediato para UX
+      try {
+        const c = localStorage.getItem(checklistStorageKey);
+        if (c && !cancelled) setChecklist(JSON.parse(c));
+        const o = localStorage.getItem(obsStorageKey);
+        if (o && !cancelled) setObservations(o);
+      } catch { /* noop */ }
 
+      const { data, error } = await supabase
+        .from('shift_checklists')
+        .select('checklist, observations')
+        .eq('agent_id', agentId)
+        .eq('shift_id', shiftKey)
+        .maybeSingle();
+      if (!cancelled && !error && data) {
+        setChecklist((data.checklist as Record<string, boolean>) || {});
+        setObservations(data.observations || '');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [shiftKey, agentId, checklistStorageKey, obsStorageKey]);
 
   // Elapsed timer
   useEffect(() => {
@@ -221,16 +236,31 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
     return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
   }, [checklist, visibleChecklist]);
 
+  const persist = async (nextChecklist: Record<string, boolean>, nextObs: string) => {
+    if (!shiftKey) return;
+    try {
+      await supabase
+        .from('shift_checklists')
+        .upsert(
+          { agent_id: agentId, shift_id: shiftKey, checklist: nextChecklist, observations: nextObs },
+          { onConflict: 'agent_id,shift_id' }
+        );
+    } catch { /* offline: mantém localStorage */ }
+  };
+
   const toggleCheck = (id: string) => {
     const next = { ...checklist, [id]: !checklist[id] };
     setChecklist(next);
     if (checklistStorageKey) localStorage.setItem(checklistStorageKey, JSON.stringify(next));
+    void persist(next, observations);
   };
 
   const saveObs = (v: string) => {
     setObservations(v);
     if (obsStorageKey) localStorage.setItem(obsStorageKey, v);
+    void persist(checklist, v);
   };
+
 
   const exportPDF = () => {
     if (!currentShift) {
