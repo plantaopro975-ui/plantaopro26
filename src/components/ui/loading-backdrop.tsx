@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
+import loadingBg from "@/assets/loading-backdrop.jpg";
 
 /**
  * Backdrop leve e responsivo para telas de "Carregando...".
- * - GPU-friendly (apenas gradientes + 1 pulse muito lento)
- * - Sem imagens, sem blur pesado -> ok em mobile
+ * - Imagem tática realista (sala de comando) + overlays GPU-friendly
  */
 export function LoadingBackdrop({ className }: { className?: string }) {
   return (
@@ -14,8 +14,14 @@ export function LoadingBackdrop({ className }: { className?: string }) {
         className
       )}
     >
-      {/* Base */}
-      <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950" />
+      {/* Base tática realista */}
+      <div
+        className="absolute inset-0 bg-zinc-950 bg-cover bg-center"
+        style={{ backgroundImage: `url(${loadingBg})` }}
+      />
+      {/* Escurecimento para legibilidade */}
+      <div className="absolute inset-0 bg-zinc-950/70" />
+
 
       {/* Glow âmbar suave — animação lenta */}
       <div
