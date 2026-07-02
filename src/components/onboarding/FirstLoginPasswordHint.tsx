@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { ShieldAlert, KeyRound } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 
 const LS_KEY = 'pp:first-login-seen';
 
@@ -23,6 +24,7 @@ export function FirstLoginPasswordHint() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const { enabled: welcomeHintEnabled, loading: welcomeHintLoading } = useWelcomeHintEnabled();
 
   useEffect(() => {
     let cancelled = false;
