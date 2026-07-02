@@ -495,7 +495,6 @@ export default function Master() {
     }
   };
 
-  const filteredAgents = agents.filter((agent) => {
   const debouncedAgentSearch = useDebouncedValue(agentSearchTerm, 200);
   const filteredAgents = agents.filter((agent) => {
     if (!debouncedAgentSearch) return true;
