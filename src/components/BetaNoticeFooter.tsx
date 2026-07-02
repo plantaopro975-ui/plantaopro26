@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Shield, AlertTriangle, Heart, Lock, Server, Users, X } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const SEEN_KEY = 'beta-notice-seen-v1';
 const HIDDEN_KEY = 'beta-notice-hidden-v1';
@@ -122,6 +123,54 @@ function DraggableBetaPill({ onOpen, onHide, retracted = false }: DraggableBetaP
   );
 }
 
+interface StaticBetaPillProps {
+  onOpen: () => void;
+  onHide: () => void;
+  retracted?: boolean;
+}
+
+function StaticBetaPill({ onOpen, onHide, retracted = false }: StaticBetaPillProps) {
+  // Ancorado logo abaixo do CommandStrip (mobile), centralizado, sem sobrepor.
+  return (
+    <div
+      className={`fixed left-1/2 -translate-x-1/2 z-[55] flex items-center gap-1.5 rounded-full border border-primary/40 bg-background/95 pl-2.5 pr-1.5 py-1 shadow-md backdrop-blur-md animate-fade-in motion-reduce:animate-none transition-all duration-300 origin-center hover:!opacity-100 hover:!scale-100 focus-within:!opacity-100 focus-within:!scale-100 ${retracted ? 'opacity-70 scale-90' : 'opacity-100 scale-100'}`}
+      style={{ top: 'calc(env(safe-area-inset-top, 0px) + 120px)' }}
+      role="group"
+      aria-label="Aviso de versão beta"
+    >
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label="Abrir aviso sobre versão beta"
+        className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-[0.18em] text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-full px-1.5 py-0.5"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
+            fill="hsl(var(--primary))"
+            opacity="0.2"
+            stroke="hsl(var(--primary))"
+            strokeWidth="1.6"
+          />
+          <circle cx="18.5" cy="5.5" r="1.6" fill="hsl(var(--destructive))">
+            <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+        <span className="font-bold">BETA</span>
+      </button>
+      <button
+        type="button"
+        onClick={onHide}
+        aria-label="Ocultar permanentemente o selo beta"
+        title="Ocultar"
+        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+      >
+        <X className="h-3 w-3" strokeWidth={2.5} />
+      </button>
+    </div>
+  );
+}
+
 /**
  * BetaNoticeFooter
  * Mobile-only. Abre modal automaticamente na 1ª visita e depois
@@ -141,6 +190,7 @@ export function BetaNoticeFooter() {
     }
   });
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     try {
@@ -178,11 +228,19 @@ export function BetaNoticeFooter() {
   return (
     <>
       {!hidden && (
-        <DraggableBetaPill
-          onOpen={() => setOpen(true)}
-          onHide={hidePermanently}
-          retracted={seen && !open}
-        />
+        isMobile ? (
+          <StaticBetaPill
+            onOpen={() => setOpen(true)}
+            onHide={hidePermanently}
+            retracted={seen && !open}
+          />
+        ) : (
+          <DraggableBetaPill
+            onOpen={() => setOpen(true)}
+            onHide={hidePermanently}
+            retracted={seen && !open}
+          />
+        )
       )}
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
