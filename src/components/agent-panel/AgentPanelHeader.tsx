@@ -10,12 +10,11 @@ import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
 import { Droplet, LogOut, Gift, Building2, Bell, RefreshCw, Wifi, WifiOff, Shield, Sword, Target, Zap, Crown, Type } from 'lucide-react';
 import { FontSizeControl } from '@/components/FontSizeControl';
 import { cn } from '@/lib/utils';
+import { Icon3D } from '@/components/ui/Icon3D';
 import icon3dGift from '@/assets/icon-3d-gift.png';
 import icon3dRefresh from '@/assets/icon-3d-refresh.png';
 import icon3dLogout from '@/assets/icon-3d-logout.png';
 import panelHeaderBg from '@/assets/panel-header-bg.jpg';
-
-const icon3dCls = 'h-6 w-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] group-hover:scale-110 transition-transform duration-300';
 
 interface Agent {
   id: string;
