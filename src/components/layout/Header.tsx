@@ -170,7 +170,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-8 w-8 hover:bg-primary/10 hover:border-primary/30 transition-all"
+          className="h-9 w-9 shrink-0 hover:bg-primary/10 hover:border-primary/30 transition-all"
           onClick={() => {
             toggleSound();
             playSound('tactical-click');
