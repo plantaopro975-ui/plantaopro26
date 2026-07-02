@@ -51,19 +51,23 @@ export function HomeVideoBackground() {
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden">
-      {/* Video element */}
-      <video
-        ref={videoRef}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-          isLoaded ? 'opacity-40' : 'opacity-0'
-        }`}
-        src="/video/intro.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        onLoadedData={() => setIsLoaded(true)}
-      />
+      {/* Video element - disabled on mobile / low-motion to prevent overheating */}
+      {enableVideo && (
+        <video
+          ref={videoRef}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            isLoaded ? 'opacity-40' : 'opacity-0'
+          }`}
+          src="/video/intro.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          onLoadedData={() => setIsLoaded(true)}
+        />
+      )}
+
       
       {/* Gradient overlay */}
       <div 
