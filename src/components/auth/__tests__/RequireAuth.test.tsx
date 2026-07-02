@@ -55,24 +55,22 @@ function renderAt(path: string) {
 }
 
 describe("RequireAuth — guards de rota", () => {
-  it("visitante não autenticado NÃO renderiza /dashboard e é redirecionado", () => {
+  beforeEach(() => {
     authState.user = null;
     authState.isLoading = false;
     authState.masterSession = null;
+    authState.isMaster = false;
+    authState.userRole = null;
+  });
 
+  it("visitante não autenticado NÃO renderiza /dashboard e é redirecionado", () => {
     renderAt("/dashboard");
-
     expect(screen.queryByText("DASHBOARD_SECRETO")).not.toBeInTheDocument();
     expect(screen.getByText("HOME_PUBLICA")).toBeInTheDocument();
   });
 
   it("visitante não autenticado NÃO renderiza /master e vê mensagem de Área Restrita", () => {
-    authState.user = null;
-    authState.isLoading = false;
-    authState.masterSession = null;
-
     renderAt("/master");
-
     expect(screen.queryByText("Painel Master")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Ação Master/i })).not.toBeInTheDocument();
     expect(screen.getByRole("alert")).toBeInTheDocument();
@@ -81,21 +79,32 @@ describe("RequireAuth — guards de rota", () => {
 
   it("usuário autenticado acessa /dashboard normalmente", () => {
     authState.user = { id: "u1" };
-    authState.isLoading = false;
-    authState.masterSession = null;
-
+    authState.userRole = "user";
     renderAt("/dashboard");
-
     expect(screen.getByText("DASHBOARD_SECRETO")).toBeInTheDocument();
   });
 
-  it("usuário autenticado acessa /master normalmente", () => {
+  it("usuário master autenticado acessa /master normalmente", () => {
     authState.user = { id: "u1" };
-    authState.isLoading = false;
-    authState.masterSession = null;
-
+    authState.userRole = "master";
+    authState.isMaster = true;
     renderAt("/master");
+    expect(screen.getByText("Painel Master")).toBeInTheDocument();
+  });
 
+  it("usuário autenticado SEM papel master NÃO acessa /master (bloqueado)", () => {
+    authState.user = { id: "u1" };
+    authState.userRole = "admin";
+    authState.isMaster = false;
+    renderAt("/master");
+    expect(screen.queryByText("Painel Master")).not.toBeInTheDocument();
+    expect(screen.getByText(/Acesso Master Exclusivo/i)).toBeInTheDocument();
+  });
+
+  it("sessão master (edge function) acessa /master mesmo sem user Supabase", () => {
+    authState.user = null;
+    authState.masterSession = "franc";
+    renderAt("/master");
     expect(screen.getByText("Painel Master")).toBeInTheDocument();
   });
 
