@@ -118,6 +118,12 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
           PlantaoPro v1.0
         </p>
       </div>
+
+      <RestrictedAccessDialog
+        open={!!restricted}
+        onOpenChange={(o) => !o && setRestricted(null)}
+        targetLabel={restricted ?? undefined}
+      />
     </div>
   );
 }
