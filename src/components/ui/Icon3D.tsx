@@ -160,3 +160,18 @@ export function Icon3D({
     </span>
   );
 }
+
+/**
+ * Icon3DAction — compact standardized variant for row/table action buttons.
+ * Fixed size 16, align-middle, leading-none. Use in every compact <Button>
+ * to guarantee visual consistency across Dashboard, Master, and unit tables.
+ */
+export function Icon3DAction(props: Omit<Icon3DProps, 'size'>) {
+  return (
+    <Icon3D
+      {...(props as Icon3DProps)}
+      size={16}
+      className={cn('align-middle leading-none', props.className)}
+    />
+  );
+}
