@@ -61,7 +61,7 @@ const App = () => (
                       <Route
                         path="/dashboard"
                         element={
-                          <RequireAuth mode="redirect" redirectTo="/">
+                          <RequireAuth mode="block">
                             <Dashboard />
                           </RequireAuth>
                         }
@@ -88,7 +88,7 @@ const App = () => (
                     <Route
                       path="/agent-panel"
                       element={
-                        <RequireAuth mode="redirect" redirectTo="/">
+                        <RequireAuth mode="block">
                           <AgentPanel />
                         </RequireAuth>
                       }
@@ -104,7 +104,7 @@ const App = () => (
                     <Route
                       path="/settings"
                       element={
-                        <RequireAuth mode="redirect" redirectTo="/">
+                        <RequireAuth mode="block">
                           <Settings />
                         </RequireAuth>
                       }

@@ -36,8 +36,24 @@ function renderAt(path: string) {
         <Route
           path="/dashboard"
           element={
-            <RequireAuth mode="redirect" redirectTo="/">
+            <RequireAuth mode="block">
               <DashboardStub />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/agent-panel"
+          element={
+            <RequireAuth mode="block">
+              <div>PAINEL_SECRETO</div>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <RequireAuth mode="block">
+              <div>CONFIG_SECRETO</div>
             </RequireAuth>
           }
         />
@@ -54,6 +70,7 @@ function renderAt(path: string) {
   );
 }
 
+
 describe("RequireAuth — guards de rota", () => {
   beforeEach(() => {
     authState.user = null;
@@ -63,11 +80,22 @@ describe("RequireAuth — guards de rota", () => {
     authState.userRole = null;
   });
 
-  it("visitante não autenticado NÃO renderiza /dashboard e é redirecionado", () => {
+  it("visitante não autenticado NÃO renderiza /dashboard e vê Área Restrita (acesso direto por URL)", () => {
     renderAt("/dashboard");
     expect(screen.queryByText("DASHBOARD_SECRETO")).not.toBeInTheDocument();
-    expect(screen.getByText("HOME_PUBLICA")).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.getByText(/Área Restrita/i)).toBeInTheDocument();
   });
+
+  it.each([
+    ["/agent-panel", "PAINEL_SECRETO"],
+    ["/settings", "CONFIG_SECRETO"],
+  ])("acesso direto a %s bloqueia render e exibe Área Restrita", (path, secret) => {
+    renderAt(path);
+    expect(screen.queryByText(secret)).not.toBeInTheDocument();
+    expect(screen.getByText(/Área Restrita/i)).toBeInTheDocument();
+  });
+
 
   it("visitante não autenticado NÃO renderiza /master e vê mensagem de Área Restrita", () => {
     renderAt("/master");
