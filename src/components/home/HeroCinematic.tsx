@@ -178,7 +178,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
             : undefined
         }
-        className="agent-figure absolute z-40 block bottom-[36%] sm:bottom-[30%] lg:bottom-[24%] right-1 sm:right-2 h-[26%] sm:h-[40%] lg:h-[54%] max-h-[55vh] w-auto max-w-[42%] sm:max-w-[38%] lg:max-w-[32%] object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_22px_hsl(var(--accent)/0.5))_drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
+        className="agent-figure absolute z-40 block bottom-[36%] sm:bottom-[30%] lg:bottom-[24%] right-1 sm:right-2 h-[18%] sm:h-[28%] lg:h-[38%] max-h-[40vh] w-auto max-w-[30%] sm:max-w-[26%] lg:max-w-[22%] object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95"
       />
 
 
