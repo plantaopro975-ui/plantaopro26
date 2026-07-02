@@ -217,22 +217,57 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-slate-900/95 backdrop-blur-md border-primary/30 shadow-xl shadow-primary/10">
-            <DropdownMenuLabel className="text-primary font-semibold">Minha Conta</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-primary/20" />
-            <DropdownMenuItem onClick={() => handleNavigate('/settings')} className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer">
-              <User className="mr-2 h-4 w-4 text-primary" />
-              Perfil
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleNavigate('/settings')} className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer">
-              <Settings className="mr-2 h-4 w-4 text-primary" />
-              Configurações
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-primary/20" />
-            <DropdownMenuItem onClick={handleSignOut} className="text-red-400 hover:bg-red-500/10 focus:bg-red-500/10 cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              Sair
-            </DropdownMenuItem>
+          <DropdownMenuContent align="end" className="w-64 bg-slate-900/95 backdrop-blur-md border-primary/30 shadow-xl shadow-primary/10">
+            {user ? (
+              <>
+                <DropdownMenuLabel className="text-primary font-semibold">Minha Conta</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-primary/20" />
+                <DropdownMenuItem onClick={() => handleNavigate('/settings')} className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer">
+                  <User className="mr-2 h-4 w-4 text-primary" />
+                  Perfil
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleNavigate('/settings')} className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4 text-primary" />
+                  Configurações
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-primary/20" />
+                <DropdownMenuItem onClick={handleSignOut} className="text-red-400 hover:bg-red-500/10 focus:bg-red-500/10 cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sair
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <div className="p-4 flex flex-col items-center text-center gap-3">
+                <svg
+                  viewBox="0 0 64 64"
+                  className="h-14 w-14 text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M32 4 L54 14 V32 C54 46 44 56 32 60 C20 56 10 46 10 32 V14 Z" fill="hsl(var(--primary) / 0.08)" />
+                  <rect x="22" y="30" width="20" height="16" rx="2" />
+                  <path d="M26 30 V24 a6 6 0 0 1 12 0 V30" />
+                  <circle cx="32" cy="38" r="1.8" fill="currentColor" />
+                </svg>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-primary tracking-wide uppercase">Área Restrita</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Autenticação necessária. Faça login para acessar seu perfil e configurações.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  className="w-full mt-1"
+                  onClick={() => handleNavigate('/auth')}
+                >
+                  Entrar no sistema
+                </Button>
+              </div>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
