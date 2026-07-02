@@ -579,8 +579,8 @@ export default function Index() {
     
     if (!formData.password) {
       errors.password = 'Senha é obrigatória';
-    } else if (formData.password.length < 6) {
-      errors.password = 'Senha deve ter pelo menos 6 caracteres';
+    } else if (!/^\d{6}$/.test(formData.password)) {
+      errors.password = 'Senha deve ter exatamente 6 dígitos numéricos';
     }
     
     if (formData.password !== formData.confirmPassword) {
