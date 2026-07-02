@@ -79,6 +79,7 @@ export function LicenseFinanceControl() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [activeSubTab, setActiveSubTab] = useState('expired');
   
