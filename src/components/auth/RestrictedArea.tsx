@@ -10,10 +10,10 @@ interface RestrictedAreaProps {
 }
 
 const DEFAULT_NOTICES: Array<{ unit: string; text: string }> = [
-  { unit: "ISE Rio Branco", text: "Operações normais. Efetivo em prontidão." },
-  { unit: "ISE Feijó", text: "Plantão ativo — canal de rádio 24/7 operante." },
-  { unit: "ISE Cruzeiro do Sul", text: "Sem ocorrências críticas nas últimas 24h." },
-  { unit: "ISE Tarauacá", text: "Rotina institucional sem intercorrências." },
+  { unit: "ISE Rio Branco", text: "Operação normal — efetivo em prontidão." },
+  { unit: "ISE Feijó", text: "Plantão ativo — rádio 24/7 operante." },
+  { unit: "ISE Cruzeiro do Sul", text: "Sem ocorrências nas últimas 24h." },
+  { unit: "ISE Sena Madureira", text: "Rotina institucional estável." },
 ];
 
 /**
@@ -22,7 +22,7 @@ const DEFAULT_NOTICES: Array<{ unit: string; text: string }> = [
  */
 export const RestrictedArea: React.FC<RestrictedAreaProps> = ({
   title = "Área Restrita",
-  message = "Este módulo é de acesso exclusivo a agentes autenticados. Faça login para prosseguir.",
+  message = "Acesso exclusivo a agentes autenticados.",
   notices = DEFAULT_NOTICES,
 }) => {
   const navigate = useNavigate();
@@ -30,12 +30,12 @@ export const RestrictedArea: React.FC<RestrictedAreaProps> = ({
     <main
       role="alert"
       aria-labelledby="restricted-title"
-      className="min-h-[70vh] flex items-center justify-center px-6 py-12"
+      className="min-h-[60vh] flex items-center justify-center px-4 py-8"
     >
-      <div className="max-w-lg w-full text-center space-y-6">
+      <div className="max-w-sm w-full text-center space-y-4">
         <svg
           viewBox="0 0 96 96"
-          className="mx-auto h-24 w-24 text-primary drop-shadow-[0_0_12px_hsl(var(--primary)/0.5)]"
+          className="mx-auto h-14 w-14 text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.4)]"
           fill="none"
           stroke="currentColor"
           strokeWidth="2.5"
@@ -49,54 +49,63 @@ export const RestrictedArea: React.FC<RestrictedAreaProps> = ({
           />
           <rect x="34" y="46" width="28" height="22" rx="3" />
           <path d="M40 46 V36 a8 8 0 0 1 16 0 V46" />
-          <circle cx="48" cy="56" r="2.5" fill="currentColor" />
-          <path d="M48 58 v6" />
+          <circle cx="48" cy="56" r="2" fill="currentColor" />
+          <path d="M48 58 v5" />
         </svg>
-        <div className="space-y-2">
+        <div className="space-y-1">
           <h1
             id="restricted-title"
-            className="text-xl font-bold uppercase tracking-widest text-primary"
+            className="text-base font-bold uppercase tracking-[0.2em] text-primary"
           >
             {title}
           </h1>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             {message}
           </p>
         </div>
 
         {notices.length > 0 && (
           <section
-            aria-label="Avisos institucionais das unidades do Acre"
-            className="text-left rounded-lg border border-border/60 bg-card/60 backdrop-blur px-4 py-3 space-y-2"
+            aria-label="Status operacional das unidades"
+            className="text-left rounded-md border border-border/50 bg-card/50 backdrop-blur px-3 py-2.5 space-y-1.5"
           >
-            <h2 className="text-[11px] font-semibold uppercase tracking-widest text-primary/80">
-              Painel Institucional — Unidades do Acre
-            </h2>
-            <ul className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[10px] font-semibold uppercase tracking-widest text-primary/80">
+                Status Operacional
+              </h2>
+              <span className="flex items-center gap-1 text-[9px] font-mono uppercase text-emerald-500/90">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                ao vivo
+              </span>
+            </div>
+            <ul className="space-y-1">
               {notices.map((n) => (
                 <li
                   key={n.unit}
-                  className="text-xs text-muted-foreground flex gap-2"
+                  className="text-[11px] text-muted-foreground flex gap-1.5 leading-snug"
                 >
-                  <span className="font-semibold text-foreground/80 shrink-0">
+                  <span className="font-semibold text-foreground/85 shrink-0">
                     {n.unit}:
                   </span>
-                  <span>{n.text}</span>
+                  <span className="truncate">{n.text}</span>
                 </li>
               ))}
             </ul>
           </section>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-2 justify-center">
-          <Button onClick={() => navigate("/")} variant="outline">
+        <div className="flex flex-col sm:flex-row gap-2 justify-center pt-1">
+          <Button onClick={() => navigate("/")} variant="outline" size="sm">
             Voltar à Home
           </Button>
-          <Button onClick={() => navigate("/auth")}>Entrar no sistema</Button>
+          <Button onClick={() => navigate("/auth")} size="sm">
+            Entrar no sistema
+          </Button>
         </div>
       </div>
     </main>
   );
 };
+
 
 export default RestrictedArea;
