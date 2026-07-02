@@ -831,7 +831,7 @@ export default function Master() {
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary" />
+                  <Icon3D src={icon3dTeam} fallback={Users} size={22} />
                   Agentes Cadastrados ({filteredAgents.length})
                 </CardTitle>
                 <CardDescription>
