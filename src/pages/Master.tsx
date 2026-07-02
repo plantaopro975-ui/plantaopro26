@@ -932,7 +932,7 @@ export default function Master() {
                                 className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
                                 title="Editar"
                               >
-                                <Pencil className="h-4 w-4" />
+                                <Icon3D src={icon3dTypography} fallback={Pencil} size={18} />
                               </Button>
                               {agent.cpf && (
                                 <AdminResetPasswordDialog 
