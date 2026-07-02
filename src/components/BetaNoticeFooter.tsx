@@ -169,6 +169,7 @@ function StaticBetaPill({ onOpen, onHide, retracted = false }: StaticBetaPillPro
       </button>
     </div>
   );
+}
 
 /**
  * BetaNoticeFooter
