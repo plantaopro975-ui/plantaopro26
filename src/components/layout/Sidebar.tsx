@@ -1,7 +1,8 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { RestrictedAccessDialog } from '@/components/auth/RestrictedAccessDialog';
 import {
   Calendar,
   Users,
@@ -29,7 +30,10 @@ const masterItems = [
 
 export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const location = useLocation();
-  const { masterSession } = useAuth();
+  const { masterSession, user } = useAuth();
+  const [restricted, setRestricted] = useState<string | null>(null);
+  const isAuthed = !!user || !!masterSession;
+
 
   return (
     <aside ref={ref} {...props} className={cn("w-64 border-r border-sidebar-border bg-sidebar hidden lg:flex flex-col", props.className)}>
@@ -54,6 +58,12 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
             <Link
               key={item.href}
               to={item.href}
+              onClick={(e) => {
+                if (!isAuthed) {
+                  e.preventDefault();
+                  setRestricted(item.label);
+                }
+              }}
               className={cn(
                 'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
                 isActive
@@ -69,6 +79,7 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
             </Link>
           );
         })}
+
 
 
         {/* Master Section */}
@@ -110,6 +121,12 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
           PlantaoPro v1.0
         </p>
       </div>
+
+      <RestrictedAccessDialog
+        open={!!restricted}
+        onOpenChange={(o) => !o && setRestricted(null)}
+        targetLabel={restricted ?? undefined}
+      />
     </aside>
   );
 });

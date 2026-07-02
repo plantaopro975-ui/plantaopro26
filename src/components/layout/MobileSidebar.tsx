@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { RestrictedAccessDialog } from '@/components/auth/RestrictedAccessDialog';
 import {
   Calendar,
   Users,
@@ -29,7 +31,10 @@ interface MobileSidebarProps {
 
 export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
   const location = useLocation();
-  const { masterSession } = useAuth();
+  const { masterSession, user } = useAuth();
+  const [restricted, setRestricted] = useState<string | null>(null);
+  const isAuthed = !!user || !!masterSession;
+
 
   return (
     <div className="flex flex-col h-full bg-sidebar">
@@ -54,7 +59,14 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
             <Link
               key={item.href}
               to={item.href}
-              onClick={onNavigate}
+              onClick={(e) => {
+                if (!isAuthed) {
+                  e.preventDefault();
+                  setRestricted(item.label);
+                  return;
+                }
+                onNavigate();
+              }}
               className={cn(
                 'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
                 isActive
@@ -67,6 +79,7 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
             </Link>
           );
         })}
+
 
         {/* Master Section */}
         {masterSession && (
@@ -105,6 +118,12 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
           PlantaoPro v1.0
         </p>
       </div>
+
+      <RestrictedAccessDialog
+        open={!!restricted}
+        onOpenChange={(o) => !o && setRestricted(null)}
+        targetLabel={restricted ?? undefined}
+      />
     </div>
   );
 }
