@@ -13,7 +13,8 @@ const DEFAULT_NOTICES: Array<{ unit: string; text: string }> = [
   { unit: "ISE Rio Branco", text: "Operação normal — efetivo em prontidão." },
   { unit: "ISE Feijó", text: "Plantão ativo — rádio 24/7 operante." },
   { unit: "ISE Cruzeiro do Sul", text: "Sem ocorrências nas últimas 24h." },
-  { unit: "ISE Sena Madureira", text: "Rotina institucional estável." },
+ { unit: "ISE Sena Madureira", text: "Rotina institucional estável." },
+ { unit: "ISE Brasiléia", text: "Fronteira monitorada — equipe em turno." },
 ];
 
 /**
