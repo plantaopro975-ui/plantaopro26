@@ -5,6 +5,121 @@ import { Shield, AlertTriangle, Heart, Lock, Server, Users, X } from 'lucide-rea
 
 const SEEN_KEY = 'beta-notice-seen-v1';
 const HIDDEN_KEY = 'beta-notice-hidden-v1';
+const POS_KEY = 'beta-notice-pos-v1';
+
+interface DraggableBetaPillProps {
+  onOpen: () => void;
+  onHide: () => void;
+}
+
+function DraggableBetaPill({ onOpen, onHide }: DraggableBetaPillProps) {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(() => {
+    try {
+      const raw = localStorage.getItem(POS_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch { /* ignore */ }
+    return null;
+  });
+  const ref = useRef<HTMLDivElement>(null);
+  const dragState = useRef<{ dx: number; dy: number; moved: boolean } | null>(null);
+
+  // Center initially if no saved position
+  useEffect(() => {
+    if (pos === null && ref.current) {
+      const r = ref.current.getBoundingClientRect();
+      setPos({
+        x: window.innerWidth / 2 - r.width / 2,
+        y: window.innerHeight / 2 - r.height / 2,
+      });
+    }
+  }, [pos]);
+
+  const clamp = (x: number, y: number) => {
+    const el = ref.current;
+    if (!el) return { x, y };
+    const r = el.getBoundingClientRect();
+    return {
+      x: Math.max(4, Math.min(window.innerWidth - r.width - 4, x)),
+      y: Math.max(4, Math.min(window.innerHeight - r.height - 4, y)),
+    };
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!ref.current || !pos) return;
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    dragState.current = { dx: e.clientX - pos.x, dy: e.clientY - pos.y, moved: false };
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragState.current) return;
+    const nx = e.clientX - dragState.current.dx;
+    const ny = e.clientY - dragState.current.dy;
+    if (Math.abs(e.movementX) + Math.abs(e.movementY) > 0) dragState.current.moved = true;
+    const c = clamp(nx, ny);
+    setPos(c);
+  };
+
+  const onPointerUp = () => {
+    if (dragState.current && pos) {
+      try { localStorage.setItem(POS_KEY, JSON.stringify(pos)); } catch { /* ignore */ }
+    }
+    const wasDrag = dragState.current?.moved;
+    dragState.current = null;
+    return wasDrag;
+  };
+
+  return (
+    <div
+      ref={ref}
+      className="fixed z-[60] flex items-center gap-1.5 rounded-full border border-primary/40 bg-background/95 pl-2.5 pr-1.5 py-1.5 shadow-lg backdrop-blur-md animate-fade-in motion-reduce:animate-none touch-none select-none cursor-grab active:cursor-grabbing"
+      style={{
+        left: pos?.x ?? -9999,
+        top: pos?.y ?? -9999,
+        visibility: pos ? 'visible' : 'hidden',
+      }}
+      role="group"
+      aria-label="Aviso de versão beta (arrastável)"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+    >
+      <button
+        type="button"
+        onClick={(e) => {
+          if (dragState.current?.moved) { e.preventDefault(); return; }
+          onOpen();
+        }}
+        aria-label="Abrir aviso sobre versão beta"
+        className="inline-flex items-center gap-1.5 text-[12px] font-mono uppercase tracking-[0.18em] text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-full px-1.5 py-0.5"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
+            fill="hsl(var(--primary))"
+            opacity="0.2"
+            stroke="hsl(var(--primary))"
+            strokeWidth="1.6"
+          />
+          <circle cx="18.5" cy="5.5" r="1.6" fill="hsl(var(--destructive))">
+            <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+        <span className="font-bold">BETA</span>
+      </button>
+      <button
+        type="button"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={onHide}
+        aria-label="Ocultar permanentemente o selo beta"
+        title="Ocultar"
+        className="inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+      >
+        <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+      </button>
+    </div>
+  );
+}
 
 /**
  * BetaNoticeFooter
