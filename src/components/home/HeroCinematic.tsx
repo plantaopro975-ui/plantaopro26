@@ -209,7 +209,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
           <div className="relative flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
-              <h1 className="font-serif text-[22px] sm:text-[28px] lg:text-[38px] leading-[0.95] font-black text-foreground tracking-tight max-w-[16ch]">
+              <h1 className="font-mono uppercase text-[20px] sm:text-[26px] lg:text-[34px] leading-[1] font-extrabold text-foreground tracking-[0.04em] max-w-[16ch]">
                 Comando <span className="text-accent">Operacional</span>
                 <br />
                 <span className="text-primary-glow">Socioeducativo</span>
