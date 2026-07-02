@@ -32,6 +32,7 @@ import NotFound from "./pages/NotFound";
 import DebugAuth from "./pages/DebugAuth";
 import { AppShell } from "@/components/layout/AppShell";
 import { RequireAuth } from "@/components/auth/RequireAuth";
+import { ConfirmProvider } from "@/components/ui/confirm-provider";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
+              <ConfirmProvider>
               <GlobalNavigationHandler>
                 {/* Global Offline Banner */}
                 <GlobalOfflineBanner />
@@ -132,6 +134,7 @@ const App = () => (
                 {/* PWA Install Prompt - Shows on all pages when installable */}
                 <PWAInstallPrompt />
               </GlobalNavigationHandler>
+              </ConfirmProvider>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
