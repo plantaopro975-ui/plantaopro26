@@ -358,7 +358,8 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
 
   return (
     <>
-      {showHUD && <ShiftStartHUD silent={lowMotion} onDone={() => setShowHUD(false)} />}
+
+
 
       <Card className="bg-slate-900/60 border-emerald-500/30 overflow-hidden">
         <CardHeader className="pb-2 pt-3 px-4">
