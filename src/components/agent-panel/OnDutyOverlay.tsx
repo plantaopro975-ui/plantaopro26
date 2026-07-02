@@ -28,6 +28,7 @@ interface Shift {
 }
 
 export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
+  const { lowMotion } = useLowMotion();
   const [currentShift, setCurrentShift] = useState<Shift | null>(null);
   const [nextShift, setNextShift] = useState<Shift | null>(null);
   const [isOnDuty, setIsOnDuty] = useState(false);
