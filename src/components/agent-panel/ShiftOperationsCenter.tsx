@@ -25,6 +25,7 @@ interface Props {
   agentName: string;
   agentTeam?: string | null;
   unitId?: string | null;
+  agentRole?: string | null;
 }
 
 interface Shift {
@@ -42,14 +43,24 @@ interface TeamMember {
   role?: string | null;
 }
 
-const DEFAULT_CHECKLIST = [
-  { id: 'access', label: 'Acesso liberado à unidade' },
-  { id: 'scale', label: 'Escala confirmada com o chefe' },
-  { id: 'radio', label: 'Rádio / comunicação operacional' },
+interface ChecklistItem {
+  id: string;
+  label: string;
+  restrictedTo?: Array<'team_leader' | 'support'>;
+}
+
+const DEFAULT_CHECKLIST: ChecklistItem[] = [
+  { id: 'handover', label: 'Recebimento do plantão da equipe anterior (07:00)' },
+  { id: 'headcount', label: 'Contagem dos adolescentes' },
+  { id: 'equipment', label: 'Contagem de algemas e tonfas' },
+  { id: 'keys', label: 'Conferência das chaves de algemas' },
+  { id: 'radio', label: 'Rádios carregados e operacionais' },
   { id: 'uniform', label: 'Fardamento e EPI conforme' },
-  { id: 'briefing', label: 'Briefing/passagem recebida' },
+  { id: 'briefing', label: 'Briefing/passagem de serviço recebida' },
+  { id: 'logbook', label: 'Registros no livro oficial de ocorrências', restrictedTo: ['team_leader', 'support'] },
   { id: 'ready', label: 'Status operacional: PRONTO' },
 ];
+
 
 
 
@@ -118,7 +129,7 @@ function OperationsRadar({ members, myId, lowMotion }: { members: TeamMember[]; 
 }
 
 // ---------- Main Component ----------
-export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }: Props) {
+export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, agentRole }: Props) {
   const { lowMotion, toggle: toggleLowMotion } = useLowMotion();
   const [currentShift, setCurrentShift] = useState<Shift | null>(null);
   const [isOnDuty, setIsOnDuty] = useState(false);
@@ -197,11 +208,18 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
     return () => clearInterval(id);
   }, [currentShift, isOnDuty]);
 
+  const visibleChecklist = useMemo(() => {
+    return DEFAULT_CHECKLIST.filter((i) => {
+      if (!i.restrictedTo) return true;
+      return agentRole ? i.restrictedTo.includes(agentRole as 'team_leader' | 'support') : false;
+    });
+  }, [agentRole]);
+
   const checklistProgress = useMemo(() => {
-    const total = DEFAULT_CHECKLIST.length;
-    const done = DEFAULT_CHECKLIST.filter((i) => checklist[i.id]).length;
-    return { total, done, pct: Math.round((done / total) * 100) };
-  }, [checklist]);
+    const total = visibleChecklist.length;
+    const done = visibleChecklist.filter((i) => checklist[i.id]).length;
+    return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+  }, [checklist, visibleChecklist]);
 
   const toggleCheck = (id: string) => {
     const next = { ...checklist, [id]: !checklist[id] };
@@ -237,7 +255,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
     autoTable(doc, {
       startY: 62,
       head: [['Checklist de Início', 'Status']],
-      body: DEFAULT_CHECKLIST.map((i) => [i.label, checklist[i.id] ? 'OK' : '—']),
+      body: visibleChecklist.map((i) => [i.label, checklist[i.id] ? 'OK' : '—']),
       theme: 'grid',
       headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold' },
       styles: { fontSize: 9, cellPadding: 3 },
@@ -350,7 +368,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {DEFAULT_CHECKLIST.map((item) => {
+                {visibleChecklist.map((item) => {
                   const done = !!checklist[item.id];
                   return (
                     <label
