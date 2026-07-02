@@ -450,9 +450,55 @@ body {
 }
 
 @media (max-width: 640px) {
+  body {
+    background-attachment: scroll;
+  }
+
   .home-viewport-shell {
-    touch-action: none;
-    overscroll-behavior: none;
+    height: auto;
+    min-height: var(--home-viewport-height);
+    max-height: none;
+    overflow: visible;
+    contain: layout style;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y pinch-zoom;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: auto;
+  }
+
+  .hero-cinematic {
+    min-height: min(920px, calc(var(--safe-dvh) + 96px));
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .agent-figure,
+  .police-vehicle,
+  .team-card-3d,
+  .team-icon-3d {
+    will-change: auto;
+  }
+
+  .animate-team-float,
+  .animate-team-shield,
+  .animate-team-helmet,
+  .animate-team-radio,
+  .animate-team-handcuffs,
+  .police-vehicle,
+  .vehicle-fx--beacon-red,
+  .vehicle-fx--beacon-blue {
+    animation: none !important;
+  }
+
+  .vehicle-fx--beacon-red,
+  .vehicle-fx--beacon-blue {
+    opacity: 0.72;
+  }
+
+  .team-card-3d:hover,
+  .team-card-3d:active,
+  .team-card-3d:hover .team-icon-3d,
+  .team-card-3d:active .team-icon-3d {
+    transform: none;
   }
 }
 

@@ -394,7 +394,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   );
 }
 
-/** Boneco com triple-tap tolerante a rolagem. Um dedo desliza a página normalmente; só conta como toque se o dedo mover < 8px. */
+/** Boneco com triple-tap tolerante a rolagem. Pointer Events evitam listeners touch não-passivos e deixam o scroll nativo fluido. */
 function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: number } }) {
   const startRef = useRef<{ x: number; y: number; t: number } | null>(null);
   const clicksRef = useRef(0);
@@ -420,25 +420,21 @@ function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: 
       role="img"
       aria-label="Agente tático — toque 3 vezes para acesso admin"
       title="3 cliques = admin"
-      onTouchStart={(e) => {
-        const t = e.touches[0];
-        startRef.current = { x: t.clientX, y: t.clientY, t: Date.now() };
+      onPointerDown={(e) => {
+        if (e.pointerType !== 'touch' && e.pointerType !== 'mouse') return;
+        startRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
       }}
-      onTouchEnd={(e) => {
+      onPointerUp={(e) => {
         const s = startRef.current;
         startRef.current = null;
         if (!s) return;
-        const t = e.changedTouches[0];
-        const moved = Math.hypot(t.clientX - s.x, t.clientY - s.y);
+        const moved = Math.hypot(e.clientX - s.x, e.clientY - s.y);
         const dur = Date.now() - s.t;
-        // Só conta como toque de admin se dedo praticamente não moveu — rolagem passa livre
-        if (moved < 8 && dur < 400) registerTap();
+        // Só conta como toque de admin se o dedo/mouse praticamente não moveu — rolagem passa livre.
+        if (moved < 10 && dur < 420) registerTap();
       }}
-      onClick={(e) => {
-        // Desktop only — no mobile o toque é tratado em onTouchEnd
-        const pt = (e.nativeEvent as PointerEvent).pointerType;
-        if (pt === 'touch') return;
-        registerTap();
+      onPointerCancel={() => {
+        startRef.current = null;
       }}
       style={{
         position: 'absolute',
