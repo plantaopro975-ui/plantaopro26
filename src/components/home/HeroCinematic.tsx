@@ -424,38 +424,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           draggable={false}
           className="h-full w-auto object-contain object-bottom pointer-events-none"
         />
-        <div
-          className="absolute bottom-1 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 rounded-md border border-primary/40 bg-background/85 p-1 shadow-lg backdrop-blur-md sm:hidden"
-          aria-label="Controles de tamanho do agente"
-          onPointerDown={stopControlGesture}
-          onTouchStart={stopControlGesture}
-        >
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Reduzir agente"
-            onClick={(e) => { stopControlGesture(e); scaleAsset(setAgentT, -0.12); }}
-          >
-            <Minus className="h-4 w-4" aria-hidden />
-          </button>
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Ampliar agente"
-            onClick={(e) => { stopControlGesture(e); scaleAsset(setAgentT, 0.12); }}
-          >
-            <Plus className="h-4 w-4" aria-hidden />
-          </button>
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-primary/20 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Resetar agente"
-            onClick={(e) => { stopControlGesture(e); resetAsset(setAgentT, { xPct: 74, yPct: 58, scale: 1.05 }); }}
-          >
-            <RotateCcw className="h-4 w-4" aria-hidden />
-          </button>
-        </div>
       </div>
+
 
 
 
