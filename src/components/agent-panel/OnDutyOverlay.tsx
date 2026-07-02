@@ -13,6 +13,7 @@ import {
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useLowMotion } from '@/hooks/useLowMotion';
 
 interface OnDutyOverlayProps {
   agentId: string;
@@ -27,6 +28,7 @@ interface Shift {
 }
 
 export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
+  const { lowMotion } = useLowMotion();
   const [currentShift, setCurrentShift] = useState<Shift | null>(null);
   const [nextShift, setNextShift] = useState<Shift | null>(null);
   const [isOnDuty, setIsOnDuty] = useState(false);
@@ -228,18 +230,20 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
         <div className={cn(
           "relative overflow-hidden rounded-2xl border-3 p-4 md:p-5 backdrop-blur-md transition-all duration-500",
           isCritical
-            ? "bg-gradient-to-r from-amber-900/40 via-orange-900/30 to-red-900/40 border-amber-500/60 animate-duty-critical"
-            : "bg-gradient-to-r from-emerald-900/40 via-green-900/30 to-teal-900/40 border-emerald-500/60 animate-duty-glow"
+            ? cn("bg-gradient-to-r from-amber-900/40 via-orange-900/30 to-red-900/40 border-amber-500/60", !lowMotion && "animate-duty-critical")
+            : cn("bg-gradient-to-r from-emerald-900/40 via-green-900/30 to-teal-900/40 border-emerald-500/60", !lowMotion && "animate-duty-glow")
         )}>
           {/* Scanline sweep */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
-            <div className={cn(
-              "absolute top-0 h-full w-1/3 animate-duty-scanline",
-              isCritical
-                ? "bg-gradient-to-r from-transparent via-amber-400/15 to-transparent"
-                : "bg-gradient-to-r from-transparent via-emerald-400/15 to-transparent"
-            )} />
-          </div>
+          {!lowMotion && (
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+              <div className={cn(
+                "absolute top-0 h-full w-1/3 animate-duty-scanline",
+                isCritical
+                  ? "bg-gradient-to-r from-transparent via-amber-400/15 to-transparent"
+                  : "bg-gradient-to-r from-transparent via-emerald-400/15 to-transparent"
+              )} />
+            </div>
+          )}
 
           {/* Header */}
           <div className="relative flex items-center justify-between mb-4">

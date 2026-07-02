@@ -13,6 +13,7 @@ import { useAlarmNotifications } from '@/hooks/useAlarmNotifications';
 import { TeamMembersCard } from '@/components/agent-panel/TeamMembersCard';
 import { ProfessionalShiftTimer } from '@/components/agent-panel/ProfessionalShiftTimer';
 import { OnDutyOverlay } from '@/components/agent-panel/OnDutyOverlay';
+import { ShiftOperationsCenter } from '@/components/agent-panel/ShiftOperationsCenter';
 import { BHTracker } from '@/components/agent-panel/BHTracker';
 import { ShiftScheduleCard } from '@/components/agent-panel/ShiftScheduleCard';
 import { NextShiftCountdown } from '@/components/agent-panel/NextShiftCountdown';
@@ -517,6 +518,15 @@ export default function AgentPanel() {
 
             {/* On Duty Overlay - Discreto e minimizável */}
             <OnDutyOverlay agentId={agent.id} />
+
+            {/* Centro de Operações (checklist, radar, PDF, HUD 3-2-1) */}
+            <ShiftOperationsCenter
+              agentId={agent.id}
+              agentName={agent.name}
+              agentTeam={agent.team}
+              unitId={agent.unit_id}
+            />
+
 
             {/* HERO PANEL - Futuristic Status Dashboard */}
             <AgentHeroPanel 
