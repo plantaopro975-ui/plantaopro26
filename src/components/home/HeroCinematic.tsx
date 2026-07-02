@@ -156,34 +156,61 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         setT(clampT({ xPct: 50, yPct: 55, scale: 1 }));
       },
       onTouchStart: (e: React.TouchEvent) => {
-        if (e.touches.length < 2) return;
-        if (e.cancelable) e.preventDefault();
-        const [a, b] = [e.touches[0], e.touches[1]];
         const g = gestureRef.current;
-        g.dragging = false;
-        g.pointerId = null;
-        g.pinchStartDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-        setT(prev => {
-          g.pinchStartScale = prev.scale;
-          return prev;
-        });
+        if (e.touches.length === 1) {
+          if (e.cancelable) e.preventDefault();
+          const a = e.touches[0];
+          g.dragging = true;
+          g.moved = false;
+          g.pointerId = null;
+          g.startX = a.clientX;
+          g.startY = a.clientY;
+          g.startT = t;
+          return;
+        }
+        if (e.touches.length >= 2) {
+          if (e.cancelable) e.preventDefault();
+          const [a, b] = [e.touches[0], e.touches[1]];
+          g.dragging = false;
+          g.pointerId = null;
+          g.pinchStartDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+          setT(prev => {
+            g.pinchStartScale = prev.scale;
+            return prev;
+          });
+        }
       },
       onTouchMove: (e: React.TouchEvent) => {
         const g = gestureRef.current;
-        if (e.touches.length < 2 || g.pinchStartDist <= 0) return;
-        if (e.cancelable) e.preventDefault();
-        const [a, b] = [e.touches[0], e.touches[1]];
-        const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-        const ratio = distance / g.pinchStartDist;
-        if (g.pinchRaf) cancelAnimationFrame(g.pinchRaf);
-        g.pinchRaf = requestAnimationFrame(() => {
-          setT(prev => clampT({ ...prev, scale: g.pinchStartScale * ratio }));
-          g.pinchRaf = 0;
-        });
+        if (e.touches.length === 1 && g.dragging) {
+          const r = rect(); if (!r) return;
+          if (e.cancelable) e.preventDefault();
+          const a = e.touches[0];
+          const dxPx = a.clientX - g.startX;
+          const dyPx = a.clientY - g.startY;
+          if (Math.abs(dxPx) + Math.abs(dyPx) > 4) g.moved = true;
+          const dx = (dxPx / r.width) * 100;
+          const dy = (dyPx / r.height) * 100;
+          setT(prev => clampT({ ...prev, xPct: g.startT.xPct + dx, yPct: g.startT.yPct + dy }));
+          return;
+        }
+        if (e.touches.length >= 2 && g.pinchStartDist > 0) {
+          if (e.cancelable) e.preventDefault();
+          const [a, b] = [e.touches[0], e.touches[1]];
+          const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+          const ratio = distance / g.pinchStartDist;
+          if (g.pinchRaf) cancelAnimationFrame(g.pinchRaf);
+          g.pinchRaf = requestAnimationFrame(() => {
+            setT(prev => clampT({ ...prev, scale: g.pinchStartScale * ratio }));
+            g.pinchRaf = 0;
+          });
+        }
       },
       onTouchEnd: (e: React.TouchEvent) => {
         const g = gestureRef.current;
         if (e.touches.length >= 2) return;
+        if (g.moved) g.suppressClickUntil = Date.now() + 350;
+        g.dragging = false;
         g.pinchStartDist = 0;
         if (g.pinchRaf) {
           cancelAnimationFrame(g.pinchRaf);
