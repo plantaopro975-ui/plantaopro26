@@ -54,8 +54,26 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const dragging = useRef<null | 'agent' | 'vehicle'>(null);
   const offset = useRef({ x: 0, y: 0 });
 
-  const makeHandlers = (_kind: 'agent' | 'vehicle', _setter: (p: { x: number; y: number }) => void, _storageKey: string) => ({});
-
+  const makeHandlers = (kind: 'agent' | 'vehicle', setter: (p: { x: number; y: number }) => void, storageKey: string) => ({
+    onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+      dragging.current = kind;
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore */ }
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
+      if (dragging.current !== kind) return;
+      setter({ x: e.clientX - offset.current.x, y: e.clientY - offset.current.y });
+    },
+    onPointerUp: (e: React.PointerEvent<HTMLElement>) => {
+      if (dragging.current !== kind) return;
+      dragging.current = null;
+      try {
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        localStorage.setItem(storageKey, JSON.stringify({ x: rect.left, y: rect.top }));
+      } catch { /* ignore */ }
+    },
+  });
 
   const agentHandlers = makeHandlers('agent', setAgentPos, 'hero_agent_pos');
   const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos');
