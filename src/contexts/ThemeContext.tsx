@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Shield, Cpu, Monitor, Flame, Snowflake, Target, Zap, Radio, Crosshair, Crown, Network, Sparkles } from 'lucide-react';
 
 // Premium themes: tactical, cyber, crimson, arctic, sovereign, nexus, ember, system
@@ -376,25 +377,57 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeType>(() => {
-    const saved = localStorage.getItem('plantaopro-theme');
-    // If saved theme no longer exists (e.g. light was removed), fallback to tactical
-    if (saved && themes[saved as ThemeType]) {
-      return saved as ThemeType;
-    }
-    // Migrate old 'light' users to sovereign
-    if (saved === 'light') {
-      localStorage.setItem('plantaopro-theme', 'sovereign');
-      return 'sovereign';
-    }
-    return 'tactical';
-  });
+  // Global theme comes from DB (system_settings.global_theme).
+  // localStorage is intentionally ignored so all devices share the same theme.
+  const DEFAULT_THEME: ThemeType = 'tactical';
+  const [theme, setThemeState] = useState<ThemeType>(DEFAULT_THEME);
 
   const [systemTheme] = useState<'tactical'>(getSystemTheme);
 
-  const setTheme = useCallback((newTheme: ThemeType) => {
+  // Load global theme from DB + subscribe to realtime changes
+  useEffect(() => {
+    let mounted = true;
+
+    const applyFromDb = (raw: unknown) => {
+      if (!mounted) return;
+      const val = typeof raw === 'string' ? raw : DEFAULT_THEME;
+      if (themes[val as ThemeType]) setThemeState(val as ThemeType);
+    };
+
+    supabase
+      .from('system_settings')
+      .select('value')
+      .eq('key', 'global_theme')
+      .maybeSingle()
+      .then(({ data }) => applyFromDb(data?.value));
+
+    const channel = supabase
+      .channel('system_settings_theme')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'system_settings', filter: 'key=eq.global_theme' },
+        (payload: any) => applyFromDb(payload.new?.value)
+      )
+      .subscribe();
+
+    return () => {
+      mounted = false;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const setTheme = useCallback(async (newTheme: ThemeType) => {
     setThemeState(newTheme);
-    localStorage.setItem('plantaopro-theme', newTheme);
+    // Persist globally in DB (RLS restricts writes to admin/master).
+    const { error } = await supabase
+      .from('system_settings')
+      .upsert(
+        { key: 'global_theme', value: newTheme as any, updated_at: new Date().toISOString() },
+        { onConflict: 'key' }
+      );
+    if (error) {
+      console.warn('[theme] Não foi possível salvar tema global:', error.message);
+    }
   }, []);
 
   const resolvedTheme: Exclude<ThemeType, 'system'> = theme === 'system' ? systemTheme : theme;
