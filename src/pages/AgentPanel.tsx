@@ -66,6 +66,7 @@ export default function AgentPanel() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('equipe');
   const [hasShifts, setHasShifts] = useState(true);
+  const { enabled: promosEnabled } = usePromosEnabled();
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [isVerifyingSession, setIsVerifyingSession] = useState(false);
   const [sessionMissing, setSessionMissing] = useState(false);
