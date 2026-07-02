@@ -83,7 +83,7 @@ interface Unit {
 const teams = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const;
 
 export default function Index() {
-  const { user, isLoading, signIn, signUp, setMasterSession, isAdmin } = useAuth();
+  const { user, isLoading, signIn, signUp, setMasterSession, isAdmin, isMaster, userRole } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { playSound } = useSoundEffects();
@@ -201,11 +201,13 @@ export default function Index() {
   }, []);
 
   useEffect(() => {
-    if (!isLoading && user) {
-      // Route by role to avoid admins being sent to the agent panel (which requires an agent profile)
-      navigate(isAdmin ? '/admin' : '/agent-panel', { replace: true });
-    }
-  }, [user, isLoading, isAdmin, navigate]);
+    if (isLoading || !user) return;
+    // Aguarda hidratação do papel para evitar redirect prematuro
+    if (userRole === null) return;
+    if (isMaster) navigate('/master', { replace: true });
+    else if (isAdmin) navigate('/admin', { replace: true });
+    else navigate('/agent-panel', { replace: true });
+  }, [user, isLoading, isMaster, isAdmin, userRole, navigate]);
 
   const LAST_CPF_KEY = 'plantaopro_last_cpf';
 

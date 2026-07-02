@@ -69,7 +69,7 @@ const App = () => (
                       <Route
                         path="/master"
                         element={
-                          <RequireAuth mode="block">
+                          <RequireAuth mode="block" requireMaster>
                             <Master />
                           </RequireAuth>
                         }
