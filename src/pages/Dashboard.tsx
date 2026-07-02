@@ -13,6 +13,8 @@ import { AnnouncementsCard } from '@/components/dashboard/AnnouncementsCard';
 import { TeamShiftsPanel } from '@/components/dashboard/TeamShiftsPanel';
 import { OvertimeChart } from '@/components/dashboard/OvertimeChart';
 import { ShiftConflictsBanner } from '@/components/dashboard/ShiftConflictsBanner';
+import hudPageBg from '@/assets/hero-tactical-ops.jpg';
+const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 import { useShiftConflictDetection } from '@/hooks/useShiftConflictDetection';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
@@ -69,7 +71,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-dvh flex">
+      <div className="min-h-dvh flex hud-scope hud-page-bg" style={hudBgStyle}>
         <Sidebar />
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <div className="max-w-7xl mx-auto">
@@ -87,7 +89,7 @@ export default function Dashboard() {
 
   return (
     <ThemedPanelBackground team={null} showTeamImage={false}>
-      <div className="min-h-dvh flex">
+      <div className="min-h-dvh flex hud-scope hud-page-bg" style={hudBgStyle}>
         <Sidebar />
         <div className="flex-1 flex flex-col">
           {/* Header is rendered by AppShell layout */}

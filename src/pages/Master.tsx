@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import hudPageBg from '@/assets/hero-tactical-ops.jpg';
+const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { PanelSkeleton } from '@/components/ui/panel-skeleton';
@@ -502,7 +504,7 @@ export default function Master() {
 
   if (isLoading || loadingData) {
     return (
-      <div className="min-h-dvh p-4 md:p-6">
+      <div className="min-h-dvh p-4 md:p-6 hud-scope hud-page-bg" style={hudBgStyle}>
         <div className="max-w-7xl mx-auto">
           <PanelSkeleton rows={6} />
         </div>
@@ -513,7 +515,7 @@ export default function Master() {
   if (!masterSession) return null;
 
   return (
-    <div className="min-h-dvh p-4 md:p-6">
+    <div className="min-h-dvh p-4 md:p-6 hud-scope hud-page-bg" style={hudBgStyle}>
       <div className="max-w-7xl mx-auto space-y-6 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
