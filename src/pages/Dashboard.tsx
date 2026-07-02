@@ -15,11 +15,8 @@ import { OvertimeChart } from '@/components/dashboard/OvertimeChart';
 import { ShiftConflictsBanner } from '@/components/dashboard/ShiftConflictsBanner';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
-import { Icon3D } from '@/components/ui/Icon3D';
-import icon3dBuilding from '@/assets/icon3d-building.png';
-import icon3dTeam from '@/assets/icon3d-team.png';
-import icon3dClock from '@/assets/icon3d-clock.png';
-import icon3dShield from '@/assets/icon3d-shield.png';
+import { Icon3D, type Icon3DName } from '@/components/ui/Icon3D';
+
 import { useShiftConflictDetection } from '@/hooks/useShiftConflictDetection';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
@@ -132,19 +129,20 @@ export default function Dashboard() {
 
               {/* Quick Access Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {[
-                  { icon: Building2, icon3d: icon3dBuilding, text: 'Unidades',        color: 'text-blue-400',   bg: 'from-blue-500/20 to-blue-600/10',   route: '/units' },
-                  { icon: Users,     icon3d: icon3dTeam,     text: 'Agentes',         color: 'text-green-400',  bg: 'from-green-500/20 to-green-600/10', route: '/agents' },
-                  { icon: Clock,     icon3d: icon3dClock,    text: 'Banco de Horas',  color: 'text-amber-400',  bg: 'from-amber-500/20 to-amber-600/10', route: '/overtime' },
-                  { icon: Settings,  icon3d: icon3dShield,   text: 'Configurações',   color: 'text-purple-400', bg: 'from-purple-500/20 to-purple-600/10', route: '/settings' },
-                ].map((feature, i) => (
+                {([
+                  { icon3d: 'building' as Icon3DName, text: 'Unidades',        color: 'text-blue-400',   bg: 'from-blue-500/20 to-blue-600/10',   route: '/units' },
+                  { icon3d: 'team'     as Icon3DName, text: 'Agentes',         color: 'text-green-400',  bg: 'from-green-500/20 to-green-600/10', route: '/agents' },
+                  { icon3d: 'clock'    as Icon3DName, text: 'Banco de Horas',  color: 'text-amber-400',  bg: 'from-amber-500/20 to-amber-600/10', route: '/overtime' },
+                  { icon3d: 'shield'   as Icon3DName, text: 'Configurações',   color: 'text-purple-400', bg: 'from-purple-500/20 to-purple-600/10', route: '/settings' },
+                ]).map((feature, i) => (
                   <div
                     key={i}
                     onClick={() => navigate(feature.route)}
                     className={`relative flex items-center gap-2 p-2.5 bg-gradient-to-br ${feature.bg} rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors cursor-pointer group`}
                   >
                     <div className={`p-1.5 rounded bg-slate-800/50 ${feature.color} group-hover:scale-110 transition-transform`}>
-                      <Icon3D src={feature.icon3d} fallback={feature.icon} size={20} />
+                      <Icon3D name={feature.icon3d} size={20} />
+
                     </div>
                     <span className="text-xs font-medium text-slate-300">{feature.text}</span>
                   </div>

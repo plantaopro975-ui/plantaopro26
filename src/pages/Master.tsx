@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
-import { Icon3D } from '@/components/ui/Icon3D';
-import icon3dBuilding from '@/assets/icon3d-building.png';
-import icon3dTeam from '@/assets/icon3d-team.png';
-import icon3dClock from '@/assets/icon3d-clock.png';
-import icon3dShield from '@/assets/icon3d-shield.png';
-import icon3dCalendar from '@/assets/icon3d-calendar.png';
+import { Icon3D, type Icon3DName } from '@/components/ui/Icon3D';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
+
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { PanelSkeleton } from '@/components/ui/panel-skeleton';
@@ -559,13 +555,14 @@ export default function Master() {
         {/* System Stats — cada card abre a aba correspondente (HUD) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {([
-            { key: 'users',      label: 'Usuários',        value: stats.totalUsers,      icon: Users,          icon3d: icon3dTeam,     tint: 'primary',   tab: 'users' },
-            { key: 'agents',     label: 'Agentes',         value: stats.totalAgents,     icon: Users,          icon3d: icon3dTeam,     tint: 'emerald',   tab: 'agents' },
-            { key: 'active',     label: 'Ativos',          value: stats.activeAgents,    icon: Check,          icon3d: icon3dShield,   tint: 'green',     tab: 'agents' },
-            { key: 'expired',    label: 'Expirados',       value: stats.expiredLicenses, icon: Clock,          icon3d: icon3dClock,    tint: 'red',       tab: 'licenses' },
-            { key: 'units',      label: 'Unidades',        value: stats.totalUnits,      icon: Building2,      icon3d: icon3dBuilding, tint: 'blue',      tab: 'overview' },
-            { key: 'transfers',  label: 'Transferências',  value: stats.pendingTransfers,icon: ArrowRightLeft, icon3d: icon3dCalendar, tint: 'yellow',    tab: 'transfers' },
-          ] as const).map(({ key, label, value, icon: Icon, icon3d, tint, tab }) => {
+            { key: 'users',      label: 'Usuários',        value: stats.totalUsers,      icon3d: 'team'     as Icon3DName, tint: 'primary',   tab: 'users' },
+            { key: 'agents',     label: 'Agentes',         value: stats.totalAgents,     icon3d: 'team'     as Icon3DName, tint: 'emerald',   tab: 'agents' },
+            { key: 'active',     label: 'Ativos',          value: stats.activeAgents,    icon3d: 'shield'   as Icon3DName, tint: 'green',     tab: 'agents' },
+            { key: 'expired',    label: 'Expirados',       value: stats.expiredLicenses, icon3d: 'clock'    as Icon3DName, tint: 'red',       tab: 'licenses' },
+            { key: 'units',      label: 'Unidades',        value: stats.totalUnits,      icon3d: 'building' as Icon3DName, tint: 'blue',      tab: 'overview' },
+            { key: 'transfers',  label: 'Transferências',  value: stats.pendingTransfers,icon3d: 'calendar' as Icon3DName, tint: 'yellow',    tab: 'transfers' },
+          ] as const).map(({ key, label, value, icon3d, tint, tab }) => {
+
             const tintMap: Record<string, string> = {
               primary: 'bg-primary/10 text-primary',
               emerald: 'bg-emerald-500/10 text-emerald-500',
@@ -602,7 +599,7 @@ export default function Master() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <div className={cn('p-2 rounded-lg', tintMap[tint])}>
-                      <Icon3D src={icon3d} fallback={Icon} size={22} />
+                      <Icon3D name={icon3d} size={22} />
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">{label}</p>
