@@ -504,7 +504,7 @@ export default function Master() {
 
   if (isLoading || loadingData) {
     return (
-      <div className="min-h-dvh p-4 md:p-6">
+      <div className="min-h-dvh p-4 md:p-6 hud-scope hud-page-bg" style={hudBgStyle}>
         <div className="max-w-7xl mx-auto">
           <PanelSkeleton rows={6} />
         </div>
