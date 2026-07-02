@@ -282,7 +282,7 @@ export function BetaNoticeFooter() {
             </DialogHeader>
           </div>
 
-          <div className="max-h-[65vh] overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="max-h-[65vh] overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }} onWheelCapture={(e) => e.stopPropagation()} onTouchMoveCapture={(e) => e.stopPropagation()}>
             <div
               ref={(node) => {
                 // Radix já expõe close via DialogPrimitive.Close; guardamos referência
