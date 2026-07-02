@@ -21,6 +21,7 @@ const MasterStub = () => (
   <div>
     <h1>Painel Master</h1>
     <button>Ação Master</button>
+    <a href="/master/danger">Zona Perigosa</a>
   </div>
 );
 const HomeStub = () => <div>HOME_PUBLICA</div>;
