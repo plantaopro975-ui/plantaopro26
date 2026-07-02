@@ -623,7 +623,63 @@ body {
     transform: none;
     will-change: auto;
   }
+
+  /* -----------------------------------------------------------------
+     MOBILE SCROLL RESPONSIVENESS
+     -----------------------------------------------------------------
+     Em celulares, as maiores fontes de lag ao rolar são:
+     1) backdrop-filter/blur em cards → força repaint de tela cheia
+     2) box-shadow grande em muitos cards → composição custosa
+     3) background-attachment: fixed → jank em scroll
+     4) animações infinitas fora da viewport
+     Tudo abaixo é forçado para o caminho rápido do compositor.
+  */
+  html, body {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto; /* smooth scroll trava em Android antigo */
+    text-rendering: optimizeSpeed;
+  }
+
+  * {
+    background-attachment: scroll !important;
+  }
+
+  /* Desliga blur pesado em mobile — mantém apenas transparência */
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Sombras grandes viram sombras leves — reduz custo de compositing */
+  .tactical-card,
+  .institutional-card,
+  [class*="shadow-2xl"],
+  [class*="shadow-xl"] {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* content-visibility: pula render de seções fora da viewport (scroll fluido) */
+  main > section,
+  .tactical-card,
+  .institutional-card {
+    content-visibility: auto;
+    contain-intrinsic-size: 320px;
+  }
+
+  /* Pausa animações infinitas quando o elemento sai da viewport */
+  .amber-pulse,
+  .animate-pulse,
+  .radar-rotate,
+  [class*="animate-[pulse"] {
+    animation-play-state: paused;
+  }
+  .amber-pulse:hover,
+  .animate-pulse:focus-within {
+    animation-play-state: running;
+  }
 }
+
+
 
 /* ================================
    BLOQUEIO FINAL DO SELO LOVABLE
