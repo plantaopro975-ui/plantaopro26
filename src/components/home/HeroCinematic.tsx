@@ -37,6 +37,8 @@ const TEAMS: { name: TeamName; icon: string; kicker: string; motion: string }[] 
  */
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const agentElRef = useRef<HTMLDivElement>(null);
+  const vehicleElRef = useRef<HTMLDivElement>(null);
   const onlineCount = useOnlinePresence();
 
   type Transform = { xPct: number; yPct: number; scale: number };
@@ -61,12 +63,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const [vehicleT, setVehicleT] = useState<Transform>(() =>
     clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
   );
+  const agentTransformRef = useRef(agentT);
+  const vehicleTransformRef = useRef(vehicleT);
 
   // Persist transforms
   useEffect(() => {
+    agentTransformRef.current = agentT;
     try { localStorage.setItem('hero_agent_t', JSON.stringify(agentT)); } catch {}
   }, [agentT]);
   useEffect(() => {
+    vehicleTransformRef.current = vehicleT;
     try { localStorage.setItem('hero_vehicle_t', JSON.stringify(vehicleT)); } catch {}
   }, [vehicleT]);
 
@@ -99,6 +105,130 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const agentGestureRef = useRef<GestureState>(createGestureState(agentT));
   const vehicleGestureRef = useRef<GestureState>(createGestureState(vehicleT));
 
+  const getTouchDistance = (touches: TouchList) => {
+    if (touches.length < 2) return 0;
+    const a = touches[0];
+    const b = touches[1];
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  };
+
+  const attachMobileGestures = (
+    element: HTMLDivElement | null,
+    transformRef: React.MutableRefObject<Transform>,
+    setT: React.Dispatch<React.SetStateAction<Transform>>,
+    gestureRef: React.MutableRefObject<GestureState>,
+  ) => {
+    if (!element) return undefined;
+
+    const rect = () => sectionRef.current?.getBoundingClientRect();
+
+    const onTouchStart = (event: TouchEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('button')) return;
+
+      const g = gestureRef.current;
+      if (event.cancelable) event.preventDefault();
+
+      if (event.touches.length === 1) {
+        const touch = event.touches[0];
+        g.dragging = true;
+        g.moved = false;
+        g.pointerId = null;
+        g.startX = touch.clientX;
+        g.startY = touch.clientY;
+        g.startT = transformRef.current;
+        g.pinchStartDist = 0;
+        return;
+      }
+
+      if (event.touches.length >= 2) {
+        g.dragging = false;
+        g.moved = true;
+        g.pointerId = null;
+        g.startT = transformRef.current;
+        g.pinchStartDist = getTouchDistance(event.touches);
+        g.pinchStartScale = transformRef.current.scale;
+      }
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      const g = gestureRef.current;
+      const r = rect();
+      if (!r) return;
+
+      if (event.cancelable) event.preventDefault();
+
+      if (event.touches.length === 1 && g.dragging) {
+        const touch = event.touches[0];
+        const dxPx = touch.clientX - g.startX;
+        const dyPx = touch.clientY - g.startY;
+        if (Math.abs(dxPx) + Math.abs(dyPx) > 3) g.moved = true;
+
+        const dx = (dxPx / r.width) * 100;
+        const dy = (dyPx / r.height) * 100;
+        setT(prev => clampT({ ...prev, xPct: g.startT.xPct + dx, yPct: g.startT.yPct + dy }));
+        return;
+      }
+
+      if (event.touches.length >= 2 && g.pinchStartDist > 0) {
+        const distance = getTouchDistance(event.touches);
+        const ratio = distance / g.pinchStartDist;
+
+        if (g.pinchRaf) cancelAnimationFrame(g.pinchRaf);
+        g.pinchRaf = requestAnimationFrame(() => {
+          setT(prev => clampT({ ...prev, scale: g.pinchStartScale * ratio }));
+          g.pinchRaf = 0;
+        });
+      }
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+      const g = gestureRef.current;
+
+      if (event.touches.length === 1) {
+        const touch = event.touches[0];
+        g.dragging = true;
+        g.startX = touch.clientX;
+        g.startY = touch.clientY;
+        g.startT = transformRef.current;
+        g.pinchStartDist = 0;
+        return;
+      }
+
+      if (g.moved) g.suppressClickUntil = Date.now() + 450;
+      g.dragging = false;
+      g.pointerId = null;
+      g.pinchStartDist = 0;
+
+      if (g.pinchRaf) {
+        cancelAnimationFrame(g.pinchRaf);
+        g.pinchRaf = 0;
+      }
+    };
+
+    element.addEventListener('touchstart', onTouchStart, { passive: false });
+    element.addEventListener('touchmove', onTouchMove, { passive: false });
+    element.addEventListener('touchend', onTouchEnd, { passive: false });
+    element.addEventListener('touchcancel', onTouchEnd, { passive: false });
+
+    return () => {
+      element.removeEventListener('touchstart', onTouchStart);
+      element.removeEventListener('touchmove', onTouchMove);
+      element.removeEventListener('touchend', onTouchEnd);
+      element.removeEventListener('touchcancel', onTouchEnd);
+    };
+  };
+
+  useEffect(() => {
+    const detachAgent = attachMobileGestures(agentElRef.current, agentTransformRef, setAgentT, agentGestureRef);
+    const detachVehicle = attachMobileGestures(vehicleElRef.current, vehicleTransformRef, setVehicleT, vehicleGestureRef);
+
+    return () => {
+      detachAgent?.();
+      detachVehicle?.();
+    };
+  }, []);
+
   const makeHandlers = (
     t: Transform,
     setT: React.Dispatch<React.SetStateAction<Transform>>,
@@ -107,8 +237,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     const rect = () => sectionRef.current?.getBoundingClientRect();
     return {
       onPointerDown: (e: React.PointerEvent) => {
+        if (e.pointerType === 'touch') return;
         if (e.pointerType === 'mouse' && e.button !== 0) return;
-        if (e.pointerType === 'touch' && !e.isPrimary) return;
         const r = rect(); if (!r) return;
         if (e.cancelable) e.preventDefault();
         const g = gestureRef.current;
@@ -121,6 +251,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch {}
       },
       onPointerMove: (e: React.PointerEvent) => {
+        if (e.pointerType === 'touch') return;
         const g = gestureRef.current;
         if (!g.dragging || g.pointerId !== e.pointerId) return;
         const r = rect(); if (!r) return;
@@ -133,6 +264,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         setT(prev => clampT({ ...prev, xPct: g.startT.xPct + dx, yPct: g.startT.yPct + dy }));
       },
       onPointerUp: (e: React.PointerEvent) => {
+        if (e.pointerType === 'touch') return;
         const g = gestureRef.current;
         if (g.pointerId !== e.pointerId) return;
         if (g.moved) g.suppressClickUntil = Date.now() + 350;
@@ -141,6 +273,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
       },
       onPointerCancel: (e: React.PointerEvent) => {
+        if (e.pointerType === 'touch') return;
         const g = gestureRef.current;
         if (g.pointerId !== e.pointerId) return;
         g.dragging = false;
@@ -154,68 +287,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       },
       onDoubleClick: () => {
         setT(clampT({ xPct: 50, yPct: 55, scale: 1 }));
-      },
-      onTouchStart: (e: React.TouchEvent) => {
-        const g = gestureRef.current;
-        if (e.touches.length === 1) {
-          if (e.cancelable) e.preventDefault();
-          const a = e.touches[0];
-          g.dragging = true;
-          g.moved = false;
-          g.pointerId = null;
-          g.startX = a.clientX;
-          g.startY = a.clientY;
-          g.startT = t;
-          return;
-        }
-        if (e.touches.length >= 2) {
-          if (e.cancelable) e.preventDefault();
-          const [a, b] = [e.touches[0], e.touches[1]];
-          g.dragging = false;
-          g.pointerId = null;
-          g.pinchStartDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-          setT(prev => {
-            g.pinchStartScale = prev.scale;
-            return prev;
-          });
-        }
-      },
-      onTouchMove: (e: React.TouchEvent) => {
-        const g = gestureRef.current;
-        if (e.touches.length === 1 && g.dragging) {
-          const r = rect(); if (!r) return;
-          if (e.cancelable) e.preventDefault();
-          const a = e.touches[0];
-          const dxPx = a.clientX - g.startX;
-          const dyPx = a.clientY - g.startY;
-          if (Math.abs(dxPx) + Math.abs(dyPx) > 4) g.moved = true;
-          const dx = (dxPx / r.width) * 100;
-          const dy = (dyPx / r.height) * 100;
-          setT(prev => clampT({ ...prev, xPct: g.startT.xPct + dx, yPct: g.startT.yPct + dy }));
-          return;
-        }
-        if (e.touches.length >= 2 && g.pinchStartDist > 0) {
-          if (e.cancelable) e.preventDefault();
-          const [a, b] = [e.touches[0], e.touches[1]];
-          const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-          const ratio = distance / g.pinchStartDist;
-          if (g.pinchRaf) cancelAnimationFrame(g.pinchRaf);
-          g.pinchRaf = requestAnimationFrame(() => {
-            setT(prev => clampT({ ...prev, scale: g.pinchStartScale * ratio }));
-            g.pinchRaf = 0;
-          });
-        }
-      },
-      onTouchEnd: (e: React.TouchEvent) => {
-        const g = gestureRef.current;
-        if (e.touches.length >= 2) return;
-        if (g.moved) g.suppressClickUntil = Date.now() + 350;
-        g.dragging = false;
-        g.pinchStartDist = 0;
-        if (g.pinchRaf) {
-          cancelAnimationFrame(g.pinchRaf);
-          g.pinchRaf = 0;
-        }
       },
     };
   };
