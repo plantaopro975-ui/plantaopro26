@@ -142,6 +142,7 @@ export function BetaNoticeFooter() {
     }
   });
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     try {
