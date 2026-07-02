@@ -30,7 +30,10 @@ const masterItems = [
 
 export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const location = useLocation();
-  const { masterSession } = useAuth();
+  const { masterSession, user } = useAuth();
+  const [restricted, setRestricted] = useState<string | null>(null);
+  const isAuthed = !!user || !!masterSession;
+
 
   return (
     <aside ref={ref} {...props} className={cn("w-64 border-r border-sidebar-border bg-sidebar hidden lg:flex flex-col", props.className)}>
