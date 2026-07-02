@@ -6,30 +6,17 @@ import { useEffect, useState } from "react";
  * → wordmark reveal → status ticker → progress bar → fade.
  */
 export function SplashScreen() {
-  const [visible, setVisible] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return sessionStorage.getItem("splash_shown_v2") !== "1";
-    } catch {
-      return true;
-    }
-  });
+  const [visible, setVisible] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    if (!visible) return;
     const t1 = window.setTimeout(() => setFadeOut(true), 2400);
-    const t2 = window.setTimeout(() => {
-      setVisible(false);
-      try {
-        sessionStorage.setItem("splash_shown_v2", "1");
-      } catch {}
-    }, 3000);
+    const t2 = window.setTimeout(() => setVisible(false), 3000);
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
-  }, [visible]);
+  }, []);
 
   if (!visible) return null;
 
