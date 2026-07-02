@@ -163,20 +163,23 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
         className="police-vehicle z-[60] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none"
-        style={
-          vehiclePos
-            ? { position: 'fixed', left: vehiclePos.x, top: vehiclePos.y }
-            : { position: 'absolute', bottom: '32%', left: '1rem' }
-        }
+        style={{
+          position: 'absolute',
+          left: `${vehicleT.xPct}%`,
+          top: `${vehicleT.yPct}%`,
+          transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
+          transformOrigin: 'center',
+          touchAction: 'none',
+        }}
       >
         <img
           src={policeVehicle}
-          alt="Arraste para posicionar viatura"
-          title="Arraste para posicionar"
+          alt="Arraste para mover · scroll para redimensionar · duplo clique para resetar"
+          title="Arrastar / Scroll = zoom / Duplo clique = reset"
           loading="lazy"
           draggable={false}
           {...vehicleHandlers}
-          className="h-full w-auto object-contain cursor-grab active:cursor-grabbing"
+          className="h-full w-auto object-contain cursor-grab active:cursor-grabbing pointer-events-auto"
         />
         {/* Giroflex realista */}
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
@@ -186,8 +189,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {/* Agente tático — arrastável (triple-click abre login master/admin) */}
       <img
         src={agentFigure}
-        alt="Arraste para posicionar · toque 3× para acesso administrador"
-        title="Toque 3× para acesso do administrador"
+        alt="Arraste para mover · scroll para redimensionar · toque 3× para acesso admin"
+        title="Arrastar / Scroll = zoom / Duplo clique = reset / 3 cliques = admin"
         loading="lazy"
         draggable={false}
         {...agentHandlers}
@@ -209,12 +212,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             });
           }
         }}
-        style={
-          agentPos
-            ? { position: 'fixed', left: agentPos.x, top: agentPos.y, transform: 'none' }
-            : undefined
-        }
-        className="agent-figure absolute z-[55] block bottom-[30%] sm:bottom-[24%] lg:bottom-[18%] right-1 sm:right-2 h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none cursor-grab active:cursor-grabbing touch-none opacity-95"
+        style={{
+          position: 'absolute',
+          left: `${agentT.xPct}%`,
+          top: `${agentT.yPct}%`,
+          transform: `translate(-50%, -50%) scale(${agentT.scale})`,
+          transformOrigin: 'center',
+          touchAction: 'none',
+        }}
+        className="agent-figure z-[55] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none cursor-grab active:cursor-grabbing opacity-95 pointer-events-auto"
       />
 
 
