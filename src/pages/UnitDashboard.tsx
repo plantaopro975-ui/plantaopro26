@@ -115,7 +115,7 @@ export default function UnitDashboard() {
         console.error('Error parsing first access data:', e);
       }
     }
-  }, []);
+  }, [welcomeHintEnabled, welcomeHintLoading]);
 
   useEffect(() => {
     if (unitId && (user || masterSession)) {
