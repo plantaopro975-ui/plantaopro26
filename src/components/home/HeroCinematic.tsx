@@ -393,3 +393,72 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     </section>
   );
 }
+
+/** Boneco com triple-tap tolerante a rolagem. Um dedo desliza a página normalmente; só conta como toque se o dedo mover < 8px. */
+function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: number } }) {
+  const startRef = useRef<{ x: number; y: number; t: number } | null>(null);
+  const clicksRef = useRef(0);
+  const timerRef = useRef<number | null>(null);
+
+  const registerTap = () => {
+    clicksRef.current += 1;
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => { clicksRef.current = 0; }, 700);
+    if (clicksRef.current >= 3) {
+      clicksRef.current = 0;
+      toast('Acesso do administrador', {
+        description: 'Confirme para abrir o login restrito.',
+        duration: 6000,
+        action: { label: 'Confirmar', onClick: () => window.dispatchEvent(new CustomEvent('open-master-login')) },
+        cancel: { label: 'Cancelar', onClick: () => {} },
+      });
+    }
+  };
+
+  return (
+    <div
+      role="img"
+      aria-label="Agente tático — toque 3 vezes para acesso admin"
+      title="3 cliques = admin"
+      onTouchStart={(e) => {
+        const t = e.touches[0];
+        startRef.current = { x: t.clientX, y: t.clientY, t: Date.now() };
+      }}
+      onTouchEnd={(e) => {
+        const s = startRef.current;
+        startRef.current = null;
+        if (!s) return;
+        const t = e.changedTouches[0];
+        const moved = Math.hypot(t.clientX - s.x, t.clientY - s.y);
+        const dur = Date.now() - s.t;
+        // Só conta como toque de admin se dedo praticamente não moveu — rolagem passa livre
+        if (moved < 8 && dur < 400) registerTap();
+      }}
+      onClick={(e) => {
+        // Desktop only — no mobile o toque é tratado em onTouchEnd
+        const pt = (e.nativeEvent as PointerEvent).pointerType;
+        if (pt === 'touch') return;
+        registerTap();
+      }}
+      style={{
+        position: 'absolute',
+        left: `${agentT.xPct}%`,
+        top: `${agentT.yPct}%`,
+        transform: `translate(-50%, -50%) scale(${agentT.scale})`,
+        transformOrigin: 'center',
+        touchAction: 'pan-y',
+      }}
+      className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-pointer"
+    >
+      <img
+        src={agentFigure}
+        alt=""
+        aria-hidden
+        loading="lazy"
+        draggable={false}
+        className="h-full w-auto object-contain object-bottom pointer-events-none"
+      />
+    </div>
+  );
+}
+
