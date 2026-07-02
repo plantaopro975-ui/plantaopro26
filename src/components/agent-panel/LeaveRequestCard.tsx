@@ -871,7 +871,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           </div>
 
           {/* Sticky Footer */}
-          <DialogFooter className="px-4 py-3 border-t border-slate-800 bg-slate-950/80 backdrop-blur shrink-0 gap-2 flex-row justify-end">
+          <DialogFooter className="relative px-4 py-3 border-t border-slate-800/80 bg-slate-950/70 backdrop-blur shrink-0 gap-2 flex-row justify-end">
             <Button
               variant="outline"
               size="sm"
