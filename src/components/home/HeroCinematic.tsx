@@ -231,8 +231,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           <div className="relative flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-accent/50 bg-background/70 backdrop-blur-md w-fit max-w-full">
-                <ShieldCheck className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-accent" strokeWidth={2.5} />
-                <span className="text-[11px] font-bold tracking-[0.26em] sm:tracking-[0.3em] uppercase text-accent font-sans truncate">
+                <ShieldCheck className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-accent shrink-0" strokeWidth={2.5} />
+                <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.18em] sm:tracking-[0.3em] uppercase text-accent font-sans whitespace-nowrap">
                   Instituto Socioeducativo · Acre
                 </span>
               </div>
