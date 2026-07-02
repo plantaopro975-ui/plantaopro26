@@ -67,7 +67,7 @@ export function RestrictedAccessDialog({ open, onOpenChange, targetLabel }: Rest
               className="flex-1 gap-2"
               onClick={() => {
                 onOpenChange(false);
-                navigate('/auth');
+                navigate('/');
               }}
             >
               <KeyRound className="h-4 w-4" />
