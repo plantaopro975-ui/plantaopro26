@@ -1,0 +1,1 @@
+ALTER TABLE public.agent_leaves ADD COLUMN IF NOT EXISTS period text NOT NULL DEFAULT 'integral' CHECK (period IN ('manha','tarde','noite','integral'));

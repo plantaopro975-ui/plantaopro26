@@ -390,6 +390,7 @@ export type Database = {
           end_date: string
           id: string
           leave_type: string
+          period: string
           reason: string | null
           start_date: string
           status: string
@@ -403,6 +404,7 @@ export type Database = {
           end_date: string
           id?: string
           leave_type: string
+          period?: string
           reason?: string | null
           start_date: string
           status?: string
@@ -416,6 +418,7 @@ export type Database = {
           end_date?: string
           id?: string
           leave_type?: string
+          period?: string
           reason?: string | null
           start_date?: string
           status?: string

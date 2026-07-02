@@ -72,6 +72,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedType, setSelectedType] = useState('special');
+  const [selectedPeriod, setSelectedPeriod] = useState<'manha' | 'tarde' | 'noite' | 'integral'>('integral');
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [leaveDates, setLeaveDates] = useState<Date[]>([]);
   const [teamLeaveDates, setTeamLeaveDates] = useState<Date[]>([]);
@@ -196,6 +197,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
     setSelectedDate(date);
     setSelectedType('special');
+    setSelectedPeriod('integral');
     setLeaveDescription('');
     setShowConfirmDialog(true);
   };
@@ -212,6 +214,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
         .insert({
           agent_id: agentId,
           leave_type: selectedType,
+          period: selectedPeriod,
           start_date: dateStr,
           end_date: dateStr,
           reason: leaveDescription.trim() || null,
@@ -662,6 +665,33 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                       );
                     })}
                   </RadioGroup>
+                </div>
+
+                {/* Period Selection */}
+                <div className="space-y-2">
+                  <Label className="text-slate-300">Período</Label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[
+                      { v: 'manha', l: 'Manhã', emoji: '🌅' },
+                      { v: 'tarde', l: 'Tarde', emoji: '☀️' },
+                      { v: 'noite', l: 'Noite', emoji: '🌙' },
+                      { v: 'integral', l: 'Integral', emoji: '⏱️' },
+                    ].map((p) => (
+                      <button
+                        key={p.v}
+                        type="button"
+                        onClick={() => setSelectedPeriod(p.v as any)}
+                        className={`flex flex-col items-center gap-1 rounded-lg border-2 p-2 transition-all ${
+                          selectedPeriod === p.v
+                            ? 'border-amber-500 bg-amber-500/15 text-amber-300'
+                            : 'border-slate-600 text-slate-300 hover:border-slate-500'
+                        }`}
+                      >
+                        <span className="text-lg leading-none">{p.emoji}</span>
+                        <span className="text-[11px] font-semibold">{p.l}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Description */}
