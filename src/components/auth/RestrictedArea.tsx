@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import restrictedBg from "@/assets/restricted-area-bg.jpg";
 
 interface RestrictedAreaProps {
   title?: string;
@@ -31,9 +32,19 @@ export const RestrictedArea: React.FC<RestrictedAreaProps> = ({
     <main
       role="alert"
       aria-labelledby="restricted-title"
-      className="min-h-[60vh] flex items-center justify-center px-4 py-8"
+      className="relative min-h-[60vh] flex items-center justify-center px-4 py-8 overflow-hidden"
     >
-      <div className="max-w-sm w-full text-center space-y-4">
+      <img
+        src={restrictedBg}
+        alt=""
+        aria-hidden
+        loading="lazy"
+        width={1536}
+        height={1024}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      <div className="relative max-w-sm w-full text-center space-y-4">
         <svg
           viewBox="0 0 96 96"
           className="mx-auto h-14 w-14 text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.4)]"
