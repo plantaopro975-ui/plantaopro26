@@ -384,9 +384,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const [systemTheme] = useState<'tactical'>(getSystemTheme);
 
-  // Load global theme from DB + subscribe to realtime changes
+  // Load global theme from DB + subscribe to realtime changes (with reconnection)
   useEffect(() => {
     let mounted = true;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
 
     const applyFromDb = (raw: unknown) => {
       if (!mounted) return;
@@ -394,27 +395,54 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       if (themes[val as ThemeType]) setThemeState(val as ThemeType);
     };
 
-    supabase
-      .from('system_settings')
-      .select('value')
-      .eq('key', 'global_theme')
-      .maybeSingle()
-      .then(({ data }) => applyFromDb(data?.value));
+    const refetch = async () => {
+      const { data } = await supabase
+        .from('system_settings')
+        .select('value')
+        .eq('key', 'global_theme')
+        .maybeSingle();
+      applyFromDb(data?.value);
+    };
 
-    const channel = supabase
-      .channel('system_settings_theme')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'system_settings', filter: 'key=eq.global_theme' },
-        (payload: any) => applyFromDb(payload.new?.value)
-      )
-      .subscribe();
+    const subscribe = () => {
+      if (channel) supabase.removeChannel(channel);
+      channel = supabase
+        .channel(`system_settings_theme_${Date.now()}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'system_settings', filter: 'key=eq.global_theme' },
+          (payload: any) => applyFromDb(payload.new?.value)
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            // Re-sync on (re)connect to catch missed updates
+            refetch();
+          }
+        });
+    };
+
+    refetch();
+    subscribe();
+
+    const handleOnline = () => {
+      refetch();
+      subscribe();
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') refetch();
+    };
+
+    window.addEventListener('online', handleOnline);
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       mounted = false;
-      supabase.removeChannel(channel);
+      window.removeEventListener('online', handleOnline);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      if (channel) supabase.removeChannel(channel);
     };
   }, []);
+
 
   const setTheme = useCallback(async (newTheme: ThemeType) => {
     setThemeState(newTheme);
