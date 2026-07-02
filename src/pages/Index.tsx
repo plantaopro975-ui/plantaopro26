@@ -1360,6 +1360,7 @@ export default function Index() {
           />
           
           {/* Found agent feedback */}
+          <div className="min-h-[84px]">
           {foundAgent && (
             <div className={cn(
               "p-4 rounded-xl border-2 animate-fade-in",
