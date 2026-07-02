@@ -129,7 +129,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
-        className="police-vehicle absolute z-30 block bottom-[130px] sm:bottom-[150px] left-1 sm:left-2 lg:left-6 h-[22%] sm:h-[30%] lg:h-[36%] w-auto select-none touch-none"
+        className="police-vehicle absolute z-30 block bottom-[38%] sm:bottom-[32%] lg:bottom-[28%] left-1 sm:left-2 lg:left-6 h-[14%] sm:h-[22%] lg:h-[30%] max-h-[40vh] w-auto max-w-[45%] sm:max-w-[40%] lg:max-w-[35%] select-none touch-none"
         style={
           vehiclePos
             ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto' }
@@ -178,7 +178,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
             : undefined
         }
-        className="agent-figure absolute z-40 block bottom-0 right-1 sm:right-2 h-[40%] sm:h-[54%] lg:h-[62%] max-h-full w-auto object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_22px_hsl(var(--accent)/0.5))_drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
+        className="agent-figure absolute z-40 block bottom-[36%] sm:bottom-[30%] lg:bottom-[24%] right-1 sm:right-2 h-[26%] sm:h-[40%] lg:h-[54%] max-h-[55vh] w-auto max-w-[42%] sm:max-w-[38%] lg:max-w-[32%] object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95 [filter:drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] hover:[filter:drop-shadow(0_0_22px_hsl(var(--accent)/0.5))_drop-shadow(0_16px_32px_rgba(0,0,0,0.8))] transition-[filter] duration-300"
       />
 
 

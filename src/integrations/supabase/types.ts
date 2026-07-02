@@ -1521,6 +1521,51 @@ export type Database = {
           },
         ]
       }
+      shift_checklists: {
+        Row: {
+          agent_id: string
+          checklist: Json
+          created_at: string
+          id: string
+          observations: string
+          shift_id: string
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          checklist?: Json
+          created_at?: string
+          id?: string
+          observations?: string
+          shift_id: string
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          checklist?: Json
+          created_at?: string
+          id?: string
+          observations?: string
+          shift_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_checklists_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_checklists_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "agent_shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_planner_configs: {
         Row: {
           agent_count: number
