@@ -758,14 +758,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
       {/* Confirmation Dialog — Compact / Pro */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="border-slate-700 p-0 gap-0 max-w-md w-[calc(100vw-1rem)] max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden font-['IBM_Plex_Sans',_system-ui,_sans-serif] relative">
-          {/* Background image + overlay */}
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${leaveDialogBg})` }}
-          />
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-slate-950/92 via-slate-950/88 to-slate-950/95" />
+        <DialogContent className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-slate-700 bg-slate-950 p-0 gap-0 max-w-md w-[calc(100vw-1rem)] max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden font-['IBM_Plex_Sans',_system-ui,_sans-serif]">
+
 
           {/* Header */}
           <DialogHeader className="relative px-4 py-3 border-b border-slate-800/80 bg-slate-950/50 backdrop-blur-sm shrink-0">
