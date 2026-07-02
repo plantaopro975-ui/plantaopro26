@@ -174,7 +174,7 @@ export default function UnitDashboard() {
   const totalAgents = teamStats.reduce((acc, team) => acc + team.agents.length, 0);
 
   return (
-    <div className="min-h-screen flex bg-slate-900 hud-scope">
+    <div className="min-h-screen flex bg-slate-900 hud-scope hud-page-bg" style={{ ['--hud-bg-url' as any]: `url(${hudPageBg})` }}>
       {/* Welcome Trial Dialog */}
       {showWelcomeDialog && (
         <WelcomeTrialDialog 
