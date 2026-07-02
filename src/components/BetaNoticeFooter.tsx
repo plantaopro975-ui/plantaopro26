@@ -58,43 +58,10 @@ export function BetaNoticeFooter() {
   return (
     <>
       {!hidden && (
-        <div
-          className="md:hidden fixed right-3 z-[60] flex items-center gap-1.5 rounded-full border border-primary/40 bg-background/95 pl-2.5 pr-1.5 py-1.5 shadow-lg backdrop-blur-md animate-fade-in motion-reduce:animate-none"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 72px)' }}
-          role="group"
-          aria-label="Aviso de versão beta"
-        >
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-label="Abrir aviso sobre versão beta"
-            className="inline-flex items-center gap-1.5 text-[12px] font-mono uppercase tracking-[0.18em] text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-full px-1.5 py-0.5"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
-                fill="hsl(var(--primary))"
-                opacity="0.2"
-                stroke="hsl(var(--primary))"
-                strokeWidth="1.6"
-              />
-              <circle cx="18.5" cy="5.5" r="1.6" fill="hsl(var(--destructive))">
-                <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
-              </circle>
-            </svg>
-            <span className="font-bold">BETA</span>
-          </button>
-          <button
-            type="button"
-            onClick={hidePermanently}
-            aria-label="Ocultar permanentemente o selo beta"
-            title="Ocultar"
-            className="inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          >
-            <X className="h-3.5 w-3.5" strokeWidth={2.5} />
-          </button>
-
-        </div>
+        <DraggableBetaPill
+          onOpen={() => setOpen(true)}
+          onHide={hidePermanently}
+        />
       )}
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
