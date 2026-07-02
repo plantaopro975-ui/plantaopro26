@@ -80,17 +80,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         const startY = e.clientY;
         const start = { ...current };
         let moved = false;
+        let last = start;
         const move = (ev: PointerEvent) => {
           const dx = ((ev.clientX - startX) / rect.width) * 100;
           const dy = ((ev.clientY - startY) / rect.height) * 100;
           if (Math.abs(dx) + Math.abs(dy) > 0.5) moved = true;
-          const next = clampT({ xPct: start.xPct + dx, yPct: start.yPct + dy, scale: start.scale });
-          setT(next);
+          last = clampT({ xPct: start.xPct + dx, yPct: start.yPct + dy, scale: start.scale });
+          setT(last);
         };
         const up = () => {
           window.removeEventListener('pointermove', move);
           window.removeEventListener('pointerup', up);
-          try { if (moved) localStorage.setItem(storageKey, JSON.stringify(current)); } catch {}
+          try { if (moved) localStorage.setItem(storageKey, JSON.stringify(last)); } catch {}
         };
         window.addEventListener('pointermove', move);
         window.addEventListener('pointerup', up, { once: true });
