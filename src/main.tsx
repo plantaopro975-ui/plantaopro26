@@ -44,22 +44,28 @@ if ("serviceWorker" in navigator && !isSafeModeActive()) {
   if (!w.__pp_sw_registered) {
     w.__pp_sw_registered = true;
 
+    // Snapshot controller BEFORE registration. If there is no controller at
+    // boot, this page was loaded without a SW — the imminent activate + claim
+    // is the very first install, NOT an update, so we must not reload.
+    const hadControllerAtBoot = !!navigator.serviceWorker.controller;
+
     // Guarded one-time reload when a new SW takes control. Uses sessionStorage
     // so a refresh storm cannot loop: we only reload once per tab session.
     const RELOAD_FLAG = "pp_sw_reloaded_once";
     navigator.serviceWorker.addEventListener("message", (event) => {
       if (event.data?.type === "SW_ACTIVATED") {
+        if (!hadControllerAtBoot) {
+          pushDiagEvent('info', 'sw_activated_first_install_no_reload');
+          return;
+        }
         try {
           if (sessionStorage.getItem(RELOAD_FLAG)) return;
           sessionStorage.setItem(RELOAD_FLAG, "1");
         } catch {
           return;
         }
-        // Only reload if we already had a controller (i.e. it's an UPDATE,
-        // not the very first install) — avoids the boot-time double load.
-        if (navigator.serviceWorker.controller) {
-          window.location.reload();
-        }
+        pushDiagEvent('info', 'sw_activated_reload');
+        window.location.reload();
       }
     });
 
