@@ -1457,22 +1457,50 @@ export default function Index() {
           <AuthInput
             label="CPF"
             value={loginCpf}
-            onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
+            onChange={(e) => {
+              // Aceita só dígitos, máx 11 (formatCPF aplica a máscara)
+              const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+              setLoginCpf(formatCPF(digits));
+            }}
+            onKeyDown={(e) => {
+              if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault();
+            }}
+            onPaste={(e) => {
+              e.preventDefault();
+              const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 11);
+              setLoginCpf(formatCPF(digits));
+            }}
             placeholder="000.000.000-00"
             variant="centered"
             maxLength={14}
+            inputMode="numeric"
+            autoComplete="off"
             disabled={!!selectedTeam}
             error={loginErrors.cpf}
           />
           
           <AuthInput
-            label="Senha"
+            label="Senha (6 dígitos)"
             value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
-            placeholder="••••••••"
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, '').slice(0, 6);
+              setLoginPassword(digits);
+            }}
+            onKeyDown={(e) => {
+              if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault();
+            }}
+            onPaste={(e) => {
+              e.preventDefault();
+              const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+              setLoginPassword(digits);
+            }}
+            placeholder="••••••"
             isPassword
+            maxLength={6}
+            inputMode="numeric"
             error={loginErrors.password}
           />
+
           
           <SavedCredentials
             onSelectCredential={(cpf, savedPassword) => {
