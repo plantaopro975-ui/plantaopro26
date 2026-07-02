@@ -287,12 +287,16 @@ export function AgentBHManagement({ onDataChange }: Props) {
   };
 
   // Filter summaries
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
   const filteredSummaries = summaries.filter(s => {
-    const matchesSearch = s.agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         s.agent.matricula?.toLowerCase().includes(searchTerm.toLowerCase());
+    const term = debouncedSearchTerm.toLowerCase();
+    const matchesSearch = !term ||
+      s.agent.name.toLowerCase().includes(term) ||
+      s.agent.matricula?.toLowerCase().includes(term);
     const matchesTeam = filterTeam === 'all' || s.agent.team === filterTeam;
     return matchesSearch && matchesTeam;
   });
+
 
   // Stats
   const totalBalance = summaries.reduce((sum, s) => sum + s.balance, 0);
