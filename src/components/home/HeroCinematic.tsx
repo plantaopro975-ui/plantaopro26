@@ -215,14 +215,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   };
 
   useEffect(() => {
-    const detachAgent = attachMobileGestures(agentElRef.current, agentTransformRef, setAgentT, agentGestureRef);
-    const detachVehicle = attachMobileGestures(vehicleElRef.current, vehicleTransformRef, setVehicleT, vehicleGestureRef);
-
-    return () => {
-      detachAgent?.();
-      detachVehicle?.();
-    };
+    // Posições travadas: gestos desativados propositalmente.
+    return () => {};
   }, []);
+
 
   const makeHandlers = (
     t: Transform,
