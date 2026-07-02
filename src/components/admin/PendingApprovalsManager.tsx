@@ -141,11 +141,17 @@ export function PendingApprovalsManager({ onApprovalChange }: PendingApprovalsMa
     }
   };
 
-  const filteredAgents = pendingAgents.filter(agent =>
-    agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    agent.cpf.includes(searchTerm) ||
-    agent.unit?.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
+  const filteredAgents = useMemo(() => {
+    const term = debouncedSearchTerm.toLowerCase();
+    if (!term) return pendingAgents;
+    return pendingAgents.filter(agent =>
+      agent.name.toLowerCase().includes(term) ||
+      agent.cpf.includes(debouncedSearchTerm) ||
+      agent.unit?.name.toLowerCase().includes(term)
+    );
+  }, [pendingAgents, debouncedSearchTerm]);
+
 
   const formatCPF = (cpf: string) => {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
