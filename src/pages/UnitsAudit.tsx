@@ -86,7 +86,7 @@ export default function UnitsAudit() {
       <div className="mx-auto max-w-6xl space-y-6">
         <header className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Auditoria de Unidades</h1>
+            <h1 className="font-tactical text-xl font-semibold tracking-[0.14em] tracking-tight">Auditoria de Unidades</h1>
             <p className="text-sm text-muted-foreground">
               Todas as unidades disponíveis para criação e visualização de escalas/plantões.
             </p>

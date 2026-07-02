@@ -177,7 +177,7 @@ export default function AgentProfile() {
                   <div className="flex-1 space-y-4">
                     <div>
                       <div className="flex items-center gap-3 flex-wrap">
-                        <h1 className="text-2xl font-bold">{agent.name}</h1>
+                        <h1 className="font-tactical text-xl font-bold tracking-[0.14em]">{agent.name}</h1>
                         <Badge variant={agent.is_active ? 'default' : 'destructive'}>
                           {agent.is_active ? 'Ativo' : 'Inativo'}
                         </Badge>

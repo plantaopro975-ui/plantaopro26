@@ -207,7 +207,7 @@ export default function Overtime() {
             {/* Page Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold flex items-center gap-2">
+                <h1 className="font-tactical text-xl font-bold tracking-[0.14em] flex items-center gap-2">
                   <Clock className="h-6 w-6 text-primary" />
                   Banco de Horas
                 </h1>

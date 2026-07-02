@@ -73,7 +73,7 @@ export default function Settings() {
 
             {/* Page Header */}
             <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
+              <h1 className="font-tactical text-xl font-bold tracking-[0.14em] flex items-center gap-2">
                 <SettingsIcon className="h-6 w-6 text-primary" />
                 Configurações Gerais
               </h1>
