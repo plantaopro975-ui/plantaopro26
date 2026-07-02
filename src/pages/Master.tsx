@@ -720,8 +720,8 @@ export default function Master() {
               
               <Dialog open={newAgentOpen} onOpenChange={setNewAgentOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500">
-                    <UserPlus className="h-4 w-4 mr-2" />
+                  <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 gap-2">
+                    <Icon3D src={icon3dTeam} fallback={UserPlus} size={18} />
                     Novo Agente
                   </Button>
                 </DialogTrigger>
@@ -831,7 +831,7 @@ export default function Master() {
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary" />
+                  <Icon3D src={icon3dTeam} fallback={Users} size={22} />
                   Agentes Cadastrados ({filteredAgents.length})
                 </CardTitle>
                 <CardDescription>
@@ -974,7 +974,7 @@ export default function Master() {
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5 text-primary" />
+                  <Icon3D src={icon3dClock} fallback={History} size={22} />
                   Logs de Acesso
                 </CardTitle>
                 <CardDescription>
@@ -1028,7 +1028,7 @@ export default function Master() {
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary" />
+                  <Icon3D src={icon3dShield} fallback={Users} size={22} />
                   Gerenciar Usuários
                 </CardTitle>
                 <CardDescription>
