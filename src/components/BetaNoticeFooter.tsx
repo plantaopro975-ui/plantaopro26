@@ -130,6 +130,9 @@ function DraggableBetaPill({ onOpen, onHide, retracted = false }: DraggableBetaP
  */
 export function BetaNoticeFooter() {
   const [open, setOpen] = useState(false);
+  const [seen, setSeen] = useState<boolean>(() => {
+    try { return localStorage.getItem(SEEN_KEY) === '1'; } catch { return false; }
+  });
   const [hidden, setHidden] = useState<boolean>(() => {
     try {
       return localStorage.getItem(HIDDEN_KEY) === '1';
@@ -158,6 +161,7 @@ export function BetaNoticeFooter() {
       } catch {
         /* ignore */
       }
+      setSeen(true);
     }
   };
 
@@ -177,6 +181,7 @@ export function BetaNoticeFooter() {
         <DraggableBetaPill
           onOpen={() => setOpen(true)}
           onHide={hidePermanently}
+          retracted={seen && !open}
         />
       )}
 
