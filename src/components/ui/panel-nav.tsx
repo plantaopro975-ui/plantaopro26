@@ -27,6 +27,18 @@ export function PanelNav({
   className,
 }: PanelNavProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // After a hard reload, react-router loses in-app history: location.key === 'default'.
+  // In that case, "Voltar" should send the user to the home instead of nowhere.
+  const handleBack = () => {
+    const hasInAppHistory = location.key && location.key !== 'default';
+    if (hasInAppHistory && window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
     <div className={cn('flex items-center gap-1.5 flex-wrap', className)}>
@@ -34,7 +46,7 @@ export function PanelNav({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}
+          onClick={handleBack}
           className="h-8 gap-1.5 text-xs"
           title="Voltar"
         >
