@@ -70,7 +70,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data) {
         setUserRole(data.role as UserRole);
+      } else {
+        // Sem role explícito → agente comum. Evita travar em "Verificando credenciais…"
+        setUserRole('user' as UserRole);
       }
+
     } catch (err: any) {
       // Ignore abort errors silently - common during component unmount/navigation
       if (err?.name === 'AbortError' || err?.message?.includes('abort') || err?.message?.includes('signal')) {

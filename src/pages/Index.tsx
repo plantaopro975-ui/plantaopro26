@@ -729,8 +729,12 @@ export default function Index() {
         throw agentError;
       }
 
+      // Garante papel padrão para novos agentes (o trigger handle_new_user não está ativo)
+      await supabase.from('user_roles').insert({ user_id: sessionUserId, role: 'user' as any });
+
       // Salvar CPF para prefill futuro
       persistLastCpf(cleanCpf);
+
 
       setFormData({
         name: '',
