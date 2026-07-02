@@ -65,12 +65,12 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
               <div className="absolute right-4 top-1/2 -translate-y-1/2">
                 {rightIcon}
               </div>
-            )}
-          </div>
+          )}
         </div>
         {error && (
-          <p className="text-sm text-red-400 font-medium animate-fade-in">{error}</p>
+          <p className="text-sm text-red-400 font-medium">{error}</p>
         )}
+
       </div>
     );
   }
