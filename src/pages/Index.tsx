@@ -419,10 +419,19 @@ export default function Index() {
   };
 
   const handleCheckCpf = async () => {
-    if (!checkCpf || checkCpf.replace(/\D/g, '').length !== 11) {
+    const cleanCpf = checkCpf.replace(/\D/g, '');
+    if (cleanCpf.length !== 11) {
       toast({
-        title: 'CPF Inválido',
-        description: 'Digite um CPF válido com 11 dígitos.',
+        title: 'CPF incompleto',
+        description: 'Digite os 11 dígitos do CPF.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (!validateCPF(cleanCpf)) {
+      toast({
+        title: 'CPF inválido',
+        description: 'O dígito verificador do CPF não confere. Revise os números.',
         variant: 'destructive',
       });
       return;
@@ -431,7 +440,7 @@ export default function Index() {
     setIsCheckingCpf(true);
 
     try {
-      const cleanCpf = checkCpf.replace(/\D/g, '');
+      // cleanCpf validated above
       const { data: existingAgent } = await supabase
         .from('agents')
         .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at')
@@ -572,8 +581,16 @@ export default function Index() {
     if (formData.birth_date && formData.birth_date.length > 0) {
       if (formData.birth_date.length !== 10) {
         errors.birth_date = 'Data incompleta (DD-MM-AAAA)';
-      } else if (!parseBirthDate(formData.birth_date)) {
-        errors.birth_date = 'Data de nascimento inválida';
+      } else {
+        const d = parseBirthDate(formData.birth_date);
+        if (!d) {
+          errors.birth_date = 'Data inválida';
+        } else {
+          const age = calculateAge(d);
+          if (age < 18) errors.birth_date = 'Idade mínima: 18 anos';
+          else if (age > 100) errors.birth_date = 'Data de nascimento improvável';
+          else if (d > new Date()) errors.birth_date = 'Data não pode ser futura';
+        }
       }
     }
     
@@ -1680,8 +1697,10 @@ export default function Index() {
                 onChange={(e) => setFormData({ ...formData, birth_date: formatBirthDate(e.target.value) })}
                 placeholder="DD-MM-AAAA"
                 maxLength={10}
+                inputMode="numeric"
+                error={regErrors.birth_date}
               />
-              {calculatedAge !== null && (
+              {calculatedAge !== null && !regErrors.birth_date && (
                 <p className="text-sm text-amber-400 font-bold mt-2">{calculatedAge} anos</p>
               )}
             </div>
