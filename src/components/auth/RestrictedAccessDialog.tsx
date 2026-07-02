@@ -35,7 +35,7 @@ export function RestrictedAccessDialog({ open, onOpenChange, targetLabel }: Rest
 
         </div>
 
-        <DialogHeader className="items-center text-center px-6 pt-12">
+        <DialogHeader className="items-center text-center px-6 pt-16">
           <DialogTitle className="font-serif text-2xl tracking-wide">
             Área Restrita
           </DialogTitle>
