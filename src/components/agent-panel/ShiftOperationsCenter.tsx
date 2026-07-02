@@ -417,26 +417,36 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {visibleChecklist.map((item) => {
-                  const done = !!checklist[item.id];
+                  const state = checklist[item.id];
+                  const done = !!state?.done;
+                  const at = state?.at ? format(new Date(state.at), 'dd/MM HH:mm:ss', { locale: ptBR }) : null;
                   return (
                     <label
                       key={item.id}
                       className={cn(
-                        'flex items-center gap-2 rounded-md border px-2.5 py-2 cursor-pointer transition-colors',
+                        'flex items-start gap-2.5 rounded-md border px-3 py-2.5 cursor-pointer transition-colors',
                         done
                           ? 'border-emerald-500/40 bg-emerald-500/10'
                           : 'border-slate-700 bg-slate-800/40 hover:border-slate-600'
                       )}
                     >
-                      <Checkbox checked={done} onCheckedChange={() => toggleCheck(item.id)} />
-                      <span className={cn('text-xs', done ? 'text-emerald-200 line-through decoration-emerald-500/50' : 'text-slate-200')}>
-                        {item.label}
-                      </span>
-                      {done ? <ShieldCheck className="h-3.5 w-3.5 ml-auto text-emerald-400" /> : <ShieldAlert className="h-3.5 w-3.5 ml-auto text-slate-500" />}
+                      <Checkbox checked={done} onCheckedChange={() => toggleCheck(item.id)} className="mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <div className={cn('text-sm font-medium leading-snug', done ? 'text-emerald-200 line-through decoration-emerald-500/50' : 'text-slate-100')}>
+                          {item.label}
+                        </div>
+                        {at && (
+                          <div className="mt-0.5 text-[11px] font-mono text-emerald-400/80 flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> Concluído em {at}
+                          </div>
+                        )}
+                      </div>
+                      {done ? <ShieldCheck className="h-4 w-4 mt-0.5 text-emerald-400" /> : <ShieldAlert className="h-4 w-4 mt-0.5 text-slate-500" />}
                     </label>
                   );
                 })}
               </div>
+
 
               <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-md bg-slate-800/60 border border-slate-700 p-2">
