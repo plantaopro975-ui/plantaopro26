@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { Shield, AlertTriangle, Heart, Lock, Server, Users, X } from 'lucide-react';
 
 
@@ -282,7 +282,7 @@ export function BetaNoticeFooter() {
             </DialogHeader>
           </div>
 
-          <ScrollArea className="max-h-[65vh]">
+          <div className="max-h-[65vh] overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
             <div
               ref={(node) => {
                 // Radix já expõe close via DialogPrimitive.Close; guardamos referência
@@ -369,7 +369,7 @@ export function BetaNoticeFooter() {
                 </p>
               </div>
             </div>
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
     </>
