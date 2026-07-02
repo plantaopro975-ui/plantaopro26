@@ -347,14 +347,15 @@ export default function AgentPanel() {
   // para evitar flash da tela de erro
   if (user && isAdmin && !agent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
-        <div className="flex flex-col items-center gap-5">
+      <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <LoadingBackdrop />
+        <div className="relative flex flex-col items-center gap-5">
           <div className="p-4 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl">
             <Shield className="h-10 w-10 text-indigo-400" />
           </div>
           <div className="text-center space-y-1">
-            <p className="text-zinc-200 font-medium">Acesso Administrativo</p>
-            <p className="text-zinc-500 text-sm">Redirecionando para o painel...</p>
+            <p className="text-zinc-100 font-medium">Acesso Administrativo</p>
+            <p className="text-zinc-400 text-sm">Redirecionando para o painel...</p>
           </div>
         </div>
       </div>
