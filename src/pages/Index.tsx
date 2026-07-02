@@ -1413,7 +1413,7 @@ export default function Index() {
           )}
           
           {checkCpf.replace(/\D/g, '').length === 11 && !foundAgent && !isSearchingAgent && (
-            <div className="p-4 bg-gradient-to-r from-amber-500/15 to-orange-500/10 rounded-xl border-2 border-amber-500/40 animate-fade-in">
+            <div className="p-4 bg-gradient-to-r from-amber-500/15 to-orange-500/10 rounded-xl border-2 border-amber-500/40">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-amber-500/20">
                   <AlertTriangle className="h-5 w-5 text-amber-400" />
