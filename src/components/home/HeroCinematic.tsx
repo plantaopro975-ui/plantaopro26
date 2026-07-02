@@ -62,11 +62,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       e.currentTarget.setPointerCapture(e.pointerId);
     },
     onPointerMove: (e: React.PointerEvent<HTMLImageElement>) => {
-      if (dragging.current !== kind || !sectionRef.current) return;
-      const sec = sectionRef.current.getBoundingClientRect();
+      if (dragging.current !== kind) return;
       const img = e.currentTarget.getBoundingClientRect();
-      const x = Math.max(0, Math.min(e.clientX - sec.left - offset.current.x, sec.width - img.width));
-      const y = Math.max(0, Math.min(e.clientY - sec.top - offset.current.y, sec.height - img.height));
+      const x = Math.max(0, Math.min(e.clientX - offset.current.x, window.innerWidth - img.width));
+      const y = Math.max(0, Math.min(e.clientY - offset.current.y, window.innerHeight - img.height));
       const next = { x, y };
       setter(next);
       try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
@@ -129,11 +128,11 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
-        className="police-vehicle absolute z-30 block bottom-[38%] sm:bottom-[32%] lg:bottom-[28%] left-1 sm:left-2 lg:left-6 h-[10%] sm:h-[15%] lg:h-[20%] max-h-[28vh] w-auto max-w-[32%] sm:max-w-[28%] lg:max-w-[24%] select-none touch-none"
+        className="police-vehicle z-30 block h-[16%] sm:h-[22%] lg:h-[28%] max-h-[36vh] w-auto max-w-[45%] sm:max-w-[38%] lg:max-w-[32%] select-none touch-none"
         style={
           vehiclePos
-            ? { left: vehiclePos.x, top: vehiclePos.y, bottom: 'auto', right: 'auto' }
-            : undefined
+            ? { position: 'fixed', left: vehiclePos.x, top: vehiclePos.y }
+            : { position: 'absolute', bottom: '32%', left: '1rem' }
         }
       >
         <img
@@ -175,10 +174,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         }}
         style={
           agentPos
-            ? { left: agentPos.x, top: agentPos.y, bottom: 'auto', right: 'auto', transform: 'none' }
+            ? { position: 'fixed', left: agentPos.x, top: agentPos.y, transform: 'none' }
             : undefined
         }
-        className="agent-figure absolute z-40 block bottom-[36%] sm:bottom-[30%] lg:bottom-[24%] right-1 sm:right-2 h-[18%] sm:h-[28%] lg:h-[38%] max-h-[40vh] w-auto max-w-[30%] sm:max-w-[26%] lg:max-w-[22%] object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95"
+        className="agent-figure absolute z-40 block bottom-[30%] sm:bottom-[24%] lg:bottom-[18%] right-1 sm:right-2 h-[26%] sm:h-[36%] lg:h-[46%] max-h-[52vh] w-auto max-w-[40%] sm:max-w-[34%] lg:max-w-[28%] object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95"
       />
 
 
