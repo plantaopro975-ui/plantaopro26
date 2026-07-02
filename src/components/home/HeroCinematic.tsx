@@ -335,11 +335,13 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   type="button"
                   data-team-card
                   onClick={() => onTeamClick?.(t.name)}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-3 sm:p-3 lg:p-4 min-h-[140px] sm:min-h-[144px] lg:min-h-[172px] rounded-md border overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-3 sm:p-3 lg:p-4 min-h-[140px] sm:min-h-[144px] lg:min-h-[172px] rounded-md border border-accent/40 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
-                    borderColor: `${tc.primary}55`,
                     // @ts-ignore CSS var
                     ['--team-ring' as any]: tc.ring,
+                    // @ts-ignore CSS var
+                    ['--team-glow' as any]: tc.glow,
+                    boxShadow: `0 0 0 1px hsl(var(--accent) / 0.15), 0 10px 24px -12px ${tc.glow}`,
                   }}
                   aria-label={`Acessar equipe ${t.name}`}
                 >
@@ -351,28 +353,38 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     <img
                       src={getTeamPoster(t.name)}
                       alt=""
-                      className="absolute inset-0 h-full w-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
-                      style={{ filter: 'saturate(1.05) contrast(1.05)' }}
+                      className="absolute inset-0 h-full w-full object-cover opacity-95 group-hover:scale-105 transition-transform duration-500"
+                      style={{ filter: 'saturate(0.9) contrast(1.08) brightness(0.92)' }}
                     />
-                    {/* Overlay consistente — vinheta radial + gradiente inferior responsivo para legibilidade */}
+                    {/* Grade navy uniforme — mesma base cromática dos posters */}
                     <span
                       aria-hidden
                       className="absolute inset-0"
                       style={{
                         background:
-                          'radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.35) 100%)',
+                          'linear-gradient(180deg, hsl(var(--background)/0.35) 0%, hsl(var(--background)/0.15) 45%, hsl(var(--background)/0.9) 100%)',
                       }}
                     />
+                    {/* Key light dourado no canto superior direito — replica iluminação dos posters */}
                     <span
                       aria-hidden
-                      className="absolute inset-x-0 bottom-0 h-[45%] sm:h-[42%] lg:h-[38%]"
+                      className="absolute inset-0"
                       style={{
                         background:
-                          'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.8) 100%)',
+                          'radial-gradient(circle at 82% 12%, hsl(var(--accent)/0.28) 0%, transparent 45%)',
                       }}
                     />
-                    {/* Borda interna sutil para acabamento consistente */}
-                    <span aria-hidden className="absolute inset-0 ring-1 ring-inset ring-white/5 rounded-md" />
+                    {/* Vinheta noir */}
+                    <span
+                      aria-hidden
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%)',
+                      }}
+                    />
+                    {/* Borda interna dourada */}
+                    <span aria-hidden className="absolute inset-0 ring-1 ring-inset ring-accent/15 rounded-md" />
                   </span>
                   {/* Canto oficial (cobre) */}
                   <span
