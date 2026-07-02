@@ -134,6 +134,7 @@ const App = () => (
                 {/* PWA Install Prompt - Shows on all pages when installable */}
                 <PWAInstallPrompt />
               </GlobalNavigationHandler>
+              </ConfirmProvider>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
