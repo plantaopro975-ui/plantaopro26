@@ -1108,6 +1108,7 @@ export default function Master() {
 
           {/* Announcements Tab */}
           <TabsContent value="announcements" className="space-y-6 mt-6">
+            <PromosToggleCard />
             <AnnouncementsManager />
           </TabsContent>
 
