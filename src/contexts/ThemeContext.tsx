@@ -53,7 +53,7 @@ export const themes: Record<ThemeType, ThemeConfig> = {
   tactical: {
     id: 'tactical',
     name: 'Comando Institucional',
-    description: 'Azul institucional e caqui operacional — forças de segurança',
+    description: 'Âmbar dourado e caqui operacional — forças de segurança',
     icon: Shield,
     emoji: '🛡️',
     fontFamily: "'Libre Baskerville', 'IBM Plex Sans', serif",
@@ -64,30 +64,30 @@ export const themes: Record<ThemeType, ThemeConfig> = {
       DELTA: Radio,
     },
     colors: {
-      // Royal navy (camisa) + dark khaki (calça)
-      primary: '218 65% 32%',           // navy blue shirt
-      primaryForeground: '42 38% 92%',
-      accent: '38 28% 45%',             // dark khaki pants
-      background: '218 40% 6%',
-      card: '218 38% 9%',
-      border: '38 22% 25%',
-      gradientFrom: '218 65% 32%',
-      gradientTo: '38 28% 38%',
-      foreground: '42 38% 94%',
-      muted: '218 25% 12%',
-      mutedForeground: '38 20% 65%',
+      // Âmbar dourado (acento) + caqui escuro profundo (base)
+      primary: '42 85% 55%',            // warm gold amber
+      primaryForeground: '30 40% 8%',
+      accent: '38 32% 48%',             // dark khaki
+      background: '30 25% 6%',
+      card: '30 22% 9%',
+      border: '38 24% 26%',
+      gradientFrom: '42 85% 55%',
+      gradientTo: '30 40% 22%',
+      foreground: '42 45% 94%',
+      muted: '30 18% 12%',
+      mutedForeground: '38 22% 68%',
       isLight: false,
     },
     effects: {
       glowIntensity: 'medium',
-      particleColor: 'rgba(59, 100, 168, 0.6)',
+      particleColor: 'rgba(217, 165, 63, 0.55)',
       scanlineOpacity: 0.04,
     },
     cardStyle: {
-      gradient: 'from-[hsl(218_50%_10%)]/95 via-[hsl(218_40%_12%)]/90 to-[hsl(38_25%_14%)]/95',
-      border: 'border-[hsl(38_28%_45%)]/40',
-      shadow: 'shadow-[hsl(218_65%_32%)]/25',
-      hoverShadow: 'hover:shadow-[hsl(38_28%_50%)]/40',
+      gradient: 'from-[hsl(30_28%_10%)]/95 via-[hsl(30_22%_12%)]/90 to-[hsl(38_25%_14%)]/95',
+      border: 'border-[hsl(42_60%_45%)]/40',
+      shadow: 'shadow-[hsl(42_85%_45%)]/25',
+      hoverShadow: 'hover:shadow-[hsl(42_85%_55%)]/40',
     },
   },
 
