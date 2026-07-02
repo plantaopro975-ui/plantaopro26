@@ -188,11 +188,11 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative h-8 w-8 hover:bg-primary/10 transition-all"
+          className="relative h-9 w-9 shrink-0 hover:bg-primary/10 transition-all overflow-visible"
           onClick={handleNotificationClick}
         >
           <Bell className="h-4 w-4" />
-          <span className="notification-badge absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+          <span className="notification-badge absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)] ring-2 ring-background" />
         </Button>
 
         {/* User Menu - Tactical Style */}
