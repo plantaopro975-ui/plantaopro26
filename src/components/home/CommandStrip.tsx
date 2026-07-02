@@ -86,14 +86,14 @@ export function CommandStrip() {
             title="ISE / Acre"
             className="group relative shrink-0 rounded-md p-0.5 ring-1 ring-border/60 hover:ring-primary/40 transition-all"
           >
-            <div className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center">
-              <Shield className="h-4 w-4 text-primary" strokeWidth={2.2} />
+            <div className="relative h-10 w-10 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center">
+              <Shield className="h-5 w-5 sm:h-4 sm:w-4 text-primary" strokeWidth={2.2} />
             </div>
           </button>
 
           {/* Identidade */}
           <div className="shrink-0 border-l border-border/50 pl-3 leading-tight">
-            <span className="block text-[13px] sm:text-[15px] font-bold text-foreground font-serif whitespace-nowrap">
+            <span className="block text-[15px] sm:text-[15px] font-bold text-foreground font-serif whitespace-nowrap">
               Comando <span className="text-primary">Operacional</span>
             </span>
             <span className="hidden md:block text-[10px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono whitespace-nowrap">
