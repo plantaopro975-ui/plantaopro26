@@ -463,7 +463,7 @@ export default function AgentPanel() {
       {/* Session Monitor Banner - Visual session status */}
       <SessionMonitorBanner />
 
-      <div className="flex-1 flex flex-col w-full min-w-0 min-h-[100dvh] no-swipe-back">
+      <div className="flex-1 flex flex-col w-full min-w-0 min-h-0 no-swipe-back">
         <main 
           className={`flex-1 w-full min-w-0 px-2 py-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto overflow-x-hidden no-swipe-back ${showLicenseWarning ? 'pt-28' : ''}`}
           style={{
