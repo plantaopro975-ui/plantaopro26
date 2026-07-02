@@ -21,6 +21,7 @@ const MasterStub = () => (
   <div>
     <h1>Painel Master</h1>
     <button>Ação Master</button>
+    <a href="/master/danger">Zona Perigosa</a>
   </div>
 );
 const HomeStub = () => <div>HOME_PUBLICA</div>;
@@ -106,5 +107,38 @@ describe("RequireAuth — guards de rota", () => {
     expect(screen.queryByText("DASHBOARD_SECRETO")).not.toBeInTheDocument();
     expect(screen.queryByText("HOME_PUBLICA")).not.toBeInTheDocument();
     expect(screen.getByRole("status")).toBeInTheDocument();
+  });
+
+  it("/master: visitante não vê nenhum botão nem link do painel na DOM", () => {
+    authState.user = null;
+    authState.isLoading = false;
+    authState.masterSession = null;
+
+    renderAt("/master");
+
+    // Nenhum controle interativo do painel Master deve estar presente.
+    expect(screen.queryByRole("button", { name: /Ação Master/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Zona Perigosa/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /Painel Master/i })).not.toBeInTheDocument();
+
+    // Apenas os controles institucionais da RestrictedArea existem.
+    const buttons = screen.getAllByRole("button");
+    const buttonNames = buttons.map((b) => b.textContent?.trim().toLowerCase() ?? "");
+    for (const name of buttonNames) {
+      expect(name).toMatch(/voltar|entrar/);
+    }
+  });
+
+  it("/master: RestrictedArea mostra avisos institucionais das unidades do Acre", () => {
+    authState.user = null;
+    authState.isLoading = false;
+    authState.masterSession = null;
+
+    renderAt("/master");
+
+    expect(screen.getByText(/Painel Institucional/i)).toBeInTheDocument();
+    expect(screen.getByText(/Unidades do Acre/i)).toBeInTheDocument();
+    expect(screen.getByText(/ISE Rio Branco/i)).toBeInTheDocument();
+    expect(screen.getByText(/ISE Feijó/i)).toBeInTheDocument();
   });
 });
