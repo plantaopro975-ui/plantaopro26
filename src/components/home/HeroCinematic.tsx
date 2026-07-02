@@ -239,15 +239,25 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             });
           }
         }}
+        onPointerDown={agentHandlers.onPointerDown}
+        onPointerMove={agentHandlers.onPointerMove}
+        onPointerUp={agentHandlers.onPointerUp}
+        onWheel={agentHandlers.onWheel}
+        onDoubleClick={agentHandlers.onDoubleClick}
+        onTouchStart={agentPinch.onTouchStart}
+        onTouchMove={agentPinch.onTouchMove}
+        onTouchEnd={agentPinch.onTouchEnd}
         style={{
           position: 'absolute',
           left: `${agentT.xPct}%`,
           top: `${agentT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${agentT.scale})`,
           transformOrigin: 'center',
+          touchAction: 'none',
         }}
-        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none opacity-95 cursor-pointer"
+        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none opacity-95 cursor-grab active:cursor-grabbing"
       />
+
 
 
 
