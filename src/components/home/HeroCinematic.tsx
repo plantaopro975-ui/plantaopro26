@@ -53,11 +53,75 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     yPct: Math.min(92, Math.max(20, t.yPct)),
     scale: Math.min(isMobile ? 1.6 : 2.5, Math.max(0.45, t.scale)),
   });
-  const [agentT] = useState<Transform>(() =>
+  const [agentT, setAgentT] = useState<Transform>(() =>
     clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
-  const [vehicleT] = useState<Transform>(() =>
+  const [vehicleT, setVehicleT] = useState<Transform>(() =>
     clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
+  );
+
+  // Desktop-only drag + wheel-scale. Mobile permanece travado.
+  const makeDesktopHandlers = (
+    current: Transform,
+    setT: (t: Transform) => void,
+    storageKey: string,
+    defaults: Transform,
+  ) => {
+    if (isMobile) return {};
+    return {
+      onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
+        if (e.pointerType === 'touch') return;
+        const el = sectionRef.current;
+        if (!el) return;
+        e.preventDefault();
+        (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+        const rect = el.getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const start = { ...current };
+        let moved = false;
+        let last = start;
+        const move = (ev: PointerEvent) => {
+          const dx = ((ev.clientX - startX) / rect.width) * 100;
+          const dy = ((ev.clientY - startY) / rect.height) * 100;
+          if (Math.abs(dx) + Math.abs(dy) > 0.5) moved = true;
+          last = clampT({ xPct: start.xPct + dx, yPct: start.yPct + dy, scale: start.scale });
+          setT(last);
+        };
+        const up = () => {
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+          try { if (moved) localStorage.setItem(storageKey, JSON.stringify(last)); } catch {}
+          if (moved) {
+            const w = window as unknown as { __heroSuppressClick?: number };
+            w.__heroSuppressClick = Date.now() + 300;
+          }
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up, { once: true });
+      },
+      onWheel: (e: React.WheelEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const delta = -e.deltaY * 0.0015;
+        const next = clampT({ ...current, scale: current.scale + delta });
+        setT(next);
+        try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
+      },
+      onDoubleClick: () => {
+        setT(clampT(defaults));
+        try { localStorage.removeItem(storageKey); } catch {}
+      },
+      style: { cursor: 'grab' as const, touchAction: 'none' as const },
+    };
+  };
+
+  const agentDesktop = makeDesktopHandlers(
+    agentT, setAgentT, 'hero_agent_t',
+    { xPct: 82, yPct: 62, scale: 1 },
+  );
+  const vehicleDesktop = makeDesktopHandlers(
+    vehicleT, setVehicleT, 'hero_vehicle_t',
+    { xPct: 18, yPct: 55, scale: 1 },
   );
 
 
@@ -112,15 +176,17 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial — posição travada */}
+      {/* Viatura policial — desktop: arrastar + wheel para redimensionar; mobile: travada */}
       <div
-        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none pointer-events-none"
+        {...vehicleDesktop}
+        className={`police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none ${isMobile ? 'pointer-events-none' : ''}`}
         style={{
           position: 'absolute',
           left: `${vehicleT.xPct}%`,
           top: `${vehicleT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
           transformOrigin: 'center',
+          ...(vehicleDesktop.style || {}),
         }}
       >
         <img
@@ -142,7 +208,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         aria-label="Agente tático — toque 3 vezes para acesso admin"
         title="3 cliques = admin"
         onClick={() => {
-          const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
+          const w = window as unknown as { __agentClicks?: number; __agentTimer?: number; __heroSuppressClick?: number };
+          if (w.__heroSuppressClick && Date.now() < w.__heroSuppressClick) return;
           w.__agentClicks = (w.__agentClicks || 0) + 1;
           if (w.__agentTimer) window.clearTimeout(w.__agentTimer);
           w.__agentTimer = window.setTimeout(() => { w.__agentClicks = 0; }, 700);
@@ -159,12 +226,14 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             });
           }
         }}
+        {...agentDesktop}
         style={{
           position: 'absolute',
           left: `${agentT.xPct}%`,
           top: `${agentT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${agentT.scale})`,
           transformOrigin: 'center',
+          ...(agentDesktop.style || {}),
         }}
         className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-pointer"
       >
