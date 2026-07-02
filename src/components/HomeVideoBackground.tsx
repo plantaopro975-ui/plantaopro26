@@ -1,18 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLowMotion } from '@/hooks/useLowMotion';
+
+const isMobileDevice = () =>
+  typeof window !== 'undefined' &&
+  (window.matchMedia?.('(max-width: 768px)').matches ||
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
 
 export function HomeVideoBackground() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { resolvedTheme } = useTheme();
+  const { lowMotion } = useLowMotion();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [enableVideo] = useState(() => !isMobileDevice() && !lowMotion);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {
-        // Autoplay blocked - user interaction needed
-      });
-    }
-  }, []);
+    if (!enableVideo) return;
+    const v = videoRef.current;
+    if (!v) return;
+    v.play().catch(() => {});
+
+    const onVis = () => {
+      if (document.hidden) v.pause();
+      else v.play().catch(() => {});
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [enableVideo]);
+
 
   // Theme-specific overlay colors
   const getOverlayStyle = () => {
@@ -36,19 +51,23 @@ export function HomeVideoBackground() {
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden">
-      {/* Video element */}
-      <video
-        ref={videoRef}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-          isLoaded ? 'opacity-40' : 'opacity-0'
-        }`}
-        src="/video/intro.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        onLoadedData={() => setIsLoaded(true)}
-      />
+      {/* Video element - disabled on mobile / low-motion to prevent overheating */}
+      {enableVideo && (
+        <video
+          ref={videoRef}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            isLoaded ? 'opacity-40' : 'opacity-0'
+          }`}
+          src="/video/intro.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          onLoadedData={() => setIsLoaded(true)}
+        />
+      )}
+
       
       {/* Gradient overlay */}
       <div 
