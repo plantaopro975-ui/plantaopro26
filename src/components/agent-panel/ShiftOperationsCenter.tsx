@@ -132,7 +132,6 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
   const shiftKey = currentShift?.id ?? '';
   const checklistStorageKey = shiftKey ? `shift_checklist_${agentId}_${shiftKey}` : '';
   const obsStorageKey = shiftKey ? `shift_obs_${agentId}_${shiftKey}` : '';
-  const hudShownKey = shiftKey ? `shift_hud_${agentId}_${shiftKey}` : '';
 
   // Fetch current/next shift
   useEffect(() => {
