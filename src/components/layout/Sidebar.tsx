@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { RestrictedAccessDialog } from '@/components/auth/RestrictedAccessDialog';
-import logoAsset from '@/assets/logo-plantao-pro-official.png.asset.json';
-const logoEmblem = logoAsset.url;
+import logoEmblem from '@/assets/logo-plantao-pro.png';
 import {
   Users,
   Clock,
