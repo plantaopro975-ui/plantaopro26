@@ -1694,24 +1694,33 @@ export default function Index() {
             />
           </div>
 
-          {/* Senhas */}
-          <div className="grid grid-cols-2 gap-4">
-            <AuthInput
-              label="Senha *"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              placeholder="Mín. 6 caracteres"
-              isPassword
-              error={regErrors.password}
-            />
-            <AuthInput
-              label="Confirmar *"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              placeholder="Repita a senha"
-              isPassword
-              error={regErrors.confirmPassword}
-            />
+          {/* Senhas — 6 dígitos numéricos */}
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-4">
+              <AuthInput
+                label="Senha (6 dígitos) *"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                placeholder="••••••"
+                isPassword
+                inputMode="numeric"
+                maxLength={6}
+                error={regErrors.password}
+              />
+              <AuthInput
+                label="Confirmar *"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                placeholder="••••••"
+                isPassword
+                inputMode="numeric"
+                maxLength={6}
+                error={regErrors.confirmPassword}
+              />
+            </div>
+            <p className="text-[11px] text-cyan-300/80 flex items-center gap-1.5">
+              <Info className="h-3 w-3" /> Dica: crie uma senha de <strong>6 números</strong> fácil de lembrar (evite datas óbvias e sequências).
+            </p>
           </div>
           
           <AuthButton
