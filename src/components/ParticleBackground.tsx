@@ -1,4 +1,5 @@
 import { useEffect, useRef, useMemo } from 'react';
+import { useLowMotion } from '@/hooks/useLowMotion';
 
 interface Particle {
   x: number;
@@ -16,19 +17,31 @@ interface ParticleBackgroundProps {
   className?: string;
 }
 
-export const ParticleBackground = ({ 
+const isMobile = () =>
+  typeof window !== 'undefined' &&
+  (window.matchMedia?.('(max-width: 768px)').matches ||
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
+
+export const ParticleBackground = ({
   particleCount = 60,
-  className = ''
+  className = '',
 }: ParticleBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
   const particlesRef = useRef<Particle[]>([]);
+  const { lowMotion } = useLowMotion();
 
-  // Generate particles only once
+  // Mobile / low-motion: drastically fewer particles
+  const effectiveCount = useMemo(() => {
+    if (lowMotion) return 0;
+    if (isMobile()) return Math.min(18, Math.round(particleCount / 3));
+    return particleCount;
+  }, [particleCount, lowMotion]);
+
   const generateParticles = useMemo(() => {
     return (width: number, height: number): Particle[] => {
       const particles: Particle[] = [];
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < effectiveCount; i++) {
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
@@ -42,25 +55,30 @@ export const ParticleBackground = ({
       }
       return particles;
     };
-  }, [particleCount]);
+  }, [effectiveCount]);
 
   useEffect(() => {
+    if (effectiveCount === 0) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
+    const mobile = isMobile();
+    const targetFps = mobile ? 24 : 60;
+    const frameInterval = 1000 / targetFps;
+    const useGlow = !mobile; // radial gradients per particle are expensive on mobile
+
     const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2);
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
       canvas.style.width = `${rect.width}px`;
       canvas.style.height = `${rect.height}px`;
-      
-      // Regenerate particles on resize
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // reset before scaling to avoid compounding
       particlesRef.current = generateParticles(rect.width, rect.height);
     };
 
@@ -68,77 +86,85 @@ export const ParticleBackground = ({
     window.addEventListener('resize', resizeCanvas);
 
     let time = 0;
+    let lastFrame = 0;
+    let paused = document.hidden;
 
-    const animate = () => {
-      if (!canvas || !ctx) return;
-      
+    const onVisibility = () => {
+      paused = document.hidden;
+      if (!paused) {
+        lastFrame = 0;
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    const animate = (now: number = performance.now()) => {
+      if (paused) return;
+      if (now - lastFrame < frameInterval) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
+      lastFrame = now;
+
       const rect = canvas.getBoundingClientRect();
       ctx.clearRect(0, 0, rect.width, rect.height);
 
-      particlesRef.current.forEach((particle) => {
-        // Update position
+      for (const particle of particlesRef.current) {
         particle.x += particle.speedX;
         particle.y += particle.speedY;
-
-        // Wrap around edges
         if (particle.x < 0) particle.x = rect.width;
         if (particle.x > rect.width) particle.x = 0;
         if (particle.y < 0) particle.y = rect.height;
         if (particle.y > rect.height) particle.y = 0;
 
-        // Twinkle effect
-        const twinkle = Math.sin(time * particle.twinkleSpeed + particle.twinklePhase) * 0.4 + 0.6;
+        const twinkle =
+          Math.sin(time * particle.twinkleSpeed + particle.twinklePhase) * 0.4 + 0.6;
         const currentOpacity = particle.opacity * twinkle;
 
-        // Draw particle with glow
-        ctx.save();
-        
-        // Outer glow
-        const gradient = ctx.createRadialGradient(
-          particle.x, particle.y, 0,
-          particle.x, particle.y, particle.size * 3
-        );
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${currentOpacity})`);
-        gradient.addColorStop(0.4, `rgba(255, 220, 150, ${currentOpacity * 0.5})`);
-        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size * 3, 0, Math.PI * 2);
-        ctx.fillStyle = gradient;
-        ctx.fill();
+        if (useGlow) {
+          const gradient = ctx.createRadialGradient(
+            particle.x,
+            particle.y,
+            0,
+            particle.x,
+            particle.y,
+            particle.size * 3
+          );
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${currentOpacity})`);
+          gradient.addColorStop(0.4, `rgba(255, 220, 150, ${currentOpacity * 0.5})`);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size * 3, 0, Math.PI * 2);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+        }
 
-        // Core star
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 255, 255, ${currentOpacity})`;
         ctx.fill();
-        
-        ctx.restore();
-      });
+      }
 
       time++;
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [generateParticles]);
+  }, [generateParticles, effectiveCount]);
+
+  if (effectiveCount === 0) return null;
 
   return (
     <canvas
       ref={canvasRef}
       className={`absolute inset-0 pointer-events-none ${className}`}
-      style={{ 
-        width: '100%', 
-        height: '100%',
-        zIndex: 5
-      }}
+      style={{ width: '100%', height: '100%', zIndex: 5 }}
     />
   );
 };
