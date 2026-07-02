@@ -33,9 +33,60 @@ function isSafeModeActive(): boolean {
   }
 }
 
-// Register the Service Worker ONCE (avoids multiple registrations and reload loops)
-// that can cause auth refresh storms.
-if ("serviceWorker" in navigator && !isSafeModeActive()) {
+// Guard: never register the app-shell SW in dev, Lovable preview, iframes,
+// or when the user asks to disable it via ?sw=off. Stale SWs are the #1
+// cause of "PWA travando" (frozen UI, white screen, reload loops).
+function shouldSkipServiceWorker(): boolean {
+  try {
+    if (!import.meta.env.PROD) return true;
+    if (window.self !== window.top) return true;
+    const host = window.location.hostname;
+    if (
+      host.startsWith("id-preview--") ||
+      host.startsWith("preview--") ||
+      host === "lovableproject.com" ||
+      host.endsWith(".lovableproject.com") ||
+      host === "lovableproject-dev.com" ||
+      host.endsWith(".lovableproject-dev.com") ||
+      host === "beta.lovable.dev" ||
+      host.endsWith(".beta.lovable.dev")
+    ) {
+      return true;
+    }
+    if (new URLSearchParams(window.location.search).has("sw") &&
+        new URLSearchParams(window.location.search).get("sw") === "off") {
+      return true;
+    }
+  } catch {
+    return true;
+  }
+  return false;
+}
+
+async function unregisterAllServiceWorkers() {
+  try {
+    if (!("serviceWorker" in navigator)) return;
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map((r) => r.unregister().catch(() => false)));
+    if ("caches" in window) {
+      const names = await caches.keys();
+      await Promise.all(
+        names
+          .filter((n) => n.startsWith("plantao-pro-"))
+          .map((n) => caches.delete(n).catch(() => false))
+      );
+    }
+  } catch {
+    // ignore
+  }
+}
+
+if ("serviceWorker" in navigator && shouldSkipServiceWorker()) {
+  // Preview / dev / kill-switch: ensure no stale SW keeps serving old HTML.
+  void unregisterAllServiceWorkers();
+  pushDiagEvent('warn', 'sw_skipped_preview_or_dev');
+} else if ("serviceWorker" in navigator && !isSafeModeActive()) {
+
   const w = window as unknown as { __pp_sw_registered?: boolean };
   if (!w.__pp_sw_registered) {
     w.__pp_sw_registered = true;
