@@ -927,7 +927,7 @@ export default function Master() {
                                 className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
                                 title="Editar"
                               >
-                                <Icon3D name="edit" size={16} alt="Editar" />
+                                <Icon3DAction name="edit" alt="Editar" />
                               </Button>
                               {agent.cpf && (
                                 <AdminResetPasswordDialog 
