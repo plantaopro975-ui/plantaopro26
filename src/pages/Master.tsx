@@ -902,7 +902,7 @@ export default function Master() {
                                 className="text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
                                 title="Enviar Mensagem"
                               >
-                                <Icon3D name="message" size={16} alt="Enviar mensagem" />
+                                <Icon3DAction name="message" alt="Enviar mensagem" />
                               </Button>
                               <Button
                                 variant="ghost"
