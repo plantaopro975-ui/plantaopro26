@@ -76,7 +76,7 @@ import { AuthDialog } from '@/components/auth/AuthDialog';
 import { AuthInput } from '@/components/auth/AuthInput';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TeamBadge } from '@/components/auth/TeamBadge';
-import logoShield from '@/assets/ise-acre-badge.png';
+
 
 
 interface Unit {
