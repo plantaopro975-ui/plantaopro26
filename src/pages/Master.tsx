@@ -628,7 +628,10 @@ export default function Master() {
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="overview">Unidades</TabsTrigger>
+            <TabsTrigger value="overview" className="gap-1.5">
+              <Icon3D src={icon3dBuilding} fallback={Building2} size={14} className="hidden sm:inline-flex" />
+              Unidades
+            </TabsTrigger>
             <TabsTrigger value="access-control" className="relative">
               Acesso
               {agents.filter(a => !a.is_active || (a as any).is_frozen).length > 0 && (
