@@ -120,17 +120,13 @@ export function AuthDialog({
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">{subtitle || title}</DialogDescription>
 
-        {/* Top accent bar */}
+        {/* Top accent bar (flat) */}
         <div
-          className={cn("h-1.5 w-full relative overflow-hidden",
-            !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
+          className={cn("h-1 w-full", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
           style={teamBranded && teamColor ? {
             background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
           } : undefined}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"
-               style={{ animationDuration: '3s' }} />
-        </div>
+        />
 
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
@@ -151,24 +147,17 @@ export function AuthDialog({
                                           '50% 30%',
               }}
             />
-            {teamPattern && (
-              <div className="absolute inset-0 opacity-25 mix-blend-overlay pointer-events-none"
-                   style={{ backgroundImage: teamPattern }} />
-            )}
             {/* Gradiente apenas na base — preserva a imagem no topo */}
             <div className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
                  style={{ background: `linear-gradient(180deg, transparent 0%, rgba(2,6,23,0.55) 55%, rgba(2,6,23,0.96) 100%)` }} />
-            {/* Leve wash lateral com a cor da equipe */}
-            <div className="absolute inset-0 pointer-events-none"
-                 style={{ background: `linear-gradient(90deg, ${teamColor!.secondary}22 0%, transparent 45%)` }} />
             <div className="absolute left-0 top-0 bottom-0 w-[3px]"
-                 style={{ background: `linear-gradient(180deg, transparent, ${teamColor!.primary}, transparent)` }} />
+                 style={{ background: teamColor!.primary, opacity: 0.7 }} />
 
             {/* Top status row */}
             <div className="absolute top-2 sm:top-2.5 inset-x-3 sm:inset-x-4 flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 min-w-0">
-                <div className="h-1.5 w-1.5 rounded-full animate-pulse shrink-0"
-                     style={{ background: teamColor!.primary, boxShadow: `0 0 8px ${teamColor!.primary}` }} />
+                <div className="h-1.5 w-1.5 rounded-full shrink-0"
+                     style={{ background: teamColor!.primary }} />
                 <span className="text-[9px] sm:text-[10px] tracking-[0.24em] sm:tracking-[0.28em] font-mono font-semibold text-white/75 uppercase truncate">
                   Secure · {teamKey}
                 </span>
@@ -179,12 +168,8 @@ export function AuthDialog({
             {/* Emblem + title — horizontal compact */}
             <div className="absolute bottom-0 inset-x-0 px-3 sm:px-4 pb-2.5 sm:pb-3 flex items-center gap-2.5 sm:gap-3">
               {teamEmblem && (
-                <div className="relative shrink-0">
-                  <div className="absolute -inset-0.5 rounded-full blur-sm opacity-60"
-                       style={{ background: teamColor!.primary }} />
-                  <img src={teamEmblem} alt=""
-                    className="relative h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]" />
-                </div>
+                <img src={teamEmblem} alt=""
+                  className="h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
               )}
               <div className="min-w-0 flex-1">
                 <div className="text-[9px] sm:text-[10px] tracking-[0.28em] sm:tracking-[0.32em] font-mono font-bold uppercase leading-none"
@@ -208,11 +193,9 @@ export function AuthDialog({
             {/* Legacy header (non-team dialogs) */}
             <div className={cn("relative px-6 pt-8 pb-6 bg-gradient-to-b", styles.headerBg)}>
               <div className="absolute top-4 right-4 flex gap-1.5">
-                <div className={cn("w-2 h-2 rounded-full animate-pulse", styles.decorColor)} />
-                <div className={cn("w-2 h-2 rounded-full animate-pulse opacity-60", styles.decorColor)}
-                     style={{ animationDelay: '0.3s' }} />
-                <div className={cn("w-2 h-2 rounded-full animate-pulse opacity-30", styles.decorColor)}
-                     style={{ animationDelay: '0.6s' }} />
+                <div className={cn("w-1.5 h-1.5 rounded-full", styles.decorColor)} />
+                <div className={cn("w-1.5 h-1.5 rounded-full opacity-60", styles.decorColor)} />
+                <div className={cn("w-1.5 h-1.5 rounded-full opacity-30", styles.decorColor)} />
               </div>
               <div className="flex justify-center mb-5">
                 <div className={cn("p-4 rounded-2xl bg-gradient-to-br backdrop-blur-sm",
