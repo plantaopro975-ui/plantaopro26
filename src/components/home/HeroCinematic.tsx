@@ -62,9 +62,82 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
   );
 
-  // Assets travados: sem drag/scroll/reset. setAgentT/setVehicleT ficam disponíveis
-  // caso queiramos reativar interação futuramente.
-  void setAgentT; void setVehicleT;
+  // Persist transforms
+  useEffect(() => {
+    try { localStorage.setItem('hero_agent_t', JSON.stringify(agentT)); } catch {}
+  }, [agentT]);
+  useEffect(() => {
+    try { localStorage.setItem('hero_vehicle_t', JSON.stringify(vehicleT)); } catch {}
+  }, [vehicleT]);
+
+  const makeHandlers = (
+    t: Transform,
+    setT: (t: Transform) => void,
+  ) => {
+    const rect = () => sectionRef.current?.getBoundingClientRect();
+    let dragging = false;
+    let start = { x: 0, y: 0, xPct: t.xPct, yPct: t.yPct };
+    return {
+      onPointerDown: (e: React.PointerEvent) => {
+        const r = rect(); if (!r) return;
+        dragging = true;
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        start = { x: e.clientX, y: e.clientY, xPct: t.xPct, yPct: t.yPct };
+      },
+      onPointerMove: (e: React.PointerEvent) => {
+        if (!dragging) return;
+        const r = rect(); if (!r) return;
+        const dx = ((e.clientX - start.x) / r.width) * 100;
+        const dy = ((e.clientY - start.y) / r.height) * 100;
+        setT(clampT({ xPct: start.xPct + dx, yPct: start.yPct + dy, scale: t.scale }));
+      },
+      onPointerUp: (e: React.PointerEvent) => {
+        dragging = false;
+        try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+      },
+      onWheel: (e: React.WheelEvent) => {
+        e.preventDefault();
+        const delta = -e.deltaY * 0.0015;
+        setT(clampT({ ...t, scale: t.scale + delta }));
+      },
+      onDoubleClick: () => {
+        setT(clampT({ xPct: 50, yPct: 55, scale: 1 }));
+      },
+    };
+  };
+
+  const agentHandlers = makeHandlers(agentT, setAgentT);
+  const vehicleHandlers = makeHandlers(vehicleT, setVehicleT);
+
+  // Pinch-to-zoom (mobile) — 2 dedos
+  const makePinch = (t: Transform, setT: (t: Transform) => void) => {
+    const pts = new Map<number, { x: number; y: number }>();
+    let startDist = 0;
+    let startScale = t.scale;
+    return {
+      onTouchStart: (e: React.TouchEvent) => {
+        for (const touch of Array.from(e.touches)) {
+          pts.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
+        }
+        if (pts.size === 2) {
+          const [a, b] = Array.from(pts.values());
+          startDist = Math.hypot(a.x - b.x, a.y - b.y);
+          startScale = t.scale;
+        }
+      },
+      onTouchMove: (e: React.TouchEvent) => {
+        if (e.touches.length !== 2 || startDist === 0) return;
+        const a = e.touches[0], b = e.touches[1];
+        const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        setT(clampT({ ...t, scale: startScale * (d / startDist) }));
+      },
+      onTouchEnd: () => { pts.clear(); startDist = 0; },
+    };
+  };
+  const agentPinch = makePinch(agentT, setAgentT);
+  const vehiclePinch = makePinch(vehicleT, setVehicleT);
+
+
 
 
 
@@ -116,7 +189,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
-        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none"
+        {...vehicleHandlers}
+        {...vehiclePinch}
+        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none cursor-grab active:cursor-grabbing"
         style={{
           position: 'absolute',
           left: `${vehicleT.xPct}%`,
@@ -126,6 +201,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           touchAction: 'none',
         }}
       >
+
         <img
           src={policeVehicle}
           alt="Viatura policial"
@@ -163,15 +239,25 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             });
           }
         }}
+        onPointerDown={agentHandlers.onPointerDown}
+        onPointerMove={agentHandlers.onPointerMove}
+        onPointerUp={agentHandlers.onPointerUp}
+        onWheel={agentHandlers.onWheel}
+        onDoubleClick={agentHandlers.onDoubleClick}
+        onTouchStart={agentPinch.onTouchStart}
+        onTouchMove={agentPinch.onTouchMove}
+        onTouchEnd={agentPinch.onTouchEnd}
         style={{
           position: 'absolute',
           left: `${agentT.xPct}%`,
           top: `${agentT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${agentT.scale})`,
           transformOrigin: 'center',
+          touchAction: 'none',
         }}
-        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none opacity-95 cursor-pointer"
+        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none opacity-95 cursor-grab active:cursor-grabbing"
       />
+
 
 
 
