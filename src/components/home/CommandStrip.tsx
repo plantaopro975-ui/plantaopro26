@@ -60,20 +60,20 @@ export function CommandStrip() {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bannerBg})` }}
       />
-      {/* Overlay Noir para legibilidade */}
+      {/* Overlay quente (âmbar/caqui) para contraste com foto golden hour */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(90deg,hsl(222_38%_6%/0.95)_0%,hsl(220_32%_8%/0.78)_55%,hsl(222_38%_6%/0.95)_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(90deg,hsl(28_35%_6%/0.94)_0%,hsl(32_28%_10%/0.72)_55%,hsl(28_35%_6%/0.94)_100%)]"
       />
 
-      {/* Gold accents (mesmos do Header/Footer) */}
+      {/* Warm gold accents */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-85"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(42_85%_55%)_30%,hsl(42_85%_55%)_70%,transparent_100%)] opacity-90"
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent"
       />
 
       <div className="relative flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-1 px-3 sm:px-4 lg:px-6 py-2 sm:py-0 sm:h-14 min-h-12">
@@ -87,14 +87,14 @@ export function CommandStrip() {
             className="group relative shrink-0 rounded-md p-0.5 ring-1 ring-border/60 hover:ring-primary/40 transition-all"
           >
             <div className="relative h-10 w-10 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center">
-              <Shield className="h-5 w-5 sm:h-4 sm:w-4 text-primary" strokeWidth={2.2} />
+              <Shield className="h-5 w-5 sm:h-4 sm:w-4 text-amber-400 drop-shadow-[0_0_6px_hsl(42_85%_55%/0.6)]" strokeWidth={2.2} />
             </div>
           </button>
 
           {/* Identidade */}
-          <div className="shrink-0 border-l border-border/50 pl-3 leading-tight">
-            <span className="block text-[15px] sm:text-[15px] font-bold text-foreground font-serif whitespace-nowrap">
-              Comando <span className="text-primary">Operacional</span>
+          <div className="shrink-0 border-l border-amber-500/30 pl-3 leading-tight">
+            <span className="block text-[15px] sm:text-[15px] font-bold text-amber-50 font-serif whitespace-nowrap tracking-wide">
+              Comando <span className="text-amber-400 drop-shadow-[0_0_8px_hsl(42_85%_55%/0.35)]">Operacional</span>
             </span>
             <span className="hidden md:block text-[10px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono whitespace-nowrap">
               Gestão inteligente de plantões
@@ -105,10 +105,10 @@ export function CommandStrip() {
         {/* Relógio + radar + status */}
         <div className="flex items-center gap-2 sm:gap-4 ml-auto shrink-0">
           <div className="text-right leading-tight tabular-nums shrink-0">
-            <div className="font-mono text-[15px] sm:text-[16px] font-semibold text-foreground tracking-tight whitespace-nowrap">
+            <div className="font-mono text-[15px] sm:text-[16px] font-semibold text-amber-50 tracking-tight whitespace-nowrap">
               {time}
             </div>
-            <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-mono whitespace-nowrap">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-amber-200/70 font-mono whitespace-nowrap">
               {date}
             </div>
           </div>
