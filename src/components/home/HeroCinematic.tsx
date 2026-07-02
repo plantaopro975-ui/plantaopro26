@@ -76,7 +76,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   });
 
   const agentHandlers = makeHandlers('agent', setAgentPos, 'hero_agent_pos');
-  const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos');
+  const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos_v2');
 
 
   return (
