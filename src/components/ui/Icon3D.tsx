@@ -56,13 +56,7 @@ export const ICON_3D_MAP = {
 
 export type Icon3DName = keyof typeof ICON_3D_MAP;
 
-interface Icon3DProps {
-  /** Semantic name (preferred). Ex: `<Icon3D name="edit" />` */
-  name?: Icon3DName;
-  /** Legacy: direct PNG URL. Prefer `name`. */
-  src?: string;
-  /** Legacy: Lucide fallback when using `src`. Ignored with `name`. */
-  fallback?: ComponentType<LucideProps>;
+interface Icon3DBaseProps {
   /** Accessible label. Empty = decorative. */
   alt?: string;
   /** Size in px. Default 24. Use 16 in compact table buttons. */
@@ -70,6 +64,28 @@ interface Icon3DProps {
   className?: string;
   fallbackColor?: string;
 }
+
+interface Icon3DSemanticProps extends Icon3DBaseProps {
+  /** Semantic name (preferred). Ex: `<Icon3D name="edit" />` */
+  name: Icon3DName;
+  src?: never;
+  fallback?: never;
+}
+
+interface Icon3DLegacyProps extends Icon3DBaseProps {
+  name?: never;
+  /** Legacy: direct PNG URL. Prefer `name` when the icon exists in ICON_3D_MAP. */
+  src: string;
+  /** Legacy: Lucide fallback when using `src`. */
+  fallback?: ComponentType<LucideProps>;
+}
+
+/**
+ * Discriminated union — either use semantic `name` OR legacy `src`.
+ * TypeScript errors if both are passed, preventing drift back to `src`
+ * when a semantic alias exists in ICON_3D_MAP.
+ */
+export type Icon3DProps = Icon3DSemanticProps | Icon3DLegacyProps;
 
 /**
  * Icon3D — 3D isometric asset with semantic mapping.
@@ -79,14 +95,16 @@ interface Icon3DProps {
  * - Perfectly centered for use inside compact buttons
  */
 export function Icon3D({
-  name,
-  src: rawSrc,
-  fallback: rawFallback,
   alt = '',
   size = 24,
   className,
   fallbackColor,
+  ...rest
 }: Icon3DProps) {
+  const name = (rest as Icon3DSemanticProps).name;
+  const rawSrc = (rest as Icon3DLegacyProps).src;
+  const rawFallback = (rest as Icon3DLegacyProps).fallback;
+
   const mapped = name ? ICON_3D_MAP[name] : undefined;
   const src = mapped?.src ?? rawSrc;
   const Fallback = mapped?.fallback ?? rawFallback;
@@ -140,5 +158,20 @@ export function Icon3D({
         style={dim}
       />
     </span>
+  );
+}
+
+/**
+ * Icon3DAction — compact standardized variant for row/table action buttons.
+ * Fixed size 16, align-middle, leading-none. Use in every compact <Button>
+ * to guarantee visual consistency across Dashboard, Master, and unit tables.
+ */
+export function Icon3DAction(props: Omit<Icon3DProps, 'size'>) {
+  return (
+    <Icon3D
+      {...(props as Icon3DProps)}
+      size={16}
+      className={cn('align-middle leading-none', props.className)}
+    />
   );
 }
