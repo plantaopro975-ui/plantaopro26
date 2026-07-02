@@ -369,7 +369,7 @@ export function BetaNoticeFooter() {
                 </p>
               </div>
             </div>
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
     </>
