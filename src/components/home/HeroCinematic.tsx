@@ -220,7 +220,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           transformOrigin: 'center',
           touchAction: 'none',
         }}
-        className="agent-figure z-[55] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none cursor-grab active:cursor-grabbing opacity-95 pointer-events-auto"
+        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none cursor-grab active:cursor-grabbing opacity-95 pointer-events-auto"
       />
 
 
