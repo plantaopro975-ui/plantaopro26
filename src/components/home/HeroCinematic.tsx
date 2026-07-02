@@ -403,7 +403,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                       src={t.icon}
                       alt=""
                       loading="lazy"
-                      className={`team-icon-3d ${t.motion} relative h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
+                      className={`team-icon-3d ${t.motion} relative h-14 w-14 sm:h-20 sm:w-20 lg:h-24 lg:w-24 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
                     />
                   </span>
                   <div className="relative mt-0.5">
