@@ -17,6 +17,7 @@ import { useShiftConflictDetection } from '@/hooks/useShiftConflictDetection';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { Users, Clock, Calendar, Building2, Loader2, ArrowLeft, LayoutDashboard, Settings, MessageSquare, FileText, Home, LogOut } from 'lucide-react';
+import { PanelNav } from '@/components/ui/panel-nav';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -95,26 +96,7 @@ export default function Dashboard() {
               {/* Page Header */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => navigate('/')}
-                    className="gap-1.5 h-8 text-xs"
-                  >
-                    <Home className="h-3 w-3" />
-                    Início
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={handleExit}
-                    className="gap-1.5 h-8 text-xs text-red-400 border-red-400/30 hover:bg-red-500/10"
-                  >
-                    <LogOut className="h-3 w-3" />
-                    Sair
-                  </Button>
-                </div>
+                <PanelNav onLogout={handleExit} />
                 <div>
                   <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
                     <LayoutDashboard className="h-5 w-5 text-primary" />
