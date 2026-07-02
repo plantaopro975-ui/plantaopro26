@@ -124,7 +124,7 @@
       radial-gradient(ellipse 60% 45% at 100% 100%, hsl(210 78% 40% / 0.10) 0%, transparent 70%),
       radial-gradient(ellipse 50% 40% at 0% 100%, hsl(220 60% 20% / 0.35) 0%, transparent 70%),
       var(--gradient-dark);
-    background-attachment: fixed;
+    background-attachment: scroll;
     background-repeat: no-repeat;
     background-size: cover;
     font-feature-settings: 'kern', 'liga', 'calt', 'ss01';
