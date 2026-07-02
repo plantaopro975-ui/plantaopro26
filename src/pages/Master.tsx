@@ -915,7 +915,7 @@ export default function Master() {
                                 )}
                                 title={agent.is_active ? 'Desativar' : 'Ativar'}
                               >
-                              <Icon3D name={agent.is_active ? 'lock' : 'unlock'} size={16} alt={agent.is_active ? 'Desativar' : 'Ativar'} />
+                              <Icon3DAction name={agent.is_active ? 'lock' : 'unlock'} alt={agent.is_active ? 'Desativar' : 'Ativar'} />
                               </Button>
                               <Button
                                 variant="ghost"
