@@ -755,144 +755,142 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
         </Tabs>
       </CardContent>
 
-      {/* Confirmation Dialog */}
+      {/* Confirmation Dialog — Compact / Pro */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="bg-slate-800 border-slate-700">
-          <DialogHeader>
-            <DialogTitle className="text-white">Registrar Folga</DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Selecione o tipo de folga para o dia escolhido.
-            </DialogDescription>
+        <DialogContent className="bg-slate-900 border-slate-700 p-0 gap-0 max-w-md w-[calc(100vw-1rem)] max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden font-['IBM_Plex_Sans',_system-ui,_sans-serif]">
+          {/* Header */}
+          <DialogHeader className="px-4 py-3 border-b border-slate-800 bg-slate-950/60 shrink-0">
+            <div className="flex items-center gap-2.5">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-amber-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <rect x="3" y="5" width="18" height="16" rx="2" />
+                <path d="M8 3v4M16 3v4M3 10h18" />
+                <circle cx="12" cy="15" r="1.5" fill="currentColor" />
+              </svg>
+              <div className="min-w-0">
+                <DialogTitle className="text-white text-sm font-semibold tracking-tight leading-tight">
+                  Registrar Folga
+                </DialogTitle>
+                {selectedDate && (
+                  <DialogDescription className="text-[11px] text-amber-300/80 font-mono mt-0.5 truncate">
+                    {format(selectedDate, "EEE, dd/MM/yyyy", { locale: ptBR })}
+                  </DialogDescription>
+                )}
+              </div>
+            </div>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
+
+          {/* Scrollable body */}
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
             {selectedDate && (
               <>
-                <p className="text-lg text-white font-medium text-center">
-                  {format(selectedDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                </p>
-                
-                {/* Leave Type Selection */}
-                <div className="space-y-2">
-                  <Label className="text-slate-300">Tipo de Folga</Label>
-                  <RadioGroup
-                    value={selectedType}
-                    onValueChange={setSelectedType}
-                    className="grid grid-cols-2 gap-2"
-                  >
+                {/* Leave Type */}
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">Tipo</Label>
+                  <div className="grid grid-cols-2 gap-1.5">
                     {leaveTypes.map((type) => {
-                      const IconComponent = type.icon;
+                      const Icon = type.icon;
+                      const active = selectedType === type.value;
                       return (
-                        <div key={type.value}>
-                          <RadioGroupItem
-                            value={type.value}
-                            id={`type-${type.value}`}
-                            className="peer sr-only"
-                          />
-                          <Label
-                            htmlFor={`type-${type.value}`}
-                            className={`flex items-center gap-2 rounded-lg border-2 p-3 cursor-pointer transition-all
-                              ${selectedType === type.value 
-                                ? `border-amber-500 ${type.bgColor}` 
-                                : 'border-slate-600 hover:border-slate-500'
-                              }`}
-                          >
-                            <IconComponent className={`h-4 w-4 ${type.color}`} />
-                            <span className={`text-sm ${selectedType === type.value ? type.color : 'text-slate-300'}`}>
-                              {type.label}
-                            </span>
-                          </Label>
-                        </div>
+                        <button
+                          key={type.value}
+                          type="button"
+                          onClick={() => setSelectedType(type.value)}
+                          className={`flex items-center gap-2 rounded-md border px-2.5 py-2 text-left transition-all ${
+                            active
+                              ? `border-amber-500/70 ${type.bgColor}`
+                              : 'border-slate-700 hover:border-slate-600 bg-slate-800/40'
+                          }`}
+                        >
+                          <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? type.color : 'text-slate-400'}`} />
+                          <span className={`text-[11px] font-medium truncate ${active ? type.color : 'text-slate-300'}`}>
+                            {type.label}
+                          </span>
+                        </button>
                       );
                     })}
-                  </RadioGroup>
+                  </div>
                 </div>
 
-                {/* Period Selection */}
-                <div className="space-y-2">
-                  <Label className="text-slate-300">Período / Duração</Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {PERIODS.map((p) => (
-                      <button
-                        key={p.v}
-                        type="button"
-                        onClick={() => setSelectedPeriod(p.v)}
-                        className={`flex flex-col items-center gap-1 rounded-lg border-2 p-2 transition-all ${
-                          selectedPeriod === p.v
-                            ? 'border-amber-500 bg-amber-500/15 text-amber-300'
-                            : 'border-slate-600 text-slate-300 hover:border-slate-500'
-                        }`}
-                      >
-                        <span className="text-lg leading-none">{p.emoji}</span>
-                        <span className="text-[11px] font-semibold">{p.l}</span>
-                        <span className="text-[10px] opacity-70">{p.start}→{p.end} ({p.hours}h)</span>
-                      </button>
-                    ))}
+                {/* Period */}
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">Período</Label>
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {PERIODS.map((p) => {
+                      const active = selectedPeriod === p.v;
+                      const icons: Record<string, JSX.Element> = {
+                        '24h': <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>,
+                        '12h': <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 12l3 3"/></svg>,
+                        'dia': <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>,
+                        'noite': <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z"/></svg>,
+                      };
+                      return (
+                        <button
+                          key={p.v}
+                          type="button"
+                          onClick={() => setSelectedPeriod(p.v)}
+                          className={`flex flex-col items-center gap-0.5 rounded-md border px-1.5 py-2 transition-all ${
+                            active
+                              ? 'border-amber-500/70 bg-amber-500/15 text-amber-300'
+                              : 'border-slate-700 bg-slate-800/40 text-slate-400 hover:border-slate-600'
+                          }`}
+                        >
+                          {icons[p.v]}
+                          <span className="text-[10px] font-semibold leading-tight">{p.l}</span>
+                          <span className="text-[9px] font-mono opacity-70 leading-tight">{p.hours}h</span>
+                        </button>
+                      );
+                    })}
                   </div>
+                  <p className="text-[10px] font-mono text-slate-500 text-center">
+                    {PERIOD_MAP[selectedPeriod]?.start} → {PERIOD_MAP[selectedPeriod]?.end}
+                  </p>
                 </div>
 
                 {/* Description */}
-                <div className="space-y-2">
-                  <Label className="text-slate-300">Descrição (opcional)</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">Descrição</Label>
                   <Textarea
                     value={leaveDescription}
                     onChange={(e) => setLeaveDescription(e.target.value)}
-                    placeholder="Motivo ou observações sobre a folga..."
-                    className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500 resize-none"
+                    placeholder="Motivo ou observações (opcional)"
+                    className="bg-slate-800/60 border-slate-700 text-white placeholder:text-slate-500 resize-none text-xs min-h-[56px]"
                     rows={2}
                   />
-                </div>
-
-                {/* Summary */}
-                <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    {(() => {
-                      const type = leaveTypes.find(t => t.value === selectedType);
-                      if (!type) return null;
-                      const IconComponent = type.icon;
-                      return (
-                        <>
-                          <div className={`p-2 rounded-lg ${type.bgColor}`}>
-                            <IconComponent className={`h-5 w-5 ${type.color}`} />
-                          </div>
-                          <div>
-                            <p className={`font-medium ${type.color}`}>{type.label}</p>
-                            <p className="text-sm text-slate-400">
-                              {format(selectedDate, "dd/MM/yyyy", { locale: ptBR })} (1 dia)
-                            </p>
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
                 </div>
               </>
             )}
           </div>
-          <DialogFooter className="gap-2">
+
+          {/* Sticky Footer */}
+          <DialogFooter className="px-4 py-3 border-t border-slate-800 bg-slate-950/80 backdrop-blur shrink-0 gap-2 flex-row justify-end">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setShowConfirmDialog(false)}
-              className="border-slate-600"
+              className="border-slate-700 text-slate-300 hover:bg-slate-800 h-9 text-xs"
             >
               Cancelar
             </Button>
             <Button
+              size="sm"
               onClick={handleConfirmLeave}
               disabled={isSubmitting}
-              className="bg-amber-500 hover:bg-amber-600 text-black"
+              className="bg-amber-500 hover:bg-amber-600 text-black font-semibold h-9 text-xs min-w-[130px]"
             >
               {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Registrando...
-                </>
+                <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Registrando...</>
               ) : (
-                'Confirmar Folga'
+                <>
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 mr-1.5" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12l5 5L20 7"/></svg>
+                  Confirmar Folga
+                </>
               )}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+
 
       {/* Team Member Dialog */}
       <TeamMemberDialog 
