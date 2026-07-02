@@ -64,6 +64,7 @@ import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { CredentialsViewer } from '@/components/admin/CredentialsViewer';
 import { PasswordRequestsManager } from '@/components/admin/PasswordRequestsManager';
 import { AnnouncementsManager } from '@/components/admin/AnnouncementsManager';
+import { PromosToggleCard } from '@/components/admin/PromosToggleCard';
 import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
 import { LicenseFinanceControl } from '@/components/admin/LicenseFinanceControl';
 import { UnitsManagementCard } from '@/components/admin/UnitsManagementCard';
@@ -1108,6 +1109,7 @@ export default function Master() {
 
           {/* Announcements Tab */}
           <TabsContent value="announcements" className="space-y-6 mt-6">
+            <PromosToggleCard />
             <AnnouncementsManager />
           </TabsContent>
 

@@ -50,6 +50,7 @@ import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
 import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
 import { AdminAnnouncementsPanel } from '@/components/agent-panel/AdminAnnouncementsPanel';
 import { AdDisplaySystem } from '@/components/agent-panel/AdDisplaySystem';
+import { usePromosEnabled } from '@/hooks/usePromosEnabled';
 import { AgentHeroPanel } from '@/components/agent-panel/AgentHeroPanel';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import { SmartAlarmClock } from '@/components/agent-panel/SmartAlarmClock';
@@ -65,6 +66,7 @@ export default function AgentPanel() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('equipe');
   const [hasShifts, setHasShifts] = useState(true);
+  const { enabled: promosEnabled } = usePromosEnabled();
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [isVerifyingSession, setIsVerifyingSession] = useState(false);
   const [sessionMissing, setSessionMissing] = useState(false);
@@ -647,7 +649,7 @@ export default function AgentPanel() {
 
               <TabsContent value="equipe" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 {/* Ad Display System temporariamente desativado a pedido do administrador */}
-                {false && <AdDisplaySystem />}
+                {promosEnabled && <AdDisplaySystem />}
 
                 
                 {/* Admin Announcements Panel - Priority Display */}
