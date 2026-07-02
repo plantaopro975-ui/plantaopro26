@@ -361,16 +361,21 @@ export default function Agents() {
     }
   };
 
-  const filteredAgents = agents.filter((agent) => {
-    const search = searchTerm.toLowerCase();
-    const searchNumbers = searchTerm.replace(/\D/g, '');
-    return agent.name.toLowerCase().includes(search) ||
+  const debouncedSearch = useDebouncedValue(searchTerm, 200);
+  const filteredAgents = useMemo(() => {
+    const search = debouncedSearch.toLowerCase();
+    const searchNumbers = debouncedSearch.replace(/\D/g, '');
+    if (!search && !searchNumbers) return agents;
+    return agents.filter((agent) =>
+      agent.name.toLowerCase().includes(search) ||
       agent.email?.toLowerCase().includes(search) ||
       agent.unit?.name.toLowerCase().includes(search) ||
       agent.team?.toLowerCase().includes(search) ||
       (agent.cpf && agent.cpf.includes(searchNumbers)) ||
-      (agent.matricula && agent.matricula.includes(searchNumbers));
-  });
+      (agent.matricula && agent.matricula.includes(searchNumbers))
+    );
+  }, [agents, debouncedSearch]);
+
 
   if (isLoading) {
     return (
