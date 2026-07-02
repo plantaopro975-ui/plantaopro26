@@ -720,8 +720,8 @@ export default function Master() {
               
               <Dialog open={newAgentOpen} onOpenChange={setNewAgentOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500">
-                    <UserPlus className="h-4 w-4 mr-2" />
+                  <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 gap-2">
+                    <Icon3D src={icon3dTeam} fallback={UserPlus} size={18} />
                     Novo Agente
                   </Button>
                 </DialogTrigger>
