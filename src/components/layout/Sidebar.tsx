@@ -12,6 +12,7 @@ import {
   Shield,
   MapPin,
   UserCircle,
+  ClipboardCheck,
 } from 'lucide-react';
 import {
   SidebarNavItem,
