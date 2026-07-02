@@ -281,102 +281,165 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const handleExportPDF = async () => {
     try {
       const { jsPDF } = await import('jspdf');
+      const autoTableMod: any = await import('jspdf-autotable');
+      const autoTable = autoTableMod.default || autoTableMod.autoTable || autoTableMod;
+
       const [{ data: agent }, { data: shifts }, { data: swaps }] = await Promise.all([
         supabase.from('agents').select('name, cpf, matricula, team').eq('id', agentId).single(),
         (supabase as any).from('agent_shifts').select('shift_date, start_time, end_time, shift_type, status').eq('agent_id', agentId).order('shift_date', { ascending: false }).limit(60),
         (supabase as any).from('shift_swaps').select('*').or(`requester_id.eq.${agentId},receiver_id.eq.${agentId}`).order('created_at', { ascending: false }).limit(30),
       ]);
 
-      const doc = new jsPDF();
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
       const now = new Date();
-      let y = 15;
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
 
-      doc.setFontSize(16);
-      doc.text('Relatório de Plantões, Folgas e Permutas', 105, y, { align: 'center' });
-      y += 8;
+      // Header band
+      doc.setFillColor(15, 23, 42);
+      doc.rect(0, 0, pageW, 26, 'F');
+      doc.setFillColor(217, 168, 62);
+      doc.rect(0, 26, pageW, 1.2, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text('RELATÓRIO OPERACIONAL — PLANTÕES, FOLGAS E PERMUTAS', pageW / 2, 12, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
-      doc.text(`Emitido em ${format(now, 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, 105, y, { align: 'center' });
-      y += 8;
-      doc.setFontSize(10);
-      doc.text(`Agente: ${agent?.name || '-'}   CPF: ${agent?.cpf || '-'}   Mat: ${agent?.matricula || '-'}   Equipe: ${agent?.team || '-'}`, 14, y);
-      y += 10;
+      doc.text(`Emitido em ${format(now, 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, pageW / 2, 19, { align: 'center' });
 
-      const addSection = (title: string) => {
-        if (y > 270) { doc.addPage(); y = 15; }
-        doc.setFillColor(240, 240, 240);
-        doc.rect(14, y - 5, 182, 7, 'F');
-        doc.setFontSize(11);
+      doc.setTextColor(20, 20, 20);
+      // Identification block
+      autoTable(doc, {
+        startY: 32,
+        theme: 'grid',
+        styles: { fontSize: 9, cellPadding: 2, textColor: [20, 20, 20] },
+        headStyles: { fillColor: [30, 41, 59], textColor: 255, fontStyle: 'bold' },
+        head: [['Agente', 'CPF', 'Matrícula', 'Equipe']],
+        body: [[agent?.name || '-', agent?.cpf || '-', agent?.matricula || '-', agent?.team || '-']],
+        margin: { left: 14, right: 14 },
+      });
+
+      const section = (title: string) => {
+        const y = (doc as any).lastAutoTable.finalY + 6;
+        doc.setFillColor(217, 168, 62);
+        doc.rect(14, y - 4, pageW - 28, 6, 'F');
+        doc.setTextColor(15, 23, 42);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
         doc.text(title, 16, y);
-        y += 8;
-        doc.setFontSize(9);
-      };
-      const addRowCols = (cols: string[], xs: number[]) => {
-        if (y > 285) { doc.addPage(); y = 15; }
-        cols.forEach((c, i) => doc.text(String(c ?? '-'), xs[i], y));
-        y += 5;
+        doc.setTextColor(20, 20, 20);
+        return y + 2;
       };
 
       // PLANTÕES
-      addSection('PLANTÕES (últimos 60)');
-      const shiftXs = [14, 46, 74, 102, 138];
-      doc.setFont('helvetica', 'bold');
-      addRowCols(['Data', 'Entrada', 'Saída', 'Tipo', 'Status'], shiftXs);
-      doc.setFont('helvetica', 'normal');
-      (shifts || []).forEach((s: any) => {
-        addRowCols([
+      autoTable(doc, {
+        startY: section('PLANTÕES (últimos 60)'),
+        theme: 'striped',
+        styles: { fontSize: 8.5, cellPadding: 1.8 },
+        headStyles: { fillColor: [30, 41, 59], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        head: [['Data', 'Entrada', 'Saída', 'Tipo', 'Status']],
+        body: (shifts || []).map((s: any) => [
           format(parseISO(s.shift_date), 'dd/MM/yyyy'),
           (s.start_time || '').slice(0, 5) || '-',
           (s.end_time || '').slice(0, 5) || '-',
           s.shift_type || '-',
           s.status || '-',
-        ], shiftXs);
+        ]),
+        margin: { left: 14, right: 14 },
       });
 
-      y += 4;
       // FOLGAS
-      addSection('FOLGAS');
-      const leaveXs = [14, 42, 66, 98, 118, 148];
-      doc.setFont('helvetica', 'bold');
-      addRowCols(['Data', 'Período', 'Entrada', 'Saída', 'Horas', 'Tipo/Status'], leaveXs);
-      doc.setFont('helvetica', 'normal');
-      leaves.forEach((l: any) => {
-        const p = PERIOD_MAP[l.period];
-        const start = l.start_time?.slice(0, 5) || p?.start || '-';
-        const end = l.end_time?.slice(0, 5) || p?.end || '-';
-        const days = Math.max(
-          1,
-          differenceInDays(parseISO(l.end_date), parseISO(l.start_date)) + 1
-        );
-        const hours = l.hours_count ?? (p ? computeHours(p.start, p.end, days) : '-');
-        const dateLabel = l.start_date === l.end_date
-          ? format(parseISO(l.start_date), 'dd/MM/yyyy')
-          : `${format(parseISO(l.start_date), 'dd/MM')}→${format(parseISO(l.end_date), 'dd/MM/yy')}`;
-        const typeStatus = `${leaveTypeLabels[l.leave_type]?.label || l.leave_type} / ${statusLabels[l.status]?.label || l.status}`;
-        addRowCols([
-          dateLabel,
-          p?.l || l.period || '-',
-          start,
-          end,
-          `${hours}h`,
-          typeStatus,
-        ], leaveXs);
+      autoTable(doc, {
+        startY: section('FOLGAS'),
+        theme: 'striped',
+        styles: { fontSize: 8.5, cellPadding: 1.8 },
+        headStyles: { fillColor: [30, 41, 59], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        head: [['Data', 'Período', 'Entrada', 'Saída', 'Horas', 'Tipo', 'Status']],
+        body: leaves.map((l: any) => {
+          const p = PERIOD_MAP[l.period];
+          const start = l.start_time?.slice(0, 5) || p?.start || '-';
+          const end = l.end_time?.slice(0, 5) || p?.end || '-';
+          const days = Math.max(1, differenceInDays(parseISO(l.end_date), parseISO(l.start_date)) + 1);
+          const hours = l.hours_count ?? (p ? computeHours(p.start, p.end, days) : '-');
+          const dateLabel = l.start_date === l.end_date
+            ? format(parseISO(l.start_date), 'dd/MM/yyyy')
+            : `${format(parseISO(l.start_date), 'dd/MM')}→${format(parseISO(l.end_date), 'dd/MM/yy')}`;
+          return [
+            dateLabel,
+            p?.l || l.period || '-',
+            start,
+            end,
+            `${hours}h`,
+            leaveTypeLabels[l.leave_type]?.label || l.leave_type,
+            statusLabels[l.status]?.label || l.status,
+          ];
+        }),
+        margin: { left: 14, right: 14 },
       });
 
-      y += 4;
       // PERMUTAS
-      addSection('PERMUTAS');
-      const swapXs = [14, 60, 106, 160];
-      doc.setFont('helvetica', 'bold');
-      addRowCols(['Data Original', 'Data Troca', 'Tipo', 'Status'], swapXs);
-      doc.setFont('helvetica', 'normal');
-      (swaps || []).forEach((sw: any) => {
-        addRowCols([
+      autoTable(doc, {
+        startY: section('PERMUTAS'),
+        theme: 'striped',
+        styles: { fontSize: 8.5, cellPadding: 1.8 },
+        headStyles: { fillColor: [30, 41, 59], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        head: [['Data Original', 'Data Troca', 'Tipo', 'Status']],
+        body: (swaps || []).map((sw: any) => [
           sw.original_date ? format(parseISO(sw.original_date), 'dd/MM/yyyy') : '-',
           sw.swap_date ? format(parseISO(sw.swap_date), 'dd/MM/yyyy') : '-',
           sw.requester_id === agentId ? 'Solicitante' : 'Receptor',
           sw.status || '-',
-        ], swapXs);
+        ]),
+        margin: { left: 14, right: 14 },
       });
+
+      // Signature block — always at bottom of last page
+      let sigY = (doc as any).lastAutoTable.finalY + 20;
+      if (sigY > pageH - 55) {
+        doc.addPage();
+        sigY = 40;
+      }
+      doc.setDrawColor(120, 120, 120);
+      doc.setFontSize(9);
+      doc.setTextColor(60, 60, 60);
+      doc.text(`Feijó/AC, ${format(now, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`, pageW / 2, sigY, { align: 'center' });
+      sigY += 22;
+
+      const sigW = 70;
+      const leftX = pageW / 2 - sigW - 10;
+      const rightX = pageW / 2 + 10;
+      // Agente
+      doc.line(leftX, sigY, leftX + sigW, sigY);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text(agent?.name || 'Agente', leftX + sigW / 2, sigY + 5, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text(`Mat.: ${agent?.matricula || '-'}`, leftX + sigW / 2, sigY + 10, { align: 'center' });
+      doc.text('Assinatura do Agente', leftX + sigW / 2, sigY + 15, { align: 'center' });
+      // Chefia
+      doc.line(rightX, sigY, rightX + sigW, sigY);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('Chefia Imediata', rightX + sigW / 2, sigY + 5, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text(`Equipe ${agent?.team || '-'}`, rightX + sigW / 2, sigY + 10, { align: 'center' });
+      doc.text('Assinatura e Carimbo', rightX + sigW / 2, sigY + 15, { align: 'center' });
+
+      // Footer with page numbers
+      const total = (doc as any).internal.getNumberOfPages();
+      for (let i = 1; i <= total; i++) {
+        doc.setPage(i);
+        doc.setFontSize(7.5);
+        doc.setTextColor(120, 120, 120);
+        doc.text('Plantão Pro — Documento oficial para conferência e assinatura', 14, pageH - 6);
+        doc.text(`Página ${i} de ${total}`, pageW - 14, pageH - 6, { align: 'right' });
+      }
 
       doc.save(`plantoes_${agent?.cpf || agentId}_${format(now, 'yyyyMMdd_HHmm')}.pdf`);
       toast.success('PDF exportado com sucesso');
@@ -385,6 +448,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
       toast.error('Erro ao exportar PDF');
     }
   };
+
 
   return (
     <Card className="card-night-purple bg-gradient-to-br from-[hsl(222,60%,3%)] via-[hsl(222,55%,5%)] to-[hsl(270,40%,8%)] border-3 border-purple-500/50 transition-all duration-300 hover:border-purple-400/70 group relative">
