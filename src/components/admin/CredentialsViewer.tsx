@@ -93,11 +93,18 @@ export function CredentialsViewer() {
     setShowCpfs(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const filteredAgents = agents.filter(agent =>
-    agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    agent.cpf?.includes(searchTerm.replace(/\D/g, '')) ||
-    agent.team?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
+  const filteredAgents = useMemo(() => {
+    const term = debouncedSearchTerm.toLowerCase();
+    const numbers = debouncedSearchTerm.replace(/\D/g, '');
+    if (!term && !numbers) return agents;
+    return agents.filter(agent =>
+      agent.name.toLowerCase().includes(term) ||
+      (numbers && agent.cpf?.includes(numbers)) ||
+      agent.team?.toLowerCase().includes(term)
+    );
+  }, [agents, debouncedSearchTerm]);
+
 
   const teamColors: Record<string, string> = {
     'ALFA': 'bg-red-500/20 text-red-400 border-red-500/40',
