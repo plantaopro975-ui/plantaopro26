@@ -174,12 +174,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       >
         <img
           src={policeVehicle}
-          alt="Arraste para mover · scroll para redimensionar · duplo clique para resetar"
-          title="Arrastar / Scroll = zoom / Duplo clique = reset"
+          alt="Viatura policial"
           loading="lazy"
           draggable={false}
-          {...vehicleHandlers}
-          className="h-full w-auto object-contain cursor-grab active:cursor-grabbing pointer-events-auto"
+          className="h-full w-auto object-contain pointer-events-none"
         />
         {/* Giroflex realista */}
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
