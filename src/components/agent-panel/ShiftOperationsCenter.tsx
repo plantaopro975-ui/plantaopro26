@@ -55,11 +55,25 @@ const DEFAULT_CHECKLIST: ChecklistItem[] = [
   { id: 'equipment', label: 'Contagem de algemas e tonfas' },
   { id: 'keys', label: 'Conferência das chaves de algemas' },
   { id: 'radio', label: 'Rádios carregados e operacionais' },
-  { id: 'uniform', label: 'Fardamento e EPI conforme' },
   { id: 'briefing', label: 'Briefing/passagem de serviço recebida' },
   { id: 'logbook', label: 'Registros no livro oficial de ocorrências', restrictedTo: ['team_leader', 'support'] },
   { id: 'ready', label: 'Status operacional: PRONTO' },
 ];
+
+type CheckState = { done: boolean; at?: string };
+type ChecklistMap = Record<string, CheckState>;
+
+function normalizeChecklist(raw: unknown): ChecklistMap {
+  if (!raw || typeof raw !== 'object') return {};
+  const out: ChecklistMap = {};
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof v === 'boolean') out[k] = { done: v };
+    else if (v && typeof v === 'object' && 'done' in (v as any)) {
+      out[k] = { done: !!(v as any).done, at: (v as any).at };
+    }
+  }
+  return out;
+}
 
 
 
