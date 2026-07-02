@@ -17,7 +17,6 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Icon3D } from '@/components/ui/Icon3D';
-import icon3dCalendar from '@/assets/icon3d-calendar.png';
 import { format, addDays, startOfWeek, isSameDay, isToday, isTomorrow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { TeamEmblem } from '@/components/TeamEmblem';

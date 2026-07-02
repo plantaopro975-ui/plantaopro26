@@ -11,9 +11,6 @@ import { Droplet, LogOut, Gift, Building2, Bell, RefreshCw, Wifi, WifiOff, Shiel
 import { FontSizeControl } from '@/components/FontSizeControl';
 import { cn } from '@/lib/utils';
 import { Icon3D } from '@/components/ui/Icon3D';
-import icon3dGift from '@/assets/icon-3d-gift.png';
-import icon3dRefresh from '@/assets/icon-3d-refresh.png';
-import icon3dLogout from '@/assets/icon-3d-logout.png';
 import panelHeaderBg from '@/assets/panel-header-bg.jpg';
 
 interface Agent {
