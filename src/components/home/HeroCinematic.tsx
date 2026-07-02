@@ -173,12 +173,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       if (event.touches.length >= 2 && g.pinchStartDist > 0) {
         const distance = getTouchDistance(event.touches);
         const ratio = distance / g.pinchStartDist;
-
-        if (g.pinchRaf) cancelAnimationFrame(g.pinchRaf);
-        g.pinchRaf = requestAnimationFrame(() => {
-          setT(prev => clampT({ ...prev, scale: g.pinchStartScale * ratio }));
-          g.pinchRaf = 0;
-        });
+        setT(prev => clampT({ ...prev, scale: g.pinchStartScale * ratio }));
       }
     };
 
