@@ -41,8 +41,9 @@ export function RestrictedAccessDialog({ open, onOpenChange, targetLabel }: Rest
           </DialogTitle>
           <DialogDescription className="text-sm leading-relaxed text-muted-foreground">
             O acesso a <span className="text-foreground font-semibold">{targetLabel ?? 'esta seção'}</span> é
-            exclusivo para agentes credenciados. Entre com as credenciais fornecidas pela sua equipe
-            (ALFA · BRAVO · CHARLIE · DELTA) para prosseguir.
+            exclusivo para agentes credenciados. Entre com as
+            <span className="text-foreground font-semibold"> credenciais da sua equipe </span>
+            (unidade/área — ALFA · BRAVO · CHARLIE · DELTA) para prosseguir com segurança.
           </DialogDescription>
         </DialogHeader>
 
