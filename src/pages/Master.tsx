@@ -1107,7 +1107,7 @@ export default function Master() {
                                   }
                                 }}
                               >
-                                <LogOut className="h-4 w-4" />
+                                <Icon3D src={icon3dLogout} fallback={LogOut} size={18} />
                               </Button>
                               <DeleteUserDialog 
                                 userId={u.id} 
