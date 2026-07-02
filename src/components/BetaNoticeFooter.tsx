@@ -72,7 +72,7 @@ function DraggableBetaPill({ onOpen, onHide, retracted = false }: DraggableBetaP
   return (
     <div
       ref={ref}
-      className="fixed z-[60] flex items-center gap-1.5 rounded-full border border-primary/40 bg-background/95 pl-2.5 pr-1.5 py-1.5 shadow-lg backdrop-blur-md animate-fade-in motion-reduce:animate-none touch-none select-none cursor-grab active:cursor-grabbing"
+      className={`group fixed z-[60] flex items-center gap-1.5 rounded-full border border-primary/40 bg-background/95 pl-2.5 pr-1.5 py-1.5 shadow-lg backdrop-blur-md animate-fade-in motion-reduce:animate-none touch-none select-none cursor-grab active:cursor-grabbing transition-all duration-500 ease-out origin-center hover:!opacity-100 hover:!scale-100 focus-within:!opacity-100 focus-within:!scale-100 ${retracted ? 'opacity-40 scale-75' : 'opacity-100 scale-100'}`}
       style={{
         left: pos?.x ?? -9999,
         top: pos?.y ?? -9999,
