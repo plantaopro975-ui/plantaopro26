@@ -67,8 +67,13 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-dvh flex">
+        <Sidebar />
+        <main className="flex-1 p-4 md:p-6 overflow-auto">
+          <div className="max-w-7xl mx-auto">
+            <PanelSkeleton rows={5} />
+          </div>
+        </main>
       </div>
     );
   }
