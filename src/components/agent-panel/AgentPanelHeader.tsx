@@ -10,6 +10,12 @@ import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
 import { Droplet, LogOut, Gift, Building2, Bell, RefreshCw, Wifi, WifiOff, Shield, Sword, Target, Zap, Crown, Type } from 'lucide-react';
 import { FontSizeControl } from '@/components/FontSizeControl';
 import { cn } from '@/lib/utils';
+import icon3dGift from '@/assets/icon-3d-gift.png';
+import icon3dRefresh from '@/assets/icon-3d-refresh.png';
+import icon3dLogout from '@/assets/icon-3d-logout.png';
+import panelHeaderBg from '@/assets/panel-header-bg.jpg';
+
+const icon3dCls = 'h-6 w-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] group-hover:scale-110 transition-transform duration-300';
 
 interface Agent {
   id: string;
@@ -140,11 +146,19 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
   };
 
   return (
-    <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-xl border border-slate-600/50 shadow-xl overflow-hidden">
+    <div className="relative bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-xl border border-slate-600/50 shadow-xl overflow-hidden">
+      {/* Realistic tactical operations background */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
+        style={{ backgroundImage: `url(${panelHeaderBg})` }}
+      />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/70 to-slate-950/85 pointer-events-none" />
+
       {/* Top accent line */}
-      <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-      
-      <div className="p-2.5 md:p-3">
+      <div className="relative h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
+
+      <div className="relative p-2.5 md:p-3">
         <div className="flex items-center justify-between gap-2">
           {/* Left Section: Avatar + Name */}
           <div 
@@ -207,7 +221,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
                   >
                     {/* Glow effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/10 to-amber-400/0 group-hover:translate-x-full transition-transform duration-700" />
-                    <Gift className="h-4 w-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300" />
+                    <img src={icon3dGift} alt="" width={24} height={24} loading="lazy" className={icon3dCls} />
                     <span className="text-xs font-bold text-amber-300 hidden sm:inline">{getRemainingTrialDays()}d</span>
                   </button>
                 </TooltipTrigger>
@@ -247,7 +261,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
                     onClick={() => window.location.reload()}
                     className="p-2.5 rounded-xl bg-gradient-to-br from-slate-700/80 to-slate-800/80 border-2 border-slate-600/50 hover:border-emerald-500/50 text-slate-400 hover:text-emerald-400 shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 hover:scale-105 active:scale-95 group"
                   >
-                    <RefreshCw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
+                    <img src={icon3dRefresh} alt="" width={24} height={24} loading="lazy" className={cn(icon3dCls, 'group-hover:rotate-180 transition-transform duration-500')} />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="bg-slate-800 border-slate-600 text-xs font-medium">
@@ -264,7 +278,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
             >
               {/* Shine effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
-              <LogOut className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform duration-300" />
+              <img src={icon3dLogout} alt="" width={20} height={20} loading="lazy" className="h-5 w-5 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] group-hover:translate-x-0.5 transition-transform duration-300" />
               <span className="hidden sm:inline tracking-wide">Sair</span>
             </button>
           </div>
