@@ -41,6 +41,7 @@ import { DiagnosticReportButton } from '@/components/DiagnosticReportButton';
 import { SessionDiagnosticCard } from '@/components/agent-panel/SessionDiagnosticCard';
 import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
+import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { WelcomeTrialDialog, shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
 import { PasswordChangeRequest } from '@/components/agent-panel/PasswordChangeRequest';
