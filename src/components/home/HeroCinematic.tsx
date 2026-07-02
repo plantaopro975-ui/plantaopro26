@@ -54,8 +54,26 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const dragging = useRef<null | 'agent' | 'vehicle'>(null);
   const offset = useRef({ x: 0, y: 0 });
 
-  const makeHandlers = (_kind: 'agent' | 'vehicle', _setter: (p: { x: number; y: number }) => void, _storageKey: string) => ({});
-
+  const makeHandlers = (kind: 'agent' | 'vehicle', setter: (p: { x: number; y: number }) => void, storageKey: string) => ({
+    onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+      dragging.current = kind;
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore */ }
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
+      if (dragging.current !== kind) return;
+      setter({ x: e.clientX - offset.current.x, y: e.clientY - offset.current.y });
+    },
+    onPointerUp: (e: React.PointerEvent<HTMLElement>) => {
+      if (dragging.current !== kind) return;
+      dragging.current = null;
+      try {
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        localStorage.setItem(storageKey, JSON.stringify({ x: rect.left, y: rect.top }));
+      } catch { /* ignore */ }
+    },
+  });
 
   const agentHandlers = makeHandlers('agent', setAgentPos, 'hero_agent_pos');
   const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos');
@@ -157,7 +175,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             ? { position: 'fixed', left: agentPos.x, top: agentPos.y, transform: 'none' }
             : undefined
         }
-        className="agent-figure absolute z-40 block bottom-[30%] sm:bottom-[24%] lg:bottom-[18%] right-1 sm:right-2 h-[38%] sm:h-[36%] lg:h-[46%] max-h-[55vh] w-auto max-w-[55%] sm:max-w-[34%] lg:max-w-[28%] object-contain object-bottom select-none cursor-pointer active:cursor-grabbing touch-none opacity-95"
+        className="agent-figure absolute z-40 block bottom-[30%] sm:bottom-[24%] lg:bottom-[18%] right-1 sm:right-2 h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none cursor-grab active:cursor-grabbing touch-none opacity-95"
       />
 
 
