@@ -51,6 +51,14 @@ const leaveTypes = [
   { value: 'training', label: 'Treinamento', icon: GraduationCap, color: 'text-blue-400', bgColor: 'bg-blue-500/20 border-blue-500/30' },
 ];
 
+const PERIODS = [
+  { v: '24h' as const, l: '24 horas', emoji: '🕛', hours: 24, start: '07:00', end: '07:00' },
+  { v: '12h' as const, l: '12 horas', emoji: '⏱️', hours: 12, start: '07:00', end: '19:00' },
+  { v: 'dia' as const, l: 'Diurno', emoji: '🌅', hours: 12, start: '07:00', end: '19:00' },
+  { v: 'noite' as const, l: 'Noturno', emoji: '🌙', hours: 12, start: '19:00', end: '07:00' },
+];
+const PERIOD_MAP = Object.fromEntries(PERIODS.map(p => [p.v, p])) as Record<string, typeof PERIODS[number]>;
+
 const leaveTypeLabels: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   vacation: { label: 'Férias', icon: <Palmtree className="h-4 w-4" />, color: 'bg-green-500/20 text-green-400 border-green-500/30' },
   medical: { label: 'Licença Médica', icon: <Stethoscope className="h-4 w-4" />, color: 'bg-red-500/20 text-red-400 border-red-500/30' },
