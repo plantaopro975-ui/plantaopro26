@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Shield, Cpu, Monitor, Flame, Snowflake, Target, Zap, Radio, Crosshair, Crown, Network, Sparkles } from 'lucide-react';
 
 // Premium themes: tactical, cyber, crimson, arctic, sovereign, nexus, ember, system
