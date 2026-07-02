@@ -59,7 +59,8 @@ export function BetaNoticeFooter() {
     <>
       {!hidden && (
         <div
-          className="md:hidden fixed bottom-2 right-2 z-40 flex items-center gap-1 rounded-full border border-primary/30 bg-background/85 pl-2 pr-1 py-0.5 shadow-md backdrop-blur-sm animate-fade-in motion-reduce:animate-none"
+          className="md:hidden fixed right-3 z-[60] flex items-center gap-1 rounded-full border border-primary/40 bg-background/95 pl-2 pr-1 py-1 shadow-lg backdrop-blur-md animate-fade-in motion-reduce:animate-none"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)' }}
           role="group"
           aria-label="Aviso de versão beta"
         >
