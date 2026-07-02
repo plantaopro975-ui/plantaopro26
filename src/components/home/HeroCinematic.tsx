@@ -208,7 +208,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         aria-label="Agente tático — toque 3 vezes para acesso admin"
         title="3 cliques = admin"
         onClick={() => {
-          const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
+          const w = window as unknown as { __agentClicks?: number; __agentTimer?: number; __heroSuppressClick?: number };
+          if (w.__heroSuppressClick && Date.now() < w.__heroSuppressClick) return;
           w.__agentClicks = (w.__agentClicks || 0) + 1;
           if (w.__agentTimer) window.clearTimeout(w.__agentTimer);
           w.__agentTimer = window.setTimeout(() => { w.__agentClicks = 0; }, 700);
