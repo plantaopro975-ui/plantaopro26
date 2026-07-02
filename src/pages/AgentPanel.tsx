@@ -474,7 +474,10 @@ export default function AgentPanel() {
             transform: 'translateZ(0)',
             willChange: 'scroll-position',
             touchAction: 'pan-y pinch-zoom',
-            paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 24px)',
+            paddingTop: 'max(env(safe-area-inset-top, 0px), 8px)',
+            paddingLeft: 'max(env(safe-area-inset-left, 0px), 8px)',
+            paddingRight: 'max(env(safe-area-inset-right, 0px), 8px)',
+            paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
           }}
         >
           <div className="max-w-7xl w-full mx-auto space-y-3 md:space-y-4 lg:space-y-5 pb-16 sm:pb-20">
