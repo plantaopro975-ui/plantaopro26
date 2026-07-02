@@ -28,7 +28,8 @@ type AdminAction =
   | 'sync_agent_auth'
   | 'approve_agent'
   | 'reject_agent'
-  | 'get_pending_agents';
+  | 'get_pending_agents'
+  | 'force_logout';
 
 /**
  * Unified admin client that works for both Master (token-based) and Admin (session-based)
