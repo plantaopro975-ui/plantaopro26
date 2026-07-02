@@ -122,7 +122,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
   const { lowMotion, toggle: toggleLowMotion } = useLowMotion();
   const [currentShift, setCurrentShift] = useState<Shift | null>(null);
   const [isOnDuty, setIsOnDuty] = useState(false);
-  const [showHUD, setShowHUD] = useState(false);
+  
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [observations, setObservations] = useState('');
