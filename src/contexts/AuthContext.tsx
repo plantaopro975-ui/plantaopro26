@@ -94,10 +94,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         // CRÍTICO: Não fazer nada em eventos de logout forçado durante refresh
-        if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+        if (event === 'TOKEN_REFRESHED') {
+          // Apenas atualiza a sessão. Não refaz fetchUserRole (evita cascata de renders/queries
+          // que amplificam o refresh_token storm e provocam 429 → token_revoked → logout).
+          setSession(newSession);
+          setUser((prev) => prev ?? newSession?.user ?? null);
+        } else if (event === 'SIGNED_IN') {
           setSession(newSession);
           setUser(newSession?.user ?? null);
-          
           if (newSession?.user) {
             setTimeout(() => {
               fetchUserRole(newSession.user.id);
@@ -124,6 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUserRole(null);
           }
         }
+
 
         // Do not end loading state until the initial getSession() completes.
         if (hasInitializedRef.current) {
