@@ -178,7 +178,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             ? { position: 'fixed', left: agentPos.x, top: agentPos.y, transform: 'none' }
             : undefined
         }
-        className="agent-figure absolute z-40 block bottom-[30%] sm:bottom-[24%] lg:bottom-[18%] right-1 sm:right-2 h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none cursor-grab active:cursor-grabbing touch-none opacity-95"
+        className="agent-figure absolute z-[55] block bottom-[30%] sm:bottom-[24%] lg:bottom-[18%] right-1 sm:right-2 h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none cursor-grab active:cursor-grabbing touch-none opacity-95"
       />
 
 
