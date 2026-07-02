@@ -440,7 +440,7 @@ export default function Index() {
     setIsCheckingCpf(true);
 
     try {
-      const cleanCpf = checkCpf.replace(/\D/g, '');
+      // cleanCpf validated above
       const { data: existingAgent } = await supabase
         .from('agents')
         .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at')
