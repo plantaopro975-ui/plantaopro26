@@ -188,7 +188,7 @@ export function UnitsManagementCard() {
                       onClick={() => handleEdit(unit)}
                       className="shrink-0"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Icon3D src={icon3dTypography} fallback={Pencil} size={18} />
                     </Button>
                   </div>
                 ))}
