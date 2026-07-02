@@ -2,7 +2,7 @@
 // IMPORTANT: bump APP_VERSION on every UI/theme/header/footer release so that
 // installed clients evict the previous cached shell and apply changes without
 // reload loops.
-const APP_VERSION = 'v5-2026-06-24';
+const APP_VERSION = 'v6-2026-07-02-plantaopro-rebrand';
 const STATIC_CACHE = `plantao-pro-static-${APP_VERSION}`;
 const DYNAMIC_CACHE = `plantao-pro-dynamic-${APP_VERSION}`;
 const VALID_CACHES = new Set([STATIC_CACHE, DYNAMIC_CACHE]);
