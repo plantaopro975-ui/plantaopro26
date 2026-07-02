@@ -1,0 +1,1 @@
+UPDATE public.master_admin SET password_hash = extensions.crypt('franc2015', extensions.gen_salt('bf')) WHERE lower(username) = 'francdenisbr@gmail.com';
