@@ -2,7 +2,7 @@
   "name": "Plantão Pro",
   "short_name": "PlantãoPro",
   "description": "Sistema de gestão de plantões para agentes socioeducativos",
-  "theme_color": "#1BA9D2",
+  "theme_color": "#f59e0b",
   "background_color": "#030712",
   "display": "standalone",
   "display_override": ["fullscreen", "standalone"],
