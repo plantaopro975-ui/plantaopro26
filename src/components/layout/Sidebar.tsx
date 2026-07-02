@@ -58,6 +58,12 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
             <Link
               key={item.href}
               to={item.href}
+              onClick={(e) => {
+                if (!isAuthed) {
+                  e.preventDefault();
+                  setRestricted(item.label);
+                }
+              }}
               className={cn(
                 'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
                 isActive
@@ -73,6 +79,7 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
             </Link>
           );
         })}
+
 
 
         {/* Master Section */}
