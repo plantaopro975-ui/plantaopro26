@@ -56,10 +56,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     scale: Math.min(isMobile ? 1 : 2.5, Math.max(0.4, t.scale)),
   });
   const [agentT, setAgentT] = useState<Transform>(() =>
-    clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 72 : 82, yPct: 62, scale: isMobile ? 0.85 : 1 }))
+    clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
   const [vehicleT, setVehicleT] = useState<Transform>(() =>
-    clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 28 : 18, yPct: 55, scale: isMobile ? 0.85 : 1 }))
+    clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
   );
 
   // Assets travados: sem drag/scroll/reset. setAgentT/setVehicleT ficam disponíveis
