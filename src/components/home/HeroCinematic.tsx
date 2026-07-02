@@ -62,63 +62,11 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 28 : 18, yPct: 55, scale: isMobile ? 0.85 : 1 }))
   );
 
-  const dragging = useRef<null | 'agent' | 'vehicle'>(null);
-  const startRef = useRef({ px: 0, py: 0, xPct: 0, yPct: 0 });
+  // Assets travados: sem drag/scroll/reset. setAgentT/setVehicleT ficam disponíveis
+  // caso queiramos reativar interação futuramente.
+  void setAgentT; void setVehicleT;
 
-  const makeHandlers = (
-    kind: 'agent' | 'vehicle',
-    getT: () => Transform,
-    setter: (t: Transform) => void,
-    storageKey: string,
-  ) => ({
-    onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
-      e.preventDefault();
-      dragging.current = kind;
-      const t = getT();
-      startRef.current = { px: e.clientX, py: e.clientY, xPct: t.xPct, yPct: t.yPct };
-      try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore */ }
-    },
-    onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
-      if (dragging.current !== kind) return;
-      const sect = sectionRef.current;
-      if (!sect) return;
-      const rect = sect.getBoundingClientRect();
-      const dx = ((e.clientX - startRef.current.px) / rect.width) * 100;
-      const dy = ((e.clientY - startRef.current.py) / rect.height) * 100;
-      const next: Transform = {
-        ...getT(),
-        xPct: Math.min(100, Math.max(0, startRef.current.xPct + dx)),
-        yPct: Math.min(100, Math.max(0, startRef.current.yPct + dy)),
-      };
-      setter(next);
-    },
-    onPointerUp: (e: React.PointerEvent<HTMLElement>) => {
-      if (dragging.current !== kind) return;
-      dragging.current = null;
-      try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* ignore */ }
-      try { localStorage.setItem(storageKey, JSON.stringify(getT())); } catch { /* ignore */ }
-    },
-    onWheel: (e: React.WheelEvent<HTMLElement>) => {
-      e.preventDefault();
-      const t = getT();
-      const next: Transform = {
-        ...t,
-        scale: Math.min(2.5, Math.max(0.4, t.scale + (e.deltaY < 0 ? 0.08 : -0.08))),
-      };
-      setter(next);
-      try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch { /* ignore */ }
-    },
-    onDoubleClick: () => {
-      const def = kind === 'agent'
-        ? { xPct: 82, yPct: 62, scale: 1 }
-        : { xPct: 18, yPct: 55, scale: 1 };
-      setter(def);
-      try { localStorage.setItem(storageKey, JSON.stringify(def)); } catch { /* ignore */ }
-    },
-  });
 
-  const agentHandlers = makeHandlers('agent', () => agentT, setAgentT, 'hero_agent_t');
-  const vehicleHandlers = makeHandlers('vehicle', () => vehicleT, setVehicleT, 'hero_vehicle_t');
 
 
   return (
