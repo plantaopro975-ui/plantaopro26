@@ -83,7 +83,10 @@ export default function UnitDashboard() {
   }, [user, authLoading, masterSession, navigate]);
 
   // Check for first access welcome dialog
+  const { enabled: welcomeHintEnabled, loading: welcomeHintLoading } = useWelcomeHintEnabled();
+
   useEffect(() => {
+    if (welcomeHintLoading || !welcomeHintEnabled) return;
     const firstAccessData = localStorage.getItem('plantaopro_first_access');
     if (firstAccessData) {
       try {
