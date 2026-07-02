@@ -325,27 +325,24 @@ export default function Units() {
 
   // Admin/Master view - show all units
   return (
-    <div className="min-h-screen flex bg-slate-900">
+    <div className="min-h-screen flex bg-slate-900 hud-scope">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header />
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-auto">
           <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
-            {/* Page Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold flex items-center gap-2">
-                  <Building2 className="h-6 w-6 text-primary" />
-                  Unidades Socioeducativas
-                </h1>
-                <p className="text-muted-foreground">
-                  Clique em uma unidade para ver detalhes e agentes
-                </p>
-              </div>
-              <Badge variant="outline" className="text-amber-400 border-amber-400/50">
-                {units.length} Unidades
-              </Badge>
-            </div>
+            <PanelHeroHUD
+              variant="units"
+              icon="building"
+              eyebrow="Rede Socioeducativa"
+              title="Unidades Socioeducativas"
+              subtitle="Selecione uma unidade para acessar equipes, agentes e operações."
+              right={
+                <span className="hud-chip">
+                  <Building2 className="h-3.5 w-3.5" /> {units.length} unidades
+                </span>
+              }
+            />
 
             {loading ? (
               <div className="flex items-center justify-center py-12">
