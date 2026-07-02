@@ -246,24 +246,28 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
 
   const checklistProgress = useMemo(() => {
     const total = visibleChecklist.length;
-    const done = visibleChecklist.filter((i) => checklist[i.id]).length;
+    const done = visibleChecklist.filter((i) => checklist[i.id]?.done).length;
     return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
   }, [checklist, visibleChecklist]);
 
-  const persist = async (nextChecklist: Record<string, boolean>, nextObs: string) => {
+  const persist = async (nextChecklist: ChecklistMap, nextObs: string) => {
     if (!shiftKey) return;
     try {
       await supabase
         .from('shift_checklists')
         .upsert(
-          { agent_id: agentId, shift_id: shiftKey, checklist: nextChecklist, observations: nextObs },
+          { agent_id: agentId, shift_id: shiftKey, checklist: nextChecklist as any, observations: nextObs },
           { onConflict: 'agent_id,shift_id' }
         );
     } catch { /* offline: mantém localStorage */ }
   };
 
   const toggleCheck = (id: string) => {
-    const next = { ...checklist, [id]: !checklist[id] };
+    const wasDone = !!checklist[id]?.done;
+    const next: ChecklistMap = {
+      ...checklist,
+      [id]: wasDone ? { done: false } : { done: true, at: new Date().toISOString() },
+    };
     setChecklist(next);
     if (checklistStorageKey) localStorage.setItem(checklistStorageKey, JSON.stringify(next));
     void persist(next, observations);
