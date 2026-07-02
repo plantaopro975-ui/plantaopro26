@@ -189,8 +189,8 @@ export function LicenseFinanceControl() {
       list = agents.filter(a => a.license_status === 'active' && !isLicenseExpired(a.license_expires_at));
     }
     
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
+    if (debouncedSearchTerm) {
+      const term = debouncedSearchTerm.toLowerCase();
       list = list.filter(a => 
         a.name.toLowerCase().includes(term) ||
         a.cpf?.includes(term) ||
@@ -199,7 +199,8 @@ export function LicenseFinanceControl() {
     }
     
     return list;
-  }, [agents, filterStatus, searchTerm, expiredAgents, expiringAgents]);
+  }, [agents, filterStatus, debouncedSearchTerm, expiredAgents, expiringAgents]);
+
 
   const handleRegisterPayment = async () => {
     if (!selectedAgent) return;
