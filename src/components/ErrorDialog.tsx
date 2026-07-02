@@ -1,14 +1,8 @@
-import { AlertTriangle, ShieldAlert, Lock, ShieldX, XCircle, KeyRound, Users, Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
-import { useEffect, useCallback } from 'react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+import bgImage from '@/assets/restricted-dialog-bg.jpg';
 
 interface ErrorDialogProps {
   open: boolean;
@@ -18,244 +12,175 @@ interface ErrorDialogProps {
   type?: 'error' | 'warning' | 'auth' | 'password' | 'team';
 }
 
-// Pleasant notification sound - soft chime
-function playPleasantSound(type: 'warning' | 'error' | 'info') {
-  try {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const now = audioContext.currentTime;
+const HEADERS: Record<NonNullable<ErrorDialogProps['type']>, string> = {
+  error: 'Falha no Sistema',
+  warning: 'Protocolo de Segurança',
+  auth: 'Autenticação Requerida',
+  password: 'Credencial Inválida',
+  team: 'Equipe Não Autorizada',
+};
 
-    if (type === 'warning' || type === 'error') {
-      // Gentle two-note attention sound (not harsh)
-      const notes = type === 'warning' ? [523, 440] : [440, 349]; // C5-A4 or A4-F4
-      
-      notes.forEach((freq, index) => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + index * 0.15);
-        
-        // Soft attack, gentle release
-        gain.gain.setValueAtTime(0, now + index * 0.15);
-        gain.gain.linearRampToValueAtTime(0.12, now + index * 0.15 + 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + index * 0.15 + 0.25);
-        
-        osc.start(now + index * 0.15);
-        osc.stop(now + index * 0.15 + 0.3);
-      });
-    } else {
-      // Info: single soft tone
-      const osc = audioContext.createOscillator();
-      const gain = audioContext.createGain();
+function playChime() {
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const now = ctx.currentTime;
+    [880, 587].forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
       osc.connect(gain);
-      gain.connect(audioContext.destination);
+      gain.connect(ctx.destination);
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(659, now); // E5
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.1, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-      osc.start(now);
-      osc.stop(now + 0.25);
-    }
-  } catch (e) {
-    // Ignore audio errors
-  }
+      osc.frequency.setValueAtTime(f, now + i * 0.14);
+      gain.gain.setValueAtTime(0, now + i * 0.14);
+      gain.gain.linearRampToValueAtTime(0.09, now + i * 0.14 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.14 + 0.35);
+      osc.start(now + i * 0.14);
+      osc.stop(now + i * 0.14 + 0.4);
+    });
+  } catch {}
 }
 
-export function ErrorDialog({ open, onClose, title, message, type = 'error' }: ErrorDialogProps) {
-  const config = {
-    error: {
-      icon: XCircle,
-      iconBg: 'bg-gradient-to-br from-red-500/20 to-rose-600/20',
-      iconColor: 'text-red-400',
-      borderColor: 'border-red-500/50',
-      btnBg: 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500',
-      headerBg: 'bg-gradient-to-r from-red-950/60 via-rose-950/40 to-transparent',
-      headerBar: 'from-red-600 via-rose-600 to-red-600',
-      headerText: 'Erro no Sistema',
-      headerIcon: AlertTriangle,
-      accentColor: 'red',
-    },
-    warning: {
-      icon: ShieldX,
-      iconBg: 'bg-gradient-to-br from-amber-500/20 via-orange-500/15 to-yellow-500/20',
-      iconColor: 'text-amber-400',
-      borderColor: 'border-amber-500/50',
-      btnBg: 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500',
-      headerBg: 'bg-gradient-to-r from-amber-950/60 via-orange-950/40 to-transparent',
-      headerBar: 'from-amber-600 via-orange-500 to-amber-600',
-      headerText: 'Protocolo de Segurança',
-      headerIcon: ShieldAlert,
-      accentColor: 'amber',
-    },
-    auth: {
-      icon: Lock,
-      iconBg: 'bg-gradient-to-br from-rose-500/20 to-pink-600/20',
-      iconColor: 'text-rose-400',
-      borderColor: 'border-rose-500/50',
-      btnBg: 'bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500',
-      headerBg: 'bg-gradient-to-r from-rose-950/60 via-pink-950/40 to-transparent',
-      headerBar: 'from-rose-600 via-pink-500 to-rose-600',
-      headerText: 'Autenticação',
-      headerIcon: Lock,
-      accentColor: 'rose',
-    },
-    password: {
-      icon: KeyRound,
-      iconBg: 'bg-gradient-to-br from-violet-500/20 to-purple-600/20',
-      iconColor: 'text-violet-400',
-      borderColor: 'border-violet-500/50',
-      btnBg: 'bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500',
-      headerBg: 'bg-gradient-to-r from-violet-950/60 via-purple-950/40 to-transparent',
-      headerBar: 'from-violet-600 via-purple-500 to-violet-600',
-      headerText: 'Credencial Inválida',
-      headerIcon: KeyRound,
-      accentColor: 'violet',
-    },
-    team: {
-      icon: Users,
-      iconBg: 'bg-gradient-to-br from-amber-500/20 via-orange-500/15 to-yellow-500/20',
-      iconColor: 'text-amber-400',
-      borderColor: 'border-amber-500/50',
-      btnBg: 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500',
-      headerBg: 'bg-gradient-to-r from-amber-950/60 via-orange-950/40 to-transparent',
-      headerBar: 'from-amber-600 via-orange-500 to-amber-600',
-      headerText: 'Equipe Incorreta',
-      headerIcon: ShieldAlert,
-      accentColor: 'amber',
-    },
-  };
+/* Professional SVG crest — heraldic shield with tactical geometry */
+function CrestSVG({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 120 140" className={className} aria-hidden>
+      <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#f5d97a" />
+          <stop offset="55%" stopColor="#c9a24c" />
+          <stop offset="100%" stopColor="#7a5c1e" />
+        </linearGradient>
+        <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a1f2b" />
+          <stop offset="100%" stopColor="#05070c" />
+        </linearGradient>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.4" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      {/* shield body */}
+      <path
+        d="M60 6 L108 22 V70 C108 100 86 122 60 134 C34 122 12 100 12 70 V22 Z"
+        fill="url(#steel)"
+        stroke="url(#gold)"
+        strokeWidth="2.2"
+        filter="url(#glow)"
+      />
+      {/* inner border */}
+      <path
+        d="M60 14 L100 27 V70 C100 96 82 115 60 126 C38 115 20 96 20 70 V27 Z"
+        fill="none"
+        stroke="url(#gold)"
+        strokeWidth="0.6"
+        opacity="0.65"
+      />
+      {/* diagonal cross bars */}
+      <path d="M32 46 L88 46" stroke="url(#gold)" strokeWidth="0.8" opacity="0.5" />
+      <path d="M32 96 L88 96" stroke="url(#gold)" strokeWidth="0.8" opacity="0.5" />
+      {/* central X (denied) */}
+      <g stroke="url(#gold)" strokeWidth="3.4" strokeLinecap="round" filter="url(#glow)">
+        <line x1="44" y1="58" x2="76" y2="88" />
+        <line x1="76" y1="58" x2="44" y2="88" />
+      </g>
+      {/* stars */}
+      <g fill="url(#gold)" opacity="0.9">
+        <circle cx="60" cy="34" r="1.6" />
+        <circle cx="46" cy="108" r="1.2" />
+        <circle cx="74" cy="108" r="1.2" />
+      </g>
+    </svg>
+  );
+}
 
-  const { 
-    icon: Icon, 
-    iconBg, 
-    iconColor, 
-    borderColor, 
-    btnBg, 
-    headerBg,
-    headerBar,
-    headerText,
-    headerIcon: HeaderIcon,
-    accentColor 
-  } = config[type];
-
-  // Play sound when dialog opens
+export function ErrorDialog({ open, onClose, title, message, type = 'warning' }: ErrorDialogProps) {
   useEffect(() => {
-    if (open) {
-      const soundType = type === 'warning' || type === 'team' ? 'warning' : type === 'error' || type === 'password' ? 'error' : 'info';
-      playPleasantSound(soundType);
-    }
-  }, [open, type]);
+    if (open) playChime();
+  }, [open]);
+
+  const header = HEADERS[type];
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent 
+      <DialogContent
         className={cn(
-          "w-[94vw] max-w-lg p-0 gap-0 border-2 overflow-hidden",
-          "bg-slate-900/98 backdrop-blur-xl",
-          borderColor,
-          `shadow-[0_0_40px_rgba(var(--${accentColor}-rgb,245,158,11),0.15)]`
+          'p-0 gap-0 overflow-hidden border-0 max-w-md w-[92vw]',
+          'rounded-2xl shadow-[0_25px_80px_-15px_rgba(0,0,0,0.9)]',
         )}
       >
-        {/* Stylish Header Bar */}
-        <div className={cn(
-          "px-5 py-3.5 flex items-center gap-3 border-b",
-          `border-${accentColor}-500/30`,
-          `bg-gradient-to-r ${headerBar}`
-        )}>
-          <div className="relative">
-            <HeaderIcon className="w-6 h-6 text-white drop-shadow-lg" />
-            <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-white/80 animate-pulse" />
-          </div>
-          <span className="text-base font-bold text-white uppercase tracking-widest drop-shadow-sm">
-            {headerText}
-          </span>
-          <div className="flex-1" />
-          <div className="flex gap-2">
-            <div className={cn("w-2.5 h-2.5 rounded-full animate-pulse", `bg-white/80`)} />
-            <div className={cn("w-2.5 h-2.5 rounded-full animate-pulse delay-150", `bg-white/60`)} />
-          </div>
-        </div>
-        
-        {/* Content */}
-        <div className={cn("p-6 sm:p-7", headerBg)}>
-          <div className="space-y-5">
-            <div className="flex items-start gap-5">
-              {/* Icon with glow effect */}
-              <div className={cn(
-                "p-5 rounded-2xl shrink-0 border relative",
-                iconBg,
-                `border-${accentColor}-500/30`,
-                `shadow-lg shadow-${accentColor}-500/20`
-              )}>
-                <Icon className={cn(
-                  "w-10 h-10",
-                  iconColor,
-                  `drop-shadow-[0_0_10px_rgba(var(--${accentColor}-rgb,245,158,11),0.5)]`
-                )} strokeWidth={2} />
-                
-                {/* Pulsing ring effect */}
-                <div className={cn(
-                  "absolute inset-0 rounded-2xl border-2 animate-ping opacity-30",
-                  `border-${accentColor}-400`
-                )} style={{ animationDuration: '2s' }} />
-              </div>
-              
-              <div className="flex-1 space-y-3 pt-1">
-                <h2 className={cn(
-                  "text-2xl font-bold text-left tracking-wide",
-                  iconColor
-                )}>
-                  {title}
-                </h2>
-                
-                {/* Status indicator */}
-                <div className={cn(
-                  "inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-full",
-                  `bg-${accentColor}-500/10 border border-${accentColor}-500/30`
-                )}>
-                  <div className={cn("w-2 h-2 rounded-full animate-pulse", `bg-${accentColor}-400`)} />
-                  <span className={cn("uppercase tracking-wider font-semibold", `text-${accentColor}-400/90`)}>
-                    Ação Necessária
-                  </span>
-                </div>
-              </div>
+        {/* Background image + overlays */}
+        <div className="relative">
+          <img
+            src={bgImage}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/92 to-black/98" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(201,162,76,0.18),transparent_60%)]" />
+
+          {/* Top hairline gold */}
+          <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#c9a24c] to-transparent" />
+
+          {/* Content */}
+          <div className="relative px-7 pt-8 pb-7 text-center">
+            {/* Section label */}
+            <p className="text-[10px] tracking-[0.42em] font-mono text-[#c9a24c]/80 uppercase mb-5">
+              {header}
+            </p>
+
+            {/* Crest */}
+            <div className="flex justify-center mb-5">
+              <CrestSVG className="w-20 h-24 drop-shadow-[0_6px_18px_rgba(201,162,76,0.35)]" />
             </div>
-            
-            {/* Message box */}
-            <p className={cn(
-              "text-base leading-relaxed whitespace-pre-line",
-              "text-slate-200 bg-slate-800/60 p-5 rounded-xl",
-              "border border-slate-700/50 backdrop-blur-sm"
-            )}>
+
+            {/* Title (serif) */}
+            <h2
+              className="text-3xl leading-tight text-white mb-1"
+              style={{ fontFamily: '"Libre Baskerville", Georgia, serif', letterSpacing: '0.01em' }}
+            >
+              {title}
+            </h2>
+
+            {/* Gold underline */}
+            <div className="mx-auto w-16 h-px bg-[#c9a24c]/70 my-4" />
+
+            {/* Message */}
+            <p
+              className="text-[13.5px] leading-relaxed text-slate-200/90 whitespace-pre-line max-w-sm mx-auto"
+              style={{ fontFamily: '"IBM Plex Sans", system-ui, sans-serif' }}
+            >
               {message}
             </p>
+
+            {/* Action */}
+            <div className="mt-7 flex justify-center">
+              <Button
+                onClick={onClose}
+                className={cn(
+                  'h-11 px-10 rounded-full border border-[#c9a24c]/60',
+                  'bg-gradient-to-b from-[#d4b060] to-[#8a6a2a] hover:from-[#e6c374] hover:to-[#a07d31]',
+                  'text-black font-semibold tracking-[0.28em] text-[11px] uppercase',
+                  'shadow-[0_6px_20px_-4px_rgba(201,162,76,0.55)] transition-all',
+                )}
+              >
+                Entendido
+              </Button>
+            </div>
+
+            {/* Footer meta */}
+            <p className="mt-6 text-[9.5px] tracking-[0.35em] font-mono text-white/35 uppercase">
+              PlantãoPro · Sistema Institucional
+            </p>
           </div>
-          
-          {/* Action button */}
-          <div className="flex justify-end pt-6">
-            <Button
-              onClick={onClose}
-              size="lg"
-              className={cn(
-                "text-white font-bold uppercase tracking-wider px-10 h-12 text-base",
-                "shadow-lg transition-all duration-200",
-                "hover:scale-105 hover:shadow-xl",
-                btnBg
-              )}
-            >
-              <Sparkles className="w-5 h-5 mr-2" />
-              Entendido
-            </Button>
-          </div>
+
+          {/* Bottom hairline gold */}
+          <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#c9a24c] to-transparent" />
         </div>
-        
-        {/* Bottom accent line */}
-        <div className={cn(
-          "h-1.5 bg-gradient-to-r",
-          headerBar
-        )} />
       </DialogContent>
     </Dialog>
   );
