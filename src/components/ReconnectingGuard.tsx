@@ -30,8 +30,15 @@ export function ReconnectingGuard({
     };
   }, []);
 
-  // Prevent pull-to-refresh and accidental navigation when offline
+  // Prevent pull-to-refresh only while offline. Keeping this listener active
+  // during normal navigation makes mobile scrolling feel heavy because it adds
+  // a non-passive touchmove handler to the document at the top of the page.
   useEffect(() => {
+    if (isOnline) {
+      document.body.classList.remove('offline-lock');
+      return;
+    }
+
     const preventPullToRefresh = (e: TouchEvent) => {
       // Only prevent if we're at the top of the page
       if (window.scrollY === 0 && e.touches.length === 1) {
@@ -57,7 +64,6 @@ export function ReconnectingGuard({
       }
     };
     
-    // Add offline lock class to body
     document.body.classList.add('offline-lock');
     document.addEventListener('touchstart', preventPullToRefresh, { passive: true });
     
@@ -65,7 +71,7 @@ export function ReconnectingGuard({
       document.body.classList.remove('offline-lock');
       document.removeEventListener('touchstart', preventPullToRefresh);
     };
-  }, []);
+  }, [isOnline]);
 
   // Handle beforeunload to warn users when offline
   useEffect(() => {
