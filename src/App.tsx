@@ -21,6 +21,7 @@ import Admin from "./pages/Admin";
 
 import Overtime from "./pages/Overtime";
 import Units from "./pages/Units";
+import UnitsAudit from "./pages/UnitsAudit";
 import Settings from "./pages/Settings";
 
 import Master from "./pages/Master";
@@ -101,6 +102,14 @@ const App = () => (
 
                     <Route path="/overtime" element={<Overtime />} />
                     <Route path="/units" element={<Units />} />
+                    <Route
+                      path="/admin/units-audit"
+                      element={
+                        <RequireAuth mode="block" requireMaster>
+                          <UnitsAudit />
+                        </RequireAuth>
+                      }
+                    />
                     <Route
                       path="/settings"
                       element={
