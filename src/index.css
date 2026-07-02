@@ -709,25 +709,30 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 .police-vehicle { position: relative; }
 .vehicle-fx { position: absolute; pointer-events: none; border-radius: 9999px; will-change: opacity, transform, filter; }
 
-/* Giroflex: pequenos pontos de luz estroboscópicos alinhados à barra */
+/* Giroflex: pontos estroboscópicos calibrados por proporção do carro (cqw = 1% da largura do wrapper) */
+.police-vehicle { container-type: inline-size; }
 .vehicle-fx--beacon {
   top: 14%;
-  width: 10%;
-  height: 6%;
-  filter: blur(2px);
+  width: clamp(6px, 9cqw, 28px);
+  height: clamp(4px, 5.5cqw, 18px);
+  filter: blur(1.5px);
   mix-blend-mode: screen;
   opacity: 0;
 }
 .vehicle-fx--beacon-red {
-  left: 38%;
+  left: 40%;
+  transform: translateX(-50%);
   background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(255,80,80,0.9) 25%, rgba(239,68,68,0.35) 55%, rgba(239,68,68,0) 78%);
-  box-shadow: 0 0 22px 6px rgba(239,68,68,0.7), 0 0 60px 20px rgba(239,68,68,0.25);
+  box-shadow: 0 0 clamp(10px,4cqw,26px) clamp(3px,1.2cqw,8px) rgba(239,68,68,0.7),
+              0 0 clamp(24px,10cqw,70px) clamp(8px,3cqw,22px) rgba(239,68,68,0.25);
   animation: vehicle-strobe-red 1.4s steps(1, end) infinite;
 }
 .vehicle-fx--beacon-blue {
-  left: 52%;
+  left: 60%;
+  transform: translateX(-50%);
   background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(120,180,255,0.9) 25%, rgba(59,130,246,0.35) 55%, rgba(59,130,246,0) 78%);
-  box-shadow: 0 0 22px 6px rgba(59,130,246,0.7), 0 0 60px 20px rgba(59,130,246,0.25);
+  box-shadow: 0 0 clamp(10px,4cqw,26px) clamp(3px,1.2cqw,8px) rgba(59,130,246,0.7),
+              0 0 clamp(24px,10cqw,70px) clamp(8px,3cqw,22px) rgba(59,130,246,0.25);
   animation: vehicle-strobe-blue 1.4s steps(1, end) infinite;
 }
 @keyframes vehicle-strobe-red {
