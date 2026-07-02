@@ -208,11 +208,18 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
     return () => clearInterval(id);
   }, [currentShift, isOnDuty]);
 
+  const visibleChecklist = useMemo(() => {
+    return DEFAULT_CHECKLIST.filter((i) => {
+      if (!i.restrictedTo) return true;
+      return agentRole ? i.restrictedTo.includes(agentRole as 'team_leader' | 'support') : false;
+    });
+  }, [agentRole]);
+
   const checklistProgress = useMemo(() => {
-    const total = DEFAULT_CHECKLIST.length;
-    const done = DEFAULT_CHECKLIST.filter((i) => checklist[i.id]).length;
-    return { total, done, pct: Math.round((done / total) * 100) };
-  }, [checklist]);
+    const total = visibleChecklist.length;
+    const done = visibleChecklist.filter((i) => checklist[i.id]).length;
+    return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+  }, [checklist, visibleChecklist]);
 
   const toggleCheck = (id: string) => {
     const next = { ...checklist, [id]: !checklist[id] };
