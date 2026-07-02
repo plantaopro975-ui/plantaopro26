@@ -8,6 +8,8 @@ interface RequireAuthProps {
   /** 'redirect' envia visitantes ao login; 'block' mostra RestrictedArea. */
   mode?: "redirect" | "block";
   redirectTo?: string;
+  /** Exige papel master (usuário master ou sessão master ativa). */
+  requireMaster?: boolean;
 }
 
 /**
@@ -18,11 +20,14 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
   mode = "redirect",
   redirectTo = "/",
+  requireMaster = false,
 }) => {
-  const { user, isLoading, masterSession } = useAuth();
+  const { user, isLoading, masterSession, isMaster, userRole } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  // Espera hidratação: se há user mas o papel ainda não foi resolvido, aguarda.
+  const roleHydrating = !!user && userRole === null && !masterSession;
+  if (isLoading || roleHydrating) {
     return (
       <div
         role="status"
@@ -46,7 +51,17 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
     );
   }
 
+  if (requireMaster && !isMaster && !masterSession) {
+    return (
+      <RestrictedArea
+        title="Acesso Master Exclusivo"
+        message="Este módulo é restrito ao Administrador Master do sistema."
+      />
+    );
+  }
+
   return <>{children}</>;
 };
 
 export default RequireAuth;
+
