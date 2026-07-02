@@ -119,18 +119,15 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
 
 
-      {/* Logo — leftmost, maximized within bar height */}
+      {/* Brand — leftmost */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        <div className="relative shrink-0 [perspective:600px]">
+        <div className="relative shrink-0">
           <span className="absolute inset-0 rounded-full bg-primary/25 blur-lg animate-pulse" aria-hidden />
-          <img
-            src={logoEmblem}
-            alt="Plantão Pro"
-            width={56}
-            height={56}
-            className="relative h-12 w-12 sm:h-14 sm:w-14 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] animate-logo-sway origin-center will-change-transform"
-          />
+          <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-gradient-to-br from-primary/25 to-primary/5 ring-1 ring-primary/40 flex items-center justify-center shadow-glow">
+            <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-primary drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" strokeWidth={2.2} />
+          </div>
         </div>
+
 
         {/* Mobile Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
