@@ -44,7 +44,7 @@ function renderAt(path: string) {
         <Route
           path="/master"
           element={
-            <RequireAuth mode="block">
+            <RequireAuth mode="block" requireMaster>
               <MasterStub />
             </RequireAuth>
           }
