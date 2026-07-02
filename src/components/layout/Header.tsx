@@ -24,6 +24,7 @@ import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 import { cn } from '@/lib/utils';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
 import logoEmblem from '@/assets/logo-plantao-pro.png';
+import headerBg from '@/assets/header-bg.jpg';
 
 export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const { user, signOut, userRole, masterSession } = useAuth();
@@ -101,12 +102,16 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       ref={ref}
       {...props}
       className={cn(
-        "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6",
-        "border-b border-border/60 shadow-[0_8px_28px_-12px_hsl(222_60%_2%/0.85)]",
-        "bg-[linear-gradient(180deg,hsl(28_38%_7%/0.96),hsl(32_28%_10%/0.94))]",
+        "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6 overflow-hidden",
+        "border-b border-border/60 shadow-[0_8px_28px_-12px_hsl(28_60%_2%/0.85)]",
         "backdrop-blur-xl",
         props.className,
       )}
+      style={{
+        backgroundImage: `linear-gradient(180deg,hsl(28_38%_6%/0.88),hsl(30_30%_9%/0.92)), url(${headerBg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
     >
       {/* Warm gold accent strip */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(42_85%_55%)_30%,hsl(42_85%_55%)_70%,transparent_100%)] opacity-90" />
