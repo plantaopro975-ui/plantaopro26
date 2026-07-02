@@ -183,13 +183,6 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
     } catch { /* noop */ }
   }, [checklistStorageKey, obsStorageKey]);
 
-  // Trigger HUD on first entry to duty (per-shift)
-  useEffect(() => {
-    if (!isOnDuty || !hudShownKey) return;
-    if (localStorage.getItem(hudShownKey) === '1') return;
-    setShowHUD(true);
-    localStorage.setItem(hudShownKey, '1');
-  }, [isOnDuty, hudShownKey]);
 
   // Elapsed timer
   useEffect(() => {
