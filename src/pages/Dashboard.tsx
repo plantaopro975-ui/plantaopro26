@@ -17,6 +17,7 @@ import { useShiftConflictDetection } from '@/hooks/useShiftConflictDetection';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { Users, Clock, Calendar, Building2, Loader2, ArrowLeft, LayoutDashboard, Settings, MessageSquare, FileText, Home, LogOut } from 'lucide-react';
+import { PanelNav } from '@/components/ui/panel-nav';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
