@@ -13,6 +13,7 @@ import { useAlarmNotifications } from '@/hooks/useAlarmNotifications';
 import { TeamMembersCard } from '@/components/agent-panel/TeamMembersCard';
 import { ProfessionalShiftTimer } from '@/components/agent-panel/ProfessionalShiftTimer';
 import { OnDutyOverlay } from '@/components/agent-panel/OnDutyOverlay';
+import { ShiftOperationsCenter } from '@/components/agent-panel/ShiftOperationsCenter';
 import { BHTracker } from '@/components/agent-panel/BHTracker';
 import { ShiftScheduleCard } from '@/components/agent-panel/ShiftScheduleCard';
 import { NextShiftCountdown } from '@/components/agent-panel/NextShiftCountdown';
