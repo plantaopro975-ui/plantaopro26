@@ -73,22 +73,22 @@ export default function AgentPanel() {
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [isVerifyingSession, setIsVerifyingSession] = useState(false);
   const [sessionMissing, setSessionMissing] = useState(false);
+  const { enabled: welcomeHintEnabled, loading: welcomeHintLoading } = useWelcomeHintEnabled();
   
   // Shift alerts banner control
   const { isDismissed: isShiftBannerDismissed, setIsDismissed: setShiftBannerDismissed, forceShow: forceShowShiftBanner, reactivateBanner: reactivateShiftBanner } = useShiftAlertsBanner();
-  // Check for first access or daily welcome
+  // Check for first access or daily welcome (gated by global toggle)
   useEffect(() => {
     if (!agent?.name) return;
+    if (welcomeHintLoading || !welcomeHintEnabled) return;
     
-    // Check if we should show welcome today (once per day on first access)
     if (shouldShowWelcomeToday()) {
-      // Small delay to ensure UI is ready
       const timer = setTimeout(() => {
         setShowWelcomeDialog(true);
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [agent?.name]);
+  }, [agent?.name, welcomeHintEnabled, welcomeHintLoading]);
 
   // ESC key navigation - goes back to previous page or home
   useBackNavigation({ enabled: true, fallbackPath: '/' });
