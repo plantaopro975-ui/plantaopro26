@@ -10,9 +10,10 @@ const POS_KEY = 'beta-notice-pos-v1';
 interface DraggableBetaPillProps {
   onOpen: () => void;
   onHide: () => void;
+  retracted?: boolean;
 }
 
-function DraggableBetaPill({ onOpen, onHide }: DraggableBetaPillProps) {
+function DraggableBetaPill({ onOpen, onHide, retracted = false }: DraggableBetaPillProps) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(() => {
     try {
       const raw = localStorage.getItem(POS_KEY);
