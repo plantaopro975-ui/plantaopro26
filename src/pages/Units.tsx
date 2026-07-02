@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Loader2, Users, Building2, ChevronRight, Shield, Sword, Target, Phone, Mail, MapPinned, User } from 'lucide-react';
 import { PanelHeroHUD, HUDIcon3D } from '@/components/panel/PanelHeroHUD';
+import hudPageBg from '@/assets/hero-tactical-ops.jpg';
 
 interface Unit {
   id: string;
