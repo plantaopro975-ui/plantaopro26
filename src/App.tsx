@@ -33,6 +33,7 @@ import DebugAuth from "./pages/DebugAuth";
 import { AppShell } from "@/components/layout/AppShell";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { ConfirmProvider } from "@/components/ui/confirm-provider";
+import { SingleDeviceGuard } from "@/components/SingleDeviceGuard";
 import { SplashScreen } from "@/components/SplashScreen";
 
 const queryClient = new QueryClient();
@@ -55,8 +56,10 @@ const App = () => (
             <AuthProvider>
               <ConfirmProvider>
               <GlobalNavigationHandler>
+                <SingleDeviceGuard />
                 {/* Global Offline Banner */}
                 <GlobalOfflineBanner />
+
                 {/* Reconnecting Guard - Shows recovery screen instead of redirecting */}
                 <ReconnectingGuard maxWaitTime={15000}>
                   <Routes>
