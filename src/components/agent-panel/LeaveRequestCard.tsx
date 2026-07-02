@@ -15,6 +15,7 @@ import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCa
 import { format, parseISO, differenceInDays, isAfter, startOfDay, isSameDay, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { TeamMemberDialog } from './TeamMemberDialog';
+import leaveDialogBg from '@/assets/leave-dialog-bg.jpg';
 
 interface LeaveRequestCardProps {
   agentId: string;
