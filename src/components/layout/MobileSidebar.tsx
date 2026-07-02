@@ -10,6 +10,7 @@ import {
   Settings,
   Shield,
   UserCircle,
+  ClipboardCheck,
 } from 'lucide-react';
 import {
   SidebarNavItem,
