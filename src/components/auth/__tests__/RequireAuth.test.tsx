@@ -10,6 +10,8 @@ const authState = {
   user: null as null | { id: string },
   isLoading: false,
   masterSession: null as string | null,
+  isMaster: false,
+  userRole: null as null | "user" | "admin" | "master",
 };
 
 vi.mock("@/contexts/AuthContext", () => ({
