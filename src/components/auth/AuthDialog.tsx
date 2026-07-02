@@ -144,6 +144,9 @@ export function AuthDialog({
                   teamKey === 'CHARLIE' ? '50% 18%' :
                   teamKey === 'BRAVO'   ? '50% 22%' :
                   teamKey === 'DELTA'   ? '50% 28%' :
+                                          '50% 30%',
+              }}
+            />
             {/* Gradiente apenas na base — preserva a imagem no topo */}
             <div className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
                  style={{ background: `linear-gradient(180deg, transparent 0%, rgba(2,6,23,0.55) 55%, rgba(2,6,23,0.96) 100%)` }} />
