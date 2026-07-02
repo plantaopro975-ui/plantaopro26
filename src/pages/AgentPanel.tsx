@@ -440,6 +440,7 @@ export default function AgentPanel() {
   return (
     <>
     <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
+      <div className="hud-scope">
       {/* License Warning Banner */}
       {showLicenseWarning && (
         <LicenseWarningBanner
