@@ -559,13 +559,13 @@ export default function Master() {
         {/* System Stats — cada card abre a aba correspondente (HUD) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {([
-            { key: 'users',      label: 'Usuários',        value: stats.totalUsers,      icon: Users,          tint: 'primary',   tab: 'users' },
-            { key: 'agents',     label: 'Agentes',         value: stats.totalAgents,     icon: Users,          tint: 'emerald',   tab: 'agents' },
-            { key: 'active',     label: 'Ativos',          value: stats.activeAgents,    icon: Check,          tint: 'green',     tab: 'agents' },
-            { key: 'expired',    label: 'Expirados',       value: stats.expiredLicenses, icon: Clock,          tint: 'red',       tab: 'licenses' },
-            { key: 'units',      label: 'Unidades',        value: stats.totalUnits,      icon: Building2,      tint: 'blue',      tab: 'overview' },
-            { key: 'transfers',  label: 'Transferências',  value: stats.pendingTransfers,icon: ArrowRightLeft, tint: 'yellow',    tab: 'transfers' },
-          ] as const).map(({ key, label, value, icon: Icon, tint, tab }) => {
+            { key: 'users',      label: 'Usuários',        value: stats.totalUsers,      icon: Users,          icon3d: icon3dTeam,     tint: 'primary',   tab: 'users' },
+            { key: 'agents',     label: 'Agentes',         value: stats.totalAgents,     icon: Users,          icon3d: icon3dTeam,     tint: 'emerald',   tab: 'agents' },
+            { key: 'active',     label: 'Ativos',          value: stats.activeAgents,    icon: Check,          icon3d: icon3dShield,   tint: 'green',     tab: 'agents' },
+            { key: 'expired',    label: 'Expirados',       value: stats.expiredLicenses, icon: Clock,          icon3d: icon3dClock,    tint: 'red',       tab: 'licenses' },
+            { key: 'units',      label: 'Unidades',        value: stats.totalUnits,      icon: Building2,      icon3d: icon3dBuilding, tint: 'blue',      tab: 'overview' },
+            { key: 'transfers',  label: 'Transferências',  value: stats.pendingTransfers,icon: ArrowRightLeft, icon3d: icon3dCalendar, tint: 'yellow',    tab: 'transfers' },
+          ] as const).map(({ key, label, value, icon: Icon, icon3d, tint, tab }) => {
             const tintMap: Record<string, string> = {
               primary: 'bg-primary/10 text-primary',
               emerald: 'bg-emerald-500/10 text-emerald-500',
@@ -602,7 +602,7 @@ export default function Master() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <div className={cn('p-2 rounded-lg', tintMap[tint])}>
-                      <Icon className="h-5 w-5" />
+                      <Icon3D src={icon3d} fallback={Icon} size={22} />
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">{label}</p>
@@ -620,7 +620,7 @@ export default function Master() {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-6 sm:grid-cols-12">
             <TabsTrigger value="approvals" className="relative">
-              <Bell className="w-4 h-4 sm:hidden" />
+              <Icon3D src={icon3dShield} fallback={Bell} size={16} className="sm:hidden" />
               <span className="hidden sm:inline">Aprovações</span>
               {stats.pendingApprovals > 0 && (
                 <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] text-white flex items-center justify-center animate-pulse">
