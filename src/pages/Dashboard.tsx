@@ -13,6 +13,8 @@ import { AnnouncementsCard } from '@/components/dashboard/AnnouncementsCard';
 import { TeamShiftsPanel } from '@/components/dashboard/TeamShiftsPanel';
 import { OvertimeChart } from '@/components/dashboard/OvertimeChart';
 import { ShiftConflictsBanner } from '@/components/dashboard/ShiftConflictsBanner';
+import hudPageBg from '@/assets/hero-tactical-ops.jpg';
+const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 import { useShiftConflictDetection } from '@/hooks/useShiftConflictDetection';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
