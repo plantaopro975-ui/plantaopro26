@@ -24,47 +24,32 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             {label}
           </label>
         )}
-        <div className="relative group">
-          {/* Glow effect on focus */}
-          <div className={cn(
-            "absolute -inset-0.5 rounded-xl opacity-0 blur-sm transition-opacity duration-300",
-            "bg-gradient-to-r from-blue-500/50 to-cyan-500/50",
-            "group-focus-within:opacity-100"
-          )} />
-          
-          <div className="relative">
-            {icon && (
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors">
-                {icon}
-              </div>
+        <div className="relative">
+          {icon && (
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors duration-150">
+              {icon}
+            </div>
+          )}
+          <input
+            ref={ref}
+            type={actualType}
+            autoComplete={isPassword ? "new-password" : props.autoComplete}
+            className={cn(
+              "relative w-full rounded-xl",
+              "h-14 px-4",
+              icon && "pl-12",
+              (rightIcon || isPassword) && "pr-12",
+              "bg-slate-800/80",
+              "border-2 border-slate-700/80",
+              "focus:border-blue-500/70 focus:ring-0 focus:outline-none focus:transition-colors focus:duration-150",
+              "text-white text-lg placeholder:text-slate-500",
+              variant === 'centered' && "text-center font-mono tracking-widest text-xl",
+              error && "border-red-500/50 focus:border-red-500/70",
+              className
             )}
-            <input
-              ref={ref}
-              type={actualType}
-              autoComplete={isPassword ? "new-password" : props.autoComplete}
-              className={cn(
-                // Base styles
-                "relative w-full rounded-xl transition-all duration-200",
-                // Height and padding
-                "h-14 px-4",
-                icon && "pl-12",
-                (rightIcon || isPassword) && "pr-12",
-                // Background
-                "bg-slate-800/80 backdrop-blur-sm",
-                // Border
-                "border-2 border-slate-700/80",
-                "hover:border-slate-600",
-                "focus:border-blue-500/70 focus:ring-0 focus:outline-none",
-                // Text
-                "text-white text-lg placeholder:text-slate-500",
-                // Mono font for CPF/numbers
-                variant === 'centered' && "text-center font-mono tracking-widest text-xl",
-                // Error state
-                error && "border-red-500/50 focus:border-red-500/70",
-                className
-              )}
-              {...props}
-            />
+            {...props}
+          />
+
             {isPassword && (
               <Button
                 type="button"
@@ -80,12 +65,12 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
               <div className="absolute right-4 top-1/2 -translate-y-1/2">
                 {rightIcon}
               </div>
-            )}
-          </div>
+          )}
         </div>
         {error && (
-          <p className="text-sm text-red-400 font-medium animate-fade-in">{error}</p>
+          <p className="text-sm text-red-400 font-medium">{error}</p>
         )}
+
       </div>
     );
   }
