@@ -1406,6 +1406,9 @@ export default function Index() {
               </div>
             </div>
           )}
+          </div>
+          
+
           
           <AuthButton
             onClick={handleCheckCpf}
