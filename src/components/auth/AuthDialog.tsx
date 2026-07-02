@@ -106,7 +106,7 @@ export function AuthDialog({
   const teamPoster = teamKey ? getTeamPoster(teamKey) : null;
   const teamEmblem = teamKey ? getTeamEmblem(teamKey) : null;
   const teamColor = teamKey ? getTeamColors(teamKey) : null;
-  const teamPattern = teamKey ? teamPatterns[teamKey] : null;
+  const teamPattern = teamColor ? buildTeamPattern(teamColor.primary) : null;
   const teamBranded = Boolean(teamPoster && teamColor);
 
   return (
