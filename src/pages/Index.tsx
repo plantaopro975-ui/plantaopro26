@@ -1489,6 +1489,37 @@ export default function Index() {
         </form>
       </AuthDialog>
 
+      {/* Confirmação profissional antes de limpar credenciais */}
+      <AlertDialog open={showClearCredsConfirm} onOpenChange={setShowClearCredsConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limpar credenciais salvas?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação remove <strong>todos os CPFs e senhas</strong> armazenados neste dispositivo.
+              Você precisará digitar novamente no próximo acesso. A ação é irreversível.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                localStorage.removeItem('plantao_pro_saved_credentials');
+                setLoginCpf('');
+                setLoginPassword('');
+                setShowClearCredsConfirm(false);
+                toast({
+                  title: 'Credenciais limpas',
+                  description: 'Nenhum acesso rápido armazenado neste dispositivo.',
+                });
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Limpar tudo
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Unsaved Changes Dialog */}
       <UnsavedChangesDialog
         hasUnsavedChanges={hasRegistrationData}
