@@ -282,7 +282,7 @@ export function BetaNoticeFooter() {
             </DialogHeader>
           </div>
 
-          <ScrollArea className="max-h-[65vh]">
+          <div className="max-h-[65vh] overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
             <div
               ref={(node) => {
                 // Radix já expõe close via DialogPrimitive.Close; guardamos referência
