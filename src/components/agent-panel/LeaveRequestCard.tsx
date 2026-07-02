@@ -789,7 +789,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           </DialogHeader>
 
           {/* Scrollable body */}
-          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
+          <div className="relative flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
             {selectedDate && (
               <>
                 {/* Leave Type */}
