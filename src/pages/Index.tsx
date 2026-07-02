@@ -20,6 +20,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, AlertTriangle, Eye, EyeOff, UserCheck, Lock, Fingerprint, Shield, Users, KeyRound, Info, Mail, Calendar, Clock, BarChart3, RefreshCw, Target, Building2, Award, CheckCircle2, Zap, Radio, Settings, ChevronDown, User } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
@@ -104,6 +114,7 @@ export default function Index() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingCpf, setIsCheckingCpf] = useState(false);
+  const [showClearCredsConfirm, setShowClearCredsConfirm] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
@@ -1349,6 +1360,7 @@ export default function Index() {
           />
           
           {/* Found agent feedback */}
+          <div className="min-h-[84px]">
           {foundAgent && (
             <div className={cn(
               "p-4 rounded-xl border-2 animate-fade-in",
@@ -1394,6 +1406,9 @@ export default function Index() {
               </div>
             </div>
           )}
+          </div>
+          
+
           
           <AuthButton
             onClick={handleCheckCpf}
@@ -1457,14 +1472,7 @@ export default function Index() {
             <ForgotPasswordDialog />
             <button
               type="button"
-              onClick={() => {
-                if (window.confirm('Limpar todos os CPFs e senhas salvos neste dispositivo?')) {
-                  localStorage.removeItem('plantao_pro_saved_credentials');
-                  setLoginCpf('');
-                  setLoginPassword('');
-                  toast({ title: 'Credenciais limpas', description: 'Nenhum acesso rápido armazenado neste dispositivo.' });
-                }
-              }}
+              onClick={() => setShowClearCredsConfirm(true)}
               className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground hover:text-destructive transition-colors font-mono"
             >
               Limpar credenciais
@@ -1484,6 +1492,37 @@ export default function Index() {
           </AuthButton>
         </form>
       </AuthDialog>
+
+      {/* Confirmação profissional antes de limpar credenciais */}
+      <AlertDialog open={showClearCredsConfirm} onOpenChange={setShowClearCredsConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limpar credenciais salvas?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação remove <strong>todos os CPFs e senhas</strong> armazenados neste dispositivo.
+              Você precisará digitar novamente no próximo acesso. A ação é irreversível.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                localStorage.removeItem('plantao_pro_saved_credentials');
+                setLoginCpf('');
+                setLoginPassword('');
+                setShowClearCredsConfirm(false);
+                toast({
+                  title: 'Credenciais limpas',
+                  description: 'Nenhum acesso rápido armazenado neste dispositivo.',
+                });
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Limpar tudo
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Unsaved Changes Dialog */}
       <UnsavedChangesDialog

@@ -21,15 +21,48 @@ interface SavedCredentialsProps {
 }
 
 const STORAGE_KEY = 'plantao_pro_saved_credentials';
+const DEVICE_KEY_STORAGE = 'plantao_pro_device_key';
 const QUICK_LOGIN_EXPIRY_HOURS = 72; // Hours before requiring password again (3 days)
 
-// Simple obfuscation (not encryption - just to prevent casual viewing)
+// Per-device random key (persisted). Prevents casual reading and cross-device
+// leaks by binding stored secrets to this device. Not a substitute for
+// server-side auth, but a meaningful hardening over plain base64.
+function getDeviceKey(): string {
+  let k = localStorage.getItem(DEVICE_KEY_STORAGE);
+  if (!k) {
+    const arr = new Uint8Array(32);
+    crypto.getRandomValues(arr);
+    k = Array.from(arr, (b) => b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem(DEVICE_KEY_STORAGE, k);
+  }
+  return k;
+}
+
+const ENC_PREFIX = 'v2:';
 function obfuscate(str: string): string {
-  return btoa(encodeURIComponent(str));
+  const key = getDeviceKey();
+  const bytes = new TextEncoder().encode(str);
+  const out = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) {
+    out[i] = bytes[i] ^ key.charCodeAt(i % key.length);
+  }
+  let bin = '';
+  for (let i = 0; i < out.length; i++) bin += String.fromCharCode(out[i]);
+  return ENC_PREFIX + btoa(bin);
 }
 
 function deobfuscate(str: string): string {
   try {
+    if (str.startsWith(ENC_PREFIX)) {
+      const key = getDeviceKey();
+      const raw = atob(str.slice(ENC_PREFIX.length));
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) {
+        bytes[i] = raw.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+      }
+      return new TextDecoder().decode(bytes);
+    }
+    // Backward compatibility with legacy base64 format
     return decodeURIComponent(atob(str));
   } catch {
     return '';
