@@ -640,7 +640,10 @@ export default function Master() {
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="agents">Agentes</TabsTrigger>
+            <TabsTrigger value="agents" className="gap-1.5">
+              <Icon3D src={icon3dTeam} fallback={Users} size={14} className="hidden sm:inline-flex" />
+              Agentes
+            </TabsTrigger>
             <TabsTrigger value="credentials">Credenciais</TabsTrigger>
             <TabsTrigger value="password-requests">Senhas</TabsTrigger>
             <TabsTrigger value="licenses" className="relative">
