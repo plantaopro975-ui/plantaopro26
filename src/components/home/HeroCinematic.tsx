@@ -128,7 +128,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
-        className="police-vehicle z-30 block h-[16%] sm:h-[22%] lg:h-[28%] max-h-[36vh] w-auto max-w-[45%] sm:max-w-[38%] lg:max-w-[32%] select-none touch-none"
+        className="police-vehicle z-30 block h-[12%] sm:h-[22%] lg:h-[28%] max-h-[36vh] w-auto max-w-[34%] sm:max-w-[38%] lg:max-w-[32%] select-none touch-none"
         style={
           vehiclePos
             ? { position: 'fixed', left: vehiclePos.x, top: vehiclePos.y }
