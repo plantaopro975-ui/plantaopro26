@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
-import { Icon3D, type Icon3DName } from '@/components/ui/Icon3D';
+import { Icon3D, Icon3DAction, type Icon3DName } from '@/components/ui/Icon3D';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 
 import { useNavigate } from 'react-router-dom';
@@ -902,7 +902,7 @@ export default function Master() {
                                 className="text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
                                 title="Enviar Mensagem"
                               >
-                                <Icon3D name="message" size={16} alt="Enviar mensagem" />
+                                <Icon3DAction name="message" alt="Enviar mensagem" />
                               </Button>
                               <Button
                                 variant="ghost"
@@ -915,7 +915,7 @@ export default function Master() {
                                 )}
                                 title={agent.is_active ? 'Desativar' : 'Ativar'}
                               >
-                              <Icon3D name={agent.is_active ? 'lock' : 'unlock'} size={16} alt={agent.is_active ? 'Desativar' : 'Ativar'} />
+                              <Icon3DAction name={agent.is_active ? 'lock' : 'unlock'} alt={agent.is_active ? 'Desativar' : 'Ativar'} />
                               </Button>
                               <Button
                                 variant="ghost"
@@ -927,7 +927,7 @@ export default function Master() {
                                 className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
                                 title="Editar"
                               >
-                                <Icon3D name="edit" size={16} alt="Editar" />
+                                <Icon3DAction name="edit" alt="Editar" />
                               </Button>
                               {agent.cpf && (
                                 <AdminResetPasswordDialog 
@@ -1101,7 +1101,7 @@ export default function Master() {
                                   }
                                 }}
                               >
-                                <Icon3D name="logout" size={16} alt="Forçar logout" />
+                                <Icon3DAction name="logout" alt="Forçar logout" />
                               </Button>
                               <DeleteUserDialog 
                                 userId={u.id} 
