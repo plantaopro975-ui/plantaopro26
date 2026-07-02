@@ -7,7 +7,7 @@ import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
 import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
-import agentFigure from '@/assets/tactical-agent-figure.png';
+import agentFigure from '@/assets/agent-valentao-3d.png';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
 import teamsHubBg from '@/assets/hero-teams-hub.jpg';
 import comandoCover from '@/assets/comando-operacional-cover.jpg';
