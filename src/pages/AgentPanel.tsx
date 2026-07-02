@@ -801,8 +801,11 @@ export default function AgentPanel() {
               </TabsContent>
             </Tabs>
 
+            {/* Mural de Comunicados Rápidos */}
+            <AnnouncementsMural className="mt-4" />
+
             {/* Footer Copyright - Compacto */}
-            <CopyrightFooter className="border-t border-border/30 mt-4" />
+            <CopyrightFooter className="border-t border-border/30 mt-2" />
           </div>
         </main>
       </div>
