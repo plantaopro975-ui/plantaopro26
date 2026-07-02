@@ -255,7 +255,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
     autoTable(doc, {
       startY: 62,
       head: [['Checklist de Início', 'Status']],
-      body: DEFAULT_CHECKLIST.map((i) => [i.label, checklist[i.id] ? 'OK' : '—']),
+      body: visibleChecklist.map((i) => [i.label, checklist[i.id] ? 'OK' : '—']),
       theme: 'grid',
       headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold' },
       styles: { fontSize: 9, cellPadding: 3 },
