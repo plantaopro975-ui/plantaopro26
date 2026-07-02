@@ -419,10 +419,19 @@ export default function Index() {
   };
 
   const handleCheckCpf = async () => {
-    if (!checkCpf || checkCpf.replace(/\D/g, '').length !== 11) {
+    const cleanCpf = checkCpf.replace(/\D/g, '');
+    if (cleanCpf.length !== 11) {
       toast({
-        title: 'CPF Inválido',
-        description: 'Digite um CPF válido com 11 dígitos.',
+        title: 'CPF incompleto',
+        description: 'Digite os 11 dígitos do CPF.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (!validateCPF(cleanCpf)) {
+      toast({
+        title: 'CPF inválido',
+        description: 'O dígito verificador do CPF não confere. Revise os números.',
         variant: 'destructive',
       });
       return;
