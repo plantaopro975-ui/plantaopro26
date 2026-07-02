@@ -134,7 +134,7 @@ function StaticBetaPill({ onOpen, onHide, retracted = false }: StaticBetaPillPro
   return (
     <div
       className={`fixed left-1/2 -translate-x-1/2 z-[55] flex items-center gap-1.5 rounded-full border border-primary/40 bg-background/95 pl-2.5 pr-1.5 py-1 shadow-md backdrop-blur-md animate-fade-in motion-reduce:animate-none transition-all duration-300 origin-center hover:!opacity-100 hover:!scale-100 focus-within:!opacity-100 focus-within:!scale-100 ${retracted ? 'opacity-70 scale-90' : 'opacity-100 scale-100'}`}
-      style={{ top: 'calc(env(safe-area-inset-top, 0px) + 120px)' }}
+      style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
       role="group"
       aria-label="Aviso de versão beta"
     >
