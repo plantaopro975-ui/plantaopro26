@@ -162,39 +162,6 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
 
 
-      {/* Primary Navigation */}
-      <nav className="flex items-center gap-1 ml-2 sm:ml-4 xl:ml-6 shrink-0" aria-label="Navegação principal">
-        {[
-          { to: '/', label: 'Home', icon: Home, end: true },
-          { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { to: '/master', label: 'Master', icon: Shield },
-        ].map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            onClick={() => playSound('tactical-click')}
-            className={({ isActive }) =>
-              cn(
-                'relative inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-[13px] sm:text-[13px] font-semibold tracking-wide transition-all',
-                'text-muted-foreground hover:text-foreground hover:bg-primary/10',
-                isActive &&
-                  'text-primary bg-primary/10 ring-1 ring-primary/30 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.15)]',
-              )
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{label}</span>
-                {isActive && (
-                  <span className="absolute -bottom-[1px] left-2 right-2 h-[2px] rounded-full bg-primary" aria-hidden />
-                )}
-              </>
-            )}
-          </NavLink>
-        ))}
-      </nav>
 
       {/* Tagline institucional — QSL Feijó (clique → /about) */}
       <div className="flex-1 min-w-0" aria-hidden />
