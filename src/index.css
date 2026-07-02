@@ -456,7 +456,7 @@ body {
 
   .home-viewport-shell {
     height: auto;
-    min-height: var(--home-viewport-height);
+    min-height: 0;
     max-height: none;
     overflow: visible;
     contain: layout style;
