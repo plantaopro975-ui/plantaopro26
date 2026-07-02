@@ -55,11 +55,25 @@ const DEFAULT_CHECKLIST: ChecklistItem[] = [
   { id: 'equipment', label: 'Contagem de algemas e tonfas' },
   { id: 'keys', label: 'Conferência das chaves de algemas' },
   { id: 'radio', label: 'Rádios carregados e operacionais' },
-  { id: 'uniform', label: 'Fardamento e EPI conforme' },
   { id: 'briefing', label: 'Briefing/passagem de serviço recebida' },
   { id: 'logbook', label: 'Registros no livro oficial de ocorrências', restrictedTo: ['team_leader', 'support'] },
   { id: 'ready', label: 'Status operacional: PRONTO' },
 ];
+
+type CheckState = { done: boolean; at?: string };
+type ChecklistMap = Record<string, CheckState>;
+
+function normalizeChecklist(raw: unknown): ChecklistMap {
+  if (!raw || typeof raw !== 'object') return {};
+  const out: ChecklistMap = {};
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof v === 'boolean') out[k] = { done: v };
+    else if (v && typeof v === 'object' && 'done' in (v as any)) {
+      out[k] = { done: !!(v as any).done, at: (v as any).at };
+    }
+  }
+  return out;
+}
 
 
 
@@ -135,7 +149,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
   const [isOnDuty, setIsOnDuty] = useState(false);
   
   const [members, setMembers] = useState<TeamMember[]>([]);
-  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
+  const [checklist, setChecklist] = useState<ChecklistMap>({});
   const [observations, setObservations] = useState('');
   const [signature, setSignature] = useState('');
   const [elapsed, setElapsed] = useState({ h: 0, m: 0, s: 0 });
@@ -191,7 +205,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
       // fallback local imediato para UX
       try {
         const c = localStorage.getItem(checklistStorageKey);
-        if (c && !cancelled) setChecklist(JSON.parse(c));
+        if (c && !cancelled) setChecklist(normalizeChecklist(JSON.parse(c)));
         const o = localStorage.getItem(obsStorageKey);
         if (o && !cancelled) setObservations(o);
       } catch { /* noop */ }
@@ -203,7 +217,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
         .eq('shift_id', shiftKey)
         .maybeSingle();
       if (!cancelled && !error && data) {
-        setChecklist((data.checklist as Record<string, boolean>) || {});
+        setChecklist(normalizeChecklist(data.checklist));
         setObservations(data.observations || '');
       }
     })();
@@ -232,24 +246,28 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
 
   const checklistProgress = useMemo(() => {
     const total = visibleChecklist.length;
-    const done = visibleChecklist.filter((i) => checklist[i.id]).length;
+    const done = visibleChecklist.filter((i) => checklist[i.id]?.done).length;
     return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
   }, [checklist, visibleChecklist]);
 
-  const persist = async (nextChecklist: Record<string, boolean>, nextObs: string) => {
+  const persist = async (nextChecklist: ChecklistMap, nextObs: string) => {
     if (!shiftKey) return;
     try {
       await supabase
         .from('shift_checklists')
         .upsert(
-          { agent_id: agentId, shift_id: shiftKey, checklist: nextChecklist, observations: nextObs },
+          { agent_id: agentId, shift_id: shiftKey, checklist: nextChecklist as any, observations: nextObs },
           { onConflict: 'agent_id,shift_id' }
         );
     } catch { /* offline: mantém localStorage */ }
   };
 
   const toggleCheck = (id: string) => {
-    const next = { ...checklist, [id]: !checklist[id] };
+    const wasDone = !!checklist[id]?.done;
+    const next: ChecklistMap = {
+      ...checklist,
+      [id]: wasDone ? { done: false } : { done: true, at: new Date().toISOString() },
+    };
     setChecklist(next);
     if (checklistStorageKey) localStorage.setItem(checklistStorageKey, JSON.stringify(next));
     void persist(next, observations);
@@ -284,12 +302,19 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
 
     autoTable(doc, {
       startY: 62,
-      head: [['Checklist de Início', 'Status']],
-      body: visibleChecklist.map((i) => [i.label, checklist[i.id] ? 'OK' : '—']),
+      head: [['Checklist de Início', 'Concluído em']],
+      body: visibleChecklist.map((i) => {
+        const s = checklist[i.id];
+        return [
+          i.label,
+          s?.done ? (s.at ? format(new Date(s.at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR }) : 'OK') : '—',
+        ];
+      }),
       theme: 'grid',
       headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 9, cellPadding: 3 },
+      styles: { fontSize: 10, cellPadding: 3 },
     });
+
 
     const y1 = (doc as any).lastAutoTable.finalY + 8;
     autoTable(doc, {
@@ -399,26 +424,36 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {visibleChecklist.map((item) => {
-                  const done = !!checklist[item.id];
+                  const state = checklist[item.id];
+                  const done = !!state?.done;
+                  const at = state?.at ? format(new Date(state.at), 'dd/MM HH:mm:ss', { locale: ptBR }) : null;
                   return (
                     <label
                       key={item.id}
                       className={cn(
-                        'flex items-center gap-2 rounded-md border px-2.5 py-2 cursor-pointer transition-colors',
+                        'flex items-start gap-2.5 rounded-md border px-3 py-2.5 cursor-pointer transition-colors',
                         done
                           ? 'border-emerald-500/40 bg-emerald-500/10'
                           : 'border-slate-700 bg-slate-800/40 hover:border-slate-600'
                       )}
                     >
-                      <Checkbox checked={done} onCheckedChange={() => toggleCheck(item.id)} />
-                      <span className={cn('text-xs', done ? 'text-emerald-200 line-through decoration-emerald-500/50' : 'text-slate-200')}>
-                        {item.label}
-                      </span>
-                      {done ? <ShieldCheck className="h-3.5 w-3.5 ml-auto text-emerald-400" /> : <ShieldAlert className="h-3.5 w-3.5 ml-auto text-slate-500" />}
+                      <Checkbox checked={done} onCheckedChange={() => toggleCheck(item.id)} className="mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <div className={cn('text-sm font-medium leading-snug', done ? 'text-emerald-200 line-through decoration-emerald-500/50' : 'text-slate-100')}>
+                          {item.label}
+                        </div>
+                        {at && (
+                          <div className="mt-0.5 text-[11px] font-mono text-emerald-400/80 flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> Concluído em {at}
+                          </div>
+                        )}
+                      </div>
+                      {done ? <ShieldCheck className="h-4 w-4 mt-0.5 text-emerald-400" /> : <ShieldAlert className="h-4 w-4 mt-0.5 text-slate-500" />}
                     </label>
                   );
                 })}
               </div>
+
 
               <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-md bg-slate-800/60 border border-slate-700 p-2">
