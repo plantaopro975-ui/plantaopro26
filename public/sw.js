@@ -50,157 +50,123 @@ self.addEventListener('activate', (event) => {
   })());
 });
 
-// Fetch event - Network first with fallback to cache
+// ---------------------------------------------------------------------------
+// Fetch strategy (coherent + timeout-safe)
+// ---------------------------------------------------------------------------
+// - Navigations (HTML)   : network-first with 4s timeout, no caching
+// - Supabase /auth/v1    : pass-through (never cache, never intercept errors)
+// - Supabase other GETs  : stale-while-revalidate (SWR) with 6s timeout
+// - Same-origin static   : cache-first (images/fonts/audio)
+// - Same-origin JS/CSS   : stale-while-revalidate (fast repeat loads)
+// - Everything else      : network pass-through
+// ---------------------------------------------------------------------------
+
+const NAV_TIMEOUT_MS = 4000;
+const API_TIMEOUT_MS = 6000;
+
+function timedFetch(request, ms) {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('sw-timeout')), ms);
+    fetch(request)
+      .then((r) => { clearTimeout(t); resolve(r); })
+      .catch((e) => { clearTimeout(t); reject(e); });
+  });
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
-
-  // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // Navigations (HTML): ALWAYS network, NEVER cache the response.
-  // Stale HTML pointing at deleted JS chunks is the root cause of reload loops.
+  const url = new URL(request.url);
+
+  // 1) HTML navigations: network-first w/ timeout, no cache write
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() =>
-        caches.match('/manifest.json').then(() => new Response('Offline', { status: 503 }))
+      timedFetch(request, NAV_TIMEOUT_MS).catch(
+        () => new Response(
+          '<!doctype html><meta charset="utf-8"><title>Offline</title>' +
+          '<body style="background:#0a0f1a;color:#f59e0b;font-family:sans-serif;' +
+          'display:flex;align-items:center;justify-content:center;height:100vh;text-align:center">' +
+          '<div><h1>Sem conexão</h1><p>Recarregue quando a rede voltar.</p></div>',
+          { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+        )
       )
     );
     return;
   }
 
-  // Handle API requests (Supabase)
-  // CRITICAL: never cache authentication endpoints (can break session persistence)
-  if (url.hostname.includes('supabase.co')) {
-    if (url.pathname.includes('/auth/v1')) {
-      // Always go to network for auth
-      event.respondWith(fetch(request));
-      return;
-    }
+  // 2) Supabase auth: never touch
+  if (url.hostname.includes('supabase.co') && url.pathname.includes('/auth/v1')) {
+    return; // let the browser handle it directly
+  }
 
-    // Other API requests - Network first with cache fallback
-    event.respondWith(handleApiRequest(request));
+  // 3) Supabase data GETs: stale-while-revalidate
+  if (url.hostname.includes('supabase.co')) {
+    event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE, API_TIMEOUT_MS));
     return;
   }
 
-  // Handle same-origin requests
+  // 4) Same-origin
   if (url.origin === self.location.origin) {
-    // Static binary assets (images/fonts/audio) - Cache first
     if (isStaticAsset(url.pathname)) {
       event.respondWith(cacheFirst(request));
-    } else {
-      // JS/CSS/HTML/JSON: pass through to network; never cache so theme
-      // and layout changes propagate immediately without reload loops.
-      event.respondWith(fetch(request));
+    } else if (/\.(js|css|json)$/.test(url.pathname)) {
+      event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE, API_TIMEOUT_MS));
     }
+    // otherwise: let browser handle
     return;
   }
 });
 
-// Check if URL is a static asset
 function isStaticAsset(pathname) {
-  // Only cache truly static binary assets.
-  // IMPORTANT: do NOT cache JS/CSS/HTML here to avoid stale builds causing auth refresh storms.
-  const staticExtensions = [
-    '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico',
-    '.woff', '.woff2', '.ttf', '.otf',
-    '.mp3', '.mp4'
-  ];
-  return staticExtensions.some(ext => pathname.endsWith(ext));
+  return /\.(png|jpe?g|gif|svg|ico|woff2?|ttf|otf|mp3|mp4)$/i.test(pathname);
 }
 
-// Cache first strategy (for static assets)
 async function cacheFirst(request) {
-  const cachedResponse = await caches.match(request);
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
+  const cached = await caches.match(request);
+  if (cached) return cached;
   try {
-    const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
+    const res = await timedFetch(request, API_TIMEOUT_MS);
+    if (res.ok) {
       const cache = await caches.open(STATIC_CACHE);
-      cache.put(request, networkResponse.clone());
+      cache.put(request, res.clone()).catch(() => {});
     }
-    return networkResponse;
-  } catch (error) {
-    console.log('[SW] Cache first failed:', error);
-    return new Response('Offline', { status: 503 });
+    return res;
+  } catch {
+    return new Response('', { status: 504, statusText: 'Offline' });
   }
 }
 
-// Network first strategy (for dynamic content)
-async function networkFirst(request) {
-  try {
-    const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
-      const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-  } catch (error) {
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
-    // Return offline page for navigation requests
-    if (request.mode === 'navigate') {
-      const offlinePage = await caches.match('/');
-      if (offlinePage) return offlinePage;
-    }
-    
-    return new Response('Offline', { status: 503 });
+// Stale-while-revalidate: serve cache instantly, refresh in background.
+// If no cache exists, wait for network (with timeout) and cache on success.
+async function staleWhileRevalidate(request, cacheName, timeoutMs) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+
+  const networkPromise = timedFetch(request, timeoutMs)
+    .then((res) => {
+      if (res && res.ok) {
+        cache.put(request, res.clone()).catch(() => {});
+      }
+      return res;
+    })
+    .catch(() => null);
+
+  if (cached) {
+    // fire-and-forget refresh
+    networkPromise.catch(() => {});
+    return cached;
   }
+
+  const fresh = await networkPromise;
+  if (fresh) return fresh;
+
+  return new Response(
+    JSON.stringify({ error: 'offline', cached: false }),
+    { status: 503, headers: { 'Content-Type': 'application/json' } }
+  );
 }
 
-// Handle API requests with smart caching
-async function handleApiRequest(request) {
-  const url = new URL(request.url);
-  const cacheKey = `api:${url.pathname}${url.search}`;
-  
-  try {
-    const networkResponse = await fetch(request);
-    
-    // Cache successful GET requests (excluding auth endpoints)
-    if (
-      networkResponse.ok &&
-      request.method === 'GET' &&
-      !url.pathname.includes('/auth/v1')
-    ) {
-      const responseClone = networkResponse.clone();
-      const cache = await caches.open(DYNAMIC_CACHE);
-
-      // Create a response with timestamp header
-      const responseBody = await responseClone.text();
-      const cachedResponse = new Response(responseBody, {
-        status: networkResponse.status,
-        statusText: networkResponse.statusText,
-        headers: {
-          ...Object.fromEntries(networkResponse.headers),
-          'x-cached-at': new Date().toISOString()
-        }
-      });
-
-      cache.put(cacheKey, cachedResponse);
-    }
-    
-    return networkResponse;
-  } catch (error) {
-    console.log('[SW] API request failed, checking cache:', cacheKey);
-    
-    const cachedResponse = await caches.match(cacheKey);
-    if (cachedResponse) {
-      console.log('[SW] Returning cached API response');
-      return cachedResponse;
-    }
-    
-    return new Response(JSON.stringify({ error: 'Offline', cached: false }), {
-      status: 503,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
 
 // Handle push notifications
 self.addEventListener('push', (event) => {
