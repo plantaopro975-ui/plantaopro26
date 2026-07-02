@@ -60,19 +60,14 @@ import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 
-import { OperationsTeamCard } from '@/components/home/OperationsTeamCard';
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
-import { ThemedAnalogClock } from '@/components/ThemedAnalogClock';
-import { SpectacularClock } from '@/components/SpectacularClock';
-import { ThemedTeamCard } from '@/components/ThemedTeamCard';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import { useSavedCredentialsSync } from '@/hooks/useSavedCredentialsSync';
 import { getThemeAssets } from '@/lib/themeAssets';
-import { ParticleBackground } from '@/components/ParticleBackground';
 import { ErrorDialog } from '@/components/ErrorDialog';
 
 import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
@@ -81,7 +76,7 @@ import { AuthDialog } from '@/components/auth/AuthDialog';
 import { AuthInput } from '@/components/auth/AuthInput';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TeamBadge } from '@/components/auth/TeamBadge';
-import logoShield from '@/assets/ise-acre-badge.png';
+
 
 
 interface Unit {
