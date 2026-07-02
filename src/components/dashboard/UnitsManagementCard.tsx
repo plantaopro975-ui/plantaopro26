@@ -188,7 +188,7 @@ export function UnitsManagementCard() {
                       onClick={() => handleEdit(unit)}
                       className="shrink-0"
                     >
-                      <Icon3D name="edit" size={16} alt="Editar unidade" />
+                      <Icon3DAction name="edit" alt="Editar unidade" />
                     </Button>
                   </div>
                 ))}
