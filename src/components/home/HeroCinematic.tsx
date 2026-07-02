@@ -5,11 +5,9 @@ import heroImage from '@/assets/hero-command.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
-import iconBeacon from '@/assets/icons-3d/noir-beacon.png';
 import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
-import teamsHubBg from '@/assets/hero-teams-hub.jpg';
 import comandoCover from '@/assets/comando-operacional-cover.jpg';
 import { getTeamPoster, getTeamColors } from '@/lib/teamAssets';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
@@ -116,7 +114,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Viatura policial — posição travada */}
       <div
-        ref={vehicleElRef}
         className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none pointer-events-none"
         style={{
           position: 'absolute',
@@ -139,14 +136,12 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </div>
 
 
-      {/* Agente tático — arrastável (triple-click abre login master/admin) */}
+      {/* Agente tático — posição travada; triple-click abre login master/admin */}
       <div
-        ref={agentElRef}
         role="img"
         aria-label="Agente tático — toque 3 vezes para acesso admin"
         title="3 cliques = admin"
         onClick={() => {
-          if (Date.now() < agentGestureRef.current.suppressClickUntil) return;
           const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
           w.__agentClicks = (w.__agentClicks || 0) + 1;
           if (w.__agentTimer) window.clearTimeout(w.__agentTimer);
