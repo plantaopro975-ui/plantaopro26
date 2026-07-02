@@ -623,7 +623,7 @@ export default function Master() {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-6 sm:grid-cols-12">
             <TabsTrigger value="approvals" className="relative">
-              <Icon3D src={icon3dShield} fallback={Bell} size={16} className="sm:hidden" />
+              <Icon3D name="shield" size={16} className="sm:hidden" />
               <span className="hidden sm:inline">Aprovações</span>
               {stats.pendingApprovals > 0 && (
                 <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] text-white flex items-center justify-center animate-pulse">
@@ -632,7 +632,7 @@ export default function Master() {
               )}
             </TabsTrigger>
             <TabsTrigger value="overview" className="gap-1.5">
-              <Icon3D src={icon3dBuilding} fallback={Building2} size={14} className="hidden sm:inline-flex" />
+              <Icon3D name="building" size={14} className="hidden sm:inline-flex" />
               Unidades
             </TabsTrigger>
             <TabsTrigger value="access-control" className="relative">
@@ -644,13 +644,13 @@ export default function Master() {
               )}
             </TabsTrigger>
             <TabsTrigger value="agents" className="gap-1.5">
-              <Icon3D src={icon3dTeam} fallback={Users} size={14} className="hidden sm:inline-flex" />
+              <Icon3D name="team" size={14} className="hidden sm:inline-flex" />
               Agentes
             </TabsTrigger>
             <TabsTrigger value="credentials">Credenciais</TabsTrigger>
             <TabsTrigger value="password-requests">Senhas</TabsTrigger>
             <TabsTrigger value="licenses" className="relative gap-1.5">
-              <Icon3D src={icon3dClock} fallback={Clock} size={14} className="hidden sm:inline-flex" />
+              <Icon3D name="clock" size={14} className="hidden sm:inline-flex" />
               Licenças
               {stats.expiredLicenses > 0 && (
                 <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center animate-pulse">
@@ -724,7 +724,7 @@ export default function Master() {
               <Dialog open={newAgentOpen} onOpenChange={setNewAgentOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 gap-2">
-                    <Icon3D src={icon3dTeam} fallback={UserPlus} size={18} />
+                    <Icon3D name="team" size={18} />
                     Novo Agente
                   </Button>
                 </DialogTrigger>
@@ -834,7 +834,7 @@ export default function Master() {
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Icon3D src={icon3dTeam} fallback={Users} size={22} />
+                  <Icon3D name="team" size={22} />
                   Agentes Cadastrados ({filteredAgents.length})
                 </CardTitle>
                 <CardDescription>
@@ -977,7 +977,7 @@ export default function Master() {
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Icon3D src={icon3dClock} fallback={History} size={22} />
+                  <Icon3D name="clock" size={22} />
                   Logs de Acesso
                 </CardTitle>
                 <CardDescription>
@@ -1031,7 +1031,7 @@ export default function Master() {
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Icon3D src={icon3dShield} fallback={Users} size={22} />
+                  <Icon3D name="shield" size={22} />
                   Gerenciar Usuários
                 </CardTitle>
                 <CardDescription>

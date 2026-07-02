@@ -176,7 +176,7 @@ export const TeamShiftsPanel = forwardRef<HTMLDivElement>(function TeamShiftsPan
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-primary/10">
-              <Icon3D src={icon3dCalendar} fallback={CalendarDays} size={22} />
+              <Icon3D name="calendar" size={22} />
             </div>
             <div>
               <CardTitle className="text-lg">Escalas da Equipe</CardTitle>
