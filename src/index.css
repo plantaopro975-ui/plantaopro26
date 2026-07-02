@@ -467,9 +467,16 @@ body {
   }
 
   .hero-cinematic {
-    min-height: 0;
-    height: auto;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    flex: 0 0 auto !important;
     touch-action: pan-y pinch-zoom;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .home-viewport-shell > * {
+    flex: 0 0 auto;
   }
 
   .agent-figure,
