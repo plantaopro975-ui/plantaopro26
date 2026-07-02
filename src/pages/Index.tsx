@@ -1697,8 +1697,10 @@ export default function Index() {
                 onChange={(e) => setFormData({ ...formData, birth_date: formatBirthDate(e.target.value) })}
                 placeholder="DD-MM-AAAA"
                 maxLength={10}
+                inputMode="numeric"
+                error={regErrors.birth_date}
               />
-              {calculatedAge !== null && (
+              {calculatedAge !== null && !regErrors.birth_date && (
                 <p className="text-sm text-amber-400 font-bold mt-2">{calculatedAge} anos</p>
               )}
             </div>
