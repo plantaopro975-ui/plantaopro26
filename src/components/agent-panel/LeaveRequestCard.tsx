@@ -273,14 +273,25 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
       <CardHeader className="pb-4 relative">
-        <CardTitle className="flex items-center gap-3 text-xl md:text-2xl">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/30 to-violet-500/20 border border-purple-500/40">
-            <CalendarOff className="h-6 w-6 md:h-7 md:w-7 text-purple-400" />
-          </div>
-          <span className="font-bold bg-gradient-to-r from-purple-200 to-violet-300 bg-clip-text text-transparent">
-            Folgas Programadas
-          </span>
-        </CardTitle>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle className="flex items-center gap-3 text-xl md:text-2xl">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/30 to-violet-500/20 border border-purple-500/40">
+              <CalendarOff className="h-6 w-6 md:h-7 md:w-7 text-purple-400" />
+            </div>
+            <span className="font-bold bg-gradient-to-r from-purple-200 to-violet-300 bg-clip-text text-transparent">
+              Folgas Programadas
+            </span>
+          </CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportPDF}
+            className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10 gap-1.5"
+          >
+            <FileDown className="h-4 w-4" />
+            <span className="hidden sm:inline">Exportar PDF</span>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-5 relative">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
