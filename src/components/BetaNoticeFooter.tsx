@@ -235,18 +235,18 @@ export function BetaNoticeFooter() {
 
   return (
     <>
-      {!hidden && (
+      {!hidden && !open && (
         isMobile ? (
           <StaticBetaPill
             onOpen={() => setOpen(true)}
             onHide={hidePermanently}
-            retracted={seen && !open}
+            retracted={seen}
           />
         ) : (
           <DraggableBetaPill
             onOpen={() => setOpen(true)}
             onHide={hidePermanently}
-            retracted={seen && !open}
+            retracted={seen}
           />
         )
       )}
