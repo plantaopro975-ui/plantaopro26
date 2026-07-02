@@ -356,21 +356,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial — arrastável, com giroflex funcional */}
+      {/* Viatura policial — posição travada */}
       <div
         ref={vehicleElRef}
-        {...vehicleHandlers}
-        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none cursor-grab active:cursor-grabbing"
+        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none pointer-events-none"
         style={{
           position: 'absolute',
           left: `${vehicleT.xPct}%`,
           top: `${vehicleT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
           transformOrigin: 'center',
-          touchAction: 'none',
         }}
       >
-
         <img
           src={policeVehicle}
           alt="Viatura policial"
@@ -381,39 +378,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         {/* Giroflex realista */}
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
-
-        <div
-          className="absolute bottom-1 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 rounded-md border border-primary/40 bg-background/85 p-1 shadow-lg backdrop-blur-md sm:hidden"
-          aria-label="Controles de tamanho da viatura"
-          onPointerDown={stopControlGesture}
-          onTouchStart={stopControlGesture}
-        >
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Reduzir viatura"
-            onClick={(e) => { stopControlGesture(e); scaleAsset(setVehicleT, -0.12); }}
-          >
-            <Minus className="h-4 w-4" aria-hidden />
-          </button>
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Ampliar viatura"
-            onClick={(e) => { stopControlGesture(e); scaleAsset(setVehicleT, 0.12); }}
-          >
-            <Plus className="h-4 w-4" aria-hidden />
-          </button>
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-primary/20 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Resetar viatura"
-            onClick={(e) => { stopControlGesture(e); resetAsset(setVehicleT, { xPct: 30, yPct: 56, scale: 1.1 }); }}
-          >
-            <RotateCcw className="h-4 w-4" aria-hidden />
-          </button>
-        </div>
       </div>
+
 
       {/* Agente tático — arrastável (triple-click abre login master/admin) */}
       <div
