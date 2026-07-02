@@ -217,7 +217,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
         .eq('shift_id', shiftKey)
         .maybeSingle();
       if (!cancelled && !error && data) {
-        setChecklist((data.checklist as Record<string, boolean>) || {});
+        setChecklist(normalizeChecklist(data.checklist));
         setObservations(data.observations || '');
       }
     })();
