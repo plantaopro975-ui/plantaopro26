@@ -222,20 +222,20 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
           <div className="relative flex items-start justify-between gap-3">
             <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
-              <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] uppercase tracking-[0.32em] text-accent/90 font-mono">
-                <span className="h-px w-6 bg-accent/60" />
-                Segurança Pública · Sistema Socioeducativo
+              <div className="inline-flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.28em] sm:tracking-[0.32em] text-accent/90 font-mono">
+                <span className="h-px w-4 sm:w-6 bg-accent/60" />
+                Segurança Pública · Socioeducativo
               </div>
-              <h1 className="font-mono uppercase text-[20px] sm:text-[26px] lg:text-[34px] leading-[1] font-extrabold text-foreground tracking-[0.04em] max-w-[18ch]">
+              <h1 className="font-mono uppercase text-[14px] sm:text-[26px] lg:text-[34px] leading-[1.05] font-extrabold text-foreground tracking-[0.04em] max-w-[18ch]">
                 Comando <span className="text-accent">Operacional</span>
                 <br />
                 <span className="text-primary-glow">para quem está na linha de frente</span>
               </h1>
-              <p className="max-w-[46ch] text-[11px] sm:text-[13px] leading-snug text-muted-foreground font-mono">
+              <p className="hidden sm:block max-w-[46ch] text-[11px] sm:text-[13px] leading-snug text-muted-foreground font-mono">
                 Coordenação tática em tempo real, escalas inteligentes e comunicação segura entre equipes — feito por agentes, para agentes.
               </p>
-              <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-muted-foreground font-mono">
-                <MapPin className="h-3.5 w-3.5 text-accent" />
+              <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-muted-foreground font-mono">
+                <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-accent" />
                 Feijó · AC · Amazônia Ocidental
               </div>
             </div>
