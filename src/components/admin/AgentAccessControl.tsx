@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -89,15 +90,18 @@ export function AgentAccessControl({ agents, onRefresh }: AgentAccessControlProp
     return new Date(agent.license_expires_at) < new Date();
   };
 
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
   const filteredAgents = agents.filter(agent => {
-    // Search filter
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      const cpfNumbers = searchTerm.replace(/\D/g, '');
+    // Search filter (debounced)
+    if (debouncedSearchTerm) {
+      const term = debouncedSearchTerm.toLowerCase();
+      const cpfNumbers = debouncedSearchTerm.replace(/\D/g, '');
       const matchesName = agent.name.toLowerCase().includes(term);
       const matchesCpf = cpfNumbers && agent.cpf?.includes(cpfNumbers);
       if (!matchesName && !matchesCpf) return false;
     }
+
+
     
     // Status filter
     switch (filterStatus) {

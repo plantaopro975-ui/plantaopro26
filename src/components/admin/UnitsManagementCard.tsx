@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { adminClient } from '@/lib/adminClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -83,16 +84,19 @@ export function UnitsManagementCard({ units, agents, onEditUnit, onRefresh }: Un
   });
   const { toast } = useToast();
 
-  const filteredUnits = units.filter(unit => {
-    if (!searchTerm) return true;
-    const term = searchTerm.toLowerCase();
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
+  const filteredUnits = useMemo(() => units.filter(unit => {
+    if (!debouncedSearchTerm) return true;
+    const term = debouncedSearchTerm.toLowerCase();
     return (
       unit.name.toLowerCase().includes(term) ||
       unit.municipality.toLowerCase().includes(term) ||
       unit.director_name?.toLowerCase().includes(term) ||
       unit.coordinator_name?.toLowerCase().includes(term)
     );
-  });
+  }), [units, debouncedSearchTerm]);
+
+
 
   const getAgentsForUnit = (unitId: string) => {
     return agents.filter(a => a.unit_id === unitId);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
 import { Icon3D, Icon3DAction, type Icon3DName } from '@/components/ui/Icon3D';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
@@ -494,9 +495,10 @@ export default function Master() {
     }
   };
 
+  const debouncedAgentSearch = useDebouncedValue(agentSearchTerm, 200);
   const filteredAgents = agents.filter((agent) => {
-    if (!agentSearchTerm) return true;
-    const searchTerm = agentSearchTerm.toLowerCase().trim();
+    if (!debouncedAgentSearch) return true;
+    const searchTerm = debouncedAgentSearch.toLowerCase().trim();
     const searchNumbers = searchTerm.replace(/\D/g, '');
     const name = agent.name.toLowerCase();
     if (name.includes(searchTerm)) return true;
@@ -504,6 +506,7 @@ export default function Master() {
     if (searchNumbers && agent.matricula && agent.matricula.includes(searchNumbers)) return true;
     return false;
   });
+
 
   if (isLoading || loadingData) {
     return (
