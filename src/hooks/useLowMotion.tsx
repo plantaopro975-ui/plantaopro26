@@ -4,27 +4,37 @@ const KEY = 'agent_low_motion';
 const EVT = 'low-motion-change';
 
 function detectSlowDevice(): boolean {
-  if (typeof navigator === 'undefined') return false;
+  if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
   try {
-    // Hardware signals
-    const cores = (navigator as any).hardwareConcurrency ?? 8;
-    const mem = (navigator as any).deviceMemory ?? 8;
-    if (cores <= 4 || mem <= 2) return true;
-
-    // Network signals (Save-Data or slow effective type)
+    const ua = navigator.userAgent;
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+    const cores = (navigator as any).hardwareConcurrency as number | undefined;
+    const mem = (navigator as any).deviceMemory as number | undefined;
     const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-    if (conn) {
-      if (conn.saveData) return true;
-      if (['slow-2g', '2g', '3g'].includes(conn.effectiveType)) return true;
+
+    // Score-based: needs 2+ points to activate (reduces false positives)
+    let score = 0;
+
+    // Hard signals (2 points each) — near-certain slow device
+    if (conn?.saveData === true) score += 2;
+    if (mem !== undefined && mem <= 1) score += 2;
+    if (cores !== undefined && cores <= 2) score += 2;
+    if (conn?.effectiveType === 'slow-2g' || conn?.effectiveType === '2g') score += 2;
+
+    // Soft signals (1 point) — only count on mobile to avoid flagging desktops
+    if (isMobile) {
+      if (mem !== undefined && mem <= 2) score += 1;
+      if (cores !== undefined && cores <= 4) score += 1;
+      if (conn?.effectiveType === '3g') score += 1;
+      // Old Android WebView / very old iOS
+      if (/Android\s([1-6])\./.test(ua)) score += 2;
+      if (/OS\s([1-9]|1[0-2])_/.test(ua) && /iPhone|iPad/.test(ua)) score += 2;
     }
 
-    // Mobile UA fallback with low DPR
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    if (isMobile && (window.devicePixelRatio ?? 1) < 2 && cores <= 6) return true;
+    return score >= 2;
   } catch {
-    // ignore
+    return false;
   }
-  return false;
 }
 
 function read(): boolean {
