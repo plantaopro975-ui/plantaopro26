@@ -190,7 +190,15 @@ export function BetaNoticeFooter() {
     }
   });
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const isMobile = useIsMobile();
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false
+  );
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)');
+    const on = () => setIsMobile(mql.matches);
+    mql.addEventListener('change', on);
+    return () => mql.removeEventListener('change', on);
+  }, []);
 
   useEffect(() => {
     try {
