@@ -163,6 +163,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           top: `${agentT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${agentT.scale})`,
           transformOrigin: 'center',
+          touchAction: 'pan-y',
         }}
         className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-pointer"
       >
