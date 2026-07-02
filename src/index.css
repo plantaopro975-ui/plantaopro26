@@ -467,7 +467,8 @@ body {
   }
 
   .hero-cinematic {
-    min-height: min(920px, calc(var(--safe-dvh) + 96px));
+    min-height: 0;
+    height: auto;
     touch-action: pan-y pinch-zoom;
   }
 
