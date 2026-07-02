@@ -581,6 +581,7 @@ body {
 
 .android-performance-mode .hero-cinematic,
 .android-performance-mode .institutional-card,
+.android-performance-mode .header-bar,
 .android-performance-mode .team-card-3d,
 .android-performance-mode .police-vehicle,
 .android-performance-mode .agent-figure,
@@ -593,9 +594,24 @@ body {
 .android-performance-mode .bg-scanlines,
 .android-performance-mode .scan-line-y,
 .android-performance-mode .radar-rotate,
+.android-performance-mode [class*="blur-"],
+.android-performance-mode [class*="backdrop-blur"],
+.android-performance-mode .splash-scan,
+.android-performance-mode .splash-grid {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.android-performance-mode .bg-scanlines,
+.android-performance-mode .scan-line-y,
+.android-performance-mode .radar-rotate,
 .android-performance-mode .splash-scan,
 .android-performance-mode .splash-grid {
   display: none !important;
+}
+
+.android-performance-mode body {
+  background: hsl(var(--background)) !important;
 }
 
 @media (max-width: 768px) {
