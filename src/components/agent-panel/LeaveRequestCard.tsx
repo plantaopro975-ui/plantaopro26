@@ -267,6 +267,90 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const pendingLeaves = leaves.filter(l => l.status === 'pending');
   const approvedLeaves = leaves.filter(l => l.status === 'approved');
 
+  const handleExportPDF = async () => {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const [{ data: agent }, { data: shifts }, { data: swaps }] = await Promise.all([
+        supabase.from('agents').select('name, cpf, matricula, team').eq('id', agentId).single(),
+        (supabase as any).from('agent_shifts').select('shift_date, start_time, end_time, shift_type, status').eq('agent_id', agentId).order('shift_date', { ascending: false }).limit(60),
+        (supabase as any).from('shift_swaps').select('*').or(`requester_id.eq.${agentId},receiver_id.eq.${agentId}`).order('created_at', { ascending: false }).limit(30),
+      ]);
+
+      const doc = new jsPDF();
+      const now = new Date();
+      let y = 15;
+
+      doc.setFontSize(16);
+      doc.text('Relatório de Plantões, Folgas e Permutas', 105, y, { align: 'center' });
+      y += 8;
+      doc.setFontSize(9);
+      doc.text(`Emitido em ${format(now, 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, 105, y, { align: 'center' });
+      y += 8;
+      doc.setFontSize(10);
+      doc.text(`Agente: ${agent?.name || '-'}   CPF: ${agent?.cpf || '-'}   Mat: ${agent?.matricula || '-'}   Equipe: ${agent?.team || '-'}`, 14, y);
+      y += 10;
+
+      const addSection = (title: string) => {
+        if (y > 270) { doc.addPage(); y = 15; }
+        doc.setFillColor(240, 240, 240);
+        doc.rect(14, y - 5, 182, 7, 'F');
+        doc.setFontSize(11);
+        doc.text(title, 16, y);
+        y += 8;
+        doc.setFontSize(9);
+      };
+      const addRow = (cols: string[]) => {
+        if (y > 285) { doc.addPage(); y = 15; }
+        doc.text(cols.join('  |  '), 14, y);
+        y += 5;
+      };
+
+      addSection('PLANTÕES (últimos 60)');
+      addRow(['Data', 'Entrada', 'Saída', 'Tipo', 'Status']);
+      (shifts || []).forEach((s: any) => {
+        addRow([
+          format(parseISO(s.shift_date), 'dd/MM/yyyy'),
+          (s.start_time || '').slice(0, 5),
+          (s.end_time || '').slice(0, 5),
+          s.shift_type || '-',
+          s.status || '-',
+        ]);
+      });
+
+      y += 4;
+      addSection('FOLGAS');
+      addRow(['Data', 'Período', 'Entrada→Saída', 'Horas', 'Tipo', 'Status']);
+      leaves.forEach((l: any) => {
+        const p = PERIOD_MAP[l.period];
+        addRow([
+          format(parseISO(l.start_date), 'dd/MM/yyyy'),
+          l.period || '-',
+          `${l.start_time?.slice(0,5) || p?.start || '-'}→${l.end_time?.slice(0,5) || p?.end || '-'}`,
+          String(l.hours_count ?? p?.hours ?? '-'),
+          leaveTypeLabels[l.leave_type]?.label || l.leave_type,
+          l.status,
+        ]);
+      });
+
+      y += 4;
+      addSection('PERMUTAS');
+      addRow(['Data Original', 'Data Troca', 'Status']);
+      (swaps || []).forEach((sw: any) => {
+        addRow([
+          sw.original_date ? format(parseISO(sw.original_date), 'dd/MM/yyyy') : '-',
+          sw.swap_date ? format(parseISO(sw.swap_date), 'dd/MM/yyyy') : '-',
+          sw.status || '-',
+        ]);
+      });
+
+      doc.save(`plantoes_${agent?.cpf || agentId}_${format(now, 'yyyyMMdd_HHmm')}.pdf`);
+      toast.success('PDF exportado com sucesso');
+    } catch (err) {
+      console.error('Export PDF error:', err);
+      toast.error('Erro ao exportar PDF');
+    }
+  };
+
   return (
     <Card className="card-night-purple bg-gradient-to-br from-[hsl(222,60%,3%)] via-[hsl(222,55%,5%)] to-[hsl(270,40%,8%)] border-3 border-purple-500/50 transition-all duration-300 hover:border-purple-400/70 group relative">
       {/* Glow Effect */}
