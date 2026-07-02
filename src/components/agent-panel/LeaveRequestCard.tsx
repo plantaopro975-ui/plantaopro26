@@ -237,7 +237,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           end_date: dateStr,
           start_time: p?.start ?? null,
           end_time: p?.end ?? null,
-          hours_count: p?.hours ?? null,
+          hours_count: p ? computeHours(p.start, p.end, 1) : null,
           reason: leaveDescription.trim() || null,
         });
 
