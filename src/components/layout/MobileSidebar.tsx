@@ -55,13 +55,10 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
       {/* Brand */}
       <div className="px-5 pt-6 pb-4 border-b border-sidebar-border/60">
         <Link to="/dashboard" className="flex items-center gap-3" onClick={onNavigate}>
-          <div className="relative w-11 h-11 shrink-0 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/30 flex items-center justify-center shadow-glow overflow-hidden">
-            <img
-              src={logoEmblem}
-              alt="PlantaoPro"
-              className="h-9 w-9 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
-            />
+          <div className="relative w-11 h-11 shrink-0 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/30 flex items-center justify-center shadow-glow">
+            <Shield className="h-6 w-6 text-primary" strokeWidth={2.2} />
           </div>
+
           <div className="min-w-0">
             <h1 className="font-display text-base leading-none tracking-wide text-gradient">
               PlantaoPro
