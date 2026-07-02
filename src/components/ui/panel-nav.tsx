@@ -2,6 +2,7 @@ import { ArrowLeft, Home, X, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useConfirm } from '@/components/ui/confirm-provider';
 
 interface PanelNavProps {
   onLogout?: () => void;
