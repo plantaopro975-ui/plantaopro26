@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCap, CalendarPlus, Users, User, MessageCircle } from 'lucide-react';
+import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCap, CalendarPlus, Users, User, MessageCircle, FileDown } from 'lucide-react';
 import { format, parseISO, differenceInDays, isAfter, startOfDay, isSameDay, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { TeamMemberDialog } from './TeamMemberDialog';
@@ -51,6 +51,14 @@ const leaveTypes = [
   { value: 'training', label: 'Treinamento', icon: GraduationCap, color: 'text-blue-400', bgColor: 'bg-blue-500/20 border-blue-500/30' },
 ];
 
+const PERIODS = [
+  { v: '24h' as const, l: '24 horas', emoji: '🕛', hours: 24, start: '07:00', end: '07:00' },
+  { v: '12h' as const, l: '12 horas', emoji: '⏱️', hours: 12, start: '07:00', end: '19:00' },
+  { v: 'dia' as const, l: 'Diurno', emoji: '🌅', hours: 12, start: '07:00', end: '19:00' },
+  { v: 'noite' as const, l: 'Noturno', emoji: '🌙', hours: 12, start: '19:00', end: '07:00' },
+];
+const PERIOD_MAP = Object.fromEntries(PERIODS.map(p => [p.v, p])) as Record<string, typeof PERIODS[number]>;
+
 const leaveTypeLabels: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   vacation: { label: 'Férias', icon: <Palmtree className="h-4 w-4" />, color: 'bg-green-500/20 text-green-400 border-green-500/30' },
   medical: { label: 'Licença Médica', icon: <Stethoscope className="h-4 w-4" />, color: 'bg-red-500/20 text-red-400 border-red-500/30' },
@@ -72,7 +80,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedType, setSelectedType] = useState('special');
-  const [selectedPeriod, setSelectedPeriod] = useState<'manha' | 'tarde' | 'noite' | 'integral'>('integral');
+  const [selectedPeriod, setSelectedPeriod] = useState<'24h' | '12h' | 'dia' | 'noite'>('24h');
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [leaveDates, setLeaveDates] = useState<Date[]>([]);
   const [teamLeaveDates, setTeamLeaveDates] = useState<Date[]>([]);
@@ -197,7 +205,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
     setSelectedDate(date);
     setSelectedType('special');
-    setSelectedPeriod('integral');
+    setSelectedPeriod('24h');
     setLeaveDescription('');
     setShowConfirmDialog(true);
   };
@@ -208,7 +216,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
     try {
       setIsSubmitting(true);
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      
+      const p = PERIOD_MAP[selectedPeriod];
+
       const { error } = await (supabase as any)
         .from('agent_leaves')
         .insert({
@@ -217,6 +226,9 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           period: selectedPeriod,
           start_date: dateStr,
           end_date: dateStr,
+          start_time: p?.start ?? null,
+          end_time: p?.end ?? null,
+          hours_count: p?.hours ?? null,
           reason: leaveDescription.trim() || null,
         });
 
@@ -255,20 +267,115 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const pendingLeaves = leaves.filter(l => l.status === 'pending');
   const approvedLeaves = leaves.filter(l => l.status === 'approved');
 
+  const handleExportPDF = async () => {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const [{ data: agent }, { data: shifts }, { data: swaps }] = await Promise.all([
+        supabase.from('agents').select('name, cpf, matricula, team').eq('id', agentId).single(),
+        (supabase as any).from('agent_shifts').select('shift_date, start_time, end_time, shift_type, status').eq('agent_id', agentId).order('shift_date', { ascending: false }).limit(60),
+        (supabase as any).from('shift_swaps').select('*').or(`requester_id.eq.${agentId},receiver_id.eq.${agentId}`).order('created_at', { ascending: false }).limit(30),
+      ]);
+
+      const doc = new jsPDF();
+      const now = new Date();
+      let y = 15;
+
+      doc.setFontSize(16);
+      doc.text('Relatório de Plantões, Folgas e Permutas', 105, y, { align: 'center' });
+      y += 8;
+      doc.setFontSize(9);
+      doc.text(`Emitido em ${format(now, 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, 105, y, { align: 'center' });
+      y += 8;
+      doc.setFontSize(10);
+      doc.text(`Agente: ${agent?.name || '-'}   CPF: ${agent?.cpf || '-'}   Mat: ${agent?.matricula || '-'}   Equipe: ${agent?.team || '-'}`, 14, y);
+      y += 10;
+
+      const addSection = (title: string) => {
+        if (y > 270) { doc.addPage(); y = 15; }
+        doc.setFillColor(240, 240, 240);
+        doc.rect(14, y - 5, 182, 7, 'F');
+        doc.setFontSize(11);
+        doc.text(title, 16, y);
+        y += 8;
+        doc.setFontSize(9);
+      };
+      const addRow = (cols: string[]) => {
+        if (y > 285) { doc.addPage(); y = 15; }
+        doc.text(cols.join('  |  '), 14, y);
+        y += 5;
+      };
+
+      addSection('PLANTÕES (últimos 60)');
+      addRow(['Data', 'Entrada', 'Saída', 'Tipo', 'Status']);
+      (shifts || []).forEach((s: any) => {
+        addRow([
+          format(parseISO(s.shift_date), 'dd/MM/yyyy'),
+          (s.start_time || '').slice(0, 5),
+          (s.end_time || '').slice(0, 5),
+          s.shift_type || '-',
+          s.status || '-',
+        ]);
+      });
+
+      y += 4;
+      addSection('FOLGAS');
+      addRow(['Data', 'Período', 'Entrada→Saída', 'Horas', 'Tipo', 'Status']);
+      leaves.forEach((l: any) => {
+        const p = PERIOD_MAP[l.period];
+        addRow([
+          format(parseISO(l.start_date), 'dd/MM/yyyy'),
+          l.period || '-',
+          `${l.start_time?.slice(0,5) || p?.start || '-'}→${l.end_time?.slice(0,5) || p?.end || '-'}`,
+          String(l.hours_count ?? p?.hours ?? '-'),
+          leaveTypeLabels[l.leave_type]?.label || l.leave_type,
+          l.status,
+        ]);
+      });
+
+      y += 4;
+      addSection('PERMUTAS');
+      addRow(['Data Original', 'Data Troca', 'Status']);
+      (swaps || []).forEach((sw: any) => {
+        addRow([
+          sw.original_date ? format(parseISO(sw.original_date), 'dd/MM/yyyy') : '-',
+          sw.swap_date ? format(parseISO(sw.swap_date), 'dd/MM/yyyy') : '-',
+          sw.status || '-',
+        ]);
+      });
+
+      doc.save(`plantoes_${agent?.cpf || agentId}_${format(now, 'yyyyMMdd_HHmm')}.pdf`);
+      toast.success('PDF exportado com sucesso');
+    } catch (err) {
+      console.error('Export PDF error:', err);
+      toast.error('Erro ao exportar PDF');
+    }
+  };
+
   return (
     <Card className="card-night-purple bg-gradient-to-br from-[hsl(222,60%,3%)] via-[hsl(222,55%,5%)] to-[hsl(270,40%,8%)] border-3 border-purple-500/50 transition-all duration-300 hover:border-purple-400/70 group relative">
       {/* Glow Effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
       <CardHeader className="pb-4 relative">
-        <CardTitle className="flex items-center gap-3 text-xl md:text-2xl">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/30 to-violet-500/20 border border-purple-500/40">
-            <CalendarOff className="h-6 w-6 md:h-7 md:w-7 text-purple-400" />
-          </div>
-          <span className="font-bold bg-gradient-to-r from-purple-200 to-violet-300 bg-clip-text text-transparent">
-            Folgas Programadas
-          </span>
-        </CardTitle>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle className="flex items-center gap-3 text-xl md:text-2xl">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/30 to-violet-500/20 border border-purple-500/40">
+              <CalendarOff className="h-6 w-6 md:h-7 md:w-7 text-purple-400" />
+            </div>
+            <span className="font-bold bg-gradient-to-r from-purple-200 to-violet-300 bg-clip-text text-transparent">
+              Folgas Programadas
+            </span>
+          </CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportPDF}
+            className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10 gap-1.5"
+          >
+            <FileDown className="h-4 w-4" />
+            <span className="hidden sm:inline">Exportar PDF</span>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-5 relative">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -669,18 +776,13 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
                 {/* Period Selection */}
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Período</Label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {[
-                      { v: 'manha', l: 'Manhã', emoji: '🌅' },
-                      { v: 'tarde', l: 'Tarde', emoji: '☀️' },
-                      { v: 'noite', l: 'Noite', emoji: '🌙' },
-                      { v: 'integral', l: 'Integral', emoji: '⏱️' },
-                    ].map((p) => (
+                  <Label className="text-slate-300">Período / Duração</Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {PERIODS.map((p) => (
                       <button
                         key={p.v}
                         type="button"
-                        onClick={() => setSelectedPeriod(p.v as any)}
+                        onClick={() => setSelectedPeriod(p.v)}
                         className={`flex flex-col items-center gap-1 rounded-lg border-2 p-2 transition-all ${
                           selectedPeriod === p.v
                             ? 'border-amber-500 bg-amber-500/15 text-amber-300'
@@ -689,6 +791,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                       >
                         <span className="text-lg leading-none">{p.emoji}</span>
                         <span className="text-[11px] font-semibold">{p.l}</span>
+                        <span className="text-[10px] opacity-70">{p.start}→{p.end} ({p.hours}h)</span>
                       </button>
                     ))}
                   </div>
