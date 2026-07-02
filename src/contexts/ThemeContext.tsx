@@ -52,11 +52,11 @@ const getSystemTheme = (): 'tactical' => {
 export const themes: Record<ThemeType, ThemeConfig> = {
   tactical: {
     id: 'tactical',
-    name: 'Tático',
-    description: 'Operações táticas com cores âmbar intenso',
+    name: 'Comando Institucional',
+    description: 'Azul institucional e caqui operacional — forças de segurança',
     icon: Shield,
-    emoji: '🎯',
-    fontFamily: "'Orbitron', 'Rajdhani', sans-serif",
+    emoji: '🛡️',
+    fontFamily: "'Libre Baskerville', 'IBM Plex Sans', serif",
     teamIcons: {
       ALFA: Shield,
       BRAVO: Target,
@@ -64,24 +64,33 @@ export const themes: Record<ThemeType, ThemeConfig> = {
       DELTA: Radio,
     },
     colors: {
-      primary: '38 92% 50%',
-      primaryForeground: '222 47% 6%',
-      accent: '25 95% 53%',
-      background: '222 47% 4%',
-      card: '222 47% 6%',
-      border: '38 50% 20%',
-      gradientFrom: '38 92% 50%',
-      gradientTo: '25 95% 53%',
-      foreground: '210 40% 98%',
-      muted: '222 30% 10%',
-      mutedForeground: '38 30% 60%',
+      // Royal navy (camisa) + dark khaki (calça)
+      primary: '218 65% 32%',           // navy blue shirt
+      primaryForeground: '42 38% 92%',
+      accent: '38 28% 45%',             // dark khaki pants
+      background: '218 40% 6%',
+      card: '218 38% 9%',
+      border: '38 22% 25%',
+      gradientFrom: '218 65% 32%',
+      gradientTo: '38 28% 38%',
+      foreground: '42 38% 94%',
+      muted: '218 25% 12%',
+      mutedForeground: '38 20% 65%',
       isLight: false,
     },
     effects: {
-      glowIntensity: 'high',
-      particleColor: 'rgba(251, 191, 36, 0.8)',
-      scanlineOpacity: 0.05,
+      glowIntensity: 'medium',
+      particleColor: 'rgba(59, 100, 168, 0.6)',
+      scanlineOpacity: 0.04,
     },
+    cardStyle: {
+      gradient: 'from-[hsl(218_50%_10%)]/95 via-[hsl(218_40%_12%)]/90 to-[hsl(38_25%_14%)]/95',
+      border: 'border-[hsl(38_28%_45%)]/40',
+      shadow: 'shadow-[hsl(218_65%_32%)]/25',
+      hoverShadow: 'hover:shadow-[hsl(38_28%_50%)]/40',
+    },
+  },
+
     cardStyle: {
       gradient: 'from-amber-950/90 via-orange-950/80 to-slate-950/95',
       border: 'border-amber-500/40',
