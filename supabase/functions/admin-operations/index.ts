@@ -369,52 +369,58 @@ serve(async (req) => {
     }
 
     // ===== CLEANUP ORPHAN AUTH USER =====
-    if (action === "cleanup_orphan_auth") {
+    if (action === "cleanup_orphan_auth" || action === "purge_user") {
       const cpf = String(body?.cpf ?? "").replace(/\D/g, "");
       if (!cpf || cpf.length !== 11) {
         return json({ success: false, error: "CPF inválido." }, 400);
       }
 
       const email = `${cpf}@agent.plantaopro.com`;
-      console.log(`[cleanup_orphan_auth] Buscando usuário órfão: ${email}`);
+      console.log(`[purge_user] Iniciando limpeza total para: ${email}`);
 
-      // Check if there's an agent with this CPF
-      const { data: existingAgent } = await admin
+      // Coletar IDs de qualquer agente com esse CPF
+      const { data: agentRows } = await admin
         .from("agents")
         .select("id")
-        .eq("cpf", cpf)
-        .maybeSingle();
+        .eq("cpf", cpf);
+      const agentIds = (agentRows ?? []).map((r: any) => r.id);
 
-      if (existingAgent) {
-        console.log(`[cleanup_orphan_auth] Agente existe, não é órfão`);
-        return json({ success: false, error: "CPF já cadastrado com agente válido." }, 400);
-      }
-
-      // Find and delete orphan auth user
+      // Coletar usuário auth (se existir)
       const { data: users } = await admin.auth.admin.listUsers();
-      const orphanUser = users?.users?.find(u => u.email === email);
+      const authUser = users?.users?.find((u) => u.email === email);
+      const allUserIds = Array.from(new Set([...agentIds, ...(authUser ? [authUser.id] : [])]));
 
-      if (orphanUser) {
-        console.log(`[cleanup_orphan_auth] Encontrado usuário órfão: ${orphanUser.id}`);
-        
-        // Clean up related tables
-        const tables = ["user_roles", "profiles", "saved_credentials"];
-        for (const table of tables) {
-          try {
-            await admin.from(table).delete().eq("user_id", orphanUser.id);
-          } catch {
-            // ignore
-          }
-        }
-
-        // Delete auth user
-        await admin.auth.admin.deleteUser(orphanUser.id);
-        console.log(`[cleanup_orphan_auth] ✓ Usuário órfão removido`);
-        return json({ success: true, data: { removed: true } });
+      if (allUserIds.length === 0) {
+        return json({ success: true, data: { removed: false } });
       }
 
-      console.log(`[cleanup_orphan_auth] Nenhum usuário órfão encontrado`);
-      return json({ success: true, data: { removed: false } });
+      const userIdTables = [
+        "user_roles", "profiles", "saved_credentials", "admin_permissions",
+        "notifications", "activity_logs", "access_logs", "master_session_tokens",
+        "pending_registrations_log",
+      ];
+      const agentIdTables = [
+        "agent_shifts", "agent_leaves", "agent_events", "overtime_bank",
+        "bh_monthly_cycles", "shift_alerts", "shift_swaps", "transfer_requests",
+        "password_change_requests", "offline_license_cache", "license_code_usage",
+        "chat_messages", "chat_room_members", "deleted_messages", "ad_views",
+        "screen_views", "payments", "shifts",
+      ];
+
+      for (const t of userIdTables) {
+        try { await admin.from(t).delete().in("user_id", allUserIds); } catch (e) { console.warn(`skip ${t}`, e); }
+      }
+      for (const t of agentIdTables) {
+        try { await admin.from(t).delete().in("agent_id", allUserIds); } catch (e) { console.warn(`skip ${t}`, e); }
+      }
+      try { await admin.from("agents").delete().in("id", allUserIds); } catch (e) { console.warn("skip agents", e); }
+
+      if (authUser) {
+        try { await admin.auth.admin.deleteUser(authUser.id); } catch (e) { console.warn("skip auth", e); }
+      }
+
+      console.log(`[purge_user] ✓ Limpeza concluída para ${email}`);
+      return json({ success: true, data: { removed: true, ids: allUserIds } });
     }
 
     // ===== IMMEDIATE TRANSFER =====
