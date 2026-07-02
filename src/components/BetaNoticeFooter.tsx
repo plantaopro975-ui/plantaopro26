@@ -180,11 +180,19 @@ export function BetaNoticeFooter() {
   return (
     <>
       {!hidden && (
-        <DraggableBetaPill
-          onOpen={() => setOpen(true)}
-          onHide={hidePermanently}
-          retracted={seen && !open}
-        />
+        isMobile ? (
+          <StaticBetaPill
+            onOpen={() => setOpen(true)}
+            onHide={hidePermanently}
+            retracted={seen && !open}
+          />
+        ) : (
+          <DraggableBetaPill
+            onOpen={() => setOpen(true)}
+            onHide={hidePermanently}
+            retracted={seen && !open}
+          />
+        )
       )}
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
