@@ -59,6 +59,15 @@ const PERIODS = [
 ];
 const PERIOD_MAP = Object.fromEntries(PERIODS.map(p => [p.v, p])) as Record<string, typeof PERIODS[number]>;
 
+// Handles midnight-crossing (ex: 19:00→07:00 = 12h) and multi-day ranges
+function computeHours(start: string, end: string, days = 1): number {
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  let diff = (eh * 60 + em) - (sh * 60 + sm);
+  if (diff <= 0) diff += 24 * 60; // crosses midnight or full 24h cycle
+  return +((diff / 60) * Math.max(days, 1)).toFixed(2);
+}
+
 const leaveTypeLabels: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   vacation: { label: 'Férias', icon: <Palmtree className="h-4 w-4" />, color: 'bg-green-500/20 text-green-400 border-green-500/30' },
   medical: { label: 'Licença Médica', icon: <Stethoscope className="h-4 w-4" />, color: 'bg-red-500/20 text-red-400 border-red-500/30' },
