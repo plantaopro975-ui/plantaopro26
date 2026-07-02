@@ -109,33 +109,43 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const agentHandlers = makeHandlers(agentT, setAgentT);
   const vehicleHandlers = makeHandlers(vehicleT, setVehicleT);
 
-  // Pinch-to-zoom (mobile) — 2 dedos
-  const makePinch = (t: Transform, setT: (t: Transform) => void) => {
-    const pts = new Map<number, { x: number; y: number }>();
-    let startDist = 0;
-    let startScale = t.scale;
-    return {
-      onTouchStart: (e: React.TouchEvent) => {
-        for (const touch of Array.from(e.touches)) {
-          pts.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
-        }
-        if (pts.size === 2) {
-          const [a, b] = Array.from(pts.values());
-          startDist = Math.hypot(a.x - b.x, a.y - b.y);
-          startScale = t.scale;
-        }
-      },
-      onTouchMove: (e: React.TouchEvent) => {
-        if (e.touches.length !== 2 || startDist === 0) return;
+  // Pinch-to-zoom (mobile) — 2 dedos. Ref persistente para não zerar entre renders.
+  const agentPinchRef = useRef({ startDist: 0, startScale: 1, raf: 0 });
+  const vehiclePinchRef = useRef({ startDist: 0, startScale: 1, raf: 0 });
+
+  const makePinch = (
+    ref: React.MutableRefObject<{ startDist: number; startScale: number; raf: number }>,
+    setT: React.Dispatch<React.SetStateAction<Transform>>,
+  ) => ({
+    onTouchStart: (e: React.TouchEvent) => {
+      if (e.touches.length >= 2) {
         const a = e.touches[0], b = e.touches[1];
-        const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-        setT(clampT({ ...t, scale: startScale * (d / startDist) }));
-      },
-      onTouchEnd: () => { pts.clear(); startDist = 0; },
-    };
-  };
-  const agentPinch = makePinch(agentT, setAgentT);
-  const vehiclePinch = makePinch(vehicleT, setVehicleT);
+        ref.current.startDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        setT(prev => { ref.current.startScale = prev.scale; return prev; });
+      }
+    },
+    onTouchMove: (e: React.TouchEvent) => {
+      if (e.touches.length < 2 || ref.current.startDist === 0) return;
+      e.preventDefault();
+      const a = e.touches[0], b = e.touches[1];
+      const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      const ratio = d / ref.current.startDist;
+      if (ref.current.raf) cancelAnimationFrame(ref.current.raf);
+      ref.current.raf = requestAnimationFrame(() => {
+        setT(prev => clampT({ ...prev, scale: ref.current.startScale * ratio }));
+      });
+    },
+    onTouchEnd: (e: React.TouchEvent) => {
+      if (e.touches.length < 2) {
+        ref.current.startDist = 0;
+        if (ref.current.raf) { cancelAnimationFrame(ref.current.raf); ref.current.raf = 0; }
+      }
+    },
+  });
+  const agentPinch = makePinch(agentPinchRef, setAgentT);
+  const vehiclePinch = makePinch(vehiclePinchRef, setVehicleT);
+
+
 
 
 
