@@ -2,6 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, KeyRound } from 'lucide-react';
+import restrictedScene from '@/assets/restricted-access-scene.jpg';
+import logoEmblem from '@/assets/logo-plantao-pro-emblem.png';
 
 interface RestrictedAccessDialogProps {
   open: boolean;
@@ -14,40 +16,40 @@ export function RestrictedAccessDialog({ open, onOpenChange, targetLabel }: Rest
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md border-primary/30 bg-background/95 backdrop-blur">
-        <DialogHeader className="items-center text-center">
-          {/* SVG institucional */}
-          <div className="relative mb-3">
-            <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-              <defs>
-                <linearGradient id="rag" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.95" />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.55" />
-                </linearGradient>
-              </defs>
-              <path d="M48 6 L84 20 V44 C84 68 66 84 48 90 C30 84 12 68 12 44 V20 Z"
-                fill="url(#rag)" stroke="hsl(var(--primary))" strokeWidth="2" />
-              <path d="M48 12 L78 24 V44 C78 64 63 78 48 84 C33 78 18 64 18 44 V24 Z"
-                fill="hsl(var(--background))" fillOpacity="0.35" />
-              <g transform="translate(48 50)" stroke="hsl(var(--primary-foreground))" strokeWidth="2.5" fill="none">
-                <rect x="-12" y="-4" width="24" height="20" rx="3" fill="hsl(var(--primary))" />
-                <path d="M-7 -4 V-12 a7 7 0 0 1 14 0 V-4" />
-                <circle cx="0" cy="6" r="2.5" fill="hsl(var(--primary-foreground))" />
-              </g>
-            </svg>
+      <DialogContent className="max-w-md p-0 overflow-hidden border-primary/30 bg-background/95 backdrop-blur">
+        {/* Cinematic banner */}
+        <div className="relative h-40 w-full overflow-hidden">
+          <img
+            src={restrictedScene}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
+          <div className="absolute inset-x-0 bottom-0 flex justify-center">
+            <div className="relative -mb-8 w-20 h-20 rounded-full bg-background ring-2 ring-primary/40 shadow-glow flex items-center justify-center">
+              <img
+                src={logoEmblem}
+                alt="PlantaoPro"
+                className="h-14 w-14 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
+              />
+            </div>
           </div>
+        </div>
+
+        <DialogHeader className="items-center text-center px-6 pt-12">
           <DialogTitle className="font-serif text-2xl tracking-wide">
             Área Restrita
           </DialogTitle>
           <DialogDescription className="text-sm leading-relaxed text-muted-foreground">
-            O acesso a <span className="text-foreground font-semibold">{targetLabel ?? 'esta seção'}</span> é
-            exclusivo para agentes credenciados. Entre com as
+            Acesso a <span className="text-foreground font-semibold">{targetLabel ?? 'esta seção'}</span> exige
             <span className="text-foreground font-semibold"> credenciais da sua equipe </span>
-            (unidade/área — ALFA · BRAVO · CHARLIE · DELTA) para prosseguir com segurança.
+            (ALFA · BRAVO · CHARLIE · DELTA).
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-2 space-y-3">
+        <div className="px-6 pb-6 pt-4 space-y-3">
           <div className="rounded-md border border-primary/20 bg-primary/5 p-3 text-xs text-muted-foreground">
             <div className="flex items-center gap-2 text-primary font-semibold mb-1">
               <ShieldAlert className="h-4 w-4" />
