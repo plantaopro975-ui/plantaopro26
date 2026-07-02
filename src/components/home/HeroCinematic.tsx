@@ -1,4 +1,4 @@
-import { ShieldCheck, Radio, MapPin } from 'lucide-react';
+import { Minus, Plus, Radio, RotateCcw, MapPin } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/hero-command.jpg';
@@ -196,6 +196,25 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const agentHandlers = makeHandlers(agentT, setAgentT, agentGestureRef);
   const vehicleHandlers = makeHandlers(vehicleT, setVehicleT, vehicleGestureRef);
 
+  const stopControlGesture = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const scaleAsset = (
+    setT: React.Dispatch<React.SetStateAction<Transform>>,
+    amount: number,
+  ) => {
+    setT(prev => clampT({ ...prev, scale: prev.scale + amount }));
+  };
+
+  const resetAsset = (
+    setT: React.Dispatch<React.SetStateAction<Transform>>,
+    next: Transform,
+  ) => {
+    setT(clampT(next));
+  };
+
 
 
 
@@ -272,15 +291,45 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         {/* Giroflex realista */}
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
+
+        <div
+          className="absolute bottom-1 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 rounded-md border border-primary/40 bg-background/85 p-1 shadow-lg backdrop-blur-md sm:hidden"
+          aria-label="Controles de tamanho da viatura"
+          onPointerDown={stopControlGesture}
+          onTouchStart={stopControlGesture}
+        >
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Reduzir viatura"
+            onClick={(e) => { stopControlGesture(e); scaleAsset(setVehicleT, -0.12); }}
+          >
+            <Minus className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Ampliar viatura"
+            onClick={(e) => { stopControlGesture(e); scaleAsset(setVehicleT, 0.12); }}
+          >
+            <Plus className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-primary/20 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Resetar viatura"
+            onClick={(e) => { stopControlGesture(e); resetAsset(setVehicleT, { xPct: 30, yPct: 56, scale: 1.1 }); }}
+          >
+            <RotateCcw className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
       </div>
 
       {/* Agente tático — arrastável (triple-click abre login master/admin) */}
-      <img
-        src={agentFigure}
-        alt="Agente tático — toque 3× para acesso admin"
+      <div
+        role="img"
+        aria-label="Agente tático — toque 3 vezes para acesso admin"
         title="3 cliques = admin"
-        loading="lazy"
-        draggable={false}
         onClick={() => {
           if (Date.now() < agentGestureRef.current.suppressClickUntil) return;
           const w = window as unknown as { __agentClicks?: number; __agentTimer?: number };
@@ -317,8 +366,48 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           transformOrigin: 'center',
           touchAction: 'none',
         }}
-        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] object-contain object-bottom select-none opacity-95 cursor-grab active:cursor-grabbing"
-      />
+        className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-grab active:cursor-grabbing"
+      >
+        <img
+          src={agentFigure}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          draggable={false}
+          className="h-full w-auto object-contain object-bottom pointer-events-none"
+        />
+        <div
+          className="absolute bottom-1 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 rounded-md border border-primary/40 bg-background/85 p-1 shadow-lg backdrop-blur-md sm:hidden"
+          aria-label="Controles de tamanho do agente"
+          onPointerDown={stopControlGesture}
+          onTouchStart={stopControlGesture}
+        >
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Reduzir agente"
+            onClick={(e) => { stopControlGesture(e); scaleAsset(setAgentT, -0.12); }}
+          >
+            <Minus className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-foreground transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Ampliar agente"
+            onClick={(e) => { stopControlGesture(e); scaleAsset(setAgentT, 0.12); }}
+          >
+            <Plus className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-primary/20 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Resetar agente"
+            onClick={(e) => { stopControlGesture(e); resetAsset(setAgentT, { xPct: 74, yPct: 58, scale: 1.05 }); }}
+          >
+            <RotateCcw className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+      </div>
 
 
 
