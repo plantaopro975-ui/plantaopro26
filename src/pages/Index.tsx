@@ -1379,7 +1379,7 @@ export default function Index() {
           <div className="min-h-[84px]">
           {foundAgent && (
             <div className={cn(
-              "p-4 rounded-xl border-2 animate-fade-in",
+              "p-4 rounded-xl border-2",
               foundAgent.team && foundAgent.team !== selectedTeam 
                 ? 'bg-gradient-to-r from-red-500/15 to-red-600/10 border-red-500/40' 
                 : 'bg-gradient-to-r from-emerald-500/15 to-green-500/10 border-emerald-500/40'
