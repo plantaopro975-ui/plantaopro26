@@ -140,25 +140,19 @@ export function AuthDialog({
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
           <div
-            className="relative w-full overflow-hidden bg-slate-950"
-            style={{ aspectRatio: '16 / 6' }}
+            className="relative w-full overflow-hidden bg-slate-950 aspect-[16/9] sm:aspect-[16/7] md:aspect-[16/6]"
           >
             <img
               src={teamPoster}
               alt={`Equipe ${teamKey}`}
-              className="absolute inset-0 h-full w-full object-cover"
-              style={{
-                filter: 'contrast(1.08) saturate(1.05) brightness(0.9)',
-                objectPosition:
-                  teamKey === 'CHARLIE' ? '50% 18%' :
-                  teamKey === 'BRAVO'   ? '50% 22%' :
-                  teamKey === 'DELTA'   ? '50% 28%' :
-                                          '50% 30%',
-              }}
+              className="absolute inset-0 h-full w-full object-cover object-[center_25%] sm:object-[center_30%]"
+              style={{ filter: 'contrast(1.06) saturate(0.98) brightness(0.9)' }}
             />
-            {/* Gradiente apenas na base — preserva a imagem no topo */}
-            <div className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
-                 style={{ background: `linear-gradient(180deg, transparent 0%, rgba(2,6,23,0.55) 55%, rgba(2,6,23,0.96) 100%)` }} />
+            {/* Vinheta noir + gradiente base para legibilidade */}
+            <div className="absolute inset-0 pointer-events-none"
+                 style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 40%, rgba(2,6,23,0.55) 100%)' }} />
+            <div className="absolute inset-x-0 bottom-0 h-3/4 pointer-events-none"
+                 style={{ background: `linear-gradient(180deg, transparent 0%, rgba(2,6,23,0.65) 55%, rgba(2,6,23,0.98) 100%)` }} />
             <div className="absolute left-0 top-0 bottom-0 w-[3px]"
                  style={{ background: teamColor!.primary, opacity: 0.7 }} />
 
@@ -171,25 +165,25 @@ export function AuthDialog({
                   Secure · {teamKey}
                 </span>
               </div>
-              <span className="text-[9px] sm:text-[10px] tracking-[0.2em] font-mono text-white/45 shrink-0">CLASSIFIED</span>
+              <span className="hidden sm:inline text-[9px] sm:text-[10px] tracking-[0.2em] font-mono text-white/45 shrink-0">CLASSIFIED</span>
             </div>
 
             {/* Emblem + title — horizontal compact */}
-            <div className="absolute bottom-0 inset-x-0 px-3 sm:px-4 pb-2.5 sm:pb-3 flex items-center gap-2.5 sm:gap-3">
+            <div className="absolute bottom-0 inset-x-0 px-3 sm:px-4 pb-2.5 sm:pb-3 flex items-end gap-2.5 sm:gap-3">
               {teamEmblem && (
                 <img src={teamEmblem} alt=""
-                  className="h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
+                  className="h-9 w-9 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
               )}
               <div className="min-w-0 flex-1">
                 <div className="text-[9px] sm:text-[10px] tracking-[0.28em] sm:tracking-[0.32em] font-mono font-bold uppercase leading-none"
                      style={{ color: teamColor!.primary }}>
                   Equipe {teamKey}
                 </div>
-                <h2 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-white leading-tight mt-1 font-stencil truncate">
+                <h2 className="text-[15px] sm:text-lg md:text-xl font-bold tracking-tight text-white leading-tight mt-1 font-stencil line-clamp-1">
                   {title}
                 </h2>
                 {subtitle && (
-                  <p className="text-[10px] sm:text-[11px] text-white/65 leading-tight mt-0.5 truncate">{subtitle}</p>
+                  <p className="text-[10px] sm:text-[11px] text-white/70 leading-snug mt-0.5 line-clamp-2 sm:line-clamp-1">{subtitle}</p>
                 )}
               </div>
             </div>
