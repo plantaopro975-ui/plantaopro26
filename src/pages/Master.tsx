@@ -920,7 +920,7 @@ export default function Master() {
                                 )}
                                 title={agent.is_active ? 'Desativar' : 'Ativar'}
                               >
-                              {agent.is_active ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
+                              {agent.is_active ? <Icon3D src={icon3dShield} fallback={Lock} size={18} /> : <Icon3D src={icon3dShield} fallback={Unlock} size={18} />}
                               </Button>
                               <Button
                                 variant="ghost"
