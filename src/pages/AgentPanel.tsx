@@ -519,6 +519,15 @@ export default function AgentPanel() {
             {/* On Duty Overlay - Discreto e minimizável */}
             <OnDutyOverlay agentId={agent.id} />
 
+            {/* Centro de Operações (checklist, radar, PDF, HUD 3-2-1) */}
+            <ShiftOperationsCenter
+              agentId={agent.id}
+              agentName={agent.name}
+              agentTeam={agent.team}
+              unitId={agent.unit_id}
+            />
+
+
             {/* HERO PANEL - Futuristic Status Dashboard */}
             <AgentHeroPanel 
               agentId={agent.id}
