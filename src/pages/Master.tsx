@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import hudPageBg from '@/assets/hero-tactical-ops.jpg';
+const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { PanelSkeleton } from '@/components/ui/panel-skeleton';
