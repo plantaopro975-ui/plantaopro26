@@ -13,6 +13,7 @@ import teamsHubBg from '@/assets/hero-teams-hub.jpg';
 import comandoCover from '@/assets/comando-operacional-cover.jpg';
 import { getTeamPoster, getTeamColors } from '@/lib/teamAssets';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import { useLowMotion } from '@/hooks/useLowMotion';
 
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
@@ -37,7 +38,8 @@ const TEAMS: { name: TeamName; icon: string; kicker: string; motion: string }[] 
  */
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const onlineCount = useOnlinePresence();
+  const { lowMotion } = useLowMotion();
+  const onlineCount = useOnlinePresence('online-users', !lowMotion);
 
   const [agentPos, setAgentPos] = useState<{ x: number; y: number } | null>(() => {
     try {
@@ -103,7 +105,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/78 to-background/25" aria-hidden />
 
       {/* Topografia amazônica — SVG orgânico (curvas de nível) */}
-      <svg
+      {!lowMotion && <svg
         aria-hidden
         className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.12] mix-blend-screen"
         viewBox="0 0 800 600"
@@ -124,7 +126,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             strokeWidth="1"
           />
         ))}
-      </svg>
+      </svg>}
 
 
       {/* Viatura policial — arrastável, com giroflex funcional */}
@@ -190,13 +192,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           className="relative rounded-lg overflow-hidden border border-accent/40 p-3 sm:p-4"
         >
           {/* Capa realista — sala de comando */}
-          <img
-            src={comandoCover}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover object-right"
-          />
+            {!lowMotion && (
+              <img
+                src={comandoCover}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover object-right"
+              />
+            )}
           {/* Overlays para legibilidade */}
           <div
             aria-hidden
@@ -206,7 +210,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                 'linear-gradient(90deg, hsl(var(--card)/0.94) 0%, hsl(var(--card)/0.82) 35%, hsl(var(--primary)/0.45) 70%, hsl(var(--accent)/0.25) 100%)',
             }}
           />
-          <svg
+          {!lowMotion && <svg
             aria-hidden
             className="absolute inset-0 h-full w-full pointer-events-none opacity-60"
             viewBox="0 0 800 300"
@@ -225,7 +229,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             <rect width="800" height="300" fill="url(#top-grid)" />
             <rect x="0" y="2" width="800" height="1" fill="url(#top-stripe)" />
             <rect x="0" y="297" width="800" height="1" fill="url(#top-stripe)" />
-          </svg>
+          </svg>}
 
 
           <div className="relative flex items-start justify-between gap-3">
@@ -275,7 +279,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             }}
           >
             {/* SVG tático institucional */}
-            <svg
+            {!lowMotion && <svg
               aria-hidden
               className="absolute inset-0 h-full w-full pointer-events-none opacity-70"
               viewBox="0 0 800 300"
@@ -315,7 +319,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               {/* Faixas superiores/inferiores */}
               <rect x="0" y="2" width="800" height="1" fill="url(#hub-stripe)" />
               <rect x="0" y="297" width="800" height="1" fill="url(#hub-stripe)" />
-            </svg>
+            </svg>}
 
 
           <div className="relative mb-1.5 sm:mb-2 flex items-center gap-2 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.32em] text-muted-foreground/80 font-mono">
@@ -350,12 +354,14 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     aria-hidden
                     className="pointer-events-none absolute inset-0 rounded-md overflow-hidden"
                   >
-                    <img
-                      src={getTeamPoster(t.name)}
-                      alt=""
-                      className="absolute inset-0 h-full w-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
-                      style={{ filter: 'saturate(1.05) contrast(1.05)' }}
-                    />
+                    {!lowMotion && (
+                      <img
+                        src={getTeamPoster(t.name)}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover opacity-100 group-hover:scale-105 transition-transform duration-500"
+                        style={{ filter: 'saturate(1.05) contrast(1.05)' }}
+                      />
+                    )}
                     {/* Overlay consistente — vinheta radial + gradiente inferior responsivo para legibilidade */}
                     <span
                       aria-hidden

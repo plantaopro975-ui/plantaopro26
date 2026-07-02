@@ -18,6 +18,7 @@ import { ConfirmProvider } from "@/components/ui/confirm-provider";
 import { SingleDeviceGuard } from "@/components/SingleDeviceGuard";
 import { SplashScreen } from "@/components/SplashScreen";
 import { PanelSkeleton } from "@/components/ui/panel-skeleton";
+import { useLowMotion } from "@/hooks/useLowMotion";
 
 // Lazy-loaded routes — split into async chunks to shrink initial bundle
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -58,7 +59,13 @@ function GlobalNavigationHandler({ children }: { children: React.ReactNode }) {
 // Prefetch the most likely next-routes while browser is idle,
 // so authenticated users open the panel/admin instantly on weak links.
 function RoutePrefetcher() {
+  const { lowMotion } = useLowMotion();
+
   useEffect(() => {
+    const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (lowMotion || isAndroid || conn?.saveData) return;
+
     const idle =
       (window as any).requestIdleCallback ||
       ((cb: () => void) => setTimeout(cb, 1200));
@@ -71,7 +78,7 @@ function RoutePrefetcher() {
       import("./pages/Admin");
     });
     return () => cancel(handle);
-  }, []);
+  }, [lowMotion]);
   return null;
 }
 

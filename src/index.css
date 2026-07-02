@@ -556,6 +556,60 @@ body {
 }
 
 /* ================================
+   ANDROID / WEBVIEW PERFORMANCE MODE
+   ================================
+   Reduz composição GPU/CPU: filtros, backdrop blur, sombras animadas,
+   will-change permanente e animações infinitas são as maiores fontes de
+   aquecimento em celulares Android no carregamento inicial.
+*/
+.low-performance-mode *,
+.android-performance-mode * {
+  scroll-behavior: auto !important;
+}
+
+.android-performance-mode *,
+.android-performance-mode *::before,
+.android-performance-mode *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  text-shadow: none !important;
+  will-change: auto !important;
+}
+
+.android-performance-mode .hero-cinematic,
+.android-performance-mode .institutional-card,
+.android-performance-mode .team-card-3d,
+.android-performance-mode .police-vehicle,
+.android-performance-mode .agent-figure,
+.android-performance-mode .team-icon-3d {
+  filter: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.android-performance-mode .bg-scanlines,
+.android-performance-mode .scan-line-y,
+.android-performance-mode .radar-rotate,
+.android-performance-mode .splash-scan,
+.android-performance-mode .splash-grid {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .home-viewport-shell {
+    contain: layout paint style;
+  }
+
+  .smooth-scroll {
+    transform: none;
+    will-change: auto;
+  }
+}
+
+/* ================================
    BLOQUEIO FINAL DO SELO LOVABLE
    ================================ */
 #lovable-badge, 
