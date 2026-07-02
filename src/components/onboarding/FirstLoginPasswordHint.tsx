@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { ShieldAlert, KeyRound } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 
 const LS_KEY = 'pp:first-login-seen';
 
@@ -23,11 +24,18 @@ export function FirstLoginPasswordHint() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const { enabled: welcomeHintEnabled, loading: welcomeHintLoading } = useWelcomeHintEnabled();
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       if (!user) return;
+      if (welcomeHintLoading) return;
+      // Admin toggle: hint only shows when explicitly enabled by the master admin.
+      if (!welcomeHintEnabled) {
+        setOpen(false);
+        return;
+      }
       if (localStorage.getItem(LS_KEY) === '1') return;
 
       const { data } = await supabase
@@ -43,7 +51,7 @@ export function FirstLoginPasswordHint() {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, welcomeHintEnabled, welcomeHintLoading]);
 
   const dismiss = () => {
     localStorage.setItem(LS_KEY, '1');
