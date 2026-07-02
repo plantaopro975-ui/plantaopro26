@@ -197,6 +197,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
     setSelectedDate(date);
     setSelectedType('special');
+    setSelectedPeriod('integral');
     setLeaveDescription('');
     setShowConfirmDialog(true);
   };
@@ -213,6 +214,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
         .insert({
           agent_id: agentId,
           leave_type: selectedType,
+          period: selectedPeriod,
           start_date: dateStr,
           end_date: dateStr,
           reason: leaveDescription.trim() || null,
