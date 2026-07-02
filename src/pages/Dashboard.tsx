@@ -133,47 +133,24 @@ export default function Dashboard() {
               {/* Quick Access Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {[
-                  { 
-                    icon: Building2, 
-                    text: 'Unidades', 
-                    color: 'text-blue-400', 
-                    bg: 'from-blue-500/20 to-blue-600/10', 
-                    route: '/units'
-                  },
-                  { 
-                    icon: Users, 
-                    text: 'Agentes', 
-                    color: 'text-green-400', 
-                    bg: 'from-green-500/20 to-green-600/10', 
-                    route: '/agents'
-                  },
-                  { 
-                    icon: Clock, 
-                    text: 'Banco de Horas', 
-                    color: 'text-amber-400', 
-                    bg: 'from-amber-500/20 to-amber-600/10', 
-                    route: '/overtime'
-                  },
-                  { 
-                    icon: Settings, 
-                    text: 'Configurações', 
-                    color: 'text-purple-400', 
-                    bg: 'from-purple-500/20 to-purple-600/10', 
-                    route: '/settings'
-                  },
+                  { icon: Building2, icon3d: icon3dBuilding, text: 'Unidades',        color: 'text-blue-400',   bg: 'from-blue-500/20 to-blue-600/10',   route: '/units' },
+                  { icon: Users,     icon3d: icon3dTeam,     text: 'Agentes',         color: 'text-green-400',  bg: 'from-green-500/20 to-green-600/10', route: '/agents' },
+                  { icon: Clock,     icon3d: icon3dClock,    text: 'Banco de Horas',  color: 'text-amber-400',  bg: 'from-amber-500/20 to-amber-600/10', route: '/overtime' },
+                  { icon: Settings,  icon3d: icon3dShield,   text: 'Configurações',   color: 'text-purple-400', bg: 'from-purple-500/20 to-purple-600/10', route: '/settings' },
                 ].map((feature, i) => (
-                  <div 
+                  <div
                     key={i}
                     onClick={() => navigate(feature.route)}
                     className={`relative flex items-center gap-2 p-2.5 bg-gradient-to-br ${feature.bg} rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors cursor-pointer group`}
                   >
                     <div className={`p-1.5 rounded bg-slate-800/50 ${feature.color} group-hover:scale-110 transition-transform`}>
-                      <feature.icon className="h-4 w-4" />
+                      <Icon3D src={feature.icon3d} fallback={feature.icon} size={20} />
                     </div>
                     <span className="text-xs font-medium text-slate-300">{feature.text}</span>
                   </div>
                 ))}
               </div>
+
 
               {/* Main Content Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
