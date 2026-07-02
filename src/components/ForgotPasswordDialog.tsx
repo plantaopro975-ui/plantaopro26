@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -12,16 +13,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { ShieldAlert, Loader2, CheckCircle } from 'lucide-react';
 import { formatCPF } from '@/lib/validators';
 
 export function ForgotPasswordDialog() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<'cpf' | 'success' | 'no-email'>('cpf');
+  const [step, setStep] = useState<'form' | 'success'>('form');
   const [cpf, setCpf] = useState('');
-  const [agentEmail, setAgentEmail] = useState<string | null>(null);
+  const [reason, setReason] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,10 +39,9 @@ export function ForgotPasswordDialog() {
 
     setLoading(true);
     try {
-      // Check if agent exists and has email
       const { data: agent } = await supabase
         .from('agents')
-        .select('email, name')
+        .select('id, name')
         .eq('cpf', cleanCpf)
         .maybeSingle();
 
@@ -55,26 +55,38 @@ export function ForgotPasswordDialog() {
         return;
       }
 
-      if (!agent.email) {
-        setStep('no-email');
+      // Verifica se já existe pedido pendente
+      const { data: existing } = await supabase
+        .from('password_change_requests')
+        .select('id')
+        .eq('agent_id', agent.id)
+        .eq('status', 'pending')
+        .maybeSingle();
+
+      if (existing) {
+        toast({
+          title: 'Solicitação já enviada',
+          description: 'Você já possui um pedido pendente. Aguarde o administrador.',
+        });
+        setStep('success');
         setLoading(false);
         return;
       }
 
-      // Send password reset email
-      const { error } = await supabase.auth.resetPasswordForEmail(agent.email, {
-        redirectTo: `${window.location.origin}/auth?reset=true`,
+      const { error } = await supabase.from('password_change_requests').insert({
+        agent_id: agent.id,
+        status: 'pending',
+        reason: reason.trim() || 'Solicitação de redefinição de senha via tela de login.',
       });
 
       if (error) throw error;
 
-      setAgentEmail(agent.email);
       setStep('success');
     } catch (error: any) {
-      console.error('Error sending reset email:', error);
+      console.error('Error creating password request:', error);
       toast({
         title: 'Erro',
-        description: error.message || 'Não foi possível enviar o email.',
+        description: error.message || 'Não foi possível registrar a solicitação.',
         variant: 'destructive',
       });
     } finally {
@@ -85,14 +97,14 @@ export function ForgotPasswordDialog() {
   const handleClose = () => {
     setOpen(false);
     setTimeout(() => {
-      setStep('cpf');
+      setStep('form');
       setCpf('');
-      setAgentEmail(null);
+      setReason('');
     }, 200);
   };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => o ? setOpen(true) : handleClose()}>
+    <Dialog open={open} onOpenChange={(o) => (o ? setOpen(true) : handleClose())}>
       <DialogTrigger asChild>
         <Button variant="link" className="text-amber-400 hover:text-amber-300 p-0 h-auto text-sm">
           Esqueceu sua senha?
@@ -101,17 +113,17 @@ export function ForgotPasswordDialog() {
       <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-white">
-            <Mail className="h-5 w-5 text-amber-400" />
-            Recuperar Senha
+            <ShieldAlert className="h-5 w-5 text-amber-400" />
+            Solicitar Redefinição
           </DialogTitle>
           <DialogDescription className="text-slate-400">
-            {step === 'cpf' && 'Digite seu CPF para recuperar o acesso'}
-            {step === 'success' && 'Email enviado com sucesso!'}
-            {step === 'no-email' && 'Sem email cadastrado'}
+            {step === 'form'
+              ? 'Sua solicitação será enviada ao administrador da unidade.'
+              : 'Solicitação registrada com sucesso.'}
           </DialogDescription>
         </DialogHeader>
 
-        {step === 'cpf' && (
+        {step === 'form' && (
           <form onSubmit={handleSubmit} className="space-y-4 pt-2">
             <div className="space-y-2">
               <Label className="text-slate-300">CPF</Label>
@@ -121,6 +133,18 @@ export function ForgotPasswordDialog() {
                 placeholder="000.000.000-00"
                 className="bg-slate-700/50 border-slate-600 text-white text-center"
                 maxLength={14}
+                autoComplete="off"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-slate-300">Motivo (opcional)</Label>
+              <Textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Ex.: esqueci minha senha após troca de plantão."
+                className="bg-slate-700/50 border-slate-600 text-white min-h-[80px]"
+                maxLength={300}
               />
             </div>
 
@@ -132,15 +156,19 @@ export function ForgotPasswordDialog() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Verificando...
+                  Enviando solicitação...
                 </>
               ) : (
                 <>
-                  <Mail className="mr-2 h-4 w-4" />
-                  Enviar Email de Recuperação
+                  <ShieldAlert className="mr-2 h-4 w-4" />
+                  Enviar ao Administrador
                 </>
               )}
             </Button>
+
+            <p className="text-xs text-slate-500 text-center">
+              O administrador irá analisar e definir uma nova senha temporária para você.
+            </p>
           </form>
         )}
 
@@ -150,45 +178,16 @@ export function ForgotPasswordDialog() {
               <CheckCircle className="h-8 w-8 text-green-400" />
             </div>
             <div className="space-y-2">
-              <p className="text-white font-medium">Email enviado!</p>
+              <p className="text-white font-medium">Solicitação registrada</p>
               <p className="text-slate-400 text-sm">
-                Enviamos um link de recuperação para:
-              </p>
-              <p className="text-amber-400 font-mono text-sm">
-                {agentEmail?.replace(/(.{3})(.*)(@.*)/, '$1***$3')}
+                O administrador da sua unidade foi notificado e entrará em contato para liberar o acesso.
               </p>
               <p className="text-slate-500 text-xs mt-4">
-                Verifique sua caixa de entrada e spam.
+                Você pode acompanhar o status pela sua unidade ou pelo canal interno de suporte.
               </p>
             </div>
-            <Button
-              onClick={handleClose}
-              className="w-full bg-slate-700 hover:bg-slate-600 text-white"
-            >
+            <Button onClick={handleClose} className="w-full bg-slate-700 hover:bg-slate-600 text-white">
               Fechar
-            </Button>
-          </div>
-        )}
-
-        {step === 'no-email' && (
-          <div className="space-y-4 pt-2 text-center">
-            <div className="w-16 h-16 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center">
-              <AlertTriangle className="h-8 w-8 text-yellow-400" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-white font-medium">Sem email cadastrado</p>
-              <p className="text-slate-400 text-sm">
-                Este agente não possui email cadastrado no sistema.
-              </p>
-              <p className="text-slate-500 text-xs mt-4">
-                Entre em contato com o administrador do sistema para redefinir sua senha.
-              </p>
-            </div>
-            <Button
-              onClick={handleClose}
-              className="w-full bg-slate-700 hover:bg-slate-600 text-white"
-            >
-              Entendi
             </Button>
           </div>
         )}
