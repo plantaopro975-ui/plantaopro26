@@ -73,12 +73,21 @@ const variantStyles = {
   },
 };
 
-// Team-specific tactical patterns overlay (SVG data URI)
-const teamPatterns: Record<string, string> = {
-  ALFA: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M0 20L20 0L40 20L20 40Z' fill='none' stroke='rgba(34,197,94,0.15)' stroke-width='1'/></svg>\")",
-  BRAVO: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='6' fill='none' stroke='rgba(249,115,22,0.18)' stroke-width='1'/></svg>\")",
-  CHARLIE: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M0 0h40v40H0z' fill='none' stroke='rgba(59,130,246,0.12)' stroke-width='0.5'/><path d='M10 20h20M20 10v20' stroke='rgba(59,130,246,0.15)' stroke-width='0.5'/></svg>\")",
-  DELTA: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M20 4L34 30H6z' fill='none' stroke='rgba(234,179,8,0.18)' stroke-width='1'/></svg>\")",
+// Unified tactical pattern overlay — same subtle diamond grid for every team,
+// tinted with the team's primary color at a light, consistent opacity.
+const hexToRgb = (hex: string): string => {
+  const h = hex.replace('#', '');
+  const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+  const r = parseInt(full.slice(0, 2), 16);
+  const g = parseInt(full.slice(2, 4), 16);
+  const b = parseInt(full.slice(4, 6), 16);
+  return `${r},${g},${b}`;
+};
+const buildTeamPattern = (primaryHex: string): string => {
+  const rgb = hexToRgb(primaryHex);
+  const stroke = `rgba(${rgb},0.10)`;
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M0 20L20 0L40 20L20 40Z' fill='none' stroke='${stroke}' stroke-width='0.6'/></svg>`;
+  return `url("data:image/svg+xml;utf8,${svg}")`;
 };
 
 export function AuthDialog({
@@ -97,7 +106,7 @@ export function AuthDialog({
   const teamPoster = teamKey ? getTeamPoster(teamKey) : null;
   const teamEmblem = teamKey ? getTeamEmblem(teamKey) : null;
   const teamColor = teamKey ? getTeamColors(teamKey) : null;
-  const teamPattern = teamKey ? teamPatterns[teamKey] : null;
+  const teamPattern = teamColor ? buildTeamPattern(teamColor.primary) : null;
   const teamBranded = Boolean(teamPoster && teamColor);
 
   return (
