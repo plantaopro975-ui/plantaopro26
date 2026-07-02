@@ -599,7 +599,7 @@ export default function Master() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <div className={cn('p-2 rounded-lg', tintMap[tint])}>
-                      <Icon3D src={icon3d} fallback={Icon} size={22} />
+                      <Icon3D name={icon3d} size={22} />
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">{label}</p>
