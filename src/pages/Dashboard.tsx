@@ -71,7 +71,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-dvh flex">
+      <div className="min-h-dvh flex hud-scope hud-page-bg" style={hudBgStyle}>
         <Sidebar />
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <div className="max-w-7xl mx-auto">
