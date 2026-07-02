@@ -1,18 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLowMotion } from '@/hooks/useLowMotion';
+
+const isMobileDevice = () =>
+  typeof window !== 'undefined' &&
+  (window.matchMedia?.('(max-width: 768px)').matches ||
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
 
 export function HomeVideoBackground() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { resolvedTheme } = useTheme();
+  const { lowMotion } = useLowMotion();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [enableVideo] = useState(() => !isMobileDevice() && !lowMotion);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {
-        // Autoplay blocked - user interaction needed
-      });
-    }
-  }, []);
+    if (!enableVideo) return;
+    const v = videoRef.current;
+    if (!v) return;
+    v.play().catch(() => {});
+
+    const onVis = () => {
+      if (document.hidden) v.pause();
+      else v.play().catch(() => {});
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [enableVideo]);
+
 
   // Theme-specific overlay colors
   const getOverlayStyle = () => {
