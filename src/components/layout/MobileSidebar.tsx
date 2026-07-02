@@ -29,6 +29,7 @@ const navItems: NavItemDef[] = [
 
 const masterItems: NavItemDef[] = [
   { icon: Shield, label: 'Painel Master', href: '/master' },
+  { icon: ClipboardCheck, label: 'Auditoria de Unidades', href: '/admin/units-audit' },
 ];
 
 interface MobileSidebarProps {
