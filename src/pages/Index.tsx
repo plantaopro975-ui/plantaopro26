@@ -1379,7 +1379,7 @@ export default function Index() {
           <div className="min-h-[84px]">
           {foundAgent && (
             <div className={cn(
-              "p-4 rounded-xl border-2 animate-fade-in",
+              "p-4 rounded-xl border-2",
               foundAgent.team && foundAgent.team !== selectedTeam 
                 ? 'bg-gradient-to-r from-red-500/15 to-red-600/10 border-red-500/40' 
                 : 'bg-gradient-to-r from-emerald-500/15 to-green-500/10 border-emerald-500/40'
@@ -1413,7 +1413,7 @@ export default function Index() {
           )}
           
           {checkCpf.replace(/\D/g, '').length === 11 && !foundAgent && !isSearchingAgent && (
-            <div className="p-4 bg-gradient-to-r from-amber-500/15 to-orange-500/10 rounded-xl border-2 border-amber-500/40 animate-fade-in">
+            <div className="p-4 bg-gradient-to-r from-amber-500/15 to-orange-500/10 rounded-xl border-2 border-amber-500/40">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-amber-500/20">
                   <AlertTriangle className="h-5 w-5 text-amber-400" />
