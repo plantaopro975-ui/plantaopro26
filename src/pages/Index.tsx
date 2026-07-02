@@ -47,6 +47,7 @@ import { MasterLoginDialog } from '@/components/auth/MasterLoginDialog';
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { CommandStrip } from '@/components/home/CommandStrip';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
+import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 
 import { OperationsTeamCard } from '@/components/home/OperationsTeamCard';
