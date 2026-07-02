@@ -302,12 +302,19 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
 
     autoTable(doc, {
       startY: 62,
-      head: [['Checklist de Início', 'Status']],
-      body: visibleChecklist.map((i) => [i.label, checklist[i.id] ? 'OK' : '—']),
+      head: [['Checklist de Início', 'Concluído em']],
+      body: visibleChecklist.map((i) => {
+        const s = checklist[i.id];
+        return [
+          i.label,
+          s?.done ? (s.at ? format(new Date(s.at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR }) : 'OK') : '—',
+        ];
+      }),
       theme: 'grid',
       headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 9, cellPadding: 3 },
+      styles: { fontSize: 10, cellPadding: 3 },
     });
+
 
     const y1 = (doc as any).lastAutoTable.finalY + 8;
     autoTable(doc, {
