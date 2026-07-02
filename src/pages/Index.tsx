@@ -1468,14 +1468,7 @@ export default function Index() {
             <ForgotPasswordDialog />
             <button
               type="button"
-              onClick={() => {
-                if (window.confirm('Limpar todos os CPFs e senhas salvos neste dispositivo?')) {
-                  localStorage.removeItem('plantao_pro_saved_credentials');
-                  setLoginCpf('');
-                  setLoginPassword('');
-                  toast({ title: 'Credenciais limpas', description: 'Nenhum acesso rápido armazenado neste dispositivo.' });
-                }
-              }}
+              onClick={() => setShowClearCredsConfirm(true)}
               className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground hover:text-destructive transition-colors font-mono"
             >
               Limpar credenciais
