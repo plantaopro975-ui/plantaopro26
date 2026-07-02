@@ -51,6 +51,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
+              <ConfirmProvider>
               <GlobalNavigationHandler>
                 {/* Global Offline Banner */}
                 <GlobalOfflineBanner />
