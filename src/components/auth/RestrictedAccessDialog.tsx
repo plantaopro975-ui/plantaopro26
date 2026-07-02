@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, KeyRound } from 'lucide-react';
 import restrictedScene from '@/assets/restricted-access-scene.jpg';
-import logoEmblem from '@/assets/logo-plantao-pro.png';
+
 
 interface RestrictedAccessDialogProps {
   open: boolean;
@@ -29,13 +29,10 @@ export function RestrictedAccessDialog({ open, onOpenChange, targetLabel }: Rest
           <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
           <div className="absolute inset-x-0 bottom-0 flex justify-center">
             <div className="relative -mb-8 w-20 h-20 rounded-full bg-background ring-2 ring-primary/40 shadow-glow flex items-center justify-center">
-              <img
-                src={logoEmblem}
-                alt="PlantaoPro"
-                className="h-14 w-14 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]"
-              />
+              <ShieldAlert className="h-10 w-10 text-primary drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]" strokeWidth={2.2} />
             </div>
           </div>
+
         </div>
 
         <DialogHeader className="items-center text-center px-6 pt-12">
