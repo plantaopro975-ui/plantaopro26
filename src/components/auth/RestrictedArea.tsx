@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import restrictedBg from "@/assets/restricted-area-bg.jpg";
 
 interface RestrictedAreaProps {
   title?: string;
