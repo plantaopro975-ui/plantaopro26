@@ -45,6 +45,7 @@ import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { WelcomeTrialDialog, shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
+import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 import { PasswordChangeRequest } from '@/components/agent-panel/PasswordChangeRequest';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
