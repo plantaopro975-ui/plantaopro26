@@ -51,6 +51,7 @@ import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
 import { AdminAnnouncementsPanel } from '@/components/agent-panel/AdminAnnouncementsPanel';
 import { AdDisplaySystem } from '@/components/agent-panel/AdDisplaySystem';
 import { AgentHeroPanel } from '@/components/agent-panel/AgentHeroPanel';
+import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import { SmartAlarmClock } from '@/components/agent-panel/SmartAlarmClock';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone } from 'lucide-react';
