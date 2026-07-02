@@ -114,6 +114,7 @@ export default function Index() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingCpf, setIsCheckingCpf] = useState(false);
+  const [showClearCredsConfirm, setShowClearCredsConfirm] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
