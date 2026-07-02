@@ -61,6 +61,7 @@ import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
+import { OperationsTeamCard } from '@/components/home/OperationsTeamCard';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
