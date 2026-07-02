@@ -61,7 +61,7 @@ const App = () => (
                       <Route
                         path="/dashboard"
                         element={
-                          <RequireAuth mode="redirect" redirectTo="/">
+                          <RequireAuth mode="block">
                             <Dashboard />
                           </RequireAuth>
                         }
