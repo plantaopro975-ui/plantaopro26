@@ -47,7 +47,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   });
   const [vehiclePos, setVehiclePos] = useState<{ x: number; y: number } | null>(() => {
     try {
-      const v = localStorage.getItem('hero_vehicle_pos');
+      const v = localStorage.getItem('hero_vehicle_pos_v2');
       return v ? JSON.parse(v) : null;
     } catch { return null; }
   });
