@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
+import { Icon3D } from '@/components/ui/Icon3D';
+import icon3dBuilding from '@/assets/icon3d-building.png';
+import icon3dTeam from '@/assets/icon3d-team.png';
+import icon3dClock from '@/assets/icon3d-clock.png';
+import icon3dShield from '@/assets/icon3d-shield.png';
+import icon3dCalendar from '@/assets/icon3d-calendar.png';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
