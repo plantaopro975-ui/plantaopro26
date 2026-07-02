@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { RestrictedAccessDialog } from '@/components/auth/RestrictedAccessDialog';
+import logoEmblem from '@/assets/logo-plantao-pro-emblem.png';
 import {
   Users,
   Clock,
