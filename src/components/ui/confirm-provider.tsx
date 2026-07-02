@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,6 +9,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { AlertTriangle } from 'lucide-react';
 
 export type ConfirmOptions = {
@@ -17,6 +19,8 @@ export type ConfirmOptions = {
   confirmText?: string;
   cancelText?: string;
   destructive?: boolean;
+  /** Se definido, exige que o usuário digite exatamente este texto para habilitar o botão de confirmação. */
+  requireText?: string;
 };
 
 type Ctx = (opts?: ConfirmOptions) => Promise<boolean>;
@@ -26,10 +30,12 @@ const ConfirmContext = createContext<Ctx | null>(null);
 export function ConfirmProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [opts, setOpts] = useState<ConfirmOptions>({});
+  const [typed, setTyped] = useState('');
   const resolver = useRef<(v: boolean) => void>();
 
   const confirm = useCallback<Ctx>((o = {}) => {
     setOpts(o);
+    setTyped('');
     setOpen(true);
     return new Promise<boolean>((resolve) => {
       resolver.current = resolve;
@@ -41,6 +47,13 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
     resolver.current?.(v);
     resolver.current = undefined;
   };
+
+  useEffect(() => {
+    if (!open) setTyped('');
+  }, [open]);
+
+  const needsText = !!opts.requireText;
+  const textOk = !needsText || typed.trim() === opts.requireText;
 
   return (
     <ConfirmContext.Provider value={confirm}>
@@ -56,12 +69,29 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
               {opts.description ?? 'Tem certeza que deseja continuar?'}
             </AlertDialogDescription>
           </AlertDialogHeader>
+
+          {needsText && (
+            <div className="space-y-2">
+              <Label htmlFor="confirm-require-text" className="text-xs">
+                Digite <span className="font-mono font-bold">{opts.requireText}</span> para confirmar
+              </Label>
+              <Input
+                id="confirm-require-text"
+                autoFocus
+                value={typed}
+                onChange={(e) => setTyped(e.target.value)}
+                autoComplete="off"
+              />
+            </div>
+          )}
+
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => done(false)}>
               {opts.cancelText ?? 'Cancelar'}
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => done(true)}
+              disabled={!textOk}
+              onClick={() => textOk && done(true)}
               className={opts.destructive ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}
             >
               {opts.confirmText ?? 'Confirmar'}
