@@ -907,7 +907,7 @@ export default function Master() {
                                 className="text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
                                 title="Enviar Mensagem"
                               >
-                                <MessageSquare className="h-4 w-4" />
+                                <Icon3D src={icon3dBell} fallback={MessageSquare} size={18} />
                               </Button>
                               <Button
                                 variant="ghost"
