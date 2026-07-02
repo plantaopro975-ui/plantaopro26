@@ -367,6 +367,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
+        ref={vehicleElRef}
         {...vehicleHandlers}
         className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none cursor-grab active:cursor-grabbing"
         style={{
@@ -425,6 +426,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Agente tático — arrastável (triple-click abre login master/admin) */}
       <div
+        ref={agentElRef}
         role="img"
         aria-label="Agente tático — toque 3 vezes para acesso admin"
         title="3 cliques = admin"
@@ -453,9 +455,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         onPointerCancel={agentHandlers.onPointerCancel}
         onWheel={agentHandlers.onWheel}
         onDoubleClick={agentHandlers.onDoubleClick}
-        onTouchStart={agentHandlers.onTouchStart}
-        onTouchMove={agentHandlers.onTouchMove}
-        onTouchEnd={agentHandlers.onTouchEnd}
         style={{
           position: 'absolute',
           left: `${agentT.xPct}%`,
