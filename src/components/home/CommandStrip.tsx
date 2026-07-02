@@ -92,11 +92,11 @@ export function CommandStrip() {
           </button>
 
           {/* Identidade */}
-          <div className="min-w-0 border-l border-border/50 pl-3 leading-tight">
+          <div className="shrink-0 border-l border-border/50 pl-3 leading-tight">
             <span className="block text-[13px] sm:text-[15px] font-bold text-foreground font-serif whitespace-nowrap">
               Comando <span className="text-primary">Operacional</span>
             </span>
-            <span className="hidden md:block text-[10px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono">
+            <span className="hidden md:block text-[10px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono whitespace-nowrap">
               Gestão inteligente de plantões
             </span>
           </div>
