@@ -709,31 +709,39 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 .police-vehicle { position: relative; }
 .vehicle-fx { position: absolute; pointer-events: none; border-radius: 9999px; will-change: opacity, transform, filter; }
 
-/* Giroflex: dois halos pulsantes no topo da viatura */
+/* Giroflex: pequenos pontos de luz estroboscópicos alinhados à barra */
 .vehicle-fx--beacon {
-  top: 6%;
-  width: 22%;
-  height: 14%;
-  filter: blur(6px);
+  top: 14%;
+  width: 10%;
+  height: 6%;
+  filter: blur(2px);
   mix-blend-mode: screen;
   opacity: 0;
-  animation: vehicle-beacon 1.1s ease-in-out infinite;
 }
 .vehicle-fx--beacon-red {
-  left: 30%;
-  background: radial-gradient(circle, rgba(255,60,60,0.95) 0%, rgba(239,68,68,0.65) 40%, rgba(239,68,68,0) 75%);
-  box-shadow: 0 0 40px 12px rgba(239,68,68,0.55);
+  left: 38%;
+  background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(255,80,80,0.9) 25%, rgba(239,68,68,0.35) 55%, rgba(239,68,68,0) 78%);
+  box-shadow: 0 0 22px 6px rgba(239,68,68,0.7), 0 0 60px 20px rgba(239,68,68,0.25);
+  animation: vehicle-strobe-red 1.4s steps(1, end) infinite;
 }
 .vehicle-fx--beacon-blue {
-  left: 50%;
-  background: radial-gradient(circle, rgba(96,165,255,0.95) 0%, rgba(59,130,246,0.65) 40%, rgba(59,130,246,0) 75%);
-  box-shadow: 0 0 40px 12px rgba(59,130,246,0.55);
-  animation-delay: 0.55s;
+  left: 52%;
+  background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(120,180,255,0.9) 25%, rgba(59,130,246,0.35) 55%, rgba(59,130,246,0) 78%);
+  box-shadow: 0 0 22px 6px rgba(59,130,246,0.7), 0 0 60px 20px rgba(59,130,246,0.25);
+  animation: vehicle-strobe-blue 1.4s steps(1, end) infinite;
 }
-@keyframes vehicle-beacon {
-  0%, 100% { opacity: 0.15; transform: scale(0.85); }
-  45%      { opacity: 1;    transform: scale(1.15); }
-  55%      { opacity: 1;    transform: scale(1.15); }
+@keyframes vehicle-strobe-red {
+  0%, 8%   { opacity: 1; }
+  10%, 18% { opacity: 0; }
+  20%, 26% { opacity: 1; }
+  28%, 100%{ opacity: 0; }
+}
+@keyframes vehicle-strobe-blue {
+  0%, 48%  { opacity: 0; }
+  50%, 56% { opacity: 1; }
+  58%, 66% { opacity: 0; }
+  68%, 74% { opacity: 1; }
+  76%, 100%{ opacity: 0; }
 }
 
 /* Faróis: cones de luz quente saindo da frente */
