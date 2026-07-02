@@ -59,8 +59,8 @@ export function BetaNoticeFooter() {
     <>
       {!hidden && (
         <div
-          className="md:hidden fixed right-3 z-[60] flex items-center gap-1 rounded-full border border-primary/40 bg-background/95 pl-2 pr-1 py-1 shadow-lg backdrop-blur-md animate-fade-in motion-reduce:animate-none"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)' }}
+          className="md:hidden fixed right-3 z-[60] flex items-center gap-1.5 rounded-full border border-primary/40 bg-background/95 pl-2.5 pr-1.5 py-1.5 shadow-lg backdrop-blur-md animate-fade-in motion-reduce:animate-none"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 72px)' }}
           role="group"
           aria-label="Aviso de versão beta"
         >
@@ -68,9 +68,9 @@ export function BetaNoticeFooter() {
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Abrir aviso sobre versão beta"
-            className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-[0.18em] text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-full px-1 py-0.5"
+            className="inline-flex items-center gap-1.5 text-[12px] font-mono uppercase tracking-[0.18em] text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-full px-1.5 py-0.5"
           >
-            <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
                 fill="hsl(var(--primary))"
@@ -89,10 +89,11 @@ export function BetaNoticeFooter() {
             onClick={hidePermanently}
             aria-label="Ocultar permanentemente o selo beta"
             title="Ocultar"
-            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            className="inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
           >
-            <X className="h-3 w-3" strokeWidth={2.5} />
+            <X className="h-3.5 w-3.5" strokeWidth={2.5} />
           </button>
+
         </div>
       )}
 
