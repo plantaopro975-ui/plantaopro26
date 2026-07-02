@@ -168,7 +168,7 @@ export default function AgentProfileEdit() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-white">Meu Perfil</h1>
+            <h1 className="font-tactical text-xl font-bold tracking-[0.14em] text-white">Meu Perfil</h1>
             <p className="text-slate-400">Edite seus dados pessoais</p>
           </div>
         </div>

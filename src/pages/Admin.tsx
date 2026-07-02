@@ -231,7 +231,7 @@ export default function Admin() {
                       <Shield className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h1 className="text-xl md:text-2xl font-bold text-white">Painel Administrativo</h1>
+                      <h1 className="font-tactical text-lg md:text-xl font-bold tracking-[0.14em] text-white">Painel Administrativo</h1>
                       <p className="text-xs md:text-sm text-muted-foreground">
                         {hasMasterAccess ? `Sessão Master: ${masterSession}` : 'Gestão operacional do sistema'}
                       </p>

@@ -202,7 +202,7 @@ export default function Units() {
               <div className="flex items-center gap-3">
                 <Building2 className="h-8 w-8 text-amber-500" />
                 <div>
-                  <h1 className="text-2xl font-bold text-white">Minha Unidade</h1>
+                  <h1 className="font-tactical text-xl font-bold tracking-[0.14em] text-white">Minha Unidade</h1>
                   <p className="text-slate-400">{myUnit.name}</p>
                 </div>
               </div>

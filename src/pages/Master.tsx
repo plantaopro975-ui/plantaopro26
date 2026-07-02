@@ -532,7 +532,7 @@ export default function Master() {
               className="h-12 w-12 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
             />
             <div>
-              <h1 className="text-2xl font-bold text-gradient">Painel Master</h1>
+              <h1 className="font-tactical text-xl font-bold tracking-[0.14em] text-gradient">Painel Master</h1>
               <p className="text-muted-foreground">
                 Controle Administrativo Total • <span className="text-primary font-medium">{masterSession}</span>
               </p>

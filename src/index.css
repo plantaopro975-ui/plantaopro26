@@ -231,9 +231,10 @@
     letter-spacing: 0.04em;
   }
   .font-tactical {
-    font-family: 'Saira Condensed', 'Oswald', 'Impact', sans-serif;
-    letter-spacing: 0.06em;
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Courier New', monospace;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
+    font-weight: 600;
   }
   .font-mono-mil {
     font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Courier New', monospace;

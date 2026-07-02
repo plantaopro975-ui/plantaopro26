@@ -247,7 +247,7 @@ export default function Agenda() {
           <div className="flex items-center gap-3">
             <BackButton fallbackPath="/agent-panel" />
             <div>
-              <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <h1 className="font-tactical text-xl font-bold tracking-[0.14em] text-foreground flex items-center gap-2">
                 <Calendar className="h-6 w-6 text-primary" />
                 Agenda
               </h1>

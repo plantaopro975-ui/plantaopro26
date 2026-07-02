@@ -102,7 +102,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-3">
                 <PanelNav onLogout={handleExit} />
                 <div>
-                  <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
+                  <h1 className="font-tactical text-base md:text-lg font-bold tracking-[0.14em] flex items-center gap-2">
                     <LayoutDashboard className="h-5 w-5 text-primary" />
                     Painel Administrativo
                   </h1>

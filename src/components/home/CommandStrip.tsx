@@ -86,10 +86,10 @@ export function CommandStrip() {
             aria-label="Comando Operacional"
             className="text-left leading-tight focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-400/60 rounded-sm"
           >
-            <span className="block text-[15px] sm:text-[15px] font-bold text-amber-50 font-serif whitespace-nowrap tracking-wide">
+            <span className="block font-tactical text-[13px] sm:text-[14px] font-bold text-amber-50 whitespace-nowrap tracking-[0.14em]">
               Comando <span className="text-amber-400 drop-shadow-[0_0_8px_hsl(42_85%_55%/0.35)]">Operacional</span>
             </span>
-            <span className="hidden md:block text-[10px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono whitespace-nowrap">
+            <span className="hidden md:block font-mono-mil text-[10px] text-muted-foreground/80 tracking-[0.22em] uppercase whitespace-nowrap">
               Gestão inteligente de plantões
             </span>
           </button>
