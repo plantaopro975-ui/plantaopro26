@@ -59,7 +59,14 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
             <Link
               key={item.href}
               to={item.href}
-              onClick={onNavigate}
+              onClick={(e) => {
+                if (!isAuthed) {
+                  e.preventDefault();
+                  setRestricted(item.label);
+                  return;
+                }
+                onNavigate();
+              }}
               className={cn(
                 'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
                 isActive
@@ -72,6 +79,7 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
             </Link>
           );
         })}
+
 
         {/* Master Section */}
         {masterSession && (
