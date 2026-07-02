@@ -55,8 +55,10 @@ const App = () => (
             <AuthProvider>
               <ConfirmProvider>
               <GlobalNavigationHandler>
+                <SingleDeviceGuard />
                 {/* Global Offline Banner */}
                 <GlobalOfflineBanner />
+
                 {/* Reconnecting Guard - Shows recovery screen instead of redirecting */}
                 <ReconnectingGuard maxWaitTime={15000}>
                   <Routes>
