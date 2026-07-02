@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { PanelSkeleton } from '@/components/ui/panel-skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -499,8 +500,10 @@ export default function Master() {
 
   if (isLoading || loadingData) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-dvh p-4 md:p-6">
+        <div className="max-w-7xl mx-auto">
+          <PanelSkeleton rows={6} />
+        </div>
       </div>
     );
   }

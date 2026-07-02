@@ -1,10 +1,9 @@
 import React, { forwardRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { RestrictedAccessDialog } from '@/components/auth/RestrictedAccessDialog';
 import {
-  Calendar,
   Users,
   Clock,
   LayoutDashboard,
@@ -13,8 +12,14 @@ import {
   MapPin,
   UserCircle,
 } from 'lucide-react';
+import {
+  SidebarNavItem,
+  SidebarSectionLabel,
+  SidebarDivider,
+  type NavItemDef,
+} from './SidebarNav';
 
-const navItems = [
+const navItems: NavItemDef[] = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: UserCircle, label: 'Meu Painel', href: '/agent-panel' },
   { icon: Users, label: 'Agentes', href: '/agents' },
@@ -23,112 +28,83 @@ const navItems = [
   { icon: Settings, label: 'Configurações', href: '/settings' },
 ];
 
-
-const masterItems = [
+const masterItems: NavItemDef[] = [
   { icon: Shield, label: 'Painel Master', href: '/master' },
 ];
 
-export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
-  const location = useLocation();
-  const { masterSession, user } = useAuth();
-  const [restricted, setRestricted] = useState<string | null>(null);
-  const isAuthed = !!user || !!masterSession;
+export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
+  (props, ref) => {
+    const { masterSession, user } = useAuth();
+    const [restricted, setRestricted] = useState<string | null>(null);
+    const isAuthed = !!user || !!masterSession;
 
+    const guard = (label: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (!isAuthed) {
+        e.preventDefault();
+        setRestricted(label);
+      }
+    };
 
-  return (
-    <aside ref={ref} {...props} className={cn("w-64 border-r border-sidebar-border bg-sidebar hidden lg:flex flex-col", props.className)}>
-      {/* Logo */}
-      <div className="p-6 border-b border-sidebar-border">
-        <Link to="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-            <Calendar className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="font-bold text-lg text-gradient">PlantaoPro</h1>
-            <p className="text-xs text-muted-foreground">Gestão de Escalas</p>
-          </div>
-        </Link>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              onClick={(e) => {
-                if (!isAuthed) {
-                  e.preventDefault();
-                  setRestricted(item.label);
-                }
-              }}
-              className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
-                isActive
-                  ? 'bg-sidebar-accent text-sidebar-primary shadow-soft'
-                  : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-              )}
-            >
-              <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-              <span className="font-medium">{item.label}</span>
-              {isActive && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
-              )}
-            </Link>
-          );
-        })}
-
-
-
-        {/* Master Section */}
-        {masterSession && (
-          <>
-            <div className="pt-4 pb-2">
-              <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Master
+    return (
+      <aside
+        ref={ref}
+        {...props}
+        className={cn(
+          'w-64 border-r border-sidebar-border bg-sidebar hidden lg:flex flex-col',
+          props.className
+        )}
+      >
+        {/* Brand */}
+        <div className="px-5 pt-6 pb-4 border-b border-sidebar-border/60">
+          <Link to="/dashboard" className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
+              <Shield className="h-4 w-4 text-primary-foreground" strokeWidth={2.5} />
+            </div>
+            <div className="min-w-0">
+              <h1 className="font-display text-base leading-none tracking-wide text-gradient">
+                PlantaoPro
+              </h1>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">
+                Comando Operacional
               </p>
             </div>
-            {masterItems.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
-                    isActive
-                      ? 'bg-sidebar-accent text-sidebar-primary shadow-soft'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                  )}
-                >
-                  <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-                  <span className="font-medium">{item.label}</span>
-                </Link>
-              );
-            })}
-          </>
-        )}
-      </nav>
+          </Link>
+        </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border">
-        <p className="text-xs text-muted-foreground text-center">
-          Desenvolvido por <span className="text-primary">CS FEIJÓ</span>
-        </p>
-        <p className="text-xs text-muted-foreground text-center mt-1">
-          PlantaoPro v1.0
-        </p>
-      </div>
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+          <SidebarSectionLabel>Navegação</SidebarSectionLabel>
+          {navItems.map((item) => (
+            <SidebarNavItem key={item.href} item={item} onClick={guard(item.label)} />
+          ))}
 
-      <RestrictedAccessDialog
-        open={!!restricted}
-        onOpenChange={(o) => !o && setRestricted(null)}
-        targetLabel={restricted ?? undefined}
-      />
-    </aside>
-  );
-});
+          {masterSession && (
+            <>
+              <SidebarDivider />
+              <SidebarSectionLabel accent>Master</SidebarSectionLabel>
+              {masterItems.map((item) => (
+                <SidebarNavItem key={item.href} item={item} />
+              ))}
+            </>
+          )}
+        </nav>
+
+        {/* Footer */}
+        <div className="px-5 py-3 border-t border-sidebar-border/60 flex items-center justify-between">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            v1.0
+          </span>
+          <span className="text-[10px] text-muted-foreground/60">CS FEIJÓ</span>
+        </div>
+
+        <RestrictedAccessDialog
+          open={!!restricted}
+          onOpenChange={(o) => !o && setRestricted(null)}
+          targetLabel={restricted ?? undefined}
+        />
+      </aside>
+    );
+  }
+);
 
 Sidebar.displayName = 'Sidebar';
