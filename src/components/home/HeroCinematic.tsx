@@ -145,9 +145,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         {/* Giroflex realista */}
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
         <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
-        {/* Faróis dianteiros */}
-        <span className="vehicle-fx vehicle-fx--headlight vehicle-fx--headlight-l" aria-hidden />
-        <span className="vehicle-fx vehicle-fx--headlight vehicle-fx--headlight-r" aria-hidden />
       </div>
 
       {/* Agente tático — arrastável (triple-click abre login master/admin) */}
