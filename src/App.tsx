@@ -103,6 +103,14 @@ const App = () => (
                     <Route path="/overtime" element={<Overtime />} />
                     <Route path="/units" element={<Units />} />
                     <Route
+                      path="/admin/units-audit"
+                      element={
+                        <RequireAuth mode="block" requireMaster>
+                          <UnitsAudit />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
                       path="/settings"
                       element={
                         <RequireAuth mode="block">
