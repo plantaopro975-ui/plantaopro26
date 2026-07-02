@@ -60,10 +60,10 @@ export function CommandStrip() {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bannerBg})` }}
       />
-      {/* Overlay Noir para legibilidade */}
+      {/* Overlay quente (âmbar/caqui) para contraste com foto golden hour */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(90deg,hsl(222_38%_6%/0.95)_0%,hsl(220_32%_8%/0.78)_55%,hsl(222_38%_6%/0.95)_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(90deg,hsl(28_35%_6%/0.94)_0%,hsl(32_28%_10%/0.72)_55%,hsl(28_35%_6%/0.94)_100%)]"
       />
 
       {/* Gold accents (mesmos do Header/Footer) */}
