@@ -648,7 +648,7 @@ export default function AgentPanel() {
 
               <TabsContent value="equipe" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
                 {/* Ad Display System temporariamente desativado a pedido do administrador */}
-                {false && <AdDisplaySystem />}
+                {promosEnabled && <AdDisplaySystem />}
 
                 
                 {/* Admin Announcements Panel - Priority Display */}
