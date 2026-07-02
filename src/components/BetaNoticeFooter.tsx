@@ -202,14 +202,19 @@ export function BetaNoticeFooter() {
 
   useEffect(() => {
     try {
-      if (!localStorage.getItem(SEEN_KEY)) {
-        const t = window.setTimeout(() => setOpen(true), 600);
-        return () => window.clearTimeout(t);
-      }
+      if (localStorage.getItem(SEEN_KEY)) return;
+      // Só mostra 1 vez, e apenas 60s após o primeiro acesso
+      const t = window.setTimeout(() => {
+        try {
+          if (!localStorage.getItem(SEEN_KEY)) setOpen(true);
+        } catch { /* ignore */ }
+      }, 60_000);
+      return () => window.clearTimeout(t);
     } catch {
       /* ignore */
     }
   }, []);
+
 
   const handleOpenChange = (v: boolean) => {
     setOpen(v);
