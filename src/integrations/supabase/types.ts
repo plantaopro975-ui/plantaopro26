@@ -1347,6 +1347,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          password_changed_at: string | null
           updated_at: string
           user_id: string
         }
@@ -1355,6 +1356,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          password_changed_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -1363,6 +1365,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          password_changed_at?: string | null
           updated_at?: string
           user_id?: string
         }
