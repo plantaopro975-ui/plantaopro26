@@ -454,13 +454,12 @@ body {
     height: auto;
     min-height: var(--home-viewport-height);
     max-height: none;
-    overflow-x: hidden;
-    overflow-y: auto;
-    contain: layout paint;
+    overflow: visible;
+    contain: layout style;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y pinch-zoom;
     overscroll-behavior-x: none;
-    overscroll-behavior-y: contain;
+    overscroll-behavior-y: auto;
   }
 }
 
