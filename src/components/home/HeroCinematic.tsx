@@ -92,6 +92,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           window.removeEventListener('pointermove', move);
           window.removeEventListener('pointerup', up);
           try { if (moved) localStorage.setItem(storageKey, JSON.stringify(last)); } catch {}
+          if (moved) {
+            const w = window as unknown as { __heroSuppressClick?: number };
+            w.__heroSuppressClick = Date.now() + 300;
+          }
         };
         window.addEventListener('pointermove', move);
         window.addEventListener('pointerup', up, { once: true });
