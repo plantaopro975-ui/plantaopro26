@@ -39,44 +39,80 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const onlineCount = useOnlinePresence();
 
-  const [agentPos, setAgentPos] = useState<{ x: number; y: number } | null>(() => {
+  type Transform = { xPct: number; yPct: number; scale: number };
+  const loadTransform = (key: string, def: Transform): Transform => {
     try {
-      const v = localStorage.getItem('hero_agent_pos');
-      return v ? JSON.parse(v) : null;
-    } catch { return null; }
-  });
-  const [vehiclePos, setVehiclePos] = useState<{ x: number; y: number } | null>(() => {
-    try {
-      const v = localStorage.getItem('hero_vehicle_pos_v2');
-      return v ? JSON.parse(v) : null;
-    } catch { return null; }
-  });
-  const dragging = useRef<null | 'agent' | 'vehicle'>(null);
-  const offset = useRef({ x: 0, y: 0 });
+      const v = localStorage.getItem(key);
+      if (!v) return def;
+      const parsed = JSON.parse(v);
+      if (typeof parsed?.xPct === 'number') return parsed as Transform;
+      return def;
+    } catch { return def; }
+  };
+  const [agentT, setAgentT] = useState<Transform>(() =>
+    loadTransform('hero_agent_t', { xPct: 82, yPct: 62, scale: 1 })
+  );
+  const [vehicleT, setVehicleT] = useState<Transform>(() =>
+    loadTransform('hero_vehicle_t', { xPct: 18, yPct: 55, scale: 1 })
+  );
 
-  const makeHandlers = (kind: 'agent' | 'vehicle', setter: (p: { x: number; y: number }) => void, storageKey: string) => ({
+  const dragging = useRef<null | 'agent' | 'vehicle'>(null);
+  const startRef = useRef({ px: 0, py: 0, xPct: 0, yPct: 0 });
+
+  const makeHandlers = (
+    kind: 'agent' | 'vehicle',
+    getT: () => Transform,
+    setter: (t: Transform) => void,
+    storageKey: string,
+  ) => ({
     onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+      e.preventDefault();
       dragging.current = kind;
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      const t = getT();
+      startRef.current = { px: e.clientX, py: e.clientY, xPct: t.xPct, yPct: t.yPct };
       try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore */ }
     },
     onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
       if (dragging.current !== kind) return;
-      setter({ x: e.clientX - offset.current.x, y: e.clientY - offset.current.y });
+      const sect = sectionRef.current;
+      if (!sect) return;
+      const rect = sect.getBoundingClientRect();
+      const dx = ((e.clientX - startRef.current.px) / rect.width) * 100;
+      const dy = ((e.clientY - startRef.current.py) / rect.height) * 100;
+      const next: Transform = {
+        ...getT(),
+        xPct: Math.min(100, Math.max(0, startRef.current.xPct + dx)),
+        yPct: Math.min(100, Math.max(0, startRef.current.yPct + dy)),
+      };
+      setter(next);
     },
     onPointerUp: (e: React.PointerEvent<HTMLElement>) => {
       if (dragging.current !== kind) return;
       dragging.current = null;
-      try {
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        localStorage.setItem(storageKey, JSON.stringify({ x: rect.left, y: rect.top }));
-      } catch { /* ignore */ }
+      try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+      try { localStorage.setItem(storageKey, JSON.stringify(getT())); } catch { /* ignore */ }
+    },
+    onWheel: (e: React.WheelEvent<HTMLElement>) => {
+      e.preventDefault();
+      const t = getT();
+      const next: Transform = {
+        ...t,
+        scale: Math.min(2.5, Math.max(0.4, t.scale + (e.deltaY < 0 ? 0.08 : -0.08))),
+      };
+      setter(next);
+      try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch { /* ignore */ }
+    },
+    onDoubleClick: () => {
+      const def = kind === 'agent'
+        ? { xPct: 82, yPct: 62, scale: 1 }
+        : { xPct: 18, yPct: 55, scale: 1 };
+      setter(def);
+      try { localStorage.setItem(storageKey, JSON.stringify(def)); } catch { /* ignore */ }
     },
   });
 
-  const agentHandlers = makeHandlers('agent', setAgentPos, 'hero_agent_pos');
-  const vehicleHandlers = makeHandlers('vehicle', setVehiclePos, 'hero_vehicle_pos_v2');
+  const agentHandlers = makeHandlers('agent', () => agentT, setAgentT, 'hero_agent_t');
+  const vehicleHandlers = makeHandlers('vehicle', () => vehicleT, setVehicleT, 'hero_vehicle_t');
 
 
   return (
