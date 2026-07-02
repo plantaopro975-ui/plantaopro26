@@ -49,11 +49,17 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       return def;
     } catch { return def; }
   };
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
+  const clampT = (t: Transform): Transform => ({
+    xPct: Math.min(90, Math.max(10, t.xPct)),
+    yPct: Math.min(92, Math.max(20, t.yPct)),
+    scale: Math.min(isMobile ? 1 : 2.5, Math.max(0.4, t.scale)),
+  });
   const [agentT, setAgentT] = useState<Transform>(() =>
-    loadTransform('hero_agent_t', { xPct: 82, yPct: 62, scale: 1 })
+    clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 72 : 82, yPct: 62, scale: isMobile ? 0.85 : 1 }))
   );
   const [vehicleT, setVehicleT] = useState<Transform>(() =>
-    loadTransform('hero_vehicle_t', { xPct: 18, yPct: 55, scale: 1 })
+    clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 28 : 18, yPct: 55, scale: isMobile ? 0.85 : 1 }))
   );
 
   const dragging = useRef<null | 'agent' | 'vehicle'>(null);
