@@ -706,18 +706,19 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 /* ================================
    VIATURA — GIROFLEX + FARÓIS REALISTAS
    ================================ */
-.police-vehicle { position: relative; }
+.police-vehicle {
+  position: relative;
+  /* Base tipográfica proporcional ao viewport — usada pelos beacons em `em` */
+  font-size: clamp(5px, 1.1vmin, 12px);
+}
 .vehicle-fx { position: absolute; pointer-events: none; border-radius: 9999px; will-change: opacity, transform, filter; }
 
-/* Giroflex: pontos estroboscópicos proporcionais ao wrapper */
+/* Giroflex: tamanho e halo em `em`, escalam com o zoom/viewport mantendo proporção */
 .vehicle-fx--beacon {
   top: 15%;
-  width: 5%;
-  height: 4%;
-  min-width: 5px;
-  min-height: 4px;
-  aspect-ratio: 1 / 1;
-  filter: blur(1px);
+  width: 1.2em;
+  height: 1.2em;
+  filter: blur(0.15em);
   mix-blend-mode: screen;
   opacity: 0;
   transform: translate(-50%, 0);
@@ -725,13 +726,13 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 .vehicle-fx--beacon-red {
   left: 47%;
   background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(255,80,80,0.9) 30%, rgba(239,68,68,0.35) 60%, rgba(239,68,68,0) 80%);
-  box-shadow: 0 0 12px 3px rgba(239,68,68,0.7), 0 0 28px 8px rgba(239,68,68,0.25);
+  box-shadow: 0 0 1.2em 0.35em rgba(239,68,68,0.7), 0 0 2.8em 0.9em rgba(239,68,68,0.25);
   animation: vehicle-strobe-red 1.4s steps(1, end) infinite;
 }
 .vehicle-fx--beacon-blue {
   left: 53%;
   background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(120,180,255,0.9) 30%, rgba(59,130,246,0.35) 60%, rgba(59,130,246,0) 80%);
-  box-shadow: 0 0 12px 3px rgba(59,130,246,0.7), 0 0 28px 8px rgba(59,130,246,0.25);
+  box-shadow: 0 0 1.2em 0.35em rgba(59,130,246,0.7), 0 0 2.8em 0.9em rgba(59,130,246,0.25);
   animation: vehicle-strobe-blue 1.4s steps(1, end) infinite;
 }
 @keyframes vehicle-strobe-red {
