@@ -216,7 +216,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
     try {
       setIsSubmitting(true);
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      
+      const p = PERIOD_MAP[selectedPeriod];
+
       const { error } = await (supabase as any)
         .from('agent_leaves')
         .insert({
@@ -225,6 +226,9 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
           period: selectedPeriod,
           start_date: dateStr,
           end_date: dateStr,
+          start_time: p?.start ?? null,
+          end_time: p?.end ?? null,
+          hours_count: p?.hours ?? null,
           reason: leaveDescription.trim() || null,
         });
 
