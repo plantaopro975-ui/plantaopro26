@@ -23,12 +23,20 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative flex w-full items-start gap-3 overflow-hidden rounded-lg border p-4 pr-10 shadow-2xl backdrop-blur-md transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
-        default: "border bg-background text-foreground",
-        destructive: "destructive group border-destructive bg-destructive text-destructive-foreground",
+        default:
+          "border-amber-500/30 bg-zinc-950/95 text-zinc-100 [--toast-accent:theme(colors.amber.400)]",
+        success:
+          "border-emerald-500/40 bg-zinc-950/95 text-zinc-100 [--toast-accent:theme(colors.emerald.400)]",
+        warning:
+          "border-amber-500/50 bg-zinc-950/95 text-zinc-100 [--toast-accent:theme(colors.amber.400)]",
+        info:
+          "border-sky-500/40 bg-zinc-950/95 text-zinc-100 [--toast-accent:theme(colors.sky.400)]",
+        destructive:
+          "destructive group border-red-500/50 bg-zinc-950/95 text-zinc-100 [--toast-accent:theme(colors.red.400)]",
       },
     },
     defaultVariants: {
@@ -37,11 +45,69 @@ const toastVariants = cva(
   },
 );
 
+type ToastVariant = "default" | "success" | "warning" | "info" | "destructive";
+
+function ToastIcon({ variant = "default" }: { variant?: ToastVariant | null }) {
+  const common = "h-5 w-5 shrink-0 drop-shadow-[0_0_6px_var(--toast-accent)]";
+  const stroke = "var(--toast-accent)";
+  switch (variant) {
+    case "success":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common} aria-hidden>
+          <circle cx="12" cy="12" r="10" stroke={stroke} strokeWidth="1.5" />
+          <path d="m7.5 12.5 3 3 6-7" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case "warning":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common} aria-hidden>
+          <path d="M12 3 2.5 20h19L12 3Z" stroke={stroke} strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="M12 10v5" stroke={stroke} strokeWidth="2" strokeLinecap="round" />
+          <circle cx="12" cy="17.5" r="1" fill={stroke} />
+        </svg>
+      );
+    case "destructive":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common} aria-hidden>
+          <circle cx="12" cy="12" r="10" stroke={stroke} strokeWidth="1.5" />
+          <path d="m9 9 6 6M15 9l-6 6" stroke={stroke} strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    case "info":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common} aria-hidden>
+          <circle cx="12" cy="12" r="10" stroke={stroke} strokeWidth="1.5" />
+          <path d="M12 11v6" stroke={stroke} strokeWidth="2" strokeLinecap="round" />
+          <circle cx="12" cy="7.5" r="1" fill={stroke} />
+        </svg>
+      );
+    default:
+      // Tactical shield emblem for default (Noir & Gold identity)
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common} aria-hidden>
+          <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3Z" stroke={stroke} strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="m8.5 12 2.5 2.5L15.5 10" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+  }
+}
+
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
-  return <ToastPrimitives.Root ref={ref} className={cn(toastVariants({ variant }), className)} {...props} />;
+>(({ className, variant, children, ...props }, ref) => {
+  return (
+    <ToastPrimitives.Root ref={ref} className={cn(toastVariants({ variant }), className)} {...props}>
+      {/* Accent side bar */}
+      <span
+        aria-hidden
+        className="absolute inset-y-0 left-0 w-1"
+        style={{ background: "var(--toast-accent)", boxShadow: "0 0 12px var(--toast-accent)" }}
+      />
+      <ToastIcon variant={variant as ToastVariant} />
+      <div className="flex-1 min-w-0">{children}</div>
+    </ToastPrimitives.Root>
+  );
 });
 Toast.displayName = ToastPrimitives.Root.displayName;
 
@@ -52,7 +118,7 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors group-[.destructive]:border-muted/40 hover:bg-secondary group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 group-[.destructive]:focus:ring-destructive disabled:pointer-events-none disabled:opacity-50",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-amber-500/30 bg-transparent px-3 text-xs font-semibold uppercase tracking-wider text-amber-300 ring-offset-background transition-colors hover:bg-amber-500/10 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:pointer-events-none disabled:opacity-50",
       className,
     )}
     {...props}
@@ -67,7 +133,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity group-hover:opacity-100 group-[.destructive]:text-red-300 hover:text-foreground group-[.destructive]:hover:text-red-50 focus:opacity-100 focus:outline-none focus:ring-2 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+      "absolute right-2 top-2 rounded-md p-1 text-zinc-400 opacity-70 transition-opacity hover:text-zinc-100 hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-amber-400",
       className,
     )}
     toast-close=""
@@ -82,7 +148,11 @@ const ToastTitle = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title ref={ref} className={cn("text-sm font-semibold", className)} {...props} />
+  <ToastPrimitives.Title
+    ref={ref}
+    className={cn("text-sm font-semibold tracking-wide text-zinc-50", className)}
+    {...props}
+  />
 ));
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
 
@@ -90,7 +160,11 @@ const ToastDescription = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Description>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Description ref={ref} className={cn("text-sm opacity-90", className)} {...props} />
+  <ToastPrimitives.Description
+    ref={ref}
+    className={cn("mt-0.5 text-xs leading-relaxed text-zinc-300", className)}
+    {...props}
+  />
 ));
 ToastDescription.displayName = ToastPrimitives.Description.displayName;
 
