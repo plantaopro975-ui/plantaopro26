@@ -494,9 +494,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--sidebar-border', config.colors.border);
     root.style.setProperty('--sidebar-ring', config.colors.primary);
     
-    // Aplicar fonte específica do tema
+    // Tipografia global — body usa sans (IBM Plex Sans) para todos os shadcn;
+    // display (serif) fica reservado para h1-h6 via CSS e utilitário font-serif/font-display.
+    const SANS_STACK = "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif";
+    const DISPLAY_STACK = "'Libre Baskerville', 'Georgia', serif";
+    const MONO_STACK = "'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace";
+    root.style.setProperty('--font-sans', SANS_STACK);
+    root.style.setProperty('--font-serif', DISPLAY_STACK);
+    root.style.setProperty('--font-mono', MONO_STACK);
+    root.style.setProperty('--font-display', DISPLAY_STACK);
     root.style.setProperty('--font-theme', config.fontFamily);
-    document.body.style.fontFamily = config.fontFamily;
+    document.body.style.fontFamily = SANS_STACK;
+
     
     root.style.setProperty('--gradient-primary', 
       `linear-gradient(135deg, hsl(${config.colors.gradientFrom}) 0%, hsl(${config.colors.gradientTo}) 100%)`
