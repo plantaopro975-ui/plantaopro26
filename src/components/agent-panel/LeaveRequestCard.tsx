@@ -681,18 +681,13 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
                 {/* Period Selection */}
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Período</Label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {[
-                      { v: 'manha', l: 'Manhã', emoji: '🌅' },
-                      { v: 'tarde', l: 'Tarde', emoji: '☀️' },
-                      { v: 'noite', l: 'Noite', emoji: '🌙' },
-                      { v: 'integral', l: 'Integral', emoji: '⏱️' },
-                    ].map((p) => (
+                  <Label className="text-slate-300">Período / Duração</Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {PERIODS.map((p) => (
                       <button
                         key={p.v}
                         type="button"
-                        onClick={() => setSelectedPeriod(p.v as any)}
+                        onClick={() => setSelectedPeriod(p.v)}
                         className={`flex flex-col items-center gap-1 rounded-lg border-2 p-2 transition-all ${
                           selectedPeriod === p.v
                             ? 'border-amber-500 bg-amber-500/15 text-amber-300'
@@ -701,6 +696,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                       >
                         <span className="text-lg leading-none">{p.emoji}</span>
                         <span className="text-[11px] font-semibold">{p.l}</span>
+                        <span className="text-[10px] opacity-70">{p.start}→{p.end} ({p.hours}h)</span>
                       </button>
                     ))}
                   </div>
