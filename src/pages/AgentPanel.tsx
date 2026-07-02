@@ -799,6 +799,7 @@ export default function AgentPanel() {
           </div>
         </main>
       </div>
+      </div>
     </ThemedPanelBackground>
 
     {/* Welcome Trial Dialog */}
