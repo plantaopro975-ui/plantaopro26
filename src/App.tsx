@@ -30,6 +30,7 @@ import Agenda from "./pages/Agenda";
 import NotFound from "./pages/NotFound";
 import DebugAuth from "./pages/DebugAuth";
 import { AppShell } from "@/components/layout/AppShell";
+import { RequireAuth } from "@/components/auth/RequireAuth";
 
 const queryClient = new QueryClient();
 
@@ -57,8 +58,22 @@ const App = () => (
                     {/* Shared shell: Header rendered globally on these routes */}
                     <Route element={<AppShell />}>
                       <Route path="/" element={<Index />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/master" element={<Master />} />
+                      <Route
+                        path="/dashboard"
+                        element={
+                          <RequireAuth mode="redirect" redirectTo="/">
+                            <Dashboard />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/master"
+                        element={
+                          <RequireAuth mode="block">
+                            <Master />
+                          </RequireAuth>
+                        }
+                      />
                     </Route>
 
                     <Route path="/auth" element={<Navigate to="/" replace />} />
