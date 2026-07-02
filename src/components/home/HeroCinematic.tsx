@@ -189,7 +189,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
       {/* Viatura policial — arrastável, com giroflex funcional */}
       <div
-        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none"
+        {...vehicleHandlers}
+        {...vehiclePinch}
+        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none touch-none cursor-grab active:cursor-grabbing"
         style={{
           position: 'absolute',
           left: `${vehicleT.xPct}%`,
@@ -199,6 +201,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           touchAction: 'none',
         }}
       >
+
         <img
           src={policeVehicle}
           alt="Viatura policial"
