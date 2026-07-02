@@ -50,6 +50,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <SplashScreen />
           <BrowserRouter>
             <AuthProvider>
               <ConfirmProvider>
