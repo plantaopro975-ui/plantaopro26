@@ -1256,6 +1256,9 @@ export default function Index() {
 
 
 
+      {/* Mobile-only beta notice */}
+      <BetaNoticeFooter />
+
       {/* Footer — Noir & Gold Command Signature */}
       <footer className="relative z-20 shrink-0 overflow-hidden border-t border-primary/20 bg-[linear-gradient(180deg,hsl(222_38%_6%/0.96)_0%,hsl(220_35%_4%/0.99)_100%)] backdrop-blur-xl">
         {/* Gold accent line */}
