@@ -76,6 +76,7 @@ import { getMasterToken, setMasterToken } from '@/lib/masterSession';
 import { adminClient } from '@/lib/adminClient';
 import { Bell } from 'lucide-react';
 import iseAcreBadge from '@/assets/ise-acre-badge.png';
+import { PanelNav } from '@/components/ui/panel-nav';
 
 interface UserWithRole {
   id: string;
