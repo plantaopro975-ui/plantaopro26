@@ -22,7 +22,6 @@ interface Shift {
 export function ShiftCalendar() {
   const [date, setDate] = useState<Date>(new Date());
   const [shifts, setShifts] = useState<Shift[]>([]);
-  const [selectedDateShifts, setSelectedDateShifts] = useState<Shift[]>([]);
   const [isCompact, setIsCompact] = useState(() => {
     const saved = localStorage.getItem('shiftCalendarCompact');
     return saved ? JSON.parse(saved) : false;
@@ -58,13 +57,15 @@ export function ShiftCalendar() {
     }
   };
 
+  // Derive selected date shifts reactively (fixes bug where selecting a date
+  // didn't show shifts until user clicked twice or shifts arrived after selection)
+  const selectedDateShifts = useMemo(() => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    return shifts.filter((s) => s.shift_date === dateStr);
+  }, [shifts, date]);
+
   const handleDateSelect = (selectedDate: Date | undefined) => {
-    if (selectedDate) {
-      setDate(selectedDate);
-      const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      const dayShifts = shifts.filter(s => s.shift_date === dateStr);
-      setSelectedDateShifts(dayShifts);
-    }
+    if (selectedDate) setDate(selectedDate);
   };
 
   const hasShifts = (day: Date) => {
