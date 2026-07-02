@@ -908,7 +908,7 @@ export default function Master() {
                                 className="text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
                                 title="Enviar Mensagem"
                               >
-                                <Icon3D src={icon3dBell} fallback={MessageSquare} size={18} />
+                                <Icon3D name="message" size={16} alt="Enviar mensagem" />
                               </Button>
                               <Button
                                 variant="ghost"
@@ -921,7 +921,7 @@ export default function Master() {
                                 )}
                                 title={agent.is_active ? 'Desativar' : 'Ativar'}
                               >
-                              {agent.is_active ? <Icon3D src={icon3dShield} fallback={Lock} size={18} /> : <Icon3D src={icon3dShield} fallback={Unlock} size={18} />}
+                              <Icon3D name={agent.is_active ? 'lock' : 'unlock'} size={16} alt={agent.is_active ? 'Desativar' : 'Ativar'} />
                               </Button>
                               <Button
                                 variant="ghost"
@@ -933,7 +933,7 @@ export default function Master() {
                                 className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
                                 title="Editar"
                               >
-                                <Icon3D src={icon3dTypography} fallback={Pencil} size={18} />
+                                <Icon3D name="edit" size={16} alt="Editar" />
                               </Button>
                               {agent.cpf && (
                                 <AdminResetPasswordDialog 
@@ -1107,7 +1107,7 @@ export default function Master() {
                                   }
                                 }}
                               >
-                                <Icon3D src={icon3dLogout} fallback={LogOut} size={18} />
+                                <Icon3D name="logout" size={16} alt="Forçar logout" />
                               </Button>
                               <DeleteUserDialog 
                                 userId={u.id} 
