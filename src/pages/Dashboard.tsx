@@ -89,7 +89,7 @@ export default function Dashboard() {
 
   return (
     <ThemedPanelBackground team={null} showTeamImage={false}>
-      <div className="min-h-dvh flex">
+      <div className="min-h-dvh flex hud-scope hud-page-bg" style={hudBgStyle}>
         <Sidebar />
         <div className="flex-1 flex flex-col">
           {/* Header is rendered by AppShell layout */}
