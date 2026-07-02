@@ -1101,7 +1101,7 @@ export default function Master() {
                                   }
                                 }}
                               >
-                                <Icon3D name="logout" size={16} alt="Forçar logout" />
+                                <Icon3DAction name="logout" alt="Forçar logout" />
                               </Button>
                               <DeleteUserDialog 
                                 userId={u.id} 
