@@ -711,27 +711,27 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 
 /* Giroflex: pontos estroboscópicos proporcionais ao wrapper */
 .vehicle-fx--beacon {
-  top: 14%;
-  width: 8%;
-  height: 5%;
-  min-width: 6px;
+  top: 15%;
+  width: 5%;
+  height: 4%;
+  min-width: 5px;
   min-height: 4px;
-  filter: blur(1.5px);
+  aspect-ratio: 1 / 1;
+  filter: blur(1px);
   mix-blend-mode: screen;
   opacity: 0;
+  transform: translate(-50%, 0);
 }
 .vehicle-fx--beacon-red {
-  left: 40%;
-  transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(255,80,80,0.9) 25%, rgba(239,68,68,0.35) 55%, rgba(239,68,68,0) 78%);
-  box-shadow: 0 0 18px 5px rgba(239,68,68,0.7), 0 0 48px 16px rgba(239,68,68,0.25);
+  left: 47%;
+  background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(255,80,80,0.9) 30%, rgba(239,68,68,0.35) 60%, rgba(239,68,68,0) 80%);
+  box-shadow: 0 0 12px 3px rgba(239,68,68,0.7), 0 0 28px 8px rgba(239,68,68,0.25);
   animation: vehicle-strobe-red 1.4s steps(1, end) infinite;
 }
 .vehicle-fx--beacon-blue {
-  left: 60%;
-  transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(120,180,255,0.9) 25%, rgba(59,130,246,0.35) 55%, rgba(59,130,246,0) 78%);
-  box-shadow: 0 0 18px 5px rgba(59,130,246,0.7), 0 0 48px 16px rgba(59,130,246,0.25);
+  left: 53%;
+  background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(120,180,255,0.9) 30%, rgba(59,130,246,0.35) 60%, rgba(59,130,246,0) 80%);
+  box-shadow: 0 0 12px 3px rgba(59,130,246,0.7), 0 0 28px 8px rgba(59,130,246,0.25);
   animation: vehicle-strobe-blue 1.4s steps(1, end) infinite;
 }
 @keyframes vehicle-strobe-red {
