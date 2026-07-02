@@ -368,7 +368,7 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, a
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {DEFAULT_CHECKLIST.map((item) => {
+                {visibleChecklist.map((item) => {
                   const done = !!checklist[item.id];
                   return (
                     <label
