@@ -581,8 +581,16 @@ export default function Index() {
     if (formData.birth_date && formData.birth_date.length > 0) {
       if (formData.birth_date.length !== 10) {
         errors.birth_date = 'Data incompleta (DD-MM-AAAA)';
-      } else if (!parseBirthDate(formData.birth_date)) {
-        errors.birth_date = 'Data de nascimento inválida';
+      } else {
+        const d = parseBirthDate(formData.birth_date);
+        if (!d) {
+          errors.birth_date = 'Data inválida';
+        } else {
+          const age = calculateAge(d);
+          if (age < 18) errors.birth_date = 'Idade mínima: 18 anos';
+          else if (age > 100) errors.birth_date = 'Data de nascimento improvável';
+          else if (d > new Date()) errors.birth_date = 'Data não pode ser futura';
+        }
       }
     }
     
