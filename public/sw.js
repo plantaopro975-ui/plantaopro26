@@ -51,18 +51,23 @@ self.addEventListener('activate', (event) => {
 });
 
 // ---------------------------------------------------------------------------
-// Fetch strategy (coherent + timeout-safe)
+// Fetch strategy (Android-cool + no reload loops)
 // ---------------------------------------------------------------------------
-// - Navigations (HTML)   : network-first with 4s timeout, no caching
-// - Supabase /auth/v1    : pass-through (never cache, never intercept errors)
-// - Supabase other GETs  : pass-through (evita CPU/cache extra no Android)
-// - Same-origin static   : cache-first (images/fonts/audio)
-// - Same-origin JS/CSS   : stale-while-revalidate (fast repeat loads)
-// - Everything else      : network pass-through
+// - Navigations (HTML)         : network-first (4s), no cache write
+// - Supabase /auth/v1          : pass-through
+// - Supabase other             : pass-through (evita CPU/cache no Android)
+// - Same-origin hashed assets  : cache-first + immutable (Vite: -[hash].ext)
+// - Same-origin non-hashed JS/CSS/JSON : network-first (5s) → cache fallback
+// - Same-origin static binaries: cache-first
+// - Range requests / non-GET   : bypass (evita duplicar streams)
 // ---------------------------------------------------------------------------
 
 const NAV_TIMEOUT_MS = 4000;
-const API_TIMEOUT_MS = 6000;
+const ASSET_TIMEOUT_MS = 5000;
+const MAX_DYNAMIC_ENTRIES = 40;
+
+// Vite hashed asset: something like main-BQ8kZ2.js, index-a1b2c3d4.css
+const HASHED_ASSET_RE = /[.-][a-f0-9]{8,}\.(js|css|woff2?|png|jpe?g|webp|svg|gif|ico|mp3|mp4)$/i;
 
 function timedFetch(request, ms) {
   return new Promise((resolve, reject) => {
@@ -73,13 +78,26 @@ function timedFetch(request, ms) {
   });
 }
 
+async function trimCache(cacheName, maxEntries) {
+  try {
+    const cache = await caches.open(cacheName);
+    const keys = await cache.keys();
+    if (keys.length > maxEntries) {
+      const excess = keys.length - maxEntries;
+      await Promise.all(keys.slice(0, excess).map((k) => cache.delete(k)));
+    }
+  } catch {}
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
+  // Range requests (video/audio streaming) — never intercept
+  if (request.headers.get('range')) return;
 
   const url = new URL(request.url);
 
-  // 1) HTML navigations: network-first w/ timeout, no cache write
+  // 1) HTML navigations: network-first w/ timeout, no cache write → sem loops
   if (request.mode === 'navigate') {
     event.respondWith(
       timedFetch(request, NAV_TIMEOUT_MS).catch(
@@ -95,39 +113,42 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2) Supabase auth: never touch
-  if (url.hostname.includes('supabase.co') && url.pathname.includes('/auth/v1')) {
-    return; // let the browser handle it directly
-  }
+  // 2) Supabase — pass-through completo
+  if (url.hostname.includes('supabase.co')) return;
 
-  // 3) Supabase data GETs: pass-through. Cache de API em SW aquece WebView
-  // em aparelhos fracos e pode manter rede/CPU ativos em background.
-  if (url.hostname.includes('supabase.co')) {
+  // 3) Only handle same-origin from here
+  if (url.origin !== self.location.origin) return;
+
+  // 4) Hashed assets: cache-first (imutáveis por natureza — nunca revalida)
+  if (HASHED_ASSET_RE.test(url.pathname)) {
+    event.respondWith(cacheFirstImmutable(request));
     return;
   }
 
-  // 4) Same-origin
-  if (url.origin === self.location.origin) {
-    if (isStaticAsset(url.pathname)) {
-      event.respondWith(cacheFirst(request));
-    } else if (/\.(js|css|json)$/.test(url.pathname)) {
-      event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE, API_TIMEOUT_MS));
-    }
-    // otherwise: let browser handle
+  // 5) Static non-hashed binaries (ícones do manifest, favicon): cache-first
+  if (isStaticAsset(url.pathname)) {
+    event.respondWith(cacheFirstImmutable(request));
     return;
   }
+
+  // 6) Non-hashed JS/CSS/JSON (raro): network-first evita servir versão velha
+  if (/\.(js|css|json)$/.test(url.pathname)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+  // Restante: deixa o browser lidar
 });
 
 function isStaticAsset(pathname) {
-  return /\.(png|jpe?g|gif|svg|ico|woff2?|ttf|otf|mp3|mp4)$/i.test(pathname);
+  return /\.(png|jpe?g|gif|svg|ico|woff2?|ttf|otf|mp3|mp4|webp)$/i.test(pathname);
 }
 
-async function cacheFirst(request) {
+async function cacheFirstImmutable(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
   try {
-    const res = await timedFetch(request, API_TIMEOUT_MS);
-    if (res.ok) {
+    const res = await timedFetch(request, ASSET_TIMEOUT_MS);
+    if (res.ok && res.type === 'basic') {
       const cache = await caches.open(STATIC_CACHE);
       cache.put(request, res.clone()).catch(() => {});
     }
@@ -137,35 +158,23 @@ async function cacheFirst(request) {
   }
 }
 
-// Stale-while-revalidate: serve cache instantly, refresh in background.
-// If no cache exists, wait for network (with timeout) and cache on success.
-async function staleWhileRevalidate(request, cacheName, timeoutMs) {
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
-
-  const networkPromise = timedFetch(request, timeoutMs)
-    .then((res) => {
-      if (res && res.ok) {
-        cache.put(request, res.clone()).catch(() => {});
-      }
-      return res;
-    })
-    .catch(() => null);
-
-  if (cached) {
-    // fire-and-forget refresh
-    networkPromise.catch(() => {});
-    return cached;
+async function networkFirst(request) {
+  try {
+    const res = await timedFetch(request, ASSET_TIMEOUT_MS);
+    if (res.ok && res.type === 'basic') {
+      const cache = await caches.open(DYNAMIC_CACHE);
+      cache.put(request, res.clone()).catch(() => {});
+      trimCache(DYNAMIC_CACHE, MAX_DYNAMIC_ENTRIES);
+    }
+    return res;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    return new Response('', { status: 504, statusText: 'Offline' });
   }
-
-  const fresh = await networkPromise;
-  if (fresh) return fresh;
-
-  return new Response(
-    JSON.stringify({ error: 'offline', cached: false }),
-    { status: 503, headers: { 'Content-Type': 'application/json' } }
-  );
 }
+
+
 
 
 // Handle push notifications
