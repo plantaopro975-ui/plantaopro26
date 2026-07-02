@@ -61,6 +61,7 @@ import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
+import { OperationsTeamCard } from '@/components/home/OperationsTeamCard';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
@@ -1281,6 +1282,25 @@ export default function Index() {
           </div>
         </section>
       )}
+
+      {/* Teams Grid — 4 cards operacionais */}
+      <section className="shrink-0 px-2 sm:px-4 pb-3 relative z-10">
+        <div className="w-full max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          {teams.map((team, index) => (
+            <div
+              key={team}
+              data-team-card
+              className="animate-fade-in-scale flex justify-center"
+              style={{ animationDelay: `${200 + index * 80}ms` }}
+            >
+              <OperationsTeamCard
+                team={team as 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA'}
+                onClick={() => handleTeamClick(team)}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
 
 
 
