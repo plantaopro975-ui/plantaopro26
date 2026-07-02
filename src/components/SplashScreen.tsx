@@ -5,18 +5,29 @@ import { useEffect, useState } from "react";
  * Sequence (~2.6s): HUD grid draws → radar sweep + emblem authenticate
  * → wordmark reveal → status ticker → progress bar → fade.
  */
+const SPLASH_SHOWN_KEY = "plantaopro_splash_shown";
+
 export function SplashScreen() {
-  const [visible, setVisible] = useState(true);
+  const alreadyShown =
+    typeof window !== "undefined" &&
+    window.sessionStorage.getItem(SPLASH_SHOWN_KEY) === "1";
+  const [visible, setVisible] = useState(!alreadyShown);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
+    if (alreadyShown) return;
+    try {
+      window.sessionStorage.setItem(SPLASH_SHOWN_KEY, "1");
+    } catch {
+      // ignore
+    }
     const t1 = window.setTimeout(() => setFadeOut(true), 2400);
     const t2 = window.setTimeout(() => setVisible(false), 3000);
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
-  }, []);
+  }, [alreadyShown]);
 
   if (!visible) return null;
 
