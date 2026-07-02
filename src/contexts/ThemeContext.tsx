@@ -91,13 +91,7 @@ export const themes: Record<ThemeType, ThemeConfig> = {
     },
   },
 
-    cardStyle: {
-      gradient: 'from-amber-950/90 via-orange-950/80 to-slate-950/95',
-      border: 'border-amber-500/40',
-      shadow: 'shadow-amber-500/20',
-      hoverShadow: 'hover:shadow-amber-400/40',
-    },
-  },
+
   cyber: {
     id: 'cyber',
     name: 'Cyber',
