@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { TeamEmblem } from '@/components/TeamEmblem';
 import { WelcomeTrialDialog } from '@/components/WelcomeTrialDialog';
+import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
 import { 
