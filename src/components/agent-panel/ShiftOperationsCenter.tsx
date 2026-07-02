@@ -25,6 +25,7 @@ interface Props {
   agentName: string;
   agentTeam?: string | null;
   unitId?: string | null;
+  agentRole?: string | null;
 }
 
 interface Shift {
@@ -42,14 +43,24 @@ interface TeamMember {
   role?: string | null;
 }
 
-const DEFAULT_CHECKLIST = [
-  { id: 'access', label: 'Acesso liberado à unidade' },
-  { id: 'scale', label: 'Escala confirmada com o chefe' },
-  { id: 'radio', label: 'Rádio / comunicação operacional' },
+interface ChecklistItem {
+  id: string;
+  label: string;
+  restrictedTo?: Array<'team_leader' | 'support'>;
+}
+
+const DEFAULT_CHECKLIST: ChecklistItem[] = [
+  { id: 'handover', label: 'Recebimento do plantão da equipe anterior (07:00)' },
+  { id: 'headcount', label: 'Contagem dos adolescentes' },
+  { id: 'equipment', label: 'Contagem de algemas e tonfas' },
+  { id: 'keys', label: 'Conferência das chaves de algemas' },
+  { id: 'radio', label: 'Rádios carregados e operacionais' },
   { id: 'uniform', label: 'Fardamento e EPI conforme' },
-  { id: 'briefing', label: 'Briefing/passagem recebida' },
+  { id: 'briefing', label: 'Briefing/passagem de serviço recebida' },
+  { id: 'logbook', label: 'Registros no livro oficial de ocorrências', restrictedTo: ['team_leader', 'support'] },
   { id: 'ready', label: 'Status operacional: PRONTO' },
 ];
+
 
 
 
