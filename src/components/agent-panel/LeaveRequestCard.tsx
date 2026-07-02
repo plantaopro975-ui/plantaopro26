@@ -308,48 +308,72 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
         y += 8;
         doc.setFontSize(9);
       };
-      const addRow = (cols: string[]) => {
+      const addRowCols = (cols: string[], xs: number[]) => {
         if (y > 285) { doc.addPage(); y = 15; }
-        doc.text(cols.join('  |  '), 14, y);
+        cols.forEach((c, i) => doc.text(String(c ?? '-'), xs[i], y));
         y += 5;
       };
 
+      // PLANTÕES
       addSection('PLANTÕES (últimos 60)');
-      addRow(['Data', 'Entrada', 'Saída', 'Tipo', 'Status']);
+      const shiftXs = [14, 46, 74, 102, 138];
+      doc.setFont('helvetica', 'bold');
+      addRowCols(['Data', 'Entrada', 'Saída', 'Tipo', 'Status'], shiftXs);
+      doc.setFont('helvetica', 'normal');
       (shifts || []).forEach((s: any) => {
-        addRow([
+        addRowCols([
           format(parseISO(s.shift_date), 'dd/MM/yyyy'),
-          (s.start_time || '').slice(0, 5),
-          (s.end_time || '').slice(0, 5),
+          (s.start_time || '').slice(0, 5) || '-',
+          (s.end_time || '').slice(0, 5) || '-',
           s.shift_type || '-',
           s.status || '-',
-        ]);
+        ], shiftXs);
       });
 
       y += 4;
+      // FOLGAS
       addSection('FOLGAS');
-      addRow(['Data', 'Período', 'Entrada→Saída', 'Horas', 'Tipo', 'Status']);
+      const leaveXs = [14, 42, 66, 98, 118, 148];
+      doc.setFont('helvetica', 'bold');
+      addRowCols(['Data', 'Período', 'Entrada', 'Saída', 'Horas', 'Tipo/Status'], leaveXs);
+      doc.setFont('helvetica', 'normal');
       leaves.forEach((l: any) => {
         const p = PERIOD_MAP[l.period];
-        addRow([
-          format(parseISO(l.start_date), 'dd/MM/yyyy'),
-          l.period || '-',
-          `${l.start_time?.slice(0,5) || p?.start || '-'}→${l.end_time?.slice(0,5) || p?.end || '-'}`,
-          String(l.hours_count ?? p?.hours ?? '-'),
-          leaveTypeLabels[l.leave_type]?.label || l.leave_type,
-          l.status,
-        ]);
+        const start = l.start_time?.slice(0, 5) || p?.start || '-';
+        const end = l.end_time?.slice(0, 5) || p?.end || '-';
+        const days = Math.max(
+          1,
+          differenceInDays(parseISO(l.end_date), parseISO(l.start_date)) + 1
+        );
+        const hours = l.hours_count ?? (p ? computeHours(p.start, p.end, days) : '-');
+        const dateLabel = l.start_date === l.end_date
+          ? format(parseISO(l.start_date), 'dd/MM/yyyy')
+          : `${format(parseISO(l.start_date), 'dd/MM')}→${format(parseISO(l.end_date), 'dd/MM/yy')}`;
+        const typeStatus = `${leaveTypeLabels[l.leave_type]?.label || l.leave_type} / ${statusLabels[l.status]?.label || l.status}`;
+        addRowCols([
+          dateLabel,
+          p?.l || l.period || '-',
+          start,
+          end,
+          `${hours}h`,
+          typeStatus,
+        ], leaveXs);
       });
 
       y += 4;
+      // PERMUTAS
       addSection('PERMUTAS');
-      addRow(['Data Original', 'Data Troca', 'Status']);
+      const swapXs = [14, 60, 106, 160];
+      doc.setFont('helvetica', 'bold');
+      addRowCols(['Data Original', 'Data Troca', 'Tipo', 'Status'], swapXs);
+      doc.setFont('helvetica', 'normal');
       (swaps || []).forEach((sw: any) => {
-        addRow([
+        addRowCols([
           sw.original_date ? format(parseISO(sw.original_date), 'dd/MM/yyyy') : '-',
           sw.swap_date ? format(parseISO(sw.swap_date), 'dd/MM/yyyy') : '-',
+          sw.requester_id === agentId ? 'Solicitante' : 'Receptor',
           sw.status || '-',
-        ]);
+        ], swapXs);
       });
 
       doc.save(`plantoes_${agent?.cpf || agentId}_${format(now, 'yyyyMMdd_HHmm')}.pdf`);
