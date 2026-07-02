@@ -1,45 +1,65 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Shield, AlertTriangle, Heart, Lock, Server, Users, Info } from 'lucide-react';
+import { Shield, AlertTriangle, Heart, Lock, Server, Users } from 'lucide-react';
+
+const SEEN_KEY = 'beta-notice-seen-v1';
 
 /**
  * BetaNoticeFooter
- * Micro-pill discreto (somente mobile). Abre modal com termos completos.
+ * Mobile-only. Abre modal automaticamente 1x (persistido em localStorage).
+ * Depois fica como micro-selo discreto no canto inferior direito.
  */
 export function BetaNoticeFooter() {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(SEEN_KEY)) {
+        const t = window.setTimeout(() => setOpen(true), 600);
+        return () => window.clearTimeout(t);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const handleOpenChange = (v: boolean) => {
+    setOpen(v);
+    if (!v) {
+      try {
+        localStorage.setItem(SEEN_KEY, '1');
+      } catch {
+        /* ignore */
+      }
+    }
+  };
+
   return (
     <>
-      <div className="md:hidden w-full flex justify-center px-3 pt-1 pb-2">
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label="Sobre esta versão beta"
-          className="group inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-card/70 px-2.5 py-1 text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground/90 backdrop-blur-sm transition-all active:scale-95 hover:border-primary/50"
-        >
-          {/* Micro-selo BETA em SVG */}
-          <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden className="text-primary">
-            <path
-              d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
-              fill="currentColor"
-              opacity="0.15"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <circle cx="18.5" cy="5.5" r="1.6" fill="hsl(var(--destructive))">
-              <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
-            </circle>
-          </svg>
-          <span className="text-primary font-bold">BETA</span>
-          <span className="text-muted-foreground/70">·</span>
-          <span>App não oficial</span>
-          <Info className="h-2.5 w-2.5 text-primary/70" />
-        </button>
-      </div>
+      {/* Micro-selo fixo no canto — só mobile */}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label="Sobre esta versão beta"
+        className="md:hidden fixed bottom-2 right-2 z-40 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-background/85 px-2 py-0.5 text-[9px] font-mono uppercase tracking-[0.18em] text-primary/90 backdrop-blur-sm shadow-md active:scale-95"
+      >
+        <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden>
+          <path
+            d="M12 2 L21 6 V13 C21 17.5 17 21 12 22 C7 21 3 17.5 3 13 V6 Z"
+            fill="hsl(var(--primary))"
+            opacity="0.2"
+            stroke="hsl(var(--primary))"
+            strokeWidth="1.6"
+          />
+          <circle cx="18.5" cy="5.5" r="1.6" fill="hsl(var(--destructive))">
+            <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+        <span className="font-bold">BETA</span>
+      </button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-md p-0 overflow-hidden border-primary/30">
           <div className="relative border-b border-primary/20 bg-gradient-to-br from-primary/15 via-background to-background px-5 pt-5 pb-4">
             <DialogHeader className="relative">
