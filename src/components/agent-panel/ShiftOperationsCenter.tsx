@@ -129,7 +129,7 @@ function OperationsRadar({ members, myId, lowMotion }: { members: TeamMember[]; 
 }
 
 // ---------- Main Component ----------
-export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }: Props) {
+export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId, agentRole }: Props) {
   const { lowMotion, toggle: toggleLowMotion } = useLowMotion();
   const [currentShift, setCurrentShift] = useState<Shift | null>(null);
   const [isOnDuty, setIsOnDuty] = useState(false);
