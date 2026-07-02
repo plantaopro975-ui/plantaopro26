@@ -13,6 +13,7 @@ import {
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useLowMotion } from '@/hooks/useLowMotion';
 
 interface OnDutyOverlayProps {
   agentId: string;
