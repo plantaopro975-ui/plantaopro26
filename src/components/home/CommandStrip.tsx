@@ -78,34 +78,23 @@ export function CommandStrip() {
       />
 
       <div className="relative flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-1 px-3 sm:px-4 lg:px-6 py-2 sm:py-0 sm:h-14 min-h-12">
-        {/* Brasão */}
-        <div className="relative flex items-center gap-3 shrink-0">
+        {/* Identidade */}
+        <div className="relative flex items-center shrink-0">
           <button
             type="button"
             onClick={handleShieldClick}
-            aria-label="Instituto Socioeducativo do Acre"
-            title="ISE / Acre"
-            className="group relative shrink-0 rounded-md p-0.5 ring-1 ring-border/60 hover:ring-primary/40 transition-all"
+            aria-label="Comando Operacional"
+            className="text-left leading-tight focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-400/60 rounded-sm"
           >
-            <div className="relative h-10 w-10 sm:h-9 sm:w-9 rounded-md bg-gradient-to-br from-card to-background flex items-center justify-center overflow-hidden">
-              <img
-                src={logoPlantaoPro}
-                alt="PlantãoPro"
-                className="h-full w-full object-contain p-0.5 drop-shadow-[0_0_6px_hsl(42_85%_55%/0.5)]"
-              />
-            </div>
-          </button>
-
-          {/* Identidade */}
-          <div className="shrink-0 border-l border-amber-500/30 pl-3 leading-tight">
             <span className="block text-[15px] sm:text-[15px] font-bold text-amber-50 font-serif whitespace-nowrap tracking-wide">
               Comando <span className="text-amber-400 drop-shadow-[0_0_8px_hsl(42_85%_55%/0.35)]">Operacional</span>
             </span>
             <span className="hidden md:block text-[10px] text-muted-foreground/80 tracking-[0.18em] uppercase font-mono whitespace-nowrap">
               Gestão inteligente de plantões
             </span>
-          </div>
+          </button>
         </div>
+
 
         {/* Relógio + radar + status */}
         <div className="flex items-center gap-2 sm:gap-4 ml-auto shrink-0">
