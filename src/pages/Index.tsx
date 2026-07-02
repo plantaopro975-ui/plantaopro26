@@ -1618,26 +1618,39 @@ export default function Index() {
             <AuthInput
               label="Matrícula"
               value={formData.matricula}
-              onChange={(e) => setFormData({ ...formData, matricula: formatMatricula(e.target.value) })}
-              placeholder="000.000.00"
+              placeholder="Preenchida no painel"
               maxLength={10}
-              error={regErrors.matricula}
+              disabled
+              readOnly
+              rightIcon={<Lock className="h-4 w-4 text-slate-500" />}
             />
           </div>
+          <p className="text-[11px] text-slate-400 -mt-3">
+            A matrícula poderá ser cadastrada depois, no seu painel do agente.
+          </p>
           
-          {/* Unidade */}
+          {/* Unidade — trava após selecionada */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-slate-300 uppercase tracking-wider">
               Unidade *
             </label>
             <Select
               value={formData.unit_id}
-              onValueChange={(value) => setFormData({ ...formData, unit_id: value })}
+              onValueChange={(value) => {
+                if (formData.unit_id) return; // não permite trocar
+                setFormData({ ...formData, unit_id: value });
+              }}
+              disabled={Boolean(formData.unit_id)}
             >
-              <SelectTrigger className="h-14 text-lg bg-slate-800/80 border-2 border-slate-700/80 hover:border-slate-600">
+              <SelectTrigger className="h-14 text-lg bg-slate-800/80 border-2 border-slate-700/80 hover:border-slate-600 disabled:opacity-100 disabled:cursor-not-allowed">
                 <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione a unidade"} />
               </SelectTrigger>
-              <SelectContent className="max-h-48" position="popper" sideOffset={4} style={{ zIndex: 9999 }}>
+              <SelectContent
+                className="max-h-[260px] overflow-y-auto overscroll-contain"
+                position="popper"
+                sideOffset={4}
+                style={{ zIndex: 9999 }}
+              >
                 {units.length === 0 ? (
                   <div className="px-3 py-2 text-slate-400 text-base">Carregando...</div>
                 ) : (
@@ -1650,6 +1663,11 @@ export default function Index() {
                 )}
               </SelectContent>
             </Select>
+            {formData.unit_id && (
+              <p className="text-[11px] text-amber-400/80 flex items-center gap-1">
+                <Lock className="h-3 w-3" /> Unidade bloqueada. Solicite ao Master para alterar.
+              </p>
+            )}
             {regErrors.unit_id && <p className="text-sm text-red-400">{regErrors.unit_id}</p>}
           </div>
 
