@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
-import { Icon3D, type Icon3DName } from '@/components/ui/Icon3D';
+import { Icon3D, Icon3DAction, type Icon3DName } from '@/components/ui/Icon3D';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 
 import { useNavigate } from 'react-router-dom';
