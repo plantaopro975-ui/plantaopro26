@@ -36,8 +36,24 @@ function renderAt(path: string) {
         <Route
           path="/dashboard"
           element={
-            <RequireAuth mode="redirect" redirectTo="/">
+            <RequireAuth mode="block">
               <DashboardStub />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/agent-panel"
+          element={
+            <RequireAuth mode="block">
+              <div>PAINEL_SECRETO</div>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <RequireAuth mode="block">
+              <div>CONFIG_SECRETO</div>
             </RequireAuth>
           }
         />
@@ -53,6 +69,7 @@ function renderAt(path: string) {
     </MemoryRouter>,
   );
 }
+
 
 describe("RequireAuth — guards de rota", () => {
   beforeEach(() => {
