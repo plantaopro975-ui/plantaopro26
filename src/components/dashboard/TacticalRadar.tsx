@@ -95,10 +95,18 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
 
   return (
     <Card ref={ref} className={cn(
-      "bg-gradient-to-br from-zinc-900/95 via-zinc-900/90 to-zinc-800/80 border border-zinc-700/60 backdrop-blur-sm overflow-hidden",
+      "relative bg-gradient-to-br from-zinc-900/95 via-zinc-900/90 to-zinc-800/80 border border-zinc-700/60 backdrop-blur-sm overflow-hidden",
       className
     )}>
-      <CardHeader className={cn("pb-1", compact ? "p-2.5" : "p-3")}>
+      {/* Professional radar backdrop */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.18] bg-center bg-cover mix-blend-screen"
+        style={{ backgroundImage: `url(${radarBg})` }}
+      />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-transparent to-zinc-950/70" />
+
+      <CardHeader className={cn("relative pb-1", compact ? "p-2.5" : "p-3")}>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-cyan-500/15 border border-cyan-500/30">
@@ -119,12 +127,19 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn("flex flex-col items-center gap-2", compact ? "p-2.5 pt-0" : "p-3 pt-1")}>
-        {/* Radar Display - Minimal Design */}
-        <div 
-          className="relative rounded-full bg-zinc-950/80 border border-zinc-700/50"
+      <CardContent className={cn("relative flex flex-col items-center gap-2", compact ? "p-2.5 pt-0" : "p-3 pt-1")}>
+        {/* Radar Display - with pro backdrop */}
+        <div
+          className="relative rounded-full bg-zinc-950/80 border border-zinc-700/50 overflow-hidden"
           style={{ width: radarSize, height: radarSize }}
         >
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-center bg-cover opacity-40"
+            style={{ backgroundImage: `url(${radarBg})` }}
+          />
+          <div aria-hidden className="absolute inset-0 bg-zinc-950/50" />
+
           {/* Grid rings */}
           {rings.map((ring) => (
             <div
