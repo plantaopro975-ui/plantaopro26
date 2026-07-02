@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import {
-  Radar, Shield, ShieldAlert, ShieldCheck, ClipboardCheck,
+  Radar, ShieldAlert, ShieldCheck, ClipboardCheck,
   FileDown, VolumeX, Volume2, Sparkles, Zap, Users, Clock,
 } from 'lucide-react';
 import {
