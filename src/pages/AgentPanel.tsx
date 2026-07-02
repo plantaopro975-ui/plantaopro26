@@ -474,6 +474,15 @@ export default function AgentPanel() {
           }}
         >
           <div className="max-w-7xl w-full mx-auto space-y-3 md:space-y-4 lg:space-y-5 pb-16 sm:pb-20">
+            {/* Futuristic HUD Hero */}
+            <PanelHeroHUD
+              variant="command"
+              icon="shield"
+              eyebrow="Painel do Agente"
+              title={`Bem-vindo, ${agent.name?.split(' ')[0] || 'Agente'}`}
+              subtitle={`Equipe ${agent.team || '—'} • Sistema Operacional Ativo`}
+            />
+
             {/* Professional Header Bar */}
             <AgentPanelHeader 
               agent={{
