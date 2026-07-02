@@ -32,6 +32,7 @@ import NotFound from "./pages/NotFound";
 import DebugAuth from "./pages/DebugAuth";
 import { AppShell } from "@/components/layout/AppShell";
 import { RequireAuth } from "@/components/auth/RequireAuth";
+import { ConfirmProvider } from "@/components/ui/confirm-provider";
 
 const queryClient = new QueryClient();
 
