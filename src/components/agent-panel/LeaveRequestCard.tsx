@@ -702,14 +702,21 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                             key={leave.id}
                             className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 border border-slate-600/50"
                           >
-                            <div className="flex items-center gap-3">
-                              <div className={`p-2 rounded-lg ${leaveTypeLabels[leave.leave_type]?.color || 'bg-slate-600'}`}>
-                                {leaveTypeLabels[leave.leave_type]?.icon || <Star className="h-4 w-4" />}
+                            <div className="flex items-center gap-3 min-w-0">
+                              <Avatar className="h-9 w-9 border border-slate-600/60 shrink-0">
+                                {leave.agent_avatar_url && <AvatarImage src={leave.agent_avatar_url} alt={leave.agent_name} />}
+                                <AvatarFallback className="bg-slate-800 text-amber-300 text-[11px] font-semibold">
+                                  {leave.agent_name?.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() || '?'}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className={`p-1.5 rounded-md ${leaveTypeLabels[leave.leave_type]?.color || 'bg-slate-600'} shrink-0`}>
+                                {leaveTypeLabels[leave.leave_type]?.icon || <Star className="h-3.5 w-3.5" />}
                               </div>
-                              <div>
-                                <p className="font-medium text-white">{leave.agent_name}</p>
-                                <p className="text-sm text-slate-400">
+                              <div className="min-w-0">
+                                <p className="font-medium text-white truncate">{leave.agent_name}</p>
+                                <p className="text-xs text-slate-400 truncate">
                                   {leaveTypeLabels[leave.leave_type]?.label || leave.leave_type}
+                                  {leave.agent_role ? ` • ${leave.agent_role}` : ''}
                                 </p>
                               </div>
                             </div>
@@ -717,6 +724,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                               {statusLabels[leave.status]?.label || leave.status}
                             </Badge>
                           </div>
+
                         ))}
                       </div>
                     )
