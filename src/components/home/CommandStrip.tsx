@@ -108,7 +108,7 @@ export function CommandStrip() {
             <div className="font-mono text-[15px] sm:text-[16px] font-semibold text-foreground tracking-tight">
               {time}
             </div>
-            <div className="text-[11px] sm:text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-mono truncate">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-mono whitespace-nowrap">
               {date}
             </div>
           </div>
