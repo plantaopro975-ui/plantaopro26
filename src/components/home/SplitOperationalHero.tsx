@@ -23,13 +23,12 @@ const TEAMS: {
   op: string;
   role: string;
   accent: string;
-  image: string;
   obj: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Proteção',      op: 'OP-01', role: 'Defensiva',       accent: '28 92% 58%',  image: teamAlfa,    obj: objAlfa },
-  { key: 'BRAVO',   motto: 'Espada · Ação',          op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  image: teamBravo,   obj: objBravo },
-  { key: 'CHARLIE', motto: 'Alvo · Precisão',        op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  image: teamCharlie, obj: objCharlie },
-  { key: 'DELTA',   motto: 'Raio · Velocidade',      op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', image: teamDelta,   obj: objDelta },
+  { key: 'ALFA',    motto: 'Escudo · Proteção',      op: 'OP-01', role: 'Defensiva',       accent: '28 92% 58%',  obj: objAlfa },
+  { key: 'BRAVO',   motto: 'Espada · Ação',          op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo },
+  { key: 'CHARLIE', motto: 'Alvo · Precisão',        op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie },
+  { key: 'DELTA',   motto: 'Raio · Velocidade',      op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta },
 ];
 
 function LiveClock() {
