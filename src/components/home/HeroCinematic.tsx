@@ -600,7 +600,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 }
 
 /** Boneco arrastável + triple-tap para admin (só conta se não houve arraste). */
-function AgentFigure({ agentT, dragHandlers }: { agentT: Transform; dragHandlers: DragH }) {
+function AgentFigure({ agentT, dragHandlers, locked = false }: { agentT: Transform; dragHandlers: DragH; locked?: boolean }) {
   const clicksRef = useRef(0);
   const timerRef = useRef<number | null>(null);
   const tapStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
