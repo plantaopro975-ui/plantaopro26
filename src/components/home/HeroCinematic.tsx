@@ -1,5 +1,5 @@
 import { Radio, MapPin } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { toast } from 'sonner';
@@ -16,6 +16,186 @@ import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
+
+type Transform = { xPct: number; yPct: number; scale: number };
+
+type DragH = {
+  onPointerDown: (e: React.PointerEvent) => void;
+  onPointerMove: (e: React.PointerEvent) => void;
+  onPointerUp: (e: React.PointerEvent) => void;
+  onPointerCancel: (e: React.PointerEvent) => void;
+  onWheel: (e: React.WheelEvent) => void;
+  wasMoved: () => boolean;
+};
+
+type PointerPoint = { x: number; y: number };
+
+type GestureSession =
+  | { mode: 'drag'; startPoint: PointerPoint; startTransform: Transform }
+  | { mode: 'pinch'; startCentroid: PointerPoint; startDistance: number; startTransform: Transform };
+
+const SCALE_LIMITS = { min: 0.35, max: 2.8 };
+
+const clampTransform = (t: Transform): Transform => ({
+  xPct: Math.min(100, Math.max(0, t.xPct)),
+  yPct: Math.min(100, Math.max(0, t.yPct)),
+  scale: Math.min(SCALE_LIMITS.max, Math.max(SCALE_LIMITS.min, t.scale)),
+});
+
+const getViewportSize = () => ({
+  width: Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1),
+  height: Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1),
+});
+
+const getDistance = (a: PointerPoint, b: PointerPoint) => Math.hypot(a.x - b.x, a.y - b.y);
+
+const getCentroid = (a: PointerPoint, b: PointerPoint): PointerPoint => ({
+  x: (a.x + b.x) / 2,
+  y: (a.y + b.y) / 2,
+});
+
+function useViewportAssetControls(
+  transform: Transform,
+  setTransform: React.Dispatch<React.SetStateAction<Transform>>,
+  resetTransform: Transform,
+): DragH {
+  const transformRef = useRef(transform);
+  const pointersRef = useRef<Map<number, PointerPoint>>(new Map());
+  const sessionRef = useRef<GestureSession | null>(null);
+  const movedRef = useRef(false);
+  const lastTapRef = useRef(0);
+
+  useEffect(() => {
+    transformRef.current = transform;
+  }, [transform]);
+
+  const applyTransform = useCallback((next: Transform) => {
+    const clamped = clampTransform(next);
+    transformRef.current = clamped;
+    setTransform(clamped);
+  }, [setTransform]);
+
+  const startPinchSession = useCallback(() => {
+    const points = Array.from(pointersRef.current.values()).slice(0, 2);
+    if (points.length < 2) return;
+    sessionRef.current = {
+      mode: 'pinch',
+      startCentroid: getCentroid(points[0], points[1]),
+      startDistance: Math.max(1, getDistance(points[0], points[1])),
+      startTransform: transformRef.current,
+    };
+  }, []);
+
+  const startDragSession = useCallback((point: PointerPoint) => {
+    sessionRef.current = {
+      mode: 'drag',
+      startPoint: point,
+      startTransform: transformRef.current,
+    };
+  }, []);
+
+  return {
+    onPointerDown: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore unsupported capture */ }
+
+      const point = { x: e.clientX, y: e.clientY };
+      pointersRef.current.set(e.pointerId, point);
+      movedRef.current = false;
+
+      if (pointersRef.current.size >= 2) {
+        movedRef.current = true;
+        startPinchSession();
+        return;
+      }
+
+      startDragSession(point);
+    },
+    onPointerMove: (e) => {
+      if (!pointersRef.current.has(e.pointerId)) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      const activePoints = Array.from(pointersRef.current.values());
+      const { width, height } = getViewportSize();
+
+      if (activePoints.length >= 2) {
+        if (!sessionRef.current || sessionRef.current.mode !== 'pinch') startPinchSession();
+        const session = sessionRef.current;
+        if (!session || session.mode !== 'pinch') return;
+
+        const [first, second] = activePoints;
+        const centroid = getCentroid(first, second);
+        const distance = Math.max(1, getDistance(first, second));
+
+        movedRef.current = true;
+        applyTransform({
+          xPct: session.startTransform.xPct + ((centroid.x - session.startCentroid.x) / width) * 100,
+          yPct: session.startTransform.yPct + ((centroid.y - session.startCentroid.y) / height) * 100,
+          scale: session.startTransform.scale * (distance / session.startDistance),
+        });
+        return;
+      }
+
+      const session = sessionRef.current;
+      if (!session || session.mode !== 'drag') return;
+
+      const point = activePoints[0];
+      const dx = point.x - session.startPoint.x;
+      const dy = point.y - session.startPoint.y;
+
+      if (Math.hypot(dx, dy) > 3) movedRef.current = true;
+      if (!movedRef.current) return;
+
+      applyTransform({
+        xPct: session.startTransform.xPct + (dx / width) * 100,
+        yPct: session.startTransform.yPct + (dy / height) * 100,
+        scale: session.startTransform.scale,
+      });
+    },
+    onPointerUp: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* ignore unsupported capture */ }
+
+      pointersRef.current.delete(e.pointerId);
+
+      if (pointersRef.current.size === 1) {
+        startDragSession(Array.from(pointersRef.current.values())[0]);
+        return;
+      }
+
+      if (pointersRef.current.size === 0) {
+        if (!movedRef.current) {
+          const now = Date.now();
+          if (now - lastTapRef.current < 350) {
+            applyTransform(resetTransform);
+            lastTapRef.current = 0;
+          } else {
+            lastTapRef.current = now;
+          }
+        }
+        sessionRef.current = null;
+      }
+    },
+    onPointerCancel: (e) => {
+      pointersRef.current.delete(e.pointerId);
+      if (pointersRef.current.size === 0) sessionRef.current = null;
+    },
+    onWheel: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      applyTransform({
+        ...transformRef.current,
+        scale: transformRef.current.scale * (e.deltaY < 0 ? 1.08 : 0.92),
+      });
+    },
+    wasMoved: () => movedRef.current,
+  };
+}
 
 interface HeroCinematicProps {
   onPrimaryAction?: () => void;
