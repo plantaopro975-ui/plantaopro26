@@ -257,11 +257,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     onPointerDown: noop, onPointerMove: noop, onPointerUp: noop,
     onPointerCancel: noop, onWheel: noop, wasMoved: () => false,
   };
-  // Travado em mobile e web: boneco e viatura ficam fixos. Triple-tap admin continua funcionando no boneco.
-  void vDragHRaw; void aDragHRaw;
-  const vDragH = lockedH;
-  const aDragH = lockedH;
-  const locked = true;
+  // Mobile: destravado (arraste + pinch/scroll para redimensionar). Desktop: travado.
+  const vDragH = isMobile ? vDragHRaw : lockedH;
+  const aDragH = isMobile ? aDragHRaw : lockedH;
+  const locked = !isMobile;
 
   return (
     <section
