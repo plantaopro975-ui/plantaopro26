@@ -48,8 +48,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   };
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
   const clampT = (t: Transform): Transform => ({
-    xPct: Math.min(90, Math.max(10, t.xPct)),
-    yPct: Math.min(92, Math.max(20, t.yPct)),
+    xPct: Math.min(100, Math.max(0, t.xPct)),
+    yPct: Math.min(100, Math.max(0, t.yPct)),
     scale: Math.min(isMobile ? 1.6 : 2.5, Math.max(0.45, t.scale)),
   });
   const [agentT, setAgentT] = useState<Transform>(() =>
