@@ -586,8 +586,13 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     const py = ((e.clientY - r.top) / r.height) * 100;
                     el.style.setProperty('--px', `${px}%`);
                     el.style.setProperty('--py', `${py}%`);
-                    el.style.setProperty('--tilt-y', `${((px - 50) / 50) * 6}deg`);
-                    el.style.setProperty('--tilt-x', `${((50 - py) / 50) * 6}deg`);
+                    const ry = ((px - 50) / 50) * 10;
+                    const rx = ((50 - py) / 50) * 10;
+                    el.style.setProperty('--tilt-y', `${ry}deg`);
+                    el.style.setProperty('--tilt-x', `${rx}deg`);
+                    el.style.setProperty('--gx', `${px}%`);
+                    el.style.setProperty('--gy', `${py}%`);
+                    el.style.setProperty('--active', '1');
                     el.style.setProperty('--lift', `-4px`);
                   }}
                   onPointerLeave={(e) => {
@@ -595,6 +600,13 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     el.style.setProperty('--tilt-x', `0deg`);
                     el.style.setProperty('--tilt-y', `0deg`);
                     el.style.setProperty('--lift', `0px`);
+                    el.style.setProperty('--active', '0');
+                  }}
+                  onPointerDown={(e) => {
+                    e.currentTarget.style.setProperty('--press', '0.97');
+                  }}
+                  onPointerUp={(e) => {
+                    e.currentTarget.style.setProperty('--press', '1');
                   }}
                   className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-2 sm:p-3 lg:p-4 min-h-[130px] sm:min-h-[144px] lg:min-h-[172px] rounded-md border border-accent/40 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
