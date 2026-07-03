@@ -764,7 +764,8 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   animation: none !important;
   transition: none !important;
   right: auto !important;
-  max-width: none;
+  width: max-content !important;
+  max-width: none !important;
 }
 
 @media (max-width: 640px) {
