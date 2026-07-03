@@ -246,8 +246,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
   const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 };
   const agentReset = { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 };
-  const vDragH = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
-  const aDragH = useViewportAssetControls(agentT, setAgentT, agentReset);
+  const vDragHRaw = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
+  const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
+  // Mobile: elementos ficam travados (sem arraste), apenas o triple-tap admin continua no boneco.
+  const noop = () => {};
+  const lockedH: DragH = {
+    onPointerDown: noop, onPointerMove: noop, onPointerUp: noop,
+    onPointerCancel: noop, onWheel: noop, wasMoved: () => false,
+  };
+  const vDragH = isMobile ? lockedH : vDragHRaw;
+  const aDragH = isMobile ? lockedH : aDragHRaw;
 
   return (
     <section
@@ -298,15 +306,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div
-            className="viewport-draggable-asset police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none cursor-grab active:cursor-grabbing"
+            className={`${isMobile ? '' : 'viewport-draggable-asset '}police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none ${isMobile ? '' : 'cursor-grab active:cursor-grabbing'}`}
             style={{
               position: 'fixed',
               left: `${vehicleT.xPct}vw`,
               top: `${vehicleT.yPct}vh`,
               transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
               transformOrigin: 'center',
-              touchAction: 'none',
-              pointerEvents: 'auto',
+              touchAction: isMobile ? 'auto' : 'none',
+              pointerEvents: isMobile ? 'none' : 'auto',
               zIndex: 2147483000,
             }}
             role="img"
@@ -328,7 +336,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
           </div>
 
-          <AgentFigure agentT={agentT} dragHandlers={aDragH} />
+          <AgentFigure agentT={agentT} dragHandlers={aDragH} locked={isMobile} />
         </>,
         document.body
       )}
@@ -592,7 +600,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 }
 
 /** Boneco arrastável + triple-tap para admin (só conta se não houve arraste). */
-function AgentFigure({ agentT, dragHandlers }: { agentT: Transform; dragHandlers: DragH }) {
+function AgentFigure({ agentT, dragHandlers, locked = false }: { agentT: Transform; dragHandlers: DragH; locked?: boolean }) {
   const clicksRef = useRef(0);
   const timerRef = useRef<number | null>(null);
   const tapStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
@@ -643,11 +651,11 @@ function AgentFigure({ agentT, dragHandlers }: { agentT: Transform; dragHandlers
         top: `${agentT.yPct}vh`,
         transform: `translate(-50%, -50%) scale(${agentT.scale})`,
         transformOrigin: 'center',
-        touchAction: 'none',
+        touchAction: locked ? 'manipulation' : 'none',
         pointerEvents: 'auto',
         zIndex: 2147483001,
       }}
-      className="viewport-draggable-asset agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
+      className={`${locked ? '' : 'viewport-draggable-asset '}agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 ${locked ? '' : 'cursor-grab active:cursor-grabbing'}`}
     >
       <img
         src={agentFigure}

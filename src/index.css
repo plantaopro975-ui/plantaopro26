@@ -503,15 +503,13 @@ body {
   .animate-team-helmet,
   .animate-team-radio,
   .animate-team-handcuffs,
-  .police-vehicle,
-  .vehicle-fx--beacon-red,
-  .vehicle-fx--beacon-blue {
+  .police-vehicle {
     animation: none !important;
   }
 
-  .vehicle-fx--beacon-red,
-  .vehicle-fx--beacon-blue {
-    opacity: 0.72;
+  /* Giroflex sutil e profissional em mobile — reduz escala do halo e mantém strobe */
+  .police-vehicle {
+    --beacon-unit: clamp(4px, 0.9vmin, 8px) !important;
   }
 
   .team-card-3d:hover,
