@@ -232,34 +232,37 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const [syncDevices, setSyncDevices] = useState<boolean>(() => {
     try { return localStorage.getItem('hero_sync_devices') === '1'; } catch { return false; }
   });
-  // Layout travado e unificado: desktop e mobile compartilham as mesmas coordenadas do desktop.
-  const agentKey = 'hero_agent_t_desktop';
-  const vehicleKey = 'hero_vehicle_t_desktop';
-  const agentDefault = { xPct: 30, yPct: 55, scale: 1 };
-  const vehicleDefault = { xPct: 18, yPct: 55, scale: 1 };
+  // Layout travado; mobile e desktop possuem coordenadas próprias para melhor enquadramento.
+  const agentKey = isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop';
+  const vehicleKey = isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop';
+  const agentDefault = isMobile
+    ? { xPct: 72, yPct: 82, scale: 0.75 }
+    : { xPct: 30, yPct: 55, scale: 1 };
+  const vehicleDefault = isMobile
+    ? { xPct: 26, yPct: 84, scale: 0.7 }
+    : { xPct: 18, yPct: 55, scale: 1 };
 
   const [agentT, setAgentT] = useState<Transform>(() => {
     try {
-      if (!localStorage.getItem('hero_agent_reset_v9')) {
-        localStorage.removeItem('hero_agent_t_mobile');
-        localStorage.removeItem('hero_agent_t_desktop');
-        localStorage.setItem('hero_agent_reset_v9', '1');
-
+      const flag = isMobile ? 'hero_agent_reset_m3' : 'hero_agent_reset_v9';
+      if (!localStorage.getItem(flag)) {
+        localStorage.removeItem(agentKey);
+        localStorage.setItem(flag, '1');
       }
     } catch { /* ignore */ }
     return clampTransform(loadTransform(agentKey, agentDefault));
   });
   const [vehicleT, setVehicleT] = useState<Transform>(() => {
     try {
-      if (!localStorage.getItem('hero_vehicle_reset_v7')) {
-        localStorage.removeItem('hero_vehicle_t_mobile');
-        localStorage.removeItem('hero_vehicle_t_desktop');
-        localStorage.setItem('hero_vehicle_reset_v7', '1');
+      const flag = isMobile ? 'hero_vehicle_reset_m3' : 'hero_vehicle_reset_v7';
+      if (!localStorage.getItem(flag)) {
+        localStorage.removeItem(vehicleKey);
+        localStorage.setItem(flag, '1');
       }
     } catch { /* ignore */ }
-
     return clampTransform(loadTransform(vehicleKey, vehicleDefault));
   });
+
 
   useEffect(() => {
     try { localStorage.setItem(agentKey, JSON.stringify(agentT)); } catch { /* ignore */ }
