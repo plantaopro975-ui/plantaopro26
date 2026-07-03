@@ -694,8 +694,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           </ul>
           </div>
         </div>
-        {/* Faixa reservada (mobile) para viatura + boneco não sobreporem os cards */}
-        <div aria-hidden className="sm:hidden shrink-0 h-[28vh]" />
 
       </div>
     </section>
