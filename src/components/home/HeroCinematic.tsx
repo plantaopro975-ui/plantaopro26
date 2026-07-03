@@ -1,5 +1,5 @@
 import { Radio, MapPin } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/hero-command.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
@@ -52,22 +52,109 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     yPct: Math.min(92, Math.max(20, t.yPct)),
     scale: Math.min(isMobile ? 1.6 : 2.5, Math.max(0.45, t.scale)),
   });
-  const [agentT] = useState<Transform>(() =>
+  const [agentT, setAgentT] = useState<Transform>(() =>
     clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
-  const [vehicleT] = useState<Transform>(() =>
+  const [vehicleT, setVehicleT] = useState<Transform>(() =>
     clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
   );
 
+  useEffect(() => {
+    try { localStorage.setItem('hero_agent_t', JSON.stringify(agentT)); } catch { /* ignore */ }
+  }, [agentT]);
+  useEffect(() => {
+    try { localStorage.setItem('hero_vehicle_t', JSON.stringify(vehicleT)); } catch { /* ignore */ }
+  }, [vehicleT]);
+
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  /** Handler genérico de arraste (mobile + desktop) via Pointer Events. */
+  const makeDragHandlers = (
+    current: Transform,
+    setT: (t: Transform) => void,
+    doubleTapReset: Transform,
+  ) => {
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+    let startXPct = current.xPct;
+    let startYPct = current.yPct;
+    let moved = false;
+    let lastTap = 0;
+
+    return {
+      onPointerDown: (e: React.PointerEvent) => {
+        const section = sectionRef.current;
+        if (!section) return;
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        dragging = true;
+        moved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        startXPct = current.xPct;
+        startYPct = current.yPct;
+      },
+      onPointerMove: (e: React.PointerEvent) => {
+        if (!dragging) return;
+        const section = sectionRef.current;
+        if (!section) return;
+        const rect = section.getBoundingClientRect();
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.hypot(dx, dy) > 6) moved = true;
+        if (!moved) return;
+        e.preventDefault();
+        const next = clampT({
+          xPct: startXPct + (dx / rect.width) * 100,
+          yPct: startYPct + (dy / rect.height) * 100,
+          scale: current.scale,
+        });
+        setT(next);
+        current = next;
+        startX = e.clientX;
+        startY = e.clientY;
+        startXPct = next.xPct;
+        startYPct = next.yPct;
+      },
+      onPointerUp: (e: React.PointerEvent) => {
+        dragging = false;
+        try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+        // Double-tap para resetar posição
+        const now = Date.now();
+        if (!moved) {
+          if (now - lastTap < 350) {
+            setT(clampT(doubleTapReset));
+          }
+          lastTap = now;
+        }
+      },
+      onPointerCancel: () => { dragging = false; },
+      wasMoved: () => moved,
+    };
+  };
+
+  const vehicleDrag = useRef(
+    makeDragHandlers(vehicleT, setVehicleT, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 })
+  ).current;
+  // Recria handlers com o estado mais recente a cada render (para closures atualizadas)
+  const vDrag = makeDragHandlers(vehicleT, setVehicleT, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 });
+  void vehicleDrag;
 
 
 
 
 
 
+
+
+  const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 };
+  const agentReset = { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 };
+  const vDragH = makeDragHandlers(vehicleT, setVehicleT, vehicleReset);
+  const aDragH = makeDragHandlers(agentT, setAgentT, agentReset);
 
   return (
     <section
+      ref={sectionRef as any}
       className="relative h-full min-h-0 w-full flex-1 overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
       aria-label="Sistema Socioeducativo do Acre — Comando Operacional"
       style={{ maxHeight: '100%' }}
@@ -110,16 +197,23 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial — posição travada em mobile e web */}
+      {/* Viatura policial — arrastável em mobile e desktop; toque duplo reseta */}
       <div
-        className="police-vehicle z-[50] pointer-events-none block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none"
+        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none cursor-grab active:cursor-grabbing"
         style={{
           position: 'absolute',
           left: `${vehicleT.xPct}%`,
           top: `${vehicleT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
           transformOrigin: 'center',
+          touchAction: 'none',
         }}
+        role="img"
+        aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
+        onPointerDown={vDragH.onPointerDown}
+        onPointerMove={vDragH.onPointerMove}
+        onPointerUp={vDragH.onPointerUp}
+        onPointerCancel={vDragH.onPointerCancel}
       >
         <img
           src={policeVehicle}
@@ -134,8 +228,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </div>
 
 
-      {/* Agente tático — triple-tap tolerante a rolagem abre login master/admin */}
-      <AgentFigure agentT={agentT} />
+      {/* Agente tático — arrastável + triple-tap para admin */}
+      <AgentFigure agentT={agentT} dragHandlers={aDragH} />
 
 
 
@@ -394,11 +488,19 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   );
 }
 
-/** Boneco com triple-tap tolerante a rolagem. Pointer Events evitam listeners touch não-passivos e deixam o scroll nativo fluido. */
-function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: number } }) {
-  const startRef = useRef<{ x: number; y: number; t: number } | null>(null);
+type DragH = {
+  onPointerDown: (e: React.PointerEvent) => void;
+  onPointerMove: (e: React.PointerEvent) => void;
+  onPointerUp: (e: React.PointerEvent) => void;
+  onPointerCancel: () => void;
+  wasMoved: () => boolean;
+};
+
+/** Boneco arrastável + triple-tap para admin (só conta se não houve arraste). */
+function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: number; scale: number }; dragHandlers: DragH }) {
   const clicksRef = useRef(0);
   const timerRef = useRef<number | null>(null);
+  const tapStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
 
   const registerTap = () => {
     clicksRef.current += 1;
@@ -418,23 +520,26 @@ function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: 
   return (
     <div
       role="img"
-      aria-label="Agente tático — toque 3 vezes para acesso admin"
-      title="3 cliques = admin"
+      aria-label="Agente tático — arraste para reposicionar; toque 3 vezes para acesso admin"
+      title="Arraste para mover · 3 cliques rápidos = admin"
       onPointerDown={(e) => {
-        if (e.pointerType !== 'touch' && e.pointerType !== 'mouse') return;
-        startRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+        tapStartRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+        dragHandlers.onPointerDown(e);
       }}
+      onPointerMove={dragHandlers.onPointerMove}
       onPointerUp={(e) => {
-        const s = startRef.current;
-        startRef.current = null;
+        const s = tapStartRef.current;
+        tapStartRef.current = null;
+        dragHandlers.onPointerUp(e);
         if (!s) return;
         const moved = Math.hypot(e.clientX - s.x, e.clientY - s.y);
         const dur = Date.now() - s.t;
-        // Só conta como toque de admin se o dedo/mouse praticamente não moveu — rolagem passa livre.
-        if (moved < 10 && dur < 420) registerTap();
+        // Só conta como triple-tap se o dedo/mouse praticamente não moveu.
+        if (moved < 8 && dur < 420) registerTap();
       }}
       onPointerCancel={() => {
-        startRef.current = null;
+        tapStartRef.current = null;
+        dragHandlers.onPointerCancel();
       }}
       style={{
         position: 'absolute',
@@ -442,9 +547,9 @@ function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: 
         top: `${agentT.yPct}%`,
         transform: `translate(-50%, -50%) scale(${agentT.scale})`,
         transformOrigin: 'center',
-        touchAction: 'pan-y',
+        touchAction: 'none',
       }}
-      className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-pointer"
+      className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-grab active:cursor-grabbing"
     >
       <img
         src={agentFigure}
@@ -457,4 +562,5 @@ function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: 
     </div>
   );
 }
+
 

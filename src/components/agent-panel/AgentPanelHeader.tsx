@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
@@ -212,11 +213,26 @@ function ActionButton({
 
 export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const trial = getRemainingTrialDays();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
+    // Logout robusto para mobile: usa o contexto (limpa user/session/master),
+    // e força reload total para evitar guards presos em estado stale.
+    try {
+      await Promise.race([
+        signOut(),
+        new Promise((resolve) => setTimeout(resolve, 1200)),
+      ]);
+    } catch {
+      /* ignore */
+    }
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* ignore */
+    }
+    window.location.replace('/');
   };
 
   return (

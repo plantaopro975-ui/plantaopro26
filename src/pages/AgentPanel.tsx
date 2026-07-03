@@ -394,8 +394,8 @@ export default function AgentPanel() {
               <Button
                 variant="ghost"
                 onClick={async () => {
-                  await supabase.auth.signOut();
-                  navigate('/');
+                  try { await supabase.auth.signOut(); } catch { /* ignore */ }
+                  window.location.replace('/');
                 }}
                 className="w-full h-12 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl"
               >
@@ -434,8 +434,8 @@ export default function AgentPanel() {
               <Button
                 variant="ghost"
                 onClick={async () => {
-                  await supabase.auth.signOut();
-                  navigate('/');
+                  try { await supabase.auth.signOut(); } catch { /* ignore */ }
+                  window.location.replace('/');
                 }}
                 className="w-full h-12 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-xl"
               >
