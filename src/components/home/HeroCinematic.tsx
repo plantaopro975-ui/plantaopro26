@@ -258,9 +258,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     onPointerCancel: noop, onWheel: noop, wasMoved: () => false,
   };
   // Mobile: destravado (arraste + pinch/scroll para redimensionar). Desktop: travado.
-  const vDragH = isMobile ? vDragHRaw : lockedH;
-  const aDragH = isMobile ? aDragHRaw : lockedH;
-  const locked = !isMobile;
+  const vDragH = vDragHRaw;
+  const aDragH = aDragHRaw;
+  const locked = false;
 
   return (
     <section
@@ -311,15 +311,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div
-            className={`${isMobile ? 'viewport-draggable-asset cursor-grab active:cursor-grabbing ' : ''}police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none`}
+            className={`viewport-draggable-asset cursor-grab active:cursor-grabbing police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none`}
+
             style={{
               position: 'fixed',
               left: `${vehicleT.xPct}vw`,
               top: `${vehicleT.yPct}vh`,
               transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
               transformOrigin: 'center',
-              touchAction: isMobile ? 'none' : 'auto',
-              pointerEvents: isMobile ? 'auto' : 'none',
+              touchAction: 'none',
+              pointerEvents: 'auto',
               zIndex: 2147483000,
             }}
             role="img"
