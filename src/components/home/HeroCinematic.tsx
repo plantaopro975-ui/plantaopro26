@@ -319,6 +319,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div
+            ref={vehicleRef}
             className={`viewport-draggable-asset cursor-grab active:cursor-grabbing police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none`}
 
             style={{
