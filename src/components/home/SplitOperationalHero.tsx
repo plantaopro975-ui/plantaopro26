@@ -259,7 +259,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
 
               <div className="flex w-full items-start justify-between">
                 <div
-                  className="flex h-12 w-12 items-center justify-center rounded-md border ring-1 transition-all group-hover:scale-105"
+                  className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-md border ring-1 transition-all group-hover:scale-105"
                   style={{
                     color: `hsl(${t.accent})`,
                     borderColor: `hsl(${t.accent} / 0.45)`,
@@ -267,21 +267,22 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                     boxShadow: `0 0 0 1px hsl(${t.accent} / 0.15), 0 8px 24px -12px hsl(${t.accent} / 0.6)`,
                   }}
                 >
-                  <TeamInsignia team={t.key} />
+                  <TeamInsignia team={t.key} size={36} />
                 </div>
-                <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-primary/80 border border-primary/30 rounded-sm px-1.5 py-0.5">
+                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-primary/80 border border-primary/30 rounded-sm px-1.5 py-0.5">
                   {t.op}
                 </span>
               </div>
 
               <div className="flex flex-col gap-0.5">
-                <span className="font-serif text-xl sm:text-2xl leading-none text-foreground group-hover:text-primary transition-colors">
+                <span className="font-serif text-lg sm:text-2xl leading-none text-foreground group-hover:text-primary transition-colors">
                   {t.key}
                 </span>
-                <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <span className="font-mono text-[9px] sm:text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                   {t.motto}
                 </span>
               </div>
+
 
               <div className="mt-auto flex w-full items-center justify-between border-t border-primary/15 pt-2">
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
