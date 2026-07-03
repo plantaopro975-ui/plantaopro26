@@ -56,6 +56,7 @@ import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecover
 import { MasterLoginDialog } from '@/components/auth/MasterLoginDialog';
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { CommandStrip } from '@/components/home/CommandStrip';
+import { CommandCenterBar } from '@/components/home/CommandCenterBar';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
