@@ -306,15 +306,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div
-            className="viewport-draggable-asset police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none cursor-grab active:cursor-grabbing"
+            className={`${isMobile ? '' : 'viewport-draggable-asset '}police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none ${isMobile ? '' : 'cursor-grab active:cursor-grabbing'}`}
             style={{
               position: 'fixed',
               left: `${vehicleT.xPct}vw`,
               top: `${vehicleT.yPct}vh`,
               transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
               transformOrigin: 'center',
-              touchAction: 'none',
-              pointerEvents: 'auto',
+              touchAction: isMobile ? 'auto' : 'none',
+              pointerEvents: isMobile ? 'none' : 'auto',
               zIndex: 2147483000,
             }}
             role="img"
