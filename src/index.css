@@ -803,8 +803,10 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
    ================================ */
 .police-vehicle {
   position: relative;
-  /* Escala unitária do giroflex — controla ponto, blur e halo de forma coesa */
-  --beacon-unit: clamp(5px, 1.1vmin, 12px);
+  container-type: inline-size;
+  /* Escala unitária do giroflex — proporcional à largura real da viatura (cqi),
+     assim o giroflex acompanha zoom, resize e mudanças de viewport. */
+  --beacon-unit: clamp(4px, 2.2cqi, 18px);
   --beacon-size: calc(var(--beacon-unit) * 1.2);
   --beacon-blur: calc(var(--beacon-unit) * 0.18);
   --beacon-halo-1: calc(var(--beacon-unit) * 1.2);
