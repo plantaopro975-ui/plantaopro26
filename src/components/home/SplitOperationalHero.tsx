@@ -243,12 +243,16 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             )}
             style={{ ['--team-accent' as any]: t.accent }}
           >
-            <img
-              src={t.image}
-              alt={`Equipe ${t.key}`}
-              loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-            />
+            {/* 3D Object — tactical gear floating on card */}
+            <div className="absolute inset-0 flex items-center justify-center p-4">
+              <img
+                src={t.obj}
+                alt={`Equipe ${t.key} — objeto 3D tático`}
+                loading="lazy"
+                className="h-[55%] w-auto object-contain drop-shadow-[0_12px_24px_hsl(0_0%_0%/0.8)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-2 select-none"
+                draggable={false}
+              />
+            </div>
             <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_25%,hsl(217_62%_3%/0.65)_55%,hsl(217_62%_2%/0.98)_100%)]" />
             <div
               aria-hidden
