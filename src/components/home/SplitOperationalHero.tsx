@@ -5,10 +5,6 @@ import commandBg from '@/assets/hero/command-navy.jpg';
 import agent3d from '@/assets/hero/agent-ise-3d.png';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import brasao from '@/assets/hero/brasao-ise.png';
-import teamAlfa from '@/assets/teams/team-alfa.jpg';
-import teamBravo from '@/assets/teams/team-bravo.jpg';
-import teamCharlie from '@/assets/teams/team-charlie.jpg';
-import teamDelta from '@/assets/teams/team-delta.jpg';
 import objAlfa from '@/assets/teams/obj-alfa-shield.png';
 import objBravo from '@/assets/teams/obj-bravo-sword.png';
 import objCharlie from '@/assets/teams/obj-charlie-target.png';
@@ -27,13 +23,12 @@ const TEAMS: {
   op: string;
   role: string;
   accent: string;
-  image: string;
   obj: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Proteção',      op: 'OP-01', role: 'Defensiva',       accent: '28 92% 58%',  image: teamAlfa,    obj: objAlfa },
-  { key: 'BRAVO',   motto: 'Espada · Ação',          op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  image: teamBravo,   obj: objBravo },
-  { key: 'CHARLIE', motto: 'Alvo · Precisão',        op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  image: teamCharlie, obj: objCharlie },
-  { key: 'DELTA',   motto: 'Raio · Velocidade',      op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', image: teamDelta,   obj: objDelta },
+  { key: 'ALFA',    motto: 'Escudo · Proteção',      op: 'OP-01', role: 'Defensiva',       accent: '28 92% 58%',  obj: objAlfa },
+  { key: 'BRAVO',   motto: 'Espada · Ação',          op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo },
+  { key: 'CHARLIE', motto: 'Alvo · Precisão',        op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie },
+  { key: 'DELTA',   motto: 'Raio · Velocidade',      op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta },
 ];
 
 function LiveClock() {
@@ -240,7 +235,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             data-team-card
             onClick={() => onTeamClick(t.key)}
             className={cn(
-              'group relative flex min-h-[168px] sm:h-[300px] flex-col justify-end overflow-hidden rounded-2xl border p-4 text-left',
+              'group relative flex min-h-[168px] sm:h-[300px] flex-col overflow-hidden rounded-2xl border text-left',
               'border-primary/20 bg-card',
               'transition-all duration-500 hover:border-primary/60 hover:-translate-y-1',
               'shadow-[0_10px_30px_-15px_hsl(0_0%_0%/0.9)] hover:shadow-[0_25px_60px_-20px_hsl(var(--primary)/0.55)]',
@@ -248,13 +243,17 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             )}
             style={{ ['--team-accent' as any]: t.accent }}
           >
-            <img
-              src={t.image}
-              alt={`Equipe ${t.key}`}
-              loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_25%,hsl(217_62%_3%/0.65)_55%,hsl(217_62%_2%/0.98)_100%)]" />
+            {/* 3D Object — tactical gear floating on card (top half, above gradients) */}
+            <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-3 pt-5">
+              <img
+                src={t.obj}
+                alt={`Equipe ${t.key} — objeto 3D tático`}
+                loading="lazy"
+                className="max-h-[90%] max-w-[75%] object-contain drop-shadow-[0_8px_20px_hsl(0_0%_0%/0.7)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1 select-none"
+                draggable={false}
+              />
+            </div>
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,hsl(217_62%_3%/0.55)_60%,hsl(217_62%_2%/0.95)_100%)] z-10 pointer-events-none" />
             <div
               aria-hidden
               className="absolute inset-x-0 bottom-0 h-1/2 opacity-40 group-hover:opacity-70 transition-opacity duration-500"
