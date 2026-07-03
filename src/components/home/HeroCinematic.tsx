@@ -284,16 +284,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const agentReset = { xPct: isMobile ? 72 : 30, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.5 : 1 };
   const vDragHRaw = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
   const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
-  // Mobile: elementos ficam travados (sem arraste), apenas o triple-tap admin continua no boneco.
-  const noop = () => {};
-  const lockedH: DragH = {
-    onPointerDown: noop, onPointerMove: noop, onPointerUp: noop,
-    onPointerCancel: noop, onWheel: noop, wasMoved: () => false,
-  };
-  // Travado em mobile e desktop — sem arraste/redimensionamento. Triple-tap admin permanece no boneco.
-  const vDragH = lockedH;
-  const aDragH = lockedH;
-  const locked = true;
+  // Desbloqueado: usuário pode arrastar/redimensionar viatura e boneco em qualquer dispositivo.
+  const vDragH = vDragHRaw;
+  const aDragH = aDragHRaw;
+  const locked = false;
 
   return (
     <section
