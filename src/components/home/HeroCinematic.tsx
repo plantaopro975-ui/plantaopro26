@@ -600,6 +600,13 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     el.style.setProperty('--tilt-x', `0deg`);
                     el.style.setProperty('--tilt-y', `0deg`);
                     el.style.setProperty('--lift', `0px`);
+                    el.style.setProperty('--active', '0');
+                  }}
+                  onPointerDown={(e) => {
+                    e.currentTarget.style.setProperty('--press', '0.97');
+                  }}
+                  onPointerUp={(e) => {
+                    e.currentTarget.style.setProperty('--press', '1');
                   }}
                   className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-2 sm:p-3 lg:p-4 min-h-[130px] sm:min-h-[144px] lg:min-h-[172px] rounded-md border border-accent/40 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
