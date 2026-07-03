@@ -235,7 +235,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             data-team-card
             onClick={() => onTeamClick(t.key)}
             className={cn(
-              'group relative flex min-h-[168px] sm:h-[300px] flex-col justify-end overflow-hidden rounded-2xl border p-4 text-left',
+              'group relative flex min-h-[168px] sm:h-[300px] flex-col overflow-hidden rounded-2xl border text-left',
               'border-primary/20 bg-card',
               'transition-all duration-500 hover:border-primary/60 hover:-translate-y-1',
               'shadow-[0_10px_30px_-15px_hsl(0_0%_0%/0.9)] hover:shadow-[0_25px_60px_-20px_hsl(var(--primary)/0.55)]',
@@ -243,17 +243,17 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             )}
             style={{ ['--team-accent' as any]: t.accent }}
           >
-            {/* 3D Object — tactical gear floating on card */}
-            <div className="absolute inset-0 flex items-center justify-center p-4">
+            {/* 3D Object — tactical gear floating on card (top half, above gradients) */}
+            <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-3 pt-5">
               <img
                 src={t.obj}
                 alt={`Equipe ${t.key} — objeto 3D tático`}
                 loading="lazy"
-                className="h-[55%] w-auto object-contain drop-shadow-[0_12px_24px_hsl(0_0%_0%/0.8)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-2 select-none"
+                className="max-h-[90%] max-w-[75%] object-contain drop-shadow-[0_8px_20px_hsl(0_0%_0%/0.7)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1 select-none"
                 draggable={false}
               />
             </div>
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_25%,hsl(217_62%_3%/0.65)_55%,hsl(217_62%_2%/0.98)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,hsl(217_62%_3%/0.55)_60%,hsl(217_62%_2%/0.95)_100%)] z-10 pointer-events-none" />
             <div
               aria-hidden
               className="absolute inset-x-0 bottom-0 h-1/2 opacity-40 group-hover:opacity-70 transition-opacity duration-500"
