@@ -311,7 +311,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
   const vDragH = vDragHRaw;
   const aDragH = aDragHRaw;
-  const locked = false;
+  const locked = true;
 
   return (
     <section
