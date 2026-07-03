@@ -319,8 +319,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               top: `${vehicleT.yPct}vh`,
               transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
               transformOrigin: 'center',
-              touchAction: isMobile ? 'none' : 'auto',
-              pointerEvents: isMobile ? 'auto' : 'none',
+              touchAction: 'none',
+              pointerEvents: 'auto',
               zIndex: 2147483000,
             }}
             role="img"
