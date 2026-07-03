@@ -196,39 +196,43 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial — arrastável em mobile e desktop; toque duplo reseta */}
-      <div
-        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none cursor-grab active:cursor-grabbing"
-        style={{
-          position: 'absolute',
-          left: `${vehicleT.xPct}%`,
-          top: `${vehicleT.yPct}%`,
-          transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
-          transformOrigin: 'center',
-          touchAction: 'none',
-        }}
-        role="img"
-        aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
-        onPointerDown={vDragH.onPointerDown}
-        onPointerMove={vDragH.onPointerMove}
-        onPointerUp={vDragH.onPointerUp}
-        onPointerCancel={vDragH.onPointerCancel}
-      >
-        <img
-          src={policeVehicle}
-          alt="Viatura policial"
-          loading="lazy"
-          draggable={false}
-          className="h-full w-auto object-contain pointer-events-none"
-        />
-        {/* Giroflex realista */}
-        <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
-        <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
-      </div>
+      {/* Viatura + Agente — arrastáveis em qualquer parte da tela (portal viewport-fixed) */}
+      {typeof document !== 'undefined' && createPortal(
+        <>
+          <div
+            className="police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none cursor-grab active:cursor-grabbing"
+            style={{
+              position: 'fixed',
+              left: `${vehicleT.xPct}vw`,
+              top: `${vehicleT.yPct}vh`,
+              transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
+              transformOrigin: 'center',
+              touchAction: 'none',
+              zIndex: 50,
+            }}
+            role="img"
+            aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
+            onPointerDown={vDragH.onPointerDown}
+            onPointerMove={vDragH.onPointerMove}
+            onPointerUp={vDragH.onPointerUp}
+            onPointerCancel={vDragH.onPointerCancel}
+          >
+            <img
+              src={policeVehicle}
+              alt="Viatura policial"
+              loading="lazy"
+              draggable={false}
+              className="h-full w-auto object-contain pointer-events-none"
+            />
+            <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
+            <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
+          </div>
 
+          <AgentFigure agentT={agentT} dragHandlers={aDragH} />
+        </>,
+        document.body
+      )}
 
-      {/* Agente tático — arrastável + triple-tap para admin */}
-      <AgentFigure agentT={agentT} dragHandlers={aDragH} />
 
 
 
