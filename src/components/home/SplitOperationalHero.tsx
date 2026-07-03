@@ -170,6 +170,19 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               className="relative z-10 h-full max-h-[420px] lg:max-h-[500px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none"
               draggable={false}
             />
+            <img
+              src={agent3d}
+              alt="Agente Socioeducativo — figura 3D"
+              className="relative z-10 h-full max-h-[420px] lg:max-h-[500px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none"
+              draggable={false}
+            />
+            {/* Tactical vehicle floating badge */}
+            <img
+              src={vehicle3d}
+              alt="Viatura ISE — Mitsubishi L200"
+              className="absolute z-20 bottom-2 -right-2 lg:-right-6 w-[42%] max-w-[220px] object-contain drop-shadow-[0_18px_24px_hsl(217_62%_2%/0.85)] select-none animate-[float_6s_ease-in-out_infinite]"
+              draggable={false}
+            />
           </div>
 
           {/* RIGHT — Glass HUD */}
