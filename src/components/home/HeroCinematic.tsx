@@ -298,7 +298,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div
-            className="police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none cursor-grab active:cursor-grabbing"
+            className="viewport-draggable-asset police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none cursor-grab active:cursor-grabbing"
             style={{
               position: 'fixed',
               left: `${vehicleT.xPct}vw`,
@@ -306,7 +306,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
               transformOrigin: 'center',
               touchAction: 'none',
-              zIndex: 50,
+              pointerEvents: 'auto',
+              zIndex: 80,
             }}
             role="img"
             aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
@@ -314,6 +315,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             onPointerMove={vDragH.onPointerMove}
             onPointerUp={vDragH.onPointerUp}
             onPointerCancel={vDragH.onPointerCancel}
+            onWheel={vDragH.onWheel}
           >
             <img
               src={policeVehicle}
@@ -589,16 +591,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   );
 }
 
-type DragH = {
-  onPointerDown: (e: React.PointerEvent) => void;
-  onPointerMove: (e: React.PointerEvent) => void;
-  onPointerUp: (e: React.PointerEvent) => void;
-  onPointerCancel: () => void;
-  wasMoved: () => boolean;
-};
-
 /** Boneco arrastável + triple-tap para admin (só conta se não houve arraste). */
-function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: number; scale: number }; dragHandlers: DragH }) {
+function AgentFigure({ agentT, dragHandlers }: { agentT: Transform; dragHandlers: DragH }) {
   const clicksRef = useRef(0);
   const timerRef = useRef<number | null>(null);
   const tapStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
@@ -638,10 +632,11 @@ function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: n
         // Só conta como triple-tap se o dedo/mouse praticamente não moveu.
         if (moved < 8 && dur < 420) registerTap();
       }}
-      onPointerCancel={() => {
+      onPointerCancel={(e) => {
         tapStartRef.current = null;
-        dragHandlers.onPointerCancel();
+        dragHandlers.onPointerCancel(e);
       }}
+      onWheel={dragHandlers.onWheel}
       style={{
         position: 'fixed',
         left: `${agentT.xPct}vw`,
@@ -649,9 +644,10 @@ function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: n
         transform: `translate(-50%, -50%) scale(${agentT.scale})`,
         transformOrigin: 'center',
         touchAction: 'none',
-        zIndex: 60,
+        pointerEvents: 'auto',
+        zIndex: 90,
       }}
-      className="agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
+      className="viewport-draggable-asset agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
     >
       <img
         src={agentFigure}
