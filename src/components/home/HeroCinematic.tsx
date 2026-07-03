@@ -309,24 +309,19 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div
-            className={`${isMobile ? '' : 'viewport-draggable-asset '}police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none ${isMobile ? '' : 'cursor-grab active:cursor-grabbing'}`}
+            className={`police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none`}
             style={{
               position: 'fixed',
               left: `${vehicleT.xPct}vw`,
               top: `${vehicleT.yPct}vh`,
               transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
               transformOrigin: 'center',
-              touchAction: isMobile ? 'auto' : 'none',
-              pointerEvents: isMobile ? 'none' : 'auto',
+              touchAction: 'auto',
+              pointerEvents: 'none',
               zIndex: 2147483000,
             }}
             role="img"
-            aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
-            onPointerDown={vDragH.onPointerDown}
-            onPointerMove={vDragH.onPointerMove}
-            onPointerUp={vDragH.onPointerUp}
-            onPointerCancel={vDragH.onPointerCancel}
-            onWheel={vDragH.onWheel}
+            aria-label="Viatura policial"
           >
             <img
               src={policeVehicle}
@@ -339,7 +334,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
           </div>
 
-          <AgentFigure agentT={agentT} dragHandlers={aDragH} locked={isMobile} />
+          <AgentFigure agentT={agentT} dragHandlers={aDragH} locked={locked} />
         </>,
         document.body
       )}
