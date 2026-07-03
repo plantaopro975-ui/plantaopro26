@@ -254,6 +254,24 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   }, [vehicleT, vehicleKey]);
 
   const sectionRef = useRef<HTMLElement | null>(null);
+  const vehicleRef = useRef<HTMLDivElement | null>(null);
+
+  // ResizeObserver: mantém --beacon-unit proporcional à largura real da viatura,
+  // garantindo alinhamento perfeito do giroflex ao teto em qualquer zoom/resize.
+  useEffect(() => {
+    const el = vehicleRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const apply = (w: number) => {
+      const unit = Math.max(4, Math.min(18, w * 0.022));
+      el.style.setProperty('--beacon-unit', `${unit}px`);
+    };
+    apply(el.getBoundingClientRect().width);
+    const ro = new ResizeObserver((entries) => {
+      for (const e of entries) apply(e.contentRect.width);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 };
   const agentReset = { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 };
