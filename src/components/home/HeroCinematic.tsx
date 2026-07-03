@@ -651,11 +651,11 @@ function AgentFigure({ agentT, dragHandlers, locked = false }: { agentT: Transfo
         top: `${agentT.yPct}vh`,
         transform: `translate(-50%, -50%) scale(${agentT.scale})`,
         transformOrigin: 'center',
-        touchAction: 'none',
+        touchAction: locked ? 'manipulation' : 'none',
         pointerEvents: 'auto',
         zIndex: 2147483001,
       }}
-      className="viewport-draggable-asset agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
+      className={`${locked ? '' : 'viewport-draggable-asset '}agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 ${locked ? '' : 'cursor-grab active:cursor-grabbing'}`}
     >
       <img
         src={agentFigure}
