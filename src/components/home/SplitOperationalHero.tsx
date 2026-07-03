@@ -171,19 +171,20 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             </span>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h1
               id="mission-title"
-              className="font-serif text-xl sm:text-3xl lg:text-4xl leading-[1.08] text-foreground"
+              className="font-serif text-[22px] leading-[1.1] sm:text-3xl lg:text-4xl text-foreground break-words"
             >
               Comando Operacional
               <br />
               <span className="text-primary italic">Socioeducativo</span>
             </h1>
-            <p className="mt-1.5 font-mono text-[10px] sm:text-[12px] uppercase tracking-[0.22em] sm:tracking-[0.24em] text-muted-foreground">
+            <p className="mt-2 font-mono text-[10px] sm:text-[12px] uppercase tracking-[0.2em] sm:tracking-[0.24em] text-muted-foreground">
               Gestão de Escalas · Agentes
             </p>
           </div>
+
 
           <LiveClock />
 
