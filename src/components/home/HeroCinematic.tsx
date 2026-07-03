@@ -86,8 +86,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
     return {
       onPointerDown: (e: React.PointerEvent) => {
-        const section = sectionRef.current;
-        if (!section) return;
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
         dragging = true;
         moved = false;
@@ -98,17 +96,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       },
       onPointerMove: (e: React.PointerEvent) => {
         if (!dragging) return;
-        const section = sectionRef.current;
-        if (!section) return;
-        const rect = section.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
         if (Math.hypot(dx, dy) > 6) moved = true;
         if (!moved) return;
         e.preventDefault();
         const next = clampT({
-          xPct: startXPct + (dx / rect.width) * 100,
-          yPct: startYPct + (dy / rect.height) * 100,
+          xPct: startXPct + (dx / vw) * 100,
+          yPct: startYPct + (dy / vh) * 100,
           scale: current.scale,
         });
         setT(next);
