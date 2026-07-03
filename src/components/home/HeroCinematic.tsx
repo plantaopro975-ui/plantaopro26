@@ -240,7 +240,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         localStorage.setItem('hero_agent_reset_v3', '1');
       }
     } catch { /* ignore */ }
-    return clampTransform(loadTransform(agentKey, { xPct: isMobile ? 46 : 30, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.05 : 1 }));
+    return clampTransform(loadTransform(agentKey, { xPct: isMobile ? 68 : 30, yPct: isMobile ? 62 : 55, scale: isMobile ? 0.85 : 1 }));
   });
   const [vehicleT, setVehicleT] = useState<Transform>(() => {
     try {
