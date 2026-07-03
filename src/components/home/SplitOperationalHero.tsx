@@ -133,13 +133,14 @@ function LiveClock() {
   const ss = now.getSeconds().toString().padStart(2, '0');
   const day = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
   return (
-    <div className="flex items-baseline gap-3 font-mono tabular-nums">
-      <span className="text-2xl sm:text-3xl font-bold tracking-[0.08em] text-primary">
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono tabular-nums">
+      <span className="text-xl sm:text-3xl font-bold tracking-[0.08em] text-primary">
         {hh}:{mm}
-        <span className="text-primary/50 text-lg">:{ss}</span>
+        <span className="hidden sm:inline text-primary/50 text-lg">:{ss}</span>
       </span>
-      <span className="uppercase text-[10px] tracking-[0.24em] text-muted-foreground">{day}</span>
+      <span className="uppercase text-[9px] sm:text-[10px] tracking-[0.22em] text-muted-foreground">{day}</span>
     </div>
+
   );
 }
 
@@ -148,24 +149,24 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
     <section className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 sm:gap-4 px-2 sm:px-4 pb-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       {/* LEFT — Mission Briefing */}
       <article
-        className="relative overflow-hidden rounded-lg border border-primary/25 bg-[linear-gradient(155deg,hsl(var(--card))_0%,hsl(220_45%_5%)_100%)] p-4 sm:p-6 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]"
+        className="relative overflow-hidden rounded-lg border border-primary/25 bg-[linear-gradient(155deg,hsl(var(--card))_0%,hsl(220_45%_5%)_100%)] p-3 sm:p-6 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)] order-2 lg:order-1"
         aria-labelledby="mission-title"
       >
         <MissionMap />
 
         {/* corner brackets */}
-        <span aria-hidden className="pointer-events-none absolute top-2 left-2 h-4 w-4 border-l-2 border-t-2 border-primary/60" />
-        <span aria-hidden className="pointer-events-none absolute top-2 right-2 h-4 w-4 border-r-2 border-t-2 border-primary/60" />
-        <span aria-hidden className="pointer-events-none absolute bottom-2 left-2 h-4 w-4 border-l-2 border-b-2 border-primary/60" />
-        <span aria-hidden className="pointer-events-none absolute bottom-2 right-2 h-4 w-4 border-r-2 border-b-2 border-primary/60" />
+        <span aria-hidden className="pointer-events-none absolute top-2 left-2 h-3 w-3 sm:h-4 sm:w-4 border-l-2 border-t-2 border-primary/60" />
+        <span aria-hidden className="pointer-events-none absolute top-2 right-2 h-3 w-3 sm:h-4 sm:w-4 border-r-2 border-t-2 border-primary/60" />
+        <span aria-hidden className="pointer-events-none absolute bottom-2 left-2 h-3 w-3 sm:h-4 sm:w-4 border-l-2 border-b-2 border-primary/60" />
+        <span aria-hidden className="pointer-events-none absolute bottom-2 right-2 h-3 w-3 sm:h-4 sm:w-4 border-r-2 border-b-2 border-primary/60" />
 
-        <div className="relative flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <span className="inline-flex items-center gap-2 rounded-sm border border-primary/40 bg-primary/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
+        <div className="relative flex flex-col gap-3 sm:gap-4">
+          <div className="flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-sm border border-primary/40 bg-primary/10 px-2 py-0.5 sm:px-2.5 sm:py-1 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.24em] sm:tracking-[0.28em] text-primary">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Briefing Ativo
+              Briefing
             </span>
-            <span className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase">
+            <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] text-muted-foreground uppercase">
               ISE · Acre
             </span>
           </div>
@@ -173,14 +174,14 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
           <div>
             <h1
               id="mission-title"
-              className="font-serif text-2xl sm:text-3xl lg:text-4xl leading-[1.05] text-foreground"
+              className="font-serif text-xl sm:text-3xl lg:text-4xl leading-[1.08] text-foreground"
             >
               Comando Operacional
               <br />
               <span className="text-primary italic">Socioeducativo</span>
             </h1>
-            <p className="mt-2 font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.24em] text-muted-foreground">
-              Gestão de Escalas · Agentes de Segurança
+            <p className="mt-1.5 font-mono text-[10px] sm:text-[12px] uppercase tracking-[0.22em] sm:tracking-[0.24em] text-muted-foreground">
+              Gestão de Escalas · Agentes
             </p>
           </div>
 
@@ -188,23 +189,23 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
 
           <dl className="grid grid-cols-3 gap-2 pt-2 border-t border-primary/15">
             <div>
-              <dt className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground">Equipes</dt>
-              <dd className="font-mono text-lg font-bold text-foreground tabular-nums">04</dd>
+              <dt className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Equipes</dt>
+              <dd className="font-mono text-base sm:text-lg font-bold text-foreground tabular-nums">04</dd>
             </div>
             <div>
-              <dt className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground">Ciclo</dt>
-              <dd className="font-mono text-lg font-bold text-foreground tabular-nums">24H</dd>
+              <dt className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Ciclo</dt>
+              <dd className="font-mono text-base sm:text-lg font-bold text-foreground tabular-nums">24H</dd>
             </div>
             <div>
-              <dt className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground">Descanso</dt>
-              <dd className="font-mono text-lg font-bold text-foreground tabular-nums">72H</dd>
+              <dt className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Descanso</dt>
+              <dd className="font-mono text-base sm:text-lg font-bold text-foreground tabular-nums">72H</dd>
             </div>
           </dl>
 
           <button
             type="button"
             onClick={onPrimaryAction}
-            className="group mt-1 inline-flex w-fit items-center gap-2 rounded-sm border border-primary/50 bg-primary/10 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.28em] text-primary hover:bg-primary/20 hover:border-primary transition-all"
+            className="group mt-1 inline-flex w-full sm:w-fit items-center justify-center sm:justify-start gap-2 rounded-sm border border-primary/50 bg-primary/10 px-4 py-2.5 sm:py-2 font-mono text-[11px] uppercase tracking-[0.24em] sm:tracking-[0.28em] text-primary hover:bg-primary/20 hover:border-primary transition-all"
           >
             <span>Iniciar Autenticação</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -215,15 +216,16 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
       </article>
 
       {/* RIGHT — Team Selector Grid */}
-      <div className="relative">
+      <div className="relative order-1 lg:order-2">
         <div className="mb-2 flex items-center justify-between px-1">
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+          <span className="font-mono text-[10px] uppercase tracking-[0.24em] sm:tracking-[0.28em] text-muted-foreground">
             Selecione a Equipe
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary/80">
+          <span className="font-mono text-[10px] uppercase tracking-[0.24em] sm:tracking-[0.28em] text-primary/80">
             4 Divisões
           </span>
         </div>
+
 
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
           {TEAMS.map((t) => (
@@ -257,7 +259,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
 
               <div className="flex w-full items-start justify-between">
                 <div
-                  className="flex h-12 w-12 items-center justify-center rounded-md border ring-1 transition-all group-hover:scale-105"
+                  className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-md border ring-1 transition-all group-hover:scale-105"
                   style={{
                     color: `hsl(${t.accent})`,
                     borderColor: `hsl(${t.accent} / 0.45)`,
@@ -265,21 +267,22 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                     boxShadow: `0 0 0 1px hsl(${t.accent} / 0.15), 0 8px 24px -12px hsl(${t.accent} / 0.6)`,
                   }}
                 >
-                  <TeamInsignia team={t.key} />
+                  <TeamInsignia team={t.key} size={36} />
                 </div>
-                <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-primary/80 border border-primary/30 rounded-sm px-1.5 py-0.5">
+                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-primary/80 border border-primary/30 rounded-sm px-1.5 py-0.5">
                   {t.op}
                 </span>
               </div>
 
               <div className="flex flex-col gap-0.5">
-                <span className="font-serif text-xl sm:text-2xl leading-none text-foreground group-hover:text-primary transition-colors">
+                <span className="font-serif text-lg sm:text-2xl leading-none text-foreground group-hover:text-primary transition-colors">
                   {t.key}
                 </span>
-                <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <span className="font-mono text-[9px] sm:text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                   {t.motto}
                 </span>
               </div>
+
 
               <div className="mt-auto flex w-full items-center justify-between border-t border-primary/15 pt-2">
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
