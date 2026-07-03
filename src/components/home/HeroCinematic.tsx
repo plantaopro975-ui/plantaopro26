@@ -234,16 +234,17 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   });
   const agentKey = syncDevices ? 'hero_agent_t' : (isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop');
   const vehicleKey = syncDevices ? 'hero_vehicle_t' : (isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop');
+  const agentDefault = { xPct: isMobile ? 78 : 30, yPct: isMobile ? 88 : 55, scale: isMobile ? 0.95 : 1 };
+  const vehicleDefault = { xPct: isMobile ? 22 : 18, yPct: isMobile ? 90 : 55, scale: isMobile ? 0.55 : 1 };
   const [agentT, setAgentT] = useState<Transform>(() => {
-    // Reset único: reposiciona o boneco junto à viatura.
     try {
-      if (!localStorage.getItem('hero_agent_reset_v6')) {
+      if (!localStorage.getItem('hero_agent_reset_v7')) {
         localStorage.removeItem('hero_agent_t_mobile');
         localStorage.removeItem('hero_agent_t_desktop');
-        localStorage.setItem('hero_agent_reset_v6', '1');
+        localStorage.setItem('hero_agent_reset_v7', '1');
       }
     } catch { /* ignore */ }
-    return clampTransform(loadTransform(agentKey, { xPct: isMobile ? 72 : 30, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.5 : 1 }));
+    return clampTransform(loadTransform(agentKey, agentDefault));
   });
   const [vehicleT, setVehicleT] = useState<Transform>(() => {
     try {
@@ -253,7 +254,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         localStorage.setItem('hero_vehicle_reset_v5', '1');
       }
     } catch { /* ignore */ }
-    return clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 28 : 18, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.55 : 1 }));
+    return clampTransform(loadTransform(vehicleKey, vehicleDefault));
   });
 
   useEffect(() => {
@@ -265,9 +266,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
   // Recarrega transforms quando a chave muda (ao alternar sincronização).
   useEffect(() => {
-    setAgentT(clampTransform(loadTransform(agentKey, { xPct: isMobile ? 72 : 30, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.5 : 1 })));
-    setVehicleT(clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 28 : 18, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.55 : 1 })));
+    setAgentT(clampTransform(loadTransform(agentKey, agentDefault)));
+    setVehicleT(clampTransform(loadTransform(vehicleKey, vehicleDefault)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [syncDevices]);
 
   const toggleSync = () => {
