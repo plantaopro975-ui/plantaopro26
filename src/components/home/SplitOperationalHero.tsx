@@ -9,6 +9,10 @@ import teamAlfa from '@/assets/teams/team-alfa.jpg';
 import teamBravo from '@/assets/teams/team-bravo.jpg';
 import teamCharlie from '@/assets/teams/team-charlie.jpg';
 import teamDelta from '@/assets/teams/team-delta.jpg';
+import objAlfa from '@/assets/teams/obj-alfa-shield.png';
+import objBravo from '@/assets/teams/obj-bravo-sword.png';
+import objCharlie from '@/assets/teams/obj-charlie-target.png';
+import objDelta from '@/assets/teams/obj-delta-bolt.png';
 
 interface Props {
   onTeamClick: (team: string) => void;
@@ -24,11 +28,12 @@ const TEAMS: {
   role: string;
   accent: string;
   image: string;
+  obj: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Proteção',      op: 'OP-01', role: 'Defensiva',       accent: '28 92% 58%',  image: teamAlfa },
-  { key: 'BRAVO',   motto: 'Espada · Ação',          op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  image: teamBravo },
-  { key: 'CHARLIE', motto: 'Alvo · Precisão',        op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  image: teamCharlie },
-  { key: 'DELTA',   motto: 'Raio · Velocidade',      op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', image: teamDelta },
+  { key: 'ALFA',    motto: 'Escudo · Proteção',      op: 'OP-01', role: 'Defensiva',       accent: '28 92% 58%',  image: teamAlfa,    obj: objAlfa },
+  { key: 'BRAVO',   motto: 'Espada · Ação',          op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  image: teamBravo,   obj: objBravo },
+  { key: 'CHARLIE', motto: 'Alvo · Precisão',        op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  image: teamCharlie, obj: objCharlie },
+  { key: 'DELTA',   motto: 'Raio · Velocidade',      op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', image: teamDelta,   obj: objDelta },
 ];
 
 function LiveClock() {
