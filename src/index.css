@@ -841,7 +841,7 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
     0 0 var(--beacon-halo-1) var(--beacon-halo-1-spread) rgba(255,80,80,0.95),
     0 0 var(--beacon-halo-2) var(--beacon-halo-2-spread) rgba(239,68,68,0.5),
     0 0 var(--beacon-halo-3) var(--beacon-halo-3-spread) rgba(220,38,38,0.22);
-  animation: vehicle-strobe-red 1.2s steps(1, end) infinite;
+  animation: vehicle-strobe-red 1.2s cubic-bezier(.2,.9,.25,1) infinite;
 }
 .vehicle-fx--beacon-blue {
   left: 44.5%;
@@ -850,21 +850,24 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
     0 0 var(--beacon-halo-1) var(--beacon-halo-1-spread) rgba(130,190,255,0.95),
     0 0 var(--beacon-halo-2) var(--beacon-halo-2-spread) rgba(59,130,246,0.5),
     0 0 var(--beacon-halo-3) var(--beacon-halo-3-spread) rgba(37,99,235,0.22);
-  animation: vehicle-strobe-blue 1.2s steps(1, end) infinite;
+  animation: vehicle-strobe-blue 1.2s cubic-bezier(.2,.9,.25,1) infinite;
 }
-/* Padrão real de barra de luz: flash duplo rápido (~60ms on/off), alterna lados */
+/* Pulsos naturais com intensidade variável: rise rápido + decay suave, com micro-flicker */
 @keyframes vehicle-strobe-red {
-  0%, 4%    { opacity: 1; }
-  5%, 9%    { opacity: 0; }
-  10%, 14%  { opacity: 1; }
-  15%, 100% { opacity: 0; }
+  0%   { opacity: 0;    transform: translate(-50%, -50%) scale(0.85); }
+  3%   { opacity: 1;    transform: translate(-50%, -50%) scale(1.15); }
+  8%   { opacity: 0.55; transform: translate(-50%, -50%) scale(1.02); }
+  11%  { opacity: 0.95; transform: translate(-50%, -50%) scale(1.12); }
+  20%  { opacity: 0.15; transform: translate(-50%, -50%) scale(0.95); }
+  30%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
 }
 @keyframes vehicle-strobe-blue {
-  0%, 49%   { opacity: 0; }
-  50%, 54%  { opacity: 1; }
-  55%, 59%  { opacity: 0; }
-  60%, 64%  { opacity: 1; }
-  65%, 100% { opacity: 0; }
+  0%, 45%   { opacity: 0;    transform: translate(-50%, -50%) scale(0.85); }
+  50%  { opacity: 1;    transform: translate(-50%, -50%) scale(1.15); }
+  55%  { opacity: 0.55; transform: translate(-50%, -50%) scale(1.02); }
+  58%  { opacity: 0.95; transform: translate(-50%, -50%) scale(1.12); }
+  68%  { opacity: 0.15; transform: translate(-50%, -50%) scale(0.95); }
+  78%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
 }
 
 /* Faróis: cones de luz quente saindo da frente */
