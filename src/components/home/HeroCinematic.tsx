@@ -301,8 +301,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     return () => ro.disconnect();
   }, []);
 
-  const vehicleReset = { xPct: isMobile ? 28 : 18, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.55 : 1 };
-  const agentReset = { xPct: isMobile ? 72 : 30, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.5 : 1 };
+  const vehicleReset = vehicleDefault;
+  const agentReset = agentDefault;
+
   const vDragHRaw = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
   const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
   // Travado nas posições atuais salvas em localStorage (por dispositivo).
