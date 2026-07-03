@@ -812,54 +812,59 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   max-width: none;
   /* Escala unitária do giroflex — proporcional à largura real da viatura (cqi),
      assim o giroflex acompanha zoom, resize e mudanças de viewport. */
-  --beacon-unit: clamp(4px, 2.2cqi, 18px);
-  --beacon-size: calc(var(--beacon-unit) * 1.2);
-  --beacon-blur: calc(var(--beacon-unit) * 0.18);
-  --beacon-halo-1: calc(var(--beacon-unit) * 1.2);
-  --beacon-halo-1-spread: calc(var(--beacon-unit) * 0.35);
-  --beacon-halo-2: calc(var(--beacon-unit) * 2.8);
-  --beacon-halo-2-spread: calc(var(--beacon-unit) * 0.9);
+  --beacon-unit: clamp(5px, 2.6cqi, 22px);
+  --beacon-size: calc(var(--beacon-unit) * 1.05);
+  --beacon-blur: calc(var(--beacon-unit) * 0.35);
+  --beacon-halo-1: calc(var(--beacon-unit) * 2.2);
+  --beacon-halo-1-spread: calc(var(--beacon-unit) * 0.55);
+  --beacon-halo-2: calc(var(--beacon-unit) * 5.5);
+  --beacon-halo-2-spread: calc(var(--beacon-unit) * 1.4);
+  --beacon-halo-3: calc(var(--beacon-unit) * 10);
+  --beacon-halo-3-spread: calc(var(--beacon-unit) * 2.2);
 }
 .vehicle-fx { position: absolute; pointer-events: none; border-radius: 9999px; will-change: opacity, transform, filter; transform-style: preserve-3d; }
 
-/* Giroflex: dimensionado 100% por variáveis, escala consistente em qualquer viewport */
+/* Giroflex realista: núcleo branco quente + halo largo + bloom atmosférico */
 .vehicle-fx--beacon {
   top: 19.5%;
   width: var(--beacon-size);
   height: var(--beacon-size);
-  filter: blur(var(--beacon-blur));
+  filter: blur(var(--beacon-blur)) saturate(1.4);
   mix-blend-mode: screen;
   opacity: 0;
   transform: translate(-50%, -50%);
 }
 .vehicle-fx--beacon-red {
   left: 53%;
-  background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(255,80,80,0.9) 30%, rgba(239,68,68,0.35) 60%, rgba(239,68,68,0) 80%);
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,220,220,0.98) 18%, rgba(255,90,90,0.92) 42%, rgba(239,68,68,0.4) 70%, rgba(239,68,68,0) 90%);
   box-shadow:
-    0 0 var(--beacon-halo-1) var(--beacon-halo-1-spread) rgba(239,68,68,0.7),
-    0 0 var(--beacon-halo-2) var(--beacon-halo-2-spread) rgba(239,68,68,0.25);
-  animation: vehicle-strobe-red 1.4s steps(1, end) infinite;
+    0 0 var(--beacon-halo-1) var(--beacon-halo-1-spread) rgba(255,80,80,0.95),
+    0 0 var(--beacon-halo-2) var(--beacon-halo-2-spread) rgba(239,68,68,0.5),
+    0 0 var(--beacon-halo-3) var(--beacon-halo-3-spread) rgba(220,38,38,0.22);
+  animation: vehicle-strobe-red 1.2s steps(1, end) infinite;
 }
 .vehicle-fx--beacon-blue {
   left: 44.5%;
-  background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(120,180,255,0.9) 30%, rgba(59,130,246,0.35) 60%, rgba(59,130,246,0) 80%);
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(220,235,255,0.98) 18%, rgba(130,190,255,0.92) 42%, rgba(59,130,246,0.4) 70%, rgba(59,130,246,0) 90%);
   box-shadow:
-    0 0 var(--beacon-halo-1) var(--beacon-halo-1-spread) rgba(59,130,246,0.7),
-    0 0 var(--beacon-halo-2) var(--beacon-halo-2-spread) rgba(59,130,246,0.25);
-  animation: vehicle-strobe-blue 1.4s steps(1, end) infinite;
+    0 0 var(--beacon-halo-1) var(--beacon-halo-1-spread) rgba(130,190,255,0.95),
+    0 0 var(--beacon-halo-2) var(--beacon-halo-2-spread) rgba(59,130,246,0.5),
+    0 0 var(--beacon-halo-3) var(--beacon-halo-3-spread) rgba(37,99,235,0.22);
+  animation: vehicle-strobe-blue 1.2s steps(1, end) infinite;
 }
+/* Padrão real de barra de luz: flash duplo rápido (~60ms on/off), alterna lados */
 @keyframes vehicle-strobe-red {
-  0%, 8%   { opacity: 1; }
-  10%, 18% { opacity: 0; }
-  20%, 26% { opacity: 1; }
-  28%, 100%{ opacity: 0; }
+  0%, 4%    { opacity: 1; }
+  5%, 9%    { opacity: 0; }
+  10%, 14%  { opacity: 1; }
+  15%, 100% { opacity: 0; }
 }
 @keyframes vehicle-strobe-blue {
-  0%, 48%  { opacity: 0; }
-  50%, 56% { opacity: 1; }
-  58%, 66% { opacity: 0; }
-  68%, 74% { opacity: 1; }
-  76%, 100%{ opacity: 0; }
+  0%, 49%   { opacity: 0; }
+  50%, 54%  { opacity: 1; }
+  55%, 59%  { opacity: 0; }
+  60%, 64%  { opacity: 1; }
+  65%, 100% { opacity: 0; }
 }
 
 /* Faróis: cones de luz quente saindo da frente */
