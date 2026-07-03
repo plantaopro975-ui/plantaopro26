@@ -250,7 +250,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         localStorage.setItem('hero_vehicle_reset_v2', '1');
       }
     } catch { /* ignore */ }
-    return clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }));
+    return clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 62 : 55, scale: isMobile ? 0.9 : 1 }));
   });
 
   useEffect(() => {
