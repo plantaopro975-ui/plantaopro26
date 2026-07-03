@@ -280,8 +280,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     return () => ro.disconnect();
   }, []);
 
-  const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 };
-  const agentReset = { xPct: isMobile ? 46 : 30, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.05 : 1 };
+  const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 62 : 55, scale: isMobile ? 0.9 : 1 };
+  const agentReset = { xPct: isMobile ? 68 : 30, yPct: isMobile ? 62 : 55, scale: isMobile ? 0.85 : 1 };
   const vDragHRaw = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
   const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
   // Mobile: elementos ficam travados (sem arraste), apenas o triple-tap admin continua no boneco.
