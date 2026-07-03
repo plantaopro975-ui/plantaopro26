@@ -488,11 +488,19 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   );
 }
 
-/** Boneco com triple-tap tolerante a rolagem. Pointer Events evitam listeners touch não-passivos e deixam o scroll nativo fluido. */
-function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: number } }) {
-  const startRef = useRef<{ x: number; y: number; t: number } | null>(null);
+type DragH = {
+  onPointerDown: (e: React.PointerEvent) => void;
+  onPointerMove: (e: React.PointerEvent) => void;
+  onPointerUp: (e: React.PointerEvent) => void;
+  onPointerCancel: () => void;
+  wasMoved: () => boolean;
+};
+
+/** Boneco arrastável + triple-tap para admin (só conta se não houve arraste). */
+function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: number; scale: number }; dragHandlers: DragH }) {
   const clicksRef = useRef(0);
   const timerRef = useRef<number | null>(null);
+  const tapStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
 
   const registerTap = () => {
     clicksRef.current += 1;
@@ -512,23 +520,26 @@ function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: 
   return (
     <div
       role="img"
-      aria-label="Agente tático — toque 3 vezes para acesso admin"
-      title="3 cliques = admin"
+      aria-label="Agente tático — arraste para reposicionar; toque 3 vezes para acesso admin"
+      title="Arraste para mover · 3 cliques rápidos = admin"
       onPointerDown={(e) => {
-        if (e.pointerType !== 'touch' && e.pointerType !== 'mouse') return;
-        startRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+        tapStartRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+        dragHandlers.onPointerDown(e);
       }}
+      onPointerMove={dragHandlers.onPointerMove}
       onPointerUp={(e) => {
-        const s = startRef.current;
-        startRef.current = null;
+        const s = tapStartRef.current;
+        tapStartRef.current = null;
+        dragHandlers.onPointerUp(e);
         if (!s) return;
         const moved = Math.hypot(e.clientX - s.x, e.clientY - s.y);
         const dur = Date.now() - s.t;
-        // Só conta como toque de admin se o dedo/mouse praticamente não moveu — rolagem passa livre.
-        if (moved < 10 && dur < 420) registerTap();
+        // Só conta como triple-tap se o dedo/mouse praticamente não moveu.
+        if (moved < 8 && dur < 420) registerTap();
       }}
       onPointerCancel={() => {
-        startRef.current = null;
+        tapStartRef.current = null;
+        dragHandlers.onPointerCancel();
       }}
       style={{
         position: 'absolute',
@@ -536,9 +547,9 @@ function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: 
         top: `${agentT.yPct}%`,
         transform: `translate(-50%, -50%) scale(${agentT.scale})`,
         transformOrigin: 'center',
-        touchAction: 'pan-y',
+        touchAction: 'none',
       }}
-      className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-pointer"
+      className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-grab active:cursor-grabbing"
     >
       <img
         src={agentFigure}
@@ -551,4 +562,5 @@ function AgentFigure({ agentT }: { agentT: { xPct: number; yPct: number; scale: 
     </div>
   );
 }
+
 
