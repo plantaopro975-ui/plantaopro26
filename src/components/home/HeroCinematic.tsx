@@ -239,10 +239,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
   const [agentT, setAgentT] = useState<Transform>(() => {
     try {
-      if (!localStorage.getItem('hero_agent_reset_v8')) {
+      if (!localStorage.getItem('hero_agent_reset_v9')) {
         localStorage.removeItem('hero_agent_t_mobile');
         localStorage.removeItem('hero_agent_t_desktop');
-        localStorage.setItem('hero_agent_reset_v8', '1');
+        localStorage.setItem('hero_agent_reset_v9', '1');
 
       }
     } catch { /* ignore */ }
@@ -250,10 +250,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   });
   const [vehicleT, setVehicleT] = useState<Transform>(() => {
     try {
-      if (!localStorage.getItem('hero_vehicle_reset_v6')) {
+      if (!localStorage.getItem('hero_vehicle_reset_v7')) {
         localStorage.removeItem('hero_vehicle_t_mobile');
         localStorage.removeItem('hero_vehicle_t_desktop');
-        localStorage.setItem('hero_vehicle_reset_v6', '1');
+        localStorage.setItem('hero_vehicle_reset_v7', '1');
       }
     } catch { /* ignore */ }
 
