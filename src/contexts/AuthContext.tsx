@@ -248,7 +248,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     pushDiagEvent('info', 'signout');
-    
+
     // Register logout in access_logs before signing out
     if (user?.id) {
       try {
@@ -262,13 +262,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn('Failed to log logout:', logErr);
       }
     }
-    
-    await supabase.auth.signOut();
+
+    // Clear local state immediately so UI cannot access protected data
     setUser(null);
     setSession(null);
     setUserRole(null);
     setMasterSession(null);
+
+    // Invalidate session globally on the server (revokes refresh token on all devices)
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (err) {
+      console.warn('Global signOut failed, falling back to local:', err);
+      try { await supabase.auth.signOut({ scope: 'local' }); } catch { /* ignore */ }
+    }
+
+    // Purge any lingering Supabase auth tokens from browser storages
+    try {
+      const purge = (storage: Storage) => {
+        const keys: string[] = [];
+        for (let i = 0; i < storage.length; i++) {
+          const k = storage.key(i);
+          if (k && (k.startsWith('sb-') || k.includes('supabase.auth'))) keys.push(k);
+        }
+        keys.forEach((k) => storage.removeItem(k));
+      };
+      purge(localStorage);
+      purge(sessionStorage);
+    } catch { /* ignore */ }
   };
+
 
   // IMPORTANT: do not derive privileges from client-side storage.
   // masterSession is only a UI session marker; actual privileges must come from backend roles.
