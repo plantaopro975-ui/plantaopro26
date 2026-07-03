@@ -231,11 +231,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   // Chaves separadas por viewport para não sobrescrever a preferência entre mobile e desktop.
   const agentKey = isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop';
   const vehicleKey = isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop';
-  const [agentT, setAgentT] = useState<Transform>(() =>
-    clampTransform(loadTransform(agentKey, { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
-  );
+  const [agentT, setAgentT] = useState<Transform>(() => {
+    // Reset único: reposiciona o boneco junto à viatura.
+    try {
+      if (!localStorage.getItem('hero_agent_reset_v3')) {
+        localStorage.removeItem('hero_agent_t_mobile');
+        localStorage.removeItem('hero_agent_t_desktop');
+        localStorage.setItem('hero_agent_reset_v3', '1');
+      }
+    } catch { /* ignore */ }
+    return clampTransform(loadTransform(agentKey, { xPct: isMobile ? 46 : 30, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.05 : 1 }));
+  });
   const [vehicleT, setVehicleT] = useState<Transform>(() => {
-    // Reset one-time: se a viatura foi movida para fora da tela, restaura o padrão.
     try {
       if (!localStorage.getItem('hero_vehicle_reset_v2')) {
         localStorage.removeItem('hero_vehicle_t_mobile');
@@ -274,7 +281,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   }, []);
 
   const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 };
-  const agentReset = { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 };
+  const agentReset = { xPct: isMobile ? 46 : 30, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.05 : 1 };
   const vDragHRaw = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
   const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
   // Mobile: elementos ficam travados (sem arraste), apenas o triple-tap admin continua no boneco.
