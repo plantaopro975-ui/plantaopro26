@@ -806,6 +806,8 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 .police-vehicle {
   position: relative;
   container-type: inline-size;
+  transform-origin: center center;
+  transform-style: preserve-3d;
   width: max-content;
   max-width: none;
   /* Escala unitária do giroflex — proporcional à largura real da viatura (cqi),
