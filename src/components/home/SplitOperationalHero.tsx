@@ -176,14 +176,33 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               className="relative z-10 h-full max-h-[420px] lg:max-h-[500px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none"
               draggable={false}
             />
-            {/* Tactical vehicle floating badge */}
-            <img
-              src={vehicle3d}
-              alt="Viatura ISE — Mitsubishi L200"
-              className="absolute z-20 bottom-2 -right-2 lg:-right-6 w-[42%] max-w-[220px] object-contain drop-shadow-[0_18px_24px_hsl(217_62%_2%/0.85)] select-none animate-[float_6s_ease-in-out_infinite]"
-              draggable={false}
-            />
-          </div>
+            {/* Tactical vehicle with animated giroflex */}
+            <div className="absolute z-20 bottom-2 -right-2 lg:-right-6 w-[42%] max-w-[220px] animate-[float_6s_ease-in-out_infinite]">
+              <img
+                src={vehicle3d}
+                alt="Viatura ISE — Toyota SW4 tática"
+                className="w-full object-contain drop-shadow-[0_18px_24px_hsl(217_62%_2%/0.85)] select-none"
+                draggable={false}
+              />
+              {/* Red strobe */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute rounded-full bg-red-500 blur-md"
+                style={{
+                  top: '14%', left: '30%', width: '14%', height: '6%',
+                  animation: 'giroflex-red 0.9s steps(2,end) infinite',
+                }}
+              />
+              {/* Blue strobe */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute rounded-full bg-sky-400 blur-md"
+                style={{
+                  top: '14%', left: '52%', width: '14%', height: '6%',
+                  animation: 'giroflex-blue 0.9s steps(2,end) infinite',
+                }}
+              />
+            </div>
 
           {/* RIGHT — Glass HUD */}
           <div className="relative rounded-2xl border border-primary/25 bg-background/50 backdrop-blur-xl p-4 sm:p-5 shadow-[inset_0_1px_0_hsl(var(--primary)/0.18)] z-10">
