@@ -144,11 +144,11 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
           </div>
 
           {/* CENTER — 3D Agent (hero visual) */}
-          <div className="relative flex justify-center items-end h-full min-h-[320px] lg:min-h-[440px] order-first lg:order-none">
+          <div className="relative flex flex-col justify-end items-center h-full min-h-[380px] lg:min-h-[500px] order-first lg:order-none pb-28 sm:pb-32 lg:pb-36">
             {/* Radial platform glow */}
             <div
               aria-hidden
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 h-24 w-[80%] rounded-[50%]"
+              className="absolute bottom-24 left-1/2 -translate-x-1/2 h-24 w-[80%] rounded-[50%]"
               style={{
                 background: 'radial-gradient(ellipse at center, hsl(var(--primary)/0.35) 0%, transparent 70%)',
                 filter: 'blur(18px)',
@@ -158,7 +158,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             <svg
               aria-hidden
               viewBox="0 0 400 400"
-              className="absolute inset-0 h-full w-full opacity-40 animate-[spin_60s_linear_infinite]"
+              className="absolute inset-x-0 top-0 h-[70%] w-full opacity-40 animate-[spin_60s_linear_infinite]"
             >
               <circle cx="200" cy="200" r="180" fill="none" stroke="hsl(var(--primary)/0.4)" strokeWidth="0.8" strokeDasharray="4 8" />
               <circle cx="200" cy="200" r="140" fill="none" stroke="hsl(var(--primary)/0.3)" strokeWidth="0.6" strokeDasharray="2 6" />
@@ -167,34 +167,26 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             <img
               src={agent3d}
               alt="Agente Socioeducativo — figura 3D"
-              className="relative z-10 h-full max-h-[420px] lg:max-h-[500px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none"
+              className="relative z-10 h-auto max-h-[300px] sm:max-h-[360px] lg:max-h-[440px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none"
               draggable={false}
             />
-            {/* Tactical vehicle with animated giroflex */}
-            <div className="absolute z-20 -bottom-4 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:-right-4 w-[70%] max-w-[280px] lg:w-[55%] lg:max-w-[300px] animate-[float_6s_ease-in-out_infinite]">
+            {/* Tactical vehicle with animated giroflex — below agent, no overlap */}
+            <div className="absolute z-20 bottom-2 left-1/2 -translate-x-1/2 w-[75%] max-w-[300px] animate-[float_6s_ease-in-out_infinite]">
               <img
                 src={vehicle3d}
                 alt="Viatura ISE — Toyota SW4 tática"
                 className="w-full object-contain drop-shadow-[0_22px_28px_hsl(217_62%_2%/0.9)] select-none"
                 draggable={false}
               />
-              {/* Red strobe */}
               <span
                 aria-hidden
                 className="pointer-events-none absolute rounded-full bg-red-500 blur-md"
-                style={{
-                  top: '14%', left: '30%', width: '14%', height: '6%',
-                  animation: 'giroflex-red 0.9s steps(2,end) infinite',
-                }}
+                style={{ top: '14%', left: '30%', width: '14%', height: '6%', animation: 'giroflex-red 0.9s steps(2,end) infinite' }}
               />
-              {/* Blue strobe */}
               <span
                 aria-hidden
                 className="pointer-events-none absolute rounded-full bg-sky-400 blur-md"
-                style={{
-                  top: '14%', left: '52%', width: '14%', height: '6%',
-                  animation: 'giroflex-blue 0.9s steps(2,end) infinite',
-                }}
+                style={{ top: '14%', left: '52%', width: '14%', height: '6%', animation: 'giroflex-blue 0.9s steps(2,end) infinite' }}
               />
             </div>
           </div>
