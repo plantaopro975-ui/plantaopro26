@@ -164,29 +164,30 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               <circle cx="200" cy="200" r="140" fill="none" stroke="hsl(var(--primary)/0.3)" strokeWidth="0.6" strokeDasharray="2 6" />
               <circle cx="200" cy="200" r="100" fill="none" stroke="hsl(var(--primary)/0.25)" strokeWidth="0.5" />
             </svg>
-            {/* Tactical vehicle BEHIND agent */}
-            <div className="absolute z-[5] top-[18%] left-1/2 -translate-x-1/2 w-[85%] max-w-[360px] opacity-80 animate-[float_6s_ease-in-out_infinite]">
+            {/* Tactical vehicle — realistic, static, offset behind agent */}
+            <div className="absolute z-[5] bottom-4 left-0 sm:-left-4 lg:-left-8 w-[70%] max-w-[380px]">
               <img
                 src={vehicle3d}
-                alt="Viatura ISE — Toyota SW4 tática"
-                className="w-full object-contain drop-shadow-[0_22px_28px_hsl(217_62%_2%/0.9)] select-none blur-[1px]"
+                alt="Viatura ISE — SW4 tática preta institucional"
+                className="w-full object-contain drop-shadow-[0_28px_32px_hsl(217_62%_2%/0.95)] select-none"
                 draggable={false}
+                loading="lazy"
               />
               <span
                 aria-hidden
                 className="pointer-events-none absolute rounded-full bg-red-500 blur-md"
-                style={{ top: '14%', left: '30%', width: '14%', height: '6%', animation: 'giroflex-red 0.9s steps(2,end) infinite' }}
+                style={{ top: '21%', left: '42%', width: '10%', height: '4%', animation: 'giroflex-red 0.9s steps(2,end) infinite' }}
               />
               <span
                 aria-hidden
                 className="pointer-events-none absolute rounded-full bg-sky-400 blur-md"
-                style={{ top: '14%', left: '52%', width: '14%', height: '6%', animation: 'giroflex-blue 0.9s steps(2,end) infinite' }}
+                style={{ top: '21%', left: '54%', width: '10%', height: '4%', animation: 'giroflex-blue 0.9s steps(2,end) infinite' }}
               />
             </div>
             <img
               src={agent3d}
               alt="Agente Socioeducativo — figura 3D"
-              className="relative z-10 h-auto max-h-[320px] sm:max-h-[380px] lg:max-h-[460px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none"
+              className="relative z-10 h-auto max-h-[320px] sm:max-h-[380px] lg:max-h-[460px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none translate-x-[15%] sm:translate-x-[20%]"
               draggable={false}
             />
           </div>
