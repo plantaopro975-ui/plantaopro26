@@ -234,9 +234,17 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const [agentT, setAgentT] = useState<Transform>(() =>
     clampTransform(loadTransform(agentKey, { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
-  const [vehicleT, setVehicleT] = useState<Transform>(() =>
-    clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
-  );
+  const [vehicleT, setVehicleT] = useState<Transform>(() => {
+    // Reset one-time: se a viatura foi movida para fora da tela, restaura o padrão.
+    try {
+      if (!localStorage.getItem('hero_vehicle_reset_v2')) {
+        localStorage.removeItem('hero_vehicle_t_mobile');
+        localStorage.removeItem('hero_vehicle_t_desktop');
+        localStorage.setItem('hero_vehicle_reset_v2', '1');
+      }
+    } catch { /* ignore */ }
+    return clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }));
+  });
 
   useEffect(() => {
     try { localStorage.setItem(agentKey, JSON.stringify(agentT)); } catch { /* ignore */ }
