@@ -234,14 +234,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   });
   const agentKey = syncDevices ? 'hero_agent_t' : (isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop');
   const vehicleKey = syncDevices ? 'hero_vehicle_t' : (isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop');
-  const agentDefault = { xPct: isMobile ? 78 : 30, yPct: isMobile ? 88 : 55, scale: isMobile ? 0.95 : 1 };
-  const vehicleDefault = { xPct: isMobile ? 22 : 18, yPct: isMobile ? 90 : 55, scale: isMobile ? 0.55 : 1 };
+  const agentDefault = { xPct: isMobile ? 78 : 30, yPct: isMobile ? 95 : 55, scale: isMobile ? 0.9 : 1 };
+  const vehicleDefault = { xPct: isMobile ? 22 : 18, yPct: isMobile ? 96 : 55, scale: isMobile ? 0.5 : 1 };
   const [agentT, setAgentT] = useState<Transform>(() => {
     try {
-      if (!localStorage.getItem('hero_agent_reset_v7')) {
+      if (!localStorage.getItem('hero_agent_reset_v8')) {
         localStorage.removeItem('hero_agent_t_mobile');
         localStorage.removeItem('hero_agent_t_desktop');
-        localStorage.setItem('hero_agent_reset_v7', '1');
+        localStorage.setItem('hero_agent_reset_v8', '1');
+
       }
     } catch { /* ignore */ }
     return clampTransform(loadTransform(agentKey, agentDefault));
