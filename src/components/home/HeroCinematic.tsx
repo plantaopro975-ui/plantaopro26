@@ -545,14 +545,15 @@ function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: n
         dragHandlers.onPointerCancel();
       }}
       style={{
-        position: 'absolute',
-        left: `${agentT.xPct}%`,
-        top: `${agentT.yPct}%`,
+        position: 'fixed',
+        left: `${agentT.xPct}vw`,
+        top: `${agentT.yPct}vh`,
         transform: `translate(-50%, -50%) scale(${agentT.scale})`,
         transformOrigin: 'center',
         touchAction: 'none',
+        zIndex: 60,
       }}
-      className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-grab active:cursor-grabbing"
+      className="agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
     >
       <img
         src={agentFigure}
