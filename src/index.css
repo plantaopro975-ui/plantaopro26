@@ -816,16 +816,16 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 
 /* Giroflex: dimensionado 100% por variáveis, escala consistente em qualquer viewport */
 .vehicle-fx--beacon {
-  top: 15%;
+  top: 28%;
   width: var(--beacon-size);
   height: var(--beacon-size);
   filter: blur(var(--beacon-blur));
   mix-blend-mode: screen;
   opacity: 0;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -50%);
 }
 .vehicle-fx--beacon-red {
-  left: 47%;
+  left: 48.5%;
   background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(255,80,80,0.9) 30%, rgba(239,68,68,0.35) 60%, rgba(239,68,68,0) 80%);
   box-shadow:
     0 0 var(--beacon-halo-1) var(--beacon-halo-1-spread) rgba(239,68,68,0.7),
@@ -833,7 +833,7 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   animation: vehicle-strobe-red 1.4s steps(1, end) infinite;
 }
 .vehicle-fx--beacon-blue {
-  left: 53%;
+  left: 51.5%;
   background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(120,180,255,0.9) 30%, rgba(59,130,246,0.35) 60%, rgba(59,130,246,0) 80%);
   box-shadow:
     0 0 var(--beacon-halo-1) var(--beacon-halo-1-spread) rgba(59,130,246,0.7),
