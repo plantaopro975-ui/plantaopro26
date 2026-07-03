@@ -60,6 +60,7 @@ import { CommandCenterBar } from '@/components/home/CommandCenterBar';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
+import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
 
@@ -1250,9 +1251,9 @@ export default function Index() {
 
 
 
-        {/* Cinematic institutional hero — teams integradas como bento 3D */}
-        <div className="min-h-0 flex-1 px-2 sm:px-4 pt-1">
-          <HeroCinematic
+        {/* Split Operational Hero — briefing + tactical team selector */}
+        <div className="min-h-0 flex-1 pt-2 sm:pt-3">
+          <SplitOperationalHero
             onPrimaryAction={() => {
               const first = document.querySelector<HTMLElement>('[data-team-card]');
               first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
