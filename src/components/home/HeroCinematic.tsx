@@ -263,6 +263,22 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     try { localStorage.setItem(vehicleKey, JSON.stringify(vehicleT)); } catch { /* ignore */ }
   }, [vehicleT, vehicleKey]);
 
+  // Recarrega transforms quando a chave muda (ao alternar sincronização).
+  useEffect(() => {
+    setAgentT(clampTransform(loadTransform(agentKey, { xPct: isMobile ? 72 : 30, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.5 : 1 })));
+    setVehicleT(clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 28 : 18, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.55 : 1 })));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [syncDevices]);
+
+  const toggleSync = () => {
+    setSyncDevices((prev) => {
+      const next = !prev;
+      try { localStorage.setItem('hero_sync_devices', next ? '1' : '0'); } catch { /* ignore */ }
+      return next;
+    });
+  };
+
+
   const sectionRef = useRef<HTMLElement | null>(null);
   const vehicleRef = useRef<HTMLDivElement | null>(null);
 
