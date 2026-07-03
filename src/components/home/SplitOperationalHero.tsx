@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { ArrowUpRight, Radio, ShieldCheck, Users, Activity, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import commandBg from '@/assets/hero/command-navy.jpg';
-import agent3d from '@/assets/hero/agent-3d-hero.png';
+import agent3d from '@/assets/hero/agent-ise-3d.png';
+import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
+import brasao from '@/assets/hero/brasao-ise.png';
 import teamAlfa from '@/assets/teams/team-alfa.jpg';
 import teamBravo from '@/assets/teams/team-bravo.jpg';
 import teamCharlie from '@/assets/teams/team-charlie.jpg';
@@ -84,7 +86,13 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         <div className="relative grid gap-4 p-5 sm:p-8 lg:p-10 lg:grid-cols-[1.15fr_1fr_0.8fr] items-center min-h-[440px] sm:min-h-[500px]">
           {/* LEFT — Mission text */}
           <div className="min-w-0 flex flex-col gap-4 relative z-10">
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap">
+              <img
+                src={brasao}
+                alt="Brasão Instituto Socioeducativo do Acre"
+                className="h-12 w-auto drop-shadow-[0_4px_10px_hsl(217_62%_2%/0.8)] select-none"
+                draggable={false}
+              />
               <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-emerald-300 backdrop-blur">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Operacional · Online
@@ -160,6 +168,19 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               src={agent3d}
               alt="Agente Socioeducativo — figura 3D"
               className="relative z-10 h-full max-h-[420px] lg:max-h-[500px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none"
+              draggable={false}
+            />
+            <img
+              src={agent3d}
+              alt="Agente Socioeducativo — figura 3D"
+              className="relative z-10 h-full max-h-[420px] lg:max-h-[500px] w-auto object-contain drop-shadow-[0_30px_40px_hsl(217_62%_2%/0.9)] select-none"
+              draggable={false}
+            />
+            {/* Tactical vehicle floating badge */}
+            <img
+              src={vehicle3d}
+              alt="Viatura ISE — Mitsubishi L200"
+              className="absolute z-20 bottom-2 -right-2 lg:-right-6 w-[42%] max-w-[220px] object-contain drop-shadow-[0_18px_24px_hsl(217_62%_2%/0.85)] select-none animate-[float_6s_ease-in-out_infinite]"
               draggable={false}
             />
           </div>
