@@ -147,8 +147,14 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
 
 
+  const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 };
+  const agentReset = { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 };
+  const vDragH = makeDragHandlers(vehicleT, setVehicleT, vehicleReset);
+  const aDragH = makeDragHandlers(agentT, setAgentT, agentReset);
+
   return (
     <section
+      ref={sectionRef as any}
       className="relative h-full min-h-0 w-full flex-1 overflow-hidden rounded-lg border border-primary/30 hero-cinematic"
       aria-label="Sistema Socioeducativo do Acre — Comando Operacional"
       style={{ maxHeight: '100%' }}
