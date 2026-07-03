@@ -475,6 +475,18 @@ body {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  /* Mobile: garantir que o boneco e a viatura capturem o toque (arraste),
+     sobrepondo o pan-y do container hero. */
+  .hero-cinematic .agent-figure,
+  .hero-cinematic .police-vehicle {
+    touch-action: none !important;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    z-index: 60;
+  }
+
+
   .home-viewport-shell > * {
     flex: 0 0 auto;
   }
