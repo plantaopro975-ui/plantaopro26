@@ -357,6 +357,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
         ))}
       </svg>
 
+      {/* Toggle: sincronizar posição/tamanho entre mobile e desktop */}
+      <button
+        type="button"
+        onClick={toggleSync}
+        className="absolute top-2 right-2 z-20 rounded border border-primary/40 bg-background/70 px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-primary/90 backdrop-blur hover:bg-primary/10 transition"
+        aria-pressed={syncDevices}
+        title="Usa as mesmas coordenadas em mobile e desktop"
+      >
+        Sync {syncDevices ? 'ON' : 'OFF'}
+      </button>
+
+
 
       {/* Viatura + Agente — arrastáveis em qualquer parte da tela (portal viewport-fixed) */}
       {typeof document !== 'undefined' && createPortal(
