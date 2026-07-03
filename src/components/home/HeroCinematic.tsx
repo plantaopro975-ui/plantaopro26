@@ -254,8 +254,11 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     onPointerDown: noop, onPointerMove: noop, onPointerUp: noop,
     onPointerCancel: noop, onWheel: noop, wasMoved: () => false,
   };
-  const vDragH = isMobile ? lockedH : vDragHRaw;
-  const aDragH = isMobile ? lockedH : aDragHRaw;
+  // Travado em mobile e web: boneco e viatura ficam fixos. Triple-tap admin continua funcionando no boneco.
+  void vDragHRaw; void aDragHRaw;
+  const vDragH = lockedH;
+  const aDragH = lockedH;
+  const locked = true;
 
   return (
     <section
