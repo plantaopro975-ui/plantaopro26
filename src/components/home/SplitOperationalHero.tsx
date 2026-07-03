@@ -133,13 +133,14 @@ function LiveClock() {
   const ss = now.getSeconds().toString().padStart(2, '0');
   const day = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
   return (
-    <div className="flex items-baseline gap-3 font-mono tabular-nums">
-      <span className="text-2xl sm:text-3xl font-bold tracking-[0.08em] text-primary">
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono tabular-nums">
+      <span className="text-xl sm:text-3xl font-bold tracking-[0.08em] text-primary">
         {hh}:{mm}
-        <span className="text-primary/50 text-lg">:{ss}</span>
+        <span className="hidden sm:inline text-primary/50 text-lg">:{ss}</span>
       </span>
-      <span className="uppercase text-[10px] tracking-[0.24em] text-muted-foreground">{day}</span>
+      <span className="uppercase text-[9px] sm:text-[10px] tracking-[0.22em] text-muted-foreground">{day}</span>
     </div>
+
   );
 }
 
