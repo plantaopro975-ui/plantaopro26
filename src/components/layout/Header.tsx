@@ -103,19 +103,19 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       {...props}
       className={cn(
         "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6 overflow-hidden",
-        "border-b border-border/60 shadow-[0_8px_28px_-12px_hsl(28_60%_2%/0.85)]",
+        "border-b border-primary/25 shadow-[0_8px_28px_-12px_hsl(217_62%_2%/0.9)]",
         "backdrop-blur-xl",
         props.className,
       )}
       style={{
-        backgroundImage: `linear-gradient(180deg,hsl(28_38%_6%/0.88),hsl(30_30%_9%/0.92)), url(${headerBg})`,
+        backgroundImage: `linear-gradient(180deg,hsl(217_62%_5%/0.94),hsl(215_55%_8%/0.96)), url(${headerBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-      {/* Warm gold accent strip */}
-      <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(42_85%_55%)_30%,hsl(42_85%_55%)_70%,transparent_100%)] opacity-90" />
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+      {/* Institutional amber accent strip */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90" />
+      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
 
 
