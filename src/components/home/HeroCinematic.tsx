@@ -1,5 +1,5 @@
 import { Radio, MapPin } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { toast } from 'sonner';
@@ -16,6 +16,186 @@ import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 
 type TeamName = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
+
+type Transform = { xPct: number; yPct: number; scale: number };
+
+type DragH = {
+  onPointerDown: (e: React.PointerEvent) => void;
+  onPointerMove: (e: React.PointerEvent) => void;
+  onPointerUp: (e: React.PointerEvent) => void;
+  onPointerCancel: (e: React.PointerEvent) => void;
+  onWheel: (e: React.WheelEvent) => void;
+  wasMoved: () => boolean;
+};
+
+type PointerPoint = { x: number; y: number };
+
+type GestureSession =
+  | { mode: 'drag'; startPoint: PointerPoint; startTransform: Transform }
+  | { mode: 'pinch'; startCentroid: PointerPoint; startDistance: number; startTransform: Transform };
+
+const SCALE_LIMITS = { min: 0.35, max: 2.8 };
+
+const clampTransform = (t: Transform): Transform => ({
+  xPct: Math.min(100, Math.max(0, t.xPct)),
+  yPct: Math.min(100, Math.max(0, t.yPct)),
+  scale: Math.min(SCALE_LIMITS.max, Math.max(SCALE_LIMITS.min, t.scale)),
+});
+
+const getViewportSize = () => ({
+  width: Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1),
+  height: Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1),
+});
+
+const getDistance = (a: PointerPoint, b: PointerPoint) => Math.hypot(a.x - b.x, a.y - b.y);
+
+const getCentroid = (a: PointerPoint, b: PointerPoint): PointerPoint => ({
+  x: (a.x + b.x) / 2,
+  y: (a.y + b.y) / 2,
+});
+
+function useViewportAssetControls(
+  transform: Transform,
+  setTransform: React.Dispatch<React.SetStateAction<Transform>>,
+  resetTransform: Transform,
+): DragH {
+  const transformRef = useRef(transform);
+  const pointersRef = useRef<Map<number, PointerPoint>>(new Map());
+  const sessionRef = useRef<GestureSession | null>(null);
+  const movedRef = useRef(false);
+  const lastTapRef = useRef(0);
+
+  useEffect(() => {
+    transformRef.current = transform;
+  }, [transform]);
+
+  const applyTransform = useCallback((next: Transform) => {
+    const clamped = clampTransform(next);
+    transformRef.current = clamped;
+    setTransform(clamped);
+  }, [setTransform]);
+
+  const startPinchSession = useCallback(() => {
+    const points = Array.from(pointersRef.current.values()).slice(0, 2);
+    if (points.length < 2) return;
+    sessionRef.current = {
+      mode: 'pinch',
+      startCentroid: getCentroid(points[0], points[1]),
+      startDistance: Math.max(1, getDistance(points[0], points[1])),
+      startTransform: transformRef.current,
+    };
+  }, []);
+
+  const startDragSession = useCallback((point: PointerPoint) => {
+    sessionRef.current = {
+      mode: 'drag',
+      startPoint: point,
+      startTransform: transformRef.current,
+    };
+  }, []);
+
+  return {
+    onPointerDown: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* ignore unsupported capture */ }
+
+      const point = { x: e.clientX, y: e.clientY };
+      pointersRef.current.set(e.pointerId, point);
+      movedRef.current = false;
+
+      if (pointersRef.current.size >= 2) {
+        movedRef.current = true;
+        startPinchSession();
+        return;
+      }
+
+      startDragSession(point);
+    },
+    onPointerMove: (e) => {
+      if (!pointersRef.current.has(e.pointerId)) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      const activePoints = Array.from(pointersRef.current.values());
+      const { width, height } = getViewportSize();
+
+      if (activePoints.length >= 2) {
+        if (!sessionRef.current || sessionRef.current.mode !== 'pinch') startPinchSession();
+        const session = sessionRef.current;
+        if (!session || session.mode !== 'pinch') return;
+
+        const [first, second] = activePoints;
+        const centroid = getCentroid(first, second);
+        const distance = Math.max(1, getDistance(first, second));
+
+        movedRef.current = true;
+        applyTransform({
+          xPct: session.startTransform.xPct + ((centroid.x - session.startCentroid.x) / width) * 100,
+          yPct: session.startTransform.yPct + ((centroid.y - session.startCentroid.y) / height) * 100,
+          scale: session.startTransform.scale * (distance / session.startDistance),
+        });
+        return;
+      }
+
+      const session = sessionRef.current;
+      if (!session || session.mode !== 'drag') return;
+
+      const point = activePoints[0];
+      const dx = point.x - session.startPoint.x;
+      const dy = point.y - session.startPoint.y;
+
+      if (Math.hypot(dx, dy) > 3) movedRef.current = true;
+      if (!movedRef.current) return;
+
+      applyTransform({
+        xPct: session.startTransform.xPct + (dx / width) * 100,
+        yPct: session.startTransform.yPct + (dy / height) * 100,
+        scale: session.startTransform.scale,
+      });
+    },
+    onPointerUp: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* ignore unsupported capture */ }
+
+      pointersRef.current.delete(e.pointerId);
+
+      if (pointersRef.current.size === 1) {
+        startDragSession(Array.from(pointersRef.current.values())[0]);
+        return;
+      }
+
+      if (pointersRef.current.size === 0) {
+        if (!movedRef.current) {
+          const now = Date.now();
+          if (now - lastTapRef.current < 350) {
+            applyTransform(resetTransform);
+            lastTapRef.current = 0;
+          } else {
+            lastTapRef.current = now;
+          }
+        }
+        sessionRef.current = null;
+      }
+    },
+    onPointerCancel: (e) => {
+      pointersRef.current.delete(e.pointerId);
+      if (pointersRef.current.size === 0) sessionRef.current = null;
+    },
+    onWheel: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      applyTransform({
+        ...transformRef.current,
+        scale: transformRef.current.scale * (e.deltaY < 0 ? 1.08 : 0.92),
+      });
+    },
+    wasMoved: () => movedRef.current,
+  };
+}
 
 interface HeroCinematicProps {
   onPrimaryAction?: () => void;
@@ -38,7 +218,6 @@ const TEAMS: { name: TeamName; icon: string; kicker: string; motion: string }[] 
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const onlineCount = useOnlinePresence();
 
-  type Transform = { xPct: number; yPct: number; scale: number };
   const loadTransform = (key: string, def: Transform): Transform => {
     try {
       const v = localStorage.getItem(key);
@@ -49,16 +228,11 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     } catch { return def; }
   };
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
-  const clampT = (t: Transform): Transform => ({
-    xPct: Math.min(100, Math.max(0, t.xPct)),
-    yPct: Math.min(100, Math.max(0, t.yPct)),
-    scale: Math.min(isMobile ? 1.6 : 2.5, Math.max(0.45, t.scale)),
-  });
   const [agentT, setAgentT] = useState<Transform>(() =>
-    clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
+    clampTransform(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
   const [vehicleT, setVehicleT] = useState<Transform>(() =>
-    clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
+    clampTransform(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
   );
 
   useEffect(() => {
@@ -70,86 +244,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  /** Handler genérico de arraste (mobile + desktop) via Pointer Events. */
-  const makeDragHandlers = (
-    current: Transform,
-    setT: (t: Transform) => void,
-    doubleTapReset: Transform,
-  ) => {
-    let dragging = false;
-    let startX = 0;
-    let startY = 0;
-    let startXPct = current.xPct;
-    let startYPct = current.yPct;
-    let moved = false;
-    let lastTap = 0;
-
-    return {
-      onPointerDown: (e: React.PointerEvent) => {
-        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-        dragging = true;
-        moved = false;
-        startX = e.clientX;
-        startY = e.clientY;
-        startXPct = current.xPct;
-        startYPct = current.yPct;
-      },
-      onPointerMove: (e: React.PointerEvent) => {
-        if (!dragging) return;
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        if (Math.hypot(dx, dy) > 6) moved = true;
-        if (!moved) return;
-        e.preventDefault();
-        const next = clampT({
-          xPct: startXPct + (dx / vw) * 100,
-          yPct: startYPct + (dy / vh) * 100,
-          scale: current.scale,
-        });
-        setT(next);
-        current = next;
-        startX = e.clientX;
-        startY = e.clientY;
-        startXPct = next.xPct;
-        startYPct = next.yPct;
-      },
-      onPointerUp: (e: React.PointerEvent) => {
-        dragging = false;
-        try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* ignore */ }
-        // Double-tap para resetar posição
-        const now = Date.now();
-        if (!moved) {
-          if (now - lastTap < 350) {
-            setT(clampT(doubleTapReset));
-          }
-          lastTap = now;
-        }
-      },
-      onPointerCancel: () => { dragging = false; },
-      wasMoved: () => moved,
-    };
-  };
-
-  const vehicleDrag = useRef(
-    makeDragHandlers(vehicleT, setVehicleT, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 })
-  ).current;
-  // Recria handlers com o estado mais recente a cada render (para closures atualizadas)
-  const vDrag = makeDragHandlers(vehicleT, setVehicleT, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 });
-  void vehicleDrag;
-
-
-
-
-
-
-
-
   const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 };
   const agentReset = { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 };
-  const vDragH = makeDragHandlers(vehicleT, setVehicleT, vehicleReset);
-  const aDragH = makeDragHandlers(agentT, setAgentT, agentReset);
+  const vDragH = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
+  const aDragH = useViewportAssetControls(agentT, setAgentT, agentReset);
 
   return (
     <section
@@ -200,7 +298,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div
-            className="police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none cursor-grab active:cursor-grabbing"
+            className="viewport-draggable-asset police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none cursor-grab active:cursor-grabbing"
             style={{
               position: 'fixed',
               left: `${vehicleT.xPct}vw`,
@@ -208,7 +306,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
               transformOrigin: 'center',
               touchAction: 'none',
-              zIndex: 50,
+              pointerEvents: 'auto',
+              zIndex: 2147483000,
             }}
             role="img"
             aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
@@ -216,6 +315,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             onPointerMove={vDragH.onPointerMove}
             onPointerUp={vDragH.onPointerUp}
             onPointerCancel={vDragH.onPointerCancel}
+            onWheel={vDragH.onWheel}
           >
             <img
               src={policeVehicle}
@@ -491,16 +591,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   );
 }
 
-type DragH = {
-  onPointerDown: (e: React.PointerEvent) => void;
-  onPointerMove: (e: React.PointerEvent) => void;
-  onPointerUp: (e: React.PointerEvent) => void;
-  onPointerCancel: () => void;
-  wasMoved: () => boolean;
-};
-
 /** Boneco arrastável + triple-tap para admin (só conta se não houve arraste). */
-function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: number; scale: number }; dragHandlers: DragH }) {
+function AgentFigure({ agentT, dragHandlers }: { agentT: Transform; dragHandlers: DragH }) {
   const clicksRef = useRef(0);
   const timerRef = useRef<number | null>(null);
   const tapStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
@@ -540,10 +632,11 @@ function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: n
         // Só conta como triple-tap se o dedo/mouse praticamente não moveu.
         if (moved < 8 && dur < 420) registerTap();
       }}
-      onPointerCancel={() => {
+      onPointerCancel={(e) => {
         tapStartRef.current = null;
-        dragHandlers.onPointerCancel();
+        dragHandlers.onPointerCancel(e);
       }}
+      onWheel={dragHandlers.onWheel}
       style={{
         position: 'fixed',
         left: `${agentT.xPct}vw`,
@@ -551,9 +644,10 @@ function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: n
         transform: `translate(-50%, -50%) scale(${agentT.scale})`,
         transformOrigin: 'center',
         touchAction: 'none',
-        zIndex: 60,
+        pointerEvents: 'auto',
+        zIndex: 2147483001,
       }}
-      className="agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
+      className="viewport-draggable-asset agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
     >
       <img
         src={agentFigure}

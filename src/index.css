@@ -744,6 +744,37 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   right: auto;
   transform: perspective(900px) rotateY(-14deg) rotateX(6deg);
 }
+
+.viewport-draggable-asset {
+  animation: none !important;
+  transition: none !important;
+  touch-action: none !important;
+  pointer-events: auto !important;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  will-change: transform;
+}
+
+.viewport-draggable-asset img {
+  pointer-events: none !important;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.viewport-draggable-asset.police-vehicle {
+  animation: none !important;
+  transition: none !important;
+  right: auto !important;
+  max-width: none;
+}
+
+@media (max-width: 640px) {
+  .viewport-draggable-asset {
+    touch-action: none !important;
+    overscroll-behavior: contain;
+  }
+}
 .hero-cinematic { position: relative; --mx: 0; --my: 0; }
 .hero-cinematic .hero-team-grid { position: relative; z-index: 20; }
 
