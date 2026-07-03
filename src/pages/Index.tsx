@@ -56,6 +56,7 @@ import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecover
 import { MasterLoginDialog } from '@/components/auth/MasterLoginDialog';
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { CommandStrip } from '@/components/home/CommandStrip';
+import { CommandCenterBar } from '@/components/home/CommandCenterBar';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
@@ -1245,6 +1246,8 @@ export default function Index() {
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
         <CommandStrip />
+        <CommandCenterBar />
+
 
 
         {/* Cinematic institutional hero — teams integradas como bento 3D */}
