@@ -203,6 +203,9 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 }}
               />
             </div>
+          </div>
+
+
 
           {/* RIGHT — Glass HUD */}
           <div className="relative rounded-2xl border border-primary/25 bg-background/50 backdrop-blur-xl p-4 sm:p-5 shadow-[inset_0_1px_0_hsl(var(--primary)/0.18)] z-10">
