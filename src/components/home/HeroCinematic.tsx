@@ -469,10 +469,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                 <span className="h-px w-4 sm:w-6 bg-accent/60" />
                 Segurança Pública · Socioeducativo
               </div>
-              <h1 className="font-mono uppercase text-[14px] sm:text-[26px] lg:text-[34px] leading-[1.05] font-extrabold text-foreground tracking-[0.04em] max-w-[18ch]">
+              <h1 className="font-mono uppercase text-[13px] sm:text-[26px] lg:text-[34px] leading-[1.05] font-extrabold text-foreground tracking-[0.04em] max-w-[18ch]">
                 Comando <span className="text-accent">Operacional</span>
-                <br />
-                <span className="text-primary-glow">para quem está na linha de frente</span>
+                <span className="hidden sm:inline"><br /><span className="text-primary-glow">para quem está na linha de frente</span></span>
               </h1>
               <p className="hidden sm:block max-w-[46ch] text-[11px] sm:text-[13px] leading-snug text-muted-foreground font-mono">
                 Coordenação tática em tempo real, escalas inteligentes e comunicação segura entre equipes — feito por agentes, para agentes.
