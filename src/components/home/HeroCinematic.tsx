@@ -311,19 +311,24 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div
-            className={`police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none`}
+            className={`${isMobile ? 'viewport-draggable-asset cursor-grab active:cursor-grabbing ' : ''}police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none`}
             style={{
               position: 'fixed',
               left: `${vehicleT.xPct}vw`,
               top: `${vehicleT.yPct}vh`,
               transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
               transformOrigin: 'center',
-              touchAction: 'auto',
-              pointerEvents: 'none',
+              touchAction: isMobile ? 'none' : 'auto',
+              pointerEvents: isMobile ? 'auto' : 'none',
               zIndex: 2147483000,
             }}
             role="img"
-            aria-label="Viatura policial"
+            aria-label={isMobile ? 'Viatura — arraste para mover; pinça para redimensionar' : 'Viatura policial'}
+            onPointerDown={vDragH.onPointerDown}
+            onPointerMove={vDragH.onPointerMove}
+            onPointerUp={vDragH.onPointerUp}
+            onPointerCancel={vDragH.onPointerCancel}
+            onWheel={vDragH.onWheel}
           >
             <img
               src={policeVehicle}
