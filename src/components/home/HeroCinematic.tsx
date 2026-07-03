@@ -249,12 +249,13 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   });
   const [vehicleT, setVehicleT] = useState<Transform>(() => {
     try {
-      if (!localStorage.getItem('hero_vehicle_reset_v5')) {
+      if (!localStorage.getItem('hero_vehicle_reset_v6')) {
         localStorage.removeItem('hero_vehicle_t_mobile');
         localStorage.removeItem('hero_vehicle_t_desktop');
-        localStorage.setItem('hero_vehicle_reset_v5', '1');
+        localStorage.setItem('hero_vehicle_reset_v6', '1');
       }
     } catch { /* ignore */ }
+
     return clampTransform(loadTransform(vehicleKey, vehicleDefault));
   });
 
