@@ -146,10 +146,10 @@ function LiveClock() {
 
 export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
   return (
-    <section className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 sm:gap-4 px-2 sm:px-4 pb-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+    <section className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-4 px-3 sm:px-4 pb-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       {/* LEFT — Mission Briefing */}
       <article
-        className="relative overflow-hidden rounded-lg border border-primary/25 bg-[linear-gradient(155deg,hsl(var(--card))_0%,hsl(220_45%_5%)_100%)] p-3 sm:p-6 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)] order-2 lg:order-1"
+        className="relative overflow-hidden rounded-lg border border-primary/25 bg-[linear-gradient(155deg,hsl(var(--card))_0%,hsl(220_45%_5%)_100%)] p-4 sm:p-6 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)] order-2 lg:order-1"
         aria-labelledby="mission-title"
       >
         <MissionMap />
@@ -171,19 +171,20 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             </span>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h1
               id="mission-title"
-              className="font-serif text-xl sm:text-3xl lg:text-4xl leading-[1.08] text-foreground"
+              className="font-serif text-[22px] leading-[1.1] sm:text-3xl lg:text-4xl text-foreground break-words"
             >
               Comando Operacional
               <br />
               <span className="text-primary italic">Socioeducativo</span>
             </h1>
-            <p className="mt-1.5 font-mono text-[10px] sm:text-[12px] uppercase tracking-[0.22em] sm:tracking-[0.24em] text-muted-foreground">
+            <p className="mt-2 font-mono text-[10px] sm:text-[12px] uppercase tracking-[0.2em] sm:tracking-[0.24em] text-muted-foreground">
               Gestão de Escalas · Agentes
             </p>
           </div>
+
 
           <LiveClock />
 
@@ -227,19 +228,20 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         </div>
 
 
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
           {TEAMS.map((t) => (
             <button
               key={t.key}
               data-team-card
               onClick={() => onTeamClick(t.key)}
               className={cn(
-                'group relative flex flex-col items-start gap-3 overflow-hidden rounded-lg border p-3 sm:p-4 text-left',
+                'group relative flex min-h-[168px] sm:min-h-[192px] flex-col items-start gap-2.5 sm:gap-3 overflow-hidden rounded-lg border p-3 sm:p-4 text-left',
                 'border-primary/25 bg-[linear-gradient(160deg,hsl(var(--card))_0%,hsl(220_50%_4%)_100%)]',
                 'transition-all duration-300 hover:border-primary/70 hover:-translate-y-0.5',
                 'shadow-[0_10px_28px_-16px_hsl(0_0%_0%/0.9)] hover:shadow-[0_18px_44px_-16px_hsl(var(--primary)/0.45)]',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70',
               )}
+
               style={{ ['--team-accent' as any]: t.accent }}
             >
               {/* accent bar */}
@@ -274,27 +276,27 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 </span>
               </div>
 
-              <div className="flex flex-col gap-0.5">
+              <div className="flex min-w-0 flex-col gap-0.5">
                 <span className="font-serif text-lg sm:text-2xl leading-none text-foreground group-hover:text-primary transition-colors">
                   {t.key}
                 </span>
-                <span className="font-mono text-[9px] sm:text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                <span className="font-mono text-[9px] sm:text-[11px] uppercase tracking-[0.16em] text-muted-foreground truncate">
                   {t.motto}
                 </span>
               </div>
 
-
-              <div className="mt-auto flex w-full items-center justify-between border-t border-primary/15 pt-2">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              <div className="mt-auto flex w-full items-center justify-between gap-2 border-t border-primary/15 pt-2">
+                <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground truncate">
                   {t.role}
                 </span>
-                <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary opacity-70 group-hover:opacity-100 transition-opacity">
+                <span className="inline-flex shrink-0 items-center gap-1 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-primary opacity-70 group-hover:opacity-100 transition-opacity">
                   Acessar
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
                 </span>
               </div>
+
             </button>
           ))}
         </div>
