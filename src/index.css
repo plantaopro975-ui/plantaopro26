@@ -899,6 +899,9 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   .animate-team-radio,
   .animate-team-beacon,
   .police-vehicle { animation: none; }
+  /* Giroflex sempre ativo — sinalização operacional profissional */
+  .vehicle-fx--beacon-red { animation: vehicle-strobe-red 1.2s cubic-bezier(.2,.9,.25,1) infinite !important; }
+  .vehicle-fx--beacon-blue { animation: vehicle-strobe-blue 1.2s cubic-bezier(.2,.9,.25,1) infinite !important; }
 }
 
 
