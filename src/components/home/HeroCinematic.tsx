@@ -601,7 +601,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   onPointerUp={(e) => {
                     e.currentTarget.style.setProperty('--press', '1');
                   }}
-                  className="team-card-3d group relative w-full flex flex-col items-stretch text-center p-0 min-h-[180px] sm:min-h-[220px] lg:min-h-[260px] rounded-lg border border-accent/30 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-stretch text-center p-0 min-h-[120px] sm:min-h-[220px] lg:min-h-[260px] rounded-lg border border-accent/30 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
                     // @ts-ignore CSS var
                     ['--team-ring' as any]: tc.ring,
