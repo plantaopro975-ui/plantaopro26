@@ -197,16 +197,23 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial — posição travada em mobile e web */}
+      {/* Viatura policial — arrastável em mobile e desktop; toque duplo reseta */}
       <div
-        className="police-vehicle z-[50] pointer-events-none block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none"
+        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none cursor-grab active:cursor-grabbing"
         style={{
           position: 'absolute',
           left: `${vehicleT.xPct}%`,
           top: `${vehicleT.yPct}%`,
           transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
           transformOrigin: 'center',
+          touchAction: 'none',
         }}
+        role="img"
+        aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
+        onPointerDown={vDragH.onPointerDown}
+        onPointerMove={vDragH.onPointerMove}
+        onPointerUp={vDragH.onPointerUp}
+        onPointerCancel={vDragH.onPointerCancel}
       >
         <img
           src={policeVehicle}
@@ -221,8 +228,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </div>
 
 
-      {/* Agente tático — triple-tap tolerante a rolagem abre login master/admin */}
-      <AgentFigure agentT={agentT} />
+      {/* Agente tático — arrastável + triple-tap para admin */}
+      <AgentFigure agentT={agentT} dragHandlers={aDragH} />
 
 
 
