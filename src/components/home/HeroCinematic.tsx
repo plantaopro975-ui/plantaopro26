@@ -307,7 +307,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
               transformOrigin: 'center',
               touchAction: 'none',
               pointerEvents: 'auto',
-              zIndex: 80,
+              zIndex: 2147483000,
             }}
             role="img"
             aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
@@ -645,7 +645,7 @@ function AgentFigure({ agentT, dragHandlers }: { agentT: Transform; dragHandlers
         transformOrigin: 'center',
         touchAction: 'none',
         pointerEvents: 'auto',
-        zIndex: 90,
+        zIndex: 2147483001,
       }}
       className="viewport-draggable-asset agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
     >
