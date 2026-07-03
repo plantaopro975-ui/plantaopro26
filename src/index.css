@@ -820,7 +820,7 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   --beacon-halo-2: calc(var(--beacon-unit) * 2.8);
   --beacon-halo-2-spread: calc(var(--beacon-unit) * 0.9);
 }
-.vehicle-fx { position: absolute; pointer-events: none; border-radius: 9999px; will-change: opacity, transform, filter; }
+.vehicle-fx { position: absolute; pointer-events: none; border-radius: 9999px; will-change: opacity, transform, filter; transform-style: preserve-3d; }
 
 /* Giroflex: dimensionado 100% por variáveis, escala consistente em qualquer viewport */
 .vehicle-fx--beacon {
