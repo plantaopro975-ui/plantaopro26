@@ -586,8 +586,13 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                     const py = ((e.clientY - r.top) / r.height) * 100;
                     el.style.setProperty('--px', `${px}%`);
                     el.style.setProperty('--py', `${py}%`);
-                    el.style.setProperty('--tilt-y', `${((px - 50) / 50) * 6}deg`);
-                    el.style.setProperty('--tilt-x', `${((50 - py) / 50) * 6}deg`);
+                    const ry = ((px - 50) / 50) * 10;
+                    const rx = ((50 - py) / 50) * 10;
+                    el.style.setProperty('--tilt-y', `${ry}deg`);
+                    el.style.setProperty('--tilt-x', `${rx}deg`);
+                    el.style.setProperty('--gx', `${px}%`);
+                    el.style.setProperty('--gy', `${py}%`);
+                    el.style.setProperty('--active', '1');
                     el.style.setProperty('--lift', `-4px`);
                   }}
                   onPointerLeave={(e) => {
