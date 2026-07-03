@@ -469,10 +469,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                 <span className="h-px w-4 sm:w-6 bg-accent/60" />
                 Segurança Pública · Socioeducativo
               </div>
-              <h1 className="font-mono uppercase text-[14px] sm:text-[26px] lg:text-[34px] leading-[1.05] font-extrabold text-foreground tracking-[0.04em] max-w-[18ch]">
+              <h1 className="font-mono uppercase text-[13px] sm:text-[26px] lg:text-[34px] leading-[1.05] font-extrabold text-foreground tracking-[0.04em] max-w-[18ch]">
                 Comando <span className="text-accent">Operacional</span>
-                <br />
-                <span className="text-primary-glow">para quem está na linha de frente</span>
+                <span className="hidden sm:inline"><br /><span className="text-primary-glow">para quem está na linha de frente</span></span>
               </h1>
               <p className="hidden sm:block max-w-[46ch] text-[11px] sm:text-[13px] leading-snug text-muted-foreground font-mono">
                 Coordenação tática em tempo real, escalas inteligentes e comunicação segura entre equipes — feito por agentes, para agentes.
@@ -602,7 +601,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   onPointerUp={(e) => {
                     e.currentTarget.style.setProperty('--press', '1');
                   }}
-                  className="team-card-3d group relative w-full flex flex-col items-stretch text-center p-0 min-h-[180px] sm:min-h-[220px] lg:min-h-[260px] rounded-lg border border-accent/30 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-stretch text-center p-0 min-h-[120px] sm:min-h-[220px] lg:min-h-[260px] rounded-lg border border-accent/30 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
                     // @ts-ignore CSS var
                     ['--team-ring' as any]: tc.ring,
