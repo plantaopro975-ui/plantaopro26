@@ -290,7 +290,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       purge(localStorage);
       purge(sessionStorage);
     } catch { /* ignore */ }
+
+    // Hard redirect to guarantee no component keeps using the old token (works for agent & master)
+    try { window.location.replace('/'); } catch { /* ignore */ }
   };
+
 
 
   // IMPORTANT: do not derive privileges from client-side storage.
