@@ -312,7 +312,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
   const locked = true;
   const noop = () => {};
-  const noopH: DragH = { onPointerDown: noop, onPointerMove: noop, onPointerUp: noop, onPointerCancel: noop, onWheel: noop };
+  const noopH: DragH = { onPointerDown: noop, onPointerMove: noop, onPointerUp: noop, onPointerCancel: noop, onWheel: noop, wasMoved: () => false };
   const vDragH = locked ? noopH : vDragHRaw;
   const aDragH = locked ? noopH : aDragHRaw;
 
