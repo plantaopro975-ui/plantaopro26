@@ -171,11 +171,11 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               draggable={false}
             />
             {/* Tactical vehicle with animated giroflex */}
-            <div className="absolute z-20 bottom-2 -right-2 lg:-right-6 w-[42%] max-w-[220px] animate-[float_6s_ease-in-out_infinite]">
+            <div className="absolute z-20 -bottom-4 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:-right-4 w-[70%] max-w-[280px] lg:w-[55%] lg:max-w-[300px] animate-[float_6s_ease-in-out_infinite]">
               <img
                 src={vehicle3d}
                 alt="Viatura ISE — Toyota SW4 tática"
-                className="w-full object-contain drop-shadow-[0_18px_24px_hsl(217_62%_2%/0.85)] select-none"
+                className="w-full object-contain drop-shadow-[0_22px_28px_hsl(217_62%_2%/0.9)] select-none"
                 draggable={false}
               />
               {/* Red strobe */}
