@@ -234,23 +234,23 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const [agentT, setAgentT] = useState<Transform>(() => {
     // Reset único: reposiciona o boneco junto à viatura.
     try {
-      if (!localStorage.getItem('hero_agent_reset_v5')) {
+      if (!localStorage.getItem('hero_agent_reset_v6')) {
         localStorage.removeItem('hero_agent_t_mobile');
         localStorage.removeItem('hero_agent_t_desktop');
-        localStorage.setItem('hero_agent_reset_v5', '1');
+        localStorage.setItem('hero_agent_reset_v6', '1');
       }
     } catch { /* ignore */ }
-    return clampTransform(loadTransform(agentKey, { xPct: isMobile ? 78 : 30, yPct: isMobile ? 20 : 55, scale: isMobile ? 0.55 : 1 }));
+    return clampTransform(loadTransform(agentKey, { xPct: isMobile ? 72 : 30, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.5 : 1 }));
   });
   const [vehicleT, setVehicleT] = useState<Transform>(() => {
     try {
-      if (!localStorage.getItem('hero_vehicle_reset_v4')) {
+      if (!localStorage.getItem('hero_vehicle_reset_v5')) {
         localStorage.removeItem('hero_vehicle_t_mobile');
         localStorage.removeItem('hero_vehicle_t_desktop');
-        localStorage.setItem('hero_vehicle_reset_v4', '1');
+        localStorage.setItem('hero_vehicle_reset_v5', '1');
       }
     } catch { /* ignore */ }
-    return clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 22 : 18, yPct: isMobile ? 20 : 55, scale: isMobile ? 0.6 : 1 }));
+    return clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 28 : 18, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.55 : 1 }));
   });
 
   useEffect(() => {
@@ -280,8 +280,8 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     return () => ro.disconnect();
   }, []);
 
-  const vehicleReset = { xPct: isMobile ? 22 : 18, yPct: isMobile ? 20 : 55, scale: isMobile ? 0.6 : 1 };
-  const agentReset = { xPct: isMobile ? 78 : 30, yPct: isMobile ? 20 : 55, scale: isMobile ? 0.55 : 1 };
+  const vehicleReset = { xPct: isMobile ? 28 : 18, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.55 : 1 };
+  const agentReset = { xPct: isMobile ? 72 : 30, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.5 : 1 };
   const vDragHRaw = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
   const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
   // Mobile: elementos ficam travados (sem arraste), apenas o triple-tap admin continua no boneco.
