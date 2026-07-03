@@ -309,15 +309,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
   const vDragHRaw = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
   const aDragHRaw = useViewportAssetControls(agentT, setAgentT, agentReset);
-  // Travado nas posições atuais salvas em localStorage (por dispositivo).
-  const noop = () => {};
-  const lockedH: DragH = {
-    onPointerDown: noop, onPointerMove: noop, onPointerUp: noop,
-    onPointerCancel: noop, onWheel: noop, wasMoved: () => false,
-  };
-  const vDragH = lockedH;
-  const aDragH = lockedH;
-  const locked = true;
+  const vDragH = vDragHRaw;
+  const aDragH = aDragHRaw;
+  const locked = false;
 
   return (
     <section
