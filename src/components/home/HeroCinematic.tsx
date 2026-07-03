@@ -608,43 +608,40 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                   onPointerUp={(e) => {
                     e.currentTarget.style.setProperty('--press', '1');
                   }}
-                  className="team-card-3d group relative w-full flex flex-col items-center justify-center text-center gap-1.5 p-2 sm:p-3 lg:p-4 min-h-[130px] sm:min-h-[144px] lg:min-h-[172px] rounded-md border border-accent/40 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
+                  className="team-card-3d group relative w-full flex flex-col items-stretch text-center p-0 min-h-[180px] sm:min-h-[220px] lg:min-h-[260px] rounded-lg border border-accent/30 hover:border-accent/70 overflow-hidden focus:outline-none focus-visible:ring-2 transition-all duration-300"
                   style={{
                     // @ts-ignore CSS var
                     ['--team-ring' as any]: tc.ring,
                     // @ts-ignore CSS var
                     ['--team-glow' as any]: tc.glow,
-                    boxShadow: `0 0 0 1px hsl(var(--accent) / 0.15), 0 10px 24px -12px ${tc.glow}`,
+                    boxShadow: `0 0 0 1px hsl(var(--accent) / 0.12), 0 18px 40px -18px ${tc.glow}`,
                   }}
                   aria-label={`Acessar equipe ${t.name}`}
                 >
-                  {/* Capa hero realista — poster oficial da equipe (background) */}
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-md overflow-hidden"
-                  >
+                  {/* Poster oficial — ocupa todo o card como background */}
+                  <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
                     <img
                       src={getTeamPoster(t.name)}
                       alt=""
-                      className="absolute inset-0 h-full w-full object-cover opacity-95 group-hover:scale-105 transition-transform duration-500"
-                      style={{ filter: 'saturate(0.9) contrast(1.08) brightness(0.92)' }}
+                      className="absolute inset-0 h-full w-full object-cover opacity-95 group-hover:scale-[1.08] transition-transform duration-700 ease-out"
+                      style={{ filter: 'saturate(0.95) contrast(1.1) brightness(0.88)' }}
                     />
-                    {/* Grade navy uniforme — mesma base cromática dos posters */}
+                    {/* Gradient inferior: base sólida para info bar */}
                     <span
                       aria-hidden
                       className="absolute inset-0"
                       style={{
                         background:
-                          'linear-gradient(180deg, hsl(var(--background)/0.35) 0%, hsl(var(--background)/0.15) 45%, hsl(var(--background)/0.9) 100%)',
+                          'linear-gradient(180deg, hsl(var(--background)/0.15) 0%, hsl(var(--background)/0.05) 40%, hsl(var(--background)/0.85) 78%, hsl(var(--background)/0.98) 100%)',
                       }}
                     />
-                    {/* Key light dourado no canto superior direito — replica iluminação dos posters */}
+                    {/* Key light dourado superior */}
                     <span
                       aria-hidden
                       className="absolute inset-0"
                       style={{
                         background:
-                          'radial-gradient(circle at 82% 12%, hsl(var(--accent)/0.28) 0%, transparent 45%)',
+                          'radial-gradient(circle at 78% 8%, hsl(var(--accent)/0.32) 0%, transparent 42%)',
                       }}
                     />
                     {/* Vinheta noir */}
@@ -653,44 +650,42 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                       className="absolute inset-0"
                       style={{
                         background:
-                          'radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%)',
+                          'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.55) 100%)',
                       }}
                     />
-                    {/* Borda interna dourada */}
-                    <span aria-hidden className="absolute inset-0 ring-1 ring-inset ring-accent/15 rounded-md" />
-                  </span>
-                  {/* Canto oficial (cobre) */}
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute top-0 left-0 h-6 w-6 border-t-2 border-l-2 border-accent/70 rounded-tl-md"
-                  />
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute bottom-0 right-0 h-6 w-6 border-b-2 border-r-2 border-accent/50 rounded-br-md"
-                  />
-                  {/* Kicker número */}
-                  <span className="absolute top-1.5 right-2 text-[9px] font-mono tracking-[0.2em] text-accent/80">
-                    /{t.kicker}
                   </span>
 
-                  <span
-                    className="relative inline-flex items-center justify-center"
-                    title={`Equipe ${t.name} — clique para acessar`}
-                  >
-                    <img
-                      src={t.icon}
-                      alt=""
-                      loading="lazy"
-                      className={`team-icon-3d ${t.motion} relative h-14 w-14 sm:h-20 sm:w-20 lg:h-24 lg:w-24 object-contain shrink-0 drop-shadow-[0_6px_14px_rgba(0,0,0,0.6)] group-hover:scale-110 group-active:scale-95`}
-                    />
-                  </span>
-                  <div className="relative mt-0.5">
-                    <div className="font-mono uppercase text-base sm:text-lg lg:text-xl font-extrabold text-foreground leading-none tracking-[0.18em]">
-                      {t.name}
+                  {/* Cantos oficiais */}
+                  <span aria-hidden className="pointer-events-none absolute top-0 left-0 h-5 w-5 border-t-2 border-l-2 border-accent/70 rounded-tl-lg z-10" />
+                  <span aria-hidden className="pointer-events-none absolute top-0 right-0 h-5 w-5 border-t-2 border-r-2 border-accent/70 rounded-tr-lg z-10" />
+                  <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 h-5 w-5 border-b-2 border-l-2 border-accent/50 rounded-bl-lg z-10" />
+                  <span aria-hidden className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-accent/50 rounded-br-lg z-10" />
+
+                  {/* Header chip: código operacional */}
+                  <div className="relative z-10 flex items-center justify-between px-2.5 pt-2">
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-background/60 backdrop-blur-sm border border-accent/40 text-[8px] sm:text-[9px] font-mono tracking-[0.22em] text-accent uppercase">
+                      <span className="h-1 w-1 rounded-full bg-accent animate-pulse" />
+                      OP-{t.kicker}
+                    </span>
+                    <span className="text-[8px] sm:text-[9px] font-mono tracking-[0.18em] text-muted-foreground/80 uppercase">
+                      ATIVO
+                    </span>
+                  </div>
+
+                  {/* Corpo flexível — reserva espaço para o poster respirar */}
+                  <div className="relative z-10 flex-1" />
+
+                  {/* Info bar inferior — identificação da equipe */}
+                  <div className="relative z-10 px-3 pb-3 pt-2 flex flex-col items-center gap-1 border-t border-accent/20 bg-background/25 backdrop-blur-[2px]">
+                    <div className="flex items-center gap-2 w-full justify-center">
+                      <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/50" />
+                      <span className="font-mono uppercase text-lg sm:text-xl lg:text-2xl font-extrabold text-foreground leading-none tracking-[0.2em]">
+                        {t.name}
+                      </span>
+                      <span className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/50" />
                     </div>
-                    <div className="mt-1 h-px w-8 mx-auto bg-gradient-to-r from-transparent via-accent to-transparent" />
-                    <div className="mt-1 text-[9px] sm:text-[9px] uppercase tracking-[0.24em] sm:tracking-[0.32em] text-muted-foreground font-mono">
-                      Equipe
+                    <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.32em] text-muted-foreground font-mono">
+                      Equipe Operacional
                     </div>
                   </div>
                 </button>
