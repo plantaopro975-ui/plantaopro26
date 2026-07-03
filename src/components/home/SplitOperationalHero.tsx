@@ -276,27 +276,27 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 </span>
               </div>
 
-              <div className="flex flex-col gap-0.5">
+              <div className="flex min-w-0 flex-col gap-0.5">
                 <span className="font-serif text-lg sm:text-2xl leading-none text-foreground group-hover:text-primary transition-colors">
                   {t.key}
                 </span>
-                <span className="font-mono text-[9px] sm:text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                <span className="font-mono text-[9px] sm:text-[11px] uppercase tracking-[0.16em] text-muted-foreground truncate">
                   {t.motto}
                 </span>
               </div>
 
-
-              <div className="mt-auto flex w-full items-center justify-between border-t border-primary/15 pt-2">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              <div className="mt-auto flex w-full items-center justify-between gap-2 border-t border-primary/15 pt-2">
+                <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground truncate">
                   {t.role}
                 </span>
-                <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary opacity-70 group-hover:opacity-100 transition-opacity">
+                <span className="inline-flex shrink-0 items-center gap-1 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-primary opacity-70 group-hover:opacity-100 transition-opacity">
                   Acessar
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
                 </span>
               </div>
+
             </button>
           ))}
         </div>
