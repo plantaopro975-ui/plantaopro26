@@ -228,9 +228,12 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     } catch { return def; }
   };
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
-  // Chaves separadas por viewport para não sobrescrever a preferência entre mobile e desktop.
-  const agentKey = isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop';
-  const vehicleKey = isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop';
+  // Sincronização opcional entre mobile e desktop: quando ativa, usa as mesmas chaves.
+  const [syncDevices, setSyncDevices] = useState<boolean>(() => {
+    try { return localStorage.getItem('hero_sync_devices') === '1'; } catch { return false; }
+  });
+  const agentKey = syncDevices ? 'hero_agent_t' : (isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop');
+  const vehicleKey = syncDevices ? 'hero_vehicle_t' : (isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop');
   const [agentT, setAgentT] = useState<Transform>(() => {
     // Reset único: reposiciona o boneco junto à viatura.
     try {
@@ -259,6 +262,22 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   useEffect(() => {
     try { localStorage.setItem(vehicleKey, JSON.stringify(vehicleT)); } catch { /* ignore */ }
   }, [vehicleT, vehicleKey]);
+
+  // Recarrega transforms quando a chave muda (ao alternar sincronização).
+  useEffect(() => {
+    setAgentT(clampTransform(loadTransform(agentKey, { xPct: isMobile ? 72 : 30, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.5 : 1 })));
+    setVehicleT(clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 28 : 18, yPct: isMobile ? 84 : 55, scale: isMobile ? 0.55 : 1 })));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [syncDevices]);
+
+  const toggleSync = () => {
+    setSyncDevices((prev) => {
+      const next = !prev;
+      try { localStorage.setItem('hero_sync_devices', next ? '1' : '0'); } catch { /* ignore */ }
+      return next;
+    });
+  };
+
 
   const sectionRef = useRef<HTMLElement | null>(null);
   const vehicleRef = useRef<HTMLDivElement | null>(null);
@@ -337,6 +356,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           />
         ))}
       </svg>
+
+      {/* Toggle: sincronizar posição/tamanho entre mobile e desktop */}
+      <button
+        type="button"
+        onClick={toggleSync}
+        className="absolute top-2 right-2 z-20 rounded border border-primary/40 bg-background/70 px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-primary/90 backdrop-blur hover:bg-primary/10 transition"
+        aria-pressed={syncDevices}
+        title="Usa as mesmas coordenadas em mobile e desktop"
+      >
+        Sync {syncDevices ? 'ON' : 'OFF'}
+      </button>
+
 
 
       {/* Viatura + Agente — arrastáveis em qualquer parte da tela (portal viewport-fixed) */}
