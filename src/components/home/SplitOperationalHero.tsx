@@ -228,19 +228,20 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         </div>
 
 
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
           {TEAMS.map((t) => (
             <button
               key={t.key}
               data-team-card
               onClick={() => onTeamClick(t.key)}
               className={cn(
-                'group relative flex flex-col items-start gap-3 overflow-hidden rounded-lg border p-3 sm:p-4 text-left',
+                'group relative flex min-h-[168px] sm:min-h-[192px] flex-col items-start gap-2.5 sm:gap-3 overflow-hidden rounded-lg border p-3 sm:p-4 text-left',
                 'border-primary/25 bg-[linear-gradient(160deg,hsl(var(--card))_0%,hsl(220_50%_4%)_100%)]',
                 'transition-all duration-300 hover:border-primary/70 hover:-translate-y-0.5',
                 'shadow-[0_10px_28px_-16px_hsl(0_0%_0%/0.9)] hover:shadow-[0_18px_44px_-16px_hsl(var(--primary)/0.45)]',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70',
               )}
+
               style={{ ['--team-accent' as any]: t.accent }}
             >
               {/* accent bar */}
