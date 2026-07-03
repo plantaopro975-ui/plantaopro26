@@ -228,19 +228,22 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     } catch { return def; }
   };
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
+  // Chaves separadas por viewport para não sobrescrever a preferência entre mobile e desktop.
+  const agentKey = isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop';
+  const vehicleKey = isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop';
   const [agentT, setAgentT] = useState<Transform>(() =>
-    clampTransform(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
+    clampTransform(loadTransform(agentKey, { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
   const [vehicleT, setVehicleT] = useState<Transform>(() =>
-    clampTransform(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
+    clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
   );
 
   useEffect(() => {
-    try { localStorage.setItem('hero_agent_t', JSON.stringify(agentT)); } catch { /* ignore */ }
-  }, [agentT]);
+    try { localStorage.setItem(agentKey, JSON.stringify(agentT)); } catch { /* ignore */ }
+  }, [agentT, agentKey]);
   useEffect(() => {
-    try { localStorage.setItem('hero_vehicle_t', JSON.stringify(vehicleT)); } catch { /* ignore */ }
-  }, [vehicleT]);
+    try { localStorage.setItem(vehicleKey, JSON.stringify(vehicleT)); } catch { /* ignore */ }
+  }, [vehicleT, vehicleKey]);
 
   const sectionRef = useRef<HTMLElement | null>(null);
 
