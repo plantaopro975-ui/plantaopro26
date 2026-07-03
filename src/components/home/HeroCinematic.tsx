@@ -258,9 +258,9 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     onPointerCancel: noop, onWheel: noop, wasMoved: () => false,
   };
   // Mobile: destravado (arraste + pinch/scroll para redimensionar). Desktop: travado.
-  const vDragH = isMobile ? vDragHRaw : lockedH;
-  const aDragH = isMobile ? aDragHRaw : lockedH;
-  const locked = !isMobile;
+  const vDragH = vDragHRaw;
+  const aDragH = aDragHRaw;
+  const locked = false;
 
   return (
     <section
