@@ -218,7 +218,6 @@ const TEAMS: { name: TeamName; icon: string; kicker: string; motion: string }[] 
 export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const onlineCount = useOnlinePresence();
 
-  type Transform = { xPct: number; yPct: number; scale: number };
   const loadTransform = (key: string, def: Transform): Transform => {
     try {
       const v = localStorage.getItem(key);
@@ -229,16 +228,11 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     } catch { return def; }
   };
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
-  const clampT = (t: Transform): Transform => ({
-    xPct: Math.min(100, Math.max(0, t.xPct)),
-    yPct: Math.min(100, Math.max(0, t.yPct)),
-    scale: Math.min(isMobile ? 1.6 : 2.5, Math.max(0.45, t.scale)),
-  });
   const [agentT, setAgentT] = useState<Transform>(() =>
-    clampT(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
+    clampTransform(loadTransform('hero_agent_t', { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 }))
   );
   const [vehicleT, setVehicleT] = useState<Transform>(() =>
-    clampT(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
+    clampTransform(loadTransform('hero_vehicle_t', { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 }))
   );
 
   useEffect(() => {
@@ -250,86 +244,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  /** Handler genérico de arraste (mobile + desktop) via Pointer Events. */
-  const makeDragHandlers = (
-    current: Transform,
-    setT: (t: Transform) => void,
-    doubleTapReset: Transform,
-  ) => {
-    let dragging = false;
-    let startX = 0;
-    let startY = 0;
-    let startXPct = current.xPct;
-    let startYPct = current.yPct;
-    let moved = false;
-    let lastTap = 0;
-
-    return {
-      onPointerDown: (e: React.PointerEvent) => {
-        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-        dragging = true;
-        moved = false;
-        startX = e.clientX;
-        startY = e.clientY;
-        startXPct = current.xPct;
-        startYPct = current.yPct;
-      },
-      onPointerMove: (e: React.PointerEvent) => {
-        if (!dragging) return;
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        if (Math.hypot(dx, dy) > 6) moved = true;
-        if (!moved) return;
-        e.preventDefault();
-        const next = clampT({
-          xPct: startXPct + (dx / vw) * 100,
-          yPct: startYPct + (dy / vh) * 100,
-          scale: current.scale,
-        });
-        setT(next);
-        current = next;
-        startX = e.clientX;
-        startY = e.clientY;
-        startXPct = next.xPct;
-        startYPct = next.yPct;
-      },
-      onPointerUp: (e: React.PointerEvent) => {
-        dragging = false;
-        try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* ignore */ }
-        // Double-tap para resetar posição
-        const now = Date.now();
-        if (!moved) {
-          if (now - lastTap < 350) {
-            setT(clampT(doubleTapReset));
-          }
-          lastTap = now;
-        }
-      },
-      onPointerCancel: () => { dragging = false; },
-      wasMoved: () => moved,
-    };
-  };
-
-  const vehicleDrag = useRef(
-    makeDragHandlers(vehicleT, setVehicleT, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 })
-  ).current;
-  // Recria handlers com o estado mais recente a cada render (para closures atualizadas)
-  const vDrag = makeDragHandlers(vehicleT, setVehicleT, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 });
-  void vehicleDrag;
-
-
-
-
-
-
-
-
   const vehicleReset = { xPct: isMobile ? 30 : 18, yPct: isMobile ? 56 : 55, scale: isMobile ? 1.1 : 1 };
   const agentReset = { xPct: isMobile ? 74 : 82, yPct: isMobile ? 58 : 62, scale: isMobile ? 1.05 : 1 };
-  const vDragH = makeDragHandlers(vehicleT, setVehicleT, vehicleReset);
-  const aDragH = makeDragHandlers(agentT, setAgentT, agentReset);
+  const vDragH = useViewportAssetControls(vehicleT, setVehicleT, vehicleReset);
+  const aDragH = useViewportAssetControls(agentT, setAgentT, agentReset);
 
   return (
     <section
