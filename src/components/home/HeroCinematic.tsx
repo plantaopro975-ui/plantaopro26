@@ -290,10 +290,10 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     onPointerDown: noop, onPointerMove: noop, onPointerUp: noop,
     onPointerCancel: noop, onWheel: noop, wasMoved: () => false,
   };
-  // Mobile: destravado (arraste + pinch/scroll para redimensionar). Desktop: travado.
-  const vDragH = vDragHRaw;
-  const aDragH = aDragHRaw;
-  const locked = false;
+  // Travado em mobile e desktop — sem arraste/redimensionamento. Triple-tap admin permanece no boneco.
+  const vDragH = lockedH;
+  const aDragH = lockedH;
+  const locked = true;
 
   return (
     <section
