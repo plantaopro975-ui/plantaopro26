@@ -1246,6 +1246,8 @@ export default function Index() {
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
         <CommandStrip />
+        <CommandCenterBar />
+
 
 
         {/* Cinematic institutional hero — teams integradas como bento 3D */}
