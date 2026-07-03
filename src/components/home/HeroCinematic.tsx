@@ -234,20 +234,20 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const [agentT, setAgentT] = useState<Transform>(() => {
     // Reset único: reposiciona o boneco junto à viatura.
     try {
-      if (!localStorage.getItem('hero_agent_reset_v3')) {
+      if (!localStorage.getItem('hero_agent_reset_v4')) {
         localStorage.removeItem('hero_agent_t_mobile');
         localStorage.removeItem('hero_agent_t_desktop');
-        localStorage.setItem('hero_agent_reset_v3', '1');
+        localStorage.setItem('hero_agent_reset_v4', '1');
       }
     } catch { /* ignore */ }
     return clampTransform(loadTransform(agentKey, { xPct: isMobile ? 68 : 30, yPct: isMobile ? 62 : 55, scale: isMobile ? 0.85 : 1 }));
   });
   const [vehicleT, setVehicleT] = useState<Transform>(() => {
     try {
-      if (!localStorage.getItem('hero_vehicle_reset_v2')) {
+      if (!localStorage.getItem('hero_vehicle_reset_v3')) {
         localStorage.removeItem('hero_vehicle_t_mobile');
         localStorage.removeItem('hero_vehicle_t_desktop');
-        localStorage.setItem('hero_vehicle_reset_v2', '1');
+        localStorage.setItem('hero_vehicle_reset_v3', '1');
       }
     } catch { /* ignore */ }
     return clampTransform(loadTransform(vehicleKey, { xPct: isMobile ? 30 : 18, yPct: isMobile ? 62 : 55, scale: isMobile ? 0.9 : 1 }));
