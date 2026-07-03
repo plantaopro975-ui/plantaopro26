@@ -1043,3 +1043,17 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   50%      { transform: translate3d(0,0,0) scale(1.15); opacity: 0.45; }
 }
 .animate-loading-orb { animation: loading-orb 6s ease-in-out infinite; will-change: transform, opacity; }
+
+/* Hero vehicle giroflex strobes (SplitOperationalHero) */
+@keyframes giroflex-red {
+  0%, 45% { opacity: 1; box-shadow: 0 0 20px 6px rgba(239,68,68,0.9); }
+  50%, 100% { opacity: 0.15; box-shadow: 0 0 6px 2px rgba(239,68,68,0.3); }
+}
+@keyframes giroflex-blue {
+  0%, 45% { opacity: 0.15; box-shadow: 0 0 6px 2px rgba(56,189,248,0.3); }
+  50%, 100% { opacity: 1; box-shadow: 0 0 20px 6px rgba(56,189,248,0.9); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
