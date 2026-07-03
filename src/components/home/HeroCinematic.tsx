@@ -1,5 +1,7 @@
 import { Radio, MapPin } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+
 import { toast } from 'sonner';
 import heroImage from '@/assets/hero-command.jpg';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
@@ -84,8 +86,6 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
     return {
       onPointerDown: (e: React.PointerEvent) => {
-        const section = sectionRef.current;
-        if (!section) return;
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
         dragging = true;
         moved = false;
@@ -96,17 +96,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       },
       onPointerMove: (e: React.PointerEvent) => {
         if (!dragging) return;
-        const section = sectionRef.current;
-        if (!section) return;
-        const rect = section.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
         if (Math.hypot(dx, dy) > 6) moved = true;
         if (!moved) return;
         e.preventDefault();
         const next = clampT({
-          xPct: startXPct + (dx / rect.width) * 100,
-          yPct: startYPct + (dy / rect.height) * 100,
+          xPct: startXPct + (dx / vw) * 100,
+          yPct: startYPct + (dy / vh) * 100,
           scale: current.scale,
         });
         setT(next);
@@ -197,39 +196,43 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       </svg>
 
 
-      {/* Viatura policial — arrastável em mobile e desktop; toque duplo reseta */}
-      <div
-        className="police-vehicle z-[50] block h-[30%] sm:h-[34%] lg:h-[42%] max-h-[52vh] w-auto max-w-[80%] sm:max-w-[55%] lg:max-w-[46%] select-none cursor-grab active:cursor-grabbing"
-        style={{
-          position: 'absolute',
-          left: `${vehicleT.xPct}%`,
-          top: `${vehicleT.yPct}%`,
-          transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
-          transformOrigin: 'center',
-          touchAction: 'none',
-        }}
-        role="img"
-        aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
-        onPointerDown={vDragH.onPointerDown}
-        onPointerMove={vDragH.onPointerMove}
-        onPointerUp={vDragH.onPointerUp}
-        onPointerCancel={vDragH.onPointerCancel}
-      >
-        <img
-          src={policeVehicle}
-          alt="Viatura policial"
-          loading="lazy"
-          draggable={false}
-          className="h-full w-auto object-contain pointer-events-none"
-        />
-        {/* Giroflex realista */}
-        <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
-        <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
-      </div>
+      {/* Viatura + Agente — arrastáveis em qualquer parte da tela (portal viewport-fixed) */}
+      {typeof document !== 'undefined' && createPortal(
+        <>
+          <div
+            className="police-vehicle block h-[30vh] sm:h-[34vh] lg:h-[42vh] max-h-[52vh] w-auto max-w-[80vw] sm:max-w-[55vw] lg:max-w-[46vw] select-none cursor-grab active:cursor-grabbing"
+            style={{
+              position: 'fixed',
+              left: `${vehicleT.xPct}vw`,
+              top: `${vehicleT.yPct}vh`,
+              transform: `translate(-50%, -50%) scale(${vehicleT.scale})`,
+              transformOrigin: 'center',
+              touchAction: 'none',
+              zIndex: 50,
+            }}
+            role="img"
+            aria-label="Viatura — arraste para reposicionar; toque duplo para resetar"
+            onPointerDown={vDragH.onPointerDown}
+            onPointerMove={vDragH.onPointerMove}
+            onPointerUp={vDragH.onPointerUp}
+            onPointerCancel={vDragH.onPointerCancel}
+          >
+            <img
+              src={policeVehicle}
+              alt="Viatura policial"
+              loading="lazy"
+              draggable={false}
+              className="h-full w-auto object-contain pointer-events-none"
+            />
+            <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
+            <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
+          </div>
 
+          <AgentFigure agentT={agentT} dragHandlers={aDragH} />
+        </>,
+        document.body
+      )}
 
-      {/* Agente tático — arrastável + triple-tap para admin */}
-      <AgentFigure agentT={agentT} dragHandlers={aDragH} />
 
 
 
@@ -542,14 +545,15 @@ function AgentFigure({ agentT, dragHandlers }: { agentT: { xPct: number; yPct: n
         dragHandlers.onPointerCancel();
       }}
       style={{
-        position: 'absolute',
-        left: `${agentT.xPct}%`,
-        top: `${agentT.yPct}%`,
+        position: 'fixed',
+        left: `${agentT.xPct}vw`,
+        top: `${agentT.yPct}vh`,
         transform: `translate(-50%, -50%) scale(${agentT.scale})`,
         transformOrigin: 'center',
         touchAction: 'none',
+        zIndex: 60,
       }}
-      className="agent-figure z-[60] block h-[30%] sm:h-[30%] lg:h-[38%] max-h-[46vh] w-auto max-w-[46%] sm:max-w-[28%] lg:max-w-[22%] select-none opacity-95 cursor-grab active:cursor-grabbing"
+      className="agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 cursor-grab active:cursor-grabbing"
     >
       <img
         src={agentFigure}
