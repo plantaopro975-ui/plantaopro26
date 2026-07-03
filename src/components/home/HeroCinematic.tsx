@@ -232,10 +232,11 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const [syncDevices, setSyncDevices] = useState<boolean>(() => {
     try { return localStorage.getItem('hero_sync_devices') === '1'; } catch { return false; }
   });
-  const agentKey = syncDevices ? 'hero_agent_t' : (isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop');
-  const vehicleKey = syncDevices ? 'hero_vehicle_t' : (isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop');
-  const agentDefault = { xPct: isMobile ? 75 : 30, yPct: isMobile ? 88 : 55, scale: isMobile ? 0.85 : 1 };
-  const vehicleDefault = { xPct: isMobile ? 25 : 18, yPct: isMobile ? 88 : 55, scale: isMobile ? 0.5 : 1 };
+  // Layout travado e unificado: desktop e mobile compartilham as mesmas coordenadas do desktop.
+  const agentKey = 'hero_agent_t_desktop';
+  const vehicleKey = 'hero_vehicle_t_desktop';
+  const agentDefault = { xPct: 30, yPct: 55, scale: 1 };
+  const vehicleDefault = { xPct: 18, yPct: 55, scale: 1 };
 
   const [agentT, setAgentT] = useState<Transform>(() => {
     try {
