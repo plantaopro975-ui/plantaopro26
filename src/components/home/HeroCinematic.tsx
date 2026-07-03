@@ -336,7 +336,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
           </div>
 
-          <AgentFigure agentT={agentT} dragHandlers={aDragH} />
+          <AgentFigure agentT={agentT} dragHandlers={aDragH} locked={isMobile} />
         </>,
         document.body
       )}
