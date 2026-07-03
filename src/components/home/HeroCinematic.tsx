@@ -228,9 +228,12 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
     } catch { return def; }
   };
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
-  // Chaves separadas por viewport para não sobrescrever a preferência entre mobile e desktop.
-  const agentKey = isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop';
-  const vehicleKey = isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop';
+  // Sincronização opcional entre mobile e desktop: quando ativa, usa as mesmas chaves.
+  const [syncDevices, setSyncDevices] = useState<boolean>(() => {
+    try { return localStorage.getItem('hero_sync_devices') === '1'; } catch { return false; }
+  });
+  const agentKey = syncDevices ? 'hero_agent_t' : (isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop');
+  const vehicleKey = syncDevices ? 'hero_vehicle_t' : (isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop');
   const [agentT, setAgentT] = useState<Transform>(() => {
     // Reset único: reposiciona o boneco junto à viatura.
     try {
