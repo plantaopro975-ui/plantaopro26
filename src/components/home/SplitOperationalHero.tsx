@@ -149,7 +149,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
     <section className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-4 px-3 sm:px-4 pb-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       {/* LEFT — Mission Briefing */}
       <article
-        className="relative overflow-hidden rounded-lg border border-primary/25 bg-[linear-gradient(155deg,hsl(var(--card))_0%,hsl(220_45%_5%)_100%)] p-3 sm:p-6 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)] order-2 lg:order-1"
+        className="relative overflow-hidden rounded-lg border border-primary/25 bg-[linear-gradient(155deg,hsl(var(--card))_0%,hsl(220_45%_5%)_100%)] p-4 sm:p-6 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)] order-2 lg:order-1"
         aria-labelledby="mission-title"
       >
         <MissionMap />
