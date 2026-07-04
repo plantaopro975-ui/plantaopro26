@@ -86,54 +86,54 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
     <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0">
       <TopHudBar />
 
-      {/* ============ TACTICAL TITLE STRIP ============ */}
-      <div className="relative mx-2 sm:mx-3 mt-2 shrink-0 overflow-hidden rounded-md border border-amber-500/25 bg-[#05070f]">
+      {/* ============ TACTICAL TITLE STRIP — Noir & Gold ============ */}
+      <div className="relative mx-2 sm:mx-3 mt-2 shrink-0 overflow-hidden rounded-md border border-primary/30 bg-background shadow-[0_2px_0_hsl(var(--background)),0_10px_24px_-12px_hsl(var(--primary)/0.35)]">
         {/* blueprint grid */}
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.18]"
+          className="pointer-events-none absolute inset-0 opacity-[0.14]"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(234,179,8,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(234,179,8,0.35) 1px, transparent 1px)',
+              'linear-gradient(hsl(var(--primary)/0.35) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)/0.35) 1px, transparent 1px)',
             backgroundSize: '22px 22px',
             maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 90%)',
           }}
         />
         {/* corner brackets */}
-        <span aria-hidden className="pointer-events-none absolute left-1 top-1 h-2.5 w-2.5 border-l border-t border-amber-400/70" />
-        <span aria-hidden className="pointer-events-none absolute right-1 top-1 h-2.5 w-2.5 border-r border-t border-amber-400/70" />
-        <span aria-hidden className="pointer-events-none absolute left-1 bottom-1 h-2.5 w-2.5 border-l border-b border-amber-400/70" />
-        <span aria-hidden className="pointer-events-none absolute right-1 bottom-1 h-2.5 w-2.5 border-r border-b border-amber-400/70" />
-        {/* amber glow line */}
-        <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-[linear-gradient(90deg,transparent,#f59e0b,transparent)]" />
-        <span aria-hidden className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-[linear-gradient(90deg,transparent,#f59e0b,transparent)]" />
+        <span aria-hidden className="pointer-events-none absolute left-1 top-1 h-2 w-2 sm:h-2.5 sm:w-2.5 border-l border-t border-primary/70" />
+        <span aria-hidden className="pointer-events-none absolute right-1 top-1 h-2 w-2 sm:h-2.5 sm:w-2.5 border-r border-t border-primary/70" />
+        <span aria-hidden className="pointer-events-none absolute left-1 bottom-1 h-2 w-2 sm:h-2.5 sm:w-2.5 border-l border-b border-primary/70" />
+        <span aria-hidden className="pointer-events-none absolute right-1 bottom-1 h-2 w-2 sm:h-2.5 sm:w-2.5 border-r border-b border-primary/70" />
+        {/* gold glow lines */}
+        <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary)),transparent)]" />
+        <span aria-hidden className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary)),transparent)]" />
 
-        <div className="relative flex items-center justify-between gap-3 px-4 sm:px-6 py-2 sm:py-2.5">
+        <div className="relative flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-2.5">
           {/* left rail — op code */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-60" />
-              <span className="relative h-2 w-2 rounded-full bg-amber-400" />
+              <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-60" />
+              <span className="relative h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.8)]" />
             </span>
-            <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em] text-amber-400/90">
-              OP&nbsp;// 01
+            <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.22em] sm:tracking-[0.28em] text-primary">
+              OP&nbsp;//&nbsp;01
             </span>
           </div>
 
           {/* center — title */}
           <div className="flex min-w-0 flex-1 items-baseline justify-center gap-2 sm:gap-3">
-            <span aria-hidden className="hidden sm:block h-3 w-8 bg-[linear-gradient(90deg,transparent,#f59e0b)]" />
+            <span aria-hidden className="hidden sm:block h-[2px] w-6 lg:w-10 bg-[linear-gradient(90deg,transparent,hsl(var(--primary)))]" />
             <h1
               id="mission-title"
-              className="font-sans font-black uppercase tracking-[0.02em] text-white text-[13px] sm:text-[17px] lg:text-[20px] leading-none truncate"
+              className="font-sans font-black uppercase tracking-[0.02em] text-foreground text-[12px] sm:text-[16px] lg:text-[20px] leading-none truncate drop-shadow-[0_1px_2px_hsl(var(--background)/0.9)]"
             >
-              Sistema <span className="text-amber-400">Socioeducativo</span>
+              Sistema <span className="text-primary">Socioeducativo</span>
             </h1>
-            <span aria-hidden className="hidden sm:block h-3 w-8 bg-[linear-gradient(270deg,transparent,#f59e0b)]" />
+            <span aria-hidden className="hidden sm:block h-[2px] w-6 lg:w-10 bg-[linear-gradient(270deg,transparent,hsl(var(--primary)))]" />
           </div>
 
           {/* right rail — subtitle */}
-          <p className="hidden md:block font-mono text-[9px] lg:text-[10px] uppercase tracking-[0.28em] text-white/60 shrink-0">
+          <p className="hidden md:block font-mono text-[9px] lg:text-[10px] uppercase tracking-[0.28em] text-muted-foreground shrink-0">
             Comando&nbsp;·&nbsp;Escalas
           </p>
         </div>
