@@ -375,6 +375,21 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 )}
                 style={{ ['--team-accent' as any]: t.accent }}
               >
+                {/* Realistic background image per team */}
+                <img
+                  src={t.bg}
+                  alt=""
+                  aria-hidden
+                  loading="lazy"
+                  decoding="async"
+                  className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-55 saturate-[0.9] transition-opacity duration-500 group-hover:opacity-75"
+                  draggable={false}
+                />
+                {/* Dark gradient overlay for legibility */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-slate-950/30"
+                />
                 {/* Halo: ALFA usa variante exclusiva; demais compartilham .team-halo */}
                 {t.key === 'ALFA' ? (
                   <span aria-hidden className="alfa-halo" />
