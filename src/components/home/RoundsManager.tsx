@@ -825,7 +825,7 @@ export function RoundsManager() {
                   <Plus className="h-3 w-3 mr-1" /> Adicionar
                 </Button>
               </div>
-              <div className={cn('grid gap-1.5 max-h-48 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+              <div className={cn('grid gap-1.5 max-h-48 overflow-y-auto pr-1 rounded-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                 {agents.map((a, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <span className="w-7 text-center font-mono text-[10px] text-primary tabular-nums">{pad(i + 1)}</span>
