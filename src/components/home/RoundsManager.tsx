@@ -861,7 +861,7 @@ export function RoundsManager() {
             <div className="mt-1 rounded-xl border border-primary/30 bg-gradient-to-b from-slate-900/80 to-slate-950 p-4"
                  style={{ boxShadow: `inset 0 0 30px -8px ${teamColor}66` }}>
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-primary/20 pb-2 mb-3">
-                <div className="font-sans font-black uppercase tracking-[0.08em] text-sm" style={{ color: teamColor }}>
+                <div className="font-sans font-semibold uppercase tracking-[0.14em] text-[13px]" style={{ color: teamColor }}>
                   EQUIPE {team}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
