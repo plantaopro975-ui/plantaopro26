@@ -206,13 +206,13 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 <div aria-hidden className="absolute inset-0 z-[1]">
                   {/* Lâmpadas azuis (lado esquerdo da barra) */}
                   <span
-                    className="absolute rounded-full blur-md bg-[radial-gradient(ellipse,rgba(59,130,246,0.9)_0%,transparent_65%)] animate-[giroflex-blue_0.8s_steps(2,end)_infinite]"
-                    style={{ left: '32%', top: '20%', width: '18%', height: '7%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
+                    className="absolute rounded-full blur-[6px] bg-[radial-gradient(ellipse,rgba(59,130,246,1)_0%,rgba(59,130,246,0.55)_35%,transparent_70%)] animate-[giroflex-blue_0.8s_steps(2,end)_infinite]"
+                    style={{ left: '39%', top: '28%', width: '14%', height: '6%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
                   />
                   {/* Lâmpadas vermelhas (lado direito da barra) */}
                   <span
-                    className="absolute rounded-full blur-md bg-[radial-gradient(ellipse,rgba(239,68,68,0.9)_0%,transparent_65%)] animate-[giroflex-red_0.8s_steps(2,end)_infinite]"
-                    style={{ left: '51%', top: '20%', width: '18%', height: '7%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
+                    className="absolute rounded-full blur-[6px] bg-[radial-gradient(ellipse,rgba(239,68,68,1)_0%,rgba(239,68,68,0.55)_35%,transparent_70%)] animate-[giroflex-red_0.8s_steps(2,end)_infinite]"
+                    style={{ left: '54%', top: '28%', width: '14%', height: '6%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
                   />
                 </div>
               </div>
