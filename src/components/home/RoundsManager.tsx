@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 import { ConfirmDialog } from './ConfirmDialog';
 
 /* ================= helpers ================= */
