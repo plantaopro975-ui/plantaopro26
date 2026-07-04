@@ -293,8 +293,12 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 )}
                 style={{ ['--team-accent' as any]: t.accent }}
               >
-                {/* ALFA-only tactical halo (subtle, respects reduced-motion) */}
-                {t.key === 'ALFA' && <span aria-hidden className="alfa-halo" />}
+                {/* Halo: ALFA usa variante exclusiva; demais compartilham .team-halo */}
+                {t.key === 'ALFA' ? (
+                  <span aria-hidden className="alfa-halo" />
+                ) : (
+                  <span aria-hidden className="team-halo" />
+                )}
 
                 {/* 3D Security Object — real 3D image with continuous 3D idle motion */}
                 <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-2 pt-4 [perspective:600px]">
@@ -302,6 +306,11 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                     src={t.obj}
                     alt={`Equipe ${t.key} — equipamento tático 3D`}
                     loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
+                    width={512}
+                    height={512}
+                    sizes="(max-width: 640px) 22vw, (max-width: 1024px) 18vw, 200px"
                     className={cn(
                       'max-h-[95%] max-w-[75%] object-contain select-none animate-float3d',
                       'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
@@ -314,9 +323,11 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                     style={{
                       transformOrigin: '50% 60%',
                       animationDelay: `${idx * 0.6}s`,
+                      contentVisibility: 'auto',
                     }}
                   />
                 </div>
+
 
 
                 {/* top accent line */}
