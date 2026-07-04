@@ -747,8 +747,11 @@ export function RoundsManager() {
         </DialogTrigger>
 
         <DialogContent
-          className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-colors duration-500"
+          className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>button.absolute]:hidden transition-colors duration-500"
           style={{ ['--primary' as string]: hexToHslTriple(teamColor) }}
+          onEscapeKeyDown={(e) => { e.preventDefault(); requestExit(); }}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
         >
           <DialogHeader className="border-b border-primary/15 pb-2">
             <div className="flex items-center gap-3">
