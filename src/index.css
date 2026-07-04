@@ -1057,3 +1057,8 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
+
+@keyframes giroflex-halo {
+  0%, 100% { background: radial-gradient(ellipse, rgba(239,68,68,0.55) 0%, transparent 70%); }
+  50%      { background: radial-gradient(ellipse, rgba(59,130,246,0.55) 0%, transparent 70%); }
+}
