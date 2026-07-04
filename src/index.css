@@ -1062,3 +1062,16 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   0%, 100% { background: radial-gradient(ellipse, rgba(239,68,68,0.55) 0%, transparent 70%); }
   50%      { background: radial-gradient(ellipse, rgba(59,130,246,0.55) 0%, transparent 70%); }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="giroflex"] {
+    animation: none !important;
+  }
+  .animate-\[giroflex-red_0\.9s_steps\(2\,end\)_infinite\],
+  .animate-\[giroflex-blue_0\.9s_steps\(2\,end\)_infinite\],
+  .animate-\[giroflex-halo_0\.9s_ease-in-out_infinite\] {
+    animation: none !important;
+    opacity: 0.6;
+    background: radial-gradient(ellipse, rgba(148,163,184,0.35) 0%, transparent 70%);
+  }
+}
