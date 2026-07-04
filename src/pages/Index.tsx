@@ -213,6 +213,9 @@ export default function Index() {
     if (isLoading || !user) return;
     // Aguarda hidratação do papel para evitar redirect prematuro
     if (userRole === null) return;
+    // Permite navegação livre para a home sem deslogar (vindo do painel interno)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('home') === '1') return;
     if (isMaster) navigate('/master', { replace: true });
     else if (isAdmin) navigate('/admin', { replace: true });
     else navigate('/agent-panel', { replace: true });
