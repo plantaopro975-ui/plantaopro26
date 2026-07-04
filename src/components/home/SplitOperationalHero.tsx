@@ -439,26 +439,38 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 >
                   {t.op}
                 </span>
-                <div className="relative z-20 flex flex-col gap-1 px-2.5 pb-2">
-                  <span
-                    className="font-sans font-black text-2xl sm:text-3xl leading-none tracking-[0.06em] uppercase"
-                    style={{
-                      backgroundImage: `linear-gradient(180deg, hsl(${t.accent} / 1) 0%, hsl(${t.accent} / 1) 45%, hsl(${t.accent.split(' ')[0]} ${t.accent.split(' ')[1]} 35%) 55%, hsl(${t.accent} / 1) 100%)`,
-                      WebkitBackgroundClip: 'text',
-                      backgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      textShadow: '0 1px 0 rgba(0,0,0,0.55), 0 2px 0 rgba(0,0,0,0.45), 0 3px 6px rgba(0,0,0,0.75)',
-                    }}
-                  >
-                    {t.key}
-                  </span>
-                  <span
-                    className="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.28em] truncate text-slate-200"
-                    style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
-                  >
-                    {t.motto}
-                  </span>
-                </div>
+                {(() => {
+                  const [hStr, sStr] = t.accent.split(' ');
+                  const h = hStr;
+                  const s = sStr; // já inclui %
+                  const hi = `hsl(${h} ${s} 78%)`;
+                  const base = `hsl(${h} ${s} 56%)`;
+                  const mid = `hsl(${h} ${s} 38%)`;
+                  const lo = `hsl(${h} ${s} 30%)`;
+                  return (
+                    <div className="relative z-20 flex flex-col gap-1 px-2.5 pb-2">
+                      <span
+                        className="font-sans font-black text-2xl sm:text-3xl leading-none tracking-[0.06em] uppercase"
+                        style={{
+                          backgroundImage: `linear-gradient(180deg, ${hi} 0%, ${base} 42%, ${mid} 55%, ${base} 78%, ${lo} 100%)`,
+                          WebkitBackgroundClip: 'text',
+                          backgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          textShadow:
+                            '0 1px 0 rgba(0,0,0,0.6), 0 2px 0 rgba(0,0,0,0.5), 0 3px 6px rgba(0,0,0,0.8)',
+                        }}
+                      >
+                        {t.key}
+                      </span>
+                      <span
+                        className="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.28em] truncate text-slate-200"
+                        style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
+                      >
+                        {t.motto}
+                      </span>
+                    </div>
+                  );
+                })()}
               </button>
             ))}
           </div>
