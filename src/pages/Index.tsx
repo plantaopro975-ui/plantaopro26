@@ -1262,6 +1262,13 @@ export default function Index() {
           />
         </div>
 
+        {/* Ferramenta Tática — Gestor de Rondas (aberto por qualquer visitante) */}
+        <div className="shrink-0 px-2 sm:px-4 pt-1 overflow-hidden">
+          <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '150ms' }}>
+            <RoundsManager />
+          </div>
+        </div>
+
         {/* Dynamic Agent Info Banner */}
         <div className="shrink-0 px-2 sm:px-4 overflow-hidden">
           <HomeAgentInfoBanner />
