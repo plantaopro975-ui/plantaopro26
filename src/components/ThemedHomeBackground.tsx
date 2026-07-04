@@ -1,7 +1,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { useEffect, useState, useMemo } from 'react';
 import { getThemeAssets } from '@/lib/themeAssets';
-import { teamPosters, teamColors, homeBackground } from '@/lib/teamAssets';
+import { teamPosters, teamPostersWebp, teamColors, homeBackground } from '@/lib/teamAssets';
 
 const teams = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const;
 
@@ -53,7 +53,7 @@ function RotatingTeamBackground({ theme }: { theme: string }) {
           key={team}
           className="absolute inset-0 transition-all duration-1500 ease-in-out bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url(${teamPosters[team]})`,
+            backgroundImage: `image-set(url(${teamPostersWebp[team]}) type("image/webp"), url(${teamPosters[team]}) type("image/jpeg"))`,
             opacity: index === currentTeamIndex ? 0.25 : 0,
             transform: `scale(${index === currentTeamIndex ? 1.05 : 1.1})`,
           }}
