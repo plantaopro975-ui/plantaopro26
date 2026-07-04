@@ -349,6 +349,19 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
               <IconRefresh className="h-4 w-4" />
             </ActionButton>
 
+            <ActionButton
+              onClick={() => navigate('/?home=1')}
+              tooltip="Ir para a página inicial (sem sair da conta)"
+              tone="amber"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 10.5 12 3l9 7.5" />
+                <path d="M5 9.5V21h14V9.5" />
+                <path d="M10 21v-6h4v6" />
+              </svg>
+            </ActionButton>
+
+
             {/* Logout — premium tactile */}
             <TooltipProvider>
               <Tooltip delayDuration={200}>
