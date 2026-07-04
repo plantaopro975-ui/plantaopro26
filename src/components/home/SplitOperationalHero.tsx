@@ -284,33 +284,14 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 data-team-card
                 onClick={() => onTeamClick(t.key)}
                 className={cn(
-                  'group relative flex h-[140px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left',
-                  'border-white/10 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_4%)_100%)]',
+                  'group relative flex h-[140px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent',
+                  'border-white/10',
                   'transition-all duration-500 will-change-transform [transform-style:preserve-3d]',
-                  'hover:border-[hsl(var(--team-accent)/0.6)] hover:-translate-y-1 hover:[transform:perspective(800px)_rotateX(4deg)]',
-                  'shadow-[0_10px_25px_-12px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.04)]',
-                  'hover:shadow-[0_25px_55px_-15px_hsl(var(--team-accent)/0.55),inset_0_1px_0_hsl(var(--team-accent)/0.4)]',
+                  'hover:border-[hsl(var(--team-accent)/0.6)] hover:-translate-y-1',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--team-accent)/0.7)]',
                 )}
                 style={{ ['--team-accent' as any]: t.accent }}
               >
-                {/* studio floor glow (breathing) */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 h-14 w-[80%] rounded-[50%] opacity-40 group-hover:opacity-90 transition-opacity duration-500 blur-2xl animate-pulse"
-                  style={{ background: `radial-gradient(ellipse at center, hsl(${t.accent} / 0.7) 0%, transparent 70%)` }}
-                />
-                {/* diagonal shine sweep on hover */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-                  style={{
-                    background:
-                      'linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.14) 50%, transparent 60%)',
-                    transform: 'translateX(-40%)',
-                    animation: 'none',
-                  }}
-                />
                 {/* 3D Security Object — real 3D image with continuous 3D idle motion */}
                 <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-2 pt-4 [perspective:600px]">
                   <img
@@ -331,14 +312,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                     }}
                   />
                 </div>
-                {/* bottom gradient for text legibility */}
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(2,6,15,0.80)_70%,rgba(2,6,15,0.98)_100%)] z-10 pointer-events-none" />
-                {/* accent tint at bottom */}
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-45 group-hover:opacity-90 transition-opacity duration-500"
-                  style={{ background: `linear-gradient(180deg, transparent 0%, hsl(${t.accent} / 0.35) 100%)` }}
-                />
+
                 {/* top accent line */}
                 <span
                   aria-hidden
