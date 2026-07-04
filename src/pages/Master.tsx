@@ -195,9 +195,49 @@ export default function Master() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
 
-  // CRÍTICO: NÃO redirecionar automaticamente - o Master deve permanecer na tela
-  // O painel Master usa masterSession que é gerenciada separadamente do auth.user
-  // Removido redirect automático para evitar logout forçado
+  // Validar token master no mount — se inválido/expirado, limpar sessão e redirecionar
+  useEffect(() => {
+    if (!masterSession) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const token = getMasterToken();
+        if (!token) {
+          setMasterSession(null);
+          try { sessionStorage.removeItem('masterSession'); localStorage.removeItem('master_user'); } catch {}
+          navigate('/', { replace: true });
+          return;
+        }
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/master-admin`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'x-master-token': token,
+            'authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ action: '__verify__' }),
+        });
+        if (cancelled) return;
+        // 401 => token inválido/expirado. Qualquer outro status (incl. 400 "Ação obrigatória") => token OK.
+        if (res.status === 401) {
+          setMasterToken(null);
+          setMasterSession(null);
+          try { sessionStorage.removeItem('masterSession'); localStorage.removeItem('master_user'); } catch {}
+          toast({
+            title: 'Sessão master expirada',
+            description: 'Faça login novamente para acessar o painel.',
+            variant: 'destructive',
+          });
+          navigate('/', { replace: true });
+        }
+      } catch (err) {
+        console.error('[Master] Falha ao validar token master:', err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [masterSession, navigate, setMasterSession, toast]);
+
 
   useEffect(() => {
     if (masterSession) {
