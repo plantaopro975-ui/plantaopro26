@@ -194,12 +194,24 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               draggable={false}
             />
             {/* Viatura ISE — tactical vehicle, next to agent */}
-            <img
-              src={vehicle3d}
-              alt="Viatura Tática ISE"
-              className="absolute bottom-4 left-1/2 z-20 h-auto w-[38%] max-w-[180px] object-contain translate-x-[35%] drop-shadow-[0_20px_30px_rgba(0,0,0,0.9)] select-none pointer-events-none"
-              draggable={false}
-            />
+            <div className="absolute bottom-4 left-1/2 z-20 w-[38%] max-w-[180px] translate-x-[35%] pointer-events-none">
+              {/* Giroflex — flashing red/blue emergency lights */}
+              <div aria-hidden className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-2 flex gap-1.5 z-30">
+                <span className="h-2 w-3 rounded-sm bg-red-500 shadow-[0_0_14px_4px_rgba(239,68,68,0.9)] animate-[giroflex-red_0.9s_steps(2,end)_infinite]" />
+                <span className="h-2 w-3 rounded-sm bg-blue-500 shadow-[0_0_14px_4px_rgba(59,130,246,0.9)] animate-[giroflex-blue_0.9s_steps(2,end)_infinite]" />
+              </div>
+              {/* Halo glow */}
+              <div
+                aria-hidden
+                className="absolute -top-6 left-1/2 -translate-x-1/2 h-16 w-24 rounded-full blur-2xl opacity-70 animate-[giroflex-halo_0.9s_ease-in-out_infinite]"
+              />
+              <img
+                src={vehicle3d}
+                alt="Viatura Tática ISE"
+                className="relative h-auto w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.9)] select-none"
+                draggable={false}
+              />
+            </div>
           </div>
 
           {/* RIGHT — Compact HUD */}
