@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Clock, Users, Plus, Trash2, Copy, Printer, Timer, Shield,
   Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
@@ -868,36 +868,10 @@ export function RoundsManager() {
   };
   const resetPosition = () => setDrag({ x: 0, y: 0 });
 
-  /* ================= Auto-fit inteligente (encaixa todo o conteúdo na tela) ================= */
+  /* Auto-fit removido — usamos layout responsivo + scroll interno para evitar cortes/sobreposições */
   const fitRef = useRef<HTMLDivElement>(null);
-  const [fitZoom, setFitZoom] = useState(1);
-  useLayoutEffect(() => {
-    if (!open) return;
-    const el = fitRef.current;
-    if (!el) return;
-    let raf = 0;
-    const recompute = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const node = fitRef.current;
-        if (!node) return;
-        // Mede tamanho natural sem o zoom aplicado
-        (node.style as unknown as { zoom: string }).zoom = '1';
-        const availH = window.innerHeight - 24;
-        const availW = window.innerWidth - 24;
-        const naturalH = node.scrollHeight;
-        const naturalW = node.scrollWidth;
-        const s = Math.min(1, availH / Math.max(1, naturalH), availW / Math.max(1, naturalW));
-        // Piso 0.62 para preservar legibilidade
-        setFitZoom(Math.max(0.62, Math.min(1, s)));
-      });
-    };
-    recompute();
-    const ro = new ResizeObserver(recompute);
-    ro.observe(el);
-    window.addEventListener('resize', recompute);
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('resize', recompute); };
-  }, [open, schedule, agents.length, history.length, issues.length]);
+
+
 
 
 
@@ -956,7 +930,7 @@ export function RoundsManager() {
         </DialogTrigger>
 
         <DialogContent
-          className="w-[min(96vw,44rem)] max-w-none max-h-[calc(100dvh-1rem)] overflow-hidden bg-background border border-border text-foreground p-3 gap-0 [&>button.absolute]:hidden transition-colors duration-500"
+          className="w-[min(100vw-0.75rem,60rem)] max-w-none max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
@@ -967,9 +941,9 @@ export function RoundsManager() {
         >
         <div
           ref={fitRef}
-          className="grid gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          style={{ zoom: fitZoom, transformOrigin: 'top left' }}
+          className="grid gap-3 p-3 sm:p-4 overflow-y-auto overscroll-contain flex-1 min-h-0"
         >
+
           <DialogHeader
             className={cn(
               'border-b border-border pb-2 select-none touch-none',
