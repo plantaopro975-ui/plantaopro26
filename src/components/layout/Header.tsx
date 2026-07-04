@@ -108,10 +108,11 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         props.className,
       )}
       style={{
-        backgroundImage: `linear-gradient(180deg,hsl(217_62%_5%/0.94),hsl(215_55%_8%/0.96)), url(${headerBg})`,
+        backgroundImage: `linear-gradient(180deg,hsl(217_62%_5%/0.55),hsl(215_55%_8%/0.72)), url(${headerBg})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'center 35%',
       }}
+
     >
       {/* Institutional amber accent strip */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90" />
