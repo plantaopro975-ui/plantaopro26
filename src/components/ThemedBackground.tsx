@@ -2,29 +2,31 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useEffect, useState, useMemo } from 'react';
 import { TacticalGrid } from './dashboard/TacticalGrid';
 import { getThemeAssets, BackgroundEffect } from '@/lib/themeAssets';
-import { teamPosters, teamColors } from '@/lib/teamAssets';
-import { homeBackground } from '@/lib/teamAssets';
+import { teamPosters, teamPostersWebp, teamColors } from '@/lib/teamAssets';
+import { homeBackground, homeBackgroundWebp } from '@/lib/teamAssets';
 
 // Team images mosaic for home screen background
 function TeamMosaicBackground() {
   const teams = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const;
-  
+
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Home background image */}
-      <div 
+      {/* Home background image — WebP with PNG fallback via image-set() */}
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-15"
-        style={{ backgroundImage: `url(${homeBackground})` }}
+        style={{
+          backgroundImage: `image-set(url(${homeBackgroundWebp}) type("image/webp"), url(${homeBackground}) type("image/png"))`,
+        }}
       />
-      
+
       {/* Team posters mosaic overlay */}
       <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 opacity-10">
         {teams.map((team) => (
           <div
             key={team}
             className="relative bg-cover bg-center bg-no-repeat"
-            style={{ 
-              backgroundImage: `url(${teamPosters[team]})`,
+            style={{
+              backgroundImage: `image-set(url(${teamPostersWebp[team]}) type("image/webp"), url(${teamPosters[team]}) type("image/jpeg"))`,
             }}
           >
             <div 
