@@ -260,9 +260,9 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 aria-hidden
                 className="pointer-events-none absolute z-30 rounded-full mix-blend-screen"
                 style={{
-                  top: '19%', left: '58%', width: '14%', height: '10%',
-                  background: 'radial-gradient(ellipse at center, rgba(255,40,40,0.95) 0%, rgba(255,0,0,0.55) 35%, transparent 70%)',
-                  filter: 'blur(6px)',
+                  top: '14%', left: '58%', width: '12%', height: '8%',
+                  background: 'radial-gradient(ellipse at center, rgba(255,40,40,1) 0%, rgba(255,0,0,0.6) 35%, transparent 70%)',
+                  filter: 'blur(5px)',
                   animation: 'giroflexRed 1.1s ease-in-out infinite',
                 }}
               />
@@ -270,9 +270,9 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 aria-hidden
                 className="pointer-events-none absolute z-30 rounded-full mix-blend-screen"
                 style={{
-                  top: '19%', left: '72%', width: '14%', height: '10%',
-                  background: 'radial-gradient(ellipse at center, rgba(60,120,255,0.95) 0%, rgba(0,60,255,0.55) 35%, transparent 70%)',
-                  filter: 'blur(6px)',
+                  top: '14%', left: '73%', width: '12%', height: '8%',
+                  background: 'radial-gradient(ellipse at center, rgba(80,140,255,1) 0%, rgba(0,60,255,0.6) 35%, transparent 70%)',
+                  filter: 'blur(5px)',
                   animation: 'giroflexBlue 1.1s ease-in-out infinite',
                 }}
               />
@@ -281,9 +281,9 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 aria-hidden
                 className="pointer-events-none absolute z-20 mix-blend-screen"
                 style={{
-                  top: '17%', left: '54%', width: '34%', height: '6%',
-                  background: 'linear-gradient(90deg, rgba(255,40,40,0.5), rgba(255,255,255,0.35), rgba(40,80,255,0.5))',
-                  filter: 'blur(10px)',
+                  top: '15%', left: '56%', width: '32%', height: '4%',
+                  background: 'linear-gradient(90deg, rgba(255,40,40,0.6), rgba(255,255,255,0.4), rgba(40,90,255,0.6))',
+                  filter: 'blur(8px)',
                   animation: 'giroflexBar 1.1s ease-in-out infinite',
                 }}
               />
@@ -292,13 +292,14 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 aria-hidden
                 className="pointer-events-none absolute z-10 mix-blend-screen"
                 style={{
-                  bottom: '4%', left: '48%', width: '48%', height: '10%',
+                  bottom: '2%', left: '46%', width: '48%', height: '8%',
                   background:
                     'radial-gradient(ellipse at 30% 50%, rgba(255,30,30,0.45) 0%, transparent 55%), radial-gradient(ellipse at 70% 50%, rgba(30,90,255,0.45) 0%, transparent 55%)',
                   filter: 'blur(14px)',
                   animation: 'giroflexFloor 1.1s ease-in-out infinite',
                 }}
               />
+
               <style>{`
                 @keyframes giroflexRed {
                   0%, 49%, 100% { opacity: 1; transform: scale(1); }
