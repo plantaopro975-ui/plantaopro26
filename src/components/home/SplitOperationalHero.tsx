@@ -254,42 +254,6 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             </div>
           </div>
 
-          {/* RIGHT — Compact HUD */}
-          <div className="relative z-20 rounded-xl border border-white/5 bg-slate-950/60 backdrop-blur-md p-3 shadow-[inset_0_1px_0_rgba(234,179,8,0.12)] flex flex-col justify-center gap-2 h-full">
-
-
-
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-slate-400">Status</span>
-              <span className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.28em] text-emerald-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Live
-              </span>
-            </div>
-
-            <div className="font-mono tabular-nums text-[32px] sm:text-[38px] leading-none font-bold text-amber-400 tracking-[0.02em] drop-shadow-[0_0_25px_rgba(234,179,8,0.35)]">
-              {clock}
-            </div>
-            <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-slate-400">{day}</div>
-
-            <dl className="grid grid-cols-3 gap-1.5 pt-2 mt-1 border-t border-white/5 divide-x divide-white/5">
-              {[
-                { label: 'Equipes', value: '04' },
-                { label: 'Ciclo', value: '24H' },
-                { label: 'Folga', value: '72H' },
-              ].map(({ label, value }) => (
-                <div key={label} className="flex flex-col gap-0.5 px-1.5 first:pl-0 last:pr-0">
-                  <dt className="font-mono text-[8px] uppercase tracking-[0.22em] text-slate-500">{label}</dt>
-                  <dd className="font-mono text-[16px] font-bold text-white tabular-nums leading-none">{value}</dd>
-                </div>
-              ))}
-            </dl>
-
-            <div className="pt-2 border-t border-white/5 flex items-center justify-between font-mono text-[8.5px] uppercase tracking-[0.22em]">
-              <span className="text-slate-500">Enlace</span>
-              <span className="text-amber-400">AES-256</span>
-            </div>
-          </div>
         </div>
 
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
