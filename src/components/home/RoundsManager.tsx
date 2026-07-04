@@ -684,9 +684,19 @@ export function RoundsManager() {
 
   const currentIdx = live?.index ?? -1;
 
+  /* Exit guard — evita fechamento acidental */
+  const [confirmExit, setConfirmExit] = useState(false);
+  const requestExit = () => setConfirmExit(true);
+  const confirmAndClose = () => {
+    setConfirmExit(false);
+    setRunning(false);
+    setOpen(false);
+  };
+
+
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={(o) => { if (o) setOpen(true); else requestExit(); }}>
         <DialogTrigger asChild>
           <button
             type="button"
@@ -737,14 +747,17 @@ export function RoundsManager() {
         </DialogTrigger>
 
         <DialogContent
-          className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-colors duration-500"
+          className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>button.absolute]:hidden transition-colors duration-500"
           style={{ ['--primary' as string]: hexToHslTriple(teamColor) }}
+          onEscapeKeyDown={(e) => { e.preventDefault(); requestExit(); }}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
         >
           <DialogHeader className="border-b border-primary/15 pb-2">
             <div className="flex items-center gap-3">
               {/* Hero realista — reativo à equipe */}
               <TeamHero team={team} color={teamColor} />
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">
                   <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
                   <span>Operação · Equipe</span>
@@ -757,6 +770,15 @@ export function RoundsManager() {
                   escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
+              {/* Botão Sair (única saída) */}
+              <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
+                className="shrink-0 inline-flex items-center gap-1.5 h-8 rounded-md border border-slate-700/70 bg-slate-900/60 pl-2 pr-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-colors">
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                  <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M10 8l-4 4 4 4M6 12h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Sair
+              </button>
             </div>
           </DialogHeader>
 
@@ -1122,7 +1144,13 @@ export function RoundsManager() {
 
       {/* Alarme de troca de ronda */}
       <Dialog open={alarm.open} onOpenChange={(o) => setAlarm((a) => ({ ...a, open: o }))}>
-        <DialogContent className="max-w-md bg-slate-950 border-2 text-center" style={{ borderColor: teamColor, boxShadow: `0 0 60px -10px ${teamColor}` }}>
+        <DialogContent
+          className="max-w-md bg-slate-950 border-2 text-center [&>button.absolute]:hidden"
+          style={{ borderColor: teamColor, boxShadow: `0 0 60px -10px ${teamColor}` }}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle className="sr-only">Hora da ronda</DialogTitle>
             <DialogDescription className="sr-only">Alarme de troca de agente</DialogDescription>
@@ -1146,6 +1174,62 @@ export function RoundsManager() {
               style={{ backgroundColor: teamColor }}>
               Ciente · Assumir posto
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmação de saída — evita fechamento acidental */}
+      <Dialog open={confirmExit} onOpenChange={setConfirmExit}>
+        <DialogContent
+          className="max-w-sm bg-slate-950 border border-slate-700/70 p-5 gap-4 [&>button.absolute]:hidden"
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <div className="flex items-start gap-3">
+              <svg viewBox="0 0 48 48" className="h-12 w-12 shrink-0" aria-hidden style={{ filter: `drop-shadow(0 4px 10px ${teamColor}55)` }}>
+                <defs>
+                  <radialGradient id="rmExitG" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stopColor={teamColor} stopOpacity="0.9" />
+                    <stop offset="60%" stopColor={teamColor} stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#020617" />
+                  </radialGradient>
+                </defs>
+                <path d="M24 4 L42 11 V26 C42 36 34 43 24 46 C14 43 6 36 6 26 V11 Z"
+                      fill="url(#rmExitG)" stroke={teamColor} strokeOpacity="0.8" strokeWidth="1.2" />
+                <path d="M24 16 V28 M24 33 V34.2" stroke="#0b0f17" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
+                <path d="M24 16 V28 M24 33 V34.2" stroke={teamColor} strokeWidth="2.4" strokeLinecap="round" />
+              </svg>
+              <div className="min-w-0">
+                <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">Confirmação</div>
+                <DialogTitle className="font-sans text-base font-normal tracking-tight text-slate-100 leading-tight">
+                  Encerrar sessão de rondas?
+                </DialogTitle>
+                <DialogDescription className="text-[12px] text-slate-400 mt-1 leading-snug">
+                  {running
+                    ? 'O cronômetro está ativo. A sessão será interrompida e ficará registrada no histórico.'
+                    : 'Os dados desta escala permanecerão salvos no histórico local.'}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button type="button" onClick={() => setConfirmExit(false)}
+              className="inline-flex items-center justify-center gap-1.5 h-10 rounded-md border border-primary/50 bg-primary/10 font-mono text-[11px] uppercase tracking-[0.16em] text-primary hover:bg-primary/20 transition-colors">
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                <path d="M4 12a8 8 0 1 0 3-6.2M4 4v5h5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Continuar
+            </button>
+            <button type="button" onClick={confirmAndClose}
+              className="inline-flex items-center justify-center gap-1.5 h-10 rounded-md border border-slate-700/70 bg-slate-900/60 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-300 hover:text-slate-100 hover:border-slate-500 transition-colors">
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M10 8l-4 4 4 4M6 12h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Sim, sair
+            </button>
           </div>
         </DialogContent>
       </Dialog>
