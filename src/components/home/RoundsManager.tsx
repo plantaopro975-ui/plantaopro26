@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 import { ConfirmDialog } from './ConfirmDialog';
 
 /* ================= helpers ================= */
@@ -624,6 +625,21 @@ export function RoundsManager() {
   useEffect(() => { setHistory(readHistory()); }, [open]);
   const clearHistory = () => { writeHistory([]); setHistory([]); };
 
+  /* server clock offset (server_ms - local_ms) */
+  const clockOffsetRef = useRef<number>(0);
+  const sessionIdRef = useRef<string | null>(null);
+  const syncServerClock = async () => {
+    try {
+      const t0 = Date.now();
+      const { data, error } = await supabase.rpc('get_server_now');
+      if (error || !data) return;
+      const rtt = (Date.now() - t0) / 2;
+      const serverMs = new Date(data as string).getTime() + rtt;
+      clockOffsetRef.current = serverMs - Date.now();
+    } catch { /* offline: keep local clock */ }
+  };
+  const nowServer = () => Date.now() + clockOffsetRef.current;
+
 
   const addAgent = () => setAgents((a) => [...a, `Agente ${a.length + 1}`]);
   const removeAgent = (i: number) => setAgents((a) => a.filter((_, idx) => idx !== i));
@@ -726,7 +742,7 @@ export function RoundsManager() {
 
   const live = useMemo(() => {
     if (!schedule || !running || startedAtRef.current == null) return null;
-    const elapsedSec = (Date.now() - startedAtRef.current) / 1000;
+    const elapsedSec = (nowServer() - startedAtRef.current) / 1000;
     const boundaries = schedule.rows.map((r) => (r.toAbs - schedule.startMin) * 60);
     const totalSec = boundaries[boundaries.length - 1];
     if (elapsedSec >= totalSec) {
@@ -744,33 +760,38 @@ export function RoundsManager() {
     const currentIdx = live.index;
     if (!firedRef.current.has(currentIdx)) {
       firedRef.current.add(currentIdx);
-      if (currentIdx > 0 || live.elapsed > 1) {
-        const row = schedule.rows[currentIdx];
-        setAlarm({ open: true, index: currentIdx, name: row.name });
-        // Sound (configurable)
+      // Individual "MISSÃO CUMPRIDA" para o agente que acabou de terminar
+      const finishedIdx = live.done ? currentIdx : currentIdx - 1;
+      if (finishedIdx >= 0) {
+        const finishedRow = schedule.rows[finishedIdx];
+        toast({
+          title: `✅ MISSÃO CUMPRIDA — ${finishedRow.name}`,
+          description: `Posto ${pad(finishedIdx + 1)} concluído · EQUIPE ${team}`,
+        });
         playAlert(soundRef.current);
-        // Vibration (mobile)
         try {
           if (!soundRef.current.muted && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
             navigator.vibrate?.([220, 90, 220, 90, 380]);
           }
         } catch { /* ignore */ }
-        // Local notification
         try {
           if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-            const n = new Notification('Hora de fazer a ronda', {
-              body: `EQUIPE ${team} · Posto ${pad(currentIdx + 1)} — ${row.name}`,
-              tag: 'plantaopro-rounds',
+            const n = new Notification('Missão cumprida', {
+              body: `EQUIPE ${team} · ${finishedRow.name} concluiu o posto ${pad(finishedIdx + 1)}.`,
+              tag: 'plantaopro-rounds-done',
               silent: false,
             });
             setTimeout(() => n.close(), 8000);
           }
         } catch { /* ignore */ }
       }
+      if (!live.done && currentIdx > 0) {
+        const row = schedule.rows[currentIdx];
+        setAlarm({ open: true, index: currentIdx, name: row.name });
+      }
     }
     if (live.done) {
       setRunning(false);
-      // finalize history entry
       if (historyIdRef.current) {
         const finished = readHistory().map((h) =>
           h.id === historyIdRef.current ? { ...h, endedAt: Date.now() } : h,
@@ -779,24 +800,64 @@ export function RoundsManager() {
         setHistory(finished);
         historyIdRef.current = null;
       }
+      // Marcar sessão como encerrada no banco
+      if (sessionIdRef.current) {
+        supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
+          .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
+      }
     }
   }, [live, schedule, team]);
 
-  const startTimer = () => {
+  /* Restaurar sessão ativa ao montar / abrir */
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    (async () => {
+      await syncServerClock();
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData?.user?.id;
+      if (!uid || cancelled) return;
+      const { data } = await supabase
+        .from('round_sessions')
+        .select('*')
+        .eq('user_id', uid)
+        .eq('is_active', true)
+        .order('server_started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (cancelled || !data) return;
+      // Hidratar configuração e retomar
+      setTeam(data.team as TeamKey);
+      setMode(data.mode as Mode);
+      setStartTime(data.start_time);
+      setEndTime(data.end_time);
+      setIntervalMin(data.interval_min);
+      const rows = (data.rows as Array<{ name: string }>) || [];
+      if (rows.length) setAgents(rows.map((r) => r.name));
+      sessionIdRef.current = data.id;
+      startedAtRef.current = new Date(data.server_started_at).getTime();
+      firedRef.current = new Set();
+      setRunning(true);
+    })();
+    return () => { cancelled = true; };
+  }, [open]);
+
+  const startTimer = async () => {
     if (!schedule) {
       toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' });
       return;
     }
-    startedAtRef.current = Date.now();
+    await syncServerClock();
+    const startMs = nowServer();
+    startedAtRef.current = startMs;
     firedRef.current = new Set();
     setRunning(true);
-    // Request notification permission (best effort)
     try {
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
         Notification.requestPermission().catch(() => { /* ignore */ });
       }
     } catch { /* ignore */ }
-    // Persist history entry
+    // Persist history (localStorage)
     const entry: HistoryEntry = {
       id: crypto.randomUUID?.() ?? String(Date.now()),
       team, mode, startTime, endTime, intervalMin,
@@ -808,6 +869,25 @@ export function RoundsManager() {
     const next = [entry, ...readHistory()].slice(0, 20);
     writeHistory(next);
     setHistory(next);
+    // Persist active session (Supabase) — encerra qualquer anterior do mesmo usuário
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData?.user?.id;
+      if (uid) {
+        await supabase.from('round_sessions')
+          .update({ is_active: false, ended_at: new Date().toISOString() })
+          .eq('user_id', uid).eq('is_active', true);
+        const { data } = await supabase.from('round_sessions').insert({
+          user_id: uid,
+          team, mode, start_time: startTime, end_time: endTime,
+          interval_min: intervalMin,
+          rows: schedule.rows.map((r) => ({ name: r.name, duration: r.duration })),
+          server_started_at: new Date(startMs).toISOString(),
+          is_active: true,
+        }).select('id').maybeSingle();
+        if (data?.id) sessionIdRef.current = data.id;
+      }
+    } catch { /* ignore — offline: sessão só local */ }
   };
   const pauseTimer = () => setRunning(false);
   const resetTimer = () => {
@@ -815,7 +895,12 @@ export function RoundsManager() {
     startedAtRef.current = null;
     firedRef.current = new Set();
     setTick(0);
+    if (sessionIdRef.current) {
+      supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
+        .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
+    }
   };
+
 
   /* ---------- share actions ---------- */
   const copyToClipboard = async () => {
