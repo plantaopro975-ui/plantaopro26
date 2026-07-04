@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowUpRight, Radio, ShieldCheck, Activity, Fingerprint, Clock3, User2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import agent3d from '@/assets/hero/agent-ise-3d.png';
+import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import brasao from '@/assets/hero/brasao-ise.png';
 import objAlfa from '@/assets/teams/obj-alfa-shield.png';
 import objBravo from '@/assets/teams/obj-bravo-sword.png';
@@ -190,6 +191,13 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               src={agent3d}
               alt="Agente Socioeducativo"
               className="relative z-10 h-full max-h-[240px] sm:max-h-[300px] lg:max-h-[360px] w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
+              draggable={false}
+            />
+            {/* Viatura ISE — tactical vehicle */}
+            <img
+              src={vehicle3d}
+              alt="Viatura Tática ISE"
+              className="absolute bottom-1 right-0 z-20 h-auto w-[45%] max-w-[220px] object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.9)] select-none pointer-events-none"
               draggable={false}
             />
           </div>
