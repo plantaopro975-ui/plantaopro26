@@ -20,39 +20,54 @@ import {
 import { cn } from '@/lib/utils';
 
 // 3D asset imports (bundled + hashed by Vite, served with long cache)
+// Each icon has PNG (fallback) + WebP (preferred, ~70% smaller).
 import editAsset from '@/assets/icon-3d-edit.png';
+import editWebp from '@/assets/icon-3d-edit.webp';
 import messageAsset from '@/assets/icon-3d-message.png';
+import messageWebp from '@/assets/icon-3d-message.webp';
 import lockAsset from '@/assets/icon-3d-lock.png';
+import lockWebp from '@/assets/icon-3d-lock.webp';
 import bellAsset from '@/assets/icon-3d-bell.png';
+import bellWebp from '@/assets/icon-3d-bell.webp';
 import logoutAsset from '@/assets/icon-3d-logout.png';
+import logoutWebp from '@/assets/icon-3d-logout.webp';
 import refreshAsset from '@/assets/icon-3d-refresh.png';
+import refreshWebp from '@/assets/icon-3d-refresh.webp';
 import giftAsset from '@/assets/icon-3d-gift.png';
+import giftWebp from '@/assets/icon-3d-gift.webp';
 import userAsset from '@/assets/icon-3d-user.png';
+import userWebp from '@/assets/icon-3d-user.webp';
 import typographyAsset from '@/assets/icon-3d-typography.png';
+import typographyWebp from '@/assets/icon-3d-typography.webp';
 import teamAsset from '@/assets/icon3d-team.png';
+import teamWebp from '@/assets/icon3d-team.webp';
 import shieldAsset from '@/assets/icon3d-shield.png';
+import shieldWebp from '@/assets/icon3d-shield.webp';
 import calendarAsset from '@/assets/icon3d-calendar.png';
+import calendarWebp from '@/assets/icon3d-calendar.webp';
 import clockAsset from '@/assets/icon3d-clock.png';
+import clockWebp from '@/assets/icon3d-clock.webp';
 import buildingAsset from '@/assets/icon3d-building.png';
+import buildingWebp from '@/assets/icon3d-building.webp';
 
-/** Semantic icon names → { asset, Lucide fallback } */
+/** Semantic icon names → { asset, webp, Lucide fallback } */
 export const ICON_3D_MAP = {
-  edit: { src: editAsset, fallback: Pencil },
-  message: { src: messageAsset, fallback: MessageSquare },
-  lock: { src: lockAsset, fallback: Lock },
-  unlock: { src: lockAsset, fallback: Unlock },
-  bell: { src: bellAsset, fallback: Bell },
-  logout: { src: logoutAsset, fallback: LogOut },
-  refresh: { src: refreshAsset, fallback: RefreshCw },
-  gift: { src: giftAsset, fallback: Gift },
-  user: { src: userAsset, fallback: User },
-  typography: { src: typographyAsset, fallback: Type },
-  team: { src: teamAsset, fallback: Users },
-  shield: { src: shieldAsset, fallback: Shield },
-  calendar: { src: calendarAsset, fallback: Calendar },
-  clock: { src: clockAsset, fallback: Clock },
-  building: { src: buildingAsset, fallback: Building2 },
-} as const satisfies Record<string, { src: string; fallback: ComponentType<LucideProps> }>;
+  edit: { src: editAsset, webp: editWebp, fallback: Pencil },
+  message: { src: messageAsset, webp: messageWebp, fallback: MessageSquare },
+  lock: { src: lockAsset, webp: lockWebp, fallback: Lock },
+  unlock: { src: lockAsset, webp: lockWebp, fallback: Unlock },
+  bell: { src: bellAsset, webp: bellWebp, fallback: Bell },
+  logout: { src: logoutAsset, webp: logoutWebp, fallback: LogOut },
+  refresh: { src: refreshAsset, webp: refreshWebp, fallback: RefreshCw },
+  gift: { src: giftAsset, webp: giftWebp, fallback: Gift },
+  user: { src: userAsset, webp: userWebp, fallback: User },
+  typography: { src: typographyAsset, webp: typographyWebp, fallback: Type },
+  team: { src: teamAsset, webp: teamWebp, fallback: Users },
+  shield: { src: shieldAsset, webp: shieldWebp, fallback: Shield },
+  calendar: { src: calendarAsset, webp: calendarWebp, fallback: Calendar },
+  clock: { src: clockAsset, webp: clockWebp, fallback: Clock },
+  building: { src: buildingAsset, webp: buildingWebp, fallback: Building2 },
+} as const satisfies Record<string, { src: string; webp: string; fallback: ComponentType<LucideProps> }>;
 
 export type Icon3DName = keyof typeof ICON_3D_MAP;
 
