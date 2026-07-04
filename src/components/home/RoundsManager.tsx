@@ -922,50 +922,6 @@ export function RoundsManager() {
             </div>
           </DialogHeader>
 
-          {/* Templates */}
-          <div className="grid gap-2 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
-            <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
-              <Star className="h-3 w-3" /> Templates salvos
-            </Label>
-            <div className="flex gap-2">
-              <Select onValueChange={loadTemplate}>
-                <SelectTrigger className="bg-slate-900/60 border-primary/20 h-8 text-xs flex-1">
-                  <SelectValue placeholder={templates.length ? 'Carregar template…' : 'Nenhum template salvo'} />
-                </SelectTrigger>
-                <SelectContent>
-                  {templates.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-primary">{t.team}</span>
-                        <span className="text-xs">{t.name}</span>
-                        <span className="text-[10px] text-muted-foreground">· {t.agents.length}ag</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {templates.length > 0 && (
-                <Select onValueChange={deleteTemplate}>
-                  <SelectTrigger className="bg-slate-900/60 border-destructive/30 h-8 w-24 text-[10px] text-destructive">
-                    <SelectValue placeholder="Excluir" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {templates.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Input value={tplName} onChange={(e) => setTplName(e.target.value.slice(0, 50))}
-                placeholder="Nome do template (ex.: Plantão diurno ALFA)"
-                className="bg-slate-900/60 border-primary/20 h-8 text-xs" autoComplete="off" />
-              <Button type="button" size="sm" onClick={saveTemplate} className="h-8 bg-primary text-primary-foreground hover:bg-primary/90">
-                <Save className="h-3.5 w-3.5 mr-1" /> Salvar
-              </Button>
-            </div>
-          </div>
 
           {/* Team pills */}
           <div className="grid gap-2 pt-1">
