@@ -24,6 +24,13 @@ export const teamPosters: Record<string, string> = {
   DELTA: deltaPoster,
 };
 
+export const teamPostersWebp: Record<string, string> = {
+  ALFA: alfaPosterWebp,
+  BRAVO: bravoPosterWebp,
+  CHARLIE: charliePosterWebp,
+  DELTA: deltaPosterWebp,
+};
+
 export const teamEmblems: Record<string, string> = {
   ALFA: alfaEmblem,
   BRAVO: bravoEmblem,
