@@ -256,10 +256,8 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
 
           {/* RIGHT — Compact HUD */}
           <div className="relative z-20 rounded-xl border border-white/5 bg-slate-950/60 backdrop-blur-md p-3 shadow-[inset_0_1px_0_rgba(234,179,8,0.12)] flex flex-col justify-center gap-2 h-full">
-            <span aria-hidden className="absolute top-1.5 left-1.5 h-2.5 w-2.5 border-l border-t border-amber-400/60" />
-            <span aria-hidden className="absolute top-1.5 right-1.5 h-2.5 w-2.5 border-r border-t border-amber-400/60" />
-            <span aria-hidden className="absolute bottom-1.5 left-1.5 h-2.5 w-2.5 border-l border-b border-amber-400/60" />
-            <span aria-hidden className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 border-r border-b border-amber-400/60" />
+
+
 
             <div className="flex items-center justify-between">
               <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-slate-400">Status</span>
