@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Clock, Users, Plus, Trash2, Copy, Printer, Timer, Shield,
-  Play, Pause, RotateCcw, Bell, Radio, ChevronRight,
+  Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
+  Save, FolderOpen, Star,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
@@ -9,6 +10,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -48,22 +52,130 @@ const TEAM_PRESETS = [
   { key: 'DELTA',   label: 'DELTA',   color: '#ef4444' },
 ] as const;
 
+type TeamKey = typeof TEAM_PRESETS[number]['key'];
 type Mode = 'split' | 'interval';
+type Rounding = 'exact' | 'floor' | 'ceil' | 'distribute';
+
+/* ================= templates (localStorage) ================= */
+type Template = {
+  id: string;
+  name: string;
+  team: TeamKey;
+  mode: Mode;
+  startTime: string;
+  endTime: string;
+  intervalMin: number;
+  rounding: Rounding;
+  agents: string[];
+  updatedAt: number;
+};
+const TPL_KEY = 'plantaopro_rounds_templates_v1';
+const readTemplates = (): Template[] => {
+  try {
+    const raw = localStorage.getItem(TPL_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+};
+const writeTemplates = (arr: Template[]) => {
+  try { localStorage.setItem(TPL_KEY, JSON.stringify(arr)); } catch { /* ignore */ }
+};
+
+/* ================= validation ================= */
+type Issue = { field: string; message: string };
+function validate(input: {
+  mode: Mode; startTime: string; endTime: string; intervalMin: number; agents: string[];
+}): Issue[] {
+  const issues: Issue[] = [];
+  const s = toMinutes(input.startTime);
+  if (s === null) issues.push({ field: 'start', message: 'Horário de início inválido.' });
+
+  if (input.mode === 'split') {
+    const e = toMinutes(input.endTime);
+    if (e === null) issues.push({ field: 'end', message: 'Horário de término inválido.' });
+    if (s !== null && e !== null) {
+      if (s === e) issues.push({ field: 'end', message: 'Início e término não podem ser iguais.' });
+      // Wrap-over-midnight is permitted (turno noturno). Only flag when both são iguais.
+    }
+  } else {
+    if (!Number.isFinite(input.intervalMin) || input.intervalMin < 1) {
+      issues.push({ field: 'interval', message: 'Intervalo deve ser de pelo menos 1 minuto.' });
+    }
+    if (input.intervalMin > 240) {
+      issues.push({ field: 'interval', message: 'Intervalo máximo é 240 minutos.' });
+    }
+  }
+
+  if (input.agents.length === 0) {
+    issues.push({ field: 'agents', message: 'Adicione ao menos 1 agente.' });
+  }
+  const trimmed = input.agents.map((a) => a.trim());
+  if (trimmed.some((a) => !a)) {
+    issues.push({ field: 'agents', message: 'Existem agentes sem nome preenchido.' });
+  }
+  const seen = new Set<string>();
+  const dupes = new Set<string>();
+  for (const a of trimmed) {
+    const k = a.toLowerCase();
+    if (!k) continue;
+    if (seen.has(k)) dupes.add(a);
+    seen.add(k);
+  }
+  if (dupes.size) {
+    issues.push({ field: 'agents', message: `Nomes repetidos: ${Array.from(dupes).join(', ')}.` });
+  }
+  return issues;
+}
 
 /* ================= component ================= */
 export function RoundsManager() {
   const [open, setOpen] = useState(false);
-  const [team, setTeam] = useState<typeof TEAM_PRESETS[number]['key']>('ALFA');
+  const [team, setTeam] = useState<TeamKey>('ALFA');
   const [mode, setMode] = useState<Mode>('split');
-
-  // split-mode config
   const [startTime, setStartTime] = useState('07:00');
   const [endTime, setEndTime] = useState('19:00');
-
-  // interval-mode config (minutes between rounds)
   const [intervalMin, setIntervalMin] = useState(30);
-
+  const [rounding, setRounding] = useState<Rounding>('distribute');
   const [agents, setAgents] = useState<string[]>(['Agente 1', 'Agente 2', 'Agente 3']);
+
+  /* templates */
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [tplName, setTplName] = useState('');
+  useEffect(() => { setTemplates(readTemplates()); }, [open]);
+
+  const saveTemplate = () => {
+    const name = tplName.trim() || `EQUIPE ${team} · ${new Date().toLocaleDateString('pt-BR')}`;
+    const tpl: Template = {
+      id: crypto.randomUUID?.() ?? String(Date.now()),
+      name: name.slice(0, 50),
+      team, mode, startTime, endTime, intervalMin, rounding,
+      agents: agents.map((a) => a.trim()).filter(Boolean),
+      updatedAt: Date.now(),
+    };
+    const next = [tpl, ...templates].slice(0, 20);
+    writeTemplates(next);
+    setTemplates(next);
+    setTplName('');
+    toast({ title: 'Template salvo', description: name });
+  };
+  const loadTemplate = (id: string) => {
+    const t = templates.find((x) => x.id === id);
+    if (!t) return;
+    setTeam(t.team);
+    setMode(t.mode);
+    setStartTime(t.startTime);
+    setEndTime(t.endTime);
+    setIntervalMin(t.intervalMin);
+    setRounding(t.rounding);
+    setAgents(t.agents.length ? t.agents : ['Agente 1']);
+    toast({ title: 'Template carregado', description: t.name });
+  };
+  const deleteTemplate = (id: string) => {
+    const next = templates.filter((x) => x.id !== id);
+    writeTemplates(next);
+    setTemplates(next);
+  };
 
   const addAgent = () => setAgents((a) => [...a, `Agente ${a.length + 1}`]);
   const removeAgent = (i: number) => setAgents((a) => a.filter((_, idx) => idx !== i));
@@ -71,46 +183,79 @@ export function RoundsManager() {
 
   const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
 
-  /* ---------- schedule computation ---------- */
-  const schedule = useMemo(() => {
-    const n = agents.length;
-    if (!n) return null;
+  /* ---------- validation ---------- */
+  const issues = useMemo(
+    () => validate({ mode, startTime, endTime, intervalMin, agents }),
+    [mode, startTime, endTime, intervalMin, agents],
+  );
+  const hasError = (field: string) => issues.some((i) => i.field === field);
 
+  /* ---------- schedule with rounding ---------- */
+  const schedule = useMemo(() => {
+    if (issues.length) return null;
+    const n = agents.length;
+    const s = toMinutes(startTime)!;
+
+    let totalMin: number;
+    let baseSlot: number;
     if (mode === 'split') {
-      const s = toMinutes(startTime);
-      const e = toMinutes(endTime);
-      if (s === null || e === null) return null;
+      const e = toMinutes(endTime)!;
       let total = e - s;
       if (total <= 0) total += 24 * 60;
-      const slot = total / n;
-      const rows = agents.map((name, i) => ({
-        name: name.trim() || `Agente ${i + 1}`,
-        from: fromMinutes(s + i * slot),
-        to: fromMinutes(s + (i + 1) * slot),
-        duration: slot,
-      }));
-      return { total, slot, rows, startMin: s };
+      totalMin = total;
+      baseSlot = total / n;
+    } else {
+      baseSlot = Math.max(1, intervalMin);
+      totalMin = baseSlot * n;
     }
 
-    // interval mode
-    const s = toMinutes(startTime);
-    if (s === null) return null;
-    const slot = Math.max(1, intervalMin);
-    const total = slot * n;
-    const rows = agents.map((name, i) => ({
-      name: name.trim() || `Agente ${i + 1}`,
-      from: fromMinutes(s + i * slot),
-      to: fromMinutes(s + (i + 1) * slot),
-      duration: slot,
-    }));
-    return { total, slot, rows, startMin: s };
-  }, [mode, startTime, endTime, intervalMin, agents]);
+    // build per-agent slot lengths (in minutes) based on rounding strategy
+    const slotsMin: number[] = new Array(n).fill(0);
+    if (rounding === 'exact' || mode === 'interval') {
+      for (let i = 0; i < n; i++) slotsMin[i] = baseSlot;
+    } else if (rounding === 'floor') {
+      const f = Math.floor(baseSlot);
+      for (let i = 0; i < n; i++) slotsMin[i] = f;
+    } else if (rounding === 'ceil') {
+      const c = Math.ceil(baseSlot);
+      for (let i = 0; i < n; i++) slotsMin[i] = c;
+    } else {
+      // distribute: floor for all, then spread leftover minutes across first agents
+      const base = Math.floor(baseSlot);
+      let leftover = Math.round(totalMin - base * n);
+      for (let i = 0; i < n; i++) slotsMin[i] = base + (leftover > 0 ? 1 : 0), leftover--;
+    }
+
+    // build rows
+    let cursor = s;
+    const rows = agents.map((name, i) => {
+      const from = cursor;
+      const to = cursor + slotsMin[i];
+      cursor = to;
+      return {
+        name: name.trim() || `Agente ${i + 1}`,
+        from: fromMinutes(from),
+        to: fromMinutes(to),
+        fromAbs: from,
+        toAbs: to,
+        duration: slotsMin[i],
+      };
+    });
+
+    return {
+      total: rows.reduce((a, r) => a + r.duration, 0),
+      slot: baseSlot,
+      rows,
+      startMin: s,
+      hasRemainder: rounding === 'distribute' && baseSlot % 1 !== 0,
+    };
+  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents]);
 
   /* ---------- live timer ---------- */
   const [running, setRunning] = useState(false);
-  const [tick, setTick] = useState(0); // forces re-render each second
-  const startedAtRef = useRef<number | null>(null); // epoch ms when timer started
-  const firedRef = useRef<Set<number>>(new Set()); // slot indices already alerted
+  const [tick, setTick] = useState(0);
+  const startedAtRef = useRef<number | null>(null);
+  const firedRef = useRef<Set<number>>(new Set());
   const [alarm, setAlarm] = useState<{ open: boolean; index: number; name: string }>({
     open: false, index: -1, name: '',
   });
@@ -124,50 +269,49 @@ export function RoundsManager() {
   const live = useMemo(() => {
     if (!schedule || !running || startedAtRef.current == null) return null;
     const elapsedSec = (Date.now() - startedAtRef.current) / 1000;
-    const slotSec = schedule.slot * 60;
-    const totalSec = schedule.slot * schedule.rows.length * 60;
+    const boundaries = schedule.rows.map((r) => (r.toAbs - schedule.startMin) * 60);
+    const totalSec = boundaries[boundaries.length - 1];
     if (elapsedSec >= totalSec) {
       return { done: true, index: schedule.rows.length - 1, remaining: 0, elapsed: elapsedSec };
     }
-    const idx = Math.min(schedule.rows.length - 1, Math.floor(elapsedSec / slotSec));
-    const remaining = slotSec - (elapsedSec - idx * slotSec);
-    return { done: false, index: idx, remaining, elapsed: elapsedSec };
+    let idx = 0;
+    while (idx < boundaries.length && elapsedSec >= boundaries[idx]) idx++;
+    const prevBoundary = idx === 0 ? 0 : boundaries[idx - 1];
+    const remaining = boundaries[idx] - elapsedSec;
+    return { done: false, index: idx, remaining, elapsed: elapsedSec, prevBoundary, slotSec: boundaries[idx] - prevBoundary };
   }, [schedule, running, tick]);
 
-  // fire alarm on transitions
   useEffect(() => {
     if (!live || !schedule) return;
     const currentIdx = live.index;
-    // fire when we ENTER a new slot (once)
     if (!firedRef.current.has(currentIdx)) {
       firedRef.current.add(currentIdx);
-      // don't alert on very first slot mount (t=0)
       if (currentIdx > 0 || live.elapsed > 1) {
         const row = schedule.rows[currentIdx];
         setAlarm({ open: true, index: currentIdx, name: row.name });
         try {
-          // short beep
           const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
             || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
           if (AC) {
             const ctx = new AC();
             const o = ctx.createOscillator();
             const g = ctx.createGain();
-            o.type = 'square';
-            o.frequency.value = 880;
-            g.gain.value = 0.05;
+            o.type = 'square'; o.frequency.value = 880; g.gain.value = 0.05;
             o.connect(g); g.connect(ctx.destination);
             o.start();
             setTimeout(() => { o.stop(); ctx.close(); }, 600);
           }
-        } catch { /* ignore audio */ }
+        } catch { /* ignore */ }
       }
     }
     if (live.done) setRunning(false);
   }, [live, schedule]);
 
   const startTimer = () => {
-    if (!schedule) return;
+    if (!schedule) {
+      toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' });
+      return;
+    }
     startedAtRef.current = Date.now();
     firedRef.current = new Set();
     setRunning(true);
@@ -210,7 +354,7 @@ export function RoundsManager() {
         .dur{color:${teamColor};font-family:ui-monospace,monospace}
       </style></head><body>
       <h1>Equipe ${team}</h1>
-      <div class="meta">${mode === 'split' ? `Divisão · ${startTime} → ${endTime}` : `Intervalo · ${intervalMin}min desde ${startTime}`} · ${agents.length} agentes · ${fmtDuration(schedule.slot)}/agente</div>
+      <div class="meta">${mode === 'split' ? `Divisão · ${startTime} → ${endTime}` : `Intervalo · ${intervalMin}min desde ${startTime}`} · ${agents.length} agentes · ${fmtDuration(schedule.slot)}/agente · Arredondamento: ${rounding}</div>
       <table><thead><tr><th>#</th><th>Agente</th><th>Início</th><th>Término</th><th>Duração</th></tr></thead><tbody>
       ${schedule.rows.map((r, i) => `<tr><td>${pad(i + 1)}</td><td>${r.name}</td><td class="win">${r.from}</td><td class="win">${r.to}</td><td class="dur">${fmtDuration(r.duration)}</td></tr>`).join('')}
       </tbody></table>
@@ -231,41 +375,47 @@ export function RoundsManager() {
             type="button"
             aria-label="Abrir Gestor de Rondas"
             className={cn(
-              'group relative inline-flex items-center gap-2.5 h-9 pl-2.5 pr-3 rounded-full',
-              'border border-primary/30 bg-slate-950/70 backdrop-blur',
-              'transition-all duration-200',
-              'hover:border-primary/70 hover:bg-slate-900/80',
+              'group relative inline-flex items-center gap-3 h-11 pl-2.5 pr-4 rounded-full overflow-hidden',
+              'border border-primary/50 bg-slate-950/80 backdrop-blur',
+              'shadow-[0_0_28px_-8px_hsl(var(--primary)/0.7)]',
+              'transition-all duration-300',
+              'hover:border-primary hover:shadow-[0_0_40px_-6px_hsl(var(--primary)/0.9)] hover:-translate-y-0.5',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
             )}
           >
-            {/* micro SVG radar */}
-            <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 border border-primary/40">
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
-                <circle cx="12" cy="12" r="8" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.4" />
-                <circle cx="12" cy="12" r="4" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.5" />
-                <line x1="12" y1="12" x2="18" y2="8" stroke="hsl(var(--primary))" strokeWidth="1.4" strokeLinecap="round" />
-                <circle cx="12" cy="12" r="1.2" fill="hsl(var(--primary))" />
+            {/* animated sheen */}
+            <span aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,transparent_30%,hsl(var(--primary)/0.18)_50%,transparent_70%)]" />
+            {/* top hairline */}
+            <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+            {/* radar */}
+            <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 border border-primary/60 shadow-inner">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+                <circle cx="12" cy="12" r="9" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.4" />
+                <circle cx="12" cy="12" r="5" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.5" />
+                <line x1="12" y1="12" x2="19" y2="7" stroke="hsl(var(--primary))" strokeWidth="1.6" strokeLinecap="round" />
+                <circle cx="12" cy="12" r="1.4" fill="hsl(var(--primary))" />
               </svg>
-              <span aria-hidden className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_hsl(142_70%_45%/0.9)] animate-pulse" />
+              <span aria-hidden className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_hsl(142_70%_45%/0.9)] animate-pulse" />
             </span>
 
-            <span className="flex items-baseline gap-2 leading-none">
-              <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-primary/90">
-                Ferramenta
+            <span className="relative z-10 flex items-baseline gap-2 leading-none">
+              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-primary">
+                Ferramenta Tática
               </span>
-              <span className="font-sans text-[12px] font-bold uppercase tracking-[0.08em] text-foreground">
+              <span className="font-sans text-[13px] font-black uppercase tracking-[0.12em] text-foreground">
                 Gestor de Rondas
               </span>
             </span>
 
             {running && live && !live.done && schedule && (
-              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-emerald-300">
+              <span className="relative z-10 ml-1 hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/60 px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums text-emerald-300">
                 <Timer className="h-3 w-3" />
                 {fmtHMS(live.remaining)}
               </span>
             )}
 
-            <ChevronRight className="h-3.5 w-3.5 text-primary/70 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="relative z-10 h-4 w-4 text-primary group-hover:translate-x-0.5 transition-transform" />
           </button>
         </DialogTrigger>
 
@@ -282,8 +432,53 @@ export function RoundsManager() {
             </DialogDescription>
           </DialogHeader>
 
+          {/* Templates */}
+          <div className="grid gap-2 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
+            <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+              <Star className="h-3 w-3" /> Templates salvos
+            </Label>
+            <div className="flex gap-2">
+              <Select onValueChange={loadTemplate}>
+                <SelectTrigger className="bg-slate-900/60 border-primary/20 h-8 text-xs flex-1">
+                  <SelectValue placeholder={templates.length ? 'Carregar template…' : 'Nenhum template salvo'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {templates.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-primary">{t.team}</span>
+                        <span className="text-xs">{t.name}</span>
+                        <span className="text-[10px] text-muted-foreground">· {t.agents.length}ag</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {templates.length > 0 && (
+                <Select onValueChange={deleteTemplate}>
+                  <SelectTrigger className="bg-slate-900/60 border-destructive/30 h-8 w-24 text-[10px] text-destructive">
+                    <SelectValue placeholder="Excluir" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {templates.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Input value={tplName} onChange={(e) => setTplName(e.target.value.slice(0, 50))}
+                placeholder="Nome do template (ex.: Plantão diurno ALFA)"
+                className="bg-slate-900/60 border-primary/20 h-8 text-xs" autoComplete="off" />
+              <Button type="button" size="sm" onClick={saveTemplate} className="h-8 bg-primary text-primary-foreground hover:bg-primary/90">
+                <Save className="h-3.5 w-3.5 mr-1" /> Salvar
+              </Button>
+            </div>
+          </div>
+
           {/* Team pills */}
-          <div className="grid gap-2 py-2">
+          <div className="grid gap-2 pt-1">
             <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
               <Radio className="h-3 w-3" /> Equipe
             </Label>
@@ -291,24 +486,17 @@ export function RoundsManager() {
               {TEAM_PRESETS.map((t) => {
                 const active = team === t.key;
                 return (
-                  <button
-                    key={t.key}
-                    type="button"
-                    onClick={() => setTeam(t.key)}
+                  <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                     className={cn(
                       'relative rounded-lg border px-2 py-2 font-sans font-black uppercase tracking-[0.14em] text-xs transition-all',
-                      active
-                        ? 'border-transparent text-slate-950 shadow-lg'
-                        : 'border-primary/20 bg-slate-900/60 text-foreground hover:border-primary/50',
+                      active ? 'border-transparent text-slate-950 shadow-lg' : 'border-primary/20 bg-slate-900/60 text-foreground hover:border-primary/50',
                     )}
                     style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
                   >
                     {t.label}
-                    <span
-                      aria-hidden
+                    <span aria-hidden
                       className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full transition-opacity', active ? 'opacity-0' : 'opacity-70')}
-                      style={{ backgroundColor: t.color }}
-                    />
+                      style={{ backgroundColor: t.color }} />
                   </button>
                 );
               })}
@@ -318,24 +506,18 @@ export function RoundsManager() {
           {/* Mode tabs */}
           <div className="grid grid-cols-2 gap-2">
             {(['split', 'interval'] as Mode[]).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setMode(m)}
+              <button key={m} type="button" onClick={() => setMode(m)}
                 className={cn(
                   'rounded-md border px-3 py-2 text-[11px] font-mono uppercase tracking-[0.18em] transition-all',
-                  mode === m
-                    ? 'border-primary/60 bg-primary/15 text-primary'
-                    : 'border-primary/20 bg-slate-900/60 text-muted-foreground hover:text-foreground',
-                )}
-              >
+                  mode === m ? 'border-primary/60 bg-primary/15 text-primary' : 'border-primary/20 bg-slate-900/60 text-muted-foreground hover:text-foreground',
+                )}>
                 {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
               </button>
             ))}
           </div>
 
           {/* Config */}
-          <div className="grid gap-3 py-2">
+          <div className="grid gap-3">
             {mode === 'split' ? (
               <div className="grid grid-cols-2 gap-3">
                 <div className="grid gap-1.5">
@@ -344,7 +526,7 @@ export function RoundsManager() {
                   </Label>
                   <Input id="rm-start" type="time" value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
-                    className="bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums" autoComplete="off" />
+                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('start') && 'border-destructive')} autoComplete="off" />
                 </div>
                 <div className="grid gap-1.5">
                   <Label htmlFor="rm-end" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
@@ -352,7 +534,7 @@ export function RoundsManager() {
                   </Label>
                   <Input id="rm-end" type="time" value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
-                    className="bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums" autoComplete="off" />
+                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('end') && 'border-destructive')} autoComplete="off" />
                 </div>
               </div>
             ) : (
@@ -363,7 +545,7 @@ export function RoundsManager() {
                   </Label>
                   <Input id="rm-start2" type="time" value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
-                    className="bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums" autoComplete="off" />
+                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('start') && 'border-destructive')} autoComplete="off" />
                 </div>
                 <div className="grid gap-1.5">
                   <Label htmlFor="rm-int" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
@@ -371,11 +553,32 @@ export function RoundsManager() {
                   </Label>
                   <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
                     onChange={(e) => setIntervalMin(Math.max(1, Math.min(240, +e.target.value || 1)))}
-                    className="bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums" autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
+                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('interval') && 'border-destructive')} autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
                 </div>
               </div>
             )}
 
+            {/* Rounding — only meaningful in split mode */}
+            {mode === 'split' && (
+              <div className="grid gap-1.5">
+                <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80">
+                  Arredondamento da divisão
+                </Label>
+                <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
+                  <SelectTrigger className="bg-slate-900/60 border-primary/20 h-9 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="distribute">Minutos inteiros — distribuir resto (recomendado)</SelectItem>
+                    <SelectItem value="floor">Minutos inteiros — truncar (sobra livre no fim)</SelectItem>
+                    <SelectItem value="ceil">Minutos inteiros — arredondar para cima</SelectItem>
+                    <SelectItem value="exact">Exato — segundos fracionários</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Agents */}
             <div className="grid gap-1.5">
               <div className="flex items-center justify-between">
                 <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
@@ -385,12 +588,14 @@ export function RoundsManager() {
                   <Plus className="h-3 w-3 mr-1" /> Adicionar
                 </Button>
               </div>
-              <div className="grid gap-1.5 max-h-48 overflow-y-auto pr-1">
+              <div className={cn('grid gap-1.5 max-h-48 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                 {agents.map((a, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <span className="w-7 text-center font-mono text-[10px] text-primary tabular-nums">{pad(i + 1)}</span>
                     <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))}
-                      placeholder={`Agente ${i + 1}`} className="bg-slate-900/60 border-primary/15 h-8 text-sm" autoComplete="off" />
+                      placeholder={`Agente ${i + 1}`}
+                      className={cn('bg-slate-900/60 border-primary/15 h-8 text-sm', !a.trim() && 'border-destructive/60')}
+                      autoComplete="off" />
                     <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
                       disabled={agents.length <= 1} className="h-8 w-8 text-muted-foreground hover:text-destructive"
                       aria-label={`Remover ${i + 1}`}>
@@ -401,6 +606,18 @@ export function RoundsManager() {
               </div>
             </div>
           </div>
+
+          {/* Validation panel */}
+          {issues.length > 0 && (
+            <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+              <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-destructive mb-1">
+                <AlertTriangle className="h-3.5 w-3.5" /> Corrija os itens abaixo
+              </div>
+              <ul className="grid gap-1 text-xs text-destructive/90 list-disc pl-4">
+                {issues.map((iss, k) => <li key={k}>{iss.message}</li>)}
+              </ul>
+            </div>
+          )}
 
           {/* Live cockpit */}
           {schedule && (
@@ -413,10 +630,10 @@ export function RoundsManager() {
                 <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
                   <span className="rounded border border-primary/40 bg-primary/10 px-2 py-0.5 text-primary tabular-nums">
                     <Timer className="inline h-3 w-3 mr-1" />
-                    {fmtDuration(schedule.slot * schedule.rows.length)} totais
+                    {fmtDuration(schedule.total)} totais
                   </span>
                   <span className="rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-emerald-400 tabular-nums">
-                    {fmtDuration(schedule.slot)} / agente
+                    ~{fmtDuration(schedule.slot)} / agente
                   </span>
                 </div>
               </div>
@@ -426,7 +643,7 @@ export function RoundsManager() {
                 <div className="flex flex-col items-center">
                   <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-muted-foreground">Regressivo</span>
                   <span className="font-mono text-2xl font-black tabular-nums" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
-                    {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.slot * 60)}
+                    {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                   </span>
                 </div>
                 <div className="min-w-0">
@@ -436,25 +653,20 @@ export function RoundsManager() {
                   <div className="font-sans font-bold text-base truncate">
                     {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
                   </div>
-                  {running && live && !live.done && (
+                  {running && live && !live.done && 'slotSec' in live && (
                     <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
                       <div className="h-full transition-all"
-                           style={{
-                             width: `${100 - (live.remaining / (schedule.slot * 60)) * 100}%`,
-                             backgroundColor: teamColor,
-                           }} />
+                           style={{ width: `${100 - (live.remaining / live.slotSec) * 100}%`, backgroundColor: teamColor }} />
                     </div>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
                   {!running ? (
-                    <Button type="button" size="sm" onClick={startTimer}
-                      className="h-8 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
+                    <Button type="button" size="sm" onClick={startTimer} className="h-8 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
                       <Play className="h-3.5 w-3.5 mr-1" /> Iniciar
                     </Button>
                   ) : (
-                    <Button type="button" size="sm" onClick={pauseTimer}
-                      className="h-8 bg-amber-500 hover:bg-amber-600 text-slate-950">
+                    <Button type="button" size="sm" onClick={pauseTimer} className="h-8 bg-amber-500 hover:bg-amber-600 text-slate-950">
                       <Pause className="h-3.5 w-3.5 mr-1" /> Pausar
                     </Button>
                   )}
@@ -471,12 +683,9 @@ export function RoundsManager() {
                   const isCurrent = running && i === currentIdx && live && !live.done;
                   return (
                     <li key={i}
-                        className={cn(
-                          'grid grid-cols-[28px_1fr_auto] items-center gap-3 rounded-md border px-3 py-2 transition-colors',
-                          isCurrent ? 'bg-slate-900' : 'border-primary/10 bg-slate-950/60',
-                        )}
-                        style={isCurrent ? { borderColor: teamColor, boxShadow: `0 0 14px -4px ${teamColor}` } : undefined}
-                    >
+                        className={cn('grid grid-cols-[28px_1fr_auto] items-center gap-3 rounded-md border px-3 py-2 transition-colors',
+                          isCurrent ? 'bg-slate-900' : 'border-primary/10 bg-slate-950/60')}
+                        style={isCurrent ? { borderColor: teamColor, boxShadow: `0 0 14px -4px ${teamColor}` } : undefined}>
                       <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--primary))' }}>{pad(i + 1)}</span>
                       <span className="font-sans font-semibold text-sm truncate">{r.name}</span>
                       <span className="font-mono text-[11px] tabular-nums flex items-center gap-2">
@@ -502,11 +711,6 @@ export function RoundsManager() {
                 </Button>
               </div>
             </div>
-          )}
-          {!schedule && (
-            <p className="text-xs text-destructive font-mono uppercase tracking-[0.15em]">
-              Horários inválidos ou nenhum agente cadastrado.
-            </p>
           )}
         </DialogContent>
       </Dialog>
