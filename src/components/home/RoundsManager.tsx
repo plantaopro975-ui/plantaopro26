@@ -534,7 +534,37 @@ function validate(input: {
 }
 
 /* ================= component ================= */
+/* ================= Section colapsável (mobile/tablet) — sempre aberta em lg+ ================= */
+function Section({
+  icon, title, defaultOpen = false, children,
+}: { icon?: React.ReactNode; title: string; defaultOpen?: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = useState(defaultOpen);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mql = window.matchMedia('(min-width: 1024px)');
+    const sync = () => { if (mql.matches) setOpen(true); };
+    sync();
+    mql.addEventListener('change', sync);
+    return () => mql.removeEventListener('change', sync);
+  }, []);
+  return (
+    <details
+      open={open}
+      onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
+      className="group min-w-0 rounded-lg border border-border bg-card/30 lg:bg-transparent lg:border-0 lg:rounded-none lg:!open"
+    >
+      <summary className="lg:hidden flex items-center gap-2 cursor-pointer px-3 py-2 select-none list-none [&::-webkit-details-marker]:hidden">
+        {icon}
+        <span className="font-sans text-[12px] uppercase tracking-wide text-foreground">{title}</span>
+        <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
+      </summary>
+      <div className="grid gap-3 p-3 lg:p-0">{children}</div>
+    </details>
+  );
+}
+
 export function RoundsManager() {
+
   const [open, setOpen] = useState(false);
   const [team, setTeam] = useState<TeamKey>('ALFA');
   const [mode, setMode] = useState<Mode>('split');
@@ -930,7 +960,7 @@ export function RoundsManager() {
         </DialogTrigger>
 
         <DialogContent
-          className="w-[min(100vw-0.75rem,60rem)] max-w-none max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
+          className="w-[min(100vw-0.5rem,72rem)] max-w-none max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
@@ -939,14 +969,10 @@ export function RoundsManager() {
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
         >
-        <div
-          ref={fitRef}
-          className="grid gap-3 p-3 sm:p-4 overflow-y-auto overscroll-contain flex-1 min-h-0"
-        >
-
+          {/* Sticky header — sempre visível */}
           <DialogHeader
             className={cn(
-              'border-b border-border pb-2 select-none touch-none',
+              'sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur px-3 sm:px-4 py-2 select-none touch-none',
               canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
             )}
             onPointerDown={onDragStart}
@@ -956,376 +982,388 @@ export function RoundsManager() {
             title={canDrag ? 'Arraste para reposicionar a janela' : 'Janela travada durante a operação'}
           >
             <div className="flex items-center gap-3">
-              {/* Grip indicator */}
-              <div className="flex flex-col gap-0.5 pr-1 opacity-60" aria-hidden>
-                <span className="flex gap-0.5">
-                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
-                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
-                </span>
-                <span className="flex gap-0.5">
-                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
-                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
-                </span>
-                <span className="flex gap-0.5">
-                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
-                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
-                </span>
+              <div className="hidden sm:flex flex-col gap-0.5 pr-1 opacity-60" aria-hidden>
+                <span className="flex gap-0.5"><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /></span>
+                <span className="flex gap-0.5"><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /></span>
+                <span className="flex gap-0.5"><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /></span>
               </div>
-              {/* Hero realista — reativo à equipe */}
               <TeamHero team={team} color={teamColor} />
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
                   <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
-                  <span>Operação · Equipe</span>
+                  <span className="truncate">Operação · Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-sans text-base font-normal tracking-tight leading-tight text-foreground">
+                <DialogTitle className="font-sans text-base font-normal tracking-tight leading-tight text-foreground truncate">
                   Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="text-[11px] text-muted-foreground font-sans tracking-wide">
+                <DialogDescription className="hidden sm:block text-[11px] text-muted-foreground font-sans tracking-wide">
                   escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
-              {/* Recentrar (só aparece se a janela foi movida) */}
+
+              {running && live && !live.done && schedule && (
+                <span className="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/50 px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums text-emerald-300">
+                  <Timer className="h-3 w-3" />
+                  {fmtHMS(live.remaining)}
+                </span>
+              )}
+
               {(drag.x !== 0 || drag.y !== 0) && (
                 <button type="button" onClick={resetPosition} aria-label="Recentrar janela"
                   onPointerDown={(e) => e.stopPropagation()}
-                  className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border bg-card/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+                  className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border bg-card/60 text-muted-foreground hover:text-foreground transition-colors"
                   title="Recentrar janela">
                   <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                     <path d="M12 3v3M12 18v3M3 12h3M18 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
                   </svg>
                 </button>
               )}
-              {/* Botão Sair (única saída) */}
+
               <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
                 onPointerDown={(e) => e.stopPropagation()}
-                className="shrink-0 inline-flex items-center gap-1.5 h-8 rounded-md border border-border bg-card/60 pl-2 pr-2.5 font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-foreground hover:border-border transition-colors">
+                className="shrink-0 inline-flex items-center gap-1.5 h-8 rounded-md border border-border bg-card/60 pl-2 pr-2.5 font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                   <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M10 8l-4 4 4 4M6 12h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Sair
+                <span className="hidden xs:inline">Sair</span>
               </button>
             </div>
           </DialogHeader>
 
+          {/* Corpo rolável — grid responsivo 1 → 2 colunas */}
+          <div
+            ref={fitRef}
+            className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
 
-          {/* Team pills */}
-          <div className="grid gap-2 pt-1">
-            <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
-              <Radio className="h-3 w-3" /> Equipe
-            </Label>
-            <div className="grid grid-cols-4 gap-2">
-              {TEAM_PRESETS.map((t) => {
-                const active = team === t.key;
-                return (
-                  <button key={t.key} type="button" onClick={() => setTeam(t.key)}
-                    className={cn(
-                      'relative rounded-lg border px-2 py-2 font-sans font-semibold uppercase tracking-wide text-[11px] transition-all',
-                      active ? 'border-transparent text-slate-950 shadow-sm' : 'border-border bg-card/60 text-foreground hover:border-border',
-                    )}
-                    style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
-                  >
-                    {t.label}
-                    <span aria-hidden
-                      className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full transition-opacity', active ? 'opacity-0' : 'opacity-70')}
-                      style={{ backgroundColor: t.color }} />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Mode tabs */}
-          <div className="grid grid-cols-2 gap-2">
-            {(['split', 'interval'] as Mode[]).map((m) => (
-              <button key={m} type="button" onClick={() => setMode(m)}
-                className={cn(
-                  'rounded-md border px-3 py-2 text-[11px] font-mono uppercase tracking-wide transition-all',
-                  mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card/60 text-muted-foreground hover:text-foreground',
-                )}>
-                {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
-              </button>
-            ))}
-          </div>
-
-          {/* Config */}
-          <div className="grid gap-3">
-            {mode === 'split' ? (
-              <div className="grid grid-cols-2 gap-3">
-                <TimeField id="rm-start" label="Início do turno" value={startTime}
-                  onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
-                <TimeField id="rm-end" label="Término do turno" value={endTime}
-                  onChange={setEndTime} invalid={hasError('end')} accent={teamColor} />
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
-                <TimeField id="rm-start2" label="Início" value={startTime}
-                  onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
-                <div className="grid gap-1.5">
-                  <label htmlFor="rm-int" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
-                    <Timer className="h-3 w-3" /> Intervalo (min)
-                  </label>
-                  <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
-                    onChange={(e) => setIntervalMin(Math.max(1, Math.min(240, +e.target.value || 1)))}
-                    className={cn('bg-background/60 border-border font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
-                    autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
-                </div>
-              </div>
-            )}
-
-            {/* Rounding — only meaningful in split mode */}
-            {mode === 'split' && (
-              <div className="grid gap-1.5">
-                <Label className="text-[11px] font-sans tracking-wide text-muted-foreground">
-                  Arredondamento da divisão
-                </Label>
-                <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
-                  <SelectTrigger className="bg-card/60 border-border h-9 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="distribute">Minutos inteiros — distribuir resto (recomendado)</SelectItem>
-                    <SelectItem value="floor">Minutos inteiros — truncar (sobra livre no fim)</SelectItem>
-                    <SelectItem value="ceil">Minutos inteiros — arredondar para cima</SelectItem>
-                    <SelectItem value="exact">Exato — segundos fracionários</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Agents */}
-            <div className="grid gap-1.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
-                  <Users className="h-3 w-3" /> Agentes ({agents.length})
-                </Label>
-                <Button type="button" size="sm" variant="outline" onClick={addAgent} className="h-7 border-border text-primary hover:bg-primary/10">
-                  <Plus className="h-3 w-3 mr-1" /> Adicionar
-                </Button>
-              </div>
-              <div className={cn('grid gap-1.5 max-h-48 overflow-y-auto pr-1 rounded-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
-                {agents.map((a, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="w-7 text-center font-mono text-[11px] text-primary tabular-nums">{pad(i + 1)}</span>
-                    <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))}
-                      placeholder={`Agente ${i + 1}`}
-                      className={cn('bg-card/60 border-border h-8 text-sm', !a.trim() && 'border-destructive/60')}
-                      autoComplete="off" />
-                    <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
-                      disabled={agents.length <= 1} className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      aria-label={`Remover ${i + 1}`}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+              {/* ============ COLUNA ESQUERDA — CONFIGURAÇÃO ============ */}
+              <Section icon={<Radio className="h-3.5 w-3.5 text-primary" />} title="Configuração" defaultOpen>
+                {/* Team pills */}
+                <div className="grid gap-2">
+                  <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
+                    <Radio className="h-3 w-3" /> Equipe
+                  </Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {TEAM_PRESETS.map((t) => {
+                      const active = team === t.key;
+                      return (
+                        <button key={t.key} type="button" onClick={() => setTeam(t.key)}
+                          className={cn(
+                            'relative rounded-lg border px-2 py-2 font-sans font-semibold uppercase tracking-wide text-[11px] transition-all',
+                            active ? 'border-transparent text-slate-950 shadow-sm' : 'border-border bg-card/60 text-foreground hover:border-border',
+                          )}
+                          style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
+                        >
+                          {t.label}
+                          <span aria-hidden
+                            className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full transition-opacity', active ? 'opacity-0' : 'opacity-70')}
+                            style={{ backgroundColor: t.color }} />
+                        </button>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Validation panel */}
-          {issues.length > 0 && (
-            <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
-              <div className="flex items-center gap-2 font-sans text-[11px] uppercase tracking-wider text-destructive mb-1">
-                <AlertTriangle className="h-3.5 w-3.5" /> Corrija os itens abaixo
-              </div>
-              <ul className="grid gap-1 text-xs text-destructive/90 list-disc pl-4">
-                {issues.map((iss, k) => <li key={k}>{iss.message}</li>)}
-              </ul>
-            </div>
-          )}
-
-          {/* Sound settings */}
-          <div className="rounded-lg border border-border bg-card/40 p-3 grid gap-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-sans text-[11px] uppercase tracking-wide text-muted-foreground">
-                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
-                  <path d="M4 10v4h4l5 4V6L8 10H4z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                  {!sound.muted && <path d="M16 8c1.6 1 1.6 7 0 8M19 5c3 2.5 3 12 0 14.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
-                  {sound.muted && <path d="M17 9l6 6M23 9l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
-                </svg>
-                Alerta sonoro
-              </div>
-              <div className="flex items-center gap-2">
-                <button type="button" onClick={() => playAlert({ ...sound, muted: false })}
-                  className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-primary border border-border rounded px-2 py-0.5">
-                  Testar
-                </button>
-                <label className="flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-wide text-muted-foreground cursor-pointer select-none">
-                  <input type="checkbox" checked={sound.muted}
-                    onChange={(e) => updateSound({ muted: e.target.checked })}
-                    className="accent-primary h-3 w-3" />
-                  Mudo
-                </label>
-              </div>
-            </div>
-            <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-              <span className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground">Vol</span>
-              <input type="range" min={0} max={100} value={sound.volume}
-                onChange={(e) => updateSound({ volume: +e.target.value })}
-                disabled={sound.muted}
-                className="w-full accent-primary disabled:opacity-40" />
-              <span className="font-mono text-[11px] tabular-nums text-foreground w-8 text-right">{sound.volume}%</span>
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {(['chime', 'pulse', 'siren'] as const).map((t) => (
-                <button key={t} type="button" onClick={() => updateSound({ tone: t })}
-                  className={cn(
-                    'rounded border px-2 py-1 font-mono text-[11px] uppercase tracking-wide transition-colors',
-                    sound.tone === t
-                      ? 'border-primary/70 bg-primary/10 text-primary'
-                      : 'border-border bg-background/60 text-muted-foreground hover:text-foreground',
-                  )}>
-                  {t === 'chime' ? 'Sino' : t === 'pulse' ? 'Pulso' : 'Sirene'}
-                </button>
-              ))}
-            </div>
-          </div>
-
-
-          {/* Live cockpit */}
-          {schedule && (
-            <div className="mt-1 rounded-xl border border-border bg-gradient-to-b from-slate-900/80 to-slate-950 p-4"
-                 style={{ boxShadow: `inset 0 0 30px -8px ${teamColor}66` }}>
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2 mb-3">
-                <div className="font-sans font-semibold uppercase tracking-wide text-[13px]" style={{ color: teamColor }}>
-                  EQUIPE {team}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-wide">
-                  <span className="rounded border border-border bg-primary/10 px-2 py-0.5 text-primary tabular-nums">
-                    <Timer className="inline h-3 w-3 mr-1" />
-                    {fmtDuration(schedule.total)} totais
-                  </span>
-                  <span className="rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-emerald-400 tabular-nums">
-                    ~{fmtDuration(schedule.slot)} / agente
-                  </span>
-                </div>
-              </div>
 
-              {/* Countdown */}
-              <div className="mb-3 grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg border border-border bg-background/95 p-3">
-                <div className="flex flex-col items-center">
-                  <span className="font-sans text-[11px] uppercase tracking-wider text-muted-foreground">Regressivo</span>
-                  <span className="font-mono text-2xl font-light tabular-nums tracking-tight" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
-                    {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
-                  </span>
+                {/* Mode tabs */}
+                <div className="grid grid-cols-2 gap-2">
+                  {(['split', 'interval'] as Mode[]).map((m) => (
+                    <button key={m} type="button" onClick={() => setMode(m)}
+                      className={cn(
+                        'rounded-md border px-3 py-2 text-[11px] font-mono uppercase tracking-wide transition-all',
+                        mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card/60 text-muted-foreground hover:text-foreground',
+                      )}>
+                      {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
+                    </button>
+                  ))}
                 </div>
-                <div className="min-w-0">
-                  <div className="font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
-                    {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
+
+                {/* Times / interval */}
+                {mode === 'split' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <TimeField id="rm-start" label="Início do turno" value={startTime}
+                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
+                    <TimeField id="rm-end" label="Término do turno" value={endTime}
+                      onChange={setEndTime} invalid={hasError('end')} accent={teamColor} />
                   </div>
-                  <div className="font-sans font-bold text-base truncate">
-                    {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
-                  </div>
-                  {running && live && !live.done && 'slotSec' in live && (
-                    <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
-                      <div className="h-full transition-all"
-                           style={{ width: `${100 - (live.remaining / live.slotSec) * 100}%`, backgroundColor: teamColor }} />
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <TimeField id="rm-start2" label="Início" value={startTime}
+                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
+                    <div className="grid gap-1.5">
+                      <label htmlFor="rm-int" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+                        <Timer className="h-3 w-3" /> Intervalo (min)
+                      </label>
+                      <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
+                        onChange={(e) => setIntervalMin(Math.max(1, Math.min(240, +e.target.value || 1)))}
+                        className={cn('bg-background/60 border-border font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
+                        autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
                     </div>
-                  )}
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {!running ? (
-                    <Button type="button" size="sm" onClick={startTimer} className="h-8 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
-                      <Play className="h-3.5 w-3.5 mr-1" /> Iniciar
+                  </div>
+                )}
+
+                {mode === 'split' && (
+                  <div className="grid gap-1.5">
+                    <Label className="text-[11px] font-sans tracking-wide text-muted-foreground">
+                      Arredondamento da divisão
+                    </Label>
+                    <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
+                      <SelectTrigger className="bg-card/60 border-border h-9 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="distribute">Minutos inteiros — distribuir resto (recomendado)</SelectItem>
+                        <SelectItem value="floor">Minutos inteiros — truncar (sobra livre no fim)</SelectItem>
+                        <SelectItem value="ceil">Minutos inteiros — arredondar para cima</SelectItem>
+                        <SelectItem value="exact">Exato — segundos fracionários</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Agents */}
+                <div className="grid gap-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
+                      <Users className="h-3 w-3" /> Agentes ({agents.length})
+                    </Label>
+                    <Button type="button" size="sm" variant="outline" onClick={addAgent} className="h-7 border-border text-primary hover:bg-primary/10">
+                      <Plus className="h-3 w-3 mr-1" /> Adicionar
                     </Button>
+                  </div>
+                  <div className={cn('grid gap-1.5 max-h-48 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+                    {agents.map((a, i) => (
+                      <div key={i} className="flex items-center gap-2 min-w-0">
+                        <span className="w-7 shrink-0 text-center font-mono text-[11px] text-primary tabular-nums">{pad(i + 1)}</span>
+                        <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))}
+                          placeholder={`Agente ${i + 1}`}
+                          className={cn('bg-card/60 border-border h-8 text-sm min-w-0 flex-1', !a.trim() && 'border-destructive/60')}
+                          autoComplete="off" />
+                        <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
+                          disabled={agents.length <= 1} className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                          aria-label={`Remover ${i + 1}`}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Validation panel */}
+                {issues.length > 0 && (
+                  <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+                    <div className="flex items-center gap-2 font-sans text-[11px] uppercase tracking-wider text-destructive mb-1">
+                      <AlertTriangle className="h-3.5 w-3.5" /> Corrija os itens abaixo
+                    </div>
+                    <ul className="grid gap-1 text-xs text-destructive/90 list-disc pl-4 break-words">
+                      {issues.map((iss, k) => <li key={k}>{iss.message}</li>)}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Sound settings */}
+                <div className="rounded-lg border border-border bg-card/40 p-3 grid gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 font-sans text-[11px] uppercase tracking-wide text-muted-foreground">
+                      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                        <path d="M4 10v4h4l5 4V6L8 10H4z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                        {!sound.muted && <path d="M16 8c1.6 1 1.6 7 0 8M19 5c3 2.5 3 12 0 14.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
+                        {sound.muted && <path d="M17 9l6 6M23 9l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
+                      </svg>
+                      Alerta sonoro
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button type="button" onClick={() => playAlert({ ...sound, muted: false })}
+                        className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-primary border border-border rounded px-2 py-0.5">
+                        Testar
+                      </button>
+                      <label className="flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-wide text-muted-foreground cursor-pointer select-none">
+                        <input type="checkbox" checked={sound.muted}
+                          onChange={(e) => updateSound({ muted: e.target.checked })}
+                          className="accent-primary h-3 w-3" />
+                        Mudo
+                      </label>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
+                    <span className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground">Vol</span>
+                    <input type="range" min={0} max={100} value={sound.volume}
+                      onChange={(e) => updateSound({ volume: +e.target.value })}
+                      disabled={sound.muted}
+                      className="w-full accent-primary disabled:opacity-40" />
+                    <span className="font-mono text-[11px] tabular-nums text-foreground w-8 text-right">{sound.volume}%</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {(['chime', 'pulse', 'siren'] as const).map((t) => (
+                      <button key={t} type="button" onClick={() => updateSound({ tone: t })}
+                        className={cn(
+                          'rounded border px-2 py-1 font-mono text-[11px] uppercase tracking-wide transition-colors',
+                          sound.tone === t
+                            ? 'border-primary/70 bg-primary/10 text-primary'
+                            : 'border-border bg-background/60 text-muted-foreground hover:text-foreground',
+                        )}>
+                        {t === 'chime' ? 'Sino' : t === 'pulse' ? 'Pulso' : 'Sirene'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </Section>
+
+              {/* ============ COLUNA DIREITA — OPERAÇÃO ============ */}
+              <div className="grid gap-4 min-w-0">
+                <Section icon={<Timer className="h-3.5 w-3.5 text-primary" />} title="Cronograma" defaultOpen={!!schedule}>
+                  {!schedule ? (
+                    <div className="rounded-lg border border-dashed border-border bg-card/30 p-6 text-center text-[12px] text-muted-foreground font-sans">
+                      Preencha a configuração para gerar o cronograma.
+                    </div>
                   ) : (
-                    <Button type="button" size="sm" onClick={pauseTimer} className="h-8 bg-amber-500 hover:bg-amber-600 text-slate-950">
-                      <Pause className="h-3.5 w-3.5 mr-1" /> Pausar
-                    </Button>
-                  )}
-                  <Button type="button" size="icon" variant="outline" onClick={resetTimer}
-                    className="h-8 w-8 border-border text-primary hover:bg-primary/10" aria-label="Reiniciar">
-                    <RotateCcw className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Rows */}
-              <ul className="grid gap-1.5">
-                {schedule.rows.map((r, i) => {
-                  const isCurrent = running && i === currentIdx && live && !live.done;
-                  return (
-                    <li key={i}
-                        className={cn('grid grid-cols-[28px_1fr_auto] items-center gap-3 rounded-md border px-3 py-2 transition-colors',
-                          isCurrent ? 'bg-slate-900' : 'border-primary/10 bg-background/60')}
-                        style={isCurrent ? { borderColor: teamColor, boxShadow: `0 0 14px -4px ${teamColor}` } : undefined}>
-                      <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--primary))' }}>{pad(i + 1)}</span>
-                      <span className="font-sans font-semibold text-sm truncate">{r.name}</span>
-                      <span className="font-mono text-[11px] tabular-nums flex items-center gap-2">
-                        <span className="text-foreground">{r.from}</span>
-                        <span style={{ color: teamColor }}>→</span>
-                        <span className="text-foreground">{r.to}</span>
-                        <span className="rounded px-1.5 py-0.5 text-[11px] uppercase tracking-wide"
-                              style={{ backgroundColor: `${teamColor}22`, color: teamColor }}>
-                          {fmtDuration(r.duration)}
-                        </span>
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              <div className="mt-4 flex flex-wrap gap-2 justify-end">
-                <Button type="button" variant="outline" onClick={copyToClipboard} className="border-border text-primary hover:bg-primary/10">
-                  <Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar
-                </Button>
-                <Button type="button" onClick={printSchedule} className="bg-primary text-primary-foreground hover:bg-primary/90">
-                  <Printer className="h-3.5 w-3.5 mr-1.5" /> Imprimir
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Histórico de rondas */}
-          <div className="mt-1 rounded-lg border border-border bg-card/40 p-3">
-            <div className="flex items-center justify-between mb-2">
-              <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
-                <History className="h-3 w-3" /> Histórico ({history.length})
-              </Label>
-              {history.length > 0 && (
-                <button type="button" onClick={clearHistory}
-                  className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
-                  Limpar
-                </button>
-              )}
-            </div>
-            {history.length === 0 ? (
-              <div className="text-[11px] text-muted-foreground font-sans uppercase tracking-wide">
-                Nenhuma ronda registrada ainda.
-              </div>
-            ) : (
-              <ul className="grid gap-1.5 max-h-40 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                {history.map((h) => {
-                  const color = TEAM_PRESETS.find((t) => t.key === h.team)?.color ?? '#f59e0b';
-                  const dt = new Date(h.startedAt);
-                  const dtStr = `${pad(dt.getDate())}/${pad(dt.getMonth() + 1)} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
-                  const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
-                  return (
-                    <li key={h.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded border border-primary/10 bg-background/60 px-2 py-1.5">
-                      <span className="font-sans text-[11px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded"
-                            style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
-                      <div className="min-w-0">
-                        <div className="font-mono text-[11px] tabular-nums text-foreground">
-                          {dtStr} <span className="text-muted-foreground">→</span> {endStr}
+                    <div className="rounded-xl border border-border bg-gradient-to-b from-slate-900/80 to-slate-950 p-3 sm:p-4"
+                         style={{ boxShadow: `inset 0 0 30px -8px ${teamColor}66` }}>
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2 mb-3">
+                        <div className="font-sans font-semibold uppercase tracking-wide text-[13px] truncate" style={{ color: teamColor }}>
+                          EQUIPE {team}
                         </div>
-                        <div className="text-[11px] text-muted-foreground truncate">
-                          {h.agents.slice(0, 4).join(' · ')}{h.agents.length > 4 ? ` +${h.agents.length - 4}` : ''}
+                        <div className="flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-wide">
+                          <span className="whitespace-nowrap rounded border border-border bg-primary/10 px-2 py-0.5 text-primary tabular-nums">
+                            <Timer className="inline h-3 w-3 mr-1" />
+                            {fmtDuration(schedule.total)} totais
+                          </span>
+                          <span className="whitespace-nowrap rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-emerald-400 tabular-nums">
+                            ~{fmtDuration(schedule.slot)} / agente
+                          </span>
                         </div>
                       </div>
-                      <span className="font-sans text-[11px] uppercase tracking-wide text-primary/70">
-                        {h.mode === 'split' ? `${h.startTime}–${h.endTime}` : `${h.intervalMin}min`}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+
+                      {/* Countdown */}
+                      <div className="mb-3 grid grid-cols-1 sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-lg border border-border bg-background/95 p-3">
+                        <div className="flex flex-col items-center sm:items-start">
+                          <span className="font-sans text-[11px] uppercase tracking-wider text-muted-foreground">Regressivo</span>
+                          <span className="font-mono text-2xl font-light tabular-nums tracking-tight" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
+                            {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
+                            {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
+                          </div>
+                          <div className="font-sans font-bold text-base truncate">
+                            {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
+                          </div>
+                          {running && live && !live.done && 'slotSec' in live && (
+                            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+                              <div className="h-full transition-all"
+                                   style={{ width: `${100 - (live.remaining / live.slotSec) * 100}%`, backgroundColor: teamColor }} />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 justify-end">
+                          {!running ? (
+                            <Button type="button" size="sm" onClick={startTimer} className="h-8 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
+                              <Play className="h-3.5 w-3.5 mr-1" /> Iniciar
+                            </Button>
+                          ) : (
+                            <Button type="button" size="sm" onClick={pauseTimer} className="h-8 bg-amber-500 hover:bg-amber-600 text-slate-950">
+                              <Pause className="h-3.5 w-3.5 mr-1" /> Pausar
+                            </Button>
+                          )}
+                          <Button type="button" size="icon" variant="outline" onClick={resetTimer}
+                            className="h-8 w-8 border-border text-primary hover:bg-primary/10" aria-label="Reiniciar">
+                            <RotateCcw className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Rows */}
+                      <ul className="grid gap-1.5">
+                        {schedule.rows.map((r, i) => {
+                          const isCurrent = running && i === currentIdx && live && !live.done;
+                          return (
+                            <li key={i}
+                                className={cn('grid grid-cols-[24px_minmax(0,1fr)] sm:grid-cols-[24px_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-md border px-3 py-2 transition-colors',
+                                  isCurrent ? 'bg-slate-900' : 'border-primary/10 bg-background/60')}
+                                style={isCurrent ? { borderColor: teamColor, boxShadow: `0 0 14px -4px ${teamColor}` } : undefined}>
+                              <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--primary))' }}>{pad(i + 1)}</span>
+                              <span className="font-sans font-semibold text-sm truncate sm:whitespace-normal sm:break-words min-w-0">{r.name}</span>
+                              <span className="col-span-2 sm:col-auto font-mono text-[11px] tabular-nums flex flex-wrap items-center gap-2 justify-start sm:justify-end">
+                                <span className="text-foreground">{r.from}</span>
+                                <span style={{ color: teamColor }}>→</span>
+                                <span className="text-foreground">{r.to}</span>
+                                <span className="rounded px-1.5 py-0.5 text-[11px] uppercase tracking-wide whitespace-nowrap"
+                                      style={{ backgroundColor: `${teamColor}22`, color: teamColor }}>
+                                  {fmtDuration(r.duration)}
+                                </span>
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+
+                      <div className="mt-4 flex flex-wrap gap-2 justify-end">
+                        <Button type="button" variant="outline" onClick={copyToClipboard} className="border-border text-primary hover:bg-primary/10">
+                          <Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar
+                        </Button>
+                        <Button type="button" onClick={printSchedule} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                          <Printer className="h-3.5 w-3.5 mr-1.5" /> Imprimir
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </Section>
+
+                <Section icon={<History className="h-3.5 w-3.5 text-primary" />} title={`Histórico (${history.length})`}>
+                  <div className="rounded-lg border border-border bg-card/40 p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
+                        <History className="h-3 w-3" /> Registros ({history.length})
+                      </Label>
+                      {history.length > 0 && (
+                        <button type="button" onClick={clearHistory}
+                          className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
+                          Limpar
+                        </button>
+                      )}
+                    </div>
+                    {history.length === 0 ? (
+                      <div className="text-[11px] text-muted-foreground font-sans uppercase tracking-wide">
+                        Nenhuma ronda registrada ainda.
+                      </div>
+                    ) : (
+                      <ul className="grid gap-1.5 max-h-56 overflow-y-auto pr-1">
+                        {history.map((h) => {
+                          const color = TEAM_PRESETS.find((t) => t.key === h.team)?.color ?? '#f59e0b';
+                          const dt = new Date(h.startedAt);
+                          const dtStr = `${pad(dt.getDate())}/${pad(dt.getMonth() + 1)} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+                          const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
+                          return (
+                            <li key={h.id} className="grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded border border-primary/10 bg-background/60 px-2 py-1.5">
+                              <span className="font-sans text-[11px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded whitespace-nowrap"
+                                    style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
+                              <div className="min-w-0">
+                                <div className="font-mono text-[11px] tabular-nums text-foreground">
+                                  {dtStr} <span className="text-muted-foreground">→</span> {endStr}
+                                </div>
+                                <div className="text-[11px] text-muted-foreground break-words">
+                                  {h.agents.slice(0, 4).join(' · ')}{h.agents.length > 4 ? ` +${h.agents.length - 4}` : ''}
+                                </div>
+                              </div>
+                              <span className="col-span-2 sm:col-auto font-sans text-[11px] uppercase tracking-wide text-primary/70 justify-self-start sm:justify-self-end whitespace-nowrap">
+                                {h.mode === 'split' ? `${h.startTime}–${h.endTime}` : `${h.intervalMin}min`}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                </Section>
+              </div>
+            </div>
           </div>
-        </div>
         </DialogContent>
+
       </Dialog>
 
       {/* Alarme de troca de ronda — padronizado */}
