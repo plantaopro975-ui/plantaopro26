@@ -1576,16 +1576,24 @@ export function RoundsManager() {
 
                 <Section icon={<History className="h-3.5 w-3.5 text-primary" />} title={`Histórico (${history.length})`}>
                   <div>
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
                       <span className="text-[11px] font-sans uppercase tracking-[0.16em] text-muted-foreground flex items-center gap-1.5">
                         <History className="h-3 w-3" /> Registros ({history.length})
                       </span>
-                      {history.length > 0 && (
-                        <button type="button" onClick={clearHistory}
-                          className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
-                          Limpar
-                        </button>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <a
+                          href="/rounds-history"
+                          className="font-sans text-[11px] uppercase tracking-wide text-primary hover:underline"
+                        >
+                          Ver histórico completo →
+                        </a>
+                        {history.length > 0 && (
+                          <button type="button" onClick={clearHistory}
+                            className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
+                            Limpar
+                          </button>
+                        )}
+                      </div>
                     </div>
                     {history.length === 0 ? (
                       <div className="text-[11px] text-muted-foreground font-sans uppercase tracking-wide text-center py-4">
