@@ -868,36 +868,10 @@ export function RoundsManager() {
   };
   const resetPosition = () => setDrag({ x: 0, y: 0 });
 
-  /* ================= Auto-fit inteligente (encaixa todo o conteúdo na tela) ================= */
+  /* Auto-fit removido — usamos layout responsivo + scroll interno para evitar cortes/sobreposições */
   const fitRef = useRef<HTMLDivElement>(null);
-  const [fitZoom, setFitZoom] = useState(1);
-  useLayoutEffect(() => {
-    if (!open) return;
-    const el = fitRef.current;
-    if (!el) return;
-    let raf = 0;
-    const recompute = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const node = fitRef.current;
-        if (!node) return;
-        // Mede tamanho natural sem o zoom aplicado
-        (node.style as unknown as { zoom: string }).zoom = '1';
-        const availH = window.innerHeight - 24;
-        const availW = window.innerWidth - 24;
-        const naturalH = node.scrollHeight;
-        const naturalW = node.scrollWidth;
-        const s = Math.min(1, availH / Math.max(1, naturalH), availW / Math.max(1, naturalW));
-        // Piso 0.62 para preservar legibilidade
-        setFitZoom(Math.max(0.62, Math.min(1, s)));
-      });
-    };
-    recompute();
-    const ro = new ResizeObserver(recompute);
-    ro.observe(el);
-    window.addEventListener('resize', recompute);
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('resize', recompute); };
-  }, [open, schedule, agents.length, history.length, issues.length]);
+
+
 
 
 
