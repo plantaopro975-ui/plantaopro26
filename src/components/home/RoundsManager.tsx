@@ -774,40 +774,23 @@ export function RoundsManager() {
           <div className="grid gap-3">
             {mode === 'split' ? (
               <div className="grid grid-cols-2 gap-3">
-                <div className="grid gap-1.5">
-                  <Label htmlFor="rm-start" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Início
-                  </Label>
-                  <Input id="rm-start" type="time" value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('start') && 'border-destructive')} autoComplete="off" />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label htmlFor="rm-end" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Término
-                  </Label>
-                  <Input id="rm-end" type="time" value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('end') && 'border-destructive')} autoComplete="off" />
-                </div>
+                <TimeField id="rm-start" label="Início do turno" value={startTime}
+                  onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
+                <TimeField id="rm-end" label="Término do turno" value={endTime}
+                  onChange={setEndTime} invalid={hasError('end')} accent={teamColor} />
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
+                <TimeField id="rm-start2" label="Início" value={startTime}
+                  onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
                 <div className="grid gap-1.5">
-                  <Label htmlFor="rm-start2" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Início
-                  </Label>
-                  <Input id="rm-start2" type="time" value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('start') && 'border-destructive')} autoComplete="off" />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label htmlFor="rm-int" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+                  <label htmlFor="rm-int" className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-1">
                     <Timer className="h-3 w-3" /> Intervalo (min)
-                  </Label>
+                  </label>
                   <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
                     onChange={(e) => setIntervalMin(Math.max(1, Math.min(240, +e.target.value || 1)))}
-                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('interval') && 'border-destructive')} autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
+                    className={cn('bg-slate-950/60 border-slate-700/70 font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
+                    autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
                 </div>
               </div>
             )}
