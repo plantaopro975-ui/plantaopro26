@@ -158,7 +158,7 @@ export function Icon3D({
         />
       )}
       <picture>
-        <source srcSet={src.replace(/\.png(\?.*)?$/i, '.webp$1')} type="image/webp" />
+        {webp && <source srcSet={webp} type="image/webp" />}
         <img
           src={src}
           alt={alt}
