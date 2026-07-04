@@ -43,6 +43,59 @@ const TEAMS: {
   { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif },
 ];
 
+interface TeamObjectProps {
+  team: { key: string; obj: string; webp: string; avif: string };
+  isAlfa: boolean;
+  idx: number;
+}
+function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      {/* Skeleton blur-up: fixa espaço, evita CLS */}
+      <span
+        aria-hidden
+        className={cn(
+          'absolute inset-3 rounded-lg bg-gradient-to-br from-white/[0.04] to-white/[0.01]',
+          'transition-opacity duration-500',
+          loaded ? 'opacity-0' : 'opacity-100 animate-pulse',
+        )}
+      />
+      <picture>
+        <source srcSet={team.avif} type="image/avif" />
+        <source srcSet={team.webp} type="image/webp" />
+        <img
+          src={team.obj}
+          alt={`Equipe ${team.key} — equipamento tático 3D`}
+          loading={isAlfa ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={isAlfa ? 'high' : 'low'}
+          width={512}
+          height={512}
+          sizes="(max-width: 640px) 22vw, (max-width: 1024px) 18vw, 200px"
+          onLoad={() => setLoaded(true)}
+          className={cn(
+            'max-h-[95%] max-w-[75%] object-contain select-none animate-float3d',
+            'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
+            'transition-[transform,opacity] duration-700 ease-out',
+            'group-hover:scale-[1.20] group-hover:-translate-y-1.5',
+            'group-active:scale-[1.05]',
+            isAlfa && 'alfa-vest',
+            loaded ? 'opacity-100' : 'opacity-0 blur-md',
+          )}
+          draggable={false}
+          style={{
+            transformOrigin: '50% 60%',
+            animationDelay: `${idx * 0.6}s`,
+            contentVisibility: 'auto',
+          }}
+        />
+      </picture>
+    </>
+  );
+}
+
+
 
 function useNow() {
   const [now, setNow] = useState(new Date());
