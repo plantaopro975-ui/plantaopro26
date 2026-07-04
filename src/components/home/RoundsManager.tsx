@@ -149,6 +149,23 @@ function validate(input: {
   if (dupes.size) {
     issues.push({ field: 'agents', message: `Nomes repetidos: ${Array.from(dupes).join(', ')}.` });
   }
+
+  // Total-time vs minimum-per-agent
+  const MIN_PER_AGENT = 1; // minutos
+  if (input.mode === 'split' && s !== null) {
+    const e = toMinutes(input.endTime);
+    if (e !== null && s !== e && trimmed.length > 0) {
+      let total = e - s;
+      if (total <= 0) total += 24 * 60;
+      const per = total / trimmed.length;
+      if (per < MIN_PER_AGENT) {
+        issues.push({
+          field: 'end',
+          message: `Tempo total (${total}min) insuficiente para ${trimmed.length} agentes — mínimo de ${MIN_PER_AGENT}min por agente.`,
+        });
+      }
+    }
+  }
   return issues;
 }
 
