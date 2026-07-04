@@ -1016,7 +1016,7 @@ export function RoundsManager() {
                 Nenhuma ronda registrada ainda.
               </div>
             ) : (
-              <ul className="grid gap-1.5 max-h-40 overflow-y-auto pr-1">
+              <ul className="grid gap-1.5 max-h-40 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {history.map((h) => {
                   const color = TEAM_PRESETS.find((t) => t.key === h.team)?.color ?? '#f59e0b';
                   const dt = new Date(h.startedAt);
