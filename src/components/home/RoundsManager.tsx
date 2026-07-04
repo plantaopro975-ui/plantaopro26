@@ -930,7 +930,7 @@ export function RoundsManager() {
         </DialogTrigger>
 
         <DialogContent
-          className="w-[min(96vw,44rem)] max-w-none max-h-[calc(100dvh-1rem)] overflow-hidden bg-background border border-border text-foreground p-3 gap-0 [&>button.absolute]:hidden transition-colors duration-500"
+          className="w-[min(100vw-0.75rem,60rem)] max-w-none max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
@@ -941,9 +941,9 @@ export function RoundsManager() {
         >
         <div
           ref={fitRef}
-          className="grid gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          style={{ zoom: fitZoom, transformOrigin: 'top left' }}
+          className="grid gap-3 p-3 sm:p-4 overflow-y-auto overscroll-contain flex-1 min-h-0"
         >
+
           <DialogHeader
             className={cn(
               'border-b border-border pb-2 select-none touch-none',
