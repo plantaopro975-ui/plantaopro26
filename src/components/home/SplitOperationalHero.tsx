@@ -170,7 +170,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
           </div>
 
           {/* CENTER — Agent 3D */}
-          <div className="relative flex items-end justify-center h-full min-h-[180px] order-first lg:order-none z-30 translate-y-16 sm:translate-y-24 lg:translate-y-32">
+          <div className="relative flex items-end justify-center h-full min-h-[180px] order-first lg:order-none z-30 translate-y-6 sm:translate-y-20 lg:translate-y-32">
             <svg
               aria-hidden
               viewBox="0 0 400 400"
@@ -189,7 +189,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               }}
             />
             {/* Cena composta: agente + viatura em escala realista */}
-            <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(200px, 28vw, 380px)' }}>
+            <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(160px, 28vw, 380px)' }}>
               <img
                 src={agentVehicleScene}
                 alt="Agente Socioeducativo ao lado da viatura tática ISE"
