@@ -456,7 +456,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                   ];
                   return (
                     <div className="relative z-20 flex flex-col gap-1 px-2.5 pb-2">
-                      <svg viewBox="0 0 260 64" className="block w-full h-9 sm:h-11" aria-label={t.key} role="img">
+                      <svg viewBox="0 0 300 72" className="block w-full h-10 sm:h-12" aria-label={t.key} role="img">
                         <defs>
                           <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
                             {stops.map((st) => (
@@ -464,22 +464,36 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                             ))}
                           </linearGradient>
                           <linearGradient id={`${uid}-bevel`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%"   stopColor={c(L.bevelHi, 0.9)} />
-                            <stop offset="50%"  stopColor={c(L.up, 0.2)} />
-                            <stop offset="100%" stopColor={c(L.bevelLo, 0.9)} />
+                            <stop offset="0%"   stopColor={c(L.bevelHi, 0.95)} />
+                            <stop offset="50%"  stopColor={c(L.up, 0.25)} />
+                            <stop offset="100%" stopColor={c(L.bevelLo, 0.95)} />
+                          </linearGradient>
+                          <linearGradient id={`${uid}-sheen`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%"   stopColor={c(L.glow, 0.55)} />
+                            <stop offset="100%" stopColor={c(L.glow, 0)} />
                           </linearGradient>
                           <filter id={`${uid}-shadow`} x="-20%" y="-20%" width="140%" height="160%">
-                            <feDropShadow dx="0" dy="1" stdDeviation="0.4" floodColor="#000" floodOpacity="0.9" />
-                            <feDropShadow dx="0" dy="3" stdDeviation="2"   floodColor="#000" floodOpacity="0.7" />
+                            <feDropShadow dx="0" dy="1" stdDeviation="0.5" floodColor="#000" floodOpacity="0.95" />
+                            <feDropShadow dx="0" dy="4" stdDeviation="3"   floodColor="#000" floodOpacity="0.65" />
                           </filter>
                         </defs>
-                        <g filter={`url(#${uid}-shadow)`} fontFamily="'Impact','Oswald','Arial Black',sans-serif" fontWeight={900} textAnchor="middle">
-                          <text x="130" y="48" fontSize="52" fill={c(L.deep)} transform="translate(0,2)" letterSpacing="2">{t.key}</text>
-                          <text x="130" y="48" fontSize="52" fill={c(L.base)} transform="translate(0,1)" letterSpacing="2">{t.key}</text>
-                          <text x="130" y="48" fontSize="52" fill={`url(#${uid}-fill)`} stroke={`url(#${uid}-bevel)`} strokeWidth="1.2" letterSpacing="2">{t.key}</text>
-                          <text x="130" y="48" fontSize="52" fill={c(L.glow)} fillOpacity="0.32" letterSpacing="2" clipPath="inset(0 0 55% 0)">{t.key}</text>
+                        <g
+                          filter={`url(#${uid}-shadow)`}
+                          fontFamily="'Stardos Stencil','Saira Condensed','Oswald','Impact',sans-serif"
+                          fontWeight={700}
+                          textAnchor="middle"
+                          style={{ fontStretch: 'condensed' }}
+                        >
+                          {/* extrusão */}
+                          <text x="150" y="54" fontSize="56" fill={c(L.deep)}  transform="translate(0,3)" letterSpacing="6">{t.key}</text>
+                          <text x="150" y="54" fontSize="56" fill={c(L.base)}  transform="translate(0,1.5)" letterSpacing="6">{t.key}</text>
+                          {/* face */}
+                          <text x="150" y="54" fontSize="56" fill={`url(#${uid}-fill)`} stroke={`url(#${uid}-bevel)`} strokeWidth="1.4" paintOrder="stroke" letterSpacing="6">{t.key}</text>
+                          {/* sheen superior */}
+                          <text x="150" y="54" fontSize="56" fill={`url(#${uid}-sheen)`} letterSpacing="6" clipPath="inset(0 0 58% 0)">{t.key}</text>
                         </g>
                       </svg>
+
                       <span
                         className="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.28em] truncate text-slate-200"
                         style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
