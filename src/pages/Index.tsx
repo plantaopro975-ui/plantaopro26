@@ -61,6 +61,7 @@ import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
+import { RoundsManager } from '@/components/home/RoundsManager';
 
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
 
@@ -1259,6 +1260,13 @@ export default function Index() {
           <SplitOperationalHero
             onTeamClick={(team) => handleTeamClick(team)}
           />
+        </div>
+
+        {/* Ferramenta Tática — Gestor de Rondas (aberto por qualquer visitante) */}
+        <div className="shrink-0 px-2 sm:px-4 pt-1 overflow-hidden">
+          <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '150ms' }}>
+            <RoundsManager />
+          </div>
         </div>
 
         {/* Dynamic Agent Info Banner */}
