@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Clock, Users, Plus, Trash2, Copy, Printer, Timer, Shield,
   Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
@@ -868,6 +868,39 @@ export function RoundsManager() {
   };
   const resetPosition = () => setDrag({ x: 0, y: 0 });
 
+  /* ================= Auto-fit inteligente (encaixa todo o conteúdo na tela) ================= */
+  const fitRef = useRef<HTMLDivElement>(null);
+  const [fitZoom, setFitZoom] = useState(1);
+  useLayoutEffect(() => {
+    if (!open) return;
+    const el = fitRef.current;
+    if (!el) return;
+    let raf = 0;
+    const recompute = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const node = fitRef.current;
+        if (!node) return;
+        // Mede tamanho natural sem o zoom aplicado
+        (node.style as unknown as { zoom: string }).zoom = '1';
+        const availH = window.innerHeight - 24;
+        const availW = window.innerWidth - 24;
+        const naturalH = node.scrollHeight;
+        const naturalW = node.scrollWidth;
+        const s = Math.min(1, availH / Math.max(1, naturalH), availW / Math.max(1, naturalW));
+        // Piso 0.62 para preservar legibilidade
+        setFitZoom(Math.max(0.62, Math.min(1, s)));
+      });
+    };
+    recompute();
+    const ro = new ResizeObserver(recompute);
+    ro.observe(el);
+    window.addEventListener('resize', recompute);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('resize', recompute); };
+  }, [open, schedule, agents.length, history.length, issues.length]);
+
+
+
 
 
   return (
@@ -923,7 +956,7 @@ export function RoundsManager() {
         </DialogTrigger>
 
         <DialogContent
-          className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>button.absolute]:hidden transition-colors duration-500"
+          className="w-[min(96vw,44rem)] max-w-none max-h-[calc(100dvh-1rem)] overflow-hidden bg-slate-950 border border-primary/25 text-slate-200 p-3 gap-0 [&>button.absolute]:hidden transition-colors duration-500"
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
@@ -931,6 +964,11 @@ export function RoundsManager() {
           onEscapeKeyDown={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
+        >
+        <div
+          ref={fitRef}
+          className="grid gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ zoom: fitZoom, transformOrigin: 'top left' }}
         >
           <DialogHeader
             className={cn(
@@ -1312,6 +1350,7 @@ export function RoundsManager() {
               </ul>
             )}
           </div>
+        </div>
         </DialogContent>
       </Dialog>
 
