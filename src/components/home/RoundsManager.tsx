@@ -831,7 +831,43 @@ export function RoundsManager() {
     setConfirmExit(false);
     setRunning(false);
     setOpen(false);
+    setDrag({ x: 0, y: 0 });
   };
+
+  /* ================= Drag da janela (antes de iniciar o cronômetro) ================= */
+  const [drag, setDrag] = useState({ x: 0, y: 0 });
+  const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const canDrag = !running;
+
+  const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!canDrag) return;
+    // Só arrasta se clicar diretamente no header (não em botões/inputs)
+    const target = e.target as HTMLElement;
+    if (target.closest('button, input, select, a, [role="button"]')) return;
+    e.preventDefault();
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: drag.x, baseY: drag.y };
+  };
+  const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current) return;
+    const { startX, startY, baseX, baseY } = dragRef.current;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    // Limita para não sair completamente da tela (mantém 80px visíveis nas bordas)
+    const maxX = Math.max(0, window.innerWidth / 2 - 80);
+    const maxY = Math.max(0, window.innerHeight / 2 - 60);
+    const nx = Math.max(-maxX, Math.min(maxX, baseX + dx));
+    const ny = Math.max(-maxY, Math.min(maxY, baseY + dy));
+    setDrag({ x: nx, y: ny });
+  };
+  const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragRef.current) {
+      dragRef.current = null;
+      try { (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId); } catch { /* noop */ }
+    }
+  };
+  const resetPosition = () => setDrag({ x: 0, y: 0 });
+
 
 
   return (
