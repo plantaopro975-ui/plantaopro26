@@ -1248,6 +1248,23 @@ export default function Index() {
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
+        {/* Return-to-panel shortcut for logged-in agents browsing the homepage */}
+        {user && (
+          <button
+            type="button"
+            onClick={() => {
+              if (isMaster) navigate('/master');
+              else if (isAdmin) navigate('/admin');
+              else navigate('/agent-panel');
+            }}
+            className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
+          >
+            <User className="h-4 w-4" />
+            Meu Painel
+          </button>
+        )}
+
+
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
 
