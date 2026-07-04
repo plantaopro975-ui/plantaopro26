@@ -284,67 +284,71 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
   }
 
   if (team === 'BRAVO') {
-    // Realistic tactical bear head — brushed steel with team-color inner-ear + gold nose
+    // Distintivo tático realista — estrela de 7 pontas em ouro sobre disco metálico com faixa colorida
     return (
       <svg {...svgProps}>
         {fx.defs}
-        {/* Backing medallion */}
+        {/* Disco base bevelado */}
         <circle cx="32" cy="32" r="28" fill={fx.url('rim')} />
-        <circle cx="32" cy="32" r="25" fill={fx.url('dome')} />
+        <circle cx="32" cy="32" r="25" fill={fx.url('steel')} stroke="#0f172a" strokeWidth="0.6" />
 
-        {/* Ears — outer (steel) */}
-        <circle cx="16" cy="18" r="7" fill={fx.url('steel')} stroke="#0f172a" strokeWidth="0.6" />
-        <circle cx="48" cy="18" r="7" fill={fx.url('steel')} stroke="#0f172a" strokeWidth="0.6" />
-        {/* Ears — inner (team accent) */}
-        <circle cx="16" cy="19" r="3.6" fill={fx.url('accent')} />
-        <circle cx="48" cy="19" r="3.6" fill={fx.url('accent')} />
+        {/* Anel interno (accent da equipe) */}
+        <circle cx="32" cy="32" r="22" fill="none" stroke={fx.url('accent')} strokeWidth="1.2" />
+        <circle cx="32" cy="32" r="20" fill="none" stroke="#0b0f17" strokeOpacity="0.6" strokeWidth="0.6" />
 
-        {/* Head shadow */}
-        <ellipse cx="32.8" cy="35.2" rx="16" ry="15" fill="#000000" fillOpacity="0.55" />
-        {/* Head (brushed steel) */}
-        <ellipse cx="32" cy="34" rx="16" ry="15" fill={fx.url('steel')} stroke="#0f172a" strokeWidth="0.6" />
-
-        {/* Fur shading strokes around head */}
+        {/* Estrela 7 pontas — sombra */}
         <path
-          d="M17 30 L14 30 M18 38 L14 40 M20 44 L17 48 M26 48 L25 52
-             M38 48 L39 52 M44 44 L47 48 M46 38 L50 40 M47 30 L50 30"
-          stroke="#0b0f17" strokeOpacity="0.6" strokeWidth="0.9" strokeLinecap="round" fill="none"
+          d="M32 6 L36 22 L52 22 L39 31 L44 47 L32 37 L20 47 L25 31 L12 22 L28 22 Z"
+          fill="#000000" fillOpacity="0.6" transform="translate(0.8 1)"
+        />
+        {/* Estrela 7 pontas — ouro */}
+        <path
+          d="M32 6 L36 22 L52 22 L39 31 L44 47 L32 37 L20 47 L25 31 L12 22 L28 22 Z"
+          fill={fx.url('gold')} stroke="#78350f" strokeWidth="0.7" strokeLinejoin="round"
+        />
+        {/* Highlight nas pontas superiores */}
+        <path
+          d="M32 6 L34 20 M32 6 L30 20"
+          stroke="#fef3c7" strokeOpacity="0.75" strokeWidth="0.5" strokeLinecap="round"
         />
 
-        {/* Eye sockets (brow shadow) */}
-        <path d="M22 28 Q26 25 30 28 M34 28 Q38 25 42 28" stroke="#0b0f17" strokeOpacity="0.7" strokeWidth="1" strokeLinecap="round" fill="none" />
+        {/* Medalhão central */}
+        <circle cx="32" cy="30" r="7" fill={fx.url('dome')} stroke="#0b0f17" strokeWidth="0.8" />
+        <circle cx="32" cy="30" r="7" fill="none" stroke={fx.url('gold')} strokeOpacity="0.9" strokeWidth="0.6" />
 
-        {/* Eyes */}
-        <ellipse cx="26" cy="30" rx="2" ry="1.8" fill="#0b0f17" />
-        <ellipse cx="38" cy="30" rx="2" ry="1.8" fill="#0b0f17" />
-        <circle cx="26" cy="30" r="1.3" fill={fx.url('iris')} />
-        <circle cx="38" cy="30" r="1.3" fill={fx.url('iris')} />
-        <circle cx="25.5" cy="29.5" r="0.4" fill="#ffffff" />
-        <circle cx="37.5" cy="29.5" r="0.4" fill="#ffffff" />
+        {/* Sigla "B" (BRAVO) em ouro */}
+        <text
+          x="32" y="33.6" textAnchor="middle"
+          fontFamily="ui-serif, Georgia, serif" fontSize="9" fontWeight="700"
+          fill={fx.url('gold')} stroke="#78350f" strokeWidth="0.3"
+        >
+          B
+        </text>
 
-        {/* Snout (lighter steel patch) */}
-        <ellipse cx="32" cy="41" rx="9" ry="7" fill="#94a3b8" stroke="#0f172a" strokeWidth="0.6" />
-        <ellipse cx="30" cy="39" rx="5" ry="2.4" fill={fx.url('gloss')} />
+        {/* Faixa "POLICE-BAR" inferior */}
+        <path d="M14 46 L50 46 L46 52 L18 52 Z" fill={fx.url('accent')} stroke="#0b0f17" strokeWidth="0.6" />
+        <path d="M15 46.6 L49 46.6" stroke="#ffffff" strokeOpacity="0.35" strokeWidth="0.4" />
+        <text
+          x="32" y="50.6" textAnchor="middle"
+          fontFamily="ui-monospace, monospace" fontSize="3.6" fontWeight="700"
+          letterSpacing="0.6" fill="#f8fafc"
+        >
+          BRAVO
+        </text>
 
-        {/* Nose (gold, rounded triangle) */}
-        <path
-          d="M28 38 Q32 35 36 38 Q35 42 32 42 Q29 42 28 38 Z"
-          fill={fx.url('gold')} stroke="#78350f" strokeWidth="0.5"
-        />
-        <circle cx="29.4" cy="37.4" r="0.4" fill="#fef3c7" />
+        {/* Rebites nas pontas cardinais */}
+        <circle cx="32" cy="10" r="0.9" fill="#fef3c7" />
+        <circle cx="32" cy="54" r="0.9" fill="#fef3c7" opacity="0.6" />
+        <circle cx="10" cy="32" r="0.9" fill="#fef3c7" opacity="0.6" />
+        <circle cx="54" cy="32" r="0.9" fill="#fef3c7" opacity="0.6" />
 
-        {/* Mouth */}
-        <path d="M32 42 V45 M27 46 Q32 48 37 46" stroke="#0b0f17" strokeWidth="0.9" strokeLinecap="round" fill="none" />
-
-        {/* Small canines */}
-        <path d="M30 46 L30.4 47.6 L30.8 46 Z" fill="#f8fafc" />
-        <path d="M33.2 46 L33.6 47.6 L34 46 Z" fill="#f8fafc" />
-
-        {/* Top-left specular highlight on medallion */}
-        <ellipse cx="26" cy="16" rx="10" ry="4" fill={fx.url('gloss')} />
+        {/* Highlight especular superior */}
+        <ellipse cx="26" cy="14" rx="11" ry="4" fill={fx.url('gloss')} />
       </svg>
     );
   }
+
+
 
 
 
