@@ -684,6 +684,16 @@ export function RoundsManager() {
 
   const currentIdx = live?.index ?? -1;
 
+  /* Exit guard — evita fechamento acidental */
+  const [confirmExit, setConfirmExit] = useState(false);
+  const requestExit = () => setConfirmExit(true);
+  const confirmAndClose = () => {
+    setConfirmExit(false);
+    setRunning(false);
+    setOpen(false);
+  };
+
+
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
