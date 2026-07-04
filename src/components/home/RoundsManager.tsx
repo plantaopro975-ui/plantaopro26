@@ -1034,7 +1034,7 @@ export function RoundsManager() {
                   <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M10 8l-4 4 4 4M6 12h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                <span className="hidden xs:inline">Sair</span>
+                <span>Sair</span>
               </button>
               </div>
             </div>
