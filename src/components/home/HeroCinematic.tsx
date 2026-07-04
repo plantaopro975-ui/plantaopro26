@@ -4,14 +4,18 @@ import { createPortal } from 'react-dom';
 
 import { toast } from 'sonner';
 import heroImage from '@/assets/hero-command.jpg';
+import heroImageWebp from '@/assets/hero-command.webp';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
+import agentFigureWebp from '@/assets/tactical-agent-figure.webp';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
+import policeVehicleWebp from '@/assets/police-vehicle-3d.webp';
 import comandoCover from '@/assets/comando-operacional-cover.jpg';
-import { getTeamPoster, getTeamColors } from '@/lib/teamAssets';
+import comandoCoverWebp from '@/assets/comando-operacional-cover.webp';
+import { getTeamPoster, getTeamPosterWebp, getTeamColors } from '@/lib/teamAssets';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 
