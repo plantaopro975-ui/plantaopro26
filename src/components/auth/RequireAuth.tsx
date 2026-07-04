@@ -32,8 +32,10 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
       <div
         role="status"
         aria-live="polite"
-        className="min-h-[40vh] flex items-center justify-center text-muted-foreground text-sm"
+        aria-busy="true"
+        className="fixed inset-0 z-[60] flex items-center justify-center bg-background text-muted-foreground text-sm gap-2"
       >
+        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" aria-hidden />
         Verificando credenciais…
       </div>
     );
