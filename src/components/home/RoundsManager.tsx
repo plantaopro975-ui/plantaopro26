@@ -847,6 +847,52 @@ export function RoundsManager() {
               </div>
             </div>
           )}
+
+          {/* Histórico de rondas */}
+          <div className="mt-1 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+                <History className="h-3 w-3" /> Histórico ({history.length})
+              </Label>
+              {history.length > 0 && (
+                <button type="button" onClick={clearHistory}
+                  className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground hover:text-destructive">
+                  Limpar
+                </button>
+              )}
+            </div>
+            {history.length === 0 ? (
+              <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[0.14em]">
+                Nenhuma ronda registrada ainda.
+              </div>
+            ) : (
+              <ul className="grid gap-1.5 max-h-40 overflow-y-auto pr-1">
+                {history.map((h) => {
+                  const color = TEAM_PRESETS.find((t) => t.key === h.team)?.color ?? '#f59e0b';
+                  const dt = new Date(h.startedAt);
+                  const dtStr = `${pad(dt.getDate())}/${pad(dt.getMonth() + 1)} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+                  const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
+                  return (
+                    <li key={h.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded border border-primary/10 bg-slate-950/60 px-2 py-1.5">
+                      <span className="font-mono text-[9px] font-black uppercase tracking-[0.18em] px-1.5 py-0.5 rounded"
+                            style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
+                      <div className="min-w-0">
+                        <div className="font-mono text-[10px] tabular-nums text-foreground">
+                          {dtStr} <span className="text-muted-foreground">→</span> {endStr}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground truncate">
+                          {h.agents.slice(0, 4).join(' · ')}{h.agents.length > 4 ? ` +${h.agents.length - 4}` : ''}
+                        </div>
+                      </div>
+                      <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-primary/70">
+                        {h.mode === 'split' ? `${h.startTime}–${h.endTime}` : `${h.intervalMin}min`}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
