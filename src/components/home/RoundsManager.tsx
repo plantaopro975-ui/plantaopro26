@@ -676,10 +676,10 @@ export function RoundsManager() {
                 <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.28em] text-primary/80">
                   <Shield className="h-3 w-3" /> Operação · Divisão de Rondas
                 </div>
-                <DialogTitle className="font-sans text-base font-black uppercase tracking-[0.04em] leading-tight">
-                  Gestor de <span style={{ color: teamColor }}>Quartos de Hora</span>
+                <DialogTitle className="font-sans text-base font-medium tracking-tight leading-tight">
+                  Gestor de <span className="font-semibold" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="text-[10px] text-muted-foreground font-mono uppercase tracking-[0.15em]">
+                <DialogDescription className="text-[10px] text-muted-foreground font-mono uppercase tracking-[0.18em]">
                   Escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
