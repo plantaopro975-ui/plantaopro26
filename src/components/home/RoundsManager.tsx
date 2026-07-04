@@ -106,6 +106,127 @@ const writeHistory = (arr: HistoryEntry[]) => {
   try { localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0, 20))); } catch { /* ignore */ }
 };
 
+/* ================= alert sound settings ================= */
+type SoundSettings = { muted: boolean; volume: number; tone: 'chime' | 'pulse' | 'siren' };
+const SND_KEY = 'plantaopro_rounds_sound_v1';
+const DEFAULT_SOUND: SoundSettings = { muted: false, volume: 60, tone: 'chime' };
+const readSound = (): SoundSettings => {
+  try {
+    const raw = localStorage.getItem(SND_KEY);
+    return raw ? { ...DEFAULT_SOUND, ...JSON.parse(raw) } : DEFAULT_SOUND;
+  } catch { return DEFAULT_SOUND; }
+};
+const writeSound = (s: SoundSettings) => {
+  try { localStorage.setItem(SND_KEY, JSON.stringify(s)); } catch { /* ignore */ }
+};
+function playAlert(settings: SoundSettings) {
+  if (settings.muted || settings.volume <= 0) return;
+  try {
+    const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
+      || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const gain = ctx.createGain();
+    const vol = Math.min(1, Math.max(0, settings.volume / 100)) * 0.35;
+    gain.gain.value = vol;
+    gain.connect(ctx.destination);
+    const now = ctx.currentTime;
+
+    const beep = (freq: number, start: number, dur: number, type: OscillatorType = 'sine') => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(0, now + start);
+      g.gain.linearRampToValueAtTime(vol, now + start + 0.02);
+      g.gain.linearRampToValueAtTime(0, now + start + dur);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now + start); o.stop(now + start + dur + 0.02);
+    };
+
+    if (settings.tone === 'chime') {
+      beep(880, 0, 0.18, 'sine');
+      beep(1320, 0.16, 0.28, 'sine');
+    } else if (settings.tone === 'pulse') {
+      beep(1000, 0, 0.1, 'square');
+      beep(1000, 0.16, 0.1, 'square');
+      beep(1000, 0.32, 0.14, 'square');
+    } else {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(600, now);
+      o.frequency.linearRampToValueAtTime(1200, now + 0.3);
+      o.frequency.linearRampToValueAtTime(600, now + 0.6);
+      g.gain.setValueAtTime(vol, now);
+      g.gain.linearRampToValueAtTime(0, now + 0.65);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now); o.stop(now + 0.7);
+    }
+    setTimeout(() => ctx.close(), 1200);
+  } catch { /* ignore */ }
+}
+
+/* ================= SVG time field ================= */
+function TimeField({
+  id, value, onChange, label, invalid, accent,
+}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string }) {
+  const [h, m] = value.split(':');
+  const setH = (nh: string) => {
+    const v = Math.max(0, Math.min(23, parseInt(nh || '0', 10) || 0));
+    onChange(`${pad(v)}:${m ?? '00'}`);
+  };
+  const setM = (nm: string) => {
+    const v = Math.max(0, Math.min(59, parseInt(nm || '0', 10) || 0));
+    onChange(`${h ?? '00'}:${pad(v)}`);
+  };
+  const bump = (which: 'h' | 'm', delta: number) => {
+    if (which === 'h') setH(String(((parseInt(h, 10) || 0) + delta + 24) % 24));
+    else setM(String(((parseInt(m, 10) || 0) + delta + 60) % 60));
+  };
+  return (
+    <div className="grid gap-1.5">
+      <label htmlFor={`${id}-h`} className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+        {label}
+      </label>
+      <div className={cn(
+        'group relative flex items-center gap-2 rounded-md border bg-slate-950/60 pl-2 pr-1 h-11 transition-colors',
+        invalid ? 'border-destructive/70' : 'border-slate-700/70 focus-within:border-primary/70',
+      )}>
+        <svg viewBox="0 0 32 32" className="h-6 w-6 shrink-0" aria-hidden>
+          <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
+          <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
+                  strokeDasharray="4 3" strokeLinecap="round" />
+          <line x1="16" y1="16" x2="16" y2="7"   stroke={accent} strokeWidth="1.4" strokeLinecap="round" />
+          <line x1="16" y1="16" x2="22" y2="16"  stroke={accent} strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
+          <circle cx="16" cy="16" r="1.2" fill={accent} />
+        </svg>
+        <input id={`${id}-h`} inputMode="numeric" maxLength={2} value={h ?? ''}
+          onChange={(e) => setH(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onBlur={(e) => setH(e.target.value || '0')}
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} horas`} autoComplete="off" />
+        <span className="font-mono text-lg text-muted-foreground/70 select-none -mt-0.5">:</span>
+        <input inputMode="numeric" maxLength={2} value={m ?? ''}
+          onChange={(e) => setM(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onBlur={(e) => setM(e.target.value || '0')}
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} minutos`} autoComplete="off" />
+        <div className="ml-auto flex flex-col">
+          <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
+            className="h-[22px] w-6 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-foreground">
+            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min"
+            className="h-[22px] w-6 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-foreground">
+            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 /* ================= validation ================= */
 type Issue = { field: string; message: string };
 function validate(input: {
@@ -231,6 +352,16 @@ export function RoundsManager() {
 
   const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
 
+  /* sound settings */
+  const [sound, setSound] = useState<SoundSettings>(DEFAULT_SOUND);
+  useEffect(() => { setSound(readSound()); }, [open]);
+  const updateSound = (patch: Partial<SoundSettings>) => {
+    setSound((prev) => { const next = { ...prev, ...patch }; writeSound(next); return next; });
+  };
+  const soundRef = useRef(sound);
+  useEffect(() => { soundRef.current = sound; }, [sound]);
+
+
   /* ---------- validation ---------- */
   const issues = useMemo(
     () => validate({ mode, startTime, endTime, intervalMin, agents }),
@@ -337,23 +468,11 @@ export function RoundsManager() {
       if (currentIdx > 0 || live.elapsed > 1) {
         const row = schedule.rows[currentIdx];
         setAlarm({ open: true, index: currentIdx, name: row.name });
-        // Sound
-        try {
-          const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
-            || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-          if (AC) {
-            const ctx = new AC();
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.type = 'square'; o.frequency.value = 880; g.gain.value = 0.05;
-            o.connect(g); g.connect(ctx.destination);
-            o.start();
-            setTimeout(() => { o.stop(); ctx.close(); }, 600);
-          }
-        } catch { /* ignore */ }
+        // Sound (configurable)
+        playAlert(soundRef.current);
         // Vibration (mobile)
         try {
-          if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          if (!soundRef.current.muted && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
             navigator.vibrate?.([220, 90, 220, 90, 380]);
           }
         } catch { /* ignore */ }
@@ -498,7 +617,7 @@ export function RoundsManager() {
               <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-primary">
                 Ferramenta Tática
               </span>
-              <span className="font-sans text-[13px] font-black uppercase tracking-[0.12em] text-foreground">
+              <span className="font-sans text-[13px] font-semibold tracking-[0.06em] text-foreground">
                 Gestor de Rondas
               </span>
             </span>
@@ -514,7 +633,7 @@ export function RoundsManager() {
           </button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/30 text-foreground p-4 gap-3">
+        <DialogContent className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/30 text-foreground p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <DialogHeader className="border-b border-primary/20 pb-2">
             <div className="flex items-center gap-3">
               {/* 3D dome / radar em SVG puro */}
@@ -557,10 +676,10 @@ export function RoundsManager() {
                 <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.28em] text-primary/80">
                   <Shield className="h-3 w-3" /> Operação · Divisão de Rondas
                 </div>
-                <DialogTitle className="font-sans text-base font-black uppercase tracking-[0.04em] leading-tight">
-                  Gestor de <span style={{ color: teamColor }}>Quartos de Hora</span>
+                <DialogTitle className="font-sans text-base font-medium tracking-tight leading-tight">
+                  Gestor de <span className="font-semibold" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="text-[10px] text-muted-foreground font-mono uppercase tracking-[0.15em]">
+                <DialogDescription className="text-[10px] text-muted-foreground font-mono uppercase tracking-[0.18em]">
                   Escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
@@ -623,7 +742,7 @@ export function RoundsManager() {
                 return (
                   <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                     className={cn(
-                      'relative rounded-lg border px-2 py-2 font-sans font-black uppercase tracking-[0.14em] text-xs transition-all',
+                      'relative rounded-lg border px-2 py-2 font-sans font-semibold uppercase tracking-[0.16em] text-[11px] transition-all',
                       active ? 'border-transparent text-slate-950 shadow-lg' : 'border-primary/20 bg-slate-900/60 text-foreground hover:border-primary/50',
                     )}
                     style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
@@ -655,40 +774,23 @@ export function RoundsManager() {
           <div className="grid gap-3">
             {mode === 'split' ? (
               <div className="grid grid-cols-2 gap-3">
-                <div className="grid gap-1.5">
-                  <Label htmlFor="rm-start" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Início
-                  </Label>
-                  <Input id="rm-start" type="time" value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('start') && 'border-destructive')} autoComplete="off" />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label htmlFor="rm-end" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Término
-                  </Label>
-                  <Input id="rm-end" type="time" value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('end') && 'border-destructive')} autoComplete="off" />
-                </div>
+                <TimeField id="rm-start" label="Início do turno" value={startTime}
+                  onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
+                <TimeField id="rm-end" label="Término do turno" value={endTime}
+                  onChange={setEndTime} invalid={hasError('end')} accent={teamColor} />
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
+                <TimeField id="rm-start2" label="Início" value={startTime}
+                  onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
                 <div className="grid gap-1.5">
-                  <Label htmlFor="rm-start2" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Início
-                  </Label>
-                  <Input id="rm-start2" type="time" value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('start') && 'border-destructive')} autoComplete="off" />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label htmlFor="rm-int" className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+                  <label htmlFor="rm-int" className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-1">
                     <Timer className="h-3 w-3" /> Intervalo (min)
-                  </Label>
+                  </label>
                   <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
                     onChange={(e) => setIntervalMin(Math.max(1, Math.min(240, +e.target.value || 1)))}
-                    className={cn('bg-slate-900/60 border-primary/20 font-mono text-base tabular-nums', hasError('interval') && 'border-destructive')} autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
+                    className={cn('bg-slate-950/60 border-slate-700/70 font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
+                    autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
                 </div>
               </div>
             )}
@@ -723,7 +825,7 @@ export function RoundsManager() {
                   <Plus className="h-3 w-3 mr-1" /> Adicionar
                 </Button>
               </div>
-              <div className={cn('grid gap-1.5 max-h-48 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+              <div className={cn('grid gap-1.5 max-h-48 overflow-y-auto pr-1 rounded-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                 {agents.map((a, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <span className="w-7 text-center font-mono text-[10px] text-primary tabular-nums">{pad(i + 1)}</span>
@@ -754,12 +856,60 @@ export function RoundsManager() {
             </div>
           )}
 
+          {/* Sound settings */}
+          <div className="rounded-lg border border-slate-700/70 bg-slate-900/40 p-3 grid gap-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                  <path d="M4 10v4h4l5 4V6L8 10H4z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  {!sound.muted && <path d="M16 8c1.6 1 1.6 7 0 8M19 5c3 2.5 3 12 0 14.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
+                  {sound.muted && <path d="M17 9l6 6M23 9l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
+                </svg>
+                Alerta sonoro
+              </div>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => playAlert({ ...sound, muted: false })}
+                  className="font-mono text-[9px] uppercase tracking-[0.2em] text-primary/80 hover:text-primary border border-primary/30 rounded px-2 py-0.5">
+                  Testar
+                </button>
+                <label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground cursor-pointer select-none">
+                  <input type="checkbox" checked={sound.muted}
+                    onChange={(e) => updateSound({ muted: e.target.checked })}
+                    className="accent-primary h-3 w-3" />
+                  Mudo
+                </label>
+              </div>
+            </div>
+            <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Vol</span>
+              <input type="range" min={0} max={100} value={sound.volume}
+                onChange={(e) => updateSound({ volume: +e.target.value })}
+                disabled={sound.muted}
+                className="w-full accent-primary disabled:opacity-40" />
+              <span className="font-mono text-[11px] tabular-nums text-foreground w-8 text-right">{sound.volume}%</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {(['chime', 'pulse', 'siren'] as const).map((t) => (
+                <button key={t} type="button" onClick={() => updateSound({ tone: t })}
+                  className={cn(
+                    'rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors',
+                    sound.tone === t
+                      ? 'border-primary/70 bg-primary/10 text-primary'
+                      : 'border-slate-700/70 bg-slate-950/60 text-muted-foreground hover:text-foreground',
+                  )}>
+                  {t === 'chime' ? 'Sino' : t === 'pulse' ? 'Pulso' : 'Sirene'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+
           {/* Live cockpit */}
           {schedule && (
             <div className="mt-1 rounded-xl border border-primary/30 bg-gradient-to-b from-slate-900/80 to-slate-950 p-4"
                  style={{ boxShadow: `inset 0 0 30px -8px ${teamColor}66` }}>
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-primary/20 pb-2 mb-3">
-                <div className="font-sans font-black uppercase tracking-[0.08em] text-sm" style={{ color: teamColor }}>
+                <div className="font-sans font-semibold uppercase tracking-[0.14em] text-[13px]" style={{ color: teamColor }}>
                   EQUIPE {team}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
@@ -777,7 +927,7 @@ export function RoundsManager() {
               <div className="mb-3 grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg border border-primary/25 bg-slate-950/80 p-3">
                 <div className="flex flex-col items-center">
                   <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-muted-foreground">Regressivo</span>
-                  <span className="font-mono text-2xl font-black tabular-nums" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
+                  <span className="font-mono text-2xl font-light tabular-nums tracking-tight" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
                     {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                   </span>
                 </div>
@@ -866,7 +1016,7 @@ export function RoundsManager() {
                 Nenhuma ronda registrada ainda.
               </div>
             ) : (
-              <ul className="grid gap-1.5 max-h-40 overflow-y-auto pr-1">
+              <ul className="grid gap-1.5 max-h-40 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {history.map((h) => {
                   const color = TEAM_PRESETS.find((t) => t.key === h.team)?.color ?? '#f59e0b';
                   const dt = new Date(h.startedAt);
@@ -874,7 +1024,7 @@ export function RoundsManager() {
                   const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
                   return (
                     <li key={h.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded border border-primary/10 bg-slate-950/60 px-2 py-1.5">
-                      <span className="font-mono text-[9px] font-black uppercase tracking-[0.18em] px-1.5 py-0.5 rounded"
+                      <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded"
                             style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
                       <div className="min-w-0">
                         <div className="font-mono text-[10px] tabular-nums text-foreground">
@@ -911,7 +1061,7 @@ export function RoundsManager() {
             <div className="font-mono text-[10px] uppercase tracking-[0.32em]" style={{ color: teamColor }}>
               EQUIPE {team} · Posto {pad(alarm.index + 1)}
             </div>
-            <div className="font-sans text-2xl font-black uppercase tracking-[0.06em] text-foreground">
+            <div className="font-sans text-2xl font-medium tracking-tight text-foreground">
               Hora de fazer a ronda
             </div>
             <div className="font-sans text-lg font-bold" style={{ color: teamColor }}>
