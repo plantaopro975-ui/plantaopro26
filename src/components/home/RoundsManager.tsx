@@ -306,21 +306,21 @@ function TimeField({
         <input id={`${id}-h`} inputMode="numeric" maxLength={2} value={h ?? ''}
           onChange={(e) => setH(e.target.value.replace(/\D/g, '').slice(0, 2))}
           onBlur={(e) => setH(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-slate-200 outline-none"
           aria-label={`${label} horas`} autoComplete="off" />
         <span className="font-mono text-lg text-muted-foreground/70 select-none -mt-0.5">:</span>
         <input inputMode="numeric" maxLength={2} value={m ?? ''}
           onChange={(e) => setM(e.target.value.replace(/\D/g, '').slice(0, 2))}
           onBlur={(e) => setM(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-slate-200 outline-none"
           aria-label={`${label} minutos`} autoComplete="off" />
         <div className="ml-auto flex flex-col">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
-            className="h-[22px] w-6 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-foreground">
+            className="h-[22px] w-6 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min"
-            className="h-[22px] w-6 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-foreground">
+            className="h-[22px] w-6 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
@@ -720,7 +720,7 @@ export function RoundsManager() {
               <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-primary">
                 Ferramenta Tática
               </span>
-              <span className="font-sans text-[13px] font-semibold tracking-[0.06em] text-foreground">
+              <span className="font-sans text-[13px] font-semibold tracking-[0.06em] text-slate-200">
                 Gestor de Rondas
               </span>
             </span>
@@ -762,7 +762,7 @@ export function RoundsManager() {
 
           {/* Templates */}
           <div className="grid gap-2 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
-            <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+            <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
               <Star className="h-3 w-3" /> Templates salvos
             </Label>
             <div className="flex gap-2">
@@ -807,7 +807,7 @@ export function RoundsManager() {
 
           {/* Team pills */}
           <div className="grid gap-2 pt-1">
-            <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+            <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
               <Radio className="h-3 w-3" /> Equipe
             </Label>
             <div className="grid grid-cols-4 gap-2">
@@ -817,7 +817,7 @@ export function RoundsManager() {
                   <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                     className={cn(
                       'relative rounded-lg border px-2 py-2 font-sans font-semibold uppercase tracking-[0.16em] text-[11px] transition-all',
-                      active ? 'border-transparent text-slate-950 shadow-lg' : 'border-primary/20 bg-slate-900/60 text-foreground hover:border-primary/50',
+                      active ? 'border-transparent text-slate-950 shadow-lg' : 'border-primary/20 bg-slate-900/60 text-slate-200 hover:border-primary/50',
                     )}
                     style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
                   >
@@ -837,7 +837,7 @@ export function RoundsManager() {
               <button key={m} type="button" onClick={() => setMode(m)}
                 className={cn(
                   'rounded-md border px-3 py-2 text-[11px] font-mono uppercase tracking-[0.18em] transition-all',
-                  mode === m ? 'border-primary/60 bg-primary/15 text-primary' : 'border-primary/20 bg-slate-900/60 text-muted-foreground hover:text-foreground',
+                  mode === m ? 'border-primary/60 bg-primary/15 text-primary' : 'border-primary/20 bg-slate-900/60 text-muted-foreground hover:text-slate-200',
                 )}>
                 {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
               </button>
@@ -872,7 +872,7 @@ export function RoundsManager() {
             {/* Rounding — only meaningful in split mode */}
             {mode === 'split' && (
               <div className="grid gap-1.5">
-                <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80">
+                <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500">
                   Arredondamento da divisão
                 </Label>
                 <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
@@ -892,7 +892,7 @@ export function RoundsManager() {
             {/* Agents */}
             <div className="grid gap-1.5">
               <div className="flex items-center justify-between">
-                <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+                <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
                   <Users className="h-3 w-3" /> Agentes ({agents.length})
                 </Label>
                 <Button type="button" size="sm" variant="outline" onClick={addAgent} className="h-7 border-primary/40 text-primary hover:bg-primary/10">
@@ -960,7 +960,7 @@ export function RoundsManager() {
                 onChange={(e) => updateSound({ volume: +e.target.value })}
                 disabled={sound.muted}
                 className="w-full accent-primary disabled:opacity-40" />
-              <span className="font-mono text-[11px] tabular-nums text-foreground w-8 text-right">{sound.volume}%</span>
+              <span className="font-mono text-[11px] tabular-nums text-slate-200 w-8 text-right">{sound.volume}%</span>
             </div>
             <div className="grid grid-cols-3 gap-1.5">
               {(['chime', 'pulse', 'siren'] as const).map((t) => (
@@ -969,7 +969,7 @@ export function RoundsManager() {
                     'rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors',
                     sound.tone === t
                       ? 'border-primary/70 bg-primary/10 text-primary'
-                      : 'border-slate-700/70 bg-slate-950/60 text-muted-foreground hover:text-foreground',
+                      : 'border-slate-700/70 bg-slate-950/60 text-muted-foreground hover:text-slate-200',
                   )}>
                   {t === 'chime' ? 'Sino' : t === 'pulse' ? 'Pulso' : 'Sirene'}
                 </button>
@@ -1048,9 +1048,9 @@ export function RoundsManager() {
                       <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--primary))' }}>{pad(i + 1)}</span>
                       <span className="font-sans font-semibold text-sm truncate">{r.name}</span>
                       <span className="font-mono text-[11px] tabular-nums flex items-center gap-2">
-                        <span className="text-foreground">{r.from}</span>
+                        <span className="text-slate-200">{r.from}</span>
                         <span style={{ color: teamColor }}>→</span>
-                        <span className="text-foreground">{r.to}</span>
+                        <span className="text-slate-200">{r.to}</span>
                         <span className="rounded px-1.5 py-0.5 text-[9px] uppercase tracking-[0.18em]"
                               style={{ backgroundColor: `${teamColor}22`, color: teamColor }}>
                           {fmtDuration(r.duration)}
@@ -1075,7 +1075,7 @@ export function RoundsManager() {
           {/* Histórico de rondas */}
           <div className="mt-1 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
             <div className="flex items-center justify-between mb-2">
-              <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+              <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
                 <History className="h-3 w-3" /> Histórico ({history.length})
               </Label>
               {history.length > 0 && (
@@ -1101,7 +1101,7 @@ export function RoundsManager() {
                       <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded"
                             style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
                       <div className="min-w-0">
-                        <div className="font-mono text-[10px] tabular-nums text-foreground">
+                        <div className="font-mono text-[10px] tabular-nums text-slate-200">
                           {dtStr} <span className="text-muted-foreground">→</span> {endStr}
                         </div>
                         <div className="text-[10px] text-muted-foreground truncate">
@@ -1135,7 +1135,7 @@ export function RoundsManager() {
             <div className="font-mono text-[10px] uppercase tracking-[0.32em]" style={{ color: teamColor }}>
               EQUIPE {team} · Posto {pad(alarm.index + 1)}
             </div>
-            <div className="font-sans text-2xl font-medium tracking-tight text-foreground">
+            <div className="font-sans text-2xl font-medium tracking-tight text-slate-200">
               Hora de fazer a ronda
             </div>
             <div className="font-sans text-lg font-bold" style={{ color: teamColor }}>
