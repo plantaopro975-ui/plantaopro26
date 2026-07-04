@@ -189,7 +189,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               }}
             />
             {/* Cena composta: agente + viatura em escala realista */}
-            <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(130px, 28vw, 380px)' }}>
+            <div className="relative inline-block leading-[0] isolate mt-auto translate-y-4 sm:translate-y-6 lg:translate-y-10" style={{ height: 'clamp(130px, 24vw, 320px)' }}>
               <img
                 src={agentVehicleScene}
                 alt="Agente Socioeducativo ao lado da viatura tática ISE"
