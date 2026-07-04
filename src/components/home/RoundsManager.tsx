@@ -384,7 +384,7 @@ export function RoundsManager() {
             )}
           >
             {/* animated sheen */}
-            <span aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,transparent_30%,hsl(var(--primary)/0.15)_50%,transparent_70%)] bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite]" />
+            <span aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,transparent_30%,hsl(var(--primary)/0.18)_50%,transparent_70%)]" />
             {/* top hairline */}
             <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
 
