@@ -218,6 +218,13 @@ export function RoundsManager() {
     setTemplates(next);
   };
 
+  /* history */
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const historyIdRef = useRef<string | null>(null);
+  useEffect(() => { setHistory(readHistory()); }, [open]);
+  const clearHistory = () => { writeHistory([]); setHistory([]); };
+
+
   const addAgent = () => setAgents((a) => [...a, `Agente ${a.length + 1}`]);
   const removeAgent = (i: number) => setAgents((a) => a.filter((_, idx) => idx !== i));
   const updateAgent = (i: number, v: string) => setAgents((a) => a.map((x, idx) => (idx === i ? v : x)));
