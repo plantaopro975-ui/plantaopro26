@@ -277,8 +277,8 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             </span>
           </div>
 
-          <div className="grid grid-cols-4 gap-2">
-            {TEAMS.map((t) => (
+          <div className="grid grid-cols-4 gap-2" style={{ perspective: '900px' }}>
+            {TEAMS.map((t, idx) => (
               <button
                 key={t.key}
                 data-team-card
@@ -286,7 +286,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 className={cn(
                   'group relative flex h-[140px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left',
                   'border-white/10 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_4%)_100%)]',
-                  'transition-all duration-500 will-change-transform',
+                  'transition-all duration-500 will-change-transform [transform-style:preserve-3d]',
                   'hover:border-[hsl(var(--team-accent)/0.6)] hover:-translate-y-1 hover:[transform:perspective(800px)_rotateX(4deg)]',
                   'shadow-[0_10px_25px_-12px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.04)]',
                   'hover:shadow-[0_25px_55px_-15px_hsl(var(--team-accent)/0.55),inset_0_1px_0_hsl(var(--team-accent)/0.4)]',
@@ -311,21 +311,24 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                     animation: 'none',
                   }}
                 />
-                {/* 3D Security Object — dominant with parallax float */}
-                <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-2 pt-4">
+                {/* 3D Security Object — real 3D image with continuous 3D idle motion */}
+                <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-2 pt-4 [perspective:600px]">
                   <img
                     src={t.obj}
                     alt={`Equipe ${t.key} — equipamento tático 3D`}
                     loading="lazy"
                     className={cn(
-                      'max-h-[95%] max-w-[75%] object-contain select-none',
+                      'max-h-[95%] max-w-[75%] object-contain select-none animate-float3d',
                       'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
                       'transition-transform duration-700 ease-out',
-                      'group-hover:scale-[1.18] group-hover:-translate-y-1.5 group-hover:-rotate-3',
-                      'group-active:scale-[1.05] group-active:rotate-0',
+                      'group-hover:scale-[1.20] group-hover:-translate-y-1.5',
+                      'group-active:scale-[1.05]',
                     )}
                     draggable={false}
-                    style={{ transformOrigin: '50% 60%' }}
+                    style={{
+                      transformOrigin: '50% 60%',
+                      animationDelay: `${idx * 0.6}s`,
+                    }}
                   />
                 </div>
                 {/* bottom gradient for text legibility */}
