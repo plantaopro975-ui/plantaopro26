@@ -378,22 +378,34 @@ function TimeField({
         </svg>
         <input id={`${id}-h`} inputMode="numeric" maxLength={2} value={h ?? ''}
           onChange={(e) => setH(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onFocus={(e) => e.currentTarget.select()}
           onBlur={(e) => setH(e.target.value || '0')}
           className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-slate-200 outline-none"
           aria-label={`${label} horas`} autoComplete="off" />
+        <div className="flex flex-col">
+          <button type="button" onClick={() => bump('h', 1)} aria-label="Mais 1 hora"
+            className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
+            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <button type="button" onClick={() => bump('h', -1)} aria-label="Menos 1 hora"
+            className="h-[22px] w-5 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
+            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        </div>
         <span className="font-mono text-lg text-muted-foreground/70 select-none -mt-0.5">:</span>
         <input inputMode="numeric" maxLength={2} value={m ?? ''}
           onChange={(e) => setM(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onFocus={(e) => e.currentTarget.select()}
           onBlur={(e) => setM(e.target.value || '0')}
           className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-slate-200 outline-none"
           aria-label={`${label} minutos`} autoComplete="off" />
         <div className="ml-auto flex flex-col">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
-            className="h-[22px] w-6 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
+            className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min"
-            className="h-[22px] w-6 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
+            className="h-[22px] w-5 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
