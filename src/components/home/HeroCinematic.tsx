@@ -408,13 +408,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             onPointerCancel={vDragH.onPointerCancel}
             onWheel={vDragH.onWheel}
           >
-            <img
-              src={policeVehicle}
-              alt="Viatura policial"
-              loading="lazy"
-              draggable={false}
-              className="h-full w-auto object-contain pointer-events-none"
-            />
+            <picture>
+              <source srcSet={policeVehicleWebp} type="image/webp" />
+              <img
+                src={policeVehicle}
+                alt="Viatura policial"
+                loading="lazy"
+                draggable={false}
+                className="h-full w-auto object-contain pointer-events-none"
+              />
+            </picture>
             <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
             <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
           </div>
