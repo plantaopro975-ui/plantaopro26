@@ -158,7 +158,7 @@ function TopHudBar() {
   );
 }
 
-export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
+export function SplitOperationalHero({ onTeamClick }: Props) {
   // Preload only the first-in-viewport 3D image (ALFA), AVIF variant
   useEffect(() => {
     const link = document.createElement('link');
