@@ -1036,6 +1036,7 @@ export function RoundsManager() {
                 </svg>
                 <span className="hidden xs:inline">Sair</span>
               </button>
+              </div>
             </div>
           </DialogHeader>
 
