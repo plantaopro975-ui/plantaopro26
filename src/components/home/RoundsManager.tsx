@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Clock, Users, Plus, Trash2, Copy, Printer, Timer, Shield,
   Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
-  Save, FolderOpen, Star,
+  Save, Star, History,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
