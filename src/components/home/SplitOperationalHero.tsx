@@ -282,6 +282,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               <button
                 key={t.key}
                 data-team-card
+                data-team={t.key}
                 onClick={() => onTeamClick(t.key)}
                 className={cn(
                   'group relative flex h-[140px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent',
@@ -292,6 +293,9 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 )}
                 style={{ ['--team-accent' as any]: t.accent }}
               >
+                {/* ALFA-only tactical halo (subtle, respects reduced-motion) */}
+                {t.key === 'ALFA' && <span aria-hidden className="alfa-halo" />}
+
                 {/* 3D Security Object — real 3D image with continuous 3D idle motion */}
                 <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-2 pt-4 [perspective:600px]">
                   <img
@@ -304,6 +308,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                       'transition-transform duration-700 ease-out',
                       'group-hover:scale-[1.20] group-hover:-translate-y-1.5',
                       'group-active:scale-[1.05]',
+                      t.key === 'ALFA' && 'alfa-vest',
                     )}
                     draggable={false}
                     style={{
@@ -312,6 +317,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                     }}
                   />
                 </div>
+
 
                 {/* top accent line */}
                 <span
