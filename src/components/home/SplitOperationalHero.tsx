@@ -48,11 +48,12 @@ const TEAMS: {
   webp: string;
   avif: string;
   bg: string;
+  bgWebp: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    webp: objAlfaWebp,    avif: objAlfaAvif,    bg: bgAlfa },
-  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   webp: objBravoWebp,   avif: objBravoAvif,   bg: bgBravo },
-  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, webp: objCharlieWebp, avif: objCharlieAvif, bg: bgCharlie },
-  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif,   bg: bgDelta },
+  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    webp: objAlfaWebp,    avif: objAlfaAvif,    bg: bgAlfa,    bgWebp: bgAlfaWebp },
+  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   webp: objBravoWebp,   avif: objBravoAvif,   bg: bgBravo,   bgWebp: bgBravoWebp },
+  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, webp: objCharlieWebp, avif: objCharlieAvif, bg: bgCharlie, bgWebp: bgCharlieWebp },
+  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif,   bg: bgDelta,   bgWebp: bgDeltaWebp },
 ];
 
 interface TeamObjectProps {
