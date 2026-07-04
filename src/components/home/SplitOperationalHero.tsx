@@ -190,7 +190,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             <img
               src={agent3d}
               alt="Agente Socioeducativo"
-              className="relative z-10 h-full max-h-[240px] sm:max-h-[300px] lg:max-h-[360px] w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
+              className="relative z-10 h-full max-h-[320px] sm:max-h-[420px] lg:max-h-[520px] w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
               draggable={false}
             />
             {/* Viatura ISE — tactical vehicle, next to agent */}
