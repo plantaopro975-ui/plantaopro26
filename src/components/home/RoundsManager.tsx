@@ -534,7 +534,37 @@ function validate(input: {
 }
 
 /* ================= component ================= */
+/* ================= Section colapsável (mobile/tablet) — sempre aberta em lg+ ================= */
+function Section({
+  icon, title, defaultOpen = false, children,
+}: { icon?: React.ReactNode; title: string; defaultOpen?: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = useState(defaultOpen);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mql = window.matchMedia('(min-width: 1024px)');
+    const sync = () => { if (mql.matches) setOpen(true); };
+    sync();
+    mql.addEventListener('change', sync);
+    return () => mql.removeEventListener('change', sync);
+  }, []);
+  return (
+    <details
+      open={open}
+      onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
+      className="group min-w-0 rounded-lg border border-border bg-card/30 lg:bg-transparent lg:border-0 lg:rounded-none lg:!open"
+    >
+      <summary className="lg:hidden flex items-center gap-2 cursor-pointer px-3 py-2 select-none list-none [&::-webkit-details-marker]:hidden">
+        {icon}
+        <span className="font-sans text-[12px] uppercase tracking-wide text-foreground">{title}</span>
+        <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
+      </summary>
+      <div className="grid gap-3 p-3 lg:p-0">{children}</div>
+    </details>
+  );
+}
+
 export function RoundsManager() {
+
   const [open, setOpen] = useState(false);
   const [team, setTeam] = useState<TeamKey>('ALFA');
   const [mode, setMode] = useState<Mode>('split');
