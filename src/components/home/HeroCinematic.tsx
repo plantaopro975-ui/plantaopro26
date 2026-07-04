@@ -632,12 +632,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                 >
                   {/* Poster oficial — ocupa todo o card como background */}
                   <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-                    <img
-                      src={getTeamPoster(t.name)}
-                      alt=""
-                      className="absolute inset-0 h-full w-full object-cover opacity-95 group-hover:scale-[1.08] transition-transform duration-700 ease-out"
-                      style={{ filter: 'saturate(0.95) contrast(1.1) brightness(0.88)' }}
-                    />
+                    <picture>
+                      <source srcSet={getTeamPosterWebp(t.name) ?? undefined} type="image/webp" />
+                      <img
+                        src={getTeamPoster(t.name)}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover opacity-95 group-hover:scale-[1.08] transition-transform duration-700 ease-out"
+                        style={{ filter: 'saturate(0.95) contrast(1.1) brightness(0.88)' }}
+                      />
+                    </picture>
                     {/* Gradient inferior: base sólida para info bar */}
                     <span
                       aria-hidden
