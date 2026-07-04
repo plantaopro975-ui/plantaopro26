@@ -122,6 +122,7 @@ export function Icon3D({
 
   const mapped = name ? ICON_3D_MAP[name] : undefined;
   const src = mapped?.src ?? rawSrc;
+  const webp = mapped?.webp;
   const Fallback = mapped?.fallback ?? rawFallback;
 
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
