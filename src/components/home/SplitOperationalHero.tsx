@@ -279,9 +279,10 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                     animation: 'giroflexBlue 1.1s steps(2,end) infinite',
                   }}
                 />
-                {/* highlight central quente sobre a barra */}
+                {/* highlight central quente sobre a barra — só em telas ≥ sm */}
                 <span
-                  className="giroflex-light absolute inset-0"
+                  className="giroflex-light hidden sm:block absolute inset-0"
+
                   style={{
                     background:
                       'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 60%)',
