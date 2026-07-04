@@ -189,7 +189,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         />
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-4 sm:gap-6 p-3 sm:p-5 lg:grid-cols-[0.95fr_1.05fr] items-center flex-1 min-h-0">
+        <div className="relative grid gap-3 sm:gap-4 px-3 sm:px-5 pt-2 pb-0 lg:grid-cols-[0.95fr_1.05fr] items-end flex-1 min-h-0">
 
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-4 justify-center">
@@ -228,7 +228,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
           </div>
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-center justify-center min-h-[220px] lg:min-h-[340px] xl:min-h-[380px] 2xl:min-h-[400px] order-first lg:order-none z-30 overflow-visible">
+          <div className="relative flex items-end justify-center min-h-[200px] lg:min-h-[280px] xl:min-h-[310px] 2xl:min-h-[330px] order-first lg:order-none z-30 overflow-visible pb-0 -mb-2">
 
             <svg
               aria-hidden
@@ -263,7 +263,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         </div>
 
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
-        <div className="relative shrink-0 px-2 sm:px-3 pb-2">
+        <div className="relative shrink-0 px-2 sm:px-3 pt-1 pb-2">
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-slate-500">
               Selecione sua Equipe
