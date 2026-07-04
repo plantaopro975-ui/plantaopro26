@@ -1350,6 +1350,7 @@ export function RoundsManager() {
               </ul>
             )}
           </div>
+        </div>
         </DialogContent>
       </Dialog>
 
