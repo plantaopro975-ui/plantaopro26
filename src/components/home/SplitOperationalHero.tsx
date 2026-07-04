@@ -7,7 +7,7 @@ import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
 
-import objAlfa from '@/assets/teams/alfa-shield-real.png';
+import objAlfa from '@/assets/teams/alfa-vest-real.png';
 import objBravo from '@/assets/teams/bravo-helmet-real.png';
 import objCharlie from '@/assets/teams/charlie-badge-real.png';
 import objDelta from '@/assets/teams/delta-radio-real.png';
