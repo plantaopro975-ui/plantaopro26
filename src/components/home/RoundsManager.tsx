@@ -696,7 +696,7 @@ export function RoundsManager() {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={(o) => { if (o) setOpen(true); else requestExit(); }}>
         <DialogTrigger asChild>
           <button
             type="button"
