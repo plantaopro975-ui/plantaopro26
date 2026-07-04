@@ -1228,79 +1228,72 @@ export function RoundsManager() {
                       Preencha a configuração para gerar o cronograma.
                     </div>
                   ) : (
-                    <div className="rounded-xl border border-border bg-gradient-to-b from-slate-900/80 to-slate-950 p-3 sm:p-4"
-                         style={{ boxShadow: `inset 0 0 30px -8px ${teamColor}66` }}>
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2 mb-3">
-                        <div className="font-sans font-semibold uppercase tracking-wide text-[13px] truncate" style={{ color: teamColor }}>
+                    <div>
+                      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-border/40">
+                        <div className="font-sans font-semibold uppercase tracking-[0.16em] text-[13px] truncate" style={{ color: teamColor }}>
                           EQUIPE {team}
                         </div>
-                        <div className="flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-wide">
-                          <span className="whitespace-nowrap rounded border border-border bg-primary/10 px-2 py-0.5 text-primary tabular-nums">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-sans text-[11px] uppercase tracking-wide">
+                          <span className="whitespace-nowrap text-primary tabular-nums">
                             <Timer className="inline h-3 w-3 mr-1" />
                             {fmtDuration(schedule.total)} totais
                           </span>
-                          <span className="whitespace-nowrap rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-emerald-400 tabular-nums">
+                          <span className="whitespace-nowrap text-emerald-400 tabular-nums">
                             ~{fmtDuration(schedule.slot)} / agente
                           </span>
                         </div>
                       </div>
 
-                      {/* Countdown */}
-                      <div className="mb-3 grid grid-cols-1 sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-lg border border-border bg-background/95 p-3">
-                        <div className="flex flex-col items-center sm:items-start">
-                          <span className="font-sans text-[11px] uppercase tracking-wider text-muted-foreground">Regressivo</span>
-                          <span className="font-mono text-2xl font-light tabular-nums tracking-tight" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
-                            {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
-                          </span>
+                      {/* Countdown — aberto, centralizado */}
+                      <div className="mb-6 flex flex-col items-center text-center gap-3">
+                        <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                          {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
+                        </span>
+                        <span className="font-mono text-5xl sm:text-6xl font-light tabular-nums tracking-tight leading-none" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
+                          {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
+                        </span>
+                        <div className="font-sans font-medium text-base text-foreground truncate max-w-full">
+                          {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
                         </div>
-                        <div className="min-w-0">
-                          <div className="font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
-                            {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
+                        {running && live && !live.done && 'slotSec' in live && (
+                          <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
+                            <div className="h-full transition-all"
+                                 style={{ width: `${100 - (live.remaining / live.slotSec) * 100}%`, backgroundColor: teamColor }} />
                           </div>
-                          <div className="font-sans font-bold text-base truncate">
-                            {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
-                          </div>
-                          {running && live && !live.done && 'slotSec' in live && (
-                            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
-                              <div className="h-full transition-all"
-                                   style={{ width: `${100 - (live.remaining / live.slotSec) * 100}%`, backgroundColor: teamColor }} />
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5 justify-end">
+                        )}
+                        <div className="flex items-center gap-2 pt-1">
                           {!running ? (
-                            <Button type="button" size="sm" onClick={startTimer} className="h-8 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
-                              <Play className="h-3.5 w-3.5 mr-1" /> Iniciar
+                            <Button type="button" size="sm" onClick={startTimer} className="h-9 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
+                              <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
                             </Button>
                           ) : (
-                            <Button type="button" size="sm" onClick={pauseTimer} className="h-8 bg-amber-500 hover:bg-amber-600 text-slate-950">
-                              <Pause className="h-3.5 w-3.5 mr-1" /> Pausar
+                            <Button type="button" size="sm" onClick={pauseTimer} className="h-9 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950">
+                              <Pause className="h-3.5 w-3.5 mr-1.5" /> Pausar
                             </Button>
                           )}
-                          <Button type="button" size="icon" variant="outline" onClick={resetTimer}
-                            className="h-8 w-8 border-border text-primary hover:bg-primary/10" aria-label="Reiniciar">
+                          <Button type="button" size="icon" variant="ghost" onClick={resetTimer}
+                            className="h-9 w-9 text-muted-foreground hover:text-primary" aria-label="Reiniciar">
                             <RotateCcw className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </div>
 
-                      {/* Rows */}
-                      <ul className="grid gap-1.5">
+                      {/* Rows — sem caixas, apenas linhas */}
+                      <ul className="divide-y divide-border/40">
                         {schedule.rows.map((r, i) => {
                           const isCurrent = running && i === currentIdx && live && !live.done;
                           return (
                             <li key={i}
-                                className={cn('grid grid-cols-[24px_minmax(0,1fr)] sm:grid-cols-[24px_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-md border px-3 py-2 transition-colors',
-                                  isCurrent ? 'bg-slate-900' : 'border-primary/10 bg-background/60')}
-                                style={isCurrent ? { borderColor: teamColor, boxShadow: `0 0 14px -4px ${teamColor}` } : undefined}>
-                              <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--primary))' }}>{pad(i + 1)}</span>
-                              <span className="font-sans font-semibold text-sm truncate sm:whitespace-normal sm:break-words min-w-0">{r.name}</span>
-                              <span className="col-span-2 sm:col-auto font-mono text-[11px] tabular-nums flex flex-wrap items-center gap-2 justify-start sm:justify-end">
+                                className={cn('grid grid-cols-[28px_minmax(0,1fr)] sm:grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-2.5 transition-colors',
+                                  isCurrent && 'bg-primary/5 -mx-2 px-2 rounded')}
+                                style={isCurrent ? { boxShadow: `inset 3px 0 0 0 ${teamColor}` } : undefined}>
+                              <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
+                              <span className="font-sans font-medium text-sm truncate sm:whitespace-normal sm:break-words min-w-0">{r.name}</span>
+                              <span className="col-span-2 sm:col-auto font-mono text-[11px] tabular-nums flex flex-wrap items-center gap-2 justify-start sm:justify-end text-muted-foreground">
                                 <span className="text-foreground">{r.from}</span>
                                 <span style={{ color: teamColor }}>→</span>
                                 <span className="text-foreground">{r.to}</span>
-                                <span className="rounded px-1.5 py-0.5 text-[11px] uppercase tracking-wide whitespace-nowrap"
-                                      style={{ backgroundColor: `${teamColor}22`, color: teamColor }}>
+                                <span className="uppercase tracking-wide whitespace-nowrap" style={{ color: teamColor }}>
                                   {fmtDuration(r.duration)}
                                 </span>
                               </span>
@@ -1309,15 +1302,16 @@ export function RoundsManager() {
                         })}
                       </ul>
 
-                      <div className="mt-4 flex flex-wrap gap-2 justify-end">
-                        <Button type="button" variant="outline" onClick={copyToClipboard} className="border-border text-primary hover:bg-primary/10">
+                      <div className="mt-5 flex flex-wrap gap-2 justify-center sm:justify-end pt-3 border-t border-border/40">
+                        <Button type="button" variant="ghost" onClick={copyToClipboard} className="text-muted-foreground hover:text-primary">
                           <Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar
                         </Button>
-                        <Button type="button" onClick={printSchedule} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        <Button type="button" variant="ghost" onClick={printSchedule} className="text-muted-foreground hover:text-primary">
                           <Printer className="h-3.5 w-3.5 mr-1.5" /> Imprimir
                         </Button>
                       </div>
                     </div>
+
                   )}
                 </Section>
 
