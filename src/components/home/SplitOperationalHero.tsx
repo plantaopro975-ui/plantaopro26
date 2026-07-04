@@ -3,8 +3,11 @@ import { Radio, ShieldCheck, Activity, Clock3, User2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import agent3d from '@/assets/hero/agent-ise-3d.png';
+import agent3dWebp from '@/assets/hero/agent-ise-3d.webp';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
+import vehicle3dWebp from '@/assets/hero/vehicle-ise-3d.webp';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
+import agentVehicleSceneWebp from '@/assets/hero/agent-vehicle-scene.webp';
 import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
 
 import objAlfa from '@/assets/teams/alfa-vest-real.png';
