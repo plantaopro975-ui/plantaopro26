@@ -354,25 +354,24 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
     // Target: bevelled ring, colored bullseye, crosshair with drop shadow
     return (
       <svg {...svgProps}>
-        {defs}
-        <circle cx="32" cy="32" r="28" fill={`url(#${rimId})`} />
-        <circle cx="32" cy="32" r="25" fill={`url(#${gId})`} />
+        {fx.defs}
+        <circle cx="32" cy="32" r="28" fill={fx.url('rim')} />
+        <circle cx="32" cy="32" r="25" fill={fx.url('dome')} />
         <circle cx="32" cy="32" r="19" fill="none" stroke="#0b0f17" strokeOpacity="0.6" strokeWidth="1.4" />
         <circle cx="32" cy="32" r="19" fill="none" stroke={color} strokeOpacity="0.9" strokeWidth="0.7" />
         <circle cx="32" cy="32" r="12" fill="none" stroke="#0b0f17" strokeOpacity="0.55" strokeWidth="1.2" />
         <circle cx="32" cy="32" r="12" fill="none" stroke={color} strokeOpacity="0.85" strokeWidth="0.6" />
         <circle cx="32" cy="32" r="5" fill={color} stroke="#0b0f17" strokeWidth="0.8" />
-        {/* Crosshair with shadow */}
         <line x1="32" y1="2"  x2="32" y2="18" stroke="#000000" strokeOpacity="0.55" strokeWidth="2.6" strokeLinecap="round" />
         <line x1="32" y1="46" x2="32" y2="62" stroke="#000000" strokeOpacity="0.55" strokeWidth="2.6" strokeLinecap="round" />
         <line x1="2"  y1="32" x2="18" y2="32" stroke="#000000" strokeOpacity="0.55" strokeWidth="2.6" strokeLinecap="round" />
         <line x1="46" y1="32" x2="62" y2="32" stroke="#000000" strokeOpacity="0.55" strokeWidth="2.6" strokeLinecap="round" />
-        <line x1="32" y1="2"  x2="32" y2="18" stroke={`url(#${mId})`} strokeWidth="1.6" strokeLinecap="round" />
-        <line x1="32" y1="46" x2="32" y2="62" stroke={`url(#${mId})`} strokeWidth="1.6" strokeLinecap="round" />
-        <line x1="2"  y1="32" x2="18" y2="32" stroke={`url(#${mId})`} strokeWidth="1.6" strokeLinecap="round" />
-        <line x1="46" y1="32" x2="62" y2="32" stroke={`url(#${mId})`} strokeWidth="1.6" strokeLinecap="round" />
+        <line x1="32" y1="2"  x2="32" y2="18" stroke={fx.url('steel')} strokeWidth="1.6" strokeLinecap="round" />
+        <line x1="32" y1="46" x2="32" y2="62" stroke={fx.url('steel')} strokeWidth="1.6" strokeLinecap="round" />
+        <line x1="2"  y1="32" x2="18" y2="32" stroke={fx.url('steel')} strokeWidth="1.6" strokeLinecap="round" />
+        <line x1="46" y1="32" x2="62" y2="32" stroke={fx.url('steel')} strokeWidth="1.6" strokeLinecap="round" />
         <circle cx="32" cy="32" r="1.4" fill="#fef3c7" />
-        <ellipse cx="26" cy="22" rx="10" ry="5" fill={`url(#${hId})`} />
+        <ellipse cx="26" cy="22" rx="10" ry="5" fill={fx.url('gloss')} />
       </svg>
     );
   }
@@ -380,18 +379,15 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
   // DELTA — lightning inside a bevelled disc
   return (
     <svg {...svgProps}>
-      {defs}
-      <circle cx="32" cy="32" r="28" fill={`url(#${rimId})`} />
-      <circle cx="32" cy="32" r="25" fill={`url(#${gId})`} />
-      {/* Bolt shadow */}
+      {fx.defs}
+      <circle cx="32" cy="32" r="28" fill={fx.url('rim')} />
+      <circle cx="32" cy="32" r="25" fill={fx.url('dome')} />
       <path d="M37 8 L18 34 H30 L26 56 L47 28 H34 Z"
             fill="#000000" fillOpacity="0.55" transform="translate(0.6 0.8)" />
-      {/* Bolt body */}
       <path d="M36 8 L18 34 H30 L26 56 L46 28 H34 Z"
-            fill={`url(#${goldId})`} stroke="#78350f" strokeWidth="0.6" strokeLinejoin="round" />
-      {/* Bolt highlight */}
+            fill={fx.url('gold')} stroke="#78350f" strokeWidth="0.6" strokeLinejoin="round" />
       <path d="M36 8 L21 32 H29" fill="none" stroke="#fef3c7" strokeOpacity="0.85" strokeWidth="0.8" strokeLinecap="round" />
-      <ellipse cx="26" cy="22" rx="10" ry="5" fill={`url(#${hId})`} />
+      <ellipse cx="26" cy="22" rx="10" ry="5" fill={fx.url('gloss')} />
     </svg>
   );
 }
