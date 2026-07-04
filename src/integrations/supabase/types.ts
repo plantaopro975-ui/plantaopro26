@@ -1383,6 +1383,54 @@ export type Database = {
         }
         Relationships: []
       }
+      round_sessions: {
+        Row: {
+          created_at: string
+          end_time: string
+          ended_at: string | null
+          id: string
+          interval_min: number
+          is_active: boolean
+          mode: string
+          rows: Json
+          server_started_at: string
+          start_time: string
+          team: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_time: string
+          ended_at?: string | null
+          id?: string
+          interval_min?: number
+          is_active?: boolean
+          mode: string
+          rows?: Json
+          server_started_at?: string
+          start_time: string
+          team: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_time?: string
+          ended_at?: string | null
+          id?: string
+          interval_min?: number
+          is_active?: boolean
+          mode?: string
+          rows?: Json
+          server_started_at?: string
+          start_time?: string
+          team?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_credentials: {
         Row: {
           agent_id: string
@@ -1928,6 +1976,7 @@ export type Database = {
         }
         Returns: number
       }
+      get_server_now: { Args: never; Returns: string }
       has_admin_permission: {
         Args: { _permission: string; _user_id: string }
         Returns: boolean
