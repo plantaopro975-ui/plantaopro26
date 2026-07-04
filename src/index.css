@@ -1044,23 +1044,34 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 }
 .animate-loading-orb { animation: loading-orb 6s ease-in-out infinite; will-change: transform, opacity; }
 
-/* Hero vehicle giroflex strobes (SplitOperationalHero) */
+/* Hero vehicle giroflex strobes (SplitOperationalHero)
+   Compositor-only: animates opacity (no box-shadow/background repaints).
+   Static box-shadow is baked in; opacity toggles produce the strobe. */
 @keyframes giroflex-red {
-  0%, 45% { opacity: 1; box-shadow: 0 0 20px 6px rgba(239,68,68,0.9); }
-  50%, 100% { opacity: 0.15; box-shadow: 0 0 6px 2px rgba(239,68,68,0.3); }
+  0%, 45%   { opacity: 1; }
+  50%, 100% { opacity: 0.15; }
 }
 @keyframes giroflex-blue {
-  0%, 45% { opacity: 0.15; box-shadow: 0 0 6px 2px rgba(56,189,248,0.3); }
-  50%, 100% { opacity: 1; box-shadow: 0 0 20px 6px rgba(56,189,248,0.9); }
+  0%, 45%   { opacity: 0.15; }
+  50%, 100% { opacity: 1; }
+}
+@keyframes giroflex-halo {
+  0%, 45%   { opacity: 0.7; }
+  50%, 100% { opacity: 0; }
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
 
-@keyframes giroflex-halo {
-  0%, 100% { background: radial-gradient(ellipse, rgba(239,68,68,0.55) 0%, transparent 70%); }
-  50%      { background: radial-gradient(ellipse, rgba(59,130,246,0.55) 0%, transparent 70%); }
+/* Apply will-change + GPU promotion to any element running a giroflex anim */
+[class*="giroflex-red"],
+[class*="giroflex-blue"],
+[class*="giroflex-halo"] {
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout paint;
 }
 
 @media (prefers-reduced-motion: reduce) {
