@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ArrowUpRight, Radio, ShieldCheck, Activity, Fingerprint, Clock3, User2 } from 'lucide-react';
+import { Radio, ShieldCheck, Activity, Clock3, User2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+
 import agent3d from '@/assets/hero/agent-ise-3d.png';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
@@ -27,7 +27,6 @@ import bgDelta from '@/assets/teams/bg-delta.jpg';
 
 interface Props {
   onTeamClick: (team: string) => void;
-  onPrimaryAction?: () => void;
 }
 
 type TeamKey = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
@@ -159,7 +158,7 @@ function TopHudBar() {
   );
 }
 
-export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
+export function SplitOperationalHero({ onTeamClick }: Props) {
   // Preload only the first-in-viewport 3D image (ALFA), AVIF variant
   useEffect(() => {
     const link = document.createElement('link');
