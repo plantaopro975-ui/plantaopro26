@@ -755,6 +755,23 @@ export function RoundsManager() {
     return { done: false, index: idx, remaining, elapsed: elapsedSec, prevBoundary, slotSec: boundaries[idx] - prevBoundary };
   }, [schedule, running, tick]);
 
+  // Trava persistida: quais postos já dispararam a notificação
+  const notifiedRef = useRef<Set<number>>(new Set());
+
+  const markNotified = async (finishedIdx: number) => {
+    if (notifiedRef.current.has(finishedIdx)) return false;
+    notifiedRef.current.add(finishedIdx);
+    if (sessionIdRef.current) {
+      try {
+        const arr = Array.from(notifiedRef.current).sort((a, b) => a - b);
+        await supabase.from('round_sessions')
+          .update({ notified_indices: arr })
+          .eq('id', sessionIdRef.current);
+      } catch { /* ignore */ }
+    }
+    return true;
+  };
+
   useEffect(() => {
     if (!live || !schedule) return;
     const currentIdx = live.index;
@@ -762,28 +779,31 @@ export function RoundsManager() {
       firedRef.current.add(currentIdx);
       // Individual "MISSÃO CUMPRIDA" para o agente que acabou de terminar
       const finishedIdx = live.done ? currentIdx : currentIdx - 1;
-      if (finishedIdx >= 0) {
-        const finishedRow = schedule.rows[finishedIdx];
-        toast({
-          title: `✅ MISSÃO CUMPRIDA — ${finishedRow.name}`,
-          description: `Posto ${pad(finishedIdx + 1)} concluído · EQUIPE ${team}`,
+      if (finishedIdx >= 0 && !notifiedRef.current.has(finishedIdx)) {
+        void markNotified(finishedIdx).then((ok) => {
+          if (!ok) return;
+          const finishedRow = schedule.rows[finishedIdx];
+          toast({
+            title: `✅ MISSÃO CUMPRIDA — ${finishedRow.name}`,
+            description: `Posto ${pad(finishedIdx + 1)} concluído · EQUIPE ${team}`,
+          });
+          playAlert(soundRef.current);
+          try {
+            if (!soundRef.current.muted && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+              navigator.vibrate?.([220, 90, 220, 90, 380]);
+            }
+          } catch { /* ignore */ }
+          try {
+            if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+              const n = new Notification('Missão cumprida', {
+                body: `EQUIPE ${team} · ${finishedRow.name} concluiu o posto ${pad(finishedIdx + 1)}.`,
+                tag: `plantaopro-rounds-done-${finishedIdx}`,
+                silent: false,
+              });
+              setTimeout(() => n.close(), 8000);
+            }
+          } catch { /* ignore */ }
         });
-        playAlert(soundRef.current);
-        try {
-          if (!soundRef.current.muted && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-            navigator.vibrate?.([220, 90, 220, 90, 380]);
-          }
-        } catch { /* ignore */ }
-        try {
-          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-            const n = new Notification('Missão cumprida', {
-              body: `EQUIPE ${team} · ${finishedRow.name} concluiu o posto ${pad(finishedIdx + 1)}.`,
-              tag: 'plantaopro-rounds-done',
-              silent: false,
-            });
-            setTimeout(() => n.close(), 8000);
-          }
-        } catch { /* ignore */ }
       }
       if (!live.done && currentIdx > 0) {
         const row = schedule.rows[currentIdx];
@@ -800,7 +820,6 @@ export function RoundsManager() {
         setHistory(finished);
         historyIdRef.current = null;
       }
-      // Marcar sessão como encerrada no banco
       if (sessionIdRef.current) {
         supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
           .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
@@ -808,10 +827,32 @@ export function RoundsManager() {
     }
   }, [live, schedule, team]);
 
-  /* Restaurar sessão ativa ao montar / abrir */
+  /* Restaurar sessão ativa ao montar / abrir + Realtime */
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const hydrateFrom = (data: {
+      id: string; team: string; mode: string; start_time: string; end_time: string;
+      interval_min: number; rows: unknown; server_started_at: string;
+      notified_indices?: number[] | null; is_active?: boolean;
+    }) => {
+      setTeam(data.team as TeamKey);
+      setMode(data.mode as Mode);
+      setStartTime(data.start_time);
+      setEndTime(data.end_time);
+      setIntervalMin(data.interval_min);
+      const rows = (data.rows as Array<{ name: string }>) || [];
+      if (rows.length) setAgents(rows.map((r) => r.name));
+      sessionIdRef.current = data.id;
+      startedAtRef.current = new Date(data.server_started_at).getTime();
+      notifiedRef.current = new Set(data.notified_indices || []);
+      // Marca como já "vistos" localmente para não re-disparar toasts históricos
+      firedRef.current = new Set(data.notified_indices || []);
+      setRunning(data.is_active !== false);
+    };
+
     (async () => {
       await syncServerClock();
       const { data: userData } = await supabase.auth.getUser();
@@ -825,22 +866,42 @@ export function RoundsManager() {
         .order('server_started_at', { ascending: false })
         .limit(1)
         .maybeSingle();
-      if (cancelled || !data) return;
-      // Hidratar configuração e retomar
-      setTeam(data.team as TeamKey);
-      setMode(data.mode as Mode);
-      setStartTime(data.start_time);
-      setEndTime(data.end_time);
-      setIntervalMin(data.interval_min);
-      const rows = (data.rows as Array<{ name: string }>) || [];
-      if (rows.length) setAgents(rows.map((r) => r.name));
-      sessionIdRef.current = data.id;
-      startedAtRef.current = new Date(data.server_started_at).getTime();
-      firedRef.current = new Set();
-      setRunning(true);
+      if (cancelled) return;
+      if (data) hydrateFrom(data);
+
+      // Realtime: sincroniza status entre navegadores do mesmo usuário
+      channel = supabase
+        .channel(`round_sessions_${uid}`)
+        .on('postgres_changes',
+          { event: '*', schema: 'public', table: 'round_sessions', filter: `user_id=eq.${uid}` },
+          (payload) => {
+            const row = (payload.new || payload.old) as {
+              id: string; is_active: boolean; notified_indices?: number[] | null;
+            } | null;
+            if (!row) return;
+            if (payload.eventType === 'INSERT' && row.is_active) {
+              hydrateFrom(payload.new as Parameters<typeof hydrateFrom>[0]);
+              return;
+            }
+            if (row.id !== sessionIdRef.current) return;
+            // Absorve trava de notificações de outros dispositivos
+            const arr = row.notified_indices || [];
+            notifiedRef.current = new Set([...notifiedRef.current, ...arr]);
+            arr.forEach((i) => firedRef.current.add(i));
+            if (row.is_active === false) {
+              setRunning(false);
+              sessionIdRef.current = null;
+            }
+          })
+        .subscribe();
     })();
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [open]);
+
 
   const startTimer = async () => {
     if (!schedule) {
@@ -851,6 +912,7 @@ export function RoundsManager() {
     const startMs = nowServer();
     startedAtRef.current = startMs;
     firedRef.current = new Set();
+    notifiedRef.current = new Set();
     setRunning(true);
     try {
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
@@ -894,6 +956,7 @@ export function RoundsManager() {
     setRunning(false);
     startedAtRef.current = null;
     firedRef.current = new Set();
+    notifiedRef.current = new Set();
     setTick(0);
     if (sessionIdRef.current) {
       supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
@@ -933,13 +996,49 @@ export function RoundsManager() {
     doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`, pageW / 2, 30, { align: 'center' });
     doc.setTextColor(0);
 
+    const statusFor = (i: number): 'Concluído' | 'Em ronda' | 'Aguardando' => {
+      if (!running || !live) return 'Aguardando';
+      if (live.done ? i <= live.index : i < live.index) return 'Concluído';
+      if (!live.done && i === live.index) return 'Em ronda';
+      return 'Aguardando';
+    };
     autoTable(doc, {
       startY: 38,
-      head: [['#', 'Agente', 'Início', 'Término', 'Duração']],
-      body: schedule.rows.map((r, i) => [pad(i + 1), r.name, r.from, r.to, fmtDuration(r.duration)]),
+      head: [['#', 'Agente', 'Início', 'Término', 'Duração', 'Status']],
+      body: schedule.rows.map((r, i) => [pad(i + 1), r.name, r.from, r.to, fmtDuration(r.duration), statusFor(i)]),
       theme: 'grid',
       headStyles: { fillColor: [10, 15, 26], textColor: 245, fontStyle: 'bold' },
       styles: { fontSize: 10, cellPadding: 3 },
+      didParseCell: (data) => {
+        if (data.section !== 'body') return;
+        const st = statusFor(data.row.index);
+        if (st === 'Concluído') {
+          // "Risco" no nome e badge verde "MISSÃO CUMPRIDA"
+          if (data.column.index === 1) {
+            data.cell.styles.textColor = [120, 120, 120];
+            (data.cell.styles as { fontStyle?: string }).fontStyle = 'italic';
+          }
+          if (data.column.index === 5) {
+            data.cell.text = ['✓ MISSÃO CUMPRIDA'];
+            data.cell.styles.fillColor = [16, 185, 129];
+            data.cell.styles.textColor = 255;
+            data.cell.styles.fontStyle = 'bold';
+          }
+        } else if (st === 'Em ronda' && data.column.index === 5) {
+          data.cell.styles.fillColor = [245, 158, 11];
+          data.cell.styles.textColor = 20;
+          data.cell.styles.fontStyle = 'bold';
+        }
+      },
+      didDrawCell: (data) => {
+        // Desenha o "risco" (strike-through) sobre nome de agentes concluídos
+        if (data.section === 'body' && data.column.index === 1 && statusFor(data.row.index) === 'Concluído') {
+          const { x, y, width, height } = data.cell;
+          doc.setDrawColor(200, 60, 60);
+          doc.setLineWidth(0.6);
+          doc.line(x + 1.5, y + height / 2, x + width - 1.5, y + height / 2);
+        }
+      },
     });
 
     doc.save(`rondas_equipe_${team}_${new Date().toISOString().split('T')[0]}.pdf`);
