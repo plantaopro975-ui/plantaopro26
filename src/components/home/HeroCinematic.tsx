@@ -773,14 +773,17 @@ function AgentFigure({ agentT, dragHandlers, locked = false }: { agentT: Transfo
       }}
       className={`${locked ? '' : 'viewport-draggable-asset '}agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 ${locked ? '' : 'cursor-grab active:cursor-grabbing'}`}
     >
-      <img
-        src={agentFigure}
-        alt=""
-        aria-hidden
-        loading="lazy"
-        draggable={false}
-        className="h-full w-auto object-contain object-bottom pointer-events-none"
-      />
+      <picture>
+        <source srcSet={agentFigureWebp} type="image/webp" />
+        <img
+          src={agentFigure}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          draggable={false}
+          className="h-full w-auto object-contain object-bottom pointer-events-none"
+        />
+      </picture>
     </div>
   );
 }
