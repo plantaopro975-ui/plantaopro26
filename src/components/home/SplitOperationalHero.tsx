@@ -7,7 +7,7 @@ import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
 
-import objAlfa from '@/assets/teams/alfa-shield-real.png';
+import objAlfa from '@/assets/teams/alfa-vest-real.png';
 import objBravo from '@/assets/teams/bravo-helmet-real.png';
 import objCharlie from '@/assets/teams/charlie-badge-real.png';
 import objDelta from '@/assets/teams/delta-radio-real.png';
@@ -27,7 +27,7 @@ const TEAMS: {
   accent: string;
   obj: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa },
+  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa },
   { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo },
   { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie },
   { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta },
