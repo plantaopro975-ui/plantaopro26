@@ -193,10 +193,6 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
 
           {/* LEFT — CTA + selos (título movido para faixa superior) */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 justify-center">
-            <p className="hidden sm:block max-w-md text-[12px] text-slate-400 leading-relaxed">
-              Plataforma integrada para agentes socioeducativos do Acre.
-              Escalas, plantões e comunicação em tempo real.
-            </p>
 
 
             <button
