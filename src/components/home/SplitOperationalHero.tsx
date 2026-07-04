@@ -196,19 +196,8 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
                 draggable={false}
               />
-              {/* Giroflex — halos ancorados em % da bounding box da cena */}
-              <div aria-hidden className="absolute inset-0 z-[1] pointer-events-none">
-                {/* Lâmpadas azuis (lado esquerdo da barra da viatura) */}
-                <span
-                  className="absolute rounded-full blur-[6px] bg-[radial-gradient(ellipse,rgba(59,130,246,1)_0%,rgba(59,130,246,0.55)_35%,transparent_70%)] animate-[giroflex-blue_0.8s_steps(2,end)_infinite]"
-                  style={{ left: '46%', top: '15%', width: '9%', height: '4%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
-                />
-                {/* Lâmpadas vermelhas (lado direito da barra da viatura) */}
-                <span
-                  className="absolute rounded-full blur-[6px] bg-[radial-gradient(ellipse,rgba(239,68,68,1)_0%,rgba(239,68,68,0.55)_35%,transparent_70%)] animate-[giroflex-red_0.8s_steps(2,end)_infinite]"
-                  style={{ left: '55%', top: '15%', width: '9%', height: '4%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
-                />
-              </div>
+              {/* Giroflex removido a pedido do usuário */}
+
             </div>
           </div>
 
