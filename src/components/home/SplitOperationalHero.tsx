@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import agent3d from '@/assets/hero/agent-ise-3d.png';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
-import brasao from '@/assets/hero/brasao-ise.png';
+
 import objAlfa from '@/assets/teams/obj-alfa-shield.png';
 import objBravo from '@/assets/teams/obj-bravo-sword.png';
 import objCharlie from '@/assets/teams/obj-charlie-target.png';
@@ -86,32 +86,56 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
     <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0">
       <TopHudBar />
 
-      {/* ============ TITLE STRIP — logo abaixo de "ONLINE · ENLACE SEGURO" ============ */}
-      <div className="relative mx-2 sm:mx-3 mt-2 overflow-hidden rounded-lg border border-amber-500/20 bg-[linear-gradient(90deg,rgba(10,17,40,0.95)_0%,rgba(5,5,5,0.85)_50%,rgba(10,17,40,0.95)_100%)] shrink-0">
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,#eab308_50%,transparent)]" />
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(90deg,transparent,#eab308_50%,transparent)]" />
-        <div className="relative flex items-center justify-center gap-2 sm:gap-4 px-3 sm:px-5 py-2 sm:py-2.5">
-          <img
-            src={brasao}
-            alt="Brasão ISE Acre"
-            className="h-6 sm:h-8 w-auto shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] select-none"
-            draggable={false}
-          />
-          <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-3 min-w-0 text-center sm:text-left">
+      {/* ============ TACTICAL TITLE STRIP ============ */}
+      <div className="relative mx-2 sm:mx-3 mt-2 shrink-0 overflow-hidden rounded-md border border-amber-500/25 bg-[#05070f]">
+        {/* blueprint grid */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.18]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(234,179,8,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(234,179,8,0.35) 1px, transparent 1px)',
+            backgroundSize: '22px 22px',
+            maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 90%)',
+          }}
+        />
+        {/* corner brackets */}
+        <span aria-hidden className="pointer-events-none absolute left-1 top-1 h-2.5 w-2.5 border-l border-t border-amber-400/70" />
+        <span aria-hidden className="pointer-events-none absolute right-1 top-1 h-2.5 w-2.5 border-r border-t border-amber-400/70" />
+        <span aria-hidden className="pointer-events-none absolute left-1 bottom-1 h-2.5 w-2.5 border-l border-b border-amber-400/70" />
+        <span aria-hidden className="pointer-events-none absolute right-1 bottom-1 h-2.5 w-2.5 border-r border-b border-amber-400/70" />
+        {/* amber glow line */}
+        <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-[linear-gradient(90deg,transparent,#f59e0b,transparent)]" />
+        <span aria-hidden className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-[linear-gradient(90deg,transparent,#f59e0b,transparent)]" />
+
+        <div className="relative flex items-center justify-between gap-3 px-4 sm:px-6 py-2 sm:py-2.5">
+          {/* left rail — op code */}
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-60" />
+              <span className="relative h-2 w-2 rounded-full bg-amber-400" />
+            </span>
+            <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em] text-amber-400/90">
+              OP&nbsp;// 01
+            </span>
+          </div>
+
+          {/* center — title */}
+          <div className="flex min-w-0 flex-1 items-baseline justify-center gap-2 sm:gap-3">
+            <span aria-hidden className="hidden sm:block h-3 w-8 bg-[linear-gradient(90deg,transparent,#f59e0b)]" />
             <h1
               id="mission-title"
-              className="font-sans font-black uppercase tracking-tight text-white text-[14px] sm:text-[18px] lg:text-[22px] leading-none truncate"
+              className="font-sans font-black uppercase tracking-[0.02em] text-white text-[13px] sm:text-[17px] lg:text-[20px] leading-none truncate"
             >
-              Sistema Socioeducativo
+              Sistema <span className="text-amber-400">Socioeducativo</span>
             </h1>
-            <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.24em] text-amber-400 leading-none truncate">
-              Comando Operacional de Escalas
-            </p>
+            <span aria-hidden className="hidden sm:block h-3 w-8 bg-[linear-gradient(270deg,transparent,#f59e0b)]" />
           </div>
-          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.24em] text-red-300 backdrop-blur shrink-0">
-            <span className="h-1 w-1 rounded-full bg-red-500 animate-pulse" />
-            ISE Acre
-          </span>
+
+          {/* right rail — subtitle */}
+          <p className="hidden md:block font-mono text-[9px] lg:text-[10px] uppercase tracking-[0.28em] text-white/60 shrink-0">
+            Comando&nbsp;·&nbsp;Escalas
+          </p>
         </div>
       </div>
 
