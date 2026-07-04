@@ -27,7 +27,7 @@ const TEAMS: {
   accent: string;
   obj: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa },
+  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa },
   { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo },
   { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie },
   { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta },
