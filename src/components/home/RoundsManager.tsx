@@ -1261,6 +1261,38 @@ export function RoundsManager() {
                         <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                           {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
                         </span>
+
+                        {/* Roster dinâmico — aparece ao iniciar a contagem */}
+                        {running && live && (
+                          <div className="w-full max-w-3xl rounded-lg border border-border/60 bg-card/40 backdrop-blur-sm p-3">
+                            <div className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
+                              Agentes participantes
+                            </div>
+                            <div className="flex flex-wrap items-center justify-center gap-1.5">
+                              {schedule.rows.map((r, i) => {
+                                const isActive = !live.done && i === live.index;
+                                const isDoneAgent = live.done ? i <= live.index : i < live.index;
+                                return (
+                                  <span
+                                    key={i}
+                                    className={cn(
+                                      'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-wide transition-all',
+                                      isActive && 'border-primary/70 bg-primary/10 text-foreground font-semibold animate-pulse',
+                                      isDoneAgent && 'border-emerald-500/40 bg-emerald-500/5 text-muted-foreground line-through decoration-emerald-500/70',
+                                      !isActive && !isDoneAgent && 'border-border/60 bg-background/40 text-muted-foreground',
+                                    )}
+                                    style={isActive ? { borderColor: teamColor, color: teamColor } : undefined}
+                                  >
+                                    <span className="font-mono text-[9px] opacity-60 no-underline">{pad(i + 1)}</span>
+                                    {r.name}
+                                    {isDoneAgent && <CheckCircle2 className="h-3 w-3 text-emerald-500 no-underline" />}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
                         <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-light tabular-nums tracking-tight leading-none break-all" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
                           {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                         </span>
@@ -1311,8 +1343,8 @@ export function RoundsManager() {
                       {/* Rows — sem caixas, apenas linhas */}
                       <ul className="divide-y divide-border/40">
                         {schedule.rows.map((r, i) => {
-                          const isCurrent = running && i === currentIdx && live && !live.done;
-                          const isDone = running && live && (live.done || i < currentIdx);
+                          const isCurrent = running && !!live && !live.done && i === live.index;
+                          const isDone = running && !!live && (live.done ? i <= live.index : i < live.index);
                           return (
                             <li key={i}
                                 className={cn('grid grid-cols-[28px_minmax(0,1fr)] sm:grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-2.5 transition-colors',
