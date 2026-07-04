@@ -186,50 +186,67 @@ function hexToHslTriple(hex: string): string {
   return `${Math.round(hh * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }
 
-/* ================= Team hero (realistic 3D SVG emblem) ================= */
-function TeamHero({ team, color }: { team: TeamKey; color: string }) {
-  const gId = `th-${team}-grad`;
-  const hId = `th-${team}-hi`;
-  const rimId = `th-${team}-rim`;
-  const mId = `th-${team}-metal`;
-  const goldId = `th-${team}-gold`;
-  const shadowId = `th-${team}-shadow`;
+/* ================= Emblem FX — reusable metallic / shadow / highlight generator =================
+ * Use for any new team emblem to keep the same visual language:
+ *   const fx = useEmblemFx('BEAR', color);
+ *   <svg viewBox="0 0 64 64" style={{ filter: fx.drop }}>
+ *     {fx.defs}
+ *     <circle cx="32" cy="32" r="28" fill={fx.url('rim')} />
+ *     ...
+ *   </svg>
+ */
+type FxKey = 'dome' | 'gloss' | 'rim' | 'steel' | 'gold' | 'accent' | 'iris' | 'innerShadow';
 
-  const shadow = `drop-shadow(0 8px 16px ${color}80) drop-shadow(0 2px 4px #00000099)`;
+function useEmblemFx(scope: string, color: string) {
+  const id = (k: FxKey) => `fx-${scope}-${k}`;
+  const url = (k: FxKey) => `url(#${id(k)})`;
+  const drop = `drop-shadow(0 8px 16px ${color}80) drop-shadow(0 2px 4px #00000099)`;
   const defs = (
     <defs>
       {/* Bevelled color dome */}
-      <radialGradient id={gId} cx="32%" cy="26%" r="82%">
+      <radialGradient id={id('dome')} cx="32%" cy="26%" r="82%">
         <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
         <stop offset="18%" stopColor={color} stopOpacity="0.95" />
         <stop offset="65%" stopColor={color} stopOpacity="0.55" />
         <stop offset="100%" stopColor="#020617" />
       </radialGradient>
       {/* Glossy top highlight */}
-      <radialGradient id={hId} cx="35%" cy="20%" r="38%">
+      <radialGradient id={id('gloss')} cx="35%" cy="20%" r="38%">
         <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
         <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
       </radialGradient>
       {/* Metallic rim */}
-      <linearGradient id={rimId} x1="0" x2="0" y1="0" y2="1">
+      <linearGradient id={id('rim')} x1="0" x2="0" y1="0" y2="1">
         <stop offset="0%" stopColor="#f8fafc" stopOpacity="0.9" />
         <stop offset="50%" stopColor={color} stopOpacity="0.6" />
         <stop offset="100%" stopColor="#020617" stopOpacity="0.9" />
       </linearGradient>
       {/* Brushed steel */}
-      <linearGradient id={mId} x1="0" x2="0" y1="0" y2="1">
+      <linearGradient id={id('steel')} x1="0" x2="0" y1="0" y2="1">
         <stop offset="0%" stopColor="#cbd5e1" />
         <stop offset="45%" stopColor="#64748b" />
         <stop offset="100%" stopColor="#0f172a" />
       </linearGradient>
       {/* Golden accents */}
-      <linearGradient id={goldId} x1="0" x2="0" y1="0" y2="1">
+      <linearGradient id={id('gold')} x1="0" x2="0" y1="0" y2="1">
         <stop offset="0%" stopColor="#fde68a" />
         <stop offset="55%" stopColor="#d97706" />
         <stop offset="100%" stopColor="#78350f" />
       </linearGradient>
+      {/* Accent radial (team-color aura) */}
+      <radialGradient id={id('accent')} cx="50%" cy="50%" r="60%">
+        <stop offset="0%" stopColor={color} stopOpacity="0.95" />
+        <stop offset="60%" stopColor={color} stopOpacity="0.55" />
+        <stop offset="100%" stopColor="#020617" />
+      </radialGradient>
+      {/* Iris (eye) */}
+      <radialGradient id={id('iris')} cx="50%" cy="45%" r="55%">
+        <stop offset="0%" stopColor="#fef3c7" />
+        <stop offset="55%" stopColor="#d97706" />
+        <stop offset="100%" stopColor="#0b0f17" />
+      </radialGradient>
       {/* Inner shadow filter */}
-      <filter id={shadowId} x="-20%" y="-20%" width="140%" height="140%">
+      <filter id={id('innerShadow')} x="-20%" y="-20%" width="140%" height="140%">
         <feGaussianBlur in="SourceAlpha" stdDeviation="0.6" />
         <feOffset dy="0.6" />
         <feComponentTransfer><feFuncA type="linear" slope="0.6" /></feComponentTransfer>
@@ -237,11 +254,16 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
       </filter>
     </defs>
   );
+  return { defs, url, drop, id };
+}
 
+/* ================= Team hero (realistic 3D SVG emblem) ================= */
+function TeamHero({ team, color }: { team: TeamKey; color: string }) {
+  const fx = useEmblemFx(team, color);
   const svgProps = {
     viewBox: '0 0 64 64',
     className: 'h-12 w-12 shrink-0',
-    style: { filter: shadow },
+    style: { filter: fx.drop },
     'aria-hidden': true as const,
   };
 
@@ -249,136 +271,82 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
     // Shield with bevelled rim, glossy dome and golden cross
     return (
       <svg {...svgProps}>
-        {defs}
-        {/* Outer bevel */}
-        <path d="M32 3 L55 12 V33 C55 47 44 56 32 61 C20 56 9 47 9 33 V12 Z"
-              fill={`url(#${rimId})`} />
-        {/* Inner dome */}
-        <path d="M32 6 L52 14 V32 C52 44 43 53 32 57 C21 53 12 44 12 32 V14 Z"
-              fill={`url(#${gId})`} />
-        {/* Top glossy highlight */}
-        <path d="M32 6 L52 14 V22 C52 25 43 28 32 28 C21 28 12 25 12 22 V14 Z" fill={`url(#${hId})`} />
-        {/* Cross shadow */}
+        {fx.defs}
+        <path d="M32 3 L55 12 V33 C55 47 44 56 32 61 C20 56 9 47 9 33 V12 Z" fill={fx.url('rim')} />
+        <path d="M32 6 L52 14 V32 C52 44 43 53 32 57 C21 53 12 44 12 32 V14 Z" fill={fx.url('dome')} />
+        <path d="M32 6 L52 14 V22 C52 25 43 28 32 28 C21 28 12 25 12 22 V14 Z" fill={fx.url('gloss')} />
         <path d="M32 18 V46 M20 30 H44" stroke="#000000" strokeOpacity="0.55" strokeWidth="5" strokeLinecap="round" />
-        {/* Golden cross */}
-        <path d="M32 18 V46 M20 30 H44" stroke={`url(#${goldId})`} strokeWidth="3.2" strokeLinecap="round" />
+        <path d="M32 18 V46 M20 30 H44" stroke={fx.url('gold')} strokeWidth="3.2" strokeLinecap="round" />
         <path d="M32 18 V46 M20 30 H44" stroke="#fef3c7" strokeOpacity="0.7" strokeWidth="0.9" strokeLinecap="round" />
-        {/* Stud accents */}
         <circle cx="32" cy="30" r="1.4" fill="#fef3c7" />
       </svg>
     );
   }
 
   if (team === 'BRAVO') {
-    // Realistic tactical lion head — brushed steel with team-color mane, gold fangs
-    const eyeId = `th-${team}-eye`;
-    const maneId = `th-${team}-mane`;
+    // Realistic tactical bear head — brushed steel with team-color inner-ear + gold nose
     return (
       <svg {...svgProps}>
-        {defs}
-        <radialGradient id={eyeId} cx="50%" cy="45%" r="55%">
-          <stop offset="0%" stopColor="#fef3c7" />
-          <stop offset="55%" stopColor="#d97706" />
-          <stop offset="100%" stopColor="#0b0f17" />
-        </radialGradient>
-        <radialGradient id={maneId} cx="50%" cy="50%" r="60%">
-          <stop offset="0%" stopColor={color} stopOpacity="0.95" />
-          <stop offset="60%" stopColor={color} stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#020617" />
-        </radialGradient>
-
+        {fx.defs}
         {/* Backing medallion */}
-        <circle cx="32" cy="32" r="28" fill={`url(#${rimId})`} />
-        <circle cx="32" cy="32" r="25" fill={`url(#${gId})`} />
+        <circle cx="32" cy="32" r="28" fill={fx.url('rim')} />
+        <circle cx="32" cy="32" r="25" fill={fx.url('dome')} />
 
-        {/* Mane — layered tufts around the head */}
-        <path
-          d="M32 6
-             C22 6 14 12 12 22
-             C8 24 6 28 8 32
-             C6 36 8 42 14 44
-             C14 50 20 55 26 55
-             C28 58 36 58 38 55
-             C44 55 50 50 50 44
-             C56 42 58 36 56 32
-             C58 28 56 24 52 22
-             C50 12 42 6 32 6 Z"
-          fill={`url(#${maneId})`}
-          stroke="#0b0f17"
-          strokeOpacity="0.7"
-          strokeWidth="0.8"
-        />
-        {/* Mane tuft strokes (fur shading) */}
-        <path
-          d="M14 22 L11 20 M12 30 L8 30 M14 40 L10 42 M20 50 L18 54
-             M28 54 L28 58 M36 54 L36 58 M44 50 L46 54 M50 40 L54 42
-             M52 30 L56 30 M50 22 L53 20 M32 8 L32 4 M24 10 L22 6 M40 10 L42 6"
-          stroke="#0b0f17"
-          strokeOpacity="0.65"
-          strokeWidth="1"
-          strokeLinecap="round"
-        />
-        <path
-          d="M14 22 L11 20 M12 30 L8 30 M14 40 L10 42 M20 50 L18 54
-             M50 40 L54 42 M52 30 L56 30 M50 22 L53 20 M32 8 L32 4"
-          stroke="#ffffff"
-          strokeOpacity="0.25"
-          strokeWidth="0.5"
-          strokeLinecap="round"
-        />
+        {/* Ears — outer (steel) */}
+        <circle cx="16" cy="18" r="7" fill={fx.url('steel')} stroke="#0f172a" strokeWidth="0.6" />
+        <circle cx="48" cy="18" r="7" fill={fx.url('steel')} stroke="#0f172a" strokeWidth="0.6" />
+        {/* Ears — inner (team accent) */}
+        <circle cx="16" cy="19" r="3.6" fill={fx.url('accent')} />
+        <circle cx="48" cy="19" r="3.6" fill={fx.url('accent')} />
 
         {/* Head shadow */}
-        <ellipse cx="32.6" cy="34.2" rx="13" ry="14" fill="#000000" fillOpacity="0.55" />
+        <ellipse cx="32.8" cy="35.2" rx="16" ry="15" fill="#000000" fillOpacity="0.55" />
         {/* Head (brushed steel) */}
-        <ellipse cx="32" cy="33" rx="13" ry="14" fill={`url(#${mId})`} stroke="#0f172a" strokeWidth="0.6" />
+        <ellipse cx="32" cy="34" rx="16" ry="15" fill={fx.url('steel')} stroke="#0f172a" strokeWidth="0.6" />
 
-        {/* Cheeks / muzzle base */}
+        {/* Fur shading strokes around head */}
         <path
-          d="M22 36 C24 42 28 45 32 45 C36 45 40 42 42 36"
-          fill="none"
-          stroke="#0b0f17"
-          strokeOpacity="0.65"
-          strokeWidth="0.8"
+          d="M17 30 L14 30 M18 38 L14 40 M20 44 L17 48 M26 48 L25 52
+             M38 48 L39 52 M44 44 L47 48 M46 38 L50 40 M47 30 L50 30"
+          stroke="#0b0f17" strokeOpacity="0.6" strokeWidth="0.9" strokeLinecap="round" fill="none"
         />
-        {/* Muzzle */}
-        <ellipse cx="32" cy="40" rx="5.5" ry="4" fill="#1e293b" stroke="#0f172a" strokeWidth="0.6" />
-        <path d="M32 40 V45" stroke="#0b0f17" strokeWidth="0.8" strokeLinecap="round" />
 
-        {/* Nose (gold) */}
-        <path
-          d="M29 36 Q32 33 35 36 Q34 39 32 39 Q30 39 29 36 Z"
-          fill={`url(#${goldId})`}
-          stroke="#78350f"
-          strokeWidth="0.5"
-        />
-        <circle cx="30.6" cy="35.4" r="0.4" fill="#fef3c7" />
-
-        {/* Fangs (small gold) */}
-        <path d="M30 42 L30.5 44.5 L31 42 Z" fill={`url(#${goldId})`} />
-        <path d="M33 42 L33.5 44.5 L34 42 Z" fill={`url(#${goldId})`} />
+        {/* Eye sockets (brow shadow) */}
+        <path d="M22 28 Q26 25 30 28 M34 28 Q38 25 42 28" stroke="#0b0f17" strokeOpacity="0.7" strokeWidth="1" strokeLinecap="round" fill="none" />
 
         {/* Eyes */}
-        <ellipse cx="26" cy="28" rx="2.2" ry="1.8" fill="#0b0f17" />
-        <ellipse cx="38" cy="28" rx="2.2" ry="1.8" fill="#0b0f17" />
-        <circle cx="26" cy="28" r="1.4" fill={`url(#${eyeId})`} />
-        <circle cx="38" cy="28" r="1.4" fill={`url(#${eyeId})`} />
-        <circle cx="25.5" cy="27.5" r="0.4" fill="#ffffff" />
-        <circle cx="37.5" cy="27.5" r="0.4" fill="#ffffff" />
+        <ellipse cx="26" cy="30" rx="2" ry="1.8" fill="#0b0f17" />
+        <ellipse cx="38" cy="30" rx="2" ry="1.8" fill="#0b0f17" />
+        <circle cx="26" cy="30" r="1.3" fill={fx.url('iris')} />
+        <circle cx="38" cy="30" r="1.3" fill={fx.url('iris')} />
+        <circle cx="25.5" cy="29.5" r="0.4" fill="#ffffff" />
+        <circle cx="37.5" cy="29.5" r="0.4" fill="#ffffff" />
 
-        {/* Brow shading */}
-        <path d="M22 25 Q26 22 30 25 M34 25 Q38 22 42 25" stroke="#0b0f17" strokeOpacity="0.7" strokeWidth="1" strokeLinecap="round" fill="none" />
+        {/* Snout (lighter steel patch) */}
+        <ellipse cx="32" cy="41" rx="9" ry="7" fill="#94a3b8" stroke="#0f172a" strokeWidth="0.6" />
+        <ellipse cx="30" cy="39" rx="5" ry="2.4" fill={fx.url('gloss')} />
 
-        {/* Ears */}
-        <path d="M20 20 Q22 14 26 18" fill={`url(#${mId})`} stroke="#0f172a" strokeWidth="0.5" />
-        <path d="M44 20 Q42 14 38 18" fill={`url(#${mId})`} stroke="#0f172a" strokeWidth="0.5" />
-        <path d="M22 18 Q23 16 25 18" fill={color} fillOpacity="0.7" />
-        <path d="M42 18 Q41 16 39 18" fill={color} fillOpacity="0.7" />
+        {/* Nose (gold, rounded triangle) */}
+        <path
+          d="M28 38 Q32 35 36 38 Q35 42 32 42 Q29 42 28 38 Z"
+          fill={fx.url('gold')} stroke="#78350f" strokeWidth="0.5"
+        />
+        <circle cx="29.4" cy="37.4" r="0.4" fill="#fef3c7" />
 
-        {/* Top-left specular highlight */}
-        <ellipse cx="26" cy="16" rx="9" ry="4" fill={`url(#${hId})`} />
+        {/* Mouth */}
+        <path d="M32 42 V45 M27 46 Q32 48 37 46" stroke="#0b0f17" strokeWidth="0.9" strokeLinecap="round" fill="none" />
+
+        {/* Small canines */}
+        <path d="M30 46 L30.4 47.6 L30.8 46 Z" fill="#f8fafc" />
+        <path d="M33.2 46 L33.6 47.6 L34 46 Z" fill="#f8fafc" />
+
+        {/* Top-left specular highlight on medallion */}
+        <ellipse cx="26" cy="16" rx="10" ry="4" fill={fx.url('gloss')} />
       </svg>
     );
   }
+
+
 
 
 
