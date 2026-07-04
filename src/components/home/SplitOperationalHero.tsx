@@ -325,12 +325,15 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             />
             {/* Cena composta: agente + viatura em escala realista */}
             <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(180px, 26vw, 340px)' }}>
-              <img
-                src={agentVehicleScene}
-                alt="Agente Socioeducativo ao lado da viatura tática ISE"
-                className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
-                draggable={false}
-              />
+              <picture>
+                <source srcSet={agentVehicleSceneWebp} type="image/webp" />
+                <img
+                  src={agentVehicleScene}
+                  alt="Agente Socioeducativo ao lado da viatura tática ISE"
+                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
+                  draggable={false}
+                />
+              </picture>
 
 
 
