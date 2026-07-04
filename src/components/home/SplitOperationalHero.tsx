@@ -20,6 +20,11 @@ import objDelta from '@/assets/teams/delta-radio-real.png';
 import objDeltaWebp from '@/assets/teams/delta-radio-real.webp';
 import objDeltaAvif from '@/assets/teams/delta-radio-real.avif';
 
+import bgAlfa from '@/assets/teams/bg-alfa.jpg';
+import bgBravo from '@/assets/teams/bg-bravo.jpg';
+import bgCharlie from '@/assets/teams/bg-charlie.jpg';
+import bgDelta from '@/assets/teams/bg-delta.jpg';
+
 interface Props {
   onTeamClick: (team: string) => void;
   onPrimaryAction?: () => void;
