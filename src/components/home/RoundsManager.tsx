@@ -976,7 +976,7 @@ export function RoundsManager() {
                   const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
                   return (
                     <li key={h.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded border border-primary/10 bg-slate-950/60 px-2 py-1.5">
-                      <span className="font-mono text-[9px] font-black uppercase tracking-[0.18em] px-1.5 py-0.5 rounded"
+                      <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded"
                             style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
                       <div className="min-w-0">
                         <div className="font-mono text-[10px] tabular-nums text-foreground">
