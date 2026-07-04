@@ -1,7 +1,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { useEffect, useState, useMemo } from 'react';
 import { getThemeAssets } from '@/lib/themeAssets';
-import { teamPosters, teamColors, homeBackground } from '@/lib/teamAssets';
+import { teamPosters, teamPostersWebp, teamColors, homeBackground } from '@/lib/teamAssets';
 
 const teams = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const;
 
