@@ -82,6 +82,30 @@ const writeTemplates = (arr: Template[]) => {
   try { localStorage.setItem(TPL_KEY, JSON.stringify(arr)); } catch { /* ignore */ }
 };
 
+/* ================= history (localStorage) ================= */
+type HistoryEntry = {
+  id: string;
+  team: TeamKey;
+  mode: Mode;
+  startTime: string;
+  endTime: string;
+  intervalMin: number;
+  agents: string[];
+  startedAt: number;
+  endedAt: number | null;
+};
+const HIST_KEY = 'plantaopro_rounds_history_v1';
+const readHistory = (): HistoryEntry[] => {
+  try {
+    const raw = localStorage.getItem(HIST_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+};
+const writeHistory = (arr: HistoryEntry[]) => {
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0, 20))); } catch { /* ignore */ }
+};
+
 /* ================= validation ================= */
 type Issue = { field: string; message: string };
 function validate(input: {
