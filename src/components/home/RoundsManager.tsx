@@ -856,6 +856,54 @@ export function RoundsManager() {
             </div>
           )}
 
+          {/* Sound settings */}
+          <div className="rounded-lg border border-slate-700/70 bg-slate-900/40 p-3 grid gap-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                  <path d="M4 10v4h4l5 4V6L8 10H4z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  {!sound.muted && <path d="M16 8c1.6 1 1.6 7 0 8M19 5c3 2.5 3 12 0 14.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
+                  {sound.muted && <path d="M17 9l6 6M23 9l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
+                </svg>
+                Alerta sonoro
+              </div>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => playAlert({ ...sound, muted: false })}
+                  className="font-mono text-[9px] uppercase tracking-[0.2em] text-primary/80 hover:text-primary border border-primary/30 rounded px-2 py-0.5">
+                  Testar
+                </button>
+                <label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground cursor-pointer select-none">
+                  <input type="checkbox" checked={sound.muted}
+                    onChange={(e) => updateSound({ muted: e.target.checked })}
+                    className="accent-primary h-3 w-3" />
+                  Mudo
+                </label>
+              </div>
+            </div>
+            <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Vol</span>
+              <input type="range" min={0} max={100} value={sound.volume}
+                onChange={(e) => updateSound({ volume: +e.target.value })}
+                disabled={sound.muted}
+                className="w-full accent-primary disabled:opacity-40" />
+              <span className="font-mono text-[11px] tabular-nums text-foreground w-8 text-right">{sound.volume}%</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {(['chime', 'pulse', 'siren'] as const).map((t) => (
+                <button key={t} type="button" onClick={() => updateSound({ tone: t })}
+                  className={cn(
+                    'rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors',
+                    sound.tone === t
+                      ? 'border-primary/70 bg-primary/10 text-primary'
+                      : 'border-slate-700/70 bg-slate-950/60 text-muted-foreground hover:text-foreground',
+                  )}>
+                  {t === 'chime' ? 'Sino' : t === 'pulse' ? 'Pulso' : 'Sirene'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+
           {/* Live cockpit */}
           {schedule && (
             <div className="mt-1 rounded-xl border border-primary/30 bg-gradient-to-b from-slate-900/80 to-slate-950 p-4"
