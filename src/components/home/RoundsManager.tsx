@@ -551,14 +551,18 @@ function Section({
     <details
       open={open}
       onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
-      className="group min-w-0 rounded-lg border border-border bg-card/30 lg:bg-transparent lg:border-0 lg:rounded-none lg:!open"
+      className="group min-w-0"
     >
-      <summary className="lg:hidden flex items-center gap-2 cursor-pointer px-3 py-2 select-none list-none [&::-webkit-details-marker]:hidden">
+      <summary className="lg:hidden flex items-center gap-2 cursor-pointer py-2 select-none list-none [&::-webkit-details-marker]:hidden border-b border-border/60">
         {icon}
-        <span className="font-sans text-[12px] uppercase tracking-wide text-foreground">{title}</span>
+        <span className="font-sans text-[12px] uppercase tracking-[0.14em] text-muted-foreground">{title}</span>
         <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
       </summary>
-      <div className="grid gap-3 p-3 lg:p-0">{children}</div>
+      <div className="hidden lg:flex items-center gap-2 pb-2 mb-3 border-b border-border/40">
+        {icon}
+        <span className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{title}</span>
+      </div>
+      <div className="grid gap-3 pt-3 lg:pt-0">{children}</div>
     </details>
   );
 }
