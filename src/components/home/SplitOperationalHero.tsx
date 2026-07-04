@@ -112,7 +112,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         />
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-3 p-3 sm:p-4 lg:grid-cols-[1fr_1.1fr_0.9fr] items-center flex-1 min-h-0">
+        <div className="relative grid gap-3 p-3 sm:p-4 lg:grid-cols-[1fr_1.1fr_0.9fr] items-start">
 
           {/* LEFT — Identity + CTA */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 justify-center">
@@ -170,7 +170,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
           </div>
 
           {/* CENTER — Agent 3D */}
-          <div className="relative flex items-end justify-center h-full min-h-[180px] order-first lg:order-none z-30 translate-y-2 sm:translate-y-20 lg:translate-y-32">
+          <div className="relative flex items-end justify-center min-h-[180px] order-first lg:order-none z-30">
             <svg
               aria-hidden
               viewBox="0 0 400 400"
