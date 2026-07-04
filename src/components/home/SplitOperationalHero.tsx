@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import agent3d from '@/assets/hero/agent-ise-3d.png';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
-import brasao from '@/assets/hero/brasao-ise.png';
+
 import objAlfa from '@/assets/teams/obj-alfa-shield.png';
 import objBravo from '@/assets/teams/obj-bravo-sword.png';
 import objCharlie from '@/assets/teams/obj-charlie-target.png';
