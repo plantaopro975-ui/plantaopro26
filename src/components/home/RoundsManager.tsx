@@ -956,6 +956,7 @@ export function RoundsManager() {
     setRunning(false);
     startedAtRef.current = null;
     firedRef.current = new Set();
+    notifiedRef.current = new Set();
     setTick(0);
     if (sessionIdRef.current) {
       supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
