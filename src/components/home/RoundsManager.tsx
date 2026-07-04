@@ -999,7 +999,7 @@ export function RoundsManager() {
                   <span className="truncate">Operação · Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-sans text-base font-normal tracking-tight leading-tight text-foreground truncate">
+                <DialogTitle className="font-sans text-sm sm:text-base font-normal tracking-tight leading-tight text-foreground break-words">
                   Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
                 <DialogDescription className="hidden sm:block text-[11px] text-muted-foreground font-sans tracking-wide">
