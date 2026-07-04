@@ -83,7 +83,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
   const day = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }).toUpperCase();
 
   return (
-    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col">
+    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0">
       <TopHudBar />
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
