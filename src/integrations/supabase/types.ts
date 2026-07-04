@@ -1392,6 +1392,7 @@ export type Database = {
           interval_min: number
           is_active: boolean
           mode: string
+          notified_indices: number[]
           rows: Json
           server_started_at: string
           start_time: string
@@ -1407,6 +1408,7 @@ export type Database = {
           interval_min?: number
           is_active?: boolean
           mode: string
+          notified_indices?: number[]
           rows?: Json
           server_started_at?: string
           start_time: string
@@ -1422,6 +1424,7 @@ export type Database = {
           interval_min?: number
           is_active?: boolean
           mode?: string
+          notified_indices?: number[]
           rows?: Json
           server_started_at?: string
           start_time?: string
