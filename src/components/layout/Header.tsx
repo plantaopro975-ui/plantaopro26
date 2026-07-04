@@ -97,6 +97,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
     }
   };
 
+  const [bgLoaded, setBgLoaded] = useState(false);
+
   return (
     <header
       ref={ref}
@@ -104,28 +106,45 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       className={cn(
         "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6 overflow-hidden isolate",
         "border-b border-primary/25 shadow-[0_8px_28px_-12px_hsl(217_62%_2%/0.9)]",
-        "bg-slate-950",
+        // Fallback sólido + placeholder gradient em caso de falha da imagem
+        "bg-slate-950 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_5%)_60%,hsl(217_62%_3%)_100%)]",
         props.className,
       )}
+      style={{ textShadow: '0 1px 2px hsl(217 62% 2% / 0.85)' }}
     >
-      {/* Background image layer — rendered as <img> for reliable loading across browsers/SW */}
+      {/* Background image layer — <img> real para carregamento confiável */}
       <img
         src={headerBg}
         alt=""
         aria-hidden
         draggable={false}
-        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover object-[center_35%] select-none"
+        loading="eager"
+        decoding="async"
+        // @ts-expect-error — atributo válido no HTML, tipagem React ainda parcial
+        fetchpriority="high"
+        onLoad={() => setBgLoaded(true)}
+        onError={() => setBgLoaded(false)}
+        className={cn(
+          "pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover select-none transition-opacity duration-500",
+          // Object-position responsivo: mantém o assunto central em qualquer largura
+          "object-[center_40%] sm:object-[center_38%] lg:object-[center_32%]",
+          bgLoaded ? "opacity-100" : "opacity-0",
+        )}
       />
-      {/* Tinted overlay for legibility — leve para destacar a foto */}
+      {/* Overlay adaptativo: gradiente escuro + vignette lateral para garantir contraste em qualquer luminosidade da foto */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,hsl(217_62%_4%/0.30)_0%,hsl(217_62%_4%/0.55)_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,hsl(217_62%_3%/0.55)_0%,hsl(217_62%_3%/0.35)_45%,hsl(217_62%_3%/0.70)_100%)]"
       />
-
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_35%,hsl(217_62%_2%/0.55)_100%)]"
+      />
 
       {/* Institutional amber accent strip */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90" />
       <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
 
 
 
