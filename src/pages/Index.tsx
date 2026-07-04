@@ -1248,26 +1248,20 @@ export default function Index() {
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
 
-
-
+        {/* Ferramenta Tática — Gestor de Rondas (topo, compacto) */}
+        <div className="shrink-0 px-2 sm:px-4 pt-2 overflow-hidden">
+          <div className="w-full max-w-6xl mx-auto animate-fade-in">
+            <RoundsManager />
+          </div>
+        </div>
 
         {/* Split Operational Hero — briefing + tactical team selector */}
         <div className="min-h-0 flex-1">
-
-
-
-
           <SplitOperationalHero
             onTeamClick={(team) => handleTeamClick(team)}
           />
         </div>
 
-        {/* Ferramenta Tática — Gestor de Rondas (aberto por qualquer visitante) */}
-        <div className="shrink-0 px-2 sm:px-4 pt-1 overflow-hidden">
-          <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '150ms' }}>
-            <RoundsManager />
-          </div>
-        </div>
 
         {/* Dynamic Agent Info Banner */}
         <div className="shrink-0 px-2 sm:px-4 overflow-hidden">
