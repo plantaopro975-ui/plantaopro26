@@ -6,10 +6,10 @@ import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
 
-import objAlfa from '@/assets/teams/obj-alfa-shield.png';
-import objBravo from '@/assets/teams/obj-bravo-sword.png';
-import objCharlie from '@/assets/teams/obj-charlie-target.png';
-import objDelta from '@/assets/teams/obj-delta-bolt.png';
+import objAlfa from '@/assets/teams/alfa-shield-3d.png.asset.json';
+import objBravo from '@/assets/teams/bravo-helmet-3d.png.asset.json';
+import objCharlie from '@/assets/teams/charlie-badge-3d.png.asset.json';
+import objDelta from '@/assets/teams/delta-radio-3d.png.asset.json';
 
 interface Props {
   onTeamClick: (team: string) => void;
