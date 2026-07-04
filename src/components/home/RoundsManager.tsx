@@ -1289,7 +1289,7 @@ export function RoundsManager() {
                                   isCurrent && 'bg-primary/5 -mx-2 px-2 rounded')}
                                 style={isCurrent ? { boxShadow: `inset 3px 0 0 0 ${teamColor}` } : undefined}>
                               <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
-                              <span className="font-sans font-medium text-sm truncate sm:whitespace-normal sm:break-words min-w-0">{r.name}</span>
+                              <span className="font-sans font-medium text-sm break-words min-w-0">{r.name}</span>
                               <span className="col-span-2 sm:col-auto font-mono text-[11px] tabular-nums flex flex-wrap items-center gap-2 justify-start sm:justify-end text-muted-foreground">
                                 <span className="text-foreground">{r.from}</span>
                                 <span style={{ color: teamColor }}>→</span>
