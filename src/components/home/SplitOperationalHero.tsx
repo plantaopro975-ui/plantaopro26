@@ -83,12 +83,12 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
   const day = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }).toUpperCase();
 
   return (
-    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col">
+    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0">
       <TopHudBar />
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-hidden mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex flex-col"
+        className="relative overflow-hidden mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
@@ -112,7 +112,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         />
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-3 p-3 sm:p-4 lg:grid-cols-[1fr_1.1fr_0.9fr] items-start">
+        <div className="relative grid gap-3 p-3 sm:p-4 lg:grid-cols-[1fr_1.1fr_0.9fr] items-center flex-1 min-h-0">
 
           {/* LEFT — Identity + CTA */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 justify-center">
