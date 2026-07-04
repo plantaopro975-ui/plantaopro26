@@ -154,6 +154,18 @@ function TopHudBar() {
 }
 
 export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
+  // Preload only the first-in-viewport 3D image (ALFA), AVIF variant
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = objAlfaAvif;
+    link.type = 'image/avif';
+    (link as any).fetchPriority = 'high';
+    document.head.appendChild(link);
+    return () => { document.head.removeChild(link); };
+  }, []);
+
   const now = useNow();
   const clock = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
   const day = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }).toUpperCase();
