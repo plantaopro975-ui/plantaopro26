@@ -24,9 +24,13 @@ import objDeltaWebp from '@/assets/teams/delta-radio-real.webp';
 import objDeltaAvif from '@/assets/teams/delta-radio-real.avif';
 
 import bgAlfa from '@/assets/teams/bg-alfa.jpg';
+import bgAlfaWebp from '@/assets/teams/bg-alfa.webp';
 import bgBravo from '@/assets/teams/bg-bravo.jpg';
+import bgBravoWebp from '@/assets/teams/bg-bravo.webp';
 import bgCharlie from '@/assets/teams/bg-charlie.jpg';
+import bgCharlieWebp from '@/assets/teams/bg-charlie.webp';
 import bgDelta from '@/assets/teams/bg-delta.jpg';
+import bgDeltaWebp from '@/assets/teams/bg-delta.webp';
 
 interface Props {
   onTeamClick: (team: string) => void;
