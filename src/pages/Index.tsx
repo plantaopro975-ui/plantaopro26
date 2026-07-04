@@ -1257,10 +1257,6 @@ export default function Index() {
 
 
           <SplitOperationalHero
-            onPrimaryAction={() => {
-              const first = document.querySelector<HTMLElement>('[data-team-card]');
-              first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }}
             onTeamClick={(team) => handleTeamClick(team)}
           />
         </div>
