@@ -195,16 +195,20 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             />
             {/* Viatura ISE — tactical vehicle, next to agent */}
             <div className="absolute bottom-4 left-1/2 z-20 w-[38%] max-w-[180px] translate-x-[35%] pointer-events-none">
-              {/* Giroflex — flashing red/blue emergency lights */}
+              {/* Giroflex — flashing red/blue emergency lights (opacity-only, GPU) */}
               <div aria-hidden className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-2 flex gap-1.5 z-30">
                 <span className="h-2 w-3 rounded-sm bg-red-500 shadow-[0_0_14px_4px_rgba(239,68,68,0.9)] animate-[giroflex-red_0.9s_steps(2,end)_infinite]" />
                 <span className="h-2 w-3 rounded-sm bg-blue-500 shadow-[0_0_14px_4px_rgba(59,130,246,0.9)] animate-[giroflex-blue_0.9s_steps(2,end)_infinite]" />
               </div>
-              {/* Halo glow */}
-              <div
-                aria-hidden
-                className="absolute -top-6 left-1/2 -translate-x-1/2 h-16 w-24 rounded-full blur-2xl opacity-70 animate-[giroflex-halo_0.9s_ease-in-out_infinite]"
-              />
+              {/* Halo glow — two static gradient layers cross-fading */}
+              <div aria-hidden className="absolute -top-6 left-1/2 -translate-x-1/2 h-16 w-24 -z-0">
+                <div
+                  className="absolute inset-0 rounded-full blur-2xl bg-[radial-gradient(ellipse,rgba(239,68,68,0.55)_0%,transparent_70%)] animate-[giroflex-halo_0.9s_steps(2,end)_infinite]"
+                />
+                <div
+                  className="absolute inset-0 rounded-full blur-2xl bg-[radial-gradient(ellipse,rgba(59,130,246,0.55)_0%,transparent_70%)] animate-[giroflex-blue_0.9s_steps(2,end)_infinite]"
+                />
+              </div>
               <img
                 src={vehicle3d}
                 alt="Viatura Tática ISE"
