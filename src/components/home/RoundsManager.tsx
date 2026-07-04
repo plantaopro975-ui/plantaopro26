@@ -166,7 +166,110 @@ function playAlert(settings: SoundSettings) {
   } catch { /* ignore */ }
 }
 
+/* ================= color helpers ================= */
+function hexToHslTriple(hex: string): string {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let hh = 0, s = 0; const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) hh = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) hh = (b - r) / d + 2;
+    else hh = (r - g) / d + 4;
+    hh /= 6;
+  }
+  return `${Math.round(hh * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
+/* ================= Team hero (realistic SVG emblem) ================= */
+function TeamHero({ team, color }: { team: TeamKey; color: string }) {
+  const gId = `th-${team}-grad`;
+  const hId = `th-${team}-hi`;
+  const mId = `th-${team}-metal`;
+  const shadow = `drop-shadow(0 6px 14px ${color}66) drop-shadow(0 2px 4px #00000080)`;
+  const defs = (
+    <defs>
+      <radialGradient id={gId} cx="35%" cy="30%" r="75%">
+        <stop offset="0%" stopColor={color} stopOpacity="0.95" />
+        <stop offset="55%" stopColor={color} stopOpacity="0.5" />
+        <stop offset="100%" stopColor="#020617" />
+      </radialGradient>
+      <radialGradient id={hId} cx="35%" cy="25%" r="35%">
+        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
+        <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+      </radialGradient>
+      <linearGradient id={mId} x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stopColor="#334155" />
+        <stop offset="100%" stopColor="#0f172a" />
+      </linearGradient>
+    </defs>
+  );
+  const svgProps = {
+    viewBox: '0 0 64 64',
+    className: 'h-11 w-11 shrink-0',
+    style: { filter: shadow },
+    'aria-hidden': true as const,
+  };
+
+  if (team === 'ALFA') {
+    return (
+      <svg {...svgProps}>
+        {defs}
+        <path d="M32 5 L54 13 V32 C54 46 44 55 32 60 C20 55 10 46 10 32 V13 Z"
+              fill={`url(#${gId})`} stroke={color} strokeOpacity="0.75" strokeWidth="1.2" />
+        <path d="M32 5 L54 13 V22 C54 24 44 27 32 27 C20 27 10 24 10 22 V13 Z" fill={`url(#${hId})`} />
+        <path d="M32 18 V44 M22 30 H42" stroke="#0b0f17" strokeWidth="3.6" strokeLinecap="round" opacity="0.35" />
+        <path d="M32 18 V44 M22 30 H42" stroke={color} strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (team === 'BRAVO') {
+    return (
+      <svg {...svgProps}>
+        {defs}
+        <path d="M32 4 L37 12 V40 L32 46 L27 40 V12 Z" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.8" />
+        <path d="M32 4 L34 12 V40" stroke="#ffffff" strokeOpacity="0.4" strokeWidth="0.8" />
+        <rect x="16" y="42" width="32" height="4" rx="1.6" fill={`url(#${mId})`} stroke={color} strokeOpacity="0.6" />
+        <rect x="28" y="46" width="8" height="12" rx="1" fill={`url(#${mId})`} stroke={color} strokeOpacity="0.6" />
+        <circle cx="32" cy="58" r="2.6" fill={color} stroke="#0b0f17" strokeWidth="0.6" />
+      </svg>
+    );
+  }
+  if (team === 'CHARLIE') {
+    return (
+      <svg {...svgProps}>
+        {defs}
+        <circle cx="32" cy="32" r="26" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.7" />
+        <circle cx="32" cy="32" r="18" fill="none" stroke={color} strokeOpacity="0.55" />
+        <circle cx="32" cy="32" r="10" fill="none" stroke={color} strokeOpacity="0.5" />
+        <line x1="32" y1="4"  x2="32" y2="20" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <line x1="32" y1="44" x2="32" y2="60" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <line x1="4"  y1="32" x2="20" y2="32" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <line x1="44" y1="32" x2="60" y2="32" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <circle cx="32" cy="32" r="2.2" fill={color} />
+        <ellipse cx="26" cy="24" rx="9" ry="5" fill={`url(#${hId})`} />
+      </svg>
+    );
+  }
+  // DELTA — lightning
+  return (
+    <svg {...svgProps}>
+      {defs}
+      <circle cx="32" cy="32" r="26" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.6" />
+      <path d="M36 8 L18 34 H30 L26 56 L46 28 H34 Z"
+            fill={color} stroke="#0b0f17" strokeWidth="0.9" strokeLinejoin="round" />
+      <path d="M36 8 L20 33 H30" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="0.8" />
+      <ellipse cx="26" cy="22" rx="9" ry="5" fill={`url(#${hId})`} />
+    </svg>
+  );
+}
+
 /* ================= SVG time field ================= */
+
 function TimeField({
   id, value, onChange, label, invalid, accent,
 }: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string }) {
@@ -203,21 +306,21 @@ function TimeField({
         <input id={`${id}-h`} inputMode="numeric" maxLength={2} value={h ?? ''}
           onChange={(e) => setH(e.target.value.replace(/\D/g, '').slice(0, 2))}
           onBlur={(e) => setH(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-slate-200 outline-none"
           aria-label={`${label} horas`} autoComplete="off" />
         <span className="font-mono text-lg text-muted-foreground/70 select-none -mt-0.5">:</span>
         <input inputMode="numeric" maxLength={2} value={m ?? ''}
           onChange={(e) => setM(e.target.value.replace(/\D/g, '').slice(0, 2))}
           onBlur={(e) => setM(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-slate-200 outline-none"
           aria-label={`${label} minutos`} autoComplete="off" />
         <div className="ml-auto flex flex-col">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
-            className="h-[22px] w-6 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-foreground">
+            className="h-[22px] w-6 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min"
-            className="h-[22px] w-6 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-foreground">
+            className="h-[22px] w-6 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
@@ -617,7 +720,7 @@ export function RoundsManager() {
               <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-primary">
                 Ferramenta Tática
               </span>
-              <span className="font-sans text-[13px] font-semibold tracking-[0.06em] text-foreground">
+              <span className="font-sans text-[13px] font-semibold tracking-[0.06em] text-slate-200">
                 Gestor de Rondas
               </span>
             </span>
@@ -633,54 +736,25 @@ export function RoundsManager() {
           </button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/30 text-foreground p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <DialogHeader className="border-b border-primary/20 pb-2">
+        <DialogContent
+          className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-colors duration-500"
+          style={{ ['--primary' as string]: hexToHslTriple(teamColor) }}
+        >
+          <DialogHeader className="border-b border-primary/15 pb-2">
             <div className="flex items-center gap-3">
-              {/* 3D dome / radar em SVG puro */}
-              <svg viewBox="0 0 64 64" className="h-11 w-11 shrink-0 drop-shadow-[0_4px_10px_hsl(var(--primary)/0.5)]" aria-hidden>
-                <defs>
-                  <radialGradient id="rmDome" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.95" />
-                    <stop offset="55%" stopColor="hsl(var(--primary))" stopOpacity="0.35" />
-                    <stop offset="100%" stopColor="#020617" stopOpacity="1" />
-                  </radialGradient>
-                  <radialGradient id="rmHi" cx="35%" cy="25%" r="35%">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
-                    <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-                  </radialGradient>
-                  <linearGradient id="rmBase" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="#1e293b" />
-                    <stop offset="100%" stopColor="#020617" />
-                  </linearGradient>
-                </defs>
-                {/* base plate */}
-                <ellipse cx="32" cy="54" rx="24" ry="5" fill="url(#rmBase)" stroke="hsl(var(--primary)/0.4)" />
-                <rect x="10" y="46" width="44" height="6" rx="2" fill="url(#rmBase)" stroke="hsl(var(--primary)/0.35)" />
-                {/* dome sphere */}
-                <circle cx="32" cy="30" r="20" fill="url(#rmDome)" stroke="hsl(var(--primary))" strokeOpacity="0.6" />
-                {/* meridians */}
-                <ellipse cx="32" cy="30" rx="20" ry="7" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.35" />
-                <ellipse cx="32" cy="30" rx="10" ry="20" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.25" />
-                {/* sweep */}
-                <path d="M32 30 L32 12 A18 18 0 0 1 47 22 Z" fill="hsl(var(--primary))" fillOpacity="0.28">
-                  <animateTransform attributeName="transform" type="rotate" from="0 32 30" to="360 32 30" dur="3.2s" repeatCount="indefinite" />
-                </path>
-                {/* highlight */}
-                <ellipse cx="26" cy="22" rx="9" ry="5" fill="url(#rmHi)" />
-                {/* status LED */}
-                <circle cx="52" cy="49" r="2" fill="#22c55e">
-                  <animate attributeName="opacity" values="1;0.3;1" dur="1.4s" repeatCount="indefinite" />
-                </circle>
-              </svg>
+              {/* Hero realista — reativo à equipe */}
+              <TeamHero team={team} color={teamColor} />
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.28em] text-primary/80">
-                  <Shield className="h-3 w-3" /> Operação · Divisão de Rondas
+                <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">
+                  <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
+                  <span>Operação · Equipe</span>
+                  <span className="font-semibold tracking-[0.2em]" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-sans text-base font-medium tracking-tight leading-tight">
-                  Gestor de <span className="font-semibold" style={{ color: teamColor }}>Quartos de Hora</span>
+                <DialogTitle className="font-sans text-base font-normal tracking-tight leading-tight text-slate-100">
+                  Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="text-[10px] text-muted-foreground font-mono uppercase tracking-[0.18em]">
-                  Escala · cronômetro · alarme · histórico
+                <DialogDescription className="text-[10px] text-slate-500 font-mono tracking-[0.16em]">
+                  escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
             </div>
@@ -688,7 +762,7 @@ export function RoundsManager() {
 
           {/* Templates */}
           <div className="grid gap-2 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
-            <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+            <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
               <Star className="h-3 w-3" /> Templates salvos
             </Label>
             <div className="flex gap-2">
@@ -733,7 +807,7 @@ export function RoundsManager() {
 
           {/* Team pills */}
           <div className="grid gap-2 pt-1">
-            <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+            <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
               <Radio className="h-3 w-3" /> Equipe
             </Label>
             <div className="grid grid-cols-4 gap-2">
@@ -743,7 +817,7 @@ export function RoundsManager() {
                   <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                     className={cn(
                       'relative rounded-lg border px-2 py-2 font-sans font-semibold uppercase tracking-[0.16em] text-[11px] transition-all',
-                      active ? 'border-transparent text-slate-950 shadow-lg' : 'border-primary/20 bg-slate-900/60 text-foreground hover:border-primary/50',
+                      active ? 'border-transparent text-slate-950 shadow-lg' : 'border-primary/20 bg-slate-900/60 text-slate-200 hover:border-primary/50',
                     )}
                     style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
                   >
@@ -763,7 +837,7 @@ export function RoundsManager() {
               <button key={m} type="button" onClick={() => setMode(m)}
                 className={cn(
                   'rounded-md border px-3 py-2 text-[11px] font-mono uppercase tracking-[0.18em] transition-all',
-                  mode === m ? 'border-primary/60 bg-primary/15 text-primary' : 'border-primary/20 bg-slate-900/60 text-muted-foreground hover:text-foreground',
+                  mode === m ? 'border-primary/60 bg-primary/15 text-primary' : 'border-primary/20 bg-slate-900/60 text-muted-foreground hover:text-slate-200',
                 )}>
                 {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
               </button>
@@ -798,7 +872,7 @@ export function RoundsManager() {
             {/* Rounding — only meaningful in split mode */}
             {mode === 'split' && (
               <div className="grid gap-1.5">
-                <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80">
+                <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500">
                   Arredondamento da divisão
                 </Label>
                 <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
@@ -818,7 +892,7 @@ export function RoundsManager() {
             {/* Agents */}
             <div className="grid gap-1.5">
               <div className="flex items-center justify-between">
-                <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+                <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
                   <Users className="h-3 w-3" /> Agentes ({agents.length})
                 </Label>
                 <Button type="button" size="sm" variant="outline" onClick={addAgent} className="h-7 border-primary/40 text-primary hover:bg-primary/10">
@@ -869,7 +943,7 @@ export function RoundsManager() {
               </div>
               <div className="flex items-center gap-2">
                 <button type="button" onClick={() => playAlert({ ...sound, muted: false })}
-                  className="font-mono text-[9px] uppercase tracking-[0.2em] text-primary/80 hover:text-primary border border-primary/30 rounded px-2 py-0.5">
+                  className="font-mono text-[9px] uppercase tracking-[0.2em] text-slate-400 hover:text-primary border border-primary/30 rounded px-2 py-0.5">
                   Testar
                 </button>
                 <label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground cursor-pointer select-none">
@@ -886,7 +960,7 @@ export function RoundsManager() {
                 onChange={(e) => updateSound({ volume: +e.target.value })}
                 disabled={sound.muted}
                 className="w-full accent-primary disabled:opacity-40" />
-              <span className="font-mono text-[11px] tabular-nums text-foreground w-8 text-right">{sound.volume}%</span>
+              <span className="font-mono text-[11px] tabular-nums text-slate-200 w-8 text-right">{sound.volume}%</span>
             </div>
             <div className="grid grid-cols-3 gap-1.5">
               {(['chime', 'pulse', 'siren'] as const).map((t) => (
@@ -895,7 +969,7 @@ export function RoundsManager() {
                     'rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors',
                     sound.tone === t
                       ? 'border-primary/70 bg-primary/10 text-primary'
-                      : 'border-slate-700/70 bg-slate-950/60 text-muted-foreground hover:text-foreground',
+                      : 'border-slate-700/70 bg-slate-950/60 text-muted-foreground hover:text-slate-200',
                   )}>
                   {t === 'chime' ? 'Sino' : t === 'pulse' ? 'Pulso' : 'Sirene'}
                 </button>
@@ -932,7 +1006,7 @@ export function RoundsManager() {
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-primary/80">
+                  <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-slate-400">
                     {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
                   </div>
                   <div className="font-sans font-bold text-base truncate">
@@ -974,9 +1048,9 @@ export function RoundsManager() {
                       <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--primary))' }}>{pad(i + 1)}</span>
                       <span className="font-sans font-semibold text-sm truncate">{r.name}</span>
                       <span className="font-mono text-[11px] tabular-nums flex items-center gap-2">
-                        <span className="text-foreground">{r.from}</span>
+                        <span className="text-slate-200">{r.from}</span>
                         <span style={{ color: teamColor }}>→</span>
-                        <span className="text-foreground">{r.to}</span>
+                        <span className="text-slate-200">{r.to}</span>
                         <span className="rounded px-1.5 py-0.5 text-[9px] uppercase tracking-[0.18em]"
                               style={{ backgroundColor: `${teamColor}22`, color: teamColor }}>
                           {fmtDuration(r.duration)}
@@ -1001,7 +1075,7 @@ export function RoundsManager() {
           {/* Histórico de rondas */}
           <div className="mt-1 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
             <div className="flex items-center justify-between mb-2">
-              <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+              <Label className="text-[10px] font-mono tracking-[0.18em] text-slate-500 flex items-center gap-1">
                 <History className="h-3 w-3" /> Histórico ({history.length})
               </Label>
               {history.length > 0 && (
@@ -1027,7 +1101,7 @@ export function RoundsManager() {
                       <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded"
                             style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
                       <div className="min-w-0">
-                        <div className="font-mono text-[10px] tabular-nums text-foreground">
+                        <div className="font-mono text-[10px] tabular-nums text-slate-200">
                           {dtStr} <span className="text-muted-foreground">→</span> {endStr}
                         </div>
                         <div className="text-[10px] text-muted-foreground truncate">
@@ -1061,7 +1135,7 @@ export function RoundsManager() {
             <div className="font-mono text-[10px] uppercase tracking-[0.32em]" style={{ color: teamColor }}>
               EQUIPE {team} · Posto {pad(alarm.index + 1)}
             </div>
-            <div className="font-sans text-2xl font-medium tracking-tight text-foreground">
+            <div className="font-sans text-2xl font-medium tracking-tight text-slate-200">
               Hora de fazer a ronda
             </div>
             <div className="font-sans text-lg font-bold" style={{ color: teamColor }}>
