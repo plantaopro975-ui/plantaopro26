@@ -8,9 +8,17 @@ import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
 
 import objAlfa from '@/assets/teams/alfa-vest-real.png';
+import objAlfaWebp from '@/assets/teams/alfa-vest-real.webp';
+import objAlfaAvif from '@/assets/teams/alfa-vest-real.avif';
 import objBravo from '@/assets/teams/bravo-helmet-real.png';
+import objBravoWebp from '@/assets/teams/bravo-helmet-real.webp';
+import objBravoAvif from '@/assets/teams/bravo-helmet-real.avif';
 import objCharlie from '@/assets/teams/charlie-badge-real.png';
+import objCharlieWebp from '@/assets/teams/charlie-badge-real.webp';
+import objCharlieAvif from '@/assets/teams/charlie-badge-real.avif';
 import objDelta from '@/assets/teams/delta-radio-real.png';
+import objDeltaWebp from '@/assets/teams/delta-radio-real.webp';
+import objDeltaAvif from '@/assets/teams/delta-radio-real.avif';
 
 interface Props {
   onTeamClick: (team: string) => void;
@@ -26,12 +34,15 @@ const TEAMS: {
   role: string;
   accent: string;
   obj: string;
+  webp: string;
+  avif: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa },
-  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo },
-  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie },
-  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta },
+  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    webp: objAlfaWebp,    avif: objAlfaAvif },
+  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   webp: objBravoWebp,   avif: objBravoAvif },
+  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, webp: objCharlieWebp, avif: objCharlieAvif },
+  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif },
 ];
+
 
 function useNow() {
   const [now, setNow] = useState(new Date());
