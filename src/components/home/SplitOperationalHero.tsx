@@ -197,7 +197,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             {/* Viatura ISE — tactical vehicle, next to agent */}
             <div
               className="pointer-events-none absolute bottom-3 left-1/2 z-20 translate-x-[8%]"
-              style={{ width: 'clamp(140px, 22vw, 280px)' }}
+              style={{ width: 'clamp(180px, 28vw, 380px)' }}
             >
               <div className="relative inline-block w-full leading-[0] isolate">
                 <img
