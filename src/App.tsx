@@ -163,6 +163,14 @@ const App = () => (
                       <Route path="/install" element={<Install />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/agenda" element={<Agenda />} />
+                      <Route
+                        path="/rounds-history"
+                        element={
+                          <RequireAuth mode="block">
+                            <RoundsHistory />
+                          </RequireAuth>
+                        }
+                      />
 
                       {/* Debug */}
                       <Route path="/debug/auth" element={<DebugAuth />} />
