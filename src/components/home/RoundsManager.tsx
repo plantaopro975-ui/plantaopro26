@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { ConfirmDialog } from './ConfirmDialog';
 
 /* ================= helpers ================= */
 const pad = (n: number) => n.toString().padStart(2, '0');
