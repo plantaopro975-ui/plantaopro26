@@ -255,69 +255,63 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
                 draggable={false}
               />
-              {/* Giroflex realista — dois halos pulsantes vermelho/azul + faixa quente */}
+              {/* Giroflex — GPU-friendly: sem filter:blur, só opacity + transform:translateZ(0) */}
               <span
                 aria-hidden
-                className="pointer-events-none absolute z-30 rounded-full mix-blend-screen"
+                className="giroflex-light pointer-events-none absolute z-30 rounded-full"
                 style={{
-                  top: '14%', left: '58%', width: '12%', height: '8%',
-                  background: 'radial-gradient(ellipse at center, rgba(255,40,40,1) 0%, rgba(255,0,0,0.6) 35%, transparent 70%)',
-                  filter: 'blur(5px)',
-                  animation: 'giroflexRed 1.1s ease-in-out infinite',
-                }}
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute z-30 rounded-full mix-blend-screen"
-                style={{
-                  top: '14%', left: '73%', width: '12%', height: '8%',
-                  background: 'radial-gradient(ellipse at center, rgba(80,140,255,1) 0%, rgba(0,60,255,0.6) 35%, transparent 70%)',
-                  filter: 'blur(5px)',
-                  animation: 'giroflexBlue 1.1s ease-in-out infinite',
-                }}
-              />
-              {/* faixa quente sobre o teto (halo geral do giroflex) */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute z-20 mix-blend-screen"
-                style={{
-                  top: '15%', left: '56%', width: '32%', height: '4%',
-                  background: 'linear-gradient(90deg, rgba(255,40,40,0.6), rgba(255,255,255,0.4), rgba(40,90,255,0.6))',
-                  filter: 'blur(8px)',
-                  animation: 'giroflexBar 1.1s ease-in-out infinite',
-                }}
-              />
-              {/* varredura de luz no chão sob a viatura */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute z-10 mix-blend-screen"
-                style={{
-                  bottom: '2%', left: '46%', width: '48%', height: '8%',
+                  top: '13%', left: '57%', width: '14%', height: '10%',
                   background:
-                    'radial-gradient(ellipse at 30% 50%, rgba(255,30,30,0.45) 0%, transparent 55%), radial-gradient(ellipse at 70% 50%, rgba(30,90,255,0.45) 0%, transparent 55%)',
-                  filter: 'blur(14px)',
-                  animation: 'giroflexFloor 1.1s ease-in-out infinite',
+                    'radial-gradient(ellipse at center, rgba(255,50,50,0.95) 0%, rgba(255,0,0,0.45) 30%, rgba(255,0,0,0.12) 55%, transparent 75%)',
+                  animation: 'giroflexRed 1.1s steps(2,end) infinite',
+                }}
+              />
+              <span
+                aria-hidden
+                className="giroflex-light pointer-events-none absolute z-30 rounded-full"
+                style={{
+                  top: '13%', left: '72%', width: '14%', height: '10%',
+                  background:
+                    'radial-gradient(ellipse at center, rgba(90,150,255,0.95) 0%, rgba(0,60,255,0.45) 30%, rgba(0,60,255,0.12) 55%, transparent 75%)',
+                  animation: 'giroflexBlue 1.1s steps(2,end) infinite',
+                }}
+              />
+              {/* faixa quente sobre o teto */}
+              <span
+                aria-hidden
+                className="giroflex-light pointer-events-none absolute z-20"
+                style={{
+                  top: '15%', left: '55%', width: '34%', height: '5%',
+                  background:
+                    'radial-gradient(ellipse at center, rgba(255,255,255,0.35) 0%, rgba(255,80,80,0.25) 40%, rgba(80,120,255,0.25) 60%, transparent 80%)',
+                  animation: 'giroflexBar 1.1s ease-in-out infinite',
                 }}
               />
 
               <style>{`
+                .giroflex-light {
+                  will-change: opacity;
+                  transform: translateZ(0);
+                  backface-visibility: hidden;
+                  mix-blend-mode: screen;
+                }
                 @keyframes giroflexRed {
-                  0%, 49%, 100% { opacity: 1; transform: scale(1); }
-                  50%, 99%      { opacity: 0.15; transform: scale(0.85); }
+                  0%, 49%   { opacity: 1; }
+                  50%, 100% { opacity: 0.1; }
                 }
                 @keyframes giroflexBlue {
-                  0%, 49%, 100% { opacity: 0.15; transform: scale(0.85); }
-                  50%, 99%      { opacity: 1; transform: scale(1); }
+                  0%, 49%   { opacity: 0.1; }
+                  50%, 100% { opacity: 1; }
                 }
                 @keyframes giroflexBar {
-                  0%, 100% { opacity: 0.55; }
+                  0%, 100% { opacity: 0.6; }
                   50%      { opacity: 0.9; }
                 }
-                @keyframes giroflexFloor {
-                  0%, 100% { opacity: 0.35; }
-                  50%      { opacity: 0.75; }
+                @media (prefers-reduced-motion: reduce) {
+                  .giroflex-light { animation: none !important; opacity: 0.55; }
                 }
               `}</style>
+
 
 
             </div>
