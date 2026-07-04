@@ -515,10 +515,6 @@ body {
     animation: none !important;
   }
 
-  /* Giroflex sutil e profissional em mobile — reduz escala do halo e mantém strobe */
-  .police-vehicle {
-    --beacon-unit: clamp(4px, 0.9vmin, 8px) !important;
-  }
 
   .team-card-3d:hover,
   .team-card-3d:active,
