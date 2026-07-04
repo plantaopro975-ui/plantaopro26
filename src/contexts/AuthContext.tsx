@@ -328,6 +328,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
 
+  // Auto-logout after 15min of inactivity for authenticated users
+  useInactivityLogout({ enabled: !!user, onLogout: signOut });
+
   // IMPORTANT: do not derive privileges from client-side storage.
   // masterSession is only a UI session marker; actual privileges must come from backend roles.
   const isAdmin = userRole === 'admin' || userRole === 'master';
