@@ -1040,7 +1040,7 @@ export function RoundsManager() {
           {/* Corpo rolável — sem caixas, layout aberto e centralizado */}
           <div
             ref={fitRef}
-            className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 lg:px-10 py-4 sm:py-6"
+            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain px-4 sm:px-6 lg:px-10 py-4 sm:py-6"
           >
             <div className="mx-auto w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-6 items-start lg:divide-x lg:divide-border/40">
               <div className="min-w-0 lg:pr-6">
