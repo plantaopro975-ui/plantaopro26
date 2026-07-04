@@ -919,47 +919,50 @@ export function RoundsManager() {
             type="button"
             aria-label="Abrir Gestor de Rondas"
             className={cn(
-              'group relative inline-flex items-center gap-3 h-11 pl-2.5 pr-4 rounded-full overflow-hidden',
-              'border border-border bg-background/95 backdrop-blur',
-              
+              'group relative inline-flex items-center gap-4 p-1.5 pr-6 rounded-2xl',
+              'bg-card/40 backdrop-blur-xl border border-border/80',
               'transition-all duration-300',
-              'hover:border-primary/70 hover:-translate-y-0.5',
+              'hover:bg-card/60 hover:border-primary/40 active:scale-[0.98]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             )}
           >
-            {/* animated sheen */}
-            <span aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,transparent_30%,hsl(var(--primary)/0.08)_50%,transparent_70%)]" />
-            {/* top hairline */}
-            <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-
-            {/* radar */}
-            <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 border border-border shadow-inner">
-              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
-                <circle cx="12" cy="12" r="9" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.4" />
-                <circle cx="12" cy="12" r="5" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.5" />
-                <line x1="12" y1="12" x2="19" y2="7" stroke="hsl(var(--primary))" strokeWidth="1.6" strokeLinecap="round" />
-                <circle cx="12" cy="12" r="1.4" fill="hsl(var(--primary))" />
+            {/* Icon module — inset panel with radar crosshair */}
+            <span className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-inner">
+              {/* subtle radar tint */}
+              <span aria-hidden className="absolute inset-0 bg-primary/5 animate-pulse" />
+              {/* crosshair */}
+              <span aria-hidden className="absolute top-1/2 left-0 right-0 h-px -translate-y-1/2 bg-primary/20" />
+              <span aria-hidden className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-primary/20" />
+              <svg viewBox="0 0 24 24" className="relative z-10 h-6 w-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M12 17h.01" />
+                <path d="M19 10.5c0-3.87-3.13-7-7-7s-7 3.13-7 7" />
+                <path d="M16.5 14.5c0-2.48-2.02-4.5-4.5-4.5s-4.5 2.02-4.5 4.5" />
+                <circle cx="12" cy="12" r="10" strokeOpacity="0.1" />
               </svg>
-              <span aria-hidden className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400/80" />
             </span>
 
-            <span className="relative z-10 flex items-baseline gap-2 leading-none">
-              <span className="font-sans text-[11px] uppercase tracking-wider text-primary">
+            {/* Content */}
+            <span className="flex flex-col items-start leading-none">
+              <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-primary">
+                <span aria-hidden className="h-1 w-1 rounded-full bg-primary animate-pulse" />
                 Ferramenta Tática
               </span>
-              <span className="font-sans text-[13px] font-semibold tracking-normal text-foreground">
+              <span className="mt-1 text-lg font-bold tracking-tight text-foreground">
                 Gestor de Rondas
               </span>
             </span>
 
             {running && live && !live.done && schedule && (
-              <span className="relative z-10 ml-1 hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/60 px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums text-emerald-300">
+              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full border border-emerald-500/60 bg-emerald-500/20 px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums text-emerald-300">
                 <Timer className="h-3 w-3" />
                 {fmtHMS(live.remaining)}
               </span>
             )}
 
-            <ChevronRight className="relative z-10 h-4 w-4 text-primary group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="ml-2 h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" strokeWidth={2.5} />
+
+            {/* glass reflection */}
+            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
         </DialogTrigger>
 
