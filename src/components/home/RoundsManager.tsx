@@ -943,7 +943,7 @@ export function RoundsManager() {
               </div>
               <div className="flex items-center gap-2">
                 <button type="button" onClick={() => playAlert({ ...sound, muted: false })}
-                  className="font-mono text-[9px] uppercase tracking-[0.2em] text-primary/80 hover:text-primary border border-primary/30 rounded px-2 py-0.5">
+                  className="font-mono text-[9px] uppercase tracking-[0.2em] text-slate-400 hover:text-primary border border-primary/30 rounded px-2 py-0.5">
                   Testar
                 </button>
                 <label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground cursor-pointer select-none">
@@ -1006,7 +1006,7 @@ export function RoundsManager() {
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-primary/80">
+                  <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-slate-400">
                     {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
                   </div>
                   <div className="font-sans font-bold text-base truncate">
