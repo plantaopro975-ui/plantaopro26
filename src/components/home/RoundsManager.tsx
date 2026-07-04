@@ -468,23 +468,11 @@ export function RoundsManager() {
       if (currentIdx > 0 || live.elapsed > 1) {
         const row = schedule.rows[currentIdx];
         setAlarm({ open: true, index: currentIdx, name: row.name });
-        // Sound
-        try {
-          const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
-            || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-          if (AC) {
-            const ctx = new AC();
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.type = 'square'; o.frequency.value = 880; g.gain.value = 0.05;
-            o.connect(g); g.connect(ctx.destination);
-            o.start();
-            setTimeout(() => { o.stop(); ctx.close(); }, 600);
-          }
-        } catch { /* ignore */ }
+        // Sound (configurable)
+        playAlert(soundRef.current);
         // Vibration (mobile)
         try {
-          if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          if (!soundRef.current.muted && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
             navigator.vibrate?.([220, 90, 220, 90, 380]);
           }
         } catch { /* ignore */ }
