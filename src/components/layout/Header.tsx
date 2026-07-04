@@ -102,21 +102,30 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       ref={ref}
       {...props}
       className={cn(
-        "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6 overflow-hidden",
+        "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6 overflow-hidden isolate",
         "border-b border-primary/25 shadow-[0_8px_28px_-12px_hsl(217_62%_2%/0.9)]",
-        "backdrop-blur-xl",
+        "bg-slate-950",
         props.className,
       )}
-      style={{
-        backgroundImage: `linear-gradient(180deg,hsl(217_62%_5%/0.55),hsl(215_55%_8%/0.72)), url(${headerBg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center 35%',
-      }}
-
     >
+      {/* Background image layer — rendered as <img> for reliable loading across browsers/SW */}
+      <img
+        src={headerBg}
+        alt=""
+        aria-hidden
+        draggable={false}
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover object-[center_35%] select-none"
+      />
+      {/* Tinted overlay for legibility */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,hsl(217_62%_5%/0.45)_0%,hsl(215_55%_8%/0.65)_100%)]"
+      />
+
       {/* Institutional amber accent strip */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90" />
       <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
 
 
 
