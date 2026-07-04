@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowUpRight, Radio, ShieldCheck, Activity, Fingerprint, Clock3, User2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import agent3d from '@/assets/hero/agent-ise-3d.png';
+import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import brasao from '@/assets/hero/brasao-ise.png';
 import objAlfa from '@/assets/teams/obj-alfa-shield.png';
 import objBravo from '@/assets/teams/obj-bravo-sword.png';
