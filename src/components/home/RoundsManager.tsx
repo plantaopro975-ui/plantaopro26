@@ -270,30 +270,44 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
   }
 
   if (team === 'BRAVO') {
-    // Sword: steel blade with fuller, golden crossguard, wrapped grip and pommel
+    // Realistic tactical eagle head — steel + gold beak, feathered shading
+    const eyeId = `th-${team}-eye`;
     return (
       <svg {...svgProps}>
         {defs}
-        {/* Blade */}
-        <path d="M32 3 L36 12 V38 L32 44 L28 38 V12 Z" fill={`url(#${mId})`} stroke="#e2e8f0" strokeOpacity="0.5" strokeWidth="0.4" />
-        {/* Fuller (blade groove) */}
-        <path d="M32 6 V38" stroke="#0f172a" strokeOpacity="0.6" strokeWidth="0.9" />
-        <path d="M31.2 6 V38" stroke="#ffffff" strokeOpacity="0.45" strokeWidth="0.4" />
-        {/* Edge highlight */}
-        <path d="M28.4 12 L28.4 38 L32 43" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="0.5" />
-        {/* Crossguard (gold) */}
-        <path d="M14 40 L50 40 L46 46 L18 46 Z" fill={`url(#${goldId})`} stroke="#78350f" strokeWidth="0.6" />
-        <path d="M15 40.6 L49 40.6" stroke="#fef3c7" strokeOpacity="0.7" strokeWidth="0.6" />
-        {/* Grip wrap */}
-        <rect x="29" y="46" width="6" height="11" rx="1" fill="#111827" />
-        <path d="M29 48 H35 M29 51 H35 M29 54 H35" stroke={color} strokeOpacity="0.55" strokeWidth="0.6" />
-        <path d="M29 48 H35 M29 51 H35 M29 54 H35" stroke="#ffffff" strokeOpacity="0.15" strokeWidth="0.4" strokeDasharray="1 1" />
-        {/* Pommel */}
-        <circle cx="32" cy="59" r="3" fill={`url(#${goldId})`} stroke="#78350f" strokeWidth="0.5" />
-        <circle cx="31" cy="58" r="1" fill="#fef3c7" fillOpacity="0.9" />
+        <radialGradient id={eyeId} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#fef3c7" />
+          <stop offset="55%" stopColor="#d97706" />
+          <stop offset="100%" stopColor="#0b0f17" />
+        </radialGradient>
+        {/* Backing medallion (bevelled disc) */}
+        <circle cx="32" cy="32" r="28" fill={`url(#${rimId})`} />
+        <circle cx="32" cy="32" r="25" fill={`url(#${gId})`} />
+        {/* Head silhouette shadow */}
+        <path d="M18 20 C18 12 26 6 34 8 C44 10 50 18 50 28 C50 34 46 39 40 42 L42 48 L36 46 L34 52 L30 46 L22 46 L26 40 C21 38 18 30 18 24 Z"
+              fill="#000000" fillOpacity="0.55" transform="translate(0.8 1)" />
+        {/* Head main (brushed steel) */}
+        <path d="M18 20 C18 12 26 6 34 8 C44 10 50 18 50 28 C50 34 46 39 40 42 L42 48 L36 46 L34 52 L30 46 L22 46 L26 40 C21 38 18 30 18 24 Z"
+              fill={`url(#${mId})`} stroke="#0f172a" strokeWidth="0.6" />
+        {/* Crown feathers (color accent) */}
+        <path d="M22 14 L26 10 L28 14 L32 9 L34 14 L38 10 L40 15" fill="none"
+              stroke={color} strokeOpacity="0.9" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Feather shading strokes */}
+        <path d="M24 22 L28 26 M22 28 L27 30 M24 34 L30 34 M28 40 L34 40" stroke="#0f172a" strokeOpacity="0.55" strokeWidth="0.6" strokeLinecap="round" />
+        <path d="M24 22 L28 26 M22 28 L27 30 M24 34 L30 34" stroke="#ffffff" strokeOpacity="0.25" strokeWidth="0.4" strokeLinecap="round" />
+        {/* Beak (gold, hooked) */}
+        <path d="M40 26 L54 30 L48 34 L40 32 Z" fill={`url(#${goldId})`} stroke="#78350f" strokeWidth="0.6" strokeLinejoin="round" />
+        <path d="M40 26 L52 30" stroke="#fef3c7" strokeOpacity="0.7" strokeWidth="0.5" />
+        {/* Eye */}
+        <circle cx="36" cy="24" r="2.2" fill="#0b0f17" />
+        <circle cx="36" cy="24" r="1.6" fill={`url(#${eyeId})`} />
+        <circle cx="35.4" cy="23.4" r="0.5" fill="#ffffff" />
+        {/* Top-left dome specular highlight */}
+        <ellipse cx="26" cy="16" rx="9" ry="4" fill={`url(#${hId})`} />
       </svg>
     );
   }
+
 
   if (team === 'CHARLIE') {
     // Target: bevelled ring, colored bullseye, crosshair with drop shadow
