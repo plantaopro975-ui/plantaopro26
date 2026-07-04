@@ -255,65 +255,6 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
                 draggable={false}
               />
-              {/* Giroflex — luzes contidas dentro da barra do teto */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute z-30 overflow-hidden"
-                style={{ top: '15.5%', left: '56%', width: '33%', height: '6%', borderRadius: '9999px' }}
-              >
-                {/* Vermelho — metade esquerda */}
-                <span
-                  className="giroflex-light absolute inset-y-0 left-0 w-1/2"
-                  style={{
-                    background:
-                      'radial-gradient(ellipse at 50% 50%, rgba(255,60,60,1) 0%, rgba(255,0,0,0.55) 45%, rgba(255,0,0,0.1) 80%, transparent 100%)',
-                    animation: 'giroflexRed 1.1s steps(2,end) infinite',
-                  }}
-                />
-                {/* Azul — metade direita */}
-                <span
-                  className="giroflex-light absolute inset-y-0 right-0 w-1/2"
-                  style={{
-                    background:
-                      'radial-gradient(ellipse at 50% 50%, rgba(100,160,255,1) 0%, rgba(0,60,255,0.55) 45%, rgba(0,60,255,0.1) 80%, transparent 100%)',
-                    animation: 'giroflexBlue 1.1s steps(2,end) infinite',
-                  }}
-                />
-                {/* highlight central quente sobre a barra — só em telas ≥ sm */}
-                <span
-                  className="giroflex-light hidden sm:block absolute inset-0"
-
-                  style={{
-                    background:
-                      'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 60%)',
-                    animation: 'giroflexBar 1.1s ease-in-out infinite',
-                  }}
-                />
-              </div>
-
-              <style>{`
-                .giroflex-light {
-                  will-change: opacity;
-                  transform: translateZ(0);
-                  backface-visibility: hidden;
-                  mix-blend-mode: screen;
-                }
-                @keyframes giroflexRed {
-                  0%, 49%   { opacity: 1; }
-                  50%, 100% { opacity: 0.1; }
-                }
-                @keyframes giroflexBlue {
-                  0%, 49%   { opacity: 0.1; }
-                  50%, 100% { opacity: 1; }
-                }
-                @keyframes giroflexBar {
-                  0%, 100% { opacity: 0.55; }
-                  50%      { opacity: 0.85; }
-                }
-                @media (prefers-reduced-motion: reduce) {
-                  .giroflex-light { animation: none !important; opacity: 0.6; }
-                }
-              `}</style>
 
 
 
