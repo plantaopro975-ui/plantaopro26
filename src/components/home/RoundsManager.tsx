@@ -1144,7 +1144,13 @@ export function RoundsManager() {
 
       {/* Alarme de troca de ronda */}
       <Dialog open={alarm.open} onOpenChange={(o) => setAlarm((a) => ({ ...a, open: o }))}>
-        <DialogContent className="max-w-md bg-slate-950 border-2 text-center" style={{ borderColor: teamColor, boxShadow: `0 0 60px -10px ${teamColor}` }}>
+        <DialogContent
+          className="max-w-md bg-slate-950 border-2 text-center [&>button.absolute]:hidden"
+          style={{ borderColor: teamColor, boxShadow: `0 0 60px -10px ${teamColor}` }}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle className="sr-only">Hora da ronda</DialogTitle>
             <DialogDescription className="sr-only">Alarme de troca de agente</DialogDescription>
