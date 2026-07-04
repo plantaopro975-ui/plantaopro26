@@ -1264,9 +1264,27 @@ export function RoundsManager() {
                         <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-light tabular-nums tracking-tight leading-none break-all" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
                           {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                         </span>
-                        <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
-                          {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
-                        </div>
+
+                        {/* Nome BEM GRANDE do agente em ronda */}
+                        {running && live && !live.done && (
+                          <div
+                            className="font-sans font-black uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                            style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
+                          >
+                            {schedule.rows[live.index].name}
+                          </div>
+                        )}
+                        {(!running || !live) && (
+                          <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
+                            {schedule.rows[0].name}
+                          </div>
+                        )}
+                        {running && live?.done && (
+                          <div className="font-sans font-black uppercase tracking-[0.15em] text-2xl sm:text-3xl text-emerald-500 flex items-center gap-2">
+                            <CheckCircle2 className="h-7 w-7" /> MISSÃO CUMPRIDA
+                          </div>
+                        )}
+
                         {running && live && !live.done && 'slotSec' in live && (
                           <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
                             <div className="h-full transition-all"
@@ -1294,13 +1312,25 @@ export function RoundsManager() {
                       <ul className="divide-y divide-border/40">
                         {schedule.rows.map((r, i) => {
                           const isCurrent = running && i === currentIdx && live && !live.done;
+                          const isDone = running && live && (live.done || i < currentIdx);
                           return (
                             <li key={i}
                                 className={cn('grid grid-cols-[28px_minmax(0,1fr)] sm:grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-2.5 transition-colors',
-                                  isCurrent && 'bg-primary/5 -mx-2 px-2 rounded')}
+                                  isCurrent && 'bg-primary/5 -mx-2 px-2 rounded',
+                                  isDone && 'opacity-70')}
                                 style={isCurrent ? { boxShadow: `inset 3px 0 0 0 ${teamColor}` } : undefined}>
                               <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
-                              <span className="font-sans font-medium text-sm break-words min-w-0">{r.name}</span>
+                              <span className={cn(
+                                'font-sans font-medium text-sm break-words min-w-0 flex items-center gap-2 flex-wrap',
+                                isDone && 'line-through text-muted-foreground decoration-emerald-500/70'
+                              )}>
+                                {r.name}
+                                {isDone && (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[9px] uppercase tracking-[0.15em] text-emerald-400 no-underline">
+                                    <CheckCircle2 className="h-2.5 w-2.5" /> Missão cumprida
+                                  </span>
+                                )}
+                              </span>
                               <span className="col-span-2 sm:col-auto font-mono text-[11px] tabular-nums flex flex-wrap items-center gap-2 justify-start sm:justify-end text-muted-foreground">
                                 <span className="text-foreground">{r.from}</span>
                                 <span style={{ color: teamColor }}>→</span>
@@ -1318,8 +1348,8 @@ export function RoundsManager() {
                         <Button type="button" variant="ghost" onClick={copyToClipboard} className="text-muted-foreground hover:text-primary">
                           <Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar
                         </Button>
-                        <Button type="button" variant="ghost" onClick={printSchedule} className="text-muted-foreground hover:text-primary">
-                          <Printer className="h-3.5 w-3.5 mr-1.5" /> Imprimir
+                        <Button type="button" variant="ghost" onClick={exportPDF} className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10">
+                          <FileDown className="h-3.5 w-3.5 mr-1.5" /> Exportar PDF
                         </Button>
                       </div>
                     </div>
