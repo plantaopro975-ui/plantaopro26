@@ -945,3 +945,33 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 @media (prefers-reduced-motion: reduce) {
   .animate-float3d { animation: none; }
 }
+
+/* ===== ALFA card — vest hover flex ===== */
+@keyframes alfa-vest-flex {
+  0%   { transform: perspective(700px) rotateX(0) rotateY(0) scale(1); }
+  40%  { transform: perspective(700px) rotateX(-6deg) rotateY(3deg) scale(1.22) translateY(-4px); }
+  100% { transform: perspective(700px) rotateX(-3deg) rotateY(-2deg) scale(1.18) translateY(-2px); }
+}
+.group[data-team="ALFA"]:hover .alfa-vest {
+  animation: alfa-vest-flex 900ms cubic-bezier(.2,.7,.2,1) forwards;
+}
+.group[data-team="ALFA"]:hover .alfa-halo {
+  opacity: 1;
+  transform: scale(1.05);
+}
+.alfa-halo {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms ease, transform 500ms ease;
+  background:
+    radial-gradient(ellipse at 50% 35%, hsl(43 96% 56% / 0.22), transparent 60%),
+    linear-gradient(180deg, transparent 60%, hsl(43 96% 56% / 0.15) 100%);
+  box-shadow: inset 0 0 0 1px hsl(43 96% 56% / 0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  .group[data-team="ALFA"]:hover .alfa-vest { animation: none; }
+  .alfa-halo { transition: none; }
+}
