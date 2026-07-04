@@ -256,7 +256,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,hsl(217_62%_3%/0.55)_60%,hsl(217_62%_2%/0.95)_100%)] z-10 pointer-events-none" />
             <div
               aria-hidden
-              className="absolute inset-x-0 bottom-0 h-1/2 opacity-40 group-hover:opacity-70 transition-opacity duration-500"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-40 group-hover:opacity-70 transition-opacity duration-500"
               style={{ background: `linear-gradient(180deg, transparent 0%, hsl(${t.accent} / 0.35) 100%)` }}
             />
             <span
