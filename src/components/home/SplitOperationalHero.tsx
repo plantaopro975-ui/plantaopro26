@@ -189,16 +189,25 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         />
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-3 p-3 sm:p-4 lg:grid-cols-2 items-center flex-1 min-h-0">
+        <div className="relative grid gap-4 sm:gap-6 p-3 sm:p-5 lg:grid-cols-[0.95fr_1.05fr] items-center flex-1 min-h-0">
 
-          {/* LEFT — CTA + selos (título movido para faixa superior) */}
-          <div className="relative z-20 min-w-0 flex flex-col gap-2.5 justify-center">
-
+          {/* LEFT — CTA + selos */}
+          <div className="relative z-20 min-w-0 flex flex-col gap-4 justify-center">
+            <div className="space-y-1.5">
+              <span className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400/90">
+                <span className="h-1 w-6 bg-amber-400/70" />
+                Sistema Operacional
+              </span>
+              <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[20px] sm:text-[26px] lg:text-[32px] leading-[1.05]">
+                Comando <span className="text-amber-400">Tático</span><br />
+                Socioeducativo
+              </h2>
+            </div>
 
             <button
               type="button"
               onClick={onPrimaryAction}
-              className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-md bg-amber-500 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.24em] font-bold text-black hover:bg-amber-400 hover:shadow-[0_0_35px_rgba(234,179,8,0.55)] transition-all"
+              className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-md bg-amber-500 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.24em] font-bold text-black hover:bg-amber-400 hover:shadow-[0_0_35px_rgba(234,179,8,0.55)] transition-all"
             >
               <Fingerprint className="h-4 w-4" strokeWidth={2.4} />
               Autenticação Segura
@@ -218,8 +227,9 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             </div>
           </div>
 
-          {/* CENTER — Agent 3D */}
-          <div className="relative flex items-center justify-center min-h-[180px] lg:min-h-[300px] xl:min-h-[340px] 2xl:min-h-[360px] order-first lg:order-none z-30 overflow-visible">
+          {/* RIGHT — Agent 3D */}
+          <div className="relative flex items-center justify-center min-h-[220px] lg:min-h-[340px] xl:min-h-[380px] 2xl:min-h-[400px] order-first lg:order-none z-30 overflow-visible">
+
             <svg
               aria-hidden
               viewBox="0 0 400 400"
