@@ -142,13 +142,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     // Buscar sessão inicial
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       pushDiagEvent('info', 'auth_get_session', {
         hasSession: !!initialSession,
         userId: initialSession?.user?.id ?? null,
         expiresAt: (initialSession as any)?.expires_at ?? null,
         expiresIn: (initialSession as any)?.expires_in ?? null,
       });
+
+      // Se existe uma sessão local, validar contra o servidor. Se o token estiver
+      // inválido/expirado, limpar imediatamente para evitar travar em
+      // "Verificando credenciais…" (RequireAuth trata !user como não autenticado).
+      if (initialSession) {
+        try {
+          const { data: userData, error: userErr } = await supabase.auth.getUser();
+          if (userErr || !userData?.user) {
+            pushDiagEvent('warn', 'auth_invalid_local_session', { error: userErr?.message ?? null });
+            await supabase.auth.signOut().catch(() => {});
+            setSession(null);
+            setUser(null);
+            setUserRole(null);
+            hasInitializedRef.current = true;
+            setIsLoading(false);
+            return;
+          }
+        } catch (err: any) {
+          pushDiagEvent('warn', 'auth_validate_user_error', { error: err?.message ?? null });
+        }
+      }
 
       setSession(initialSession);
       setUser(initialSession?.user ?? null);
@@ -160,6 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       hasInitializedRef.current = true;
       setIsLoading(false);
     });
+
 
     return () => subscription.unsubscribe();
   }, []);
