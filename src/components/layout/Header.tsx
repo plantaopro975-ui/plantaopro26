@@ -174,9 +174,10 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 ml-1 border-l border-border/50">
           <RadarSweep size={30} />
           <div className="flex flex-col leading-tight">
-            <span className="text-[11px] sm:text-[11px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-success uppercase font-mono">
+            <span className="text-[11px] sm:text-[11px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-primary uppercase font-mono drop-shadow-[0_1px_2px_hsl(217_62%_2%/0.9)]">
               Radar Ativo
             </span>
+
             <span className="text-[12px] sm:text-[12px] font-semibold text-foreground/90 font-mono tabular-nums">
               <span className="text-primary">{onlineCount}</span>
               <span className="text-muted-foreground"> online · </span>
