@@ -617,7 +617,7 @@ export function RoundsManager() {
               <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-primary">
                 Ferramenta Tática
               </span>
-              <span className="font-sans text-[13px] font-black uppercase tracking-[0.12em] text-foreground">
+              <span className="font-sans text-[13px] font-semibold tracking-[0.06em] text-foreground">
                 Gestor de Rondas
               </span>
             </span>
