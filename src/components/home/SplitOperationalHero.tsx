@@ -194,7 +194,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               draggable={false}
             />
             {/* Viatura ISE — tactical vehicle, next to agent */}
-            <div className="pointer-events-none absolute bottom-3 left-1/2 z-20 w-[48%] max-w-[220px] sm:max-w-[250px] lg:max-w-[280px] translate-x-[32%]">
+            <div className="pointer-events-none absolute bottom-3 left-1/2 z-20 w-[48%] max-w-[220px] sm:max-w-[250px] lg:max-w-[280px] translate-x-[8%]">
               <div className="relative inline-block w-full leading-[0] isolate">
                 <img
                   src={vehicle3d}
