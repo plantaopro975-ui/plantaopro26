@@ -1245,13 +1245,14 @@ export default function Index() {
         <CommandRoomBackground />
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
+      <header className="relative z-20 flex flex-col overflow-hidden">
 
 
 
 
         {/* Split Operational Hero — briefing + tactical team selector */}
         <div className="pt-2 sm:pt-3 shrink-0">
+
 
 
           <SplitOperationalHero
