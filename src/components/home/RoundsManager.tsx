@@ -1250,10 +1250,10 @@ export function RoundsManager() {
                         <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                           {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
                         </span>
-                        <span className="font-mono text-5xl sm:text-6xl font-light tabular-nums tracking-tight leading-none" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
+                        <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-light tabular-nums tracking-tight leading-none break-all" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
                           {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                         </span>
-                        <div className="font-sans font-medium text-base text-foreground truncate max-w-full">
+                        <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
                           {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
                         </div>
                         {running && live && !live.done && 'slotSec' in live && (
