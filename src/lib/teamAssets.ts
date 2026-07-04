@@ -1,15 +1,21 @@
 // Team image assets
 import alfaPoster from '@/assets/teams/alfa-poster.jpg';
+import alfaPosterWebp from '@/assets/teams/alfa-poster.webp';
 import bravoPoster from '@/assets/teams/bravo-poster.jpg';
+import bravoPosterWebp from '@/assets/teams/bravo-poster.webp';
 import charliePoster from '@/assets/teams/charlie-poster.jpg';
+import charliePosterWebp from '@/assets/teams/charlie-poster.webp';
 import deltaPoster from '@/assets/teams/delta-poster.jpg';
+import deltaPosterWebp from '@/assets/teams/delta-poster.webp';
 import alfaEmblem from '@/assets/teams/alfa-emblem.png';
 import bravoEmblem from '@/assets/teams/bravo-emblem.png';
 import charlieEmblem from '@/assets/teams/charlie-emblem.png';
 import deltaEmblem from '@/assets/teams/delta-emblem.png';
 import panelsBg from '@/assets/teams/panels-bg.png';
 import homeBackground from '@/assets/home-background.png';
+import homeBackgroundWebp from '@/assets/home-background.webp';
 import loginBackground from '@/assets/login-background.jpg';
+import loginBackgroundWebp from '@/assets/login-background.webp';
 
 export const teamPosters: Record<string, string> = {
   ALFA: alfaPoster,
