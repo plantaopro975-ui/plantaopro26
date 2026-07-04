@@ -337,6 +337,7 @@ export function RoundsManager() {
       if (currentIdx > 0 || live.elapsed > 1) {
         const row = schedule.rows[currentIdx];
         setAlarm({ open: true, index: currentIdx, name: row.name });
+        // Sound
         try {
           const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
             || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
@@ -350,10 +351,38 @@ export function RoundsManager() {
             setTimeout(() => { o.stop(); ctx.close(); }, 600);
           }
         } catch { /* ignore */ }
+        // Vibration (mobile)
+        try {
+          if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+            navigator.vibrate?.([220, 90, 220, 90, 380]);
+          }
+        } catch { /* ignore */ }
+        // Local notification
+        try {
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            const n = new Notification('Hora de fazer a ronda', {
+              body: `EQUIPE ${team} · Posto ${pad(currentIdx + 1)} — ${row.name}`,
+              tag: 'plantaopro-rounds',
+              silent: false,
+            });
+            setTimeout(() => n.close(), 8000);
+          }
+        } catch { /* ignore */ }
       }
     }
-    if (live.done) setRunning(false);
-  }, [live, schedule]);
+    if (live.done) {
+      setRunning(false);
+      // finalize history entry
+      if (historyIdRef.current) {
+        const finished = readHistory().map((h) =>
+          h.id === historyIdRef.current ? { ...h, endedAt: Date.now() } : h,
+        );
+        writeHistory(finished);
+        setHistory(finished);
+        historyIdRef.current = null;
+      }
+    }
+  }, [live, schedule, team]);
 
   const startTimer = () => {
     if (!schedule) {
@@ -363,6 +392,24 @@ export function RoundsManager() {
     startedAtRef.current = Date.now();
     firedRef.current = new Set();
     setRunning(true);
+    // Request notification permission (best effort)
+    try {
+      if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => { /* ignore */ });
+      }
+    } catch { /* ignore */ }
+    // Persist history entry
+    const entry: HistoryEntry = {
+      id: crypto.randomUUID?.() ?? String(Date.now()),
+      team, mode, startTime, endTime, intervalMin,
+      agents: schedule.rows.map((r) => r.name),
+      startedAt: Date.now(),
+      endedAt: null,
+    };
+    historyIdRef.current = entry.id;
+    const next = [entry, ...readHistory()].slice(0, 20);
+    writeHistory(next);
+    setHistory(next);
   };
   const pauseTimer = () => setRunning(false);
   const resetTimer = () => {
