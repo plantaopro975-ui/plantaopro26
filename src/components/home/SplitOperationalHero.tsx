@@ -6,10 +6,10 @@ import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
 
-import objAlfa from '@/assets/teams/obj-alfa-shield.png';
-import objBravo from '@/assets/teams/obj-bravo-sword.png';
-import objCharlie from '@/assets/teams/obj-charlie-target.png';
-import objDelta from '@/assets/teams/obj-delta-bolt.png';
+import objAlfa from '@/assets/teams/alfa-shield-3d.png.asset.json';
+import objBravo from '@/assets/teams/bravo-helmet-3d.png.asset.json';
+import objCharlie from '@/assets/teams/charlie-badge-3d.png.asset.json';
+import objDelta from '@/assets/teams/delta-radio-3d.png.asset.json';
 
 interface Props {
   onTeamClick: (team: string) => void;
@@ -26,10 +26,10 @@ const TEAMS: {
   accent: string;
   obj: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa },
-  { key: 'BRAVO',   motto: 'Espada · Ação',       op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo },
-  { key: 'CHARLIE', motto: 'Alvo · Precisão',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie },
-  { key: 'DELTA',   motto: 'Raio · Velocidade',   op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta },
+  { key: 'ALFA',    motto: 'Escudo · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa.url },
+  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo.url },
+  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie.url },
+  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta.url },
 ];
 
 function useNow() {
@@ -312,37 +312,80 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 data-team-card
                 onClick={() => onTeamClick(t.key)}
                 className={cn(
-                  'group relative flex h-[130px] sm:h-[150px] flex-col overflow-hidden rounded-xl border text-left',
-                  'border-white/5 bg-slate-950/60 backdrop-blur-md',
-                  'transition-all duration-500 hover:border-amber-400/50 hover:-translate-y-0.5',
-                  'shadow-[0_8px_20px_-10px_rgba(0,0,0,0.9)] hover:shadow-[0_20px_45px_-15px_rgba(234,179,8,0.45)]',
-                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70',
+                  'group relative flex h-[140px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left',
+                  'border-white/10 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_4%)_100%)]',
+                  'transition-all duration-500 will-change-transform',
+                  'hover:border-[hsl(var(--team-accent)/0.6)] hover:-translate-y-1 hover:[transform:perspective(800px)_rotateX(4deg)]',
+                  'shadow-[0_10px_25px_-12px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.04)]',
+                  'hover:shadow-[0_25px_55px_-15px_hsl(var(--team-accent)/0.55),inset_0_1px_0_hsl(var(--team-accent)/0.4)]',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--team-accent)/0.7)]',
                 )}
                 style={{ ['--team-accent' as any]: t.accent }}
               >
-                {/* 3D Security Object — dominant */}
+                {/* studio floor glow (breathing) */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 h-14 w-[80%] rounded-[50%] opacity-40 group-hover:opacity-90 transition-opacity duration-500 blur-2xl animate-pulse"
+                  style={{ background: `radial-gradient(ellipse at center, hsl(${t.accent} / 0.7) 0%, transparent 70%)` }}
+                />
+                {/* diagonal shine sweep on hover */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                  style={{
+                    background:
+                      'linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.14) 50%, transparent 60%)',
+                    transform: 'translateX(-40%)',
+                    animation: 'none',
+                  }}
+                />
+                {/* 3D Security Object — dominant with parallax float */}
                 <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-2 pt-4">
                   <img
                     src={t.obj}
-                    alt={`Equipe ${t.key} — objeto tático 3D`}
+                    alt={`Equipe ${t.key} — equipamento tático 3D`}
                     loading="lazy"
-                    className="max-h-[95%] max-w-[70%] object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-0.5 select-none"
+                    className={cn(
+                      'max-h-[95%] max-w-[75%] object-contain select-none',
+                      'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
+                      'transition-transform duration-700 ease-out',
+                      'group-hover:scale-[1.18] group-hover:-translate-y-1.5 group-hover:-rotate-3',
+                      'group-active:scale-[1.05] group-active:rotate-0',
+                    )}
                     draggable={false}
+                    style={{ transformOrigin: '50% 60%' }}
                   />
                 </div>
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(2,6,15,0.75)_70%,rgba(2,6,15,0.98)_100%)] z-10 pointer-events-none" />
+                {/* bottom gradient for text legibility */}
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(2,6,15,0.80)_70%,rgba(2,6,15,0.98)_100%)] z-10 pointer-events-none" />
+                {/* accent tint at bottom */}
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-40 group-hover:opacity-70 transition-opacity duration-500"
-                  style={{ background: `linear-gradient(180deg, transparent 0%, hsl(${t.accent} / 0.30) 100%)` }}
+                  className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-45 group-hover:opacity-90 transition-opacity duration-500"
+                  style={{ background: `linear-gradient(180deg, transparent 0%, hsl(${t.accent} / 0.35) 100%)` }}
                 />
+                {/* top accent line */}
                 <span
                   aria-hidden
                   className="absolute top-0 left-0 h-px w-full"
                   style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }}
                 />
+                {/* live pulse dot (reação) */}
                 <span
-                  className="absolute top-1.5 right-1.5 font-mono text-[8.5px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded backdrop-blur-md border"
+                  aria-hidden
+                  className="absolute top-2 left-2 z-30 flex h-2 w-2"
+                >
+                  <span
+                    className="absolute inset-0 rounded-full animate-ping opacity-70"
+                    style={{ background: `hsl(${t.accent})` }}
+                  />
+                  <span
+                    className="relative h-2 w-2 rounded-full"
+                    style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 8px hsl(${t.accent} / 0.9)` }}
+                  />
+                </span>
+                <span
+                  className="absolute top-1.5 right-1.5 z-30 font-mono text-[8.5px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded backdrop-blur-md border"
                   style={{
                     color: `hsl(${t.accent})`,
                     borderColor: `hsl(${t.accent} / 0.5)`,
@@ -353,7 +396,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 </span>
                 <div className="relative z-20 flex flex-col gap-0.5 px-2.5 pb-2">
                   <span
-                    className="font-sans font-black text-xl sm:text-2xl leading-none tracking-tight uppercase"
+                    className="font-sans font-black text-xl sm:text-2xl leading-none tracking-tight uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
                     style={{ color: `hsl(${t.accent})` }}
                   >
                     {t.key}
