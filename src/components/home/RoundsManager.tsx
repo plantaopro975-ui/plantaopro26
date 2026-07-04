@@ -1316,11 +1316,11 @@ export function RoundsManager() {
                 </Section>
 
                 <Section icon={<History className="h-3.5 w-3.5 text-primary" />} title={`Histórico (${history.length})`}>
-                  <div className="rounded-lg border border-border bg-card/40 p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[11px] font-sans uppercase tracking-[0.16em] text-muted-foreground flex items-center gap-1.5">
                         <History className="h-3 w-3" /> Registros ({history.length})
-                      </Label>
+                      </span>
                       {history.length > 0 && (
                         <button type="button" onClick={clearHistory}
                           className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
@@ -1329,20 +1329,20 @@ export function RoundsManager() {
                       )}
                     </div>
                     {history.length === 0 ? (
-                      <div className="text-[11px] text-muted-foreground font-sans uppercase tracking-wide">
+                      <div className="text-[11px] text-muted-foreground font-sans uppercase tracking-wide text-center py-4">
                         Nenhuma ronda registrada ainda.
                       </div>
                     ) : (
-                      <ul className="grid gap-1.5 max-h-56 overflow-y-auto pr-1">
+                      <ul className="divide-y divide-border/40 max-h-72 overflow-y-auto">
                         {history.map((h) => {
                           const color = TEAM_PRESETS.find((t) => t.key === h.team)?.color ?? '#f59e0b';
                           const dt = new Date(h.startedAt);
                           const dtStr = `${pad(dt.getDate())}/${pad(dt.getMonth() + 1)} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
                           const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
                           return (
-                            <li key={h.id} className="grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded border border-primary/10 bg-background/60 px-2 py-1.5">
-                              <span className="font-sans text-[11px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded whitespace-nowrap"
-                                    style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
+                            <li key={h.id} className="grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 py-2.5">
+                              <span className="font-sans text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap"
+                                    style={{ color }}>{h.team}</span>
                               <div className="min-w-0">
                                 <div className="font-mono text-[11px] tabular-nums text-foreground">
                                   {dtStr} <span className="text-muted-foreground">→</span> {endStr}
@@ -1351,7 +1351,7 @@ export function RoundsManager() {
                                   {h.agents.slice(0, 4).join(' · ')}{h.agents.length > 4 ? ` +${h.agents.length - 4}` : ''}
                                 </div>
                               </div>
-                              <span className="col-span-2 sm:col-auto font-sans text-[11px] uppercase tracking-wide text-primary/70 justify-self-start sm:justify-self-end whitespace-nowrap">
+                              <span className="col-span-2 sm:col-auto font-sans text-[11px] uppercase tracking-wide text-muted-foreground justify-self-start sm:justify-self-end whitespace-nowrap">
                                 {h.mode === 'split' ? `${h.startTime}–${h.endTime}` : `${h.intervalMin}min`}
                               </span>
                             </li>
@@ -1360,6 +1360,7 @@ export function RoundsManager() {
                       </ul>
                     )}
                   </div>
+
                 </Section>
               </div>
             </div>
