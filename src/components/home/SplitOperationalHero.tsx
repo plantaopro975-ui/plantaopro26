@@ -194,21 +194,26 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               draggable={false}
             />
             {/* Viatura ISE — tactical vehicle, next to agent */}
-            <div className="absolute bottom-4 left-1/2 z-20 w-[38%] max-w-[180px] translate-x-[35%] pointer-events-none">
-              <div className="relative">
+            <div className="pointer-events-none absolute bottom-4 left-1/2 z-20 w-[38%] max-w-[180px] translate-x-[35%]">
+              <div className="relative inline-block w-full leading-[0] isolate">
                 <img
                   src={vehicle3d}
                   alt="Viatura Tática ISE"
-                  className="relative z-10 h-auto w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.9)] select-none"
+                  className="block h-auto w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.9)] select-none"
                   draggable={false}
                 />
-                {/* Giroflex — cross-fading halos above the roof (opacity-only, GPU) */}
-                <div
-                  aria-hidden
-                  className="absolute left-1/2 top-[18%] -translate-x-1/2 -translate-y-1/2 h-14 w-24 z-20"
-                >
-                  <div className="absolute inset-0 rounded-full blur-xl bg-[radial-gradient(ellipse,rgba(239,68,68,0.85)_0%,transparent_65%)] animate-[giroflex-red_0.8s_steps(2,end)_infinite]" />
-                  <div className="absolute inset-0 rounded-full blur-xl bg-[radial-gradient(ellipse,rgba(59,130,246,0.85)_0%,transparent_65%)] animate-[giroflex-blue_0.8s_steps(2,end)_infinite]" />
+                {/* Giroflex — halos ancorados em % da bounding box da img (escala em todos os viewports) */}
+                <div aria-hidden className="absolute inset-0 z-[1]">
+                  {/* Lâmpadas azuis (lado esquerdo da barra) */}
+                  <span
+                    className="absolute rounded-full blur-md bg-[radial-gradient(ellipse,rgba(59,130,246,0.9)_0%,transparent_65%)] animate-[giroflex-blue_0.8s_steps(2,end)_infinite]"
+                    style={{ left: '32%', top: '20%', width: '18%', height: '7%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
+                  />
+                  {/* Lâmpadas vermelhas (lado direito da barra) */}
+                  <span
+                    className="absolute rounded-full blur-md bg-[radial-gradient(ellipse,rgba(239,68,68,0.9)_0%,transparent_65%)] animate-[giroflex-red_0.8s_steps(2,end)_infinite]"
+                    style={{ left: '51%', top: '20%', width: '18%', height: '7%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
+                  />
                 </div>
               </div>
             </div>
