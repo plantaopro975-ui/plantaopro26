@@ -831,7 +831,43 @@ export function RoundsManager() {
     setConfirmExit(false);
     setRunning(false);
     setOpen(false);
+    setDrag({ x: 0, y: 0 });
   };
+
+  /* ================= Drag da janela (antes de iniciar o cronômetro) ================= */
+  const [drag, setDrag] = useState({ x: 0, y: 0 });
+  const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const canDrag = !running;
+
+  const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!canDrag) return;
+    // Só arrasta se clicar diretamente no header (não em botões/inputs)
+    const target = e.target as HTMLElement;
+    if (target.closest('button, input, select, a, [role="button"]')) return;
+    e.preventDefault();
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: drag.x, baseY: drag.y };
+  };
+  const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current) return;
+    const { startX, startY, baseX, baseY } = dragRef.current;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    // Limita para não sair completamente da tela (mantém 80px visíveis nas bordas)
+    const maxX = Math.max(0, window.innerWidth / 2 - 80);
+    const maxY = Math.max(0, window.innerHeight / 2 - 60);
+    const nx = Math.max(-maxX, Math.min(maxX, baseX + dx));
+    const ny = Math.max(-maxY, Math.min(maxY, baseY + dy));
+    setDrag({ x: nx, y: ny });
+  };
+  const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragRef.current) {
+      dragRef.current = null;
+      try { (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId); } catch { /* noop */ }
+    }
+  };
+  const resetPosition = () => setDrag({ x: 0, y: 0 });
+
 
 
   return (
@@ -888,15 +924,44 @@ export function RoundsManager() {
 
         <DialogContent
           className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>button.absolute]:hidden transition-colors duration-500"
-          style={{ ['--primary' as string]: hexToHslTriple(teamColor) }}
+          style={{
+            ['--primary' as string]: hexToHslTriple(teamColor),
+            transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
+          }}
           onEscapeKeyDown={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
         >
-          <DialogHeader className="border-b border-primary/15 pb-2">
+          <DialogHeader
+            className={cn(
+              'border-b border-primary/15 pb-2 select-none touch-none',
+              canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
+            )}
+            onPointerDown={onDragStart}
+            onPointerMove={onDragMove}
+            onPointerUp={onDragEnd}
+            onPointerCancel={onDragEnd}
+            title={canDrag ? 'Arraste para reposicionar a janela' : 'Janela travada durante a operação'}
+          >
             <div className="flex items-center gap-3">
+              {/* Grip indicator */}
+              <div className="flex flex-col gap-0.5 pr-1 opacity-60" aria-hidden>
+                <span className="flex gap-0.5">
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                </span>
+                <span className="flex gap-0.5">
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                </span>
+                <span className="flex gap-0.5">
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                </span>
+              </div>
               {/* Hero realista — reativo à equipe */}
               <TeamHero team={team} color={teamColor} />
+
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">
                   <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
@@ -910,8 +975,20 @@ export function RoundsManager() {
                   escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
+              {/* Recentrar (só aparece se a janela foi movida) */}
+              {(drag.x !== 0 || drag.y !== 0) && (
+                <button type="button" onClick={resetPosition} aria-label="Recentrar janela"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-slate-700/70 bg-slate-900/60 text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-colors"
+                  title="Recentrar janela">
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                    <path d="M12 3v3M12 18v3M3 12h3M18 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                </button>
+              )}
               {/* Botão Sair (única saída) */}
               <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
+                onPointerDown={(e) => e.stopPropagation()}
                 className="shrink-0 inline-flex items-center gap-1.5 h-8 rounded-md border border-slate-700/70 bg-slate-900/60 pl-2 pr-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-colors">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                   <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
