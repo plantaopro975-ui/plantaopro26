@@ -924,15 +924,44 @@ export function RoundsManager() {
 
         <DialogContent
           className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>button.absolute]:hidden transition-colors duration-500"
-          style={{ ['--primary' as string]: hexToHslTriple(teamColor) }}
+          style={{
+            ['--primary' as string]: hexToHslTriple(teamColor),
+            transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
+          }}
           onEscapeKeyDown={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
         >
-          <DialogHeader className="border-b border-primary/15 pb-2">
+          <DialogHeader
+            className={cn(
+              'border-b border-primary/15 pb-2 select-none touch-none',
+              canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
+            )}
+            onPointerDown={onDragStart}
+            onPointerMove={onDragMove}
+            onPointerUp={onDragEnd}
+            onPointerCancel={onDragEnd}
+            title={canDrag ? 'Arraste para reposicionar a janela' : 'Janela travada durante a operação'}
+          >
             <div className="flex items-center gap-3">
+              {/* Grip indicator */}
+              <div className="flex flex-col gap-0.5 pr-1 opacity-60" aria-hidden>
+                <span className="flex gap-0.5">
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                </span>
+                <span className="flex gap-0.5">
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                </span>
+                <span className="flex gap-0.5">
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                </span>
+              </div>
               {/* Hero realista — reativo à equipe */}
               <TeamHero team={team} color={teamColor} />
+
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">
                   <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
