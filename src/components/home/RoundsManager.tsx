@@ -1013,7 +1013,7 @@ export function RoundsManager() {
             <div className="font-mono text-[10px] uppercase tracking-[0.32em]" style={{ color: teamColor }}>
               EQUIPE {team} · Posto {pad(alarm.index + 1)}
             </div>
-            <div className="font-sans text-2xl font-black uppercase tracking-[0.06em] text-foreground">
+            <div className="font-sans text-2xl font-medium tracking-tight text-foreground">
               Hora de fazer a ronda
             </div>
             <div className="font-sans text-lg font-bold" style={{ color: teamColor }}>
