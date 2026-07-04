@@ -736,54 +736,25 @@ export function RoundsManager() {
           </button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/30 text-foreground p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <DialogHeader className="border-b border-primary/20 pb-2">
+        <DialogContent
+          className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-colors duration-500"
+          style={{ ['--primary' as string]: hexToHslTriple(teamColor) }}
+        >
+          <DialogHeader className="border-b border-primary/15 pb-2">
             <div className="flex items-center gap-3">
-              {/* 3D dome / radar em SVG puro */}
-              <svg viewBox="0 0 64 64" className="h-11 w-11 shrink-0 drop-shadow-[0_4px_10px_hsl(var(--primary)/0.5)]" aria-hidden>
-                <defs>
-                  <radialGradient id="rmDome" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.95" />
-                    <stop offset="55%" stopColor="hsl(var(--primary))" stopOpacity="0.35" />
-                    <stop offset="100%" stopColor="#020617" stopOpacity="1" />
-                  </radialGradient>
-                  <radialGradient id="rmHi" cx="35%" cy="25%" r="35%">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
-                    <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-                  </radialGradient>
-                  <linearGradient id="rmBase" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="#1e293b" />
-                    <stop offset="100%" stopColor="#020617" />
-                  </linearGradient>
-                </defs>
-                {/* base plate */}
-                <ellipse cx="32" cy="54" rx="24" ry="5" fill="url(#rmBase)" stroke="hsl(var(--primary)/0.4)" />
-                <rect x="10" y="46" width="44" height="6" rx="2" fill="url(#rmBase)" stroke="hsl(var(--primary)/0.35)" />
-                {/* dome sphere */}
-                <circle cx="32" cy="30" r="20" fill="url(#rmDome)" stroke="hsl(var(--primary))" strokeOpacity="0.6" />
-                {/* meridians */}
-                <ellipse cx="32" cy="30" rx="20" ry="7" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.35" />
-                <ellipse cx="32" cy="30" rx="10" ry="20" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.25" />
-                {/* sweep */}
-                <path d="M32 30 L32 12 A18 18 0 0 1 47 22 Z" fill="hsl(var(--primary))" fillOpacity="0.28">
-                  <animateTransform attributeName="transform" type="rotate" from="0 32 30" to="360 32 30" dur="3.2s" repeatCount="indefinite" />
-                </path>
-                {/* highlight */}
-                <ellipse cx="26" cy="22" rx="9" ry="5" fill="url(#rmHi)" />
-                {/* status LED */}
-                <circle cx="52" cy="49" r="2" fill="#22c55e">
-                  <animate attributeName="opacity" values="1;0.3;1" dur="1.4s" repeatCount="indefinite" />
-                </circle>
-              </svg>
+              {/* Hero realista — reativo à equipe */}
+              <TeamHero team={team} color={teamColor} />
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.28em] text-primary/80">
-                  <Shield className="h-3 w-3" /> Operação · Divisão de Rondas
+                <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">
+                  <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
+                  <span>Operação · Equipe</span>
+                  <span className="font-semibold tracking-[0.2em]" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-sans text-base font-medium tracking-tight leading-tight">
-                  Gestor de <span className="font-semibold" style={{ color: teamColor }}>Quartos de Hora</span>
+                <DialogTitle className="font-sans text-base font-normal tracking-tight leading-tight text-slate-100">
+                  Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="text-[10px] text-muted-foreground font-mono uppercase tracking-[0.18em]">
-                  Escala · cronômetro · alarme · histórico
+                <DialogDescription className="text-[10px] text-slate-500 font-mono tracking-[0.16em]">
+                  escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
             </div>
