@@ -985,27 +985,29 @@ export function RoundsManager() {
             onPointerCancel={onDragEnd}
             title={canDrag ? 'Arraste para reposicionar a janela' : 'Janela travada durante a operação'}
           >
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex flex-col gap-0.5 pr-1 opacity-60" aria-hidden>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <div className="hidden sm:flex flex-col gap-0.5 pr-1 opacity-60 shrink-0" aria-hidden>
                 <span className="flex gap-0.5"><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /></span>
                 <span className="flex gap-0.5"><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /></span>
                 <span className="flex gap-0.5"><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /><span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" /></span>
               </div>
-              <TeamHero team={team} color={teamColor} />
+              <div className="shrink-0"><TeamHero team={team} color={teamColor} /></div>
 
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
-                  <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
-                  <span className="truncate">Operação · Equipe</span>
+              <div className="min-w-0 flex-1 basis-40">
+                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
+                  <Shield className="h-3 w-3 shrink-0" style={{ color: teamColor, opacity: 0.85 }} />
+                  <span>Operação · Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
                 <DialogTitle className="font-sans text-sm sm:text-base font-normal tracking-tight leading-tight text-foreground break-words">
                   Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="hidden sm:block text-[11px] text-muted-foreground font-sans tracking-wide">
+                <DialogDescription className="hidden sm:block text-[11px] text-muted-foreground font-sans tracking-wide break-words">
                   escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
+
+              <div className="flex flex-wrap items-center gap-2 ml-auto shrink-0">
 
               {running && live && !live.done && schedule && (
                 <span className="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/50 px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums text-emerald-300">
