@@ -170,7 +170,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
           </div>
 
           {/* CENTER — Agent 3D */}
-          <div className="relative flex items-end justify-center h-full min-h-[180px] order-first lg:order-none z-30">
+          <div className="relative flex items-end justify-center h-full min-h-[180px] order-first lg:order-none z-30 translate-y-4 sm:translate-y-6 lg:translate-y-8">
             <svg
               aria-hidden
               viewBox="0 0 400 400"
