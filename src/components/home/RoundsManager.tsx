@@ -1171,7 +1171,8 @@ export function RoundsManager() {
                 )}
 
                 {/* Sound settings */}
-                <div className="rounded-lg border border-border bg-card/40 p-3 grid gap-2">
+                <div className="grid gap-2 pt-3 border-t border-border/40">
+
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2 font-sans text-[11px] uppercase tracking-wide text-muted-foreground">
                       <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
