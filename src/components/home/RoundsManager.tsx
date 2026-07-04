@@ -742,7 +742,7 @@ export function RoundsManager() {
                 return (
                   <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                     className={cn(
-                      'relative rounded-lg border px-2 py-2 font-sans font-black uppercase tracking-[0.14em] text-xs transition-all',
+                      'relative rounded-lg border px-2 py-2 font-sans font-semibold uppercase tracking-[0.16em] text-[11px] transition-all',
                       active ? 'border-transparent text-slate-950 shadow-lg' : 'border-primary/20 bg-slate-900/60 text-foreground hover:border-primary/50',
                     )}
                     style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
