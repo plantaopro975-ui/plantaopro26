@@ -3,8 +3,11 @@ import { Radio, ShieldCheck, Activity, Clock3, User2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import agent3d from '@/assets/hero/agent-ise-3d.png';
+import agent3dWebp from '@/assets/hero/agent-ise-3d.webp';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
+import vehicle3dWebp from '@/assets/hero/vehicle-ise-3d.webp';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
+import agentVehicleSceneWebp from '@/assets/hero/agent-vehicle-scene.webp';
 import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
 
 import objAlfa from '@/assets/teams/alfa-vest-real.png';
@@ -322,12 +325,15 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             />
             {/* Cena composta: agente + viatura em escala realista */}
             <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(180px, 26vw, 340px)' }}>
-              <img
-                src={agentVehicleScene}
-                alt="Agente Socioeducativo ao lado da viatura tática ISE"
-                className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
-                draggable={false}
-              />
+              <picture>
+                <source srcSet={agentVehicleSceneWebp} type="image/webp" />
+                <img
+                  src={agentVehicleScene}
+                  alt="Agente Socioeducativo ao lado da viatura tática ISE"
+                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
+                  draggable={false}
+                />
+              </picture>
 
 
 
