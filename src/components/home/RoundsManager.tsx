@@ -352,6 +352,16 @@ export function RoundsManager() {
 
   const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
 
+  /* sound settings */
+  const [sound, setSound] = useState<SoundSettings>(DEFAULT_SOUND);
+  useEffect(() => { setSound(readSound()); }, [open]);
+  const updateSound = (patch: Partial<SoundSettings>) => {
+    setSound((prev) => { const next = { ...prev, ...patch }; writeSound(next); return next; });
+  };
+  const soundRef = useRef(sound);
+  useEffect(() => { soundRef.current = sound; }, [sound]);
+
+
   /* ---------- validation ---------- */
   const issues = useMemo(
     () => validate({ mode, startTime, endTime, intervalMin, agents }),
