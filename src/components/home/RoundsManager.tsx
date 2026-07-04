@@ -912,6 +912,7 @@ export function RoundsManager() {
     const startMs = nowServer();
     startedAtRef.current = startMs;
     firedRef.current = new Set();
+    notifiedRef.current = new Set();
     setRunning(true);
     try {
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
