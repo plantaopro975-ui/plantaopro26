@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Clock, Users, Plus, Trash2, Copy, Printer, Timer, Shield,
   Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
-  Save, FolderOpen, Star,
+  Save, Star, History,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
@@ -82,6 +82,30 @@ const writeTemplates = (arr: Template[]) => {
   try { localStorage.setItem(TPL_KEY, JSON.stringify(arr)); } catch { /* ignore */ }
 };
 
+/* ================= history (localStorage) ================= */
+type HistoryEntry = {
+  id: string;
+  team: TeamKey;
+  mode: Mode;
+  startTime: string;
+  endTime: string;
+  intervalMin: number;
+  agents: string[];
+  startedAt: number;
+  endedAt: number | null;
+};
+const HIST_KEY = 'plantaopro_rounds_history_v1';
+const readHistory = (): HistoryEntry[] => {
+  try {
+    const raw = localStorage.getItem(HIST_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+};
+const writeHistory = (arr: HistoryEntry[]) => {
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0, 20))); } catch { /* ignore */ }
+};
+
 /* ================= validation ================= */
 type Issue = { field: string; message: string };
 function validate(input: {
@@ -124,6 +148,23 @@ function validate(input: {
   }
   if (dupes.size) {
     issues.push({ field: 'agents', message: `Nomes repetidos: ${Array.from(dupes).join(', ')}.` });
+  }
+
+  // Total-time vs minimum-per-agent
+  const MIN_PER_AGENT = 1; // minutos
+  if (input.mode === 'split' && s !== null) {
+    const e = toMinutes(input.endTime);
+    if (e !== null && s !== e && trimmed.length > 0) {
+      let total = e - s;
+      if (total <= 0) total += 24 * 60;
+      const per = total / trimmed.length;
+      if (per < MIN_PER_AGENT) {
+        issues.push({
+          field: 'end',
+          message: `Tempo total (${total}min) insuficiente para ${trimmed.length} agentes — mínimo de ${MIN_PER_AGENT}min por agente.`,
+        });
+      }
+    }
   }
   return issues;
 }
@@ -176,6 +217,13 @@ export function RoundsManager() {
     writeTemplates(next);
     setTemplates(next);
   };
+
+  /* history */
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const historyIdRef = useRef<string | null>(null);
+  useEffect(() => { setHistory(readHistory()); }, [open]);
+  const clearHistory = () => { writeHistory([]); setHistory([]); };
+
 
   const addAgent = () => setAgents((a) => [...a, `Agente ${a.length + 1}`]);
   const removeAgent = (i: number) => setAgents((a) => a.filter((_, idx) => idx !== i));
@@ -289,6 +337,7 @@ export function RoundsManager() {
       if (currentIdx > 0 || live.elapsed > 1) {
         const row = schedule.rows[currentIdx];
         setAlarm({ open: true, index: currentIdx, name: row.name });
+        // Sound
         try {
           const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
             || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
@@ -302,10 +351,38 @@ export function RoundsManager() {
             setTimeout(() => { o.stop(); ctx.close(); }, 600);
           }
         } catch { /* ignore */ }
+        // Vibration (mobile)
+        try {
+          if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+            navigator.vibrate?.([220, 90, 220, 90, 380]);
+          }
+        } catch { /* ignore */ }
+        // Local notification
+        try {
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            const n = new Notification('Hora de fazer a ronda', {
+              body: `EQUIPE ${team} · Posto ${pad(currentIdx + 1)} — ${row.name}`,
+              tag: 'plantaopro-rounds',
+              silent: false,
+            });
+            setTimeout(() => n.close(), 8000);
+          }
+        } catch { /* ignore */ }
       }
     }
-    if (live.done) setRunning(false);
-  }, [live, schedule]);
+    if (live.done) {
+      setRunning(false);
+      // finalize history entry
+      if (historyIdRef.current) {
+        const finished = readHistory().map((h) =>
+          h.id === historyIdRef.current ? { ...h, endedAt: Date.now() } : h,
+        );
+        writeHistory(finished);
+        setHistory(finished);
+        historyIdRef.current = null;
+      }
+    }
+  }, [live, schedule, team]);
 
   const startTimer = () => {
     if (!schedule) {
@@ -315,6 +392,24 @@ export function RoundsManager() {
     startedAtRef.current = Date.now();
     firedRef.current = new Set();
     setRunning(true);
+    // Request notification permission (best effort)
+    try {
+      if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => { /* ignore */ });
+      }
+    } catch { /* ignore */ }
+    // Persist history entry
+    const entry: HistoryEntry = {
+      id: crypto.randomUUID?.() ?? String(Date.now()),
+      team, mode, startTime, endTime, intervalMin,
+      agents: schedule.rows.map((r) => r.name),
+      startedAt: Date.now(),
+      endedAt: null,
+    };
+    historyIdRef.current = entry.id;
+    const next = [entry, ...readHistory()].slice(0, 20);
+    writeHistory(next);
+    setHistory(next);
   };
   const pauseTimer = () => setRunning(false);
   const resetTimer = () => {
@@ -419,17 +514,57 @@ export function RoundsManager() {
           </button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto bg-slate-950 border border-primary/30 text-foreground">
-          <DialogHeader className="border-b border-primary/20 pb-3">
-            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.28em] text-primary/80">
-              <Shield className="h-3 w-3" /> Operação · Divisão de Rondas
+        <DialogContent className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/30 text-foreground p-4 gap-3">
+          <DialogHeader className="border-b border-primary/20 pb-2">
+            <div className="flex items-center gap-3">
+              {/* 3D dome / radar em SVG puro */}
+              <svg viewBox="0 0 64 64" className="h-11 w-11 shrink-0 drop-shadow-[0_4px_10px_hsl(var(--primary)/0.5)]" aria-hidden>
+                <defs>
+                  <radialGradient id="rmDome" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.95" />
+                    <stop offset="55%" stopColor="hsl(var(--primary))" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#020617" stopOpacity="1" />
+                  </radialGradient>
+                  <radialGradient id="rmHi" cx="35%" cy="25%" r="35%">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
+                    <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                  </radialGradient>
+                  <linearGradient id="rmBase" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stopColor="#1e293b" />
+                    <stop offset="100%" stopColor="#020617" />
+                  </linearGradient>
+                </defs>
+                {/* base plate */}
+                <ellipse cx="32" cy="54" rx="24" ry="5" fill="url(#rmBase)" stroke="hsl(var(--primary)/0.4)" />
+                <rect x="10" y="46" width="44" height="6" rx="2" fill="url(#rmBase)" stroke="hsl(var(--primary)/0.35)" />
+                {/* dome sphere */}
+                <circle cx="32" cy="30" r="20" fill="url(#rmDome)" stroke="hsl(var(--primary))" strokeOpacity="0.6" />
+                {/* meridians */}
+                <ellipse cx="32" cy="30" rx="20" ry="7" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.35" />
+                <ellipse cx="32" cy="30" rx="10" ry="20" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.25" />
+                {/* sweep */}
+                <path d="M32 30 L32 12 A18 18 0 0 1 47 22 Z" fill="hsl(var(--primary))" fillOpacity="0.28">
+                  <animateTransform attributeName="transform" type="rotate" from="0 32 30" to="360 32 30" dur="3.2s" repeatCount="indefinite" />
+                </path>
+                {/* highlight */}
+                <ellipse cx="26" cy="22" rx="9" ry="5" fill="url(#rmHi)" />
+                {/* status LED */}
+                <circle cx="52" cy="49" r="2" fill="#22c55e">
+                  <animate attributeName="opacity" values="1;0.3;1" dur="1.4s" repeatCount="indefinite" />
+                </circle>
+              </svg>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.28em] text-primary/80">
+                  <Shield className="h-3 w-3" /> Operação · Divisão de Rondas
+                </div>
+                <DialogTitle className="font-sans text-base font-black uppercase tracking-[0.04em] leading-tight">
+                  Gestor de <span style={{ color: teamColor }}>Quartos de Hora</span>
+                </DialogTitle>
+                <DialogDescription className="text-[10px] text-muted-foreground font-mono uppercase tracking-[0.15em]">
+                  Escala · cronômetro · alarme · histórico
+                </DialogDescription>
+              </div>
             </div>
-            <DialogTitle className="font-sans text-xl font-black uppercase tracking-[0.04em]">
-              Gestor de <span style={{ color: teamColor }}>Quartos de Hora</span>
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground font-mono uppercase tracking-[0.15em]">
-              Escala automática, cronômetro em tempo real e alarme de troca.
-            </DialogDescription>
           </DialogHeader>
 
           {/* Templates */}
@@ -712,6 +847,52 @@ export function RoundsManager() {
               </div>
             </div>
           )}
+
+          {/* Histórico de rondas */}
+          <div className="mt-1 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-[10px] font-mono uppercase tracking-[0.22em] text-primary/80 flex items-center gap-1">
+                <History className="h-3 w-3" /> Histórico ({history.length})
+              </Label>
+              {history.length > 0 && (
+                <button type="button" onClick={clearHistory}
+                  className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground hover:text-destructive">
+                  Limpar
+                </button>
+              )}
+            </div>
+            {history.length === 0 ? (
+              <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[0.14em]">
+                Nenhuma ronda registrada ainda.
+              </div>
+            ) : (
+              <ul className="grid gap-1.5 max-h-40 overflow-y-auto pr-1">
+                {history.map((h) => {
+                  const color = TEAM_PRESETS.find((t) => t.key === h.team)?.color ?? '#f59e0b';
+                  const dt = new Date(h.startedAt);
+                  const dtStr = `${pad(dt.getDate())}/${pad(dt.getMonth() + 1)} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+                  const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
+                  return (
+                    <li key={h.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded border border-primary/10 bg-slate-950/60 px-2 py-1.5">
+                      <span className="font-mono text-[9px] font-black uppercase tracking-[0.18em] px-1.5 py-0.5 rounded"
+                            style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
+                      <div className="min-w-0">
+                        <div className="font-mono text-[10px] tabular-nums text-foreground">
+                          {dtStr} <span className="text-muted-foreground">→</span> {endStr}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground truncate">
+                          {h.agents.slice(0, 4).join(' · ')}{h.agents.length > 4 ? ` +${h.agents.length - 4}` : ''}
+                        </div>
+                      </div>
+                      <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-primary/70">
+                        {h.mode === 'split' ? `${h.startTime}–${h.endTime}` : `${h.intervalMin}min`}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
