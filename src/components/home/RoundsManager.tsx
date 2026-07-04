@@ -999,7 +999,7 @@ export function RoundsManager() {
                   <span className="truncate">Operação · Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-sans text-base font-normal tracking-tight leading-tight text-foreground truncate">
+                <DialogTitle className="font-sans text-sm sm:text-base font-normal tracking-tight leading-tight text-foreground break-words">
                   Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
                 <DialogDescription className="hidden sm:block text-[11px] text-muted-foreground font-sans tracking-wide">
@@ -1040,7 +1040,7 @@ export function RoundsManager() {
           {/* Corpo rolável — sem caixas, layout aberto e centralizado */}
           <div
             ref={fitRef}
-            className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 lg:px-10 py-4 sm:py-6"
+            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain px-4 sm:px-6 lg:px-10 py-4 sm:py-6"
           >
             <div className="mx-auto w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-6 items-start lg:divide-x lg:divide-border/40">
               <div className="min-w-0 lg:pr-6">
@@ -1250,10 +1250,10 @@ export function RoundsManager() {
                         <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                           {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
                         </span>
-                        <span className="font-mono text-5xl sm:text-6xl font-light tabular-nums tracking-tight leading-none" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
+                        <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-light tabular-nums tracking-tight leading-none break-all" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
                           {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                         </span>
-                        <div className="font-sans font-medium text-base text-foreground truncate max-w-full">
+                        <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
                           {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
                         </div>
                         {running && live && !live.done && 'slotSec' in live && (
@@ -1289,7 +1289,7 @@ export function RoundsManager() {
                                   isCurrent && 'bg-primary/5 -mx-2 px-2 rounded')}
                                 style={isCurrent ? { boxShadow: `inset 3px 0 0 0 ${teamColor}` } : undefined}>
                               <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
-                              <span className="font-sans font-medium text-sm truncate sm:whitespace-normal sm:break-words min-w-0">{r.name}</span>
+                              <span className="font-sans font-medium text-sm break-words min-w-0">{r.name}</span>
                               <span className="col-span-2 sm:col-auto font-mono text-[11px] tabular-nums flex flex-wrap items-center gap-2 justify-start sm:justify-end text-muted-foreground">
                                 <span className="text-foreground">{r.from}</span>
                                 <span style={{ color: teamColor }}>→</span>
