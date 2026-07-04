@@ -311,33 +311,11 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                   <span aria-hidden className="team-halo" />
                 )}
 
-                {/* 3D Security Object — real 3D image with continuous 3D idle motion */}
+                {/* 3D Security Object — <picture> AVIF/WebP/PNG + skeleton blur-up */}
                 <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-2 pt-4 [perspective:600px]">
-                  <img
-                    src={t.obj}
-                    alt={`Equipe ${t.key} — equipamento tático 3D`}
-                    loading="lazy"
-                    decoding="async"
-                    fetchPriority="low"
-                    width={512}
-                    height={512}
-                    sizes="(max-width: 640px) 22vw, (max-width: 1024px) 18vw, 200px"
-                    className={cn(
-                      'max-h-[95%] max-w-[75%] object-contain select-none animate-float3d',
-                      'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
-                      'transition-transform duration-700 ease-out',
-                      'group-hover:scale-[1.20] group-hover:-translate-y-1.5',
-                      'group-active:scale-[1.05]',
-                      t.key === 'ALFA' && 'alfa-vest',
-                    )}
-                    draggable={false}
-                    style={{
-                      transformOrigin: '50% 60%',
-                      animationDelay: `${idx * 0.6}s`,
-                      contentVisibility: 'auto',
-                    }}
-                  />
+                  <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
                 </div>
+
 
 
 
