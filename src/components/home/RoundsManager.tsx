@@ -166,7 +166,110 @@ function playAlert(settings: SoundSettings) {
   } catch { /* ignore */ }
 }
 
+/* ================= color helpers ================= */
+function hexToHslTriple(hex: string): string {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let hh = 0, s = 0; const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) hh = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) hh = (b - r) / d + 2;
+    else hh = (r - g) / d + 4;
+    hh /= 6;
+  }
+  return `${Math.round(hh * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
+/* ================= Team hero (realistic SVG emblem) ================= */
+function TeamHero({ team, color }: { team: TeamKey; color: string }) {
+  const gId = `th-${team}-grad`;
+  const hId = `th-${team}-hi`;
+  const mId = `th-${team}-metal`;
+  const shadow = `drop-shadow(0 6px 14px ${color}66) drop-shadow(0 2px 4px #00000080)`;
+  const defs = (
+    <defs>
+      <radialGradient id={gId} cx="35%" cy="30%" r="75%">
+        <stop offset="0%" stopColor={color} stopOpacity="0.95" />
+        <stop offset="55%" stopColor={color} stopOpacity="0.5" />
+        <stop offset="100%" stopColor="#020617" />
+      </radialGradient>
+      <radialGradient id={hId} cx="35%" cy="25%" r="35%">
+        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
+        <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+      </radialGradient>
+      <linearGradient id={mId} x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stopColor="#334155" />
+        <stop offset="100%" stopColor="#0f172a" />
+      </linearGradient>
+    </defs>
+  );
+  const svgProps = {
+    viewBox: '0 0 64 64',
+    className: 'h-11 w-11 shrink-0',
+    style: { filter: shadow },
+    'aria-hidden': true as const,
+  };
+
+  if (team === 'ALFA') {
+    return (
+      <svg {...svgProps}>
+        {defs}
+        <path d="M32 5 L54 13 V32 C54 46 44 55 32 60 C20 55 10 46 10 32 V13 Z"
+              fill={`url(#${gId})`} stroke={color} strokeOpacity="0.75" strokeWidth="1.2" />
+        <path d="M32 5 L54 13 V22 C54 24 44 27 32 27 C20 27 10 24 10 22 V13 Z" fill={`url(#${hId})`} />
+        <path d="M32 18 V44 M22 30 H42" stroke="#0b0f17" strokeWidth="3.6" strokeLinecap="round" opacity="0.35" />
+        <path d="M32 18 V44 M22 30 H42" stroke={color} strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (team === 'BRAVO') {
+    return (
+      <svg {...svgProps}>
+        {defs}
+        <path d="M32 4 L37 12 V40 L32 46 L27 40 V12 Z" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.8" />
+        <path d="M32 4 L34 12 V40" stroke="#ffffff" strokeOpacity="0.4" strokeWidth="0.8" />
+        <rect x="16" y="42" width="32" height="4" rx="1.6" fill={`url(#${mId})`} stroke={color} strokeOpacity="0.6" />
+        <rect x="28" y="46" width="8" height="12" rx="1" fill={`url(#${mId})`} stroke={color} strokeOpacity="0.6" />
+        <circle cx="32" cy="58" r="2.6" fill={color} stroke="#0b0f17" strokeWidth="0.6" />
+      </svg>
+    );
+  }
+  if (team === 'CHARLIE') {
+    return (
+      <svg {...svgProps}>
+        {defs}
+        <circle cx="32" cy="32" r="26" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.7" />
+        <circle cx="32" cy="32" r="18" fill="none" stroke={color} strokeOpacity="0.55" />
+        <circle cx="32" cy="32" r="10" fill="none" stroke={color} strokeOpacity="0.5" />
+        <line x1="32" y1="4"  x2="32" y2="20" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <line x1="32" y1="44" x2="32" y2="60" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <line x1="4"  y1="32" x2="20" y2="32" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <line x1="44" y1="32" x2="60" y2="32" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+        <circle cx="32" cy="32" r="2.2" fill={color} />
+        <ellipse cx="26" cy="24" rx="9" ry="5" fill={`url(#${hId})`} />
+      </svg>
+    );
+  }
+  // DELTA — lightning
+  return (
+    <svg {...svgProps}>
+      {defs}
+      <circle cx="32" cy="32" r="26" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.6" />
+      <path d="M36 8 L18 34 H30 L26 56 L46 28 H34 Z"
+            fill={color} stroke="#0b0f17" strokeWidth="0.9" strokeLinejoin="round" />
+      <path d="M36 8 L20 33 H30" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="0.8" />
+      <ellipse cx="26" cy="22" rx="9" ry="5" fill={`url(#${hId})`} />
+    </svg>
+  );
+}
+
 /* ================= SVG time field ================= */
+
 function TimeField({
   id, value, onChange, label, invalid, accent,
 }: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string }) {
