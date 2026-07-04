@@ -133,11 +133,12 @@ const App = () => (
                       <Route
                         path="/agent-panel"
                         element={
-                          <RequireAuth mode="block">
+                          <RequireAuth mode="redirect" redirectTo="/">
                             <AgentPanel />
                           </RequireAuth>
                         }
                       />
+
                       <Route path="/agent-profile" element={<AgentProfileEdit />} />
                       <Route path="/agent-profile-edit" element={<AgentProfileEdit />} />
                       <Route path="/unit/:unitId" element={<UnitDashboard />} />
