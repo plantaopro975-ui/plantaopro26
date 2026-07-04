@@ -879,7 +879,7 @@ export function RoundsManager() {
               <div className="mb-3 grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg border border-primary/25 bg-slate-950/80 p-3">
                 <div className="flex flex-col items-center">
                   <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-muted-foreground">Regressivo</span>
-                  <span className="font-mono text-2xl font-black tabular-nums" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
+                  <span className="font-mono text-2xl font-light tabular-nums tracking-tight" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
                     {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                   </span>
                 </div>
