@@ -215,19 +215,26 @@ export function ThemedHomeBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {/* Base dark gradient */}
-      <div 
+      {/* Realistic photographic base */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${realisticHomeBg})` }}
+      />
+      {/* Dark tonal wash for legibility */}
+      <div
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(180deg, 
-            hsl(var(--background)) 0%, 
-            hsl(var(--card)) 50%,
-            hsl(var(--background)) 100%
+          background: `linear-gradient(180deg,
+            hsl(var(--background) / 0.75) 0%,
+            hsl(var(--background) / 0.55) 50%,
+            hsl(var(--background) / 0.85) 100%
           )`,
         }}
       />
-      
+
       {/* Rotating team images */}
       <RotatingTeamBackground theme={resolvedTheme} />
+
       
       {/* Theme-specific ambient glow */}
       <div 
