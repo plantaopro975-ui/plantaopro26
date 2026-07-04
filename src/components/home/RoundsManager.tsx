@@ -416,12 +416,12 @@ function TimeField({
   };
   return (
     <div className="grid gap-1.5">
-      <label htmlFor={`${id}-h`} className="text-[10px] font-sans uppercase tracking-wide text-muted-foreground">
+      <label htmlFor={`${id}-h`} className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground">
         {label}
       </label>
       <div className={cn(
-        'group relative flex items-center gap-2 rounded-md border bg-slate-950/60 pl-2 pr-1 h-11 transition-colors',
-        invalid ? 'border-destructive/70' : 'border-slate-700/70 focus-within:border-primary/70',
+        'group relative flex items-center gap-2 rounded-md border bg-background/60 pl-2 pr-1 h-11 transition-colors',
+        invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
       )}>
         <svg viewBox="0 0 32 32" className="h-6 w-6 shrink-0" aria-hidden>
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
@@ -435,15 +435,15 @@ function TimeField({
           onChange={(e) => setH(e.target.value.replace(/\D/g, '').slice(0, 2))}
           onFocus={(e) => e.currentTarget.select()}
           onBlur={(e) => setH(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-slate-200 outline-none"
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
           aria-label={`${label} horas`} autoComplete="off" />
         <div className="flex flex-col">
           <button type="button" onClick={() => bump('h', 1)} aria-label="Mais 1 hora"
-            className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
+            className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <button type="button" onClick={() => bump('h', -1)} aria-label="Menos 1 hora"
-            className="h-[22px] w-5 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
+            className="h-[22px] w-5 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
@@ -452,15 +452,15 @@ function TimeField({
           onChange={(e) => setM(e.target.value.replace(/\D/g, '').slice(0, 2))}
           onFocus={(e) => e.currentTarget.select()}
           onBlur={(e) => setM(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-slate-200 outline-none"
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
           aria-label={`${label} minutos`} autoComplete="off" />
         <div className="ml-auto flex flex-col">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
-            className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
+            className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min"
-            className="h-[22px] w-5 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-slate-200">
+            className="h-[22px] w-5 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
@@ -912,11 +912,11 @@ export function RoundsManager() {
             aria-label="Abrir Gestor de Rondas"
             className={cn(
               'group relative inline-flex items-center gap-3 h-11 pl-2.5 pr-4 rounded-full overflow-hidden',
-              'border border-slate-700/70 bg-slate-950/80 backdrop-blur',
+              'border border-border bg-background/95 backdrop-blur',
               
               'transition-all duration-300',
               'hover:border-primary/70 hover:-translate-y-0.5',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             )}
           >
             {/* animated sheen */}
@@ -925,7 +925,7 @@ export function RoundsManager() {
             <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
 
             {/* radar */}
-            <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 border border-primary/60 shadow-inner">
+            <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 border border-border shadow-inner">
               <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
                 <circle cx="12" cy="12" r="9" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.4" />
                 <circle cx="12" cy="12" r="5" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.5" />
@@ -936,10 +936,10 @@ export function RoundsManager() {
             </span>
 
             <span className="relative z-10 flex items-baseline gap-2 leading-none">
-              <span className="font-sans text-[9px] uppercase tracking-wider text-primary">
+              <span className="font-sans text-[11px] uppercase tracking-wider text-primary">
                 Ferramenta Tática
               </span>
-              <span className="font-sans text-[13px] font-semibold tracking-normal text-slate-200">
+              <span className="font-sans text-[13px] font-semibold tracking-normal text-foreground">
                 Gestor de Rondas
               </span>
             </span>
@@ -956,7 +956,7 @@ export function RoundsManager() {
         </DialogTrigger>
 
         <DialogContent
-          className="w-[min(96vw,44rem)] max-w-none max-h-[calc(100dvh-1rem)] overflow-hidden bg-slate-950 border border-primary/25 text-slate-200 p-3 gap-0 [&>button.absolute]:hidden transition-colors duration-500"
+          className="w-[min(96vw,44rem)] max-w-none max-h-[calc(100dvh-1rem)] overflow-hidden bg-background border border-border text-foreground p-3 gap-0 [&>button.absolute]:hidden transition-colors duration-500"
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
@@ -972,7 +972,7 @@ export function RoundsManager() {
         >
           <DialogHeader
             className={cn(
-              'border-b border-primary/15 pb-2 select-none touch-none',
+              'border-b border-border pb-2 select-none touch-none',
               canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
             )}
             onPointerDown={onDragStart}
@@ -985,31 +985,31 @@ export function RoundsManager() {
               {/* Grip indicator */}
               <div className="flex flex-col gap-0.5 pr-1 opacity-60" aria-hidden>
                 <span className="flex gap-0.5">
-                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
-                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
                 </span>
                 <span className="flex gap-0.5">
-                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
-                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
                 </span>
                 <span className="flex gap-0.5">
-                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
-                  <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
+                  <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground" />
                 </span>
               </div>
               {/* Hero realista — reativo à equipe */}
               <TeamHero team={team} color={teamColor} />
 
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5 font-sans text-[9px] uppercase tracking-wider text-slate-500">
+                <div className="flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
                   <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
                   <span>Operação · Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-sans text-base font-normal tracking-tight leading-tight text-slate-100">
+                <DialogTitle className="font-sans text-base font-normal tracking-tight leading-tight text-foreground">
                   Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="text-[10px] text-slate-500 font-sans tracking-wide">
+                <DialogDescription className="text-[11px] text-muted-foreground font-sans tracking-wide">
                   escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
@@ -1017,7 +1017,7 @@ export function RoundsManager() {
               {(drag.x !== 0 || drag.y !== 0) && (
                 <button type="button" onClick={resetPosition} aria-label="Recentrar janela"
                   onPointerDown={(e) => e.stopPropagation()}
-                  className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-slate-700/70 bg-slate-900/60 text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-colors"
+                  className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border bg-card/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors"
                   title="Recentrar janela">
                   <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                     <path d="M12 3v3M12 18v3M3 12h3M18 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -1027,7 +1027,7 @@ export function RoundsManager() {
               {/* Botão Sair (única saída) */}
               <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
                 onPointerDown={(e) => e.stopPropagation()}
-                className="shrink-0 inline-flex items-center gap-1.5 h-8 rounded-md border border-slate-700/70 bg-slate-900/60 pl-2 pr-2.5 font-sans text-[10px] uppercase tracking-wide text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-colors">
+                className="shrink-0 inline-flex items-center gap-1.5 h-8 rounded-md border border-border bg-card/60 pl-2 pr-2.5 font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-foreground hover:border-border transition-colors">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                   <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M10 8l-4 4 4 4M6 12h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -1040,7 +1040,7 @@ export function RoundsManager() {
 
           {/* Team pills */}
           <div className="grid gap-2 pt-1">
-            <Label className="text-[10px] font-sans tracking-wide text-slate-500 flex items-center gap-1">
+            <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
               <Radio className="h-3 w-3" /> Equipe
             </Label>
             <div className="grid grid-cols-4 gap-2">
@@ -1050,7 +1050,7 @@ export function RoundsManager() {
                   <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                     className={cn(
                       'relative rounded-lg border px-2 py-2 font-sans font-semibold uppercase tracking-wide text-[11px] transition-all',
-                      active ? 'border-transparent text-slate-950 shadow-lg' : 'border-primary/20 bg-slate-900/60 text-slate-200 hover:border-primary/50',
+                      active ? 'border-transparent text-slate-950 shadow-sm' : 'border-border bg-card/60 text-foreground hover:border-border',
                     )}
                     style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
                   >
@@ -1070,7 +1070,7 @@ export function RoundsManager() {
               <button key={m} type="button" onClick={() => setMode(m)}
                 className={cn(
                   'rounded-md border px-3 py-2 text-[11px] font-mono uppercase tracking-wide transition-all',
-                  mode === m ? 'border-primary/60 bg-primary/15 text-primary' : 'border-primary/20 bg-slate-900/60 text-muted-foreground hover:text-slate-200',
+                  mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card/60 text-muted-foreground hover:text-foreground',
                 )}>
                 {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
               </button>
@@ -1091,12 +1091,12 @@ export function RoundsManager() {
                 <TimeField id="rm-start2" label="Início" value={startTime}
                   onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
                 <div className="grid gap-1.5">
-                  <label htmlFor="rm-int" className="text-[10px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+                  <label htmlFor="rm-int" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
                     <Timer className="h-3 w-3" /> Intervalo (min)
                   </label>
                   <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
                     onChange={(e) => setIntervalMin(Math.max(1, Math.min(240, +e.target.value || 1)))}
-                    className={cn('bg-slate-950/60 border-slate-700/70 font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
+                    className={cn('bg-background/60 border-border font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
                     autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
                 </div>
               </div>
@@ -1105,11 +1105,11 @@ export function RoundsManager() {
             {/* Rounding — only meaningful in split mode */}
             {mode === 'split' && (
               <div className="grid gap-1.5">
-                <Label className="text-[10px] font-sans tracking-wide text-slate-500">
+                <Label className="text-[11px] font-sans tracking-wide text-muted-foreground">
                   Arredondamento da divisão
                 </Label>
                 <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
-                  <SelectTrigger className="bg-slate-900/60 border-primary/20 h-9 text-xs">
+                  <SelectTrigger className="bg-card/60 border-border h-9 text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1125,20 +1125,20 @@ export function RoundsManager() {
             {/* Agents */}
             <div className="grid gap-1.5">
               <div className="flex items-center justify-between">
-                <Label className="text-[10px] font-sans tracking-wide text-slate-500 flex items-center gap-1">
+                <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
                   <Users className="h-3 w-3" /> Agentes ({agents.length})
                 </Label>
-                <Button type="button" size="sm" variant="outline" onClick={addAgent} className="h-7 border-primary/40 text-primary hover:bg-primary/10">
+                <Button type="button" size="sm" variant="outline" onClick={addAgent} className="h-7 border-border text-primary hover:bg-primary/10">
                   <Plus className="h-3 w-3 mr-1" /> Adicionar
                 </Button>
               </div>
               <div className={cn('grid gap-1.5 max-h-48 overflow-y-auto pr-1 rounded-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                 {agents.map((a, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <span className="w-7 text-center font-mono text-[10px] text-primary tabular-nums">{pad(i + 1)}</span>
+                    <span className="w-7 text-center font-mono text-[11px] text-primary tabular-nums">{pad(i + 1)}</span>
                     <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))}
                       placeholder={`Agente ${i + 1}`}
-                      className={cn('bg-slate-900/60 border-primary/15 h-8 text-sm', !a.trim() && 'border-destructive/60')}
+                      className={cn('bg-card/60 border-border h-8 text-sm', !a.trim() && 'border-destructive/60')}
                       autoComplete="off" />
                     <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
                       disabled={agents.length <= 1} className="h-8 w-8 text-muted-foreground hover:text-destructive"
@@ -1154,7 +1154,7 @@ export function RoundsManager() {
           {/* Validation panel */}
           {issues.length > 0 && (
             <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
-              <div className="flex items-center gap-2 font-sans text-[10px] uppercase tracking-wider text-destructive mb-1">
+              <div className="flex items-center gap-2 font-sans text-[11px] uppercase tracking-wider text-destructive mb-1">
                 <AlertTriangle className="h-3.5 w-3.5" /> Corrija os itens abaixo
               </div>
               <ul className="grid gap-1 text-xs text-destructive/90 list-disc pl-4">
@@ -1164,9 +1164,9 @@ export function RoundsManager() {
           )}
 
           {/* Sound settings */}
-          <div className="rounded-lg border border-slate-700/70 bg-slate-900/40 p-3 grid gap-2">
+          <div className="rounded-lg border border-border bg-card/40 p-3 grid gap-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-sans text-[10px] uppercase tracking-wide text-muted-foreground">
+              <div className="flex items-center gap-2 font-sans text-[11px] uppercase tracking-wide text-muted-foreground">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                   <path d="M4 10v4h4l5 4V6L8 10H4z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
                   {!sound.muted && <path d="M16 8c1.6 1 1.6 7 0 8M19 5c3 2.5 3 12 0 14.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />}
@@ -1176,10 +1176,10 @@ export function RoundsManager() {
               </div>
               <div className="flex items-center gap-2">
                 <button type="button" onClick={() => playAlert({ ...sound, muted: false })}
-                  className="font-sans text-[9px] uppercase tracking-wide text-slate-400 hover:text-primary border border-primary/30 rounded px-2 py-0.5">
+                  className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-primary border border-border rounded px-2 py-0.5">
                   Testar
                 </button>
-                <label className="flex items-center gap-1.5 font-sans text-[10px] uppercase tracking-wide text-muted-foreground cursor-pointer select-none">
+                <label className="flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-wide text-muted-foreground cursor-pointer select-none">
                   <input type="checkbox" checked={sound.muted}
                     onChange={(e) => updateSound({ muted: e.target.checked })}
                     className="accent-primary h-3 w-3" />
@@ -1188,21 +1188,21 @@ export function RoundsManager() {
               </div>
             </div>
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-              <span className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground">Vol</span>
+              <span className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground">Vol</span>
               <input type="range" min={0} max={100} value={sound.volume}
                 onChange={(e) => updateSound({ volume: +e.target.value })}
                 disabled={sound.muted}
                 className="w-full accent-primary disabled:opacity-40" />
-              <span className="font-mono text-[11px] tabular-nums text-slate-200 w-8 text-right">{sound.volume}%</span>
+              <span className="font-mono text-[11px] tabular-nums text-foreground w-8 text-right">{sound.volume}%</span>
             </div>
             <div className="grid grid-cols-3 gap-1.5">
               {(['chime', 'pulse', 'siren'] as const).map((t) => (
                 <button key={t} type="button" onClick={() => updateSound({ tone: t })}
                   className={cn(
-                    'rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-wide transition-colors',
+                    'rounded border px-2 py-1 font-mono text-[11px] uppercase tracking-wide transition-colors',
                     sound.tone === t
                       ? 'border-primary/70 bg-primary/10 text-primary'
-                      : 'border-slate-700/70 bg-slate-950/60 text-muted-foreground hover:text-slate-200',
+                      : 'border-border bg-background/60 text-muted-foreground hover:text-foreground',
                   )}>
                   {t === 'chime' ? 'Sino' : t === 'pulse' ? 'Pulso' : 'Sirene'}
                 </button>
@@ -1213,14 +1213,14 @@ export function RoundsManager() {
 
           {/* Live cockpit */}
           {schedule && (
-            <div className="mt-1 rounded-xl border border-primary/30 bg-gradient-to-b from-slate-900/80 to-slate-950 p-4"
+            <div className="mt-1 rounded-xl border border-border bg-gradient-to-b from-slate-900/80 to-slate-950 p-4"
                  style={{ boxShadow: `inset 0 0 30px -8px ${teamColor}66` }}>
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-primary/20 pb-2 mb-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2 mb-3">
                 <div className="font-sans font-semibold uppercase tracking-wide text-[13px]" style={{ color: teamColor }}>
                   EQUIPE {team}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 font-sans text-[10px] uppercase tracking-wide">
-                  <span className="rounded border border-primary/40 bg-primary/10 px-2 py-0.5 text-primary tabular-nums">
+                <div className="flex flex-wrap items-center gap-2 font-sans text-[11px] uppercase tracking-wide">
+                  <span className="rounded border border-border bg-primary/10 px-2 py-0.5 text-primary tabular-nums">
                     <Timer className="inline h-3 w-3 mr-1" />
                     {fmtDuration(schedule.total)} totais
                   </span>
@@ -1231,15 +1231,15 @@ export function RoundsManager() {
               </div>
 
               {/* Countdown */}
-              <div className="mb-3 grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg border border-primary/25 bg-slate-950/80 p-3">
+              <div className="mb-3 grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg border border-border bg-background/95 p-3">
                 <div className="flex flex-col items-center">
-                  <span className="font-sans text-[9px] uppercase tracking-wider text-muted-foreground">Regressivo</span>
+                  <span className="font-sans text-[11px] uppercase tracking-wider text-muted-foreground">Regressivo</span>
                   <span className="font-mono text-2xl font-light tabular-nums tracking-tight" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
                     {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <div className="font-sans text-[9px] uppercase tracking-wider text-slate-400">
+                  <div className="font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
                     {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
                   </div>
                   <div className="font-sans font-bold text-base truncate">
@@ -1263,7 +1263,7 @@ export function RoundsManager() {
                     </Button>
                   )}
                   <Button type="button" size="icon" variant="outline" onClick={resetTimer}
-                    className="h-8 w-8 border-primary/40 text-primary hover:bg-primary/10" aria-label="Reiniciar">
+                    className="h-8 w-8 border-border text-primary hover:bg-primary/10" aria-label="Reiniciar">
                     <RotateCcw className="h-3.5 w-3.5" />
                   </Button>
                 </div>
@@ -1276,15 +1276,15 @@ export function RoundsManager() {
                   return (
                     <li key={i}
                         className={cn('grid grid-cols-[28px_1fr_auto] items-center gap-3 rounded-md border px-3 py-2 transition-colors',
-                          isCurrent ? 'bg-slate-900' : 'border-primary/10 bg-slate-950/60')}
+                          isCurrent ? 'bg-slate-900' : 'border-primary/10 bg-background/60')}
                         style={isCurrent ? { borderColor: teamColor, boxShadow: `0 0 14px -4px ${teamColor}` } : undefined}>
                       <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--primary))' }}>{pad(i + 1)}</span>
                       <span className="font-sans font-semibold text-sm truncate">{r.name}</span>
                       <span className="font-mono text-[11px] tabular-nums flex items-center gap-2">
-                        <span className="text-slate-200">{r.from}</span>
+                        <span className="text-foreground">{r.from}</span>
                         <span style={{ color: teamColor }}>→</span>
-                        <span className="text-slate-200">{r.to}</span>
-                        <span className="rounded px-1.5 py-0.5 text-[9px] uppercase tracking-wide"
+                        <span className="text-foreground">{r.to}</span>
+                        <span className="rounded px-1.5 py-0.5 text-[11px] uppercase tracking-wide"
                               style={{ backgroundColor: `${teamColor}22`, color: teamColor }}>
                           {fmtDuration(r.duration)}
                         </span>
@@ -1295,7 +1295,7 @@ export function RoundsManager() {
               </ul>
 
               <div className="mt-4 flex flex-wrap gap-2 justify-end">
-                <Button type="button" variant="outline" onClick={copyToClipboard} className="border-primary/40 text-primary hover:bg-primary/10">
+                <Button type="button" variant="outline" onClick={copyToClipboard} className="border-border text-primary hover:bg-primary/10">
                   <Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar
                 </Button>
                 <Button type="button" onClick={printSchedule} className="bg-primary text-primary-foreground hover:bg-primary/90">
@@ -1306,14 +1306,14 @@ export function RoundsManager() {
           )}
 
           {/* Histórico de rondas */}
-          <div className="mt-1 rounded-lg border border-primary/20 bg-slate-900/40 p-3">
+          <div className="mt-1 rounded-lg border border-border bg-card/40 p-3">
             <div className="flex items-center justify-between mb-2">
-              <Label className="text-[10px] font-sans tracking-wide text-slate-500 flex items-center gap-1">
+              <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
                 <History className="h-3 w-3" /> Histórico ({history.length})
               </Label>
               {history.length > 0 && (
                 <button type="button" onClick={clearHistory}
-                  className="font-sans text-[9px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
+                  className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
                   Limpar
                 </button>
               )}
@@ -1330,18 +1330,18 @@ export function RoundsManager() {
                   const dtStr = `${pad(dt.getDate())}/${pad(dt.getMonth() + 1)} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
                   const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
                   return (
-                    <li key={h.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded border border-primary/10 bg-slate-950/60 px-2 py-1.5">
-                      <span className="font-sans text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                    <li key={h.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded border border-primary/10 bg-background/60 px-2 py-1.5">
+                      <span className="font-sans text-[11px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded"
                             style={{ color, backgroundColor: `${color}22` }}>{h.team}</span>
                       <div className="min-w-0">
-                        <div className="font-mono text-[10px] tabular-nums text-slate-200">
+                        <div className="font-mono text-[11px] tabular-nums text-foreground">
                           {dtStr} <span className="text-muted-foreground">→</span> {endStr}
                         </div>
-                        <div className="text-[10px] text-muted-foreground truncate">
+                        <div className="text-[11px] text-muted-foreground truncate">
                           {h.agents.slice(0, 4).join(' · ')}{h.agents.length > 4 ? ` +${h.agents.length - 4}` : ''}
                         </div>
                       </div>
-                      <span className="font-sans text-[9px] uppercase tracking-wide text-primary/70">
+                      <span className="font-sans text-[11px] uppercase tracking-wide text-primary/70">
                         {h.mode === 'split' ? `${h.startTime}–${h.endTime}` : `${h.intervalMin}min`}
                       </span>
                     </li>
