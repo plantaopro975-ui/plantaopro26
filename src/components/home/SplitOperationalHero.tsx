@@ -440,28 +440,44 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                   {t.op}
                 </span>
                 {(() => {
-                  const [hStr, sStr] = t.accent.split(' ');
-                  const h = hStr;
-                  const s = sStr; // já inclui %
-                  const hi = `hsl(${h} ${s} 78%)`;
-                  const base = `hsl(${h} ${s} 56%)`;
-                  const mid = `hsl(${h} ${s} 38%)`;
-                  const lo = `hsl(${h} ${s} 30%)`;
+                  const [h, s] = t.accent.split(' ');
+                  const uid = `tn-${t.key}`;
                   return (
                     <div className="relative z-20 flex flex-col gap-1 px-2.5 pb-2">
-                      <span
-                        className="font-sans font-black text-2xl sm:text-3xl leading-none tracking-[0.06em] uppercase"
-                        style={{
-                          backgroundImage: `linear-gradient(180deg, ${hi} 0%, ${base} 42%, ${mid} 55%, ${base} 78%, ${lo} 100%)`,
-                          WebkitBackgroundClip: 'text',
-                          backgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          textShadow:
-                            '0 1px 0 rgba(0,0,0,0.6), 0 2px 0 rgba(0,0,0,0.5), 0 3px 6px rgba(0,0,0,0.8)',
-                        }}
+                      <svg
+                        viewBox="0 0 260 64"
+                        className="block w-full h-9 sm:h-11"
+                        aria-label={t.key}
+                        role="img"
                       >
-                        {t.key}
-                      </span>
+                        <defs>
+                          <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%"   stopColor={`hsl(${h} ${s} 82%)`} />
+                            <stop offset="35%"  stopColor={`hsl(${h} ${s} 60%)`} />
+                            <stop offset="52%"  stopColor={`hsl(${h} ${s} 34%)`} />
+                            <stop offset="68%"  stopColor={`hsl(${h} ${s} 58%)`} />
+                            <stop offset="100%" stopColor={`hsl(${h} ${s} 28%)`} />
+                          </linearGradient>
+                          <linearGradient id={`${uid}-bevel`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%"  stopColor={`hsl(${h} ${s} 92%)`} stopOpacity="0.9" />
+                            <stop offset="50%" stopColor={`hsl(${h} ${s} 50%)`} stopOpacity="0.2" />
+                            <stop offset="100%" stopColor={`hsl(${h} ${s} 20%)`} stopOpacity="0.9" />
+                          </linearGradient>
+                          <filter id={`${uid}-shadow`} x="-20%" y="-20%" width="140%" height="160%">
+                            <feDropShadow dx="0" dy="1" stdDeviation="0.4" floodColor="#000" floodOpacity="0.9" />
+                            <feDropShadow dx="0" dy="3" stdDeviation="2"   floodColor="#000" floodOpacity="0.7" />
+                          </filter>
+                        </defs>
+                        <g filter={`url(#${uid}-shadow)`} fontFamily="'Impact','Oswald','Arial Black',sans-serif" fontWeight={900} textAnchor="middle">
+                          {/* extrusão inferior */}
+                          <text x="130" y="48" fontSize="52" fill={`hsl(${h} ${s} 14%)`} transform="translate(0,2)" letterSpacing="2">{t.key}</text>
+                          <text x="130" y="48" fontSize="52" fill={`hsl(${h} ${s} 18%)`} transform="translate(0,1)" letterSpacing="2">{t.key}</text>
+                          {/* face principal */}
+                          <text x="130" y="48" fontSize="52" fill={`url(#${uid}-fill)`} stroke={`url(#${uid}-bevel)`} strokeWidth="1.2" letterSpacing="2">{t.key}</text>
+                          {/* realce superior */}
+                          <text x="130" y="48" fontSize="52" fill={`hsl(${h} ${s} 95%)`} fillOpacity="0.35" letterSpacing="2" clipPath={`inset(0 0 55% 0)`}>{t.key}</text>
+                        </g>
+                      </svg>
                       <span
                         className="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.28em] truncate text-slate-200"
                         style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
