@@ -625,6 +625,21 @@ export function RoundsManager() {
   useEffect(() => { setHistory(readHistory()); }, [open]);
   const clearHistory = () => { writeHistory([]); setHistory([]); };
 
+  /* server clock offset (server_ms - local_ms) */
+  const clockOffsetRef = useRef<number>(0);
+  const sessionIdRef = useRef<string | null>(null);
+  const syncServerClock = async () => {
+    try {
+      const t0 = Date.now();
+      const { data, error } = await supabase.rpc('get_server_now');
+      if (error || !data) return;
+      const rtt = (Date.now() - t0) / 2;
+      const serverMs = new Date(data as string).getTime() + rtt;
+      clockOffsetRef.current = serverMs - Date.now();
+    } catch { /* offline: keep local clock */ }
+  };
+  const nowServer = () => Date.now() + clockOffsetRef.current;
+
 
   const addAgent = () => setAgents((a) => [...a, `Agente ${a.length + 1}`]);
   const removeAgent = (i: number) => setAgents((a) => a.filter((_, idx) => idx !== i));
