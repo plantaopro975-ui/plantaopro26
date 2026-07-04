@@ -440,28 +440,33 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                   {t.op}
                 </span>
                 {(() => {
+                  // Deriva gradiente metálico automaticamente: mantém H e S da equipe,
+                  // varia APENAS L em stops fixos (highlight → base → sombra → rebote → base escura).
                   const [h, s] = t.accent.split(' ');
+                  const L = { hi: 88, up: 62, mid: 32, lo: 55, base: 24, deep: 12, bevelHi: 96, bevelLo: 18, glow: 95 } as const;
+                  const c = (l: number, a?: number) =>
+                    a === undefined ? `hsl(${h} ${s} ${l}%)` : `hsl(${h} ${s} ${l}% / ${a})`;
                   const uid = `tn-${t.key}`;
+                  const stops: { off: string; l: number }[] = [
+                    { off: '0%',   l: L.hi },
+                    { off: '35%',  l: L.up },
+                    { off: '52%',  l: L.mid },
+                    { off: '68%',  l: L.lo },
+                    { off: '100%', l: L.base },
+                  ];
                   return (
                     <div className="relative z-20 flex flex-col gap-1 px-2.5 pb-2">
-                      <svg
-                        viewBox="0 0 260 64"
-                        className="block w-full h-9 sm:h-11"
-                        aria-label={t.key}
-                        role="img"
-                      >
+                      <svg viewBox="0 0 260 64" className="block w-full h-9 sm:h-11" aria-label={t.key} role="img">
                         <defs>
                           <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%"   stopColor={`hsl(${h} ${s} 82%)`} />
-                            <stop offset="35%"  stopColor={`hsl(${h} ${s} 60%)`} />
-                            <stop offset="52%"  stopColor={`hsl(${h} ${s} 34%)`} />
-                            <stop offset="68%"  stopColor={`hsl(${h} ${s} 58%)`} />
-                            <stop offset="100%" stopColor={`hsl(${h} ${s} 28%)`} />
+                            {stops.map((st) => (
+                              <stop key={st.off} offset={st.off} stopColor={c(st.l)} />
+                            ))}
                           </linearGradient>
                           <linearGradient id={`${uid}-bevel`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%"  stopColor={`hsl(${h} ${s} 92%)`} stopOpacity="0.9" />
-                            <stop offset="50%" stopColor={`hsl(${h} ${s} 50%)`} stopOpacity="0.2" />
-                            <stop offset="100%" stopColor={`hsl(${h} ${s} 20%)`} stopOpacity="0.9" />
+                            <stop offset="0%"   stopColor={c(L.bevelHi, 0.9)} />
+                            <stop offset="50%"  stopColor={c(L.up, 0.2)} />
+                            <stop offset="100%" stopColor={c(L.bevelLo, 0.9)} />
                           </linearGradient>
                           <filter id={`${uid}-shadow`} x="-20%" y="-20%" width="140%" height="160%">
                             <feDropShadow dx="0" dy="1" stdDeviation="0.4" floodColor="#000" floodOpacity="0.9" />
@@ -469,13 +474,10 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                           </filter>
                         </defs>
                         <g filter={`url(#${uid}-shadow)`} fontFamily="'Impact','Oswald','Arial Black',sans-serif" fontWeight={900} textAnchor="middle">
-                          {/* extrusão inferior */}
-                          <text x="130" y="48" fontSize="52" fill={`hsl(${h} ${s} 14%)`} transform="translate(0,2)" letterSpacing="2">{t.key}</text>
-                          <text x="130" y="48" fontSize="52" fill={`hsl(${h} ${s} 18%)`} transform="translate(0,1)" letterSpacing="2">{t.key}</text>
-                          {/* face principal */}
+                          <text x="130" y="48" fontSize="52" fill={c(L.deep)} transform="translate(0,2)" letterSpacing="2">{t.key}</text>
+                          <text x="130" y="48" fontSize="52" fill={c(L.base)} transform="translate(0,1)" letterSpacing="2">{t.key}</text>
                           <text x="130" y="48" fontSize="52" fill={`url(#${uid}-fill)`} stroke={`url(#${uid}-bevel)`} strokeWidth="1.2" letterSpacing="2">{t.key}</text>
-                          {/* realce superior */}
-                          <text x="130" y="48" fontSize="52" fill={`hsl(${h} ${s} 95%)`} fillOpacity="0.35" letterSpacing="2" clipPath={`inset(0 0 55% 0)`}>{t.key}</text>
+                          <text x="130" y="48" fontSize="52" fill={c(L.glow)} fillOpacity="0.32" letterSpacing="2" clipPath="inset(0 0 55% 0)">{t.key}</text>
                         </g>
                       </svg>
                       <span
