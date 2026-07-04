@@ -99,18 +99,18 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
 
       {/* ============ TACTICAL TITLE STRIP — Noir & Gold (matches Header) ============ */}
       <div className="relative mx-2 sm:mx-3 mt-2 shrink-0 overflow-hidden rounded-md border-b border-t border-primary/25 bg-slate-950 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_5%)_60%,hsl(217_62%_3%)_100%)] shadow-[0_8px_28px_-12px_hsl(217_62%_2%/0.9)]">
-        {/* realistic photo background */}
+        {/* subtle photo background — low contrast so it doesn't fight the text */}
         <img
           src={hudBg.url}
           alt=""
           aria-hidden
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60 select-none"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 grayscale-[0.4] blur-[1px] select-none"
           draggable={false}
         />
-        {/* dark gradient overlay for legibility */}
+        {/* strong dark overlay for legibility */}
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,hsl(217_62%_3%/0.92)_0%,hsl(217_62%_5%/0.55)_50%,hsl(217_62%_3%/0.92)_100%)]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,hsl(217_62%_3%/0.96)_0%,hsl(217_62%_4%/0.82)_50%,hsl(217_62%_3%/0.96)_100%)]"
         />
         {/* blueprint grid */}
         <span
