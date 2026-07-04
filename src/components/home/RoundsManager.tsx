@@ -757,7 +757,7 @@ export function RoundsManager() {
             <div className="flex items-center gap-3">
               {/* Hero realista — reativo à equipe */}
               <TeamHero team={team} color={teamColor} />
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">
                   <Shield className="h-3 w-3" style={{ color: teamColor, opacity: 0.85 }} />
                   <span>Operação · Equipe</span>
@@ -770,6 +770,15 @@ export function RoundsManager() {
                   escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
+              {/* Botão Sair (única saída) */}
+              <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
+                className="shrink-0 inline-flex items-center gap-1.5 h-8 rounded-md border border-slate-700/70 bg-slate-900/60 pl-2 pr-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-colors">
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                  <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M10 8l-4 4 4 4M6 12h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Sair
+              </button>
             </div>
           </DialogHeader>
 
