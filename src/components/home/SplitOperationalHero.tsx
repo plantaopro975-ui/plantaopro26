@@ -376,15 +376,18 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 style={{ ['--team-accent' as any]: t.accent }}
               >
                 {/* Realistic background image per team */}
-                <img
-                  src={t.bg}
-                  alt=""
-                  aria-hidden
-                  loading="lazy"
-                  decoding="async"
-                  className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-90 saturate-125 contrast-110 transition-opacity duration-500 group-hover:opacity-100"
-                  draggable={false}
-                />
+                <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
+                  <source srcSet={t.bgWebp} type="image/webp" />
+                  <img
+                    src={t.bg}
+                    alt=""
+                    aria-hidden
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover opacity-90 saturate-125 contrast-110 transition-opacity duration-500 group-hover:opacity-100"
+                    draggable={false}
+                  />
+                </picture>
                 {/* Vignette-only overlay — mantém cores vivas, escurece só as bordas para legibilidade */}
                 <span
                   aria-hidden
