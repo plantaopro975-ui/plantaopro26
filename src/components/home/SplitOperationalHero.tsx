@@ -57,7 +57,7 @@ function TopHudBar() {
           <div className="flex items-center gap-2 min-w-0">
             <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-400" strokeWidth={2.2} />
             <span className="truncate text-slate-300">
-              Online<span className="hidden sm:inline text-slate-500"> · Enlace Seguro</span>
+              Online
             </span>
           </div>
           <div className="hidden md:flex items-center justify-center text-slate-400/80 truncate">
@@ -193,10 +193,6 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
 
           {/* LEFT — CTA + selos (título movido para faixa superior) */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 justify-center">
-            <p className="hidden sm:block max-w-md text-[12px] text-slate-400 leading-relaxed">
-              Plataforma integrada para agentes socioeducativos do Acre.
-              Escalas, plantões e comunicação em tempo real.
-            </p>
 
 
             <button
