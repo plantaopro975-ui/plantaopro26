@@ -61,6 +61,7 @@ export function useInactivityLogout({ enabled, onLogout }: Options) {
 
     return () => {
       events.forEach((e) => window.removeEventListener(e, reset));
+      document.removeEventListener('visibilitychange', reset);
       clear();
     };
   }, [enabled, onLogout, toast]);
