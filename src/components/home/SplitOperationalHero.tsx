@@ -193,8 +193,8 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         <div className="relative grid gap-3 sm:gap-4 px-3 sm:px-5 pt-3 pb-0 md:grid-cols-[0.95fr_1.05fr] items-end shrink-0">
 
           {/* LEFT — CTA + selos */}
-          <div className="relative z-20 min-w-0 flex flex-col gap-4 justify-center">
-            <div className="space-y-1.5">
+          <div className="relative z-20 min-w-0 flex flex-col gap-4 items-stretch">
+            <div className="flex flex-col gap-1.5">
               <span className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400/90">
                 <span className="h-1 w-6 bg-amber-400/70" />
                 Sistema Operacional
@@ -209,7 +209,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               type="button"
               onClick={onPrimaryAction}
               size="lg"
-              className="group w-full justify-center gap-2 rounded-md bg-amber-500 font-mono text-[11px] uppercase tracking-[0.24em] font-bold text-black hover:bg-amber-400 hover:shadow-[0_0_35px_rgba(234,179,8,0.55)]"
+              className="group w-full justify-center gap-2 bg-amber-500 text-black font-mono text-[11px] uppercase tracking-[0.24em] font-bold hover:bg-amber-400 hover:shadow-[0_0_35px_rgba(234,179,8,0.55)] focus-visible:ring-amber-400/70 disabled:opacity-50"
             >
               <Fingerprint className="h-4 w-4" strokeWidth={2.4} />
               Autenticação Segura
