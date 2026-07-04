@@ -207,7 +207,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
             <button
               type="button"
               onClick={onPrimaryAction}
-              className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-md bg-amber-500 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.24em] font-bold text-black hover:bg-amber-400 hover:shadow-[0_0_35px_rgba(234,179,8,0.55)] transition-all"
+              className="group flex w-full items-center justify-center gap-2 rounded-md bg-amber-500 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.24em] font-bold text-black hover:bg-amber-400 hover:shadow-[0_0_35px_rgba(234,179,8,0.55)] transition-all"
             >
               <Fingerprint className="h-4 w-4" strokeWidth={2.4} />
               Autenticação Segura
