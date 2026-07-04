@@ -1343,8 +1343,8 @@ export function RoundsManager() {
                       {/* Rows — sem caixas, apenas linhas */}
                       <ul className="divide-y divide-border/40">
                         {schedule.rows.map((r, i) => {
-                          const isCurrent = running && i === currentIdx && live && !live.done;
-                          const isDone = running && live && (live.done || i < currentIdx);
+                          const isCurrent = running && !!live && !live.done && i === live.index;
+                          const isDone = running && !!live && (live.done ? i <= live.index : i < live.index);
                           return (
                             <li key={i}
                                 className={cn('grid grid-cols-[28px_minmax(0,1fr)] sm:grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-2.5 transition-colors',
