@@ -3,6 +3,7 @@ import { ArrowUpRight, Radio, ShieldCheck, Activity, Fingerprint, Clock3, User2 
 import { cn } from '@/lib/utils';
 import agent3d from '@/assets/hero/agent-ise-3d.png';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
+import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import brasao from '@/assets/hero/brasao-ise.png';
 import objAlfa from '@/assets/teams/obj-alfa-shield.png';
 import objBravo from '@/assets/teams/obj-bravo-sword.png';
@@ -187,38 +188,26 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 filter: 'blur(20px)',
               }}
             />
-            <img
-              src={agent3d}
-              alt="Agente Socioeducativo"
-              className="relative z-10 h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
-              style={{ maxHeight: 'clamp(260px, 42vw, 560px)' }}
-              draggable={false}
-            />
-            {/* Viatura ISE — tactical vehicle, next to agent */}
-            <div
-              className="pointer-events-none absolute bottom-3 left-1/2 z-20 translate-x-[8%]"
-              style={{ width: 'clamp(180px, 28vw, 380px)' }}
-            >
-              <div className="relative inline-block w-full leading-[0] isolate">
-                <img
-                  src={vehicle3d}
-                  alt="Viatura Tática ISE"
-                  className="block h-auto w-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.9)] select-none"
-                  draggable={false}
+            {/* Cena composta: agente + viatura em escala realista */}
+            <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(280px, 46vw, 600px)' }}>
+              <img
+                src={agentVehicleScene}
+                alt="Agente Socioeducativo ao lado da viatura tática ISE"
+                className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
+                draggable={false}
+              />
+              {/* Giroflex — halos ancorados em % da bounding box da cena */}
+              <div aria-hidden className="absolute inset-0 z-[1] pointer-events-none">
+                {/* Lâmpadas azuis (lado esquerdo da barra da viatura) */}
+                <span
+                  className="absolute rounded-full blur-[6px] bg-[radial-gradient(ellipse,rgba(59,130,246,1)_0%,rgba(59,130,246,0.55)_35%,transparent_70%)] animate-[giroflex-blue_0.8s_steps(2,end)_infinite]"
+                  style={{ left: '46%', top: '15%', width: '9%', height: '4%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
                 />
-                {/* Giroflex — halos ancorados em % da bounding box da img (escala em todos os viewports) */}
-                <div aria-hidden className="absolute inset-0 z-[1]">
-                  {/* Lâmpadas azuis (lado esquerdo da barra) */}
-                  <span
-                    className="absolute rounded-full blur-[6px] bg-[radial-gradient(ellipse,rgba(59,130,246,1)_0%,rgba(59,130,246,0.55)_35%,transparent_70%)] animate-[giroflex-blue_0.8s_steps(2,end)_infinite]"
-                    style={{ left: '39%', top: '28%', width: '14%', height: '6%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
-                  />
-                  {/* Lâmpadas vermelhas (lado direito da barra) */}
-                  <span
-                    className="absolute rounded-full blur-[6px] bg-[radial-gradient(ellipse,rgba(239,68,68,1)_0%,rgba(239,68,68,0.55)_35%,transparent_70%)] animate-[giroflex-red_0.8s_steps(2,end)_infinite]"
-                    style={{ left: '54%', top: '28%', width: '14%', height: '6%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
-                  />
-                </div>
+                {/* Lâmpadas vermelhas (lado direito da barra da viatura) */}
+                <span
+                  className="absolute rounded-full blur-[6px] bg-[radial-gradient(ellipse,rgba(239,68,68,1)_0%,rgba(239,68,68,0.55)_35%,transparent_70%)] animate-[giroflex-red_0.8s_steps(2,end)_infinite]"
+                  style={{ left: '55%', top: '15%', width: '9%', height: '4%', transformOrigin: '50% 50%', transform: 'translateZ(0)' }}
+                />
               </div>
             </div>
           </div>
