@@ -933,13 +933,49 @@ export function RoundsManager() {
     doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`, pageW / 2, 30, { align: 'center' });
     doc.setTextColor(0);
 
+    const statusFor = (i: number): 'Concluído' | 'Em ronda' | 'Aguardando' => {
+      if (!running || !live) return 'Aguardando';
+      if (live.done ? i <= live.index : i < live.index) return 'Concluído';
+      if (!live.done && i === live.index) return 'Em ronda';
+      return 'Aguardando';
+    };
     autoTable(doc, {
       startY: 38,
-      head: [['#', 'Agente', 'Início', 'Término', 'Duração']],
-      body: schedule.rows.map((r, i) => [pad(i + 1), r.name, r.from, r.to, fmtDuration(r.duration)]),
+      head: [['#', 'Agente', 'Início', 'Término', 'Duração', 'Status']],
+      body: schedule.rows.map((r, i) => [pad(i + 1), r.name, r.from, r.to, fmtDuration(r.duration), statusFor(i)]),
       theme: 'grid',
       headStyles: { fillColor: [10, 15, 26], textColor: 245, fontStyle: 'bold' },
       styles: { fontSize: 10, cellPadding: 3 },
+      didParseCell: (data) => {
+        if (data.section !== 'body') return;
+        const st = statusFor(data.row.index);
+        if (st === 'Concluído') {
+          // "Risco" no nome e badge verde "MISSÃO CUMPRIDA"
+          if (data.column.index === 1) {
+            data.cell.styles.textColor = [120, 120, 120];
+            (data.cell.styles as { fontStyle?: string }).fontStyle = 'italic';
+          }
+          if (data.column.index === 5) {
+            data.cell.text = ['✓ MISSÃO CUMPRIDA'];
+            data.cell.styles.fillColor = [16, 185, 129];
+            data.cell.styles.textColor = 255;
+            data.cell.styles.fontStyle = 'bold';
+          }
+        } else if (st === 'Em ronda' && data.column.index === 5) {
+          data.cell.styles.fillColor = [245, 158, 11];
+          data.cell.styles.textColor = 20;
+          data.cell.styles.fontStyle = 'bold';
+        }
+      },
+      didDrawCell: (data) => {
+        // Desenha o "risco" (strike-through) sobre nome de agentes concluídos
+        if (data.section === 'body' && data.column.index === 1 && statusFor(data.row.index) === 'Concluído') {
+          const { x, y, width, height } = data.cell;
+          doc.setDrawColor(200, 60, 60);
+          doc.setLineWidth(0.6);
+          doc.line(x + 1.5, y + height / 2, x + width - 1.5, y + height / 2);
+        }
+      },
     });
 
     doc.save(`rondas_equipe_${team}_${new Date().toISOString().split('T')[0]}.pdf`);
