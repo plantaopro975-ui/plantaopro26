@@ -382,13 +382,17 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                   aria-hidden
                   loading="lazy"
                   decoding="async"
-                  className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-55 saturate-[0.9] transition-opacity duration-500 group-hover:opacity-75"
+                  className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-90 saturate-125 contrast-110 transition-opacity duration-500 group-hover:opacity-100"
                   draggable={false}
                 />
-                {/* Dark gradient overlay for legibility */}
+                {/* Vignette-only overlay — mantém cores vivas, escurece só as bordas para legibilidade */}
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-slate-950/30"
+                  className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,6,23,0.75)_100%)]"
+                />
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-t from-slate-950/90 to-transparent"
                 />
                 {/* Halo: ALFA usa variante exclusiva; demais compartilham .team-halo */}
                 {t.key === 'ALFA' ? (
