@@ -822,7 +822,7 @@ export function RoundsManager() {
         <DialogContent
           className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>button.absolute]:hidden transition-colors duration-500"
           style={{ ['--primary' as string]: hexToHslTriple(teamColor) }}
-          onEscapeKeyDown={(e) => { e.preventDefault(); requestExit(); }}
+          onEscapeKeyDown={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
         >
