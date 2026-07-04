@@ -18,6 +18,7 @@ import { ConfirmProvider } from "@/components/ui/confirm-provider";
 import { SingleDeviceGuard } from "@/components/SingleDeviceGuard";
 import { SplashScreen } from "@/components/SplashScreen";
 import { PanelSkeleton } from "@/components/ui/panel-skeleton";
+import { InactivityGuard } from "@/components/InactivityGuard";
 
 // Lazy-loaded routes — split into async chunks to shrink initial bundle
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -90,8 +91,10 @@ const App = () => (
               <GlobalNavigationHandler>
                 <RoutePrefetcher />
                 <SingleDeviceGuard />
+                <InactivityGuard />
                 {/* Global Offline Banner */}
                 <GlobalOfflineBanner />
+
 
                 {/* Reconnecting Guard - Shows recovery screen instead of redirecting */}
                 <ReconnectingGuard maxWaitTime={15000}>
@@ -130,11 +133,12 @@ const App = () => (
                       <Route
                         path="/agent-panel"
                         element={
-                          <RequireAuth mode="block">
+                          <RequireAuth mode="redirect" redirectTo="/">
                             <AgentPanel />
                           </RequireAuth>
                         }
                       />
+
                       <Route path="/agent-profile" element={<AgentProfileEdit />} />
                       <Route path="/agent-profile-edit" element={<AgentProfileEdit />} />
                       <Route path="/unit/:unitId" element={<UnitDashboard />} />
