@@ -141,22 +141,25 @@ export function Icon3D({
           className="absolute inset-0 rounded-md bg-amber-500/20 animate-pulse"
         />
       )}
-      <img
-        src={src}
-        alt={alt}
-        aria-hidden={alt ? undefined : true}
-        loading="lazy"
-        decoding="async"
-        width={size}
-        height={size}
-        onLoad={() => setStatus('loaded')}
-        onError={() => setStatus('error')}
-        className={cn(
-          'block object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] transition-opacity duration-300',
-          status === 'loaded' ? 'opacity-100' : 'opacity-0',
-        )}
-        style={dim}
-      />
+      <picture>
+        <source srcSet={src.replace(/\.png(\?.*)?$/i, '.webp$1')} type="image/webp" />
+        <img
+          src={src}
+          alt={alt}
+          aria-hidden={alt ? undefined : true}
+          loading="lazy"
+          decoding="async"
+          width={size}
+          height={size}
+          onLoad={() => setStatus('loaded')}
+          onError={() => setStatus('error')}
+          className={cn(
+            'block object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] transition-opacity duration-300',
+            status === 'loaded' ? 'opacity-100' : 'opacity-0',
+          )}
+          style={dim}
+        />
+      </picture>
     </span>
   );
 }
