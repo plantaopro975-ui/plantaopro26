@@ -91,8 +91,10 @@ const App = () => (
               <GlobalNavigationHandler>
                 <RoutePrefetcher />
                 <SingleDeviceGuard />
+                <InactivityGuard />
                 {/* Global Offline Banner */}
                 <GlobalOfflineBanner />
+
 
                 {/* Reconnecting Guard - Shows recovery screen instead of redirecting */}
                 <ReconnectingGuard maxWaitTime={15000}>
