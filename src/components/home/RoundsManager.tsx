@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import {
-  Clock, Users, Plus, Trash2, Copy, Printer, Timer, Shield,
+  Clock, Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
   Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
-  Save, Star, History,
+  Save, Star, History, CheckCircle2,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
@@ -827,33 +829,36 @@ export function RoundsManager() {
     toast({ title: 'Copiado', description: 'Escala copiada para a área de transferência.' });
   };
 
-  const printSchedule = () => {
+  const exportPDF = () => {
     if (!schedule) return;
-    const w = window.open('', '_blank', 'width=800,height=1000');
-    if (!w) return;
-    w.document.write(`
-      <html><head><title>EQUIPE ${team} — Rondas</title>
-      <style>
-        body{font-family:'Segoe UI',system-ui,sans-serif;padding:32px;color:#0a0f1a;}
-        h1{margin:0 0 4px;letter-spacing:.05em;text-transform:uppercase;font-size:22px;color:${teamColor}}
-        .meta{color:#475569;font-size:12px;margin-bottom:24px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.15em}
-        table{width:100%;border-collapse:collapse}
-        th,td{padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:14px}
-        th{background:#0a0f1a;color:${teamColor};text-transform:uppercase;font-size:11px;letter-spacing:.2em}
-        tr:nth-child(even) td{background:#f8fafc}
-        .win{font-family:ui-monospace,monospace;font-weight:700}
-        .dur{color:${teamColor};font-family:ui-monospace,monospace}
-      </style></head><body>
-      <h1>Equipe ${team}</h1>
-      <div class="meta">${mode === 'split' ? `Divisão · ${startTime} → ${endTime}` : `Intervalo · ${intervalMin}min desde ${startTime}`} · ${agents.length} agentes · ${fmtDuration(schedule.slot)}/agente · Arredondamento: ${rounding}</div>
-      <table><thead><tr><th>#</th><th>Agente</th><th>Início</th><th>Término</th><th>Duração</th></tr></thead><tbody>
-      ${schedule.rows.map((r, i) => `<tr><td>${pad(i + 1)}</td><td>${r.name}</td><td class="win">${r.from}</td><td class="win">${r.to}</td><td class="dur">${fmtDuration(r.duration)}</td></tr>`).join('')}
-      </tbody></table>
-      </body></html>
-    `);
-    w.document.close();
-    w.focus();
-    w.print();
+    const doc = new jsPDF();
+    const pageW = doc.internal.pageSize.getWidth();
+    const modeTxt = mode === 'split'
+      ? `Divisão · ${startTime} → ${endTime}`
+      : `Intervalo · ${intervalMin}min desde ${startTime}`;
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`EQUIPE ${team} — ESCALA DE RONDAS`, pageW / 2, 18, { align: 'center' });
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(90);
+    doc.text(`${modeTxt} · ${agents.length} agentes · ${fmtDuration(schedule.slot)}/agente · ${rounding}`, pageW / 2, 25, { align: 'center' });
+    doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`, pageW / 2, 30, { align: 'center' });
+    doc.setTextColor(0);
+
+    autoTable(doc, {
+      startY: 38,
+      head: [['#', 'Agente', 'Início', 'Término', 'Duração']],
+      body: schedule.rows.map((r, i) => [pad(i + 1), r.name, r.from, r.to, fmtDuration(r.duration)]),
+      theme: 'grid',
+      headStyles: { fillColor: [10, 15, 26], textColor: 245, fontStyle: 'bold' },
+      styles: { fontSize: 10, cellPadding: 3 },
+    });
+
+    doc.save(`rondas_equipe_${team}_${new Date().toISOString().split('T')[0]}.pdf`);
+    toast({ title: 'PDF exportado', description: 'A escala foi salva como PDF.' });
   };
 
   const currentIdx = live?.index ?? -1;
@@ -1259,9 +1264,27 @@ export function RoundsManager() {
                         <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-light tabular-nums tracking-tight leading-none break-all" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
                           {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
                         </span>
-                        <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
-                          {running && live ? schedule.rows[live.index].name : schedule.rows[0].name}
-                        </div>
+
+                        {/* Nome BEM GRANDE do agente em ronda */}
+                        {running && live && !live.done && (
+                          <div
+                            className="font-sans font-black uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                            style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
+                          >
+                            {schedule.rows[live.index].name}
+                          </div>
+                        )}
+                        {(!running || !live) && (
+                          <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
+                            {schedule.rows[0].name}
+                          </div>
+                        )}
+                        {running && live?.done && (
+                          <div className="font-sans font-black uppercase tracking-[0.15em] text-2xl sm:text-3xl text-emerald-500 flex items-center gap-2">
+                            <CheckCircle2 className="h-7 w-7" /> MISSÃO CUMPRIDA
+                          </div>
+                        )}
+
                         {running && live && !live.done && 'slotSec' in live && (
                           <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
                             <div className="h-full transition-all"
@@ -1289,13 +1312,25 @@ export function RoundsManager() {
                       <ul className="divide-y divide-border/40">
                         {schedule.rows.map((r, i) => {
                           const isCurrent = running && i === currentIdx && live && !live.done;
+                          const isDone = running && live && (live.done || i < currentIdx);
                           return (
                             <li key={i}
                                 className={cn('grid grid-cols-[28px_minmax(0,1fr)] sm:grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-2.5 transition-colors',
-                                  isCurrent && 'bg-primary/5 -mx-2 px-2 rounded')}
+                                  isCurrent && 'bg-primary/5 -mx-2 px-2 rounded',
+                                  isDone && 'opacity-70')}
                                 style={isCurrent ? { boxShadow: `inset 3px 0 0 0 ${teamColor}` } : undefined}>
                               <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
-                              <span className="font-sans font-medium text-sm break-words min-w-0">{r.name}</span>
+                              <span className={cn(
+                                'font-sans font-medium text-sm break-words min-w-0 flex items-center gap-2 flex-wrap',
+                                isDone && 'line-through text-muted-foreground decoration-emerald-500/70'
+                              )}>
+                                {r.name}
+                                {isDone && (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[9px] uppercase tracking-[0.15em] text-emerald-400 no-underline">
+                                    <CheckCircle2 className="h-2.5 w-2.5" /> Missão cumprida
+                                  </span>
+                                )}
+                              </span>
                               <span className="col-span-2 sm:col-auto font-mono text-[11px] tabular-nums flex flex-wrap items-center gap-2 justify-start sm:justify-end text-muted-foreground">
                                 <span className="text-foreground">{r.from}</span>
                                 <span style={{ color: teamColor }}>→</span>
@@ -1313,8 +1348,8 @@ export function RoundsManager() {
                         <Button type="button" variant="ghost" onClick={copyToClipboard} className="text-muted-foreground hover:text-primary">
                           <Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar
                         </Button>
-                        <Button type="button" variant="ghost" onClick={printSchedule} className="text-muted-foreground hover:text-primary">
-                          <Printer className="h-3.5 w-3.5 mr-1.5" /> Imprimir
+                        <Button type="button" variant="ghost" onClick={exportPDF} className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10">
+                          <FileDown className="h-3.5 w-3.5 mr-1.5" /> Exportar PDF
                         </Button>
                       </div>
                     </div>
