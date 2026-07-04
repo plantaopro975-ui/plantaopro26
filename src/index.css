@@ -1001,15 +1001,19 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
   .alfa-halo {
     transition: none !important;
     transform: none !important;
+    opacity: 0 !important;
   }
-  .group[data-team="ALFA"]:hover .alfa-vest,
-  .group[data-team="ALFA"]:focus-visible .alfa-vest,
-  .group[data-team="ALFA"]:active .alfa-vest {
+  [data-team-card],
+  [data-team-card] * {
+    transition: none !important;
     animation: none !important;
     transform: none !important;
   }
-  .group[data-team="ALFA"] .animate-float3d {
-    animation: none !important;
+  [data-team-card]:hover,
+  [data-team-card]:focus-visible,
+  [data-team-card]:active {
+    transform: none !important;
   }
 }
+
 
