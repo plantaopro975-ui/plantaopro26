@@ -270,43 +270,116 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
   }
 
   if (team === 'BRAVO') {
-    // Realistic tactical eagle head — steel + gold beak, feathered shading
+    // Realistic tactical lion head — brushed steel with team-color mane, gold fangs
     const eyeId = `th-${team}-eye`;
+    const maneId = `th-${team}-mane`;
     return (
       <svg {...svgProps}>
         {defs}
-        <radialGradient id={eyeId} cx="50%" cy="50%" r="50%">
+        <radialGradient id={eyeId} cx="50%" cy="45%" r="55%">
           <stop offset="0%" stopColor="#fef3c7" />
           <stop offset="55%" stopColor="#d97706" />
           <stop offset="100%" stopColor="#0b0f17" />
         </radialGradient>
-        {/* Backing medallion (bevelled disc) */}
+        <radialGradient id={maneId} cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stopColor={color} stopOpacity="0.95" />
+          <stop offset="60%" stopColor={color} stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#020617" />
+        </radialGradient>
+
+        {/* Backing medallion */}
         <circle cx="32" cy="32" r="28" fill={`url(#${rimId})`} />
         <circle cx="32" cy="32" r="25" fill={`url(#${gId})`} />
-        {/* Head silhouette shadow */}
-        <path d="M18 20 C18 12 26 6 34 8 C44 10 50 18 50 28 C50 34 46 39 40 42 L42 48 L36 46 L34 52 L30 46 L22 46 L26 40 C21 38 18 30 18 24 Z"
-              fill="#000000" fillOpacity="0.55" transform="translate(0.8 1)" />
-        {/* Head main (brushed steel) */}
-        <path d="M18 20 C18 12 26 6 34 8 C44 10 50 18 50 28 C50 34 46 39 40 42 L42 48 L36 46 L34 52 L30 46 L22 46 L26 40 C21 38 18 30 18 24 Z"
-              fill={`url(#${mId})`} stroke="#0f172a" strokeWidth="0.6" />
-        {/* Crown feathers (color accent) */}
-        <path d="M22 14 L26 10 L28 14 L32 9 L34 14 L38 10 L40 15" fill="none"
-              stroke={color} strokeOpacity="0.9" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
-        {/* Feather shading strokes */}
-        <path d="M24 22 L28 26 M22 28 L27 30 M24 34 L30 34 M28 40 L34 40" stroke="#0f172a" strokeOpacity="0.55" strokeWidth="0.6" strokeLinecap="round" />
-        <path d="M24 22 L28 26 M22 28 L27 30 M24 34 L30 34" stroke="#ffffff" strokeOpacity="0.25" strokeWidth="0.4" strokeLinecap="round" />
-        {/* Beak (gold, hooked) */}
-        <path d="M40 26 L54 30 L48 34 L40 32 Z" fill={`url(#${goldId})`} stroke="#78350f" strokeWidth="0.6" strokeLinejoin="round" />
-        <path d="M40 26 L52 30" stroke="#fef3c7" strokeOpacity="0.7" strokeWidth="0.5" />
-        {/* Eye */}
-        <circle cx="36" cy="24" r="2.2" fill="#0b0f17" />
-        <circle cx="36" cy="24" r="1.6" fill={`url(#${eyeId})`} />
-        <circle cx="35.4" cy="23.4" r="0.5" fill="#ffffff" />
-        {/* Top-left dome specular highlight */}
+
+        {/* Mane — layered tufts around the head */}
+        <path
+          d="M32 6
+             C22 6 14 12 12 22
+             C8 24 6 28 8 32
+             C6 36 8 42 14 44
+             C14 50 20 55 26 55
+             C28 58 36 58 38 55
+             C44 55 50 50 50 44
+             C56 42 58 36 56 32
+             C58 28 56 24 52 22
+             C50 12 42 6 32 6 Z"
+          fill={`url(#${maneId})`}
+          stroke="#0b0f17"
+          strokeOpacity="0.7"
+          strokeWidth="0.8"
+        />
+        {/* Mane tuft strokes (fur shading) */}
+        <path
+          d="M14 22 L11 20 M12 30 L8 30 M14 40 L10 42 M20 50 L18 54
+             M28 54 L28 58 M36 54 L36 58 M44 50 L46 54 M50 40 L54 42
+             M52 30 L56 30 M50 22 L53 20 M32 8 L32 4 M24 10 L22 6 M40 10 L42 6"
+          stroke="#0b0f17"
+          strokeOpacity="0.65"
+          strokeWidth="1"
+          strokeLinecap="round"
+        />
+        <path
+          d="M14 22 L11 20 M12 30 L8 30 M14 40 L10 42 M20 50 L18 54
+             M50 40 L54 42 M52 30 L56 30 M50 22 L53 20 M32 8 L32 4"
+          stroke="#ffffff"
+          strokeOpacity="0.25"
+          strokeWidth="0.5"
+          strokeLinecap="round"
+        />
+
+        {/* Head shadow */}
+        <ellipse cx="32.6" cy="34.2" rx="13" ry="14" fill="#000000" fillOpacity="0.55" />
+        {/* Head (brushed steel) */}
+        <ellipse cx="32" cy="33" rx="13" ry="14" fill={`url(#${mId})`} stroke="#0f172a" strokeWidth="0.6" />
+
+        {/* Cheeks / muzzle base */}
+        <path
+          d="M22 36 C24 42 28 45 32 45 C36 45 40 42 42 36"
+          fill="none"
+          stroke="#0b0f17"
+          strokeOpacity="0.65"
+          strokeWidth="0.8"
+        />
+        {/* Muzzle */}
+        <ellipse cx="32" cy="40" rx="5.5" ry="4" fill="#1e293b" stroke="#0f172a" strokeWidth="0.6" />
+        <path d="M32 40 V45" stroke="#0b0f17" strokeWidth="0.8" strokeLinecap="round" />
+
+        {/* Nose (gold) */}
+        <path
+          d="M29 36 Q32 33 35 36 Q34 39 32 39 Q30 39 29 36 Z"
+          fill={`url(#${goldId})`}
+          stroke="#78350f"
+          strokeWidth="0.5"
+        />
+        <circle cx="30.6" cy="35.4" r="0.4" fill="#fef3c7" />
+
+        {/* Fangs (small gold) */}
+        <path d="M30 42 L30.5 44.5 L31 42 Z" fill={`url(#${goldId})`} />
+        <path d="M33 42 L33.5 44.5 L34 42 Z" fill={`url(#${goldId})`} />
+
+        {/* Eyes */}
+        <ellipse cx="26" cy="28" rx="2.2" ry="1.8" fill="#0b0f17" />
+        <ellipse cx="38" cy="28" rx="2.2" ry="1.8" fill="#0b0f17" />
+        <circle cx="26" cy="28" r="1.4" fill={`url(#${eyeId})`} />
+        <circle cx="38" cy="28" r="1.4" fill={`url(#${eyeId})`} />
+        <circle cx="25.5" cy="27.5" r="0.4" fill="#ffffff" />
+        <circle cx="37.5" cy="27.5" r="0.4" fill="#ffffff" />
+
+        {/* Brow shading */}
+        <path d="M22 25 Q26 22 30 25 M34 25 Q38 22 42 25" stroke="#0b0f17" strokeOpacity="0.7" strokeWidth="1" strokeLinecap="round" fill="none" />
+
+        {/* Ears */}
+        <path d="M20 20 Q22 14 26 18" fill={`url(#${mId})`} stroke="#0f172a" strokeWidth="0.5" />
+        <path d="M44 20 Q42 14 38 18" fill={`url(#${mId})`} stroke="#0f172a" strokeWidth="0.5" />
+        <path d="M22 18 Q23 16 25 18" fill={color} fillOpacity="0.7" />
+        <path d="M42 18 Q41 16 39 18" fill={color} fillOpacity="0.7" />
+
+        {/* Top-left specular highlight */}
         <ellipse cx="26" cy="16" rx="9" ry="4" fill={`url(#${hId})`} />
       </svg>
     );
   }
+
 
 
   if (team === 'CHARLIE') {
