@@ -4,7 +4,7 @@ import { getThemeAssets } from '@/lib/themeAssets';
 import { teamPosters, teamPostersWebp, teamColors, homeBackground } from '@/lib/teamAssets';
 import realisticHomeBg from '@/assets/home-realistic-bg.jpg';
 
-import { teamPosters, teamPostersWebp, teamColors, homeBackground } from '@/lib/teamAssets';
+
 
 const teams = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const;
 
