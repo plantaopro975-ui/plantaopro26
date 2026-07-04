@@ -94,9 +94,14 @@ export const getTeamPoster = (team: string | null): string | null => {
   return teamPosters[team.toUpperCase()] || null;
 };
 
+export const getTeamPosterWebp = (team: string | null): string | null => {
+  if (!team) return null;
+  return teamPostersWebp[team.toUpperCase()] || null;
+};
+
 export const getTeamColors = (team: string | null) => {
   if (!team) return teamColors.ALFA;
   return teamColors[team.toUpperCase()] || teamColors.ALFA;
 };
 
-export { panelsBg, homeBackground, loginBackground };
+export { panelsBg, homeBackground, homeBackgroundWebp, loginBackground, loginBackgroundWebp };
