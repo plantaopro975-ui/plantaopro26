@@ -189,7 +189,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         />
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-3 p-3 sm:p-4 lg:grid-cols-[1fr_1.1fr_0.9fr] items-center flex-1 min-h-0">
+        <div className="relative grid gap-3 p-3 sm:p-4 lg:grid-cols-2 items-center flex-1 min-h-0">
 
           {/* LEFT — CTA + selos (título movido para faixa superior) */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 justify-center">
