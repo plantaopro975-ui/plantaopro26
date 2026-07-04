@@ -441,13 +441,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           className="relative rounded-lg overflow-hidden border border-accent/40 p-2 sm:p-4"
         >
           {/* Capa realista — sala de comando */}
-          <img
-            src={comandoCover}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover object-right"
-          />
+          <picture>
+            <source srcSet={comandoCoverWebp} type="image/webp" />
+            <img
+              src={comandoCover}
+              alt=""
+              aria-hidden
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover object-right"
+            />
+          </picture>
           {/* Overlays para legibilidade */}
           <div
             aria-hidden
