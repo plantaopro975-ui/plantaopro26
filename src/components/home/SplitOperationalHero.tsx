@@ -27,7 +27,6 @@ import bgDelta from '@/assets/teams/bg-delta.jpg';
 
 interface Props {
   onTeamClick: (team: string) => void;
-  onPrimaryAction?: () => void;
 }
 
 type TeamKey = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
