@@ -86,6 +86,35 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
     <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0">
       <TopHudBar />
 
+      {/* ============ TITLE STRIP — logo abaixo de "ONLINE · ENLACE SEGURO" ============ */}
+      <div className="relative mx-2 sm:mx-3 mt-2 overflow-hidden rounded-lg border border-amber-500/20 bg-[linear-gradient(90deg,rgba(10,17,40,0.95)_0%,rgba(5,5,5,0.85)_50%,rgba(10,17,40,0.95)_100%)] shrink-0">
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,#eab308_50%,transparent)]" />
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(90deg,transparent,#eab308_50%,transparent)]" />
+        <div className="relative flex items-center justify-center gap-2 sm:gap-4 px-3 sm:px-5 py-2 sm:py-2.5">
+          <img
+            src={brasao}
+            alt="Brasão ISE Acre"
+            className="h-6 sm:h-8 w-auto shrink-0 drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] select-none"
+            draggable={false}
+          />
+          <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-3 min-w-0 text-center sm:text-left">
+            <h1
+              id="mission-title"
+              className="font-sans font-black uppercase tracking-tight text-white text-[14px] sm:text-[18px] lg:text-[22px] leading-none truncate"
+            >
+              Sistema Socioeducativo
+            </h1>
+            <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.24em] text-amber-400 leading-none truncate">
+              Comando Operacional de Escalas
+            </p>
+          </div>
+          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.24em] text-red-300 backdrop-blur shrink-0">
+            <span className="h-1 w-1 rounded-full bg-red-500 animate-pulse" />
+            ISE Acre
+          </span>
+        </div>
+      </div>
+
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
         className="relative overflow-hidden mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
@@ -114,37 +143,13 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
         <div className="relative grid gap-3 p-3 sm:p-4 lg:grid-cols-[1fr_1.1fr_0.9fr] items-center flex-1 min-h-0">
 
-          {/* LEFT — Identity + CTA */}
+          {/* LEFT — CTA + selos (título movido para faixa superior) */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 justify-center">
-            <div className="flex items-center gap-2 flex-wrap">
-              <img
-                src={brasao}
-                alt="Brasão ISE Acre"
-                className="h-8 w-auto drop-shadow-[0_6px_14px_rgba(0,0,0,0.9)] select-none"
-                draggable={false}
-              />
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-500/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.24em] text-red-300 backdrop-blur">
-                <span className="h-1 w-1 rounded-full bg-red-500 animate-pulse" />
-                ISE Acre
-              </span>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <h1
-                id="mission-title"
-                className="font-sans font-black uppercase tracking-tighter text-white text-[24px] sm:text-[32px] lg:text-[36px] leading-[0.95]"
-              >
-                Sistema<br />Socioeducativo
-              </h1>
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-amber-400">
-                Comando Operacional de Escalas
-              </p>
-            </div>
-
             <p className="hidden sm:block max-w-md text-[12px] text-slate-400 leading-relaxed">
               Plataforma integrada para agentes socioeducativos do Acre.
               Escalas, plantões e comunicação em tempo real.
             </p>
+
 
             <button
               type="button"
