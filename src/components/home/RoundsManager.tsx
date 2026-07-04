@@ -1217,9 +1217,11 @@ export function RoundsManager() {
                   </div>
                 </div>
               </Section>
+              </div>
 
               {/* ============ COLUNA DIREITA — OPERAÇÃO ============ */}
-              <div className="grid gap-4 min-w-0">
+              <div className="grid gap-6 min-w-0 lg:pl-6">
+
                 <Section icon={<Timer className="h-3.5 w-3.5 text-primary" />} title="Cronograma" defaultOpen={!!schedule}>
                   {!schedule ? (
                     <div className="rounded-lg border border-dashed border-border bg-card/30 p-6 text-center text-[12px] text-muted-foreground font-sans">
