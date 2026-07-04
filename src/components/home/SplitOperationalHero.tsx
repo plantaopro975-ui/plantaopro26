@@ -439,14 +439,28 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 >
                   {t.op}
                 </span>
-                <div className="relative z-20 flex flex-col gap-0.5 px-2.5 pb-2">
+                <div className="relative z-20 flex flex-col gap-1 px-2.5 pb-2">
                   <span
-                    className="font-sans font-black text-xl sm:text-2xl leading-none tracking-tight uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
-                    style={{ color: `hsl(${t.accent})` }}
+                    className="team-name-3d font-sans font-black text-2xl sm:text-3xl leading-none tracking-[0.08em] uppercase"
+                    style={{
+                      ['--tn-accent' as any]: `hsl(${t.accent})`,
+                      backgroundImage: `linear-gradient(180deg, #ffffff 0%, hsl(${t.accent}) 45%, hsl(${t.accent} / 0.55) 55%, hsl(${t.accent}) 75%, #f5f5f5 100%)`,
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      textShadow: `0 1px 0 rgba(0,0,0,0.4), 0 2px 0 rgba(0,0,0,0.35), 0 3px 0 rgba(0,0,0,0.3), 0 6px 12px rgba(0,0,0,0.75), 0 0 22px hsl(${t.accent} / 0.55)`,
+                      filter: `drop-shadow(0 2px 3px rgba(0,0,0,0.7))`,
+                    }}
                   >
                     {t.key}
                   </span>
-                  <span className="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.2em] text-slate-300 truncate">
+                  <span
+                    className="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.28em] truncate"
+                    style={{
+                      color: `hsl(${t.accent} / 0.85)`,
+                      textShadow: '0 1px 2px rgba(0,0,0,0.9)',
+                    }}
+                  >
                     {t.motto}
                   </span>
                 </div>
