@@ -20,6 +20,11 @@ import objDelta from '@/assets/teams/delta-radio-real.png';
 import objDeltaWebp from '@/assets/teams/delta-radio-real.webp';
 import objDeltaAvif from '@/assets/teams/delta-radio-real.avif';
 
+import bgAlfa from '@/assets/teams/bg-alfa.jpg';
+import bgBravo from '@/assets/teams/bg-bravo.jpg';
+import bgCharlie from '@/assets/teams/bg-charlie.jpg';
+import bgDelta from '@/assets/teams/bg-delta.jpg';
+
 interface Props {
   onTeamClick: (team: string) => void;
   onPrimaryAction?: () => void;
@@ -36,11 +41,12 @@ const TEAMS: {
   obj: string;
   webp: string;
   avif: string;
+  bg: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    webp: objAlfaWebp,    avif: objAlfaAvif },
-  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   webp: objBravoWebp,   avif: objBravoAvif },
-  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, webp: objCharlieWebp, avif: objCharlieAvif },
-  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif },
+  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    webp: objAlfaWebp,    avif: objAlfaAvif,    bg: bgAlfa },
+  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   webp: objBravoWebp,   avif: objBravoAvif,   bg: bgBravo },
+  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, webp: objCharlieWebp, avif: objCharlieAvif, bg: bgCharlie },
+  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif,   bg: bgDelta },
 ];
 
 interface TeamObjectProps {
@@ -369,6 +375,21 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
                 )}
                 style={{ ['--team-accent' as any]: t.accent }}
               >
+                {/* Realistic background image per team */}
+                <img
+                  src={t.bg}
+                  alt=""
+                  aria-hidden
+                  loading="lazy"
+                  decoding="async"
+                  className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-55 saturate-[0.9] transition-opacity duration-500 group-hover:opacity-75"
+                  draggable={false}
+                />
+                {/* Dark gradient overlay for legibility */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-slate-950/30"
+                />
                 {/* Halo: ALFA usa variante exclusiva; demais compartilham .team-halo */}
                 {t.key === 'ALFA' ? (
                   <span aria-hidden className="alfa-halo" />
