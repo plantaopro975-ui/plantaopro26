@@ -4,14 +4,18 @@ import { createPortal } from 'react-dom';
 
 import { toast } from 'sonner';
 import heroImage from '@/assets/hero-command.jpg';
+import heroImageWebp from '@/assets/hero-command.webp';
 import iconShield from '@/assets/icons-3d/noir-shield.png';
 import iconRadio from '@/assets/icons-3d/noir-radio.png';
 import iconHelmet from '@/assets/icons-3d/noir-helmet.png';
 import iconHandcuffs from '@/assets/icons-3d/noir-handcuffs.png';
 import agentFigure from '@/assets/tactical-agent-figure.png';
+import agentFigureWebp from '@/assets/tactical-agent-figure.webp';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
+import policeVehicleWebp from '@/assets/police-vehicle-3d.webp';
 import comandoCover from '@/assets/comando-operacional-cover.jpg';
-import { getTeamPoster, getTeamColors } from '@/lib/teamAssets';
+import comandoCoverWebp from '@/assets/comando-operacional-cover.webp';
+import { getTeamPoster, getTeamPosterWebp, getTeamColors } from '@/lib/teamAssets';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 
@@ -327,15 +331,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       style={{ maxHeight: '100%' }}
     >
       {/* Background */}
-      <img
-        src={heroImage}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 w-full h-full object-cover object-center"
-        loading="eager"
-        width={1920}
-        height={1024}
-      />
+      <picture>
+        <source srcSet={heroImageWebp} type="image/webp" />
+        <img
+          src={heroImage}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          loading="eager"
+          width={1920}
+          height={1024}
+        />
+      </picture>
       <div className="absolute inset-0" style={{ background: 'var(--gradient-hero-overlay)' }} aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/78 to-background/25" aria-hidden />
 
@@ -401,13 +408,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
             onPointerCancel={vDragH.onPointerCancel}
             onWheel={vDragH.onWheel}
           >
-            <img
-              src={policeVehicle}
-              alt="Viatura policial"
-              loading="lazy"
-              draggable={false}
-              className="h-full w-auto object-contain pointer-events-none"
-            />
+            <picture>
+              <source srcSet={policeVehicleWebp} type="image/webp" />
+              <img
+                src={policeVehicle}
+                alt="Viatura policial"
+                loading="lazy"
+                draggable={false}
+                className="h-full w-auto object-contain pointer-events-none"
+              />
+            </picture>
             <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-red" aria-hidden />
             <span className="vehicle-fx vehicle-fx--beacon vehicle-fx--beacon-blue" aria-hidden />
           </div>
@@ -431,13 +441,16 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
           className="relative rounded-lg overflow-hidden border border-accent/40 p-2 sm:p-4"
         >
           {/* Capa realista — sala de comando */}
-          <img
-            src={comandoCover}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover object-right"
-          />
+          <picture>
+            <source srcSet={comandoCoverWebp} type="image/webp" />
+            <img
+              src={comandoCover}
+              alt=""
+              aria-hidden
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover object-right"
+            />
+          </picture>
           {/* Overlays para legibilidade */}
           <div
             aria-hidden
@@ -619,12 +632,15 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
                 >
                   {/* Poster oficial — ocupa todo o card como background */}
                   <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-                    <img
-                      src={getTeamPoster(t.name)}
-                      alt=""
-                      className="absolute inset-0 h-full w-full object-cover opacity-95 group-hover:scale-[1.08] transition-transform duration-700 ease-out"
-                      style={{ filter: 'saturate(0.95) contrast(1.1) brightness(0.88)' }}
-                    />
+                    <picture>
+                      <source srcSet={getTeamPosterWebp(t.name) ?? undefined} type="image/webp" />
+                      <img
+                        src={getTeamPoster(t.name)}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover opacity-95 group-hover:scale-[1.08] transition-transform duration-700 ease-out"
+                        style={{ filter: 'saturate(0.95) contrast(1.1) brightness(0.88)' }}
+                      />
+                    </picture>
                     {/* Gradient inferior: base sólida para info bar */}
                     <span
                       aria-hidden
@@ -757,14 +773,17 @@ function AgentFigure({ agentT, dragHandlers, locked = false }: { agentT: Transfo
       }}
       className={`${locked ? '' : 'viewport-draggable-asset '}agent-figure block h-[30vh] sm:h-[30vh] lg:h-[38vh] max-h-[46vh] w-auto max-w-[46vw] sm:max-w-[28vw] lg:max-w-[22vw] select-none opacity-95 ${locked ? '' : 'cursor-grab active:cursor-grabbing'}`}
     >
-      <img
-        src={agentFigure}
-        alt=""
-        aria-hidden
-        loading="lazy"
-        draggable={false}
-        className="h-full w-auto object-contain object-bottom pointer-events-none"
-      />
+      <picture>
+        <source srcSet={agentFigureWebp} type="image/webp" />
+        <img
+          src={agentFigure}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          draggable={false}
+          className="h-full w-auto object-contain object-bottom pointer-events-none"
+        />
+      </picture>
     </div>
   );
 }

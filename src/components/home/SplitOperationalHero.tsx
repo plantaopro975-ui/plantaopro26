@@ -24,9 +24,13 @@ import objDeltaWebp from '@/assets/teams/delta-radio-real.webp';
 import objDeltaAvif from '@/assets/teams/delta-radio-real.avif';
 
 import bgAlfa from '@/assets/teams/bg-alfa.jpg';
+import bgAlfaWebp from '@/assets/teams/bg-alfa.webp';
 import bgBravo from '@/assets/teams/bg-bravo.jpg';
+import bgBravoWebp from '@/assets/teams/bg-bravo.webp';
 import bgCharlie from '@/assets/teams/bg-charlie.jpg';
+import bgCharlieWebp from '@/assets/teams/bg-charlie.webp';
 import bgDelta from '@/assets/teams/bg-delta.jpg';
+import bgDeltaWebp from '@/assets/teams/bg-delta.webp';
 
 interface Props {
   onTeamClick: (team: string) => void;
@@ -44,11 +48,12 @@ const TEAMS: {
   webp: string;
   avif: string;
   bg: string;
+  bgWebp: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    webp: objAlfaWebp,    avif: objAlfaAvif,    bg: bgAlfa },
-  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   webp: objBravoWebp,   avif: objBravoAvif,   bg: bgBravo },
-  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, webp: objCharlieWebp, avif: objCharlieAvif, bg: bgCharlie },
-  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif,   bg: bgDelta },
+  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    webp: objAlfaWebp,    avif: objAlfaAvif,    bg: bgAlfa,    bgWebp: bgAlfaWebp },
+  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   webp: objBravoWebp,   avif: objBravoAvif,   bg: bgBravo,   bgWebp: bgBravoWebp },
+  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, webp: objCharlieWebp, avif: objCharlieAvif, bg: bgCharlie, bgWebp: bgCharlieWebp },
+  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif,   bg: bgDelta,   bgWebp: bgDeltaWebp },
 ];
 
 interface TeamObjectProps {
@@ -371,15 +376,18 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 style={{ ['--team-accent' as any]: t.accent }}
               >
                 {/* Realistic background image per team */}
-                <img
-                  src={t.bg}
-                  alt=""
-                  aria-hidden
-                  loading="lazy"
-                  decoding="async"
-                  className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-90 saturate-125 contrast-110 transition-opacity duration-500 group-hover:opacity-100"
-                  draggable={false}
-                />
+                <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
+                  <source srcSet={t.bgWebp} type="image/webp" />
+                  <img
+                    src={t.bg}
+                    alt=""
+                    aria-hidden
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover opacity-90 saturate-125 contrast-110 transition-opacity duration-500 group-hover:opacity-100"
+                    draggable={false}
+                  />
+                </picture>
                 {/* Vignette-only overlay — mantém cores vivas, escurece só as bordas para legibilidade */}
                 <span
                   aria-hidden
