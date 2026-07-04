@@ -1251,7 +1251,7 @@ export default function Index() {
 
 
         {/* Split Operational Hero — briefing + tactical team selector */}
-        <div className="min-h-0 flex-1 pt-2 sm:pt-3">
+        <div className="min-h-0 flex-1">
 
 
 
