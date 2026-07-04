@@ -463,16 +463,15 @@ body {
   }
 
   .home-viewport-shell {
-    height: auto;
-    min-height: 0;
-    max-height: none;
-    overflow: visible;
-    contain: layout style;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y pinch-zoom;
-    overscroll-behavior-x: none;
-    overscroll-behavior-y: auto;
+    height: var(--home-viewport-height);
+    min-height: var(--home-viewport-height);
+    max-height: var(--home-viewport-height);
+    overflow: hidden;
+    contain: layout paint;
+    touch-action: pan-x pan-y pinch-zoom;
+    overscroll-behavior: none;
   }
+
 
   .hero-cinematic {
     min-height: 0 !important;
