@@ -54,15 +54,9 @@ export function useInactivityLogout({ enabled, onLogout }: Options) {
       }, IDLE_MS);
     };
 
-    const events: Array<keyof WindowEventMap> = [
-      'mousemove',
-      'mousedown',
-      'keydown',
-      'touchstart',
-      'scroll',
-      'visibilitychange',
-    ];
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'] as const;
     events.forEach((e) => window.addEventListener(e, reset, { passive: true }));
+    document.addEventListener('visibilitychange', reset);
     reset();
 
     return () => {
