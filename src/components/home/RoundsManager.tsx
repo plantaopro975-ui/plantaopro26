@@ -975,8 +975,20 @@ export function RoundsManager() {
                   escala · cronômetro · alarme · histórico
                 </DialogDescription>
               </div>
+              {/* Recentrar (só aparece se a janela foi movida) */}
+              {(drag.x !== 0 || drag.y !== 0) && (
+                <button type="button" onClick={resetPosition} aria-label="Recentrar janela"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-slate-700/70 bg-slate-900/60 text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-colors"
+                  title="Recentrar janela">
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                    <path d="M12 3v3M12 18v3M3 12h3M18 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                </button>
+              )}
               {/* Botão Sair (única saída) */}
               <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
+                onPointerDown={(e) => e.stopPropagation()}
                 className="shrink-0 inline-flex items-center gap-1.5 h-8 rounded-md border border-slate-700/70 bg-slate-900/60 pl-2 pr-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-colors">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                   <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
