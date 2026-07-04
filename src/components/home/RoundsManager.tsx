@@ -879,12 +879,13 @@ export function RoundsManager() {
               id: string; is_active: boolean; notified_indices?: number[] | null;
             } | null;
             if (!row) return;
-            if (payload.eventType === 'INSERT' && row.is_active) {
+            // Nova sessão ou sessão ativa detectada em outra aba: hidrata do zero
+            if ((payload.eventType === 'INSERT' || !sessionIdRef.current) && row.is_active) {
               hydrateFrom(payload.new as Parameters<typeof hydrateFrom>[0]);
               return;
             }
             if (row.id !== sessionIdRef.current) return;
-            // Absorve trava de notificações de outros dispositivos
+            // Absorve trava de notificações de outros dispositivos (dedupe)
             const arr = row.notified_indices || [];
             notifiedRef.current = new Set([...notifiedRef.current, ...arr]);
             arr.forEach((i) => firedRef.current.add(i));
