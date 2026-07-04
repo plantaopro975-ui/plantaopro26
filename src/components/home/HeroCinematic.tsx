@@ -331,15 +331,18 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
       style={{ maxHeight: '100%' }}
     >
       {/* Background */}
-      <img
-        src={heroImage}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 w-full h-full object-cover object-center"
-        loading="eager"
-        width={1920}
-        height={1024}
-      />
+      <picture>
+        <source srcSet={heroImageWebp} type="image/webp" />
+        <img
+          src={heroImage}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          loading="eager"
+          width={1920}
+          height={1024}
+        />
+      </picture>
       <div className="absolute inset-0" style={{ background: 'var(--gradient-hero-overlay)' }} aria-hidden />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/78 to-background/25" aria-hidden />
 
