@@ -633,7 +633,7 @@ export function RoundsManager() {
           </button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/30 text-foreground p-4 gap-3">
+        <DialogContent className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/30 text-foreground p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <DialogHeader className="border-b border-primary/20 pb-2">
             <div className="flex items-center gap-3">
               {/* 3D dome / radar em SVG puro */}
