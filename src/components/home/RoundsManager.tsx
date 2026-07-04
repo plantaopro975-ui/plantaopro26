@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { ConfirmDialog } from './ConfirmDialog';
 
 /* ================= helpers ================= */
 const pad = (n: number) => n.toString().padStart(2, '0');
@@ -185,85 +186,157 @@ function hexToHslTriple(hex: string): string {
   return `${Math.round(hh * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }
 
-/* ================= Team hero (realistic SVG emblem) ================= */
+/* ================= Team hero (realistic 3D SVG emblem) ================= */
 function TeamHero({ team, color }: { team: TeamKey; color: string }) {
   const gId = `th-${team}-grad`;
   const hId = `th-${team}-hi`;
+  const rimId = `th-${team}-rim`;
   const mId = `th-${team}-metal`;
-  const shadow = `drop-shadow(0 6px 14px ${color}66) drop-shadow(0 2px 4px #00000080)`;
+  const goldId = `th-${team}-gold`;
+  const shadowId = `th-${team}-shadow`;
+
+  const shadow = `drop-shadow(0 8px 16px ${color}80) drop-shadow(0 2px 4px #00000099)`;
   const defs = (
     <defs>
-      <radialGradient id={gId} cx="35%" cy="30%" r="75%">
-        <stop offset="0%" stopColor={color} stopOpacity="0.95" />
-        <stop offset="55%" stopColor={color} stopOpacity="0.5" />
+      {/* Bevelled color dome */}
+      <radialGradient id={gId} cx="32%" cy="26%" r="82%">
+        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
+        <stop offset="18%" stopColor={color} stopOpacity="0.95" />
+        <stop offset="65%" stopColor={color} stopOpacity="0.55" />
         <stop offset="100%" stopColor="#020617" />
       </radialGradient>
-      <radialGradient id={hId} cx="35%" cy="25%" r="35%">
-        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
+      {/* Glossy top highlight */}
+      <radialGradient id={hId} cx="35%" cy="20%" r="38%">
+        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
         <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
       </radialGradient>
+      {/* Metallic rim */}
+      <linearGradient id={rimId} x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stopColor="#f8fafc" stopOpacity="0.9" />
+        <stop offset="50%" stopColor={color} stopOpacity="0.6" />
+        <stop offset="100%" stopColor="#020617" stopOpacity="0.9" />
+      </linearGradient>
+      {/* Brushed steel */}
       <linearGradient id={mId} x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0%" stopColor="#334155" />
+        <stop offset="0%" stopColor="#cbd5e1" />
+        <stop offset="45%" stopColor="#64748b" />
         <stop offset="100%" stopColor="#0f172a" />
       </linearGradient>
+      {/* Golden accents */}
+      <linearGradient id={goldId} x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stopColor="#fde68a" />
+        <stop offset="55%" stopColor="#d97706" />
+        <stop offset="100%" stopColor="#78350f" />
+      </linearGradient>
+      {/* Inner shadow filter */}
+      <filter id={shadowId} x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="0.6" />
+        <feOffset dy="0.6" />
+        <feComponentTransfer><feFuncA type="linear" slope="0.6" /></feComponentTransfer>
+        <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+      </filter>
     </defs>
   );
+
   const svgProps = {
     viewBox: '0 0 64 64',
-    className: 'h-11 w-11 shrink-0',
+    className: 'h-12 w-12 shrink-0',
     style: { filter: shadow },
     'aria-hidden': true as const,
   };
 
   if (team === 'ALFA') {
+    // Shield with bevelled rim, glossy dome and golden cross
     return (
       <svg {...svgProps}>
         {defs}
-        <path d="M32 5 L54 13 V32 C54 46 44 55 32 60 C20 55 10 46 10 32 V13 Z"
-              fill={`url(#${gId})`} stroke={color} strokeOpacity="0.75" strokeWidth="1.2" />
-        <path d="M32 5 L54 13 V22 C54 24 44 27 32 27 C20 27 10 24 10 22 V13 Z" fill={`url(#${hId})`} />
-        <path d="M32 18 V44 M22 30 H42" stroke="#0b0f17" strokeWidth="3.6" strokeLinecap="round" opacity="0.35" />
-        <path d="M32 18 V44 M22 30 H42" stroke={color} strokeWidth="2" strokeLinecap="round" />
+        {/* Outer bevel */}
+        <path d="M32 3 L55 12 V33 C55 47 44 56 32 61 C20 56 9 47 9 33 V12 Z"
+              fill={`url(#${rimId})`} />
+        {/* Inner dome */}
+        <path d="M32 6 L52 14 V32 C52 44 43 53 32 57 C21 53 12 44 12 32 V14 Z"
+              fill={`url(#${gId})`} />
+        {/* Top glossy highlight */}
+        <path d="M32 6 L52 14 V22 C52 25 43 28 32 28 C21 28 12 25 12 22 V14 Z" fill={`url(#${hId})`} />
+        {/* Cross shadow */}
+        <path d="M32 18 V46 M20 30 H44" stroke="#000000" strokeOpacity="0.55" strokeWidth="5" strokeLinecap="round" />
+        {/* Golden cross */}
+        <path d="M32 18 V46 M20 30 H44" stroke={`url(#${goldId})`} strokeWidth="3.2" strokeLinecap="round" />
+        <path d="M32 18 V46 M20 30 H44" stroke="#fef3c7" strokeOpacity="0.7" strokeWidth="0.9" strokeLinecap="round" />
+        {/* Stud accents */}
+        <circle cx="32" cy="30" r="1.4" fill="#fef3c7" />
       </svg>
     );
   }
+
   if (team === 'BRAVO') {
+    // Sword: steel blade with fuller, golden crossguard, wrapped grip and pommel
     return (
       <svg {...svgProps}>
         {defs}
-        <path d="M32 4 L37 12 V40 L32 46 L27 40 V12 Z" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.8" />
-        <path d="M32 4 L34 12 V40" stroke="#ffffff" strokeOpacity="0.4" strokeWidth="0.8" />
-        <rect x="16" y="42" width="32" height="4" rx="1.6" fill={`url(#${mId})`} stroke={color} strokeOpacity="0.6" />
-        <rect x="28" y="46" width="8" height="12" rx="1" fill={`url(#${mId})`} stroke={color} strokeOpacity="0.6" />
-        <circle cx="32" cy="58" r="2.6" fill={color} stroke="#0b0f17" strokeWidth="0.6" />
+        {/* Blade */}
+        <path d="M32 3 L36 12 V38 L32 44 L28 38 V12 Z" fill={`url(#${mId})`} stroke="#e2e8f0" strokeOpacity="0.5" strokeWidth="0.4" />
+        {/* Fuller (blade groove) */}
+        <path d="M32 6 V38" stroke="#0f172a" strokeOpacity="0.6" strokeWidth="0.9" />
+        <path d="M31.2 6 V38" stroke="#ffffff" strokeOpacity="0.45" strokeWidth="0.4" />
+        {/* Edge highlight */}
+        <path d="M28.4 12 L28.4 38 L32 43" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="0.5" />
+        {/* Crossguard (gold) */}
+        <path d="M14 40 L50 40 L46 46 L18 46 Z" fill={`url(#${goldId})`} stroke="#78350f" strokeWidth="0.6" />
+        <path d="M15 40.6 L49 40.6" stroke="#fef3c7" strokeOpacity="0.7" strokeWidth="0.6" />
+        {/* Grip wrap */}
+        <rect x="29" y="46" width="6" height="11" rx="1" fill="#111827" />
+        <path d="M29 48 H35 M29 51 H35 M29 54 H35" stroke={color} strokeOpacity="0.55" strokeWidth="0.6" />
+        <path d="M29 48 H35 M29 51 H35 M29 54 H35" stroke="#ffffff" strokeOpacity="0.15" strokeWidth="0.4" strokeDasharray="1 1" />
+        {/* Pommel */}
+        <circle cx="32" cy="59" r="3" fill={`url(#${goldId})`} stroke="#78350f" strokeWidth="0.5" />
+        <circle cx="31" cy="58" r="1" fill="#fef3c7" fillOpacity="0.9" />
       </svg>
     );
   }
+
   if (team === 'CHARLIE') {
+    // Target: bevelled ring, colored bullseye, crosshair with drop shadow
     return (
       <svg {...svgProps}>
         {defs}
-        <circle cx="32" cy="32" r="26" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.7" />
-        <circle cx="32" cy="32" r="18" fill="none" stroke={color} strokeOpacity="0.55" />
-        <circle cx="32" cy="32" r="10" fill="none" stroke={color} strokeOpacity="0.5" />
-        <line x1="32" y1="4"  x2="32" y2="20" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
-        <line x1="32" y1="44" x2="32" y2="60" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
-        <line x1="4"  y1="32" x2="20" y2="32" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
-        <line x1="44" y1="32" x2="60" y2="32" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
-        <circle cx="32" cy="32" r="2.2" fill={color} />
-        <ellipse cx="26" cy="24" rx="9" ry="5" fill={`url(#${hId})`} />
+        <circle cx="32" cy="32" r="28" fill={`url(#${rimId})`} />
+        <circle cx="32" cy="32" r="25" fill={`url(#${gId})`} />
+        <circle cx="32" cy="32" r="19" fill="none" stroke="#0b0f17" strokeOpacity="0.6" strokeWidth="1.4" />
+        <circle cx="32" cy="32" r="19" fill="none" stroke={color} strokeOpacity="0.9" strokeWidth="0.7" />
+        <circle cx="32" cy="32" r="12" fill="none" stroke="#0b0f17" strokeOpacity="0.55" strokeWidth="1.2" />
+        <circle cx="32" cy="32" r="12" fill="none" stroke={color} strokeOpacity="0.85" strokeWidth="0.6" />
+        <circle cx="32" cy="32" r="5" fill={color} stroke="#0b0f17" strokeWidth="0.8" />
+        {/* Crosshair with shadow */}
+        <line x1="32" y1="2"  x2="32" y2="18" stroke="#000000" strokeOpacity="0.55" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="32" y1="46" x2="32" y2="62" stroke="#000000" strokeOpacity="0.55" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="2"  y1="32" x2="18" y2="32" stroke="#000000" strokeOpacity="0.55" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="46" y1="32" x2="62" y2="32" stroke="#000000" strokeOpacity="0.55" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="32" y1="2"  x2="32" y2="18" stroke={`url(#${mId})`} strokeWidth="1.6" strokeLinecap="round" />
+        <line x1="32" y1="46" x2="32" y2="62" stroke={`url(#${mId})`} strokeWidth="1.6" strokeLinecap="round" />
+        <line x1="2"  y1="32" x2="18" y2="32" stroke={`url(#${mId})`} strokeWidth="1.6" strokeLinecap="round" />
+        <line x1="46" y1="32" x2="62" y2="32" stroke={`url(#${mId})`} strokeWidth="1.6" strokeLinecap="round" />
+        <circle cx="32" cy="32" r="1.4" fill="#fef3c7" />
+        <ellipse cx="26" cy="22" rx="10" ry="5" fill={`url(#${hId})`} />
       </svg>
     );
   }
-  // DELTA — lightning
+
+  // DELTA — lightning inside a bevelled disc
   return (
     <svg {...svgProps}>
       {defs}
-      <circle cx="32" cy="32" r="26" fill={`url(#${gId})`} stroke={color} strokeOpacity="0.6" />
+      <circle cx="32" cy="32" r="28" fill={`url(#${rimId})`} />
+      <circle cx="32" cy="32" r="25" fill={`url(#${gId})`} />
+      {/* Bolt shadow */}
+      <path d="M37 8 L18 34 H30 L26 56 L47 28 H34 Z"
+            fill="#000000" fillOpacity="0.55" transform="translate(0.6 0.8)" />
+      {/* Bolt body */}
       <path d="M36 8 L18 34 H30 L26 56 L46 28 H34 Z"
-            fill={color} stroke="#0b0f17" strokeWidth="0.9" strokeLinejoin="round" />
-      <path d="M36 8 L20 33 H30" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="0.8" />
-      <ellipse cx="26" cy="22" rx="9" ry="5" fill={`url(#${hId})`} />
+            fill={`url(#${goldId})`} stroke="#78350f" strokeWidth="0.6" strokeLinejoin="round" />
+      {/* Bolt highlight */}
+      <path d="M36 8 L21 32 H29" fill="none" stroke="#fef3c7" strokeOpacity="0.85" strokeWidth="0.8" strokeLinecap="round" />
+      <ellipse cx="26" cy="22" rx="10" ry="5" fill={`url(#${hId})`} />
     </svg>
   );
 }
@@ -749,7 +822,7 @@ export function RoundsManager() {
         <DialogContent
           className="max-w-xl max-h-[88vh] overflow-y-auto bg-slate-950 border border-primary/25 text-slate-200 p-4 gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>button.absolute]:hidden transition-colors duration-500"
           style={{ ['--primary' as string]: hexToHslTriple(teamColor) }}
-          onEscapeKeyDown={(e) => { e.preventDefault(); requestExit(); }}
+          onEscapeKeyDown={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
         >
@@ -1142,97 +1215,45 @@ export function RoundsManager() {
         </DialogContent>
       </Dialog>
 
-      {/* Alarme de troca de ronda */}
-      <Dialog open={alarm.open} onOpenChange={(o) => setAlarm((a) => ({ ...a, open: o }))}>
-        <DialogContent
-          className="max-w-md bg-slate-950 border-2 text-center [&>button.absolute]:hidden"
-          style={{ borderColor: teamColor, boxShadow: `0 0 60px -10px ${teamColor}` }}
-          onEscapeKeyDown={(e) => e.preventDefault()}
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onInteractOutside={(e) => e.preventDefault()}
-        >
-          <DialogHeader>
-            <DialogTitle className="sr-only">Hora da ronda</DialogTitle>
-            <DialogDescription className="sr-only">Alarme de troca de agente</DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col items-center gap-3 py-4">
-            <div className="relative">
-              <Bell className="h-14 w-14 animate-bounce" style={{ color: teamColor }} />
-              <span className="absolute inset-0 rounded-full animate-ping" style={{ boxShadow: `0 0 30px ${teamColor}` }} />
-            </div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.32em]" style={{ color: teamColor }}>
-              EQUIPE {team} · Posto {pad(alarm.index + 1)}
-            </div>
-            <div className="font-sans text-2xl font-medium tracking-tight text-slate-200">
-              Hora de fazer a ronda
-            </div>
-            <div className="font-sans text-lg font-bold" style={{ color: teamColor }}>
+      {/* Alarme de troca de ronda — padronizado */}
+      <ConfirmDialog
+        open={alarm.open}
+        onOpenChange={(o) => setAlarm((a) => ({ ...a, open: o }))}
+        variant="alarm"
+        kicker={`EQUIPE ${team} · POSTO ${pad(alarm.index + 1)}`}
+        title="Hora de fazer a ronda"
+        description={
+          <span>
+            Assumir posto:{' '}
+            <span className="font-semibold" style={{ color: teamColor }}>
               {alarm.name}
-            </div>
-            <Button type="button" onClick={() => setAlarm((a) => ({ ...a, open: false }))}
-              className="mt-2 text-slate-950 font-bold uppercase tracking-[0.14em]"
-              style={{ backgroundColor: teamColor }}>
-              Ciente · Assumir posto
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+            </span>
+          </span>
+        }
+        accent={teamColor}
+        primaryLabel="Ciente · Assumir posto"
+        onPrimary={() => setAlarm((a) => ({ ...a, open: false }))}
+      />
 
-      {/* Confirmação de saída — evita fechamento acidental */}
-      <Dialog open={confirmExit} onOpenChange={setConfirmExit}>
-        <DialogContent
-          className="max-w-sm bg-slate-950 border border-slate-700/70 p-5 gap-4 [&>button.absolute]:hidden"
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onInteractOutside={(e) => e.preventDefault()}
-        >
-          <DialogHeader>
-            <div className="flex items-start gap-3">
-              <svg viewBox="0 0 48 48" className="h-12 w-12 shrink-0" aria-hidden style={{ filter: `drop-shadow(0 4px 10px ${teamColor}55)` }}>
-                <defs>
-                  <radialGradient id="rmExitG" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stopColor={teamColor} stopOpacity="0.9" />
-                    <stop offset="60%" stopColor={teamColor} stopOpacity="0.35" />
-                    <stop offset="100%" stopColor="#020617" />
-                  </radialGradient>
-                </defs>
-                <path d="M24 4 L42 11 V26 C42 36 34 43 24 46 C14 43 6 36 6 26 V11 Z"
-                      fill="url(#rmExitG)" stroke={teamColor} strokeOpacity="0.8" strokeWidth="1.2" />
-                <path d="M24 16 V28 M24 33 V34.2" stroke="#0b0f17" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
-                <path d="M24 16 V28 M24 33 V34.2" stroke={teamColor} strokeWidth="2.4" strokeLinecap="round" />
-              </svg>
-              <div className="min-w-0">
-                <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">Confirmação</div>
-                <DialogTitle className="font-sans text-base font-normal tracking-tight text-slate-100 leading-tight">
-                  Encerrar sessão de rondas?
-                </DialogTitle>
-                <DialogDescription className="text-[12px] text-slate-400 mt-1 leading-snug">
-                  {running
-                    ? 'O cronômetro está ativo. A sessão será interrompida e ficará registrada no histórico.'
-                    : 'Os dados desta escala permanecerão salvos no histórico local.'}
-                </DialogDescription>
-              </div>
-            </div>
-          </DialogHeader>
+      {/* Confirmação de saída — padronizada */}
+      <ConfirmDialog
+        open={confirmExit}
+        onOpenChange={setConfirmExit}
+        variant="exit"
+        kicker="Confirmação"
+        title="Encerrar sessão de rondas?"
+        description={
+          running
+            ? 'O cronômetro está ativo. A sessão será interrompida e ficará registrada no histórico.'
+            : 'Os dados desta escala permanecerão salvos no histórico local.'
+        }
+        accent={teamColor}
+        primaryLabel="Continuar"
+        onPrimary={() => setConfirmExit(false)}
+        secondaryLabel="Sim, sair"
+        onSecondary={confirmAndClose}
+      />
 
-          <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => setConfirmExit(false)}
-              className="inline-flex items-center justify-center gap-1.5 h-10 rounded-md border border-primary/50 bg-primary/10 font-mono text-[11px] uppercase tracking-[0.16em] text-primary hover:bg-primary/20 transition-colors">
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
-                <path d="M4 12a8 8 0 1 0 3-6.2M4 4v5h5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Continuar
-            </button>
-            <button type="button" onClick={confirmAndClose}
-              className="inline-flex items-center justify-center gap-1.5 h-10 rounded-md border border-slate-700/70 bg-slate-900/60 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-300 hover:text-slate-100 hover:border-slate-500 transition-colors">
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
-                <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M10 8l-4 4 4 4M6 12h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Sim, sair
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
