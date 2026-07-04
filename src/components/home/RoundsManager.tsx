@@ -829,33 +829,36 @@ export function RoundsManager() {
     toast({ title: 'Copiado', description: 'Escala copiada para a área de transferência.' });
   };
 
-  const printSchedule = () => {
+  const exportPDF = () => {
     if (!schedule) return;
-    const w = window.open('', '_blank', 'width=800,height=1000');
-    if (!w) return;
-    w.document.write(`
-      <html><head><title>EQUIPE ${team} — Rondas</title>
-      <style>
-        body{font-family:'Segoe UI',system-ui,sans-serif;padding:32px;color:#0a0f1a;}
-        h1{margin:0 0 4px;letter-spacing:.05em;text-transform:uppercase;font-size:22px;color:${teamColor}}
-        .meta{color:#475569;font-size:12px;margin-bottom:24px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.15em}
-        table{width:100%;border-collapse:collapse}
-        th,td{padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:14px}
-        th{background:#0a0f1a;color:${teamColor};text-transform:uppercase;font-size:11px;letter-spacing:.2em}
-        tr:nth-child(even) td{background:#f8fafc}
-        .win{font-family:ui-monospace,monospace;font-weight:700}
-        .dur{color:${teamColor};font-family:ui-monospace,monospace}
-      </style></head><body>
-      <h1>Equipe ${team}</h1>
-      <div class="meta">${mode === 'split' ? `Divisão · ${startTime} → ${endTime}` : `Intervalo · ${intervalMin}min desde ${startTime}`} · ${agents.length} agentes · ${fmtDuration(schedule.slot)}/agente · Arredondamento: ${rounding}</div>
-      <table><thead><tr><th>#</th><th>Agente</th><th>Início</th><th>Término</th><th>Duração</th></tr></thead><tbody>
-      ${schedule.rows.map((r, i) => `<tr><td>${pad(i + 1)}</td><td>${r.name}</td><td class="win">${r.from}</td><td class="win">${r.to}</td><td class="dur">${fmtDuration(r.duration)}</td></tr>`).join('')}
-      </tbody></table>
-      </body></html>
-    `);
-    w.document.close();
-    w.focus();
-    w.print();
+    const doc = new jsPDF();
+    const pageW = doc.internal.pageSize.getWidth();
+    const modeTxt = mode === 'split'
+      ? `Divisão · ${startTime} → ${endTime}`
+      : `Intervalo · ${intervalMin}min desde ${startTime}`;
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`EQUIPE ${team} — ESCALA DE RONDAS`, pageW / 2, 18, { align: 'center' });
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(90);
+    doc.text(`${modeTxt} · ${agents.length} agentes · ${fmtDuration(schedule.slot)}/agente · ${rounding}`, pageW / 2, 25, { align: 'center' });
+    doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`, pageW / 2, 30, { align: 'center' });
+    doc.setTextColor(0);
+
+    autoTable(doc, {
+      startY: 38,
+      head: [['#', 'Agente', 'Início', 'Término', 'Duração']],
+      body: schedule.rows.map((r, i) => [pad(i + 1), r.name, r.from, r.to, fmtDuration(r.duration)]),
+      theme: 'grid',
+      headStyles: { fillColor: [10, 15, 26], textColor: 245, fontStyle: 'bold' },
+      styles: { fontSize: 10, cellPadding: 3 },
+    });
+
+    doc.save(`rondas_equipe_${team}_${new Date().toISOString().split('T')[0]}.pdf`);
+    toast({ title: 'PDF exportado', description: 'A escala foi salva como PDF.' });
   };
 
   const currentIdx = live?.index ?? -1;
