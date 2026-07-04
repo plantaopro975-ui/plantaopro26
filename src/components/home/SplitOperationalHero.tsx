@@ -7,18 +7,18 @@ import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
 
-import objAlfa from '@/assets/teams/alfa-theme.png';
-import objAlfaWebp from '@/assets/teams/alfa-theme.webp';
-import objAlfaAvif from '@/assets/teams/alfa-theme.avif';
-import objBravo from '@/assets/teams/bravo-theme.png';
-import objBravoWebp from '@/assets/teams/bravo-theme.webp';
-import objBravoAvif from '@/assets/teams/bravo-theme.avif';
-import objCharlie from '@/assets/teams/charlie-theme.png';
-import objCharlieWebp from '@/assets/teams/charlie-theme.webp';
-import objCharlieAvif from '@/assets/teams/charlie-theme.avif';
-import objDelta from '@/assets/teams/delta-theme.png';
-import objDeltaWebp from '@/assets/teams/delta-theme.webp';
-import objDeltaAvif from '@/assets/teams/delta-theme.avif';
+import objAlfa from '@/assets/teams/alfa-vest-real.png';
+import objAlfaWebp from '@/assets/teams/alfa-vest-real.webp';
+import objAlfaAvif from '@/assets/teams/alfa-vest-real.avif';
+import objBravo from '@/assets/teams/bravo-helmet-real.png';
+import objBravoWebp from '@/assets/teams/bravo-helmet-real.webp';
+import objBravoAvif from '@/assets/teams/bravo-helmet-real.avif';
+import objCharlie from '@/assets/teams/charlie-badge-real.png';
+import objCharlieWebp from '@/assets/teams/charlie-badge-real.webp';
+import objCharlieAvif from '@/assets/teams/charlie-badge-real.avif';
+import objDelta from '@/assets/teams/delta-radio-real.png';
+import objDeltaWebp from '@/assets/teams/delta-radio-real.webp';
+import objDeltaAvif from '@/assets/teams/delta-radio-real.avif';
 
 interface Props {
   onTeamClick: (team: string) => void;
