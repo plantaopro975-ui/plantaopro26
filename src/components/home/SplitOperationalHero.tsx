@@ -61,7 +61,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
           loaded ? 'opacity-0' : 'opacity-100 animate-pulse',
         )}
       />
-      <picture>
+      <picture className="relative flex h-full w-full items-center justify-center">
         <source srcSet={team.avif} type="image/avif" />
         <source srcSet={team.webp} type="image/webp" />
         <img
@@ -75,11 +75,11 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
           sizes="(max-width: 640px) 22vw, (max-width: 1024px) 18vw, 200px"
           onLoad={() => setLoaded(true)}
           className={cn(
-            'max-h-[95%] max-w-[75%] object-contain select-none animate-float3d',
+            'block h-full w-full max-h-[80%] max-w-[65%] object-contain select-none animate-float3d',
             'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
             'transition-[transform,opacity] duration-700 ease-out',
-            'group-hover:scale-[1.20] group-hover:-translate-y-1.5',
-            'group-active:scale-[1.05]',
+            'group-hover:scale-[1.12] group-hover:-translate-y-1',
+            'group-active:scale-[1.04]',
             isAlfa && 'alfa-vest',
             loaded ? 'opacity-100' : 'opacity-0 blur-md',
           )}
