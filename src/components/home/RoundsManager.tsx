@@ -106,6 +106,127 @@ const writeHistory = (arr: HistoryEntry[]) => {
   try { localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0, 20))); } catch { /* ignore */ }
 };
 
+/* ================= alert sound settings ================= */
+type SoundSettings = { muted: boolean; volume: number; tone: 'chime' | 'pulse' | 'siren' };
+const SND_KEY = 'plantaopro_rounds_sound_v1';
+const DEFAULT_SOUND: SoundSettings = { muted: false, volume: 60, tone: 'chime' };
+const readSound = (): SoundSettings => {
+  try {
+    const raw = localStorage.getItem(SND_KEY);
+    return raw ? { ...DEFAULT_SOUND, ...JSON.parse(raw) } : DEFAULT_SOUND;
+  } catch { return DEFAULT_SOUND; }
+};
+const writeSound = (s: SoundSettings) => {
+  try { localStorage.setItem(SND_KEY, JSON.stringify(s)); } catch { /* ignore */ }
+};
+function playAlert(settings: SoundSettings) {
+  if (settings.muted || settings.volume <= 0) return;
+  try {
+    const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
+      || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const gain = ctx.createGain();
+    const vol = Math.min(1, Math.max(0, settings.volume / 100)) * 0.35;
+    gain.gain.value = vol;
+    gain.connect(ctx.destination);
+    const now = ctx.currentTime;
+
+    const beep = (freq: number, start: number, dur: number, type: OscillatorType = 'sine') => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(0, now + start);
+      g.gain.linearRampToValueAtTime(vol, now + start + 0.02);
+      g.gain.linearRampToValueAtTime(0, now + start + dur);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now + start); o.stop(now + start + dur + 0.02);
+    };
+
+    if (settings.tone === 'chime') {
+      beep(880, 0, 0.18, 'sine');
+      beep(1320, 0.16, 0.28, 'sine');
+    } else if (settings.tone === 'pulse') {
+      beep(1000, 0, 0.1, 'square');
+      beep(1000, 0.16, 0.1, 'square');
+      beep(1000, 0.32, 0.14, 'square');
+    } else {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(600, now);
+      o.frequency.linearRampToValueAtTime(1200, now + 0.3);
+      o.frequency.linearRampToValueAtTime(600, now + 0.6);
+      g.gain.setValueAtTime(vol, now);
+      g.gain.linearRampToValueAtTime(0, now + 0.65);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now); o.stop(now + 0.7);
+    }
+    setTimeout(() => ctx.close(), 1200);
+  } catch { /* ignore */ }
+}
+
+/* ================= SVG time field ================= */
+function TimeField({
+  id, value, onChange, label, invalid, accent,
+}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string }) {
+  const [h, m] = value.split(':');
+  const setH = (nh: string) => {
+    const v = Math.max(0, Math.min(23, parseInt(nh || '0', 10) || 0));
+    onChange(`${pad(v)}:${m ?? '00'}`);
+  };
+  const setM = (nm: string) => {
+    const v = Math.max(0, Math.min(59, parseInt(nm || '0', 10) || 0));
+    onChange(`${h ?? '00'}:${pad(v)}`);
+  };
+  const bump = (which: 'h' | 'm', delta: number) => {
+    if (which === 'h') setH(String(((parseInt(h, 10) || 0) + delta + 24) % 24));
+    else setM(String(((parseInt(m, 10) || 0) + delta + 60) % 60));
+  };
+  return (
+    <div className="grid gap-1.5">
+      <label htmlFor={`${id}-h`} className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+        {label}
+      </label>
+      <div className={cn(
+        'group relative flex items-center gap-2 rounded-md border bg-slate-950/60 pl-2 pr-1 h-11 transition-colors',
+        invalid ? 'border-destructive/70' : 'border-slate-700/70 focus-within:border-primary/70',
+      )}>
+        <svg viewBox="0 0 32 32" className="h-6 w-6 shrink-0" aria-hidden>
+          <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
+          <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
+                  strokeDasharray="4 3" strokeLinecap="round" />
+          <line x1="16" y1="16" x2="16" y2="7"   stroke={accent} strokeWidth="1.4" strokeLinecap="round" />
+          <line x1="16" y1="16" x2="22" y2="16"  stroke={accent} strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
+          <circle cx="16" cy="16" r="1.2" fill={accent} />
+        </svg>
+        <input id={`${id}-h`} inputMode="numeric" maxLength={2} value={h ?? ''}
+          onChange={(e) => setH(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onBlur={(e) => setH(e.target.value || '0')}
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} horas`} autoComplete="off" />
+        <span className="font-mono text-lg text-muted-foreground/70 select-none -mt-0.5">:</span>
+        <input inputMode="numeric" maxLength={2} value={m ?? ''}
+          onChange={(e) => setM(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onBlur={(e) => setM(e.target.value || '0')}
+          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} minutos`} autoComplete="off" />
+        <div className="ml-auto flex flex-col">
+          <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
+            className="h-[22px] w-6 flex items-center justify-center rounded-t hover:bg-slate-800/70 text-muted-foreground hover:text-foreground">
+            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min"
+            className="h-[22px] w-6 flex items-center justify-center rounded-b hover:bg-slate-800/70 text-muted-foreground hover:text-foreground">
+            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 /* ================= validation ================= */
 type Issue = { field: string; message: string };
 function validate(input: {
