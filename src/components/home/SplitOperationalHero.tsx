@@ -193,11 +193,11 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
               className="relative z-10 h-full max-h-[240px] sm:max-h-[300px] lg:max-h-[360px] w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
               draggable={false}
             />
-            {/* Viatura ISE — tactical vehicle */}
+            {/* Viatura ISE — tactical vehicle, next to agent */}
             <img
               src={vehicle3d}
               alt="Viatura Tática ISE"
-              className="absolute bottom-1 right-0 z-20 h-auto w-[45%] max-w-[220px] object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.9)] select-none pointer-events-none"
+              className="absolute bottom-4 left-1/2 z-20 h-auto w-[38%] max-w-[180px] object-contain translate-x-[35%] drop-shadow-[0_20px_30px_rgba(0,0,0,0.9)] select-none pointer-events-none"
               draggable={false}
             />
           </div>
