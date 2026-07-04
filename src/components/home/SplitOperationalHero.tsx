@@ -98,7 +98,7 @@ export function SplitOperationalHero({ onTeamClick, onPrimaryAction }: Props) {
       <TopHudBar />
 
       {/* ============ TACTICAL TITLE STRIP — Noir & Gold (matches Header) ============ */}
-      <div className="relative mx-2 sm:mx-3 mt-2 shrink-0 overflow-hidden rounded-md border-b border-t border-primary/25 bg-slate-950 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_5%)_60%,hsl(217_62%_3%)_100%)] shadow-[0_8px_28px_-12px_hsl(217_62%_2%/0.9)]">
+      <div className="relative mx-2 sm:mx-3 mt-0 shrink-0 overflow-hidden rounded-md border-b border-t border-primary/25 bg-slate-950 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_5%)_60%,hsl(217_62%_3%)_100%)] shadow-[0_8px_28px_-12px_hsl(217_62%_2%/0.9)]">
         {/* subtle photo background — low contrast so it doesn't fight the text */}
         <img
           src={hudBg.url}
