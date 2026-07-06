@@ -110,13 +110,10 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
 
 
 
+// Relógio sincronizado com o servidor (não confia no relógio local do dispositivo)
+import { useServerTime } from '@/hooks/useServerTime';
 function useNow() {
-  const [now, setNow] = useState(new Date());
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-  return now;
+  return useServerTime(1000);
 }
 
 function pad(n: number) { return n.toString().padStart(2, '0'); }
