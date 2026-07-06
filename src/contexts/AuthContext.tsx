@@ -119,10 +119,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Só limpa se realmente foi logout intencional
           const storedMaster = localStorage.getItem('master_token');
           if (!storedMaster) {
+            const wasIntentional = intentionalSignOutRef.current;
             setSession(null);
             setUser(null);
             setUserRole(null);
             try { clearAllCredentials(); } catch { /* ignore */ }
+            if (!wasIntentional && hasInitializedRef.current) {
+              try {
+                toast.warning('Sessão encerrada', {
+                  description: 'Sua sessão expirou ou foi invalidada. Credenciais salvas foram limpas por segurança.',
+                  duration: 6000,
+                });
+              } catch { /* ignore */ }
+            }
+            intentionalSignOutRef.current = false;
           }
         } else {
           // Para outros eventos, atualiza normalmente
