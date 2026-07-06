@@ -6,6 +6,7 @@ import {
   getSavedCredentials,
   removeCredential,
   canQuickLogin,
+  CREDENTIALS_CHANGED_EVENT,
 } from '@/components/auth/SavedCredentials';
 
 interface SavedCredential {
