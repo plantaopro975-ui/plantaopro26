@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Eye, Coffee, Brain, Flame, Compass, Heart, ShieldCheck, Zap, Moon, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const PHRASES: Array<{ icon: typeof Eye; text: string; hue: 'primary' | 'warn' | 'ok' }> = [
   { icon: Eye,          text: 'Mantenha os olhos abertos — o setor conta com você.', hue: 'primary' },
