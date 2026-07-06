@@ -1248,7 +1248,15 @@ export default function Index() {
 
   return (
     <>
-      <div className="h-[100dvh] flex flex-col bg-background relative overflow-hidden overscroll-none">
+      <div
+        className="h-full flex flex-col bg-background relative overflow-hidden overscroll-none home-compact"
+        style={{
+          fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
+          ['--home-gap' as any]: 'clamp(4px, 0.6vh, 12px)',
+          ['--home-pad-x' as any]: 'clamp(6px, 1.2vw, 16px)',
+          ['--home-pad-y' as any]: 'clamp(4px, 0.8vh, 12px)',
+        }}
+      >
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
@@ -1261,9 +1269,10 @@ export default function Index() {
               else if (isAdmin) navigate('/admin');
               else navigate('/agent-panel');
             }}
-            className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
+            className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
+            style={{ fontSize: 'clamp(9px, 0.6vw + 0.4rem, 12px)' }}
           >
-            <User className="h-3.5 w-3.5" />
+            <User className="h-3 w-3" />
             Meu Painel
           </button>
         )}
