@@ -101,6 +101,8 @@ export default function Index() {
   const themeAssets = getThemeAssets(theme, resolvedTheme);
   const { isAvailable: isBiometricAvailable, isEnrolled: isBiometricEnrolled, enrolledCpf, enrollBiometric, authenticateBiometric } = useBiometricAuth();
   const { saveCredential, updateLastLogin } = useSavedCredentialsSync();
+  const { order: homeCardOrder, move: moveHomeCard } = useHomeCardOrder();
+
 
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [showCpfCheck, setShowCpfCheck] = useState(false);
