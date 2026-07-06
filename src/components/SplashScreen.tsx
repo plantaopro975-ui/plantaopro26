@@ -204,10 +204,16 @@ export function SplashScreen() {
           <LogLine delay={1300} label="HUD · Comando" value="Pronto" />
         </div>
 
-        {/* Progress bar */}
-        <div className="relative mt-1 h-[3px] w-64 max-w-full overflow-hidden rounded-full bg-amber-500/10">
-          <div className="splash-progress absolute inset-y-0 left-0 bg-gradient-to-r from-amber-600 via-amber-300 to-amber-500" />
+        {/* Ready indicator — discrete, no loading animation */}
+        <div className="splash-ready mt-1 flex items-center gap-2 text-[9px] uppercase tracking-[0.35em] text-amber-300/55"
+          style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+          <span className="h-[1px] w-8 bg-amber-400/40" aria-hidden />
+          <span className="h-1 w-1 rounded-full bg-amber-400/80" aria-hidden />
+          <span>Sistema · Pronto</span>
+          <span className="h-1 w-1 rounded-full bg-amber-400/80" aria-hidden />
+          <span className="h-[1px] w-8 bg-amber-400/40" aria-hidden />
         </div>
+
       </div>
 
       {/* Bottom HUD bar */}
