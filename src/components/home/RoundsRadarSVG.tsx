@@ -46,31 +46,35 @@ export function RoundsRadarSVG({ color, progress, size = 88 }: Props) {
       <line x1="50" y1="6" x2="50" y2="94" stroke={color} strokeOpacity="0.18" strokeWidth="0.5" />
       <line x1="6" y1="50" x2="94" y2="50" stroke={color} strokeOpacity="0.18" strokeWidth="0.5" />
 
-      {/* Pulse rings */}
-      <circle cx="50" cy="50" r="10" fill="none" stroke={color} strokeWidth="0.8">
-        <animate attributeName="r" from="10" to="44" dur="2.4s" repeatCount="indefinite" />
-        <animate attributeName="opacity" from="0.7" to="0" dur="2.4s" repeatCount="indefinite" />
-      </circle>
-      <circle cx="50" cy="50" r="10" fill="none" stroke={color} strokeWidth="0.8">
-        <animate attributeName="r" from="10" to="44" dur="2.4s" begin="1.2s" repeatCount="indefinite" />
-        <animate attributeName="opacity" from="0.7" to="0" dur="2.4s" begin="1.2s" repeatCount="indefinite" />
-      </circle>
+      {/* Pulse rings — cadence tied to remaining progress (faster near the end) */}
+      {(() => {
+        const pulseDur = Math.max(0.9, 2.6 - progress * 1.6).toFixed(2) + 's';
+        return (
+          <>
+            <circle cx="50" cy="50" r="10" fill="none" stroke={color} strokeWidth="0.8">
+              <animate attributeName="r" from="10" to="44" dur={pulseDur} repeatCount="indefinite" />
+              <animate attributeName="opacity" from="0.75" to="0" dur={pulseDur} repeatCount="indefinite" />
+            </circle>
+            <circle cx="50" cy="50" r="10" fill="none" stroke={color} strokeWidth="0.8">
+              <animate attributeName="r" from="10" to="44" dur={pulseDur} begin={`-${(parseFloat(pulseDur) / 2).toFixed(2)}s`} repeatCount="indefinite" />
+              <animate attributeName="opacity" from="0.75" to="0" dur={pulseDur} begin={`-${(parseFloat(pulseDur) / 2).toFixed(2)}s`} repeatCount="indefinite" />
+            </circle>
+          </>
+        );
+      })()}
 
-      {/* Rotating sweep */}
-      <g style={{ transformOrigin: '50px 50px' }}>
-        <g>
-          <path d="M50,50 L96,50 A46,46 0 0 0 70,10 Z" fill="url(#rr-sweep)" opacity="0.55" />
-          <line x1="50" y1="50" x2="96" y2="50" stroke={color} strokeWidth="1" strokeOpacity="0.9" />
-          <animateTransform
-            attributeName="transform"
-            type="rotate"
-            from="0 50 50"
-            to="360 50 50"
-            dur="3.2s"
-            repeatCount="indefinite"
-          />
-        </g>
+      {/* Sweep — angle mirrors countdown progress (0% → 100% = 0° → 360°) */}
+      <g
+        style={{
+          transformOrigin: '50px 50px',
+          transform: `rotate(${progress * 360}deg)`,
+          transition: 'transform 0.9s linear',
+        }}
+      >
+        <path d="M50,50 L96,50 A46,46 0 0 0 70,10 Z" fill="url(#rr-sweep)" opacity="0.6" />
+        <line x1="50" y1="50" x2="96" y2="50" stroke={color} strokeWidth="1.1" strokeOpacity="0.95" />
       </g>
+
 
       {/* Progress ring */}
       <circle
