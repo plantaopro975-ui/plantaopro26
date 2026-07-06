@@ -57,7 +57,7 @@ function TeamMosaicBackground() {
 
 // Particle effect component
 function ParticleField({ effect }: { effect: BackgroundEffect }) {
-  const count = effect.particleCount || 30;
+  const count = Math.min(effect.particleCount || 30, 12);
   const particles = useMemo(() => 
     Array.from({ length: count }, (_, i) => ({
       id: i,
@@ -94,7 +94,7 @@ function ParticleField({ effect }: { effect: BackgroundEffect }) {
 
 // Matrix rain effect component
 function MatrixRain({ effect }: { effect: BackgroundEffect }) {
-  const columns = effect.intensity === 'high' ? 25 : effect.intensity === 'medium' ? 15 : 8;
+  const columns = effect.intensity === 'high' ? 12 : effect.intensity === 'medium' ? 8 : 5;
   
   return (
     <div className="absolute inset-0 overflow-hidden opacity-20">
@@ -263,7 +263,7 @@ function FrostEffect({ effect }: { effect: BackgroundEffect }) {
         />
       ))}
       {/* Snowfall particles */}
-      {Array.from({ length: 40 }).map((_, i) => (
+      {Array.from({ length: 15 }).map((_, i) => (
         <div
           key={`snow-${i}`}
           className="absolute rounded-full animate-float"
@@ -288,7 +288,7 @@ function FlameEffect({ effect }: { effect: BackgroundEffect }) {
   return (
     <div className="absolute inset-0 overflow-hidden">
       {/* Rising embers */}
-      {Array.from({ length: effect.intensity === 'high' ? 40 : 20 }).map((_, i) => (
+      {Array.from({ length: effect.intensity === 'high' ? 18 : 10 }).map((_, i) => (
         <div
           key={i}
           className="absolute rounded-full animate-rise"

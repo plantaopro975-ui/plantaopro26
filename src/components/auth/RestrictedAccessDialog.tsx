@@ -2,9 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, KeyRound } from 'lucide-react';
-import restrictedScene from '@/assets/restricted-access-scene.jpg';
-
-
+import restrictedSceneAsset from '@/assets/restricted-access-scene.jpg.asset.json';
+const restrictedScene = restrictedSceneAsset.url;
 interface RestrictedAccessDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

@@ -82,7 +82,8 @@ import { cn } from '@/lib/utils';
 import { getMasterToken, setMasterToken } from '@/lib/masterSession';
 import { adminClient } from '@/lib/adminClient';
 import { Bell } from 'lucide-react';
-import iseAcreBadge from '@/assets/ise-acre-badge.png';
+import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
+const iseAcreBadge = iseAcreBadgeAsset.url;
 import { PanelNav } from '@/components/ui/panel-nav';
 
 interface UserWithRole {

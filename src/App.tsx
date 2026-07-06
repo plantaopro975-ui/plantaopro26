@@ -54,6 +54,14 @@ const queryClient = new QueryClient({
 // Wrapper component to handle global navigation (ESC key and logout redirect)
 function GlobalNavigationHandler({ children }: { children: React.ReactNode }) {
   useGlobalNavigation({ enabled: true });
+  // Pause CSS animations while the tab is hidden — big CPU/GPU saver.
+  useEffect(() => {
+    const html = document.documentElement;
+    const sync = () => html.classList.toggle('tab-hidden', document.hidden);
+    sync();
+    document.addEventListener('visibilitychange', sync);
+    return () => document.removeEventListener('visibilitychange', sync);
+  }, []);
   return <>{children}</>;
 }
 
