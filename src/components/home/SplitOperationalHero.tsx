@@ -351,43 +351,79 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           </div>
 
           <div className="grid grid-cols-4 gap-2" style={{ perspective: '900px' }}>
-            {TEAMS.map((t, idx) => (
+            {TEAMS.map((t, idx) => {
+              const isSelected = selectedTeam === t.key;
+              return (
               <button
                 key={t.key}
                 data-team-card
                 data-team={t.key}
-                onClick={() => onTeamClick(t.key)}
+                aria-pressed={isSelected}
+                onClick={() => handleSelect(t.key)}
                 className={cn(
-                  'group relative flex h-[140px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent',
-                  'border-white/10',
-                  'transition-all duration-500 will-change-transform [transform-style:preserve-3d]',
-                  'hover:border-[hsl(var(--team-accent)/0.6)] hover:-translate-y-1',
-                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--team-accent)/0.7)]',
+                  'group relative flex h-[140px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
+                  'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
+                  isSelected
+                    ? 'border-[hsl(var(--team-accent))] -translate-y-1.5 scale-[1.02] shadow-[0_0_0_1px_hsl(var(--team-accent)/0.7),0_18px_40px_-12px_hsl(var(--team-accent)/0.55),0_10px_20px_-8px_rgba(0,0,0,0.8)] ring-1 ring-[hsl(var(--team-accent)/0.35)]'
+                    : 'border-white/10 hover:border-[hsl(var(--team-accent)/0.7)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_14px_30px_-14px_hsl(var(--team-accent)/0.45),0_8px_18px_-10px_rgba(0,0,0,0.7)] active:translate-y-0 active:scale-[0.99]',
                 )}
                 style={{ ['--team-accent' as any]: t.accent }}
               >
                 {/* Realistic background image per team */}
-                <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
-                  <source srcSet={t.bgWebp} type="image/webp" />
-                  <img
-                    src={t.bg}
-                    alt=""
-                    aria-hidden
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover opacity-90 saturate-125 contrast-110 transition-opacity duration-500 group-hover:opacity-100"
-                    draggable={false}
-                  />
-                </picture>
+                <img
+                  src={t.bg}
+                  alt=""
+                  aria-hidden
+                  loading="lazy"
+                  decoding="async"
+                  className={cn(
+                    'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
+                    'transition-all duration-500 ease-out',
+                    isSelected
+                      ? 'opacity-100 scale-105 saturate-125 contrast-110'
+                      : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
+                  )}
+                  draggable={false}
+                />
                 {/* Vignette-only overlay — mantém cores vivas, escurece só as bordas para legibilidade */}
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,6,23,0.75)_100%)]"
+                  className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,6,23,0.78)_100%)]"
                 />
                 <span
                   aria-hidden
                   className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-t from-slate-950/90 to-transparent"
                 />
+                {/* Accent color wash on hover/selected */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    'pointer-events-none absolute inset-0 z-[2] transition-opacity duration-500 mix-blend-overlay',
+                    isSelected ? 'opacity-40' : 'opacity-0 group-hover:opacity-25',
+                  )}
+                  style={{
+                    background: `radial-gradient(ellipse at 50% 40%, hsl(${t.accent} / 0.6) 0%, transparent 70%)`,
+                  }}
+                />
+                {/* Scanline sheen on hover */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 z-[2] overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                >
+                  <span
+                    className="absolute -inset-y-2 -left-full w-1/3 skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[500%]"
+                  />
+                </span>
+                {/* SELECTED indicator: corner brackets */}
+                {isSelected && (
+                  <>
+                    <span aria-hidden className="absolute top-1 left-1 z-30 h-3 w-3 border-t-2 border-l-2 rounded-tl-sm" style={{ borderColor: `hsl(${t.accent})` }} />
+                    <span aria-hidden className="absolute top-1 right-1 z-30 h-3 w-3 border-t-2 border-r-2 rounded-tr-sm" style={{ borderColor: `hsl(${t.accent})` }} />
+                    <span aria-hidden className="absolute bottom-1 left-1 z-30 h-3 w-3 border-b-2 border-l-2 rounded-bl-sm" style={{ borderColor: `hsl(${t.accent})` }} />
+                    <span aria-hidden className="absolute bottom-1 right-1 z-30 h-3 w-3 border-b-2 border-r-2 rounded-br-sm" style={{ borderColor: `hsl(${t.accent})` }} />
+                  </>
+                )}
                 {/* Halo: ALFA usa variante exclusiva; demais compartilham .team-halo */}
                 {t.key === 'ALFA' ? (
                   <span aria-hidden className="alfa-halo" />
