@@ -363,8 +363,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       purge(sessionStorage);
     } catch { /* ignore */ }
 
-    // Hard redirect to guarantee no component keeps using the old token (works for agent & master)
-    try { window.location.replace('/'); } catch { /* ignore */ }
+    // Soft navigate to home (avoids a full page reload / black flash).
+    // Local state was already cleared above, so RequireAuth will keep protected routes safe.
+    try {
+      if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+        window.history.replaceState({}, '', '/');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+    } catch { /* ignore */ }
   };
 
 
