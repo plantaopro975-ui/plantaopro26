@@ -1358,6 +1358,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           full_name: string | null
+          home_card_order: Json | null
           id: string
           password_changed_at: string | null
           updated_at: string
@@ -1367,6 +1368,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           full_name?: string | null
+          home_card_order?: Json | null
           id?: string
           password_changed_at?: string | null
           updated_at?: string
@@ -1376,6 +1378,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           full_name?: string | null
+          home_card_order?: Json | null
           id?: string
           password_changed_at?: string | null
           updated_at?: string
