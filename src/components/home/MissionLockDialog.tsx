@@ -9,6 +9,7 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 import { Lock, ShieldAlert, Radio } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface MissionLockDialogProps {
   open: boolean;
@@ -16,13 +17,14 @@ interface MissionLockDialogProps {
   color: string;
   agentName?: string;
   remainingLabel?: string;
+  silent?: boolean;
 }
 
 /**
  * Professional lock dialog shown when an agent tries to pause/reset
  * an ongoing rounds countdown. Reinforces mission integrity.
  */
-export function MissionLockDialog({ open, onClose, color, agentName, remainingLabel }: MissionLockDialogProps) {
+export function MissionLockDialog({ open, onClose, color, agentName, remainingLabel, silent = false }: MissionLockDialogProps) {
   const [dots, setDots] = useState(0);
   useEffect(() => {
     if (!open) return;
@@ -38,27 +40,31 @@ export function MissionLockDialog({ open, onClose, color, agentName, remainingLa
           className="relative h-10 flex items-center justify-center overflow-hidden"
           style={{ background: `linear-gradient(90deg, ${color}22, ${color}55, ${color}22)` }}
         >
-          <div
-            className="absolute inset-0 opacity-30"
-            style={{
-              backgroundImage: `repeating-linear-gradient(45deg, ${color} 0 10px, transparent 10px 20px)`,
-              animation: 'stripeSlide 1.2s linear infinite',
-            }}
-          />
+          {!silent && (
+            <div
+              className="absolute inset-0 opacity-30"
+              style={{
+                backgroundImage: `repeating-linear-gradient(45deg, ${color} 0 10px, transparent 10px 20px)`,
+                animation: 'stripeSlide 1.2s linear infinite',
+              }}
+            />
+          )}
           <div className="relative flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.3em] font-bold" style={{ color }}>
-            <ShieldAlert className="h-4 w-4 animate-pulse" />
+            <ShieldAlert className={cn('h-4 w-4', !silent && 'animate-pulse')} />
             Missão em andamento
-            <ShieldAlert className="h-4 w-4 animate-pulse" />
+            <ShieldAlert className={cn('h-4 w-4', !silent && 'animate-pulse')} />
           </div>
         </div>
 
         <div className="p-6 pt-4">
           <AlertDialogHeader>
             <div className="mx-auto mb-3 relative">
-              <div
-                className="absolute inset-0 rounded-full blur-xl opacity-60"
-                style={{ backgroundColor: color }}
-              />
+              {!silent && (
+                <div
+                  className="absolute inset-0 rounded-full blur-xl opacity-60"
+                  style={{ backgroundColor: color }}
+                />
+              )}
               <div
                 className="relative w-16 h-16 rounded-full flex items-center justify-center border-2"
                 style={{ borderColor: color, background: `${color}18` }}

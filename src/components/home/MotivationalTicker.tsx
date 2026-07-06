@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Eye, Coffee, Brain, Flame, Compass, Heart, ShieldCheck, Zap, Moon, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const PHRASES: Array<{ icon: typeof Eye; text: string; hue: 'primary' | 'warn' | 'ok' }> = [
   { icon: Eye,          text: 'Mantenha os olhos abertos — o setor conta com você.', hue: 'primary' },
@@ -19,23 +20,29 @@ const PHRASES: Array<{ icon: typeof Eye; text: string; hue: 'primary' | 'warn' |
 interface Props {
   color: string;
   active: boolean;
+  /** 0..1 — round progress. Higher = closer to end = faster phrase rotation. */
+  progress?: number;
+  /** When true, suppresses animations and scanlines but keeps the guidance text. */
+  silent?: boolean;
 }
 
 /**
  * Rotating motivational strip shown while a round is running.
- * Cycles professional reminders every ~5s with a subtle animated pulse
- * to keep the agent alert during long shifts.
+ * Cycles professional reminders with cadence tied to countdown progress
+ * (faster near the end) to keep the agent alert during long shifts.
  */
-export function MotivationalTicker({ color, active }: Props) {
+export function MotivationalTicker({ color, active, progress = 0, silent = false }: Props) {
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
     if (!active) return;
+    // 5s at start → 1.5s near the end
+    const interval = Math.max(1500, 5000 - progress * 3500);
     const id = window.setInterval(() => {
       setIdx((i) => (i + 1) % PHRASES.length);
-    }, 5000);
+    }, interval);
     return () => window.clearInterval(id);
-  }, [active]);
+  }, [active, progress]);
 
   if (!active) return null;
 
@@ -45,7 +52,10 @@ export function MotivationalTicker({ color, active }: Props) {
   return (
     <div
       key={idx}
-      className="relative w-full max-w-2xl mx-auto rounded-lg border overflow-hidden animate-fade-in"
+      className={cn(
+        'relative w-full max-w-2xl mx-auto rounded-lg border overflow-hidden',
+        !silent && 'animate-fade-in',
+      )}
       style={{
         borderColor: `${color}55`,
         background: `linear-gradient(90deg, ${color}0A, transparent 20%, transparent 80%, ${color}0A)`,
@@ -63,14 +73,16 @@ export function MotivationalTicker({ color, active }: Props) {
         style={{ background: `linear-gradient(180deg, transparent, ${color}, transparent)` }}
       />
       {/* Scanline */}
-      <span
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-px opacity-70"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
-          animation: 'motivScan 3.5s linear infinite',
-        }}
-      />
+      {!silent && (
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-px opacity-70"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+            animation: 'motivScan 3.5s linear infinite',
+          }}
+        />
+      )}
 
       <div className="relative flex items-center gap-3 px-4 py-2.5">
         <div
@@ -78,13 +90,16 @@ export function MotivationalTicker({ color, active }: Props) {
           style={{ borderColor: `${color}55`, background: `${color}15` }}
         >
           <Icon className="h-4 w-4" style={{ color }} />
-          <span
-            className="absolute -inset-1 rounded-md"
-            style={{
-              boxShadow: `0 0 12px ${color}66`,
-              animation: 'motivPulse 2.2s ease-in-out infinite',
-            }}
-          />
+          {!silent && (
+            <span
+              aria-hidden
+              className="absolute -inset-1 rounded-md"
+              style={{
+                boxShadow: `0 0 12px ${color}66`,
+                animation: 'motivPulse 2.2s ease-in-out infinite',
+              }}
+            />
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-muted-foreground">
@@ -108,7 +123,9 @@ export function MotivationalTicker({ color, active }: Props) {
             strokeLinejoin="round"
             style={{ filter: `drop-shadow(0 0 3px ${color})` }}
           >
-            <animate attributeName="stroke-dasharray" values="0 80;80 0" dur="1.6s" repeatCount="indefinite" />
+            {!silent && (
+              <animate attributeName="stroke-dasharray" values="0 80;80 0" dur="1.6s" repeatCount="indefinite" />
+            )}
           </path>
         </svg>
       </div>
