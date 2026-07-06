@@ -406,15 +406,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     background: `radial-gradient(ellipse at 50% 40%, hsl(${t.accent} / 0.6) 0%, transparent 70%)`,
                   }}
                 />
-                {/* Scanline sheen on hover */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 z-[2] overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                >
-                  <span
-                    className="absolute -inset-y-2 -left-full w-1/3 skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-[500%]"
-                  />
-                </span>
+                {/* Scanline sheen removed per request */}
                 {/* SELECTED indicator: corner brackets */}
                 {isSelected && (
                   <>
