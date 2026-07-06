@@ -1710,13 +1710,15 @@ export default function Index() {
           
           {/* CPF e Matrícula */}
           <div className="grid grid-cols-2 gap-4">
-            <MaskedCpfInput
+            <AuthInput
               label="CPF *"
               value={formData.cpf}
-              onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
               placeholder="000.000.000-00"
+              inputMode="numeric"
+              maxLength={14}
               error={regErrors.cpf}
-              showValidation
+              icon={<Fingerprint className="h-5 w-5" />}
               rightIcon={cpfValidation.isChecking ? (
                 <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
               ) : undefined}
