@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Trash2, User, Key, KeyRound, Clock, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
 import { formatCPF } from '@/lib/validators';
 
 interface SavedCredential {
@@ -214,17 +215,30 @@ export function SavedCredentials({ onSelectCredential, onSaveChange, saveCpf, sa
     e.stopPropagation();
     removeCredential(cpf);
     setCredentials(getSavedCredentials());
+    toast.success('Credencial removida', {
+      description: `CPF •••${cpf.slice(-2)} apagado deste dispositivo`,
+      duration: 2500,
+    });
   };
 
   const handleRemovePassword = (cpf: string, e: React.MouseEvent) => {
     e.stopPropagation();
     removeCredentialPassword(cpf);
     setCredentials(getSavedCredentials());
+    toast('Senha rápida removida', {
+      description: 'Na próxima entrada será necessário digitar a senha.',
+      duration: 2500,
+    });
   };
 
   const handleClearAll = () => {
+    const count = credentials.length;
     clearAllCredentials();
     setCredentials([]);
+    toast.success('Credenciais limpas', {
+      description: `${count} credencial(is) removida(s) em tempo real.`,
+      duration: 2500,
+    });
   };
 
   const handleSelectCredential = (cred: SavedCredential) => {

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { pushDiagEvent } from '@/lib/diagLog';
+import { clearAllCredentials } from '@/components/auth/SavedCredentials';
 
 
 type UserRole = 'admin' | 'user' | 'master';
@@ -119,6 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setSession(null);
             setUser(null);
             setUserRole(null);
+            try { clearAllCredentials(); } catch { /* ignore */ }
           }
         } else {
           // Para outros eventos, atualiza normalmente
@@ -160,12 +162,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (userErr || !userData?.user) {
             pushDiagEvent('warn', 'auth_invalid_local_session', { error: userErr?.message ?? null });
             await supabase.auth.signOut().catch(() => {});
-            // Limpar TODOS os artefatos de auth do cliente (supabase + master)
+            // Limpar TODOS os artefatos de auth do cliente (supabase + master + credenciais salvas)
             try {
               localStorage.removeItem('master_token');
               localStorage.removeItem('master_user');
               sessionStorage.removeItem('masterSession');
             } catch {}
+            try { clearAllCredentials(); } catch { /* ignore */ }
             setSession(null);
             setUser(null);
             setUserRole(null);
@@ -299,6 +302,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession(null);
     setUserRole(null);
     setMasterSession(null);
+
+    // Higieniza credenciais salvas em tempo real (todos os componentes/abas)
+    try { clearAllCredentials(); } catch { /* ignore */ }
 
     // Invalidate session globally on the server (revokes refresh token on all devices)
     try {
