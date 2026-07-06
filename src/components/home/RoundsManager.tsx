@@ -766,6 +766,7 @@ export function RoundsManager() {
   /* ---------- live timer ---------- */
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
+  const [lockOpen, setLockOpen] = useState(false);
   const startedAtRef = useRef<number | null>(null);
   const firedRef = useRef<Set<number>>(new Set());
   const [alarm, setAlarm] = useState<{ open: boolean; index: number; name: string }>({
