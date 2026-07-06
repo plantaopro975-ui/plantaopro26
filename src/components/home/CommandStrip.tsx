@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
 import { Radio, Shield } from 'lucide-react';
 import { SignalUplink } from './SignalUplink';
+import { useServerTime } from '@/hooks/useServerTime';
 
 
 import { cn } from '@/lib/utils';
@@ -13,12 +13,8 @@ import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
  * Triple-click no brasão abre o login master (com feedback visual).
  */
 export function CommandStrip() {
-  const [now, setNow] = useState<Date>(new Date());
-
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(id);
-  }, []);
+  // Relógio via rede/servidor — não confia no relógio local do dispositivo
+  const now = useServerTime(1000);
 
   const handleShieldClick = () => {
     const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
