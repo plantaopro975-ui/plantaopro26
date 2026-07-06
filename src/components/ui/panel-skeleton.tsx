@@ -19,7 +19,7 @@ export function PanelSkeleton({
   className,
 }: PanelSkeletonProps) {
   return (
-    <div className={cn('animate-fade-in space-y-6', className)}>
+    <div className={cn('space-y-6 opacity-80', className)}>
       {showHeader && (
         <div className="space-y-2">
           <Skeleton className="h-6 w-48" />
@@ -59,7 +59,7 @@ export function PanelSkeleton({
 
 export function InlinePanelSkeleton({ lines = 3 }: { lines?: number }) {
   return (
-    <div className="animate-fade-in space-y-2 p-4">
+    <div className="space-y-2 p-4 opacity-80">
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton key={i} className="h-3" style={{ width: `${90 - i * 15}%` }} />
       ))}
