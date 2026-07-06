@@ -48,12 +48,12 @@ import {
   calculateAge,
   formatPhone 
 } from '@/lib/validators';
-import { UnsavedChangesDialog } from '@/components/UnsavedChangesDialog';
-import { ForgotPasswordDialog } from '@/components/ForgotPasswordDialog';
+const UnsavedChangesDialog = lazy(() => import('@/components/UnsavedChangesDialog').then(m => ({ default: m.UnsavedChangesDialog })));
+const ForgotPasswordDialog = lazy(() => import('@/components/ForgotPasswordDialog').then(m => ({ default: m.ForgotPasswordDialog })));
 import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, canQuickLogin } from '@/components/auth/SavedCredentials';
-import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDialog';
-import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
-import { MasterLoginDialog } from '@/components/auth/MasterLoginDialog';
+const ManageCredentialsDialog = lazy(() => import('@/components/auth/ManageCredentialsDialog').then(m => ({ default: m.ManageCredentialsDialog })));
+const MasterPasswordRecoveryDialog = lazy(() => import('@/components/MasterPasswordRecoveryDialog').then(m => ({ default: m.MasterPasswordRecoveryDialog })));
+const MasterLoginDialog = lazy(() => import('@/components/auth/MasterLoginDialog').then(m => ({ default: m.MasterLoginDialog })));
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { CommandStrip } from '@/components/home/CommandStrip';
 import { CommandCenterBar } from '@/components/home/CommandCenterBar';
