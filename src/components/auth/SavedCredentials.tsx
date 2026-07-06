@@ -197,7 +197,17 @@ export function SavedCredentials({ onSelectCredential, onSaveChange, saveCpf, sa
   const [credentials, setCredentials] = useState<SavedCredential[]>([]);
   
   useEffect(() => {
-    setCredentials(getSavedCredentials());
+    const refresh = () => setCredentials(getSavedCredentials());
+    refresh();
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key || e.key === STORAGE_KEY) refresh();
+    };
+    window.addEventListener(CREDENTIALS_CHANGED_EVENT, refresh);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(CREDENTIALS_CHANGED_EVENT, refresh);
+      window.removeEventListener('storage', onStorage);
+    };
   }, []);
 
   const handleRemove = (cpf: string, e: React.MouseEvent) => {
