@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { ShieldCheck, MapPin, Cpu, Radio, Lock } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
-import { DeveloperSignature } from './DeveloperSignature';
+
 const iseAcreBadge = iseAcreBadgeAsset.url;
 interface CopyrightFooterProps {
   className?: string;
