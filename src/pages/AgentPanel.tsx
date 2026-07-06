@@ -13,7 +13,7 @@ import { useBHReminderHour } from '@/components/agent-panel/BHReminderSettings';
 import { useAlarmNotifications } from '@/hooks/useAlarmNotifications';
 import { TeamMembersCard } from '@/components/agent-panel/TeamMembersCard';
 import { OnDutyOverlay } from '@/components/agent-panel/OnDutyOverlay';
-import { ShiftOperationsCenter } from '@/components/agent-panel/ShiftOperationsCenter';
+const ShiftOperationsCenter = lazy(() => import('@/components/agent-panel/ShiftOperationsCenter').then(m => ({ default: m.ShiftOperationsCenter })));
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { ShiftSetupPrompt } from '@/components/agent-panel/ShiftSetupPrompt';
@@ -22,21 +22,22 @@ import { BHReminderSettings } from '@/components/agent-panel/BHReminderSettings'
 import { BirthdayCard } from '@/components/agent-panel/BirthdayCard';
 import { ProfileCompletionAlert } from '@/components/agent-panel/ProfileCompletionAlert';
 import { LicenseWarningBanner } from '@/components/LicenseWarningBanner';
-import { TacticalRadar } from '@/components/dashboard/TacticalRadar';
+const TacticalRadar = lazy(() => import('@/components/dashboard/TacticalRadar').then(m => ({ default: m.TacticalRadar })));
 import { SessionMonitorBanner } from '@/components/SessionMonitorBanner';
-import { DiagnosticReportButton } from '@/components/DiagnosticReportButton';
+const DiagnosticReportButton = lazy(() => import('@/components/DiagnosticReportButton').then(m => ({ default: m.DiagnosticReportButton })));
 import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
-import { WelcomeTrialDialog, shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
+import { shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
+const WelcomeTrialDialog = lazy(() => import('@/components/WelcomeTrialDialog').then(m => ({ default: m.WelcomeTrialDialog })));
 import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
 import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
 import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
 import { AdminAnnouncementsPanel } from '@/components/agent-panel/AdminAnnouncementsPanel';
-import { AdDisplaySystem } from '@/components/agent-panel/AdDisplaySystem';
+const AdDisplaySystem = lazy(() => import('@/components/agent-panel/AdDisplaySystem').then(m => ({ default: m.AdDisplaySystem })));
 import { usePromosEnabled } from '@/hooks/usePromosEnabled';
 import { AgentHeroPanel } from '@/components/agent-panel/AgentHeroPanel';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
@@ -528,12 +529,14 @@ export default function AgentPanel() {
             <OnDutyOverlay agentId={agent.id} />
 
             {/* Centro de Operações (checklist, radar, PDF, HUD 3-2-1) */}
-            <ShiftOperationsCenter
-              agentId={agent.id}
-              agentName={agent.name}
-              agentTeam={agent.team}
-              unitId={agent.unit_id}
-            />
+            <Suspense fallback={null}>
+              <ShiftOperationsCenter
+                agentId={agent.id}
+                agentName={agent.name}
+                agentTeam={agent.team}
+                unitId={agent.unit_id}
+              />
+            </Suspense>
 
 
             {/* HERO PANEL - Futuristic Status Dashboard */}
@@ -835,10 +838,12 @@ export default function AgentPanel() {
 
     {/* Welcome Trial Dialog */}
     {showWelcomeDialog && agent && (
-      <WelcomeTrialDialog 
-        agentName={agent.name} 
-        onClose={() => setShowWelcomeDialog(false)} 
-      />
+      <Suspense fallback={null}>
+        <WelcomeTrialDialog 
+          agentName={agent.name} 
+          onClose={() => setShowWelcomeDialog(false)} 
+        />
+      </Suspense>
     )}
     </>
   );
