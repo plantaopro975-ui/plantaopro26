@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { pushDiagEvent } from '@/lib/diagLog';
 import { clearAllCredentials } from '@/components/auth/SavedCredentials';
+import { toast } from 'sonner';
 
 
 type UserRole = 'admin' | 'user' | 'master';
