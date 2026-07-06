@@ -1963,5 +1963,6 @@ export default function Index() {
       />
       </div>
     </>
+    </Suspense>
   );
 }
