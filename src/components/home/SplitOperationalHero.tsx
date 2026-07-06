@@ -206,14 +206,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </svg>
             <div
               aria-hidden
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 h-12 w-[70%] rounded-[50%]"
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 md:left-[28%] lg:left-[22%] xl:left-[18%] h-12 w-[70%] rounded-[50%]"
               style={{
                 background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.35) 0%, transparent 70%)',
                 filter: 'blur(20px)',
               }}
             />
             {/* Cena composta: agente + viatura em escala realista */}
-            <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(130px, 18vw, 240px)' }}>
+            <div className="relative inline-block leading-[0] isolate md:-translate-x-[22%] lg:-translate-x-[28%] xl:-translate-x-[32%]" style={{ height: 'clamp(130px, 18vw, 240px)' }}>
               <picture>
                 <source srcSet={agentVehicleSceneWebp} type="image/webp" />
                 <img
