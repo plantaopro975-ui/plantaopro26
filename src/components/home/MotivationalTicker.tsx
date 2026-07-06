@@ -90,13 +90,16 @@ export function MotivationalTicker({ color, active, progress = 0, silent = false
           style={{ borderColor: `${color}55`, background: `${color}15` }}
         >
           <Icon className="h-4 w-4" style={{ color }} />
-          <span
-            className="absolute -inset-1 rounded-md"
-            style={{
-              boxShadow: `0 0 12px ${color}66`,
-              animation: 'motivPulse 2.2s ease-in-out infinite',
-            }}
-          />
+          {!silent && (
+            <span
+              aria-hidden
+              className="absolute -inset-1 rounded-md"
+              style={{
+                boxShadow: `0 0 12px ${color}66`,
+                animation: 'motivPulse 2.2s ease-in-out infinite',
+              }}
+            />
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-muted-foreground">
