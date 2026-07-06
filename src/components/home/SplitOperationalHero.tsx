@@ -3,6 +3,7 @@ import { Radio, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
+import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 
 import agent3d from '@/assets/hero/agent-ise-3d.png';
@@ -136,6 +137,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
       ? { dot: 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)]', text: 'text-amber-300/90', label: 'Instável' }
       : { dot: 'bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.9)]', text: 'text-rose-300/90', label: 'Offline' };
   const fmt2 = (n: number) => String(n).padStart(2, '0');
+  const onlineAgents = useOnlinePresence('agents-online');
 
 
 
@@ -237,29 +239,49 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   </span>
                 </div>
 
-                <div className="relative grid grid-cols-3 gap-2 md:gap-3">
+                <div className="relative grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                   {[
                     {
                       k: 'Unidades',
                       v: metrics.loading ? '——' : fmt2(metrics.units),
                       s: 'Socioeducativas',
+                      pulse: false,
                     },
                     {
                       k: 'Divisões',
                       v: fmt2(metrics.divisions),
                       s: 'Táticas',
+                      pulse: false,
                     },
                     {
                       k: 'Efetivo',
                       v: metrics.loading ? '——' : fmt2(metrics.agentsActive),
                       s: 'Agentes ativos',
+                      pulse: false,
+                    },
+                    {
+                      k: 'Online',
+                      v: fmt2(onlineAgents),
+                      s: 'Presença agora',
+                      pulse: true,
                     },
                   ].map((it) => (
                     <div key={it.k} className="relative pl-2 md:pl-2.5 border-l border-amber-400/25 min-w-0">
-                      <div className="font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.24em] text-slate-400 truncate">
+                      <div className="font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.24em] text-slate-400 truncate flex items-center gap-1">
+                        {it.pulse && (
+                          <span className="relative inline-flex h-1.5 w-1.5 shrink-0">
+                            <span className="absolute inset-0 rounded-full bg-emerald-400/70 animate-ping" />
+                            <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+                          </span>
+                        )}
                         {it.k}
                       </div>
-                      <div className="font-sans font-black text-white text-[15px] md:text-[17px] lg:text-[18px] leading-none mt-0.5 tabular-nums">
+                      <div
+                        className={cn(
+                          'font-sans font-black text-[15px] md:text-[17px] lg:text-[18px] leading-none mt-0.5 tabular-nums',
+                          it.pulse ? 'text-emerald-300' : 'text-white',
+                        )}
+                      >
                         {it.v}
                       </div>
                       <div className="font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.2em] text-slate-500 mt-0.5 truncate">
@@ -268,6 +290,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     </div>
                   ))}
                 </div>
+
 
                 {/* barcode strip */}
                 <div className="relative mt-2 flex items-end gap-[2px] h-3 opacity-70 overflow-hidden">
