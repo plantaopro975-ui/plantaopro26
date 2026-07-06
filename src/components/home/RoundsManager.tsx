@@ -767,6 +767,14 @@ export function RoundsManager() {
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
   const [lockOpen, setLockOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
+  const [silentMode, setSilentMode] = useState<boolean>(() => {
+    try { return localStorage.getItem('plantaopro_rounds_silent') === '1'; } catch { return false; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('plantaopro_rounds_silent', silentMode ? '1' : '0'); } catch { /* ignore */ }
+  }, [silentMode]);
   const startedAtRef = useRef<number | null>(null);
   const firedRef = useRef<Set<number>>(new Set());
   const [alarm, setAlarm] = useState<{ open: boolean; index: number; name: string }>({
