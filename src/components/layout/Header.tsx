@@ -104,8 +104,8 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       ref={ref}
       {...props}
       className={cn(
-        "header-bar relative min-h-20 sm:min-h-16 flex items-center gap-2 sm:gap-4 px-3 pb-5 pt-2 sm:px-4 sm:py-0 lg:px-6 overflow-hidden isolate",
-        "border-b border-primary/25 shadow-[0_8px_28px_-12px_hsl(217_62%_2%/0.9)]",
+        "header-bar relative min-h-11 sm:min-h-10 flex items-center gap-2 sm:gap-3 px-2 pb-4 pt-1 sm:px-3 sm:py-0 lg:px-4 overflow-hidden isolate",
+        "border-b border-primary/25 shadow-[0_6px_18px_-12px_hsl(217_62%_2%/0.9)]",
         // Fallback sólido + placeholder gradient em caso de falha da imagem
         "bg-slate-950 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_5%)_60%,hsl(217_62%_3%)_100%)]",
         props.className,
@@ -152,9 +152,9 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       {/* Brand — leftmost */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <div className="relative shrink-0">
-          <span className="absolute inset-0 rounded-full bg-primary/25 blur-lg animate-pulse" aria-hidden />
-          <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-gradient-to-br from-primary/25 to-primary/5 ring-1 ring-primary/40 flex items-center justify-center shadow-glow">
-            <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-primary drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" strokeWidth={2.2} />
+          <span className="absolute inset-0 rounded-md bg-primary/25 blur-md animate-pulse" aria-hidden />
+          <div className="relative h-7 w-7 sm:h-8 sm:w-8 rounded-md bg-gradient-to-br from-primary/25 to-primary/5 ring-1 ring-primary/40 flex items-center justify-center shadow-glow">
+            <Shield className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-primary drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" strokeWidth={2.2} />
           </div>
         </div>
 
@@ -171,17 +171,16 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           </SheetContent>
         </Sheet>
 
-        <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 ml-1 border-l border-border/50">
-          <RadarSweep size={30} />
+        <div className="flex items-center gap-1.5 sm:gap-2 pl-1.5 sm:pl-2 ml-0.5 border-l border-border/50">
+          <RadarSweep size={20} />
           <div className="flex flex-col leading-tight">
-            <span className="text-[11px] sm:text-[11px] font-bold tracking-[0.24em] sm:tracking-[0.28em] text-primary uppercase font-mono drop-shadow-[0_1px_2px_hsl(217_62%_2%/0.9)]">
+            <span className="text-[9px] sm:text-[9.5px] font-bold tracking-[0.22em] text-primary uppercase font-mono drop-shadow-[0_1px_2px_hsl(217_62%_2%/0.9)]">
               Radar Ativo
             </span>
-
-            <span className="text-[12px] sm:text-[12px] font-semibold text-foreground/90 font-mono tabular-nums">
+            <span className="text-[10px] sm:text-[10.5px] font-semibold text-foreground/90 font-mono tabular-nums">
               <span className="text-primary">{onlineCount}</span>
               <span className="text-muted-foreground"> online · </span>
-              <span className="tracking-[0.2em] uppercase text-[10px]">Rede 24/7</span>
+              <span className="tracking-[0.18em] uppercase text-[8.5px]">24/7</span>
             </span>
           </div>
         </div>
@@ -196,12 +195,12 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
       {/* Right Side */}
 
-      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+      <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
         {/* Sound Toggle */}
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-9 w-9 shrink-0 hover:bg-primary/10 hover:border-primary/30 transition-all"
+          className="h-7 w-7 shrink-0 hover:bg-primary/10 hover:border-primary/30 transition-all"
           onClick={() => {
             toggleSound();
             playSound('tactical-click');
@@ -209,9 +208,9 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           title={isSoundEnabled ? 'Desativar sons' : 'Ativar sons'}
         >
           {isSoundEnabled ? (
-            <Volume2 className="h-4 w-4 text-primary" />
+            <Volume2 className="h-3.5 w-3.5 text-primary" />
           ) : (
-            <VolumeX className="h-4 w-4 text-muted-foreground" />
+            <VolumeX className="h-3.5 w-3.5 text-muted-foreground" />
           )}
         </Button>
 
@@ -219,11 +218,11 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative h-9 w-9 shrink-0 hover:bg-primary/10 transition-all overflow-visible"
+          className="relative h-7 w-7 shrink-0 hover:bg-primary/10 transition-all overflow-visible"
           onClick={handleNotificationClick}
         >
-          <Bell className="h-4 w-4" />
-          <span className="notification-badge absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)] ring-2 ring-background" />
+          <Bell className="h-3.5 w-3.5" />
+          <span className="notification-badge absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)] ring-2 ring-background" />
         </Button>
 
         {/* User Menu - Tactical Style */}
@@ -231,17 +230,17 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              className="flex items-center gap-2 pl-2 pr-3 h-9 hover:bg-primary/10 border border-transparent hover:border-primary/30 transition-all"
+              className="flex items-center gap-1.5 pl-1.5 pr-2 h-7 hover:bg-primary/10 border border-transparent hover:border-primary/30 transition-all"
               onClick={() => playSound('tactical-hover')}
             >
-              <Avatar className="h-7 w-7 ring-2 ring-primary/30">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-xs font-bold">
+              <Avatar className="h-5 w-5 ring-1 ring-primary/30">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-[9px] font-bold">
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
-              <div className="hidden sm:block text-left">
-                <p className="text-[13px] font-semibold truncate max-w-[90px] md:max-w-[120px] text-foreground">{getDisplayName()}</p>
-                <p className="text-[11px] text-primary/80 font-medium">{getRoleBadge()}</p>
+              <div className="hidden sm:block text-left leading-tight">
+                <p className="text-[11px] font-semibold truncate max-w-[80px] md:max-w-[110px] text-foreground">{getDisplayName()}</p>
+                <p className="text-[9px] text-primary/80 font-medium">{getRoleBadge()}</p>
               </div>
             </Button>
           </DropdownMenuTrigger>
@@ -305,27 +304,27 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         type="button"
         onClick={() => handleNavigate('/about')}
         className={cn(
-          "group absolute left-0 right-0 bottom-0 z-10 mx-auto flex w-full max-w-[95%] items-center justify-center gap-1.5 px-2 py-1",
+          "group absolute left-0 right-0 bottom-0 z-10 mx-auto flex w-full max-w-[95%] items-center justify-center gap-1 px-2 py-0.5",
           "select-none hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors cursor-pointer",
         )}
         aria-label="Sobre o app — QSL, Feijó! Feito por agente para Agente; Franc.D'nis"
         title="Sobre o app"
       >
-        <span className="hidden md:block h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent to-primary/50" aria-hidden />
-        <p className="text-center leading-tight text-[11px] sm:text-[11px] md:text-[12px] xl:text-[13px] font-mono font-semibold tracking-[0.1em] uppercase text-foreground/90 group-hover:text-foreground whitespace-normal sm:whitespace-nowrap">
+        <span className="hidden md:block h-px flex-1 max-w-[60px] bg-gradient-to-r from-transparent to-primary/50" aria-hidden />
+        <p className="text-center leading-tight text-[9px] sm:text-[9.5px] md:text-[10px] font-mono font-semibold tracking-[0.08em] uppercase text-foreground/90 group-hover:text-foreground whitespace-normal sm:whitespace-nowrap">
           <span className="text-primary font-bold">QSL</span>
           <span className="text-muted-foreground">, </span>
           <span className="text-foreground">Feijó!</span>
-          <span className="mx-1 sm:mx-2 text-muted-foreground/60">·</span>
+          <span className="mx-1 text-muted-foreground/60">·</span>
           <span className="text-muted-foreground normal-case tracking-normal font-sans italic">
             Feito por agente para Agente
           </span>
-          <span className="mx-1 sm:mx-2 text-primary/50">·</span>
+          <span className="mx-1 text-primary/50">·</span>
           <span className="text-primary/90 font-semibold normal-case tracking-normal">
             Franc.D'nis
           </span>
         </p>
-        <span className="hidden md:block h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent to-primary/50" aria-hidden />
+        <span className="hidden md:block h-px flex-1 max-w-[60px] bg-gradient-to-l from-transparent to-primary/50" aria-hidden />
       </button>
     </header>
   );

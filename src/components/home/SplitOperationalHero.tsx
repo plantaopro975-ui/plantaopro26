@@ -309,7 +309,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           </div>
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center min-h-[200px] md:min-h-[260px] lg:min-h-[280px] xl:min-h-[310px] 2xl:min-h-[330px] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
+          <div className="relative flex items-end justify-center min-h-[140px] md:min-h-[180px] lg:min-h-[200px] xl:min-h-[220px] 2xl:min-h-[240px] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
 
             <svg
               aria-hidden
@@ -322,14 +322,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </svg>
             <div
               aria-hidden
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 h-16 w-[80%] rounded-[50%]"
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 h-12 w-[70%] rounded-[50%]"
               style={{
                 background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.35) 0%, transparent 70%)',
                 filter: 'blur(20px)',
               }}
             />
             {/* Cena composta: agente + viatura em escala realista */}
-            <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(180px, 26vw, 340px)' }}>
+            <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(130px, 18vw, 240px)' }}>
               <picture>
                 <source srcSet={agentVehicleSceneWebp} type="image/webp" />
                 <img
