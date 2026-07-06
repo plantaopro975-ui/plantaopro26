@@ -1534,46 +1534,79 @@ export function RoundsManager() {
                           </div>
                         )}
 
-                        <div className="flex items-center justify-center gap-4 sm:gap-6">
-                          {running && live && !live.done && 'slotSec' in live && (
-                            <RoundsRadarSVG
-                              color={teamColor}
-                              progress={1 - live.remaining / live.slotSec}
-                            />
-                          )}
-                          <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-light tabular-nums tracking-tight leading-none break-all" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
-                            {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
-                          </span>
-                        </div>
+                        {(() => {
+                          const urgent = running && live && !live.done && live.remaining <= 10;
+                          const critical = running && live && !live.done && live.remaining <= 5;
+                          const slotProgress = running && live && !live.done && 'slotSec' in live
+                            ? 1 - live.remaining / live.slotSec : 0;
+                          return (
+                            <>
+                              <div className="flex items-center justify-center gap-4 sm:gap-6">
+                                {running && live && !live.done && 'slotSec' in live && (
+                                  <RoundsRadarSVG color={teamColor} progress={slotProgress} />
+                                )}
+                                <span
+                                  className={cn(
+                                    'font-mono font-light tabular-nums tracking-tight leading-none break-all transition-all',
+                                    urgent
+                                      ? 'text-5xl sm:text-6xl md:text-7xl font-black'
+                                      : 'text-4xl sm:text-5xl md:text-6xl',
+                                    critical && !silentMode && 'animate-pulse',
+                                  )}
+                                  style={{
+                                    color: urgent
+                                      ? 'hsl(var(--destructive))'
+                                      : running ? teamColor : 'hsl(var(--muted-foreground))',
+                                    textShadow: urgent ? '0 0 24px hsl(var(--destructive) / 0.7)' : undefined,
+                                  }}
+                                >
+                                  {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
+                                </span>
+                              </div>
 
-                        {/* Nome BEM GRANDE do agente em ronda */}
-                        {running && live && !live.done && (
-                          <div
-                            className="font-sans font-black uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
-                            style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
-                          >
-                            {schedule.rows[live.index].name}
-                          </div>
-                        )}
-                        {(!running || !live) && (
-                          <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
-                            {schedule.rows[0].name}
-                          </div>
-                        )}
-                        {running && live?.done && (
-                          <div className="font-sans font-black uppercase tracking-[0.15em] text-2xl sm:text-3xl text-emerald-500 flex items-center gap-2">
-                            <CheckCircle2 className="h-7 w-7" /> MISSÃO CUMPRIDA
-                          </div>
-                        )}
+                              {urgent && (
+                                <div className="font-mono text-[11px] uppercase tracking-[0.35em] font-bold text-destructive animate-fade-in">
+                                  ⚠ {critical ? 'ALERTA FINAL · ' : 'Contagem final · '}
+                                  {String(Math.max(0, Math.ceil(live.remaining))).padStart(2, '0')} segundos
+                                </div>
+                              )}
 
-                        {running && live && !live.done && 'slotSec' in live && (
-                          <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
-                            <div className="h-full transition-all"
-                                 style={{ width: `${100 - (live.remaining / live.slotSec) * 100}%`, backgroundColor: teamColor }} />
-                          </div>
-                        )}
-                        {/* Motivational strip — only visible while running to keep the agent alert */}
-                        <MotivationalTicker color={teamColor} active={running && !!live && !live.done} />
+                              {/* Nome BEM GRANDE do agente em ronda */}
+                              {running && live && !live.done && (
+                                <div
+                                  className="font-sans font-black uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                                  style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
+                                >
+                                  {schedule.rows[live.index].name}
+                                </div>
+                              )}
+                              {(!running || !live) && (
+                                <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
+                                  {schedule.rows[0].name}
+                                </div>
+                              )}
+                              {running && live?.done && (
+                                <div className="font-sans font-black uppercase tracking-[0.15em] text-2xl sm:text-3xl text-emerald-500 flex items-center gap-2">
+                                  <CheckCircle2 className="h-7 w-7" /> MISSÃO CUMPRIDA
+                                </div>
+                              )}
+
+                              {running && live && !live.done && 'slotSec' in live && (
+                                <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
+                                  <div className="h-full transition-all"
+                                       style={{ width: `${slotProgress * 100}%`, backgroundColor: urgent ? 'hsl(var(--destructive))' : teamColor }} />
+                                </div>
+                              )}
+                              {/* Motivational strip — cadence syncs with countdown progress */}
+                              <MotivationalTicker
+                                color={teamColor}
+                                active={running && !!live && !live.done}
+                                progress={slotProgress}
+                                silent={silentMode}
+                              />
+                            </>
+                          );
+                        })()}
 
                         <div className="flex items-center gap-2 pt-1">
                           {!running ? (
@@ -1598,13 +1631,31 @@ export function RoundsManager() {
                             size="icon"
                             variant="ghost"
                             onClick={() => {
-                              if (running && live && !live.done) { setLockOpen(true); return; }
+                              if ((running && live && !live.done) || summaryOpen) { setLockOpen(true); return; }
                               resetTimer();
                             }}
                             className="h-9 w-9 text-muted-foreground hover:text-primary"
                             aria-label="Reiniciar"
                           >
                             <RotateCcw className="h-3.5 w-3.5" />
+                          </Button>
+                          {/* Silent mode toggle — never allows pause; only mutes visuals/sounds */}
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => {
+                              setSilentMode((v) => {
+                                const next = !v;
+                                soundRef.current = { ...soundRef.current, muted: next };
+                                return next;
+                              });
+                            }}
+                            className={cn('h-9 w-9', silentMode ? 'text-muted-foreground' : 'text-primary')}
+                            aria-label={silentMode ? 'Ativar animações e sons' : 'Modo silêncio'}
+                            title={silentMode ? 'Modo silêncio ATIVO — sem sons/animações' : 'Modo silêncio — desativa sons e animações'}
+                          >
+                            {silentMode ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
                           </Button>
                         </div>
                       </div>
@@ -1615,6 +1666,18 @@ export function RoundsManager() {
                         color={teamColor}
                         agentName={live && !live.done ? schedule.rows[live.index]?.name : undefined}
                         remainingLabel={live && !live.done ? fmtHMS(live.remaining) : undefined}
+                        silent={silentMode}
+                      />
+
+                      <RoundSummaryDialog
+                        open={summaryOpen}
+                        onClose={() => { setSummaryOpen(false); setSummaryData(null); }}
+                        color={teamColor}
+                        team={team}
+                        totalSeconds={summaryData?.totalSec ?? 0}
+                        agentsCount={schedule.rows.length}
+                        completedCount={summaryData?.completed ?? schedule.rows.length}
+                        silent={silentMode}
                       />
 
                       {/* Rows — sem caixas, apenas linhas */}
