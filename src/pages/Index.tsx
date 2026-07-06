@@ -1530,14 +1530,16 @@ export default function Index() {
         team={selectedTeam}
       >
         <form onSubmit={handleLogin} className="space-y-5" data-login-form="true">
-          <MaskedCpfInput
+          <AuthInput
             label="CPF"
             value={loginCpf}
-            onChange={(e) => setLoginCpf(e.target.value)}
+            onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
             placeholder="000.000.000-00"
+            inputMode="numeric"
+            maxLength={14}
             disabled={!!selectedTeam}
             error={loginErrors.cpf}
-            showValidation
+            icon={<Fingerprint className="h-5 w-5" />}
           />
           
           <AuthInput
