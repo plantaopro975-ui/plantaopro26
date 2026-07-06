@@ -69,6 +69,16 @@ function deobfuscate(str: string): string {
   }
 }
 
+export const CREDENTIALS_CHANGED_EVENT = 'plantao_pro:credentials_changed';
+
+function notifyCredentialsChanged() {
+  try {
+    window.dispatchEvent(new CustomEvent(CREDENTIALS_CHANGED_EVENT));
+  } catch {
+    /* noop */
+  }
+}
+
 export function getSavedCredentials(): SavedCredential[] {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -105,6 +115,7 @@ export function saveCredential(cpf: string, name?: string, password?: string) {
   }
   
   localStorage.setItem(STORAGE_KEY, JSON.stringify(credentials));
+  notifyCredentialsChanged();
 }
 
 export function updateLastLogin(cpf: string) {
@@ -114,6 +125,7 @@ export function updateLastLogin(cpf: string) {
     c.cpf === cleanCpf ? { ...c, lastLoginAt: new Date().toISOString() } : c
   );
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  notifyCredentialsChanged();
 }
 
 export function removeCredentialPassword(cpf: string) {
@@ -123,6 +135,7 @@ export function removeCredentialPassword(cpf: string) {
     c.cpf === cleanCpf ? { ...c, password: undefined } : c
   );
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  notifyCredentialsChanged();
 }
 
 export function removeCredential(cpf: string) {
@@ -130,10 +143,12 @@ export function removeCredential(cpf: string) {
   const cleanCpf = cpf.replace(/\D/g, '');
   const filtered = credentials.filter(c => c.cpf !== cleanCpf);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  notifyCredentialsChanged();
 }
 
 export function clearAllCredentials() {
   localStorage.removeItem(STORAGE_KEY);
+  notifyCredentialsChanged();
 }
 
 // Check if quick login is possible (credential has password and was used within expiry period)
@@ -182,7 +197,17 @@ export function SavedCredentials({ onSelectCredential, onSaveChange, saveCpf, sa
   const [credentials, setCredentials] = useState<SavedCredential[]>([]);
   
   useEffect(() => {
-    setCredentials(getSavedCredentials());
+    const refresh = () => setCredentials(getSavedCredentials());
+    refresh();
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key || e.key === STORAGE_KEY) refresh();
+    };
+    window.addEventListener(CREDENTIALS_CHANGED_EVENT, refresh);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(CREDENTIALS_CHANGED_EVENT, refresh);
+      window.removeEventListener('storage', onStorage);
+    };
   }, []);
 
   const handleRemove = (cpf: string, e: React.MouseEvent) => {

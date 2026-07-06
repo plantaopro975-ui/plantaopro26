@@ -6,6 +6,7 @@ import {
   getSavedCredentials,
   removeCredential,
   canQuickLogin,
+  CREDENTIALS_CHANGED_EVENT,
 } from '@/components/auth/SavedCredentials';
 
 interface SavedCredential {
@@ -52,7 +53,17 @@ export function QuickAccessPanel({ onQuickLogin, onSelectCredential, isLoading, 
   const [credentials, setCredentials] = useState<SavedCredential[]>([]);
 
   useEffect(() => {
-    setCredentials(getSavedCredentials());
+    const refresh = () => setCredentials(getSavedCredentials());
+    refresh();
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key || e.key === 'plantao_pro_saved_credentials') refresh();
+    };
+    window.addEventListener(CREDENTIALS_CHANGED_EVENT, refresh);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(CREDENTIALS_CHANGED_EVENT, refresh);
+      window.removeEventListener('storage', onStorage);
+    };
   }, []);
 
   const handleRemove = (cpf: string, e: React.MouseEvent) => {
