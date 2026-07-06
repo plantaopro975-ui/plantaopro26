@@ -11,6 +11,7 @@ import {
   Shield,
   UserCircle,
   ClipboardCheck,
+  Home,
 } from 'lucide-react';
 import {
   SidebarNavItem,
@@ -20,6 +21,7 @@ import {
 } from './SidebarNav';
 
 const navItems: NavItemDef[] = [
+  { icon: Home, label: 'Início', href: '/?home=1' },
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: UserCircle, label: 'Meu Painel', href: '/agent-panel' },
   { icon: Users, label: 'Agentes', href: '/agents' },
