@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Radio, ShieldCheck, Activity, Clock3, User2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { OperationalStatusRibbon } from './OperationalStatusRibbon';
+
 
 import agent3d from '@/assets/hero/agent-ise-3d.png';
 import agent3dWebp from '@/assets/hero/agent-ise-3d.webp';
