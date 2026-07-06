@@ -1166,7 +1166,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         const naturalW = inner.scrollWidth;
         if (!cH || !naturalH) return;
         const s = Math.min(1, cH / naturalH, cW / naturalW);
-        setFitScale(Number.isFinite(s) && s > 0.35 ? s : Math.max(0.35, s || 1));
+        setFitScale(Number.isFinite(s) && s > 0 ? Math.max(0.55, s) : 1);
       });
     };
     compute();
