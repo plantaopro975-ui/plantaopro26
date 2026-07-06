@@ -183,7 +183,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               <Lock className="h-3 w-3 text-primary/60" />
               Uso restrito · LGPD compliant
             </span>
-            
+            <DeveloperSignature className="order-last sm:order-none" />
             <span className="flex items-center gap-1.5 tracking-wider uppercase">
               <ShieldCheck className="h-3 w-3 text-primary/70" />
               TLS 1.3 · AES-256 · RLS
