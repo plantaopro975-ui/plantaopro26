@@ -1679,6 +1679,17 @@ export function RoundsManager() {
                         silent={silentMode}
                       />
 
+                      <StartLockConfirmDialog
+                        open={startConfirmOpen}
+                        onCancel={() => setStartConfirmOpen(false)}
+                        onConfirm={() => { setStartConfirmOpen(false); startTimer(); }}
+                        color={teamColor}
+                        teamName={team}
+                        agentCount={schedule.rows.length}
+                        totalDurationLabel={fmtDuration(schedule.rows.reduce((sum, r) => sum + r.duration, 0))}
+                        silent={silentMode}
+                      />
+
                       <RoundSummaryDialog
                         open={summaryOpen}
                         onClose={() => { setSummaryOpen(false); setSummaryData(null); }}
