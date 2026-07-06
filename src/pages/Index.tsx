@@ -55,11 +55,8 @@ const ManageCredentialsDialog = lazy(() => import('@/components/auth/ManageCrede
 const MasterPasswordRecoveryDialog = lazy(() => import('@/components/MasterPasswordRecoveryDialog').then(m => ({ default: m.MasterPasswordRecoveryDialog })));
 const MasterLoginDialog = lazy(() => import('@/components/auth/MasterLoginDialog').then(m => ({ default: m.MasterLoginDialog })));
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
-import { CommandStrip } from '@/components/home/CommandStrip';
-import { CommandCenterBar } from '@/components/home/CommandCenterBar';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
-import { HeroCinematic } from '@/components/home/HeroCinematic';
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 import { RoundsCommandBar } from '@/components/home/RoundsCommandBar';
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
