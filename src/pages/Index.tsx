@@ -1248,7 +1248,7 @@ export default function Index() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col bg-background relative overscroll-none">
+      <div className="h-[100dvh] flex flex-col bg-background relative overflow-hidden overscroll-none">
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
@@ -1261,65 +1261,86 @@ export default function Index() {
               else if (isAdmin) navigate('/admin');
               else navigate('/agent-panel');
             }}
-            className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
+            className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
           >
-            <User className="h-4 w-4" />
+            <User className="h-3.5 w-3.5" />
             Meu Painel
           </button>
         )}
 
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex flex-1 flex-col">
+      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden text-[13px] [--card-scale:0.85]">
         {(() => {
           const savedCount = getSavedCredentials().length;
           const wrap = (child: JSX.Element, extra = '') => (
-            <div className={cn('w-full max-w-6xl mx-auto px-2 sm:px-4', extra)}>{child}</div>
+            <div className={cn('w-full max-w-6xl mx-auto px-2 sm:px-3', extra)}>{child}</div>
           );
-          const blocks: Record<HomeCardId, JSX.Element | null> = {
-            rounds: wrap(
-              <div className="animate-fade-in">
-                <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
-                  <RoundsManager />
-                </DraggableHomeCard>
-              </div>,
-            ),
-            hero: (
-              <div className="w-full max-w-7xl mx-auto px-2 sm:px-4">
-                <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block">
-                  <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
-                </DraggableHomeCard>
-              </div>
-            ),
-            banner: wrap(
-              <DraggableHomeCard id="banner" onDropCard={moveHomeCard}>
-                <HomeAgentInfoBanner />
-              </DraggableHomeCard>,
-            ),
+          const blocks: Record<HomeCardId, { node: JSX.Element; grow?: boolean } | null> = {
+            rounds: {
+              node: wrap(
+                <div className="animate-fade-in">
+                  <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
+                    <RoundsManager />
+                  </DraggableHomeCard>
+                </div>,
+              ),
+            },
+            hero: {
+              grow: true,
+              node: (
+                <div className="w-full max-w-7xl mx-auto px-2 sm:px-3 h-full">
+                  <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block h-full">
+                    <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
+                  </DraggableHomeCard>
+                </div>
+              ),
+            },
+            banner: {
+              node: wrap(
+                <DraggableHomeCard id="banner" onDropCard={moveHomeCard}>
+                  <HomeAgentInfoBanner />
+                </DraggableHomeCard>,
+              ),
+            },
             quick: savedCount > 0
-              ? wrap(
-                  <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-                    <DraggableHomeCard id="quick" onDropCard={moveHomeCard}>
-                      <QuickAccessPanel
-                        onQuickLogin={handleQuickLogin}
-                        onSelectCredential={handleQuickLoginSelect}
-                        isLoading={!!quickLoginLoadingCpf}
-                        loadingCpf={quickLoginLoadingCpf || undefined}
-                      />
-                    </DraggableHomeCard>
-                  </div>,
-                )
+              ? {
+                  node: wrap(
+                    <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+                      <DraggableHomeCard id="quick" onDropCard={moveHomeCard}>
+                        <QuickAccessPanel
+                          onQuickLogin={handleQuickLogin}
+                          onSelectCredential={handleQuickLoginSelect}
+                          isLoading={!!quickLoginLoadingCpf}
+                          loadingCpf={quickLoginLoadingCpf || undefined}
+                        />
+                      </DraggableHomeCard>
+                    </div>,
+                  ),
+                }
               : null,
           };
           return (
-            <div className="flex flex-col gap-3 sm:gap-4 py-3 sm:py-4">
-              {homeCardOrder.map((id) => (
-                <div key={id}>{blocks[id]}</div>
-              ))}
+            <div className="flex min-h-0 flex-1 flex-col gap-2 py-2">
+              {homeCardOrder.map((id) => {
+                const b = blocks[id];
+                if (!b) return null;
+                return (
+                  <div
+                    key={id}
+                    className={b.grow ? 'min-h-0 flex-1 overflow-hidden' : 'shrink-0 overflow-hidden'}
+                  >
+                    {b.node}
+                  </div>
+                );
+              })}
             </div>
           );
         })()}
       </header>
+
+
+
 
 
 
