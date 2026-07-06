@@ -123,7 +123,9 @@ export function MotivationalTicker({ color, active, progress = 0, silent = false
             strokeLinejoin="round"
             style={{ filter: `drop-shadow(0 0 3px ${color})` }}
           >
-            <animate attributeName="stroke-dasharray" values="0 80;80 0" dur="1.6s" repeatCount="indefinite" />
+            {!silent && (
+              <animate attributeName="stroke-dasharray" values="0 80;80 0" dur="1.6s" repeatCount="indefinite" />
+            )}
           </path>
         </svg>
       </div>
