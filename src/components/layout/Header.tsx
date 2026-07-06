@@ -104,7 +104,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       ref={ref}
       {...props}
       className={cn(
-        "header-bar relative min-h-11 sm:min-h-10 flex items-center gap-2 sm:gap-3 px-2 pb-4 pt-1 sm:px-3 sm:py-0 lg:px-4 overflow-hidden isolate",
+        "header-bar relative min-h-11 sm:min-h-10 flex items-center gap-2 sm:gap-3 px-2 py-1 sm:px-3 sm:py-0 lg:px-4 overflow-hidden isolate",
         "border-b border-primary/25 shadow-[0_6px_18px_-12px_hsl(217_62%_2%/0.9)]",
         // Fallback sólido + placeholder gradient em caso de falha da imagem
         "bg-slate-950 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_5%)_60%,hsl(217_62%_3%)_100%)]",
