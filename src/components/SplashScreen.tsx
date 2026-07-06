@@ -280,7 +280,7 @@ export function SplashScreen() {
         .splash-log { animation: splashFadeUp 500ms ease-out 1000ms both; }
         .splash-top { animation: splashFadeUp 500ms ease-out 100ms both; }
         .splash-bottom { animation: splashFadeUp 500ms ease-out 300ms both; }
-        .splash-progress { animation: splashProgress 2.3s cubic-bezier(.4,0,.2,1) 200ms both; }
+        .splash-ready { animation: splashFadeUp 500ms ease-out 1400ms both; }
         @media (prefers-reduced-motion: reduce) {
           .splash-root *, .splash-root { animation: none !important; }
         }
