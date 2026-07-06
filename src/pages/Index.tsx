@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -61,7 +61,7 @@ import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
-import { RoundsManager } from '@/components/home/RoundsManager';
+const RoundsManager = lazy(() => import('@/components/home/RoundsManager').then(m => ({ default: m.RoundsManager })));
 import { RoundsCommandBar } from '@/components/home/RoundsCommandBar';
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
 import { useHomeCardOrder, type HomeCardId } from '@/hooks/useHomeCardOrder';
