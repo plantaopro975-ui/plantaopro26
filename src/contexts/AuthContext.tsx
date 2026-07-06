@@ -162,12 +162,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (userErr || !userData?.user) {
             pushDiagEvent('warn', 'auth_invalid_local_session', { error: userErr?.message ?? null });
             await supabase.auth.signOut().catch(() => {});
-            // Limpar TODOS os artefatos de auth do cliente (supabase + master)
+            // Limpar TODOS os artefatos de auth do cliente (supabase + master + credenciais salvas)
             try {
               localStorage.removeItem('master_token');
               localStorage.removeItem('master_user');
               sessionStorage.removeItem('masterSession');
             } catch {}
+            try { clearAllCredentials(); } catch { /* ignore */ }
             setSession(null);
             setUser(null);
             setUserRole(null);
