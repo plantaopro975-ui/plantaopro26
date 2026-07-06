@@ -166,8 +166,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-4 items-stretch">
             <div className="flex flex-col gap-1.5">
-              <span className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400/90 leading-[1.4] py-0.5">
-                <span className="h-1 w-6 bg-amber-400/70" />
+              <span className="inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5">
+                <span className="h-1 w-6 bg-amber-400" />
                 Sistema Operacional
               </span>
               <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[20px] sm:text-[26px] lg:text-[32px] leading-[1.05]">
@@ -179,14 +179,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            <div className="flex flex-wrap items-center gap-3 text-slate-500">
-              <div className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-[0.18em]">
+            <div className="flex flex-wrap items-center gap-3 text-slate-200">
+              <div className="flex items-center gap-1 text-[10px] font-mono font-semibold uppercase tracking-[0.18em]">
                 <ShieldCheck className="h-3 w-3 text-amber-400" /> RLS
               </div>
-              <div className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-[0.18em]">
+              <div className="flex items-center gap-1 text-[10px] font-mono font-semibold uppercase tracking-[0.18em]">
                 <Activity className="h-3 w-3 text-emerald-400" /> Realtime
               </div>
-              <div className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-[0.18em]">
+              <div className="flex items-center gap-1 text-[10px] font-mono font-semibold uppercase tracking-[0.18em]">
                 <Radio className="h-3 w-3 text-amber-400" /> PWA
               </div>
             </div>
@@ -212,12 +212,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 />
 
                 <div className="relative flex items-center justify-between gap-2 mb-2">
-                  <span className="font-mono text-[8px] md:text-[9px] uppercase tracking-[0.32em] text-amber-400/90 truncate">
+                  <span className="font-mono text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-300 truncate">
                     Briefing Operacional
                   </span>
                   <span
                     className={cn(
-                      'flex items-center gap-1 font-mono text-[8px] md:text-[9px] uppercase tracking-[0.28em] shrink-0',
+                      'flex items-center gap-1 font-mono text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.24em] shrink-0',
                       uplinkTone.text,
                     )}
                     aria-live="polite"
@@ -255,7 +255,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     },
                   ].map((it) => (
                     <div key={it.k} className="relative pl-2 md:pl-2.5 border-l border-amber-400/25 min-w-0">
-                      <div className="font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.24em] text-slate-400 truncate flex items-center gap-1">
+                      <div className="font-mono text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-200/95 truncate flex items-center gap-1">
                         {it.pulse && (
                           <span className="relative inline-flex h-1.5 w-1.5 shrink-0">
                             <span className="absolute inset-0 rounded-full bg-emerald-400/70 animate-ping" />
@@ -272,7 +272,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       >
                         {it.v}
                       </div>
-                      <div className="font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.2em] text-slate-500 mt-0.5 truncate">
+                      <div className="font-mono text-[9px] md:text-[10px] font-medium uppercase tracking-[0.16em] text-slate-200/90 mt-0.5 truncate">
                         {it.s}
                       </div>
                     </div>
@@ -289,7 +289,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       style={{ height: `${h * 10}%` }}
                     />
                   ))}
-                  <span className="ml-auto pl-2 font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.24em] text-amber-300/80 shrink-0">
+                  <span className="ml-auto pl-2 font-mono text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-300 shrink-0">
                     ISE · AC · BR
                   </span>
                 </div>
@@ -342,10 +342,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
         <div className="relative shrink-0 px-2 sm:px-3 pt-0 pb-2 -mt-2 sm:-mt-4">
           <div className="flex items-center justify-between px-1 pb-1.5">
-            <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-slate-500">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-200">
               Selecione sua Equipe
             </span>
-            <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-amber-400/80">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-amber-300">
               4 Divisões
             </span>
           </div>

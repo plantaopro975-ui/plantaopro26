@@ -143,7 +143,7 @@ export function RoundsCommandBar() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="hidden lg:flex flex-col leading-tight cursor-default max-w-[160px]">
-                        <span className="text-[8px] text-slate-500 tracking-[0.24em] uppercase">Unidade</span>
+                        <span className="text-[10px] font-semibold text-amber-200/90 tracking-[0.22em] uppercase">Unidade</span>
                         <span className="text-slate-200 text-[10px] font-semibold uppercase truncate">{shortUnit}</span>
                       </div>
                     </TooltipTrigger>
@@ -167,7 +167,7 @@ export function RoundsCommandBar() {
                   className="hidden md:flex flex-col items-end leading-tight group focus-visible:outline-none"
                   aria-label="Ir para Comando — Escalas"
                 >
-                  <span className="text-[8px] text-slate-500 tracking-[0.24em] uppercase">Shortcut</span>
+                  <span className="text-[10px] font-semibold text-amber-200/90 tracking-[0.22em] uppercase">Shortcut</span>
                   <span className="inline-flex items-center gap-1 text-slate-300 group-hover:text-primary transition-colors text-[10px] font-bold tracking-widest uppercase">
                     Comando — Escalas
                     <ArrowUpRight className="h-3 w-3" strokeWidth={2.4} />
@@ -184,7 +184,7 @@ export function RoundsCommandBar() {
               <span className="text-[11px] sm:text-[12px] text-primary font-bold leading-none tracking-[0.14em] tabular-nums drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]">
                 {clock}
               </span>
-              <span className="text-[8.5px] text-slate-500 tracking-[0.22em] mt-0.5">{dateStr}</span>
+              <span className="text-[10px] font-semibold text-slate-200 tracking-[0.2em] mt-0.5">{dateStr}</span>
             </div>
           </div>
         </div>
@@ -215,7 +215,7 @@ function Metric({
   const valueColor = tone === 'primary' ? 'text-slate-100' : 'text-slate-200';
   return (
     <div className={cn('flex flex-col leading-tight min-w-0', className)}>
-      <span className="text-[8px] text-slate-500 tracking-[0.24em] uppercase whitespace-nowrap">{label}</span>
+      <span className="text-[10px] font-semibold text-amber-200/90 tracking-[0.22em] uppercase whitespace-nowrap">{label}</span>
       <div className="flex items-center gap-1.5">
         {live && (
           <span className="relative flex h-1.5 w-1.5 shrink-0" aria-hidden>
@@ -232,7 +232,7 @@ function Metric({
 function TeamChip({ team, className }: { team: string; className?: string }) {
   return (
     <div className={cn('flex flex-col leading-tight', className)}>
-      <span className="text-[8px] text-slate-500 tracking-[0.24em] uppercase">Equipe</span>
+      <span className="text-[10px] font-semibold text-amber-200/90 tracking-[0.22em] uppercase">Equipe</span>
       <span className="bg-slate-900 text-primary text-[9px] px-1.5 py-[1px] font-bold border border-primary/30 tracking-[0.2em] uppercase self-start">
         {team}
       </span>
