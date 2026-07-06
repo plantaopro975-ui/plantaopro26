@@ -73,14 +73,16 @@ export function MotivationalTicker({ color, active, progress = 0, silent = false
         style={{ background: `linear-gradient(180deg, transparent, ${color}, transparent)` }}
       />
       {/* Scanline */}
-      <span
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-px opacity-70"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
-          animation: 'motivScan 3.5s linear infinite',
-        }}
-      />
+      {!silent && (
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-px opacity-70"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+            animation: 'motivScan 3.5s linear infinite',
+          }}
+        />
+      )}
 
       <div className="relative flex items-center gap-3 px-4 py-2.5">
         <div
