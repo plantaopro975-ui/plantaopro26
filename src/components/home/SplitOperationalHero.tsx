@@ -10,7 +10,7 @@ import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
 import vehicle3dWebp from '@/assets/hero/vehicle-ise-3d.webp';
 import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import agentVehicleSceneWebp from '@/assets/hero/agent-vehicle-scene.webp';
-import hudBg from '@/assets/hero/hud-bg.jpg.asset.json';
+
 
 import objAlfa from '@/assets/teams/alfa-vest-real.png';
 import objAlfaWebp from '@/assets/teams/alfa-vest-real.webp';
