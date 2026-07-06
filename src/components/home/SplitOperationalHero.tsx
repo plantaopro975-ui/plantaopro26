@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Radio, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
+import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 
 
 import agent3d from '@/assets/hero/agent-ise-3d.png';
@@ -127,6 +128,15 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     return () => { document.head.removeChild(link); };
   }, []);
 
+  const metrics = useOperationalMetrics();
+  const uplinkTone =
+    metrics.uplink === 'online'
+      ? { dot: 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]', text: 'text-emerald-300/90', label: 'Online' }
+      : metrics.uplink === 'degraded'
+      ? { dot: 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)]', text: 'text-amber-300/90', label: 'Instável' }
+      : { dot: 'bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.9)]', text: 'text-rose-300/90', label: 'Offline' };
+  const fmt2 = (n: number) => String(n).padStart(2, '0');
+
 
 
 
@@ -192,9 +202,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </div>
 
             {/* Mission briefing panel — preenche o espaço entre título e cena */}
-            <div className="relative mt-1 hidden sm:block">
+            <div className="relative mt-1 hidden sm:block w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%]">
               <div
-                className="relative rounded-md border border-amber-400/20 bg-[linear-gradient(135deg,rgba(10,17,40,0.85)_0%,rgba(5,5,5,0.9)_100%)] px-3 py-2.5 overflow-hidden"
+                className="relative rounded-md border border-amber-400/20 bg-[linear-gradient(135deg,rgba(10,17,40,0.85)_0%,rgba(5,5,5,0.9)_100%)] px-3 py-2.5 md:px-3.5 md:py-3 overflow-hidden"
                 style={{ boxShadow: 'inset 0 1px 0 rgba(234,179,8,0.12), 0 8px 24px -12px rgba(0,0,0,0.9)' }}
               >
                 {/* corner brackets */}
@@ -212,29 +222,47 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 />
 
                 <div className="relative flex items-center justify-between gap-2 mb-2">
-                  <span className="font-mono text-[8px] uppercase tracking-[0.32em] text-amber-400/90">
+                  <span className="font-mono text-[8px] md:text-[9px] uppercase tracking-[0.32em] text-amber-400/90 truncate">
                     Briefing Operacional
                   </span>
-                  <span className="flex items-center gap-1 font-mono text-[8px] uppercase tracking-[0.28em] text-emerald-300/90">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
-                    Uplink
+                  <span
+                    className={cn(
+                      'flex items-center gap-1 font-mono text-[8px] md:text-[9px] uppercase tracking-[0.28em] shrink-0',
+                      uplinkTone.text,
+                    )}
+                    aria-live="polite"
+                  >
+                    <span className={cn('h-1.5 w-1.5 rounded-full', uplinkTone.dot)} />
+                    Uplink · {uplinkTone.label}
                   </span>
                 </div>
 
-                <div className="relative grid grid-cols-3 gap-2">
+                <div className="relative grid grid-cols-3 gap-2 md:gap-3">
                   {[
-                    { k: 'Unidades', v: '09', s: 'Ativas' },
-                    { k: 'Divisões', v: '04', s: 'Operacionais' },
-                    { k: 'Prontidão', v: '100%', s: '24 / 7' },
+                    {
+                      k: 'Unidades',
+                      v: metrics.loading ? '——' : fmt2(metrics.units),
+                      s: 'Socioeducativas',
+                    },
+                    {
+                      k: 'Divisões',
+                      v: fmt2(metrics.divisions),
+                      s: 'Táticas',
+                    },
+                    {
+                      k: 'Efetivo',
+                      v: metrics.loading ? '——' : fmt2(metrics.agentsActive),
+                      s: 'Agentes ativos',
+                    },
                   ].map((it) => (
-                    <div key={it.k} className="relative pl-2 border-l border-amber-400/25">
-                      <div className="font-mono text-[7.5px] uppercase tracking-[0.24em] text-slate-400">
+                    <div key={it.k} className="relative pl-2 md:pl-2.5 border-l border-amber-400/25 min-w-0">
+                      <div className="font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.24em] text-slate-400 truncate">
                         {it.k}
                       </div>
-                      <div className="font-sans font-black text-white text-[15px] leading-none mt-0.5">
+                      <div className="font-sans font-black text-white text-[15px] md:text-[17px] lg:text-[18px] leading-none mt-0.5 tabular-nums">
                         {it.v}
                       </div>
-                      <div className="font-mono text-[7.5px] uppercase tracking-[0.2em] text-slate-500 mt-0.5">
+                      <div className="font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.2em] text-slate-500 mt-0.5 truncate">
                         {it.s}
                       </div>
                     </div>
@@ -242,21 +270,22 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 </div>
 
                 {/* barcode strip */}
-                <div className="relative mt-2 flex items-end gap-[2px] h-3 opacity-70">
+                <div className="relative mt-2 flex items-end gap-[2px] h-3 opacity-70 overflow-hidden">
                   {[3,7,4,9,5,3,8,4,6,3,9,4,7,5,3,6,4,8,3,7,5,4,9,6,3].map((h, i) => (
                     <span
                       key={i}
-                      className="block w-[2px] bg-amber-400/70"
+                      className="block w-[2px] bg-amber-400/70 shrink-0"
                       style={{ height: `${h * 10}%` }}
                     />
                   ))}
-                  <span className="ml-auto font-mono text-[7.5px] uppercase tracking-[0.24em] text-amber-300/80">
+                  <span className="ml-auto pl-2 font-mono text-[7.5px] md:text-[8px] uppercase tracking-[0.24em] text-amber-300/80 shrink-0">
                     ISE · AC · BR
                   </span>
                 </div>
               </div>
             </div>
           </div>
+
 
 
           {/* RIGHT — Agent 3D */}

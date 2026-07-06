@@ -147,21 +147,23 @@ export function OperationalStatusRibbon() {
           </>
         ) : (
           <>
-            {/* Estado público — sem login */}
+            {/* Estado público — sem login: sem duplicar KPIs do Briefing */}
             <g transform="translate(80,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace">
-              <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(42 60% 72% / 0.85)">MISSÃO</text>
-              <text y="7" fontSize="11" fontWeight="700" fill="hsl(48 100% 90%)">EM CURSO</text>
-              <text y="17" fontSize="7.5" letterSpacing="1.6" fill="hsl(42 40% 72% / 0.7)">24 / 7 · SOCIOEDUCATIVO</text>
+              <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(42 60% 72% / 0.85)">PROTOCOLO</text>
+              <text y="7" fontSize="11" fontWeight="700" fill="hsl(48 100% 90%)">ISE-AC / 2026</text>
+              <text y="17" fontSize="7.5" letterSpacing="1.6" fill="hsl(42 40% 72% / 0.7)">SISTEMA SOCIOEDUCATIVO</text>
             </g>
 
             <g transform="translate(350,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="middle">
-              <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(42 60% 72% / 0.85)">UNIDADES</text>
-              <text y="10" fontSize="14" fontWeight="700" fill="hsl(48 100% 92%)">09 / 09</text>
+              <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(42 60% 72% / 0.85)">TURNO</text>
+              <text y="8" fontSize="12" fontWeight="700" fill="hsl(48 100% 92%)">24 / 7</text>
+              <text y="18" fontSize="7" letterSpacing="1.4" fill="hsl(42 40% 72% / 0.7)">COBERTURA CONTÍNUA</text>
             </g>
 
             <g transform="translate(580,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="middle">
-              <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(42 60% 72% / 0.85)">DIVISÕES</text>
-              <text y="10" fontSize="14" fontWeight="700" fill="hsl(48 100% 92%)">04</text>
+              <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(42 60% 72% / 0.85)">JURISDIÇÃO</text>
+              <text y="8" fontSize="12" fontWeight="700" fill="hsl(48 100% 92%)">ACRE · BR</text>
+              <text y="18" fontSize="7" letterSpacing="1.4" fill="hsl(42 40% 72% / 0.7)">GOV / SEJUSP</text>
             </g>
 
             <g transform="translate(720,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace">
