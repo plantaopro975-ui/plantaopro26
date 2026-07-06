@@ -1345,21 +1345,27 @@ export function RoundsManager() {
                 {mode === 'split' && (
                   <div className="grid gap-1.5">
                     <Label className="text-[11px] font-sans tracking-wide text-muted-foreground">
-                      Arredondamento da divisão
+                      Divisão automática entre {agents.length} agente{agents.length === 1 ? '' : 's'}
                     </Label>
                     <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
                       <SelectTrigger className="bg-card/60 border-border h-9 text-xs">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="distribute">Minutos inteiros — distribuir resto (recomendado)</SelectItem>
-                        <SelectItem value="floor">Minutos inteiros — truncar (sobra livre no fim)</SelectItem>
-                        <SelectItem value="ceil">Minutos inteiros — arredondar para cima</SelectItem>
-                        <SelectItem value="exact">Exato — segundos fracionários</SelectItem>
+                        <SelectItem value="distribute">Automático — minutos inteiros, recalibra no fim (recomendado)</SelectItem>
+                        <SelectItem value="exact">Preciso — divide em segundos, fecha 100% no término</SelectItem>
+                        <SelectItem value="floor">Truncar — minutos inteiros (sobra livre no fim)</SelectItem>
+                        <SelectItem value="ceil">Arredondar — minutos inteiros para cima (pode ultrapassar)</SelectItem>
                       </SelectContent>
                     </Select>
+                    {schedule && (
+                      <p className="text-[10px] font-mono text-muted-foreground/80 mt-0.5">
+                        {agents.length} × ~{fmtDuration(schedule.slot)} · total {fmtDuration(schedule.total)} ({startTime} → {endTime})
+                      </p>
+                    )}
                   </div>
                 )}
+
 
                 {/* Agents */}
                 <div className="grid gap-1.5">
