@@ -19,7 +19,7 @@ export function PanelSkeleton({
   className,
 }: PanelSkeletonProps) {
   return (
-    <div className={cn('animate-fade-in space-y-6', className)}>
+    <div className={cn('space-y-6 opacity-80', className)}>
       {showHeader && (
         <div className="space-y-2">
           <Skeleton className="h-6 w-48" />
