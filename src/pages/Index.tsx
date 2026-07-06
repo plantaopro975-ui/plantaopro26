@@ -73,11 +73,11 @@ import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import { useSavedCredentialsSync } from '@/hooks/useSavedCredentialsSync';
 import { getThemeAssets } from '@/lib/themeAssets';
-import { ErrorDialog } from '@/components/ErrorDialog';
+const ErrorDialog = lazy(() => import('@/components/ErrorDialog').then(m => ({ default: m.ErrorDialog })));
 
-import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
-import { PendingApprovalDialog } from '@/components/PendingApprovalDialog';
-import { AuthDialog } from '@/components/auth/AuthDialog';
+const LockoutTimerDialog = lazy(() => import('@/components/LockoutTimerDialog').then(m => ({ default: m.LockoutTimerDialog })));
+const PendingApprovalDialog = lazy(() => import('@/components/PendingApprovalDialog').then(m => ({ default: m.PendingApprovalDialog })));
+const AuthDialog = lazy(() => import('@/components/auth/AuthDialog').then(m => ({ default: m.AuthDialog })));
 import { AuthInput } from '@/components/auth/AuthInput';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TeamBadge } from '@/components/auth/TeamBadge';
