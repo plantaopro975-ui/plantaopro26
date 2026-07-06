@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { pushDiagEvent } from '@/lib/diagLog';
 import { clearAllCredentials } from '@/components/auth/SavedCredentials';
+import { toast } from 'sonner';
 
 
 type UserRole = 'admin' | 'user' | 'master';
@@ -33,6 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // some pages gate on isLoading=false && !user and redirect,
   // but Supabase can momentarily report null session before hydration.
   const hasInitializedRef = useRef(false);
+  const intentionalSignOutRef = useRef(false);
   const [masterSession, setMasterSessionState] = useState<string | null>(() => {
     // Check both sessionStorage and localStorage for master session
     if (typeof window !== 'undefined') {
@@ -117,10 +119,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Só limpa se realmente foi logout intencional
           const storedMaster = localStorage.getItem('master_token');
           if (!storedMaster) {
+            const wasIntentional = intentionalSignOutRef.current;
             setSession(null);
             setUser(null);
             setUserRole(null);
             try { clearAllCredentials(); } catch { /* ignore */ }
+            if (!wasIntentional && hasInitializedRef.current) {
+              try {
+                toast.warning('Sessão encerrada', {
+                  description: 'Sua sessão expirou ou foi invalidada. Credenciais salvas foram limpas por segurança.',
+                  duration: 6000,
+                });
+              } catch { /* ignore */ }
+            }
+            intentionalSignOutRef.current = false;
           }
         } else {
           // Para outros eventos, atualiza normalmente
@@ -169,6 +181,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               sessionStorage.removeItem('masterSession');
             } catch {}
             try { clearAllCredentials(); } catch { /* ignore */ }
+            try {
+              toast.warning('Sessão expirada', {
+                description: 'Suas credenciais salvas foram limpas por segurança. Faça login novamente.',
+                duration: 6000,
+              });
+            } catch { /* ignore */ }
             setSession(null);
             setUser(null);
             setUserRole(null);
@@ -282,6 +300,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     pushDiagEvent('info', 'signout');
+    intentionalSignOutRef.current = true;
 
     // Register logout in access_logs before signing out
     if (user?.id) {
