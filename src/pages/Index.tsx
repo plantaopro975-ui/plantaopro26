@@ -1530,17 +1530,41 @@ export default function Index() {
         team={selectedTeam}
       >
         <form onSubmit={handleLogin} className="space-y-5" data-login-form="true">
-          <AuthInput
-            label="CPF"
-            value={loginCpf}
-            onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
-            placeholder="000.000.000-00"
-            inputMode="numeric"
-            maxLength={14}
-            disabled={!!selectedTeam}
-            error={loginErrors.cpf}
-            icon={<Fingerprint className="h-5 w-5" />}
-          />
+          {foundAgent?.name ? (
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-slate-300 uppercase tracking-wider">
+                Identidade Confirmada
+              </label>
+              <div className="relative rounded-xl border-2 border-emerald-500/40 bg-gradient-to-r from-emerald-500/10 via-slate-800/80 to-emerald-500/5 h-14 px-4 flex items-center gap-3 overflow-hidden">
+                <div className="absolute inset-y-0 left-0 w-1 bg-emerald-500/70" />
+                <div className="shrink-0 h-9 w-9 rounded-lg bg-emerald-500/15 border border-emerald-500/40 grid place-items-center">
+                  <ShieldCheck className="h-5 w-5 text-emerald-300" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80">Agente</div>
+                  <div className="text-white font-semibold truncate leading-tight">{foundAgent.name}</div>
+                </div>
+                {foundAgent.team && (
+                  <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                    {foundAgent.team}
+                  </span>
+                )}
+              </div>
+              <input type="hidden" value={loginCpf} readOnly />
+            </div>
+          ) : (
+            <AuthInput
+              label="CPF"
+              value={loginCpf}
+              onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
+              placeholder="000.000.000-00"
+              inputMode="numeric"
+              maxLength={14}
+              disabled={!!selectedTeam}
+              error={loginErrors.cpf}
+              icon={<Fingerprint className="h-5 w-5" />}
+            />
+          )}
           
           <AuthInput
             label="Senha (6 dígitos)"
