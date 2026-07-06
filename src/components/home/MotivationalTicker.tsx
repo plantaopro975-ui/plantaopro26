@@ -19,23 +19,29 @@ const PHRASES: Array<{ icon: typeof Eye; text: string; hue: 'primary' | 'warn' |
 interface Props {
   color: string;
   active: boolean;
+  /** 0..1 — round progress. Higher = closer to end = faster phrase rotation. */
+  progress?: number;
+  /** When true, suppresses animations and scanlines but keeps the guidance text. */
+  silent?: boolean;
 }
 
 /**
  * Rotating motivational strip shown while a round is running.
- * Cycles professional reminders every ~5s with a subtle animated pulse
- * to keep the agent alert during long shifts.
+ * Cycles professional reminders with cadence tied to countdown progress
+ * (faster near the end) to keep the agent alert during long shifts.
  */
-export function MotivationalTicker({ color, active }: Props) {
+export function MotivationalTicker({ color, active, progress = 0, silent = false }: Props) {
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
     if (!active) return;
+    // 5s at start → 1.5s near the end
+    const interval = Math.max(1500, 5000 - progress * 3500);
     const id = window.setInterval(() => {
       setIdx((i) => (i + 1) % PHRASES.length);
-    }, 5000);
+    }, interval);
     return () => window.clearInterval(id);
-  }, [active]);
+  }, [active, progress]);
 
   if (!active) return null;
 
