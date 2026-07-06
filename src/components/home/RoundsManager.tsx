@@ -22,6 +22,7 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { RoundsRadarSVG } from './RoundsRadarSVG';
 import { MissionLockDialog } from './MissionLockDialog';
 import { MotivationalTicker } from './MotivationalTicker';
+import { RoundSummaryDialog } from './RoundSummaryDialog';
 
 /* ================= helpers ================= */
 const pad = (n: number) => n.toString().padStart(2, '0');
