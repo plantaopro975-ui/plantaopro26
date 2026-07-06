@@ -195,12 +195,12 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
 
       {/* Right Side */}
 
-      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+      <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
         {/* Sound Toggle */}
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-9 w-9 shrink-0 hover:bg-primary/10 hover:border-primary/30 transition-all"
+          className="h-7 w-7 shrink-0 hover:bg-primary/10 hover:border-primary/30 transition-all"
           onClick={() => {
             toggleSound();
             playSound('tactical-click');
@@ -208,9 +208,9 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           title={isSoundEnabled ? 'Desativar sons' : 'Ativar sons'}
         >
           {isSoundEnabled ? (
-            <Volume2 className="h-4 w-4 text-primary" />
+            <Volume2 className="h-3.5 w-3.5 text-primary" />
           ) : (
-            <VolumeX className="h-4 w-4 text-muted-foreground" />
+            <VolumeX className="h-3.5 w-3.5 text-muted-foreground" />
           )}
         </Button>
 
@@ -218,11 +218,11 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative h-9 w-9 shrink-0 hover:bg-primary/10 transition-all overflow-visible"
+          className="relative h-7 w-7 shrink-0 hover:bg-primary/10 transition-all overflow-visible"
           onClick={handleNotificationClick}
         >
-          <Bell className="h-4 w-4" />
-          <span className="notification-badge absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)] ring-2 ring-background" />
+          <Bell className="h-3.5 w-3.5" />
+          <span className="notification-badge absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)] ring-2 ring-background" />
         </Button>
 
         {/* User Menu - Tactical Style */}
@@ -230,17 +230,17 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              className="flex items-center gap-2 pl-2 pr-3 h-9 hover:bg-primary/10 border border-transparent hover:border-primary/30 transition-all"
+              className="flex items-center gap-1.5 pl-1.5 pr-2 h-7 hover:bg-primary/10 border border-transparent hover:border-primary/30 transition-all"
               onClick={() => playSound('tactical-hover')}
             >
-              <Avatar className="h-7 w-7 ring-2 ring-primary/30">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-xs font-bold">
+              <Avatar className="h-5 w-5 ring-1 ring-primary/30">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-[9px] font-bold">
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
-              <div className="hidden sm:block text-left">
-                <p className="text-[13px] font-semibold truncate max-w-[90px] md:max-w-[120px] text-foreground">{getDisplayName()}</p>
-                <p className="text-[11px] text-primary/80 font-medium">{getRoleBadge()}</p>
+              <div className="hidden sm:block text-left leading-tight">
+                <p className="text-[11px] font-semibold truncate max-w-[80px] md:max-w-[110px] text-foreground">{getDisplayName()}</p>
+                <p className="text-[9px] text-primary/80 font-medium">{getRoleBadge()}</p>
               </div>
             </Button>
           </DropdownMenuTrigger>
