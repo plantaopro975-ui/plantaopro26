@@ -163,9 +163,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     return () => { document.head.removeChild(link); };
   }, []);
 
-  const now = useNow();
-  const clock = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  const day = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }).toUpperCase();
+
+
 
   return (
     <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0">
