@@ -1166,7 +1166,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         const naturalW = inner.scrollWidth;
         if (!cH || !naturalH) return;
         const s = Math.min(1, cH / naturalH, cW / naturalW);
-        setFitScale(Number.isFinite(s) && s > 0.35 ? s : Math.max(0.35, s || 1));
+        setFitScale(Number.isFinite(s) && s > 0 ? Math.max(0.55, s) : 1);
       });
     };
     compute();
@@ -1242,7 +1242,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
         <DialogContent
-          className="w-[min(100vw-0.5rem,72rem)] max-w-none max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
+          className="w-[min(100vw-1rem,60rem)] max-w-none max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
@@ -1321,7 +1321,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Corpo auto-ajustado — sem barra de rolagem, escala para caber tudo */}
           <div
             ref={fitRef}
-            className="flex-1 min-h-0 overflow-hidden"
+            className="flex-1 min-h-0 overflow-auto"
           >
             <div
               ref={fitInnerRef}
@@ -1330,10 +1330,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 transformOrigin: 'top left',
                 width: `${100 / fitScale}%`,
               }}
-              className="px-4 sm:px-6 lg:px-10 py-4 sm:py-6"
+              className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4"
             >
-              <div className="mx-auto w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-6 items-start lg:divide-x lg:divide-border/40">
-                <div className="min-w-0 lg:pr-6">
+              <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 items-start lg:divide-x lg:divide-border/40">
+                <div className="min-w-0 lg:pr-4">
 
 
               {/* ============ COLUNA ESQUERDA — CONFIGURAÇÃO ============ */}
