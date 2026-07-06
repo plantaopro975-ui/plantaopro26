@@ -534,7 +534,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   );
                 })()}
               </button>
-            ))}
+              );
+            })}
           </div>
 
           {/* ============ TACTICAL STATUS RIBBON — SVG HUD ============ */}
