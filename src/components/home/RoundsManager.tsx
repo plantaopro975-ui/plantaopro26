@@ -1519,9 +1519,17 @@ export function RoundsManager() {
                           </div>
                         )}
 
-                        <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-light tabular-nums tracking-tight leading-none break-all" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
-                          {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
-                        </span>
+                        <div className="flex items-center justify-center gap-4 sm:gap-6">
+                          {running && live && !live.done && 'slotSec' in live && (
+                            <RoundsRadarSVG
+                              color={teamColor}
+                              progress={1 - live.remaining / live.slotSec}
+                            />
+                          )}
+                          <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-light tabular-nums tracking-tight leading-none break-all" style={{ color: running ? teamColor : 'hsl(var(--muted-foreground))' }}>
+                            {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
+                          </span>
+                        </div>
 
                         {/* Nome BEM GRANDE do agente em ronda */}
                         {running && live && !live.done && (
