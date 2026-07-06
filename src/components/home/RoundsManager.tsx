@@ -4,7 +4,7 @@ import autoTable from 'jspdf-autotable';
 import {
   Clock, Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
   Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
-  Save, Star, History, CheckCircle2,
+  Save, Star, History, CheckCircle2, Volume2, VolumeX,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
