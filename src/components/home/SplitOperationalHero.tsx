@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Radio, ShieldCheck, Activity, Clock3, User2 } from 'lucide-react';
+import { Radio, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
 
