@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { ShieldCheck, MapPin, Users2, Clock3, Radar, CalendarCheck, type LucideIcon } from 'lucide-react';
-import { useServerTime } from '@/hooks/useServerTime';
+import { MapPin, Users2, Radar, CalendarCheck, type LucideIcon } from 'lucide-react';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useRoundsStats } from '@/hooks/useRoundsStats';
 import { RoundsManager } from './RoundsManager';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+
 
 /**
  * Barra tática unificada:
@@ -36,11 +36,6 @@ interface Cell {
 
 export function RoundsCommandBar() {
   const { agent } = useAgentProfile();
-
-  // Tick de 20s — o mostrador é HH:mm, então re-render de segundo é desperdício.
-  const now = useServerTime(20_000);
-  const hh = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  const dd = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
 
   const rounds = useRoundsStats();
 
@@ -83,17 +78,6 @@ export function RoundsCommandBar() {
         show: 'hidden sm:flex',
         keepIcon: true,
       },
-      {
-        key: 'enlace',
-        icon: ShieldCheck,
-        label: 'Enlace',
-        value: 'Seguro',
-        tip: 'Canal operacional seguro · 24/7',
-        tone: 'ok',
-        live: true,
-        show: 'hidden md:flex',
-        keepIcon: true,
-      },
     ];
 
     if (agent?.team) {
@@ -109,31 +93,20 @@ export function RoundsCommandBar() {
       });
     }
 
-    list.push(
-      {
-        key: 'setor',
-        icon: MapPin,
-        label: 'Unidade',
-        value: shortUnitLabel,
-        tip: unitLabel,
-        tone: 'neutral',
-        show: 'hidden lg:flex',
-        keepIcon: true,
-      },
-      {
-        key: 'hora',
-        icon: Clock3,
-        label: 'Hora',
-        value: `${hh} · ${dd}`,
-        tip: `Horário de rede · ${hh} · ${dd}`,
-        tone: 'neutral',
-        show: 'flex',
-        keepIcon: true,
-      },
-    );
+    list.push({
+      key: 'setor',
+      icon: MapPin,
+      label: 'Unidade',
+      value: shortUnitLabel,
+      tip: unitLabel,
+      tone: 'neutral',
+      show: 'hidden lg:flex',
+      keepIcon: true,
+    });
 
     return list;
-  }, [rounds.active, rounds.today, agent?.team, shortUnitLabel, unitLabel, hh, dd]);
+
+  }, [rounds.active, rounds.today, agent?.team, shortUnitLabel, unitLabel]);
 
   const toneText = (t?: Tone) =>
     t === 'ok' ? 'text-success'

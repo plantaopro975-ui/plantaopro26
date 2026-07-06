@@ -128,35 +128,19 @@ function TopHudBar() {
   const dateStr = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}`;
   return (
     <div className="relative w-full border-y border-white/5 bg-slate-950/70 backdrop-blur-md shrink-0">
-      <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,#eab308_50%,transparent)]" />
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-primary/40" />
       <div className="mx-auto max-w-[1600px] px-3 sm:px-5">
-        <div className="grid grid-cols-3 items-center h-8 font-mono text-[10px] uppercase tracking-[0.22em]">
-          <div className="flex items-center gap-2 min-w-0">
-            <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-400" strokeWidth={2.2} />
-            <span className="truncate text-slate-300">
-              Online
+        <div className="flex items-center justify-end h-8 font-mono text-[10px] uppercase tracking-[0.22em]">
+          {/* Único destaque: DATA + HORA (fonte autoritativa do horário de rede). */}
+          <div className="flex items-stretch overflow-hidden rounded-md border border-primary/40 bg-slate-950/80 shadow-[0_0_10px_-4px_hsl(var(--primary)/0.6)]">
+            <span className="flex items-center gap-1 px-1.5 sm:px-2 py-1 text-primary/90 tabular-nums text-[10px] sm:text-[11px] tracking-[0.18em]">
+              <span className="hidden xs:inline">{weekday}</span>
+              <span className="font-bold">{dateStr}</span>
             </span>
-          </div>
-          <div className="hidden md:flex items-center justify-center text-slate-400/80 truncate">
-            QSL, Feijó! · Franc.D'nis
-          </div>
-          <div className="md:hidden" />
-          <div className="flex items-center justify-end gap-2 min-w-0">
-            {/* Destaque: DATA + HORA agrupadas */}
-            <div className="flex items-stretch overflow-hidden rounded-md border border-primary/40 bg-slate-950/80 shadow-[0_0_10px_-4px_hsl(var(--primary)/0.6)]">
-              <span className="flex items-center gap-1 px-1.5 sm:px-2 py-1 text-primary/90 tabular-nums text-[10px] sm:text-[11px] tracking-[0.18em]">
-                <span className="hidden xs:inline">{weekday}</span>
-                <span className="font-bold">{dateStr}</span>
-              </span>
-              <span aria-hidden className="w-px bg-primary/30" />
-              <span className="flex items-center gap-1 px-1.5 sm:px-2 py-1 text-primary font-bold tabular-nums text-[11px] sm:text-[12px] tracking-[0.14em] drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]">
-                <Clock3 className="h-3 w-3" strokeWidth={2.4} />
-                {clock}
-              </span>
-            </div>
-            <span className="hidden sm:flex items-center gap-1.5 text-slate-400">
-              <User2 className="h-3 w-3" strokeWidth={2.2} />
-              Agente
+            <span aria-hidden className="w-px bg-primary/30" />
+            <span className="flex items-center gap-1 px-1.5 sm:px-2 py-1 text-primary font-bold tabular-nums text-[11px] sm:text-[12px] tracking-[0.14em] drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]">
+              <Clock3 className="h-3 w-3" strokeWidth={2.4} />
+              {clock}
             </span>
           </div>
         </div>
@@ -164,6 +148,7 @@ function TopHudBar() {
     </div>
   );
 }
+
 
 export function SplitOperationalHero({ onTeamClick }: Props) {
   // Preload only the first-in-viewport 3D image (ALFA), AVIF variant
@@ -178,9 +163,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     return () => { document.head.removeChild(link); };
   }, []);
 
-  const now = useNow();
-  const clock = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  const day = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }).toUpperCase();
+
+
 
   return (
     <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0">
