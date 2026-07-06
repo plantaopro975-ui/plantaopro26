@@ -836,10 +836,12 @@ export default function AgentPanel() {
 
     {/* Welcome Trial Dialog */}
     {showWelcomeDialog && agent && (
-      <WelcomeTrialDialog 
-        agentName={agent.name} 
-        onClose={() => setShowWelcomeDialog(false)} 
-      />
+      <Suspense fallback={null}>
+        <WelcomeTrialDialog 
+          agentName={agent.name} 
+          onClose={() => setShowWelcomeDialog(false)} 
+        />
+      </Suspense>
     )}
     </>
   );
