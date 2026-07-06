@@ -34,6 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // some pages gate on isLoading=false && !user and redirect,
   // but Supabase can momentarily report null session before hydration.
   const hasInitializedRef = useRef(false);
+  const intentionalSignOutRef = useRef(false);
   const [masterSession, setMasterSessionState] = useState<string | null>(() => {
     // Check both sessionStorage and localStorage for master session
     if (typeof window !== 'undefined') {
