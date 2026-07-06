@@ -1396,15 +1396,15 @@ export default function Index() {
             <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
           </div>
 
-          {/* Center: Institutional */}
+          {/* Center: Institutional signature (single authoritative © line) */}
           <div className="hidden sm:flex flex-col items-center leading-tight">
             <span className="text-[8.5px] uppercase tracking-[0.28em] text-muted-foreground/60 font-mono">
-              © {new Date().getFullYear()} · Feijó / AC
+              © {new Date().getFullYear()} · PlantãoPro
             </span>
           </div>
 
 
-          {/* Right: Actions + Clock */}
+          {/* Right: Actions */}
           <div className="flex items-center gap-1.5">
             {getSavedCredentials().length > 0 && (
               <button
@@ -1422,15 +1422,7 @@ export default function Index() {
             >
               <Info className="h-3.5 w-3.5" />
             </button>
-            <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/50">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-60" />
-                <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
-              </span>
-              <span className="text-[9px] font-semibold tracking-[0.20em] uppercase text-success/90 font-mono">
-                Ativo
-              </span>
-            </div>
+
 
 
           </div>
