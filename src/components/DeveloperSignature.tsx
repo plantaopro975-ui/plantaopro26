@@ -21,55 +21,8 @@ export function DeveloperSignature({ className, compact = false }: DeveloperSign
       title="Desenvolvido por Franc D'nis · Agente Socioeducativo · Feijó/AC"
       aria-label="Desenvolvido por Franc D'nis, Agente Socioeducativo, Feijó, AC"
     >
-      {/* Monogram seal */}
-      <svg
-        viewBox="0 0 32 32"
-        className={cn(
-          'shrink-0 drop-shadow-[0_0_4px_hsl(var(--primary)/0.4)]',
-          compact ? 'h-3 w-3' : 'h-3.5 w-3.5',
-        )}
-        aria-hidden
-      >
-        <defs>
-          <linearGradient id="sig-seal" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
-          </linearGradient>
-        </defs>
-        {/* Hex frame */}
-        <path
-          d="M16 2 L28 9 L28 23 L16 30 L4 23 L4 9 Z"
-          fill="none"
-          stroke="url(#sig-seal)"
-          strokeWidth="1.2"
-          className="opacity-70 group-hover:opacity-100 transition-opacity"
-        />
-        {/* Inner rotating ring */}
-        <circle
-          cx="16"
-          cy="16"
-          r="6.5"
-          fill="none"
-          stroke="hsl(var(--primary))"
-          strokeWidth="0.6"
-          strokeDasharray="2 3"
-          className="opacity-50 origin-center [animation:sig-spin_18s_linear_infinite]"
-        />
-        {/* Monogram FD */}
-        <text
-          x="16"
-          y="20"
-          textAnchor="middle"
-          fontSize="10"
-          fontWeight="700"
-          fontFamily="'Playfair Display', Georgia, serif"
-          fontStyle="italic"
-          fill="hsl(var(--primary))"
-          className="drop-shadow-[0_0_2px_hsl(var(--primary)/0.6)]"
-        >
-          FD
-        </text>
-      </svg>
+      {/* Monogram seal removed per request */}
+
 
       {/* Handwritten signature */}
       <svg
