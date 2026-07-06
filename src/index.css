@@ -1017,3 +1017,37 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 }
 
 
+
+/* ============================================================
+   PERFORMANCE: pause off-screen animations + skip heavy loops
+   ============================================================ */
+
+/* Pause all CSS animations when the tab is hidden */
+html.tab-hidden *,
+html.tab-hidden *::before,
+html.tab-hidden *::after {
+  animation-play-state: paused !important;
+}
+
+/* Off-screen work: lets the browser skip layout/paint for offscreen sections */
+.perf-cv {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 800px;
+}
+
+/* Reduced motion: kill decorative particle/matrix/frost/flame fields entirely */
+@media (prefers-reduced-motion: reduce) {
+  .themed-bg-decor {
+    display: none !important;
+  }
+  .animate-ping,
+  .animate-pulse,
+  .animate-spin,
+  .animate-float,
+  .animate-radar,
+  .animate-scan,
+  .animate-rise,
+  .animate-float3d {
+    animation: none !important;
+  }
+}
