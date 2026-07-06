@@ -1445,7 +1445,7 @@ export default function Index() {
             <MaskedCpfInput
               value={checkCpf}
               onChange={(e) => setCheckCpf(e.target.value)}
-              onValidCpf={() => handleCpfInputChange(checkCpf)}
+              onValidCpf={(clean) => handleCpfInputChange(clean)}
               placeholder="000.000.000-00"
               showValidation
               rightIcon={isSearchingAgent ? (
