@@ -59,10 +59,12 @@ export function MissionLockDialog({ open, onClose, color, agentName, remainingLa
         <div className="p-6 pt-4">
           <AlertDialogHeader>
             <div className="mx-auto mb-3 relative">
-              <div
-                className="absolute inset-0 rounded-full blur-xl opacity-60"
-                style={{ backgroundColor: color }}
-              />
+              {!silent && (
+                <div
+                  className="absolute inset-0 rounded-full blur-xl opacity-60"
+                  style={{ backgroundColor: color }}
+                />
+              )}
               <div
                 className="relative w-16 h-16 rounded-full flex items-center justify-center border-2"
                 style={{ borderColor: color, background: `${color}18` }}
