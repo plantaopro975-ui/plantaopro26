@@ -106,7 +106,7 @@ export function RoundsCommandBar() {
 
     return list;
 
-  }, [rounds.active, rounds.today, agent?.team, shortUnitLabel, unitLabel, hh, dd]);
+  }, [rounds.active, rounds.today, agent?.team, shortUnitLabel, unitLabel]);
 
   const toneText = (t?: Tone) =>
     t === 'ok' ? 'text-success'
