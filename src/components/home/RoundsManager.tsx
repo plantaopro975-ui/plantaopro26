@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import {
   Clock, Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
   Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
@@ -1030,8 +1028,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     toast({ title: 'Copiado', description: 'Escala copiada para a área de transferência.' });
   };
 
-  const exportPDF = () => {
+  const exportPDF = async () => {
     if (!schedule) return;
+    const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+      import('jspdf'),
+      import('jspdf-autotable'),
+    ]);
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
     const modeTxt = mode === 'split'

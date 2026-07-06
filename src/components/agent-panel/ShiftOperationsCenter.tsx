@@ -14,8 +14,6 @@ import {
   addHours, differenceInSeconds, format, isWithinInterval, parseISO, subDays,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useLowMotion } from '@/hooks/useLowMotion';
@@ -287,11 +285,15 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
     if (obsStorageKey) localStorage.setItem(obsStorageKey, v);
   };
 
-  const exportPDF = () => {
+  const exportPDF = async () => {
     if (!currentShift) {
       toast.error('Nenhum plantão em curso para exportar.');
       return;
     }
+    const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+      import('jspdf'),
+      import('jspdf-autotable'),
+    ]);
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
 
