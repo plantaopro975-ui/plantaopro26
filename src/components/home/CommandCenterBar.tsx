@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
 import { Activity, Radio, ShieldCheck, Signal, Users, Clock3, type LucideIcon } from 'lucide-react';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import { useServerTime } from '@/hooks/useServerTime';
 import { cn } from '@/lib/utils';
 
 /**
@@ -9,12 +9,8 @@ import { cn } from '@/lib/utils';
  */
 export function CommandCenterBar() {
   const online = useOnlinePresence();
-  const [now, setNow] = useState(() => new Date());
-
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(id);
-  }, []);
+  // Horário sincronizado com o servidor (não depende do relógio local)
+  const now = useServerTime(1000);
 
   const hh = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const dd = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
