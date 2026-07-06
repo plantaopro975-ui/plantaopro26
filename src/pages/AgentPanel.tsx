@@ -37,7 +37,7 @@ import { useNetworkStatus } from '@/hooks/useOfflineCache';
 import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
 import { UnitSummaryCard } from '@/components/agent-panel/UnitSummaryCard';
 import { AdminAnnouncementsPanel } from '@/components/agent-panel/AdminAnnouncementsPanel';
-import { AdDisplaySystem } from '@/components/agent-panel/AdDisplaySystem';
+const AdDisplaySystem = lazy(() => import('@/components/agent-panel/AdDisplaySystem').then(m => ({ default: m.AdDisplaySystem })));
 import { usePromosEnabled } from '@/hooks/usePromosEnabled';
 import { AgentHeroPanel } from '@/components/agent-panel/AgentHeroPanel';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
