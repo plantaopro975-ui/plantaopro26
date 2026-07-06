@@ -31,15 +31,26 @@ function toMinutes(hhmm: string): number | null {
   return h * 60 + mi;
 }
 function fromMinutes(total: number): string {
-  const t = ((total % 1440) + 1440) % 1440;
-  return `${pad(Math.floor(t / 60))}:${pad(t % 60)}`;
+  // Aceita minutos fracionários — mostra HH:mm:ss quando houver segundos, senão HH:mm.
+  const totalSec = Math.round(total * 60);
+  const daySec = 24 * 3600;
+  const t = ((totalSec % daySec) + daySec) % daySec;
+  const h = Math.floor(t / 3600);
+  const m = Math.floor((t % 3600) / 60);
+  const s = t % 60;
+  return s === 0 ? `${pad(h)}:${pad(m)}` : `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 function fmtDuration(mins: number): string {
-  const h = Math.floor(mins / 60);
-  const m = Math.round(mins % 60);
-  if (h && m) return `${h}h${pad(m)}`;
-  if (h) return `${h}h`;
-  return `${m}min`;
+  // Aceita minutos fracionários (com segundos).
+  const totalSec = Math.max(0, Math.round(mins * 60));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const parts: string[] = [];
+  if (h) parts.push(`${h}h`);
+  if (m) parts.push(`${pad(m)}min`);
+  if (s) parts.push(`${pad(s)}s`);
+  return parts.length ? parts.join('') : '0min';
 }
 function fmtHMS(seconds: number): string {
   const s = Math.max(0, Math.round(seconds));
@@ -664,66 +675,90 @@ export function RoundsManager() {
   );
   const hasError = (field: string) => issues.some((i) => i.field === field);
 
-  /* ---------- schedule with rounding ---------- */
+  /* ---------- schedule com RECALIBRAGEM AUTOMÁTICA (precisão em segundos) ---------- */
   const schedule = useMemo(() => {
     if (issues.length) return null;
     const n = agents.length;
+    if (n === 0) return null;
     const s = toMinutes(startTime)!;
+    const startSec = s * 60;
 
-    let totalMin: number;
-    let baseSlot: number;
+    // Total em segundos (split = janela do turno; interval = intervalo × N)
+    let totalSec: number;
     if (mode === 'split') {
       const e = toMinutes(endTime)!;
-      let total = e - s;
-      if (total <= 0) total += 24 * 60;
-      totalMin = total;
-      baseSlot = total / n;
+      let totalMin = e - s;
+      if (totalMin <= 0) totalMin += 24 * 60; // suporta virada de meia-noite
+      totalSec = totalMin * 60;
     } else {
-      baseSlot = Math.max(1, intervalMin);
-      totalMin = baseSlot * n;
+      totalSec = Math.max(1, Math.round(intervalMin * 60)) * n;
     }
 
-    // build per-agent slot lengths (in minutes) based on rounding strategy
-    const slotsMin: number[] = new Array(n).fill(0);
-    if (rounding === 'exact' || mode === 'interval') {
-      for (let i = 0; i < n; i++) slotsMin[i] = baseSlot;
+    // Estratégia de fatiamento em SEGUNDOS
+    const slotsSec: number[] = new Array(n).fill(0);
+    if (mode === 'interval') {
+      // Intervalo fixo — cada agente recebe exatamente o intervalo escolhido
+      const per = Math.round(intervalMin * 60);
+      for (let i = 0; i < n; i++) slotsSec[i] = per;
+    } else if (rounding === 'exact') {
+      // Distribui em segundos inteiros, encaixando o resto nos primeiros (fecha 100% no endTime)
+      const base = Math.floor(totalSec / n);
+      let leftover = totalSec - base * n;
+      for (let i = 0; i < n; i++) {
+        slotsSec[i] = base + (leftover > 0 ? 1 : 0);
+        if (leftover > 0) leftover--;
+      }
     } else if (rounding === 'floor') {
-      const f = Math.floor(baseSlot);
-      for (let i = 0; i < n; i++) slotsMin[i] = f;
+      const perMin = Math.floor(totalSec / 60 / n);
+      for (let i = 0; i < n; i++) slotsSec[i] = perMin * 60;
     } else if (rounding === 'ceil') {
-      const c = Math.ceil(baseSlot);
-      for (let i = 0; i < n; i++) slotsMin[i] = c;
+      const perMin = Math.ceil(totalSec / 60 / n);
+      for (let i = 0; i < n; i++) slotsSec[i] = perMin * 60;
     } else {
-      // distribute: floor for all, then spread leftover minutes across first agents
-      const base = Math.floor(baseSlot);
-      let leftover = Math.round(totalMin - base * n);
-      for (let i = 0; i < n; i++) slotsMin[i] = base + (leftover > 0 ? 1 : 0), leftover--;
+      // distribute (default): minutos inteiros + resto distribuído — recalibra para fechar no endTime
+      const totalMin = Math.round(totalSec / 60);
+      const baseMin = Math.floor(totalMin / n);
+      let leftoverMin = totalMin - baseMin * n;
+      for (let i = 0; i < n; i++) {
+        const extra = leftoverMin > 0 ? 1 : 0;
+        slotsSec[i] = (baseMin + extra) * 60;
+        if (leftoverMin > 0) leftoverMin--;
+      }
+      // Ajuste fino: qualquer sobra/déficit em segundos vai para o último agente,
+      // garantindo que o horário final bata exatamente com o solicitado.
+      const drift = totalSec - slotsSec.reduce((a, v) => a + v, 0);
+      if (drift !== 0) slotsSec[n - 1] += drift;
     }
 
-    // build rows
-    let cursor = s;
+    // Monta linhas com precisão de segundos; fromAbs/toAbs em minutos (float) mantém compat com o live timer.
+    let cursorSec = startSec;
     const rows = agents.map((name, i) => {
-      const from = cursor;
-      const to = cursor + slotsMin[i];
-      cursor = to;
+      const fromSec = cursorSec;
+      const toSec = cursorSec + slotsSec[i];
+      cursorSec = toSec;
       return {
         name: name.trim() || `Agente ${i + 1}`,
-        from: fromMinutes(from),
-        to: fromMinutes(to),
-        fromAbs: from,
-        toAbs: to,
-        duration: slotsMin[i],
+        from: fromMinutes(fromSec / 60),
+        to: fromMinutes(toSec / 60),
+        fromAbs: fromSec / 60,
+        toAbs: toSec / 60,
+        duration: slotsSec[i] / 60, // minutos (pode ser fracionário)
       };
     });
 
+    const totalMinOut = slotsSec.reduce((a, v) => a + v, 0) / 60;
+    const baseSlot = totalSec / 60 / n; // slot médio em minutos (referência)
+    const hasSeconds = slotsSec.some((v) => v % 60 !== 0);
+
     return {
-      total: rows.reduce((a, r) => a + r.duration, 0),
+      total: totalMinOut,
       slot: baseSlot,
       rows,
       startMin: s,
-      hasRemainder: rounding === 'distribute' && baseSlot % 1 !== 0,
+      hasRemainder: hasSeconds,
     };
   }, [issues, mode, startTime, endTime, intervalMin, rounding, agents]);
+
 
   /* ---------- live timer ---------- */
   const [running, setRunning] = useState(false);
@@ -1310,21 +1345,27 @@ export function RoundsManager() {
                 {mode === 'split' && (
                   <div className="grid gap-1.5">
                     <Label className="text-[11px] font-sans tracking-wide text-muted-foreground">
-                      Arredondamento da divisão
+                      Divisão automática entre {agents.length} agente{agents.length === 1 ? '' : 's'}
                     </Label>
                     <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
                       <SelectTrigger className="bg-card/60 border-border h-9 text-xs">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="distribute">Minutos inteiros — distribuir resto (recomendado)</SelectItem>
-                        <SelectItem value="floor">Minutos inteiros — truncar (sobra livre no fim)</SelectItem>
-                        <SelectItem value="ceil">Minutos inteiros — arredondar para cima</SelectItem>
-                        <SelectItem value="exact">Exato — segundos fracionários</SelectItem>
+                        <SelectItem value="distribute">Automático — minutos inteiros, recalibra no fim (recomendado)</SelectItem>
+                        <SelectItem value="exact">Preciso — divide em segundos, fecha 100% no término</SelectItem>
+                        <SelectItem value="floor">Truncar — minutos inteiros (sobra livre no fim)</SelectItem>
+                        <SelectItem value="ceil">Arredondar — minutos inteiros para cima (pode ultrapassar)</SelectItem>
                       </SelectContent>
                     </Select>
+                    {schedule && (
+                      <p className="text-[10px] font-mono text-muted-foreground/80 mt-0.5">
+                        {agents.length} × ~{fmtDuration(schedule.slot)} · total {fmtDuration(schedule.total)} ({startTime} → {endTime})
+                      </p>
+                    )}
                   </div>
                 )}
+
 
                 {/* Agents */}
                 <div className="grid gap-1.5">
