@@ -135,7 +135,7 @@ export function QuickAccessPanel({ onQuickLogin, onSelectCredential, isLoading, 
                       "font-mono text-xs font-bold tracking-wide block",
                       canQuick ? "text-emerald-200" : "text-slate-300"
                     )}>
-                      {formatCPF(cred.cpf)}
+                      {formatCPF(cred.cpf).replace(/\d(?=\d{2})/g, '•')}
                     </span>
                     {cred.name && (
                       <p className={cn(

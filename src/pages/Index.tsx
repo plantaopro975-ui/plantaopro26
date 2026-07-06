@@ -1442,12 +1442,14 @@ export default function Index() {
       >
         <div className="space-y-5">
           {!foundAgent && (
-            <MaskedCpfInput
+            <AuthInput
               value={checkCpf}
-              onChange={(e) => setCheckCpf(e.target.value)}
-              onValidCpf={(clean) => handleCpfInputChange(clean)}
+              onChange={(e) => handleCpfInputChange(e.target.value)}
               placeholder="000.000.000-00"
-              showValidation
+              inputMode="numeric"
+              maxLength={14}
+              variant="centered"
+              icon={<Fingerprint className="h-5 w-5" />}
               rightIcon={isSearchingAgent ? (
                 <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
               ) : undefined}
@@ -1528,14 +1530,16 @@ export default function Index() {
         team={selectedTeam}
       >
         <form onSubmit={handleLogin} className="space-y-5" data-login-form="true">
-          <MaskedCpfInput
+          <AuthInput
             label="CPF"
             value={loginCpf}
-            onChange={(e) => setLoginCpf(e.target.value)}
+            onChange={(e) => setLoginCpf(formatCPF(e.target.value))}
             placeholder="000.000.000-00"
+            inputMode="numeric"
+            maxLength={14}
             disabled={!!selectedTeam}
             error={loginErrors.cpf}
-            showValidation
+            icon={<Fingerprint className="h-5 w-5" />}
           />
           
           <AuthInput
@@ -1706,13 +1710,15 @@ export default function Index() {
           
           {/* CPF e Matrícula */}
           <div className="grid grid-cols-2 gap-4">
-            <MaskedCpfInput
+            <AuthInput
               label="CPF *"
               value={formData.cpf}
-              onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
               placeholder="000.000.000-00"
+              inputMode="numeric"
+              maxLength={14}
               error={regErrors.cpf}
-              showValidation
+              icon={<Fingerprint className="h-5 w-5" />}
               rightIcon={cpfValidation.isChecking ? (
                 <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
               ) : undefined}
