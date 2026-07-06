@@ -1444,9 +1444,10 @@ export default function Index() {
           {!foundAgent && (
             <MaskedCpfInput
               value={checkCpf}
-              onChange={(e) => handleCpfInputChange(e.target.value)}
+              onChange={(e) => setCheckCpf(e.target.value)}
+              onValidCpf={() => handleCpfInputChange(checkCpf)}
               placeholder="000.000.000-00"
-              maxLength={14}
+              showValidation
               rightIcon={isSearchingAgent ? (
                 <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
               ) : undefined}
