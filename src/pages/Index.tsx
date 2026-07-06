@@ -1248,7 +1248,7 @@ export default function Index() {
 
   return (
     <>
-      <div className="home-viewport-shell flex flex-col bg-background relative overflow-hidden overscroll-none">
+      <div className="min-h-screen flex flex-col bg-background relative overscroll-none">
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
@@ -1270,53 +1270,54 @@ export default function Index() {
 
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
+      <header className="relative z-20 flex flex-1 flex-col">
         {(() => {
           const savedCount = getSavedCredentials().length;
+          const wrap = (child: JSX.Element, extra = '') => (
+            <div className={cn('w-full max-w-6xl mx-auto px-2 sm:px-4', extra)}>{child}</div>
+          );
           const blocks: Record<HomeCardId, JSX.Element | null> = {
-            rounds: (
-              <div className="shrink-0 px-2 sm:px-4 pt-2 overflow-hidden">
-                <div className="w-full max-w-6xl mx-auto animate-fade-in">
-                  <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
-                    <RoundsManager />
-                  </DraggableHomeCard>
-                </div>
-              </div>
+            rounds: wrap(
+              <div className="animate-fade-in">
+                <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
+                  <RoundsManager />
+                </DraggableHomeCard>
+              </div>,
             ),
             hero: (
-              <div className="min-h-0 flex-1">
-                <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="h-full">
+              <div className="w-full max-w-7xl mx-auto px-2 sm:px-4">
+                <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block">
                   <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
                 </DraggableHomeCard>
               </div>
             ),
-            banner: (
-              <div className="shrink-0 px-2 sm:px-4 overflow-hidden">
-                <DraggableHomeCard id="banner" onDropCard={moveHomeCard}>
-                  <HomeAgentInfoBanner />
-                </DraggableHomeCard>
-              </div>
+            banner: wrap(
+              <DraggableHomeCard id="banner" onDropCard={moveHomeCard}>
+                <HomeAgentInfoBanner />
+              </DraggableHomeCard>,
             ),
-            quick: savedCount > 0 ? (
-              <section className="shrink-0 px-2 sm:px-4 pb-1 relative z-10 overflow-hidden">
-                <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
-                  <DraggableHomeCard id="quick" onDropCard={moveHomeCard}>
-                    <QuickAccessPanel
-                      onQuickLogin={handleQuickLogin}
-                      onSelectCredential={handleQuickLoginSelect}
-                      isLoading={!!quickLoginLoadingCpf}
-                      loadingCpf={quickLoginLoadingCpf || undefined}
-                    />
-                  </DraggableHomeCard>
-                </div>
-              </section>
-            ) : null,
+            quick: savedCount > 0
+              ? wrap(
+                  <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+                    <DraggableHomeCard id="quick" onDropCard={moveHomeCard}>
+                      <QuickAccessPanel
+                        onQuickLogin={handleQuickLogin}
+                        onSelectCredential={handleQuickLoginSelect}
+                        isLoading={!!quickLoginLoadingCpf}
+                        loadingCpf={quickLoginLoadingCpf || undefined}
+                      />
+                    </DraggableHomeCard>
+                  </div>,
+                )
+              : null,
           };
-          return homeCardOrder.map((id) => (
-            <div key={id} className={id === 'hero' ? 'min-h-0 flex-1 flex flex-col' : 'contents'}>
-              {blocks[id]}
+          return (
+            <div className="flex flex-col gap-3 sm:gap-4 py-3 sm:py-4">
+              {homeCardOrder.map((id) => (
+                <div key={id}>{blocks[id]}</div>
+              ))}
             </div>
-          ));
+          );
         })()}
       </header>
 
