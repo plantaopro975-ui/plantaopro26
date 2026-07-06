@@ -1442,12 +1442,14 @@ export default function Index() {
       >
         <div className="space-y-5">
           {!foundAgent && (
-            <MaskedCpfInput
+            <AuthInput
               value={checkCpf}
-              onChange={(e) => setCheckCpf(e.target.value)}
-              onValidCpf={(clean) => handleCpfInputChange(clean)}
+              onChange={(e) => handleCpfInputChange(e.target.value)}
               placeholder="000.000.000-00"
-              showValidation
+              inputMode="numeric"
+              maxLength={14}
+              variant="centered"
+              icon={<Fingerprint className="h-5 w-5" />}
               rightIcon={isSearchingAgent ? (
                 <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
               ) : undefined}
