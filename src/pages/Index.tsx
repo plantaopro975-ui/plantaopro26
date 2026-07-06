@@ -57,6 +57,7 @@ import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { DeveloperSignature } from '@/components/DeveloperSignature';
+import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
