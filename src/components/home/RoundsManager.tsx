@@ -1028,8 +1028,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     toast({ title: 'Copiado', description: 'Escala copiada para a área de transferência.' });
   };
 
-  const exportPDF = () => {
+  const exportPDF = async () => {
     if (!schedule) return;
+    const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+      import('jspdf'),
+      import('jspdf-autotable'),
+    ]);
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
     const modeTxt = mode === 'split'
