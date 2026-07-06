@@ -1279,11 +1279,16 @@ export default function Index() {
 
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden text-[13px] [--card-scale:0.85]">
+      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
         {(() => {
           const savedCount = getSavedCredentials().length;
           const wrap = (child: JSX.Element, extra = '') => (
-            <div className={cn('w-full max-w-6xl mx-auto px-2 sm:px-3', extra)}>{child}</div>
+            <div
+              className={cn('w-full max-w-6xl mx-auto', extra)}
+              style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
+            >
+              {child}
+            </div>
           );
           const blocks: Record<HomeCardId, { node: JSX.Element; grow?: boolean } | null> = {
             rounds: {
@@ -1298,7 +1303,10 @@ export default function Index() {
             hero: {
               grow: true,
               node: (
-                <div className="w-full max-w-7xl mx-auto px-2 sm:px-3 h-full">
+                <div
+                  className="w-full max-w-7xl mx-auto h-full"
+                  style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
+                >
                   <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block h-full">
                     <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
                   </DraggableHomeCard>
@@ -1330,7 +1338,10 @@ export default function Index() {
               : null,
           };
           return (
-            <div className="flex min-h-0 flex-1 flex-col gap-2 py-2">
+            <div
+              className="flex min-h-0 flex-1 flex-col"
+              style={{ gap: 'var(--home-gap)', paddingTop: 'var(--home-pad-y)', paddingBottom: 'var(--home-pad-y)' }}
+            >
               {homeCardOrder.map((id) => {
                 const b = blocks[id];
                 if (!b) return null;
