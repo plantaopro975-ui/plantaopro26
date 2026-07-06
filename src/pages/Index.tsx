@@ -62,6 +62,8 @@ import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 import { RoundsManager } from '@/components/home/RoundsManager';
+import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
+import { useHomeCardOrder, type HomeCardId } from '@/hooks/useHomeCardOrder';
 
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
 
@@ -99,6 +101,8 @@ export default function Index() {
   const themeAssets = getThemeAssets(theme, resolvedTheme);
   const { isAvailable: isBiometricAvailable, isEnrolled: isBiometricEnrolled, enrolledCpf, enrollBiometric, authenticateBiometric } = useBiometricAuth();
   const { saveCredential, updateLastLogin } = useSavedCredentialsSync();
+  const { order: homeCardOrder, move: moveHomeCard } = useHomeCardOrder();
+
 
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [showCpfCheck, setShowCpfCheck] = useState(false);
@@ -1267,43 +1271,55 @@ export default function Index() {
 
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
-
-        {/* Ferramenta Tática — Gestor de Rondas (topo, compacto) */}
-        <div className="shrink-0 px-2 sm:px-4 pt-2 overflow-hidden">
-          <div className="w-full max-w-6xl mx-auto animate-fade-in">
-            <RoundsManager />
-          </div>
-        </div>
-
-        {/* Split Operational Hero — briefing + tactical team selector */}
-        <div className="min-h-0 flex-1">
-          <SplitOperationalHero
-            onTeamClick={(team) => handleTeamClick(team)}
-          />
-        </div>
-
-
-        {/* Dynamic Agent Info Banner */}
-        <div className="shrink-0 px-2 sm:px-4 overflow-hidden">
-          <HomeAgentInfoBanner />
-        </div>
-
-
+        {(() => {
+          const savedCount = getSavedCredentials().length;
+          const blocks: Record<HomeCardId, JSX.Element | null> = {
+            rounds: (
+              <div className="shrink-0 px-2 sm:px-4 pt-2 overflow-hidden">
+                <div className="w-full max-w-6xl mx-auto animate-fade-in">
+                  <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
+                    <RoundsManager />
+                  </DraggableHomeCard>
+                </div>
+              </div>
+            ),
+            hero: (
+              <div className="min-h-0 flex-1">
+                <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="h-full">
+                  <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
+                </DraggableHomeCard>
+              </div>
+            ),
+            banner: (
+              <div className="shrink-0 px-2 sm:px-4 overflow-hidden">
+                <DraggableHomeCard id="banner" onDropCard={moveHomeCard}>
+                  <HomeAgentInfoBanner />
+                </DraggableHomeCard>
+              </div>
+            ),
+            quick: savedCount > 0 ? (
+              <section className="shrink-0 px-2 sm:px-4 pb-1 relative z-10 overflow-hidden">
+                <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
+                  <DraggableHomeCard id="quick" onDropCard={moveHomeCard}>
+                    <QuickAccessPanel
+                      onQuickLogin={handleQuickLogin}
+                      onSelectCredential={handleQuickLoginSelect}
+                      isLoading={!!quickLoginLoadingCpf}
+                      loadingCpf={quickLoginLoadingCpf || undefined}
+                    />
+                  </DraggableHomeCard>
+                </div>
+              </section>
+            ) : null,
+          };
+          return homeCardOrder.map((id) => (
+            <div key={id} className={id === 'hero' ? 'min-h-0 flex-1 flex flex-col' : 'contents'}>
+              {blocks[id]}
+            </div>
+          ));
+        })()}
       </header>
 
-      {/* Quick Access — apenas quando há credenciais salvas */}
-      {getSavedCredentials().length > 0 && (
-        <section className="shrink-0 px-2 sm:px-4 pb-1 relative z-10 overflow-hidden">
-          <div className="w-full max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
-            <QuickAccessPanel
-              onQuickLogin={handleQuickLogin}
-              onSelectCredential={handleQuickLoginSelect}
-              isLoading={!!quickLoginLoadingCpf}
-              loadingCpf={quickLoginLoadingCpf || undefined}
-            />
-          </div>
-        </section>
-      )}
 
 
 
