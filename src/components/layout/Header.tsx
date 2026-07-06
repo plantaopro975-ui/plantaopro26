@@ -152,9 +152,9 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       {/* Brand — leftmost */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <div className="relative shrink-0">
-          <span className="absolute inset-0 rounded-full bg-primary/25 blur-lg animate-pulse" aria-hidden />
-          <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-gradient-to-br from-primary/25 to-primary/5 ring-1 ring-primary/40 flex items-center justify-center shadow-glow">
-            <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-primary drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" strokeWidth={2.2} />
+          <span className="absolute inset-0 rounded-md bg-primary/25 blur-md animate-pulse" aria-hidden />
+          <div className="relative h-7 w-7 sm:h-8 sm:w-8 rounded-md bg-gradient-to-br from-primary/25 to-primary/5 ring-1 ring-primary/40 flex items-center justify-center shadow-glow">
+            <Shield className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-primary drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" strokeWidth={2.2} />
           </div>
         </div>
 
