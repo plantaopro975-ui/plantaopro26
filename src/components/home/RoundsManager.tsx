@@ -23,6 +23,7 @@ import { RoundsRadarSVG } from './RoundsRadarSVG';
 import { MissionLockDialog } from './MissionLockDialog';
 import { MotivationalTicker } from './MotivationalTicker';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
+import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 
 /* ================= helpers ================= */
 const pad = (n: number) => n.toString().padStart(2, '0');
@@ -768,6 +769,7 @@ export function RoundsManager() {
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
   const [lockOpen, setLockOpen] = useState(false);
+  const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
   const [silentMode, setSilentMode] = useState<boolean>(() => {
@@ -1610,7 +1612,15 @@ export function RoundsManager() {
 
                         <div className="flex items-center gap-2 pt-1">
                           {!running ? (
-                            <Button type="button" size="sm" onClick={startTimer} className="h-9 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => {
+                                if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
+                                setStartConfirmOpen(true);
+                              }}
+                              className="h-9 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950"
+                            >
                               <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
                             </Button>
                           ) : (
@@ -1666,6 +1676,17 @@ export function RoundsManager() {
                         color={teamColor}
                         agentName={live && !live.done ? schedule.rows[live.index]?.name : undefined}
                         remainingLabel={live && !live.done ? fmtHMS(live.remaining) : undefined}
+                        silent={silentMode}
+                      />
+
+                      <StartLockConfirmDialog
+                        open={startConfirmOpen}
+                        onCancel={() => setStartConfirmOpen(false)}
+                        onConfirm={() => { setStartConfirmOpen(false); startTimer(); }}
+                        color={teamColor}
+                        teamName={team}
+                        agentCount={schedule.rows.length}
+                        totalDurationLabel={fmtDuration(schedule.rows.reduce((sum, r) => sum + r.duration, 0))}
                         silent={silentMode}
                       />
 
