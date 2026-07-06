@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,12 +48,12 @@ import {
   calculateAge,
   formatPhone 
 } from '@/lib/validators';
-import { UnsavedChangesDialog } from '@/components/UnsavedChangesDialog';
-import { ForgotPasswordDialog } from '@/components/ForgotPasswordDialog';
+const UnsavedChangesDialog = lazy(() => import('@/components/UnsavedChangesDialog').then(m => ({ default: m.UnsavedChangesDialog })));
+const ForgotPasswordDialog = lazy(() => import('@/components/ForgotPasswordDialog').then(m => ({ default: m.ForgotPasswordDialog })));
 import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, canQuickLogin } from '@/components/auth/SavedCredentials';
-import { ManageCredentialsDialog } from '@/components/auth/ManageCredentialsDialog';
-import { MasterPasswordRecoveryDialog } from '@/components/MasterPasswordRecoveryDialog';
-import { MasterLoginDialog } from '@/components/auth/MasterLoginDialog';
+const ManageCredentialsDialog = lazy(() => import('@/components/auth/ManageCredentialsDialog').then(m => ({ default: m.ManageCredentialsDialog })));
+const MasterPasswordRecoveryDialog = lazy(() => import('@/components/MasterPasswordRecoveryDialog').then(m => ({ default: m.MasterPasswordRecoveryDialog })));
+const MasterLoginDialog = lazy(() => import('@/components/auth/MasterLoginDialog').then(m => ({ default: m.MasterLoginDialog })));
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { CommandStrip } from '@/components/home/CommandStrip';
 import { CommandCenterBar } from '@/components/home/CommandCenterBar';
@@ -73,11 +73,11 @@ import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import { useSavedCredentialsSync } from '@/hooks/useSavedCredentialsSync';
 import { getThemeAssets } from '@/lib/themeAssets';
-import { ErrorDialog } from '@/components/ErrorDialog';
+const ErrorDialog = lazy(() => import('@/components/ErrorDialog').then(m => ({ default: m.ErrorDialog })));
 
-import { LockoutTimerDialog } from '@/components/LockoutTimerDialog';
-import { PendingApprovalDialog } from '@/components/PendingApprovalDialog';
-import { AuthDialog } from '@/components/auth/AuthDialog';
+const LockoutTimerDialog = lazy(() => import('@/components/LockoutTimerDialog').then(m => ({ default: m.LockoutTimerDialog })));
+const PendingApprovalDialog = lazy(() => import('@/components/PendingApprovalDialog').then(m => ({ default: m.PendingApprovalDialog })));
+const AuthDialog = lazy(() => import('@/components/auth/AuthDialog').then(m => ({ default: m.AuthDialog })));
 import { AuthInput } from '@/components/auth/AuthInput';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TeamBadge } from '@/components/auth/TeamBadge';
@@ -1247,6 +1247,7 @@ export default function Index() {
   }
 
   return (
+    <Suspense fallback={null}>
     <>
       <div
         className="h-full flex flex-col bg-background relative overflow-hidden overscroll-none home-compact"
@@ -1962,5 +1963,6 @@ export default function Index() {
       />
       </div>
     </>
+    </Suspense>
   );
 }
