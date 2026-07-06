@@ -39,17 +39,19 @@ export function MissionLockDialog({ open, onClose, color, agentName, remainingLa
           className="relative h-10 flex items-center justify-center overflow-hidden"
           style={{ background: `linear-gradient(90deg, ${color}22, ${color}55, ${color}22)` }}
         >
-          <div
-            className="absolute inset-0 opacity-30"
-            style={{
-              backgroundImage: `repeating-linear-gradient(45deg, ${color} 0 10px, transparent 10px 20px)`,
-              animation: 'stripeSlide 1.2s linear infinite',
-            }}
-          />
+          {!silent && (
+            <div
+              className="absolute inset-0 opacity-30"
+              style={{
+                backgroundImage: `repeating-linear-gradient(45deg, ${color} 0 10px, transparent 10px 20px)`,
+                animation: 'stripeSlide 1.2s linear infinite',
+              }}
+            />
+          )}
           <div className="relative flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.3em] font-bold" style={{ color }}>
-            <ShieldAlert className="h-4 w-4 animate-pulse" />
+            <ShieldAlert className={cn('h-4 w-4', !silent && 'animate-pulse')} />
             Missão em andamento
-            <ShieldAlert className="h-4 w-4 animate-pulse" />
+            <ShieldAlert className={cn('h-4 w-4', !silent && 'animate-pulse')} />
           </div>
         </div>
 
