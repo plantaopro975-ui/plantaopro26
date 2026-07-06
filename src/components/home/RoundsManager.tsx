@@ -1144,8 +1144,36 @@ export function RoundsManager() {
   };
   const resetPosition = () => setDrag({ x: 0, y: 0 });
 
-  /* Auto-fit removido — usamos layout responsivo + scroll interno para evitar cortes/sobreposições */
+  /* Auto-fit: escala o conteúdo para caber inteiro na janela, sem barra de rolagem */
   const fitRef = useRef<HTMLDivElement>(null);
+  const fitInnerRef = useRef<HTMLDivElement>(null);
+  const [fitScale, setFitScale] = useState(1);
+  useEffect(() => {
+    if (!open) return;
+    const container = fitRef.current;
+    const inner = fitInnerRef.current;
+    if (!container || !inner) return;
+    let raf = 0;
+    const compute = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const cH = container.clientHeight;
+        const cW = container.clientWidth;
+        // medir altura/largura natural (sem escala)
+        const naturalH = inner.scrollHeight;
+        const naturalW = inner.scrollWidth;
+        if (!cH || !naturalH) return;
+        const s = Math.min(1, cH / naturalH, cW / naturalW);
+        setFitScale(Number.isFinite(s) && s > 0.35 ? s : Math.max(0.35, s || 1));
+      });
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(container);
+    ro.observe(inner);
+    window.addEventListener('resize', compute);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('resize', compute); };
+  }, [open]);
 
 
 
@@ -1285,13 +1313,22 @@ export function RoundsManager() {
             </div>
           </DialogHeader>
 
-          {/* Corpo rolável — sem caixas, layout aberto e centralizado */}
+          {/* Corpo auto-ajustado — sem barra de rolagem, escala para caber tudo */}
           <div
             ref={fitRef}
-            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain px-4 sm:px-6 lg:px-10 py-4 sm:py-6"
+            className="flex-1 min-h-0 overflow-hidden"
           >
-            <div className="mx-auto w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-6 items-start lg:divide-x lg:divide-border/40">
-              <div className="min-w-0 lg:pr-6">
+            <div
+              ref={fitInnerRef}
+              style={{
+                transform: `scale(${fitScale})`,
+                transformOrigin: 'top left',
+                width: `${100 / fitScale}%`,
+              }}
+              className="px-4 sm:px-6 lg:px-10 py-4 sm:py-6"
+            >
+              <div className="mx-auto w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-6 items-start lg:divide-x lg:divide-border/40">
+                <div className="min-w-0 lg:pr-6">
 
 
               {/* ============ COLUNA ESQUERDA — CONFIGURAÇÃO ============ */}
@@ -1806,6 +1843,7 @@ export function RoundsManager() {
 
                 </Section>
               </div>
+            </div>
             </div>
           </div>
         </DialogContent>
