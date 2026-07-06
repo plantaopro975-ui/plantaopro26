@@ -303,6 +303,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUserRole(null);
     setMasterSession(null);
 
+    // Higieniza credenciais salvas em tempo real (todos os componentes/abas)
+    try { clearAllCredentials(); } catch { /* ignore */ }
+
     // Invalidate session globally on the server (revokes refresh token on all devices)
     try {
       await supabase.auth.signOut({ scope: 'global' });
