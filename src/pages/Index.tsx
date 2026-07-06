@@ -62,6 +62,8 @@ import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 import { RoundsManager } from '@/components/home/RoundsManager';
+import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
+import { useHomeCardOrder, type HomeCardId } from '@/hooks/useHomeCardOrder';
 
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
 
