@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { ShieldCheck, MapPin, Users2, Clock3, Radar, CalendarCheck, type LucideIcon } from 'lucide-react';
-import { useServerTime } from '@/hooks/useServerTime';
+import { MapPin, Users2, Radar, CalendarCheck, type LucideIcon } from 'lucide-react';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useRoundsStats } from '@/hooks/useRoundsStats';
 import { RoundsManager } from './RoundsManager';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+
 
 /**
  * Barra tática unificada:
