@@ -51,7 +51,7 @@ const TEAMS: {
 ];
 
 interface TeamObjectProps {
-  team: { key: string; obj: string; webp: string; avif: string };
+  team: { key: string; obj: string };
   isAlfa: boolean;
   idx: number;
 }
@@ -69,8 +69,6 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
         )}
       />
       <picture className="relative flex h-full w-full items-center justify-center">
-        <source srcSet={team.avif} type="image/avif" />
-        <source srcSet={team.webp} type="image/webp" />
         <img
           src={team.obj}
           alt={`Equipe ${team.key} — equipamento tático 3D`}
