@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
@@ -11,7 +11,7 @@ import { UnitsManagementCard } from '@/components/dashboard/UnitsManagementCard'
 import { BHControlCard } from '@/components/dashboard/BHControlCard';
 import { AnnouncementsCard } from '@/components/dashboard/AnnouncementsCard';
 import { TeamShiftsPanel } from '@/components/dashboard/TeamShiftsPanel';
-import { OvertimeChart } from '@/components/dashboard/OvertimeChart';
+const OvertimeChart = lazy(() => import('@/components/dashboard/OvertimeChart').then(m => ({ default: m.OvertimeChart })));
 import { ShiftConflictsBanner } from '@/components/dashboard/ShiftConflictsBanner';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
@@ -172,7 +172,9 @@ export default function Dashboard() {
               <TeamShiftsPanel />
 
               {/* Overtime Chart */}
-              <OvertimeChart />
+              <Suspense fallback={<div className="h-64 rounded-lg bg-muted/20 animate-pulse" />}>
+                <OvertimeChart />
+              </Suspense>
 
               {/* Footer Copyright */}
               <CopyrightFooter className="border-t border-border/30 mt-4" />
