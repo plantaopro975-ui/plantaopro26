@@ -57,6 +57,7 @@ import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { DeveloperSignature } from '@/components/DeveloperSignature';
+import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
@@ -1440,16 +1441,17 @@ export default function Index() {
         team={selectedTeam}
       >
         <div className="space-y-5">
-          <AuthInput
-            value={checkCpf}
-            onChange={(e) => handleCpfInputChange(e.target.value)}
-            placeholder="000.000.000-00"
-            variant="centered"
-            maxLength={14}
-            rightIcon={isSearchingAgent ? (
-              <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
-            ) : undefined}
-          />
+          {!foundAgent && (
+            <MaskedCpfInput
+              value={checkCpf}
+              onChange={(e) => handleCpfInputChange(e.target.value)}
+              placeholder="000.000.000-00"
+              maxLength={14}
+              rightIcon={isSearchingAgent ? (
+                <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
+              ) : undefined}
+            />
+          )}
           
           {/* Found agent feedback */}
           <div className="min-h-[84px]">
