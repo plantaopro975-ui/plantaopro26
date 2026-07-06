@@ -1705,21 +1705,15 @@ export default function Index() {
           
           {/* CPF e Matrícula */}
           <div className="grid grid-cols-2 gap-4">
-            <AuthInput
+            <MaskedCpfInput
               label="CPF *"
               value={formData.cpf}
-              onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
+              onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
               placeholder="000.000.000-00"
-              maxLength={14}
               error={regErrors.cpf}
-              rightIcon={formData.cpf.replace(/\D/g, '').length === 11 ? (
-                cpfValidation.isChecking ? (
-                  <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
-                ) : cpfValidation.isValid && !cpfValidation.exists ? (
-                  <UserCheck className="h-5 w-5 text-emerald-400" />
-                ) : (
-                  <AlertTriangle className="h-5 w-5 text-amber-400" />
-                )
+              showValidation
+              rightIcon={cpfValidation.isChecking ? (
+                <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
               ) : undefined}
             />
             <AuthInput
@@ -1732,9 +1726,24 @@ export default function Index() {
               rightIcon={<Lock className="h-4 w-4 text-slate-500" />}
             />
           </div>
-          <p className="text-[11px] text-slate-400 -mt-3">
+          {cpfValidation.exists && cpfValidation.existingAgent && (
+            <div className="p-3 rounded-lg bg-gradient-to-r from-emerald-500/15 to-green-500/10 border border-emerald-500/40 flex items-center gap-3 -mt-2">
+              <div className="p-1.5 rounded-md bg-emerald-500/20">
+                <UserCheck className="h-4 w-4 text-emerald-400" />
+              </div>
+              <div className="min-w-0">
+                <span className="block text-[11px] uppercase tracking-wider text-emerald-300/80 font-semibold">Agente já cadastrado</span>
+                <span className="block text-sm font-bold text-emerald-200 truncate">{cpfValidation.existingAgent.name}</span>
+                {cpfValidation.existingAgent.team && (
+                  <span className="text-[11px] text-emerald-300/70">Equipe {cpfValidation.existingAgent.team}</span>
+                )}
+              </div>
+            </div>
+          )}
+          <p className="text-[11px] text-slate-400 -mt-1">
             A matrícula poderá ser cadastrada depois, no seu painel do agente.
           </p>
+
           
           {/* Unidade — trava após selecionada */}
           <div className="space-y-2">
