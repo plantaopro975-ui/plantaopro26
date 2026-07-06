@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Bell, LogOut, Menu, Settings, User, Volume2, VolumeX } from 'lucide-react';
+import { Bell, LogOut, Menu, Settings, User, Volume2, VolumeX, MoreVertical } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { MobileSidebar } from './MobileSidebar';
 import { RadarSweep } from '@/components/home/RadarSweep';
@@ -196,34 +196,77 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
       {/* Right Side */}
 
       <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
-        {/* Sound Toggle */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="h-7 w-7 shrink-0 hover:bg-primary/10 hover:border-primary/30 transition-all"
-          onClick={() => {
-            toggleSound();
-            playSound('tactical-click');
-          }}
-          title={isSoundEnabled ? 'Desativar sons' : 'Ativar sons'}
-        >
-          {isSoundEnabled ? (
-            <Volume2 className="h-3.5 w-3.5 text-primary" />
-          ) : (
-            <VolumeX className="h-3.5 w-3.5 text-muted-foreground" />
-          )}
-        </Button>
+        {/* ≥sm: Ícones inline (som + notificações) */}
+        <div className="hidden sm:flex items-center gap-0.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 shrink-0 hover:bg-primary/10 hover:border-primary/30 transition-all"
+            onClick={() => {
+              toggleSound();
+              playSound('tactical-click');
+            }}
+            title={isSoundEnabled ? 'Desativar sons' : 'Ativar sons'}
+          >
+            {isSoundEnabled ? (
+              <Volume2 className="h-3.5 w-3.5 text-primary" />
+            ) : (
+              <VolumeX className="h-3.5 w-3.5 text-muted-foreground" />
+            )}
+          </Button>
 
-        {/* Notifications - Tactical Style */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="relative h-7 w-7 shrink-0 hover:bg-primary/10 transition-all overflow-visible"
-          onClick={handleNotificationClick}
-        >
-          <Bell className="h-3.5 w-3.5" />
-          <span className="notification-badge absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)] ring-2 ring-background" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-7 w-7 shrink-0 hover:bg-primary/10 transition-all overflow-visible"
+            onClick={handleNotificationClick}
+          >
+            <Bell className="h-3.5 w-3.5" />
+            <span className="notification-badge absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)] ring-2 ring-background" />
+          </Button>
+        </div>
+
+        {/* <sm: Menu compacto agrupando ações */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="sm:hidden relative h-7 w-7 shrink-0 hover:bg-primary/10 hover:border-primary/30 transition-all"
+              aria-label="Ações rápidas"
+              onClick={() => playSound('tactical-hover')}
+            >
+              <MoreVertical className="h-3.5 w-3.5 text-primary" />
+              <span className="notification-badge absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)] ring-2 ring-background" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52 bg-slate-900/95 backdrop-blur-md border-primary/30 shadow-xl shadow-primary/10">
+            <DropdownMenuLabel className="text-primary font-semibold text-xs">Ações</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-primary/20" />
+            <DropdownMenuItem
+              onClick={() => {
+                toggleSound();
+                playSound('tactical-click');
+              }}
+              className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer text-xs"
+            >
+              {isSoundEnabled ? (
+                <Volume2 className="mr-2 h-4 w-4 text-primary" />
+              ) : (
+                <VolumeX className="mr-2 h-4 w-4 text-muted-foreground" />
+              )}
+              {isSoundEnabled ? 'Desativar sons' : 'Ativar sons'}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleNotificationClick}
+              className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer text-xs"
+            >
+              <Bell className="mr-2 h-4 w-4 text-primary" />
+              Notificações
+              <span className="ml-auto h-2 w-2 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.6)]" />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* User Menu - Tactical Style */}
         <DropdownMenu>
