@@ -386,16 +386,20 @@ export default function Admin() {
 
                 {/* Tab Contents */}
                 <TabsContent value="overview" className="space-y-4 mt-4">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <SystemOverviewCard />
-                    <ActivityLogsCard />
-                  </div>
-                  <TeamShiftsPanel />
+                  <Suspense fallback={<PanelSkeleton />}>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <SystemOverviewCard />
+                      <ActivityLogsCard />
+                    </div>
+                    <TeamShiftsPanel />
+                  </Suspense>
                 </TabsContent>
 
                 {permissions?.can_manage_units && (
                   <TabsContent value="units" className="mt-4">
-                    <UnitsManagementCard />
+                    <Suspense fallback={<PanelSkeleton />}>
+                      <UnitsManagementCard />
+                    </Suspense>
                   </TabsContent>
                 )}
 
@@ -425,24 +429,32 @@ export default function Admin() {
                 )}
 
                 <TabsContent value="bh" className="mt-4">
-                  <BHControlCard />
+                  <Suspense fallback={<PanelSkeleton />}>
+                    <BHControlCard />
+                  </Suspense>
                 </TabsContent>
 
                 {permissions?.can_manage_announcements && (
                   <TabsContent value="announcements" className="mt-4">
-                    <AnnouncementsCard />
+                    <Suspense fallback={<PanelSkeleton />}>
+                      <AnnouncementsCard />
+                    </Suspense>
                   </TabsContent>
                 )}
 
                 {permissions?.can_manage_ads && (
                   <TabsContent value="ads" className="mt-4">
-                    <AdvertisementsManager />
+                    <Suspense fallback={<PanelSkeleton />}>
+                      <AdvertisementsManager />
+                    </Suspense>
                   </TabsContent>
                 )}
 
                 {permissions?.can_manage_screens && (
                   <TabsContent value="screens" className="mt-4">
-                    <DynamicScreensManager />
+                    <Suspense fallback={<PanelSkeleton />}>
+                      <DynamicScreensManager />
+                    </Suspense>
                   </TabsContent>
                 )}
 
