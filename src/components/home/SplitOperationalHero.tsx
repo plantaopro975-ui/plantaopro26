@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Radio, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
@@ -20,13 +20,9 @@ import objCharlie from '@/assets/teams/charlie-badge-pro.png';
 import objDelta from '@/assets/teams/delta-radio-pro.png';
 
 import bgAlfa from '@/assets/teams/bg-alfa.jpg';
-import bgAlfaWebp from '@/assets/teams/bg-alfa.webp';
 import bgBravo from '@/assets/teams/bg-bravo.jpg';
-import bgBravoWebp from '@/assets/teams/bg-bravo.webp';
 import bgCharlie from '@/assets/teams/bg-charlie.jpg';
-import bgCharlieWebp from '@/assets/teams/bg-charlie.webp';
 import bgDelta from '@/assets/teams/bg-delta.jpg';
-import bgDeltaWebp from '@/assets/teams/bg-delta.webp';
 
 interface Props {
   onTeamClick: (team: string) => void;
@@ -42,12 +38,11 @@ const TEAMS: {
   accent: string;
   obj: string;
   bg: string;
-  bgWebp: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa,    bgWebp: bgAlfaWebp },
-  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo,   bgWebp: bgBravoWebp },
-  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie, bgWebp: bgCharlieWebp },
-  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   bg: bgDelta,   bgWebp: bgDeltaWebp },
+  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa },
+  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo },
+  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie },
+  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   bg: bgDelta },
 ];
 
 interface TeamObjectProps {
