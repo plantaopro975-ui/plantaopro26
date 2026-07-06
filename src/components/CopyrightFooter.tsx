@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { ShieldCheck, MapPin, Cpu, Radio, Lock } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
+import { DeveloperSignature } from './DeveloperSignature';
 const iseAcreBadge = iseAcreBadgeAsset.url;
 interface CopyrightFooterProps {
   className?: string;
@@ -64,8 +65,10 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               </span>
             </div>
 
-            {/* Right: Meta */}
+            {/* Right: Meta + signature */}
             <div className="flex items-center gap-2 text-[9px] text-muted-foreground/70 tracking-[0.18em] uppercase">
+              <DeveloperSignature compact className="hidden md:inline-flex" />
+              <span className="hidden md:inline text-muted-foreground/30">·</span>
               <Lock className="h-3 w-3 text-primary/60" />
               <span className="hidden sm:inline">LGPD · TLS 1.3</span>
               <span className="text-muted-foreground/40">·</span>
@@ -179,6 +182,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               <Lock className="h-3 w-3 text-primary/60" />
               Uso restrito · LGPD compliant
             </span>
+            <DeveloperSignature className="order-last sm:order-none" />
             <span className="flex items-center gap-1.5 tracking-wider uppercase">
               <ShieldCheck className="h-3 w-3 text-primary/70" />
               TLS 1.3 · AES-256 · RLS
