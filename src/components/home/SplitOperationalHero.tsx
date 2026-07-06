@@ -190,7 +190,73 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <Radio className="h-3 w-3 text-amber-400" /> PWA
               </div>
             </div>
-          </div>
+
+            {/* Mission briefing panel — preenche o espaço entre título e cena */}
+            <div className="relative mt-1 hidden sm:block">
+              <div
+                className="relative rounded-md border border-amber-400/20 bg-[linear-gradient(135deg,rgba(10,17,40,0.85)_0%,rgba(5,5,5,0.9)_100%)] px-3 py-2.5 overflow-hidden"
+                style={{ boxShadow: 'inset 0 1px 0 rgba(234,179,8,0.12), 0 8px 24px -12px rgba(0,0,0,0.9)' }}
+              >
+                {/* corner brackets */}
+                <span aria-hidden className="absolute top-0 left-0 h-2.5 w-2.5 border-t border-l border-amber-400/60" />
+                <span aria-hidden className="absolute top-0 right-0 h-2.5 w-2.5 border-t border-r border-amber-400/60" />
+                <span aria-hidden className="absolute bottom-0 left-0 h-2.5 w-2.5 border-b border-l border-amber-400/60" />
+                <span aria-hidden className="absolute bottom-0 right-0 h-2.5 w-2.5 border-b border-r border-amber-400/60" />
+                {/* hatch backdrop */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 opacity-[0.08]"
+                  style={{
+                    backgroundImage: 'repeating-linear-gradient(45deg, rgba(234,179,8,0.6) 0 1px, transparent 1px 8px)',
+                  }}
+                />
+
+                <div className="relative flex items-center justify-between gap-2 mb-2">
+                  <span className="font-mono text-[8px] uppercase tracking-[0.32em] text-amber-400/90">
+                    Briefing Operacional
+                  </span>
+                  <span className="flex items-center gap-1 font-mono text-[8px] uppercase tracking-[0.28em] text-emerald-300/90">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+                    Uplink
+                  </span>
+                </div>
+
+                <div className="relative grid grid-cols-3 gap-2">
+                  {[
+                    { k: 'Unidades', v: '09', s: 'Ativas' },
+                    { k: 'Divisões', v: '04', s: 'Operacionais' },
+                    { k: 'Prontidão', v: '100%', s: '24 / 7' },
+                  ].map((it) => (
+                    <div key={it.k} className="relative pl-2 border-l border-amber-400/25">
+                      <div className="font-mono text-[7.5px] uppercase tracking-[0.24em] text-slate-400">
+                        {it.k}
+                      </div>
+                      <div className="font-sans font-black text-white text-[15px] leading-none mt-0.5">
+                        {it.v}
+                      </div>
+                      <div className="font-mono text-[7.5px] uppercase tracking-[0.2em] text-slate-500 mt-0.5">
+                        {it.s}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* barcode strip */}
+                <div className="relative mt-2 flex items-end gap-[2px] h-3 opacity-70">
+                  {[3,7,4,9,5,3,8,4,6,3,9,4,7,5,3,6,4,8,3,7,5,4,9,6,3].map((h, i) => (
+                    <span
+                      key={i}
+                      className="block w-[2px] bg-amber-400/70"
+                      style={{ height: `${h * 10}%` }}
+                    />
+                  ))}
+                  <span className="ml-auto font-mono text-[7.5px] uppercase tracking-[0.24em] text-amber-300/80">
+                    ISE · AC · BR
+                  </span>
+                </div>
+              </div>
+            </div>
+
 
           {/* RIGHT — Agent 3D */}
           <div className="relative flex items-end justify-center min-h-[140px] md:min-h-[180px] lg:min-h-[200px] xl:min-h-[220px] 2xl:min-h-[240px] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
