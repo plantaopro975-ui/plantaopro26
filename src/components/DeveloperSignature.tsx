@@ -54,16 +54,6 @@ export function DeveloperSignature({ className, compact = false }: DeveloperSign
           strokeLinejoin="round"
           className="[filter:drop-shadow(0_0_2px_hsl(var(--primary)/0.4))]"
         />
-        {/* Flourish underline */}
-        <path
-          d="M 3 18 Q 55 20, 106 17 T 110 16"
-          fill="none"
-          stroke="hsl(var(--primary))"
-          strokeWidth="0.7"
-          strokeLinecap="round"
-          opacity="0.55"
-        />
-        <circle cx="110" cy="16" r="0.9" fill="hsl(var(--primary))" />
       </svg>
 
       {/* Profession bracketed */}
