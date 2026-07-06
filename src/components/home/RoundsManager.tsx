@@ -20,6 +20,8 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { ConfirmDialog } from './ConfirmDialog';
 import { RoundsRadarSVG } from './RoundsRadarSVG';
+import { MissionLockDialog } from './MissionLockDialog';
+import { MotivationalTicker } from './MotivationalTicker';
 
 /* ================= helpers ================= */
 const pad = (n: number) => n.toString().padStart(2, '0');
