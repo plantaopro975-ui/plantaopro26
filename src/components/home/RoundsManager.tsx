@@ -860,6 +860,8 @@ export function RoundsManager() {
     }
     if (live.done) {
       setRunning(false);
+      setSummaryData({ totalSec: Math.round(live.elapsed), completed: schedule.rows.length });
+      setSummaryOpen(true);
       if (historyIdRef.current) {
         const finished = readHistory().map((h) =>
           h.id === historyIdRef.current ? { ...h, endedAt: Date.now() } : h,
