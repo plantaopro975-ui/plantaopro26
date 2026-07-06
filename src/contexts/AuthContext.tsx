@@ -300,6 +300,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     pushDiagEvent('info', 'signout');
+    intentionalSignOutRef.current = true;
 
     // Register logout in access_logs before signing out
     if (user?.id) {
