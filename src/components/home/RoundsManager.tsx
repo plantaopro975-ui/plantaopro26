@@ -1144,8 +1144,36 @@ export function RoundsManager() {
   };
   const resetPosition = () => setDrag({ x: 0, y: 0 });
 
-  /* Auto-fit removido — usamos layout responsivo + scroll interno para evitar cortes/sobreposições */
+  /* Auto-fit: escala o conteúdo para caber inteiro na janela, sem barra de rolagem */
   const fitRef = useRef<HTMLDivElement>(null);
+  const fitInnerRef = useRef<HTMLDivElement>(null);
+  const [fitScale, setFitScale] = useState(1);
+  useEffect(() => {
+    if (!open) return;
+    const container = fitRef.current;
+    const inner = fitInnerRef.current;
+    if (!container || !inner) return;
+    let raf = 0;
+    const compute = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const cH = container.clientHeight;
+        const cW = container.clientWidth;
+        // medir altura/largura natural (sem escala)
+        const naturalH = inner.scrollHeight;
+        const naturalW = inner.scrollWidth;
+        if (!cH || !naturalH) return;
+        const s = Math.min(1, cH / naturalH, cW / naturalW);
+        setFitScale(Number.isFinite(s) && s > 0.35 ? s : Math.max(0.35, s || 1));
+      });
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(container);
+    ro.observe(inner);
+    window.addEventListener('resize', compute);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('resize', compute); };
+  }, [open]);
 
 
 
