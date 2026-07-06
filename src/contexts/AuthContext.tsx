@@ -170,6 +170,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               sessionStorage.removeItem('masterSession');
             } catch {}
             try { clearAllCredentials(); } catch { /* ignore */ }
+            try {
+              toast.warning('Sessão expirada', {
+                description: 'Suas credenciais salvas foram limpas por segurança. Faça login novamente.',
+                duration: 6000,
+              });
+            } catch { /* ignore */ }
             setSession(null);
             setUser(null);
             setUserRole(null);
