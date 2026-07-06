@@ -100,7 +100,7 @@ export function OperationalStatusRibbon() {
               <text y="6" fontSize="11" fontWeight="700" fill="hsl(48 100% 92%)">
                 {agentShort || 'IDENTIFICADO'}
               </text>
-              <text y="16" fontSize="7.5" letterSpacing="1.6" fill="hsl(45 90% 82%)" fontWeight="600">
+              <text y="16" fontSize="8.5" letterSpacing="1.4" fill="hsl(45 92% 85%)" fontWeight="600">
                 MAT · {matricula}
               </text>
             </g>
@@ -111,7 +111,7 @@ export function OperationalStatusRibbon() {
               <text y="6" fontSize="11" fontWeight="700" fill="hsl(48 100% 92%)">
                 {(unitName || 'ISE').slice(0, 26)}
               </text>
-              <text y="16" fontSize="7.5" letterSpacing="1.6" fill="hsl(45 90% 82%)" fontWeight="600">
+              <text y="16" fontSize="8.5" letterSpacing="1.4" fill="hsl(45 92% 85%)" fontWeight="600">
                 {(municipality || 'ACRE').toUpperCase()} · BR
               </text>
             </g>
@@ -122,7 +122,7 @@ export function OperationalStatusRibbon() {
               <text y="7" fontSize="13" fontWeight="700" letterSpacing="3" fill={accentColor} style={{ filter: 'drop-shadow(0 0 6px currentColor)' }}>
                 {teamKey || '——'}
               </text>
-              <text y="17" fontSize="7.5" letterSpacing="1.6" fill="hsl(45 90% 82%)" fontWeight="600">
+              <text y="17" fontSize="8.5" letterSpacing="1.4" fill="hsl(45 92% 85%)" fontWeight="600">
                 {accent?.label ?? 'OPERACIONAL'}
               </text>
             </g>
@@ -151,25 +151,25 @@ export function OperationalStatusRibbon() {
             <g transform="translate(80,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace">
               <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(45 95% 78%)" fontWeight="700">PROTOCOLO</text>
               <text y="7" fontSize="11" fontWeight="700" fill="hsl(48 100% 90%)">ISE-AC / 2026</text>
-              <text y="17" fontSize="7.5" letterSpacing="1.6" fill="hsl(45 90% 82%)" fontWeight="600">SISTEMA SOCIOEDUCATIVO</text>
+              <text y="17" fontSize="8.5" letterSpacing="1.4" fill="hsl(45 92% 85%)" fontWeight="600">SISTEMA SOCIOEDUCATIVO</text>
             </g>
 
             <g transform="translate(350,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="middle">
               <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(45 95% 78%)" fontWeight="700">TURNO</text>
               <text y="8" fontSize="12" fontWeight="700" fill="hsl(48 100% 92%)">24 / 7</text>
-              <text y="18" fontSize="7" letterSpacing="1.4" fill="hsl(45 90% 82%)" fontWeight="600">COBERTURA CONTÍNUA</text>
+              <text y="18" fontSize="8.5" letterSpacing="1.2" fill="hsl(45 92% 85%)" fontWeight="600">COBERTURA CONTÍNUA</text>
             </g>
 
             <g transform="translate(580,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="middle">
               <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(45 95% 78%)" fontWeight="700">JURISDIÇÃO</text>
               <text y="8" fontSize="12" fontWeight="700" fill="hsl(48 100% 92%)">ACRE · BR</text>
-              <text y="18" fontSize="7" letterSpacing="1.4" fill="hsl(45 90% 82%)" fontWeight="600">GOV / SEJUSP</text>
+              <text y="18" fontSize="8.5" letterSpacing="1.2" fill="hsl(45 92% 85%)" fontWeight="600">GOV / SEJUSP</text>
             </g>
 
             <g transform="translate(720,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace">
               <text y="-6" fontSize="7.5" letterSpacing="2.2" fill="hsl(45 95% 78%)" fontWeight="700">CANAL</text>
               <text y="8" fontSize="9" fontWeight="700" letterSpacing="1.6" fill="hsl(48 100% 88%)">SEGURO</text>
-              <text y="18" fontSize="7" letterSpacing="1.4" fill="hsl(142 72% 70%)">AES-256 · ONLINE</text>
+              <text y="18" fontSize="8.5" fontWeight="700" letterSpacing="1.2" fill="hsl(142 78% 75%)">AES-256 · ONLINE</text>
             </g>
           </>
         )}
