@@ -11,7 +11,7 @@ import { UnitsManagementCard } from '@/components/dashboard/UnitsManagementCard'
 import { BHControlCard } from '@/components/dashboard/BHControlCard';
 import { AnnouncementsCard } from '@/components/dashboard/AnnouncementsCard';
 import { TeamShiftsPanel } from '@/components/dashboard/TeamShiftsPanel';
-import { OvertimeChart } from '@/components/dashboard/OvertimeChart';
+const OvertimeChart = lazy(() => import('@/components/dashboard/OvertimeChart').then(m => ({ default: m.OvertimeChart })));
 import { ShiftConflictsBanner } from '@/components/dashboard/ShiftConflictsBanner';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
 const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
