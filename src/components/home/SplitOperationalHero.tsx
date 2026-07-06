@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Radio, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
+import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 
 
 import agent3d from '@/assets/hero/agent-ise-3d.png';
