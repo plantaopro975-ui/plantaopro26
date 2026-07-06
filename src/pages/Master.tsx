@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
 import { Icon3D, Icon3DAction, type Icon3DName } from '@/components/ui/Icon3D';
