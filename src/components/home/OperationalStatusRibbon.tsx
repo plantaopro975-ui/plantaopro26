@@ -175,7 +175,7 @@ export function OperationalStatusRibbon() {
         )}
       </svg>
 
-      <p className="mt-1 text-center font-mono text-[9px] uppercase tracking-[0.32em] text-amber-200/60">
+      <p className="mt-1 text-center font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-200">
         Servir · Proteger · Ressocializar
       </p>
     </div>
