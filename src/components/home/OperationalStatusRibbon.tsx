@@ -176,23 +176,24 @@ export function OperationalStatusRibbon() {
       </svg>
 
       {/* Wordmark institucional — PLANTÃO PRO */}
-      <div className="mt-1.5 flex items-center justify-center gap-3 px-2" aria-label="Plantão Pro">
-        <span aria-hidden className="h-px flex-1 max-w-[8rem] bg-gradient-to-r from-transparent to-amber-300/40" />
-        <div className="flex items-baseline gap-1.5 select-none">
+      <div className="mt-3 flex items-center justify-center gap-4 px-2" aria-label="Plantão Pro">
+        <span aria-hidden className="h-px flex-1 max-w-[7rem] bg-gradient-to-r from-transparent to-amber-300/45" />
+        <div className="flex items-baseline gap-2.5 select-none">
           <span
-            className="font-serif text-[15px] sm:text-[17px] font-semibold tracking-[0.22em] uppercase text-amber-100"
-            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.85), 0 0 12px hsl(43 92% 58% / 0.25)' }}
+            className="font-serif text-[18px] sm:text-[20px] font-semibold tracking-[0.08em] text-amber-50 leading-none"
+            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9), 0 0 14px hsl(43 92% 58% / 0.28)' }}
           >
             Plantão
           </span>
+          <span aria-hidden className="h-3.5 w-px bg-amber-300/50" />
           <span
-            className="font-mono text-[10px] sm:text-[11px] font-bold tracking-[0.42em] uppercase text-amber-400"
-            style={{ textShadow: '0 0 6px hsl(43 92% 58% / 0.5)' }}
+            className="font-mono text-[11px] sm:text-[12px] font-bold tracking-[0.32em] uppercase text-amber-400 leading-none"
+            style={{ textShadow: '0 0 6px hsl(43 92% 58% / 0.55)' }}
           >
             PRO
           </span>
         </div>
-        <span aria-hidden className="h-px flex-1 max-w-[8rem] bg-gradient-to-l from-transparent to-amber-300/40" />
+        <span aria-hidden className="h-px flex-1 max-w-[7rem] bg-gradient-to-l from-transparent to-amber-300/45" />
       </div>
     </div>
   );
