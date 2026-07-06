@@ -121,6 +121,11 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
       : { dot: 'bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.9)]', text: 'text-rose-300/90', label: 'Offline' };
   const fmt2 = (n: number) => String(n).padStart(2, '0');
   const onlineAgents = useOnlinePresence('agents-online');
+  const [selectedTeam, setSelectedTeam] = useState<TeamKey | null>(null);
+  const handleSelect = useCallback((k: TeamKey) => {
+    setSelectedTeam(k);
+    onTeamClick(k);
+  }, [onTeamClick]);
 
 
 
