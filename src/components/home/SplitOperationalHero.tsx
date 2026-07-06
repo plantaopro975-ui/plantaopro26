@@ -14,18 +14,10 @@ import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import agentVehicleSceneWebp from '@/assets/hero/agent-vehicle-scene.webp';
 
 
-import objAlfa from '@/assets/teams/alfa-vest-real.png';
-import objAlfaWebp from '@/assets/teams/alfa-vest-real.webp';
-import objAlfaAvif from '@/assets/teams/alfa-vest-real.avif';
-import objBravo from '@/assets/teams/bravo-helmet-real.png';
-import objBravoWebp from '@/assets/teams/bravo-helmet-real.webp';
-import objBravoAvif from '@/assets/teams/bravo-helmet-real.avif';
-import objCharlie from '@/assets/teams/charlie-badge-real.png';
-import objCharlieWebp from '@/assets/teams/charlie-badge-real.webp';
-import objCharlieAvif from '@/assets/teams/charlie-badge-real.avif';
-import objDelta from '@/assets/teams/delta-radio-real.png';
-import objDeltaWebp from '@/assets/teams/delta-radio-real.webp';
-import objDeltaAvif from '@/assets/teams/delta-radio-real.avif';
+import objAlfa from '@/assets/teams/alfa-vest-pro.png';
+import objBravo from '@/assets/teams/bravo-helmet-pro.png';
+import objCharlie from '@/assets/teams/charlie-badge-pro.png';
+import objDelta from '@/assets/teams/delta-radio-pro.png';
 
 import bgAlfa from '@/assets/teams/bg-alfa.jpg';
 import bgAlfaWebp from '@/assets/teams/bg-alfa.webp';
@@ -49,19 +41,17 @@ const TEAMS: {
   role: string;
   accent: string;
   obj: string;
-  webp: string;
-  avif: string;
   bg: string;
   bgWebp: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    webp: objAlfaWebp,    avif: objAlfaAvif,    bg: bgAlfa,    bgWebp: bgAlfaWebp },
-  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   webp: objBravoWebp,   avif: objBravoAvif,   bg: bgBravo,   bgWebp: bgBravoWebp },
-  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, webp: objCharlieWebp, avif: objCharlieAvif, bg: bgCharlie, bgWebp: bgCharlieWebp },
-  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   webp: objDeltaWebp,   avif: objDeltaAvif,   bg: bgDelta,   bgWebp: bgDeltaWebp },
+  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa,    bgWebp: bgAlfaWebp },
+  { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo,   bgWebp: bgBravoWebp },
+  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie, bgWebp: bgCharlieWebp },
+  { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '210 90% 62%', obj: objDelta,   bg: bgDelta,   bgWebp: bgDeltaWebp },
 ];
 
 interface TeamObjectProps {
-  team: { key: string; obj: string; webp: string; avif: string };
+  team: { key: string; obj: string };
   isAlfa: boolean;
   idx: number;
 }
@@ -79,8 +69,6 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
         )}
       />
       <picture className="relative flex h-full w-full items-center justify-center">
-        <source srcSet={team.avif} type="image/avif" />
-        <source srcSet={team.webp} type="image/webp" />
         <img
           src={team.obj}
           alt={`Equipe ${team.key} — equipamento tático 3D`}
@@ -117,13 +105,13 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
 
 
 export function SplitOperationalHero({ onTeamClick }: Props) {
-  // Preload only the first-in-viewport 3D image (ALFA), AVIF variant
+  // Preload only the first-in-viewport 3D image (ALFA)
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'preload';
     link.as = 'image';
-    link.href = objAlfaAvif;
-    link.type = 'image/avif';
+    link.href = objAlfa;
+    link.type = 'image/png';
     (link as any).fetchPriority = 'high';
     document.head.appendChild(link);
     return () => { document.head.removeChild(link); };
