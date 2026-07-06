@@ -22,8 +22,8 @@ import { RadarSweep } from '@/components/home/RadarSweep';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 import { cn } from '@/lib/utils';
-import iseAcreBadge from '@/assets/ise-acre-badge.png';
-
+import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
+const iseAcreBadge = iseAcreBadgeAsset.url;
 import headerBg from '@/assets/header-bg.jpg';
 
 export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {

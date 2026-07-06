@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { ShieldCheck, MapPin, Cpu, Radio, Lock } from 'lucide-react';
-import iseAcreBadge from '@/assets/ise-acre-badge.png';
-
+import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
+const iseAcreBadge = iseAcreBadgeAsset.url;
 interface CopyrightFooterProps {
   className?: string;
   compact?: boolean;

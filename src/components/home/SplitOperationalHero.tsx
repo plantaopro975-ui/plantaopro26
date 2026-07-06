@@ -6,24 +6,34 @@ import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 
-import agent3d from '@/assets/hero/agent-ise-3d.png';
-import agent3dWebp from '@/assets/hero/agent-ise-3d.webp';
-import vehicle3d from '@/assets/hero/vehicle-ise-3d.png';
-import vehicle3dWebp from '@/assets/hero/vehicle-ise-3d.webp';
-import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
-import agentVehicleSceneWebp from '@/assets/hero/agent-vehicle-scene.webp';
-
-
-import objAlfa from '@/assets/teams/alfa-vest-pro.png';
-import objBravo from '@/assets/teams/bravo-helmet-pro.png';
-import objCharlie from '@/assets/teams/charlie-badge-pro.png';
-import objDelta from '@/assets/teams/delta-radio-pro.png';
-
-import bgAlfa from '@/assets/teams/bg-alfa.jpg';
-import bgBravo from '@/assets/teams/bg-bravo.jpg';
-import bgCharlie from '@/assets/teams/bg-charlie.jpg';
-import bgDelta from '@/assets/teams/bg-delta.jpg';
-
+import agent3dAsset from '@/assets/hero/agent-ise-3d.png.asset.json';
+const agent3d = agent3dAsset.url;
+import agent3dWebpAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
+const agent3dWebp = agent3dWebpAsset.url;
+import vehicle3dAsset from '@/assets/hero/vehicle-ise-3d.png.asset.json';
+const vehicle3d = vehicle3dAsset.url;
+import vehicle3dWebpAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
+const vehicle3dWebp = vehicle3dWebpAsset.url;
+import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.png.asset.json';
+const agentVehicleScene = agentVehicleSceneAsset.url;
+import agentVehicleSceneWebpAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
+const agentVehicleSceneWebp = agentVehicleSceneWebpAsset.url;
+import objAlfaAsset from '@/assets/teams/alfa-vest-pro.png.asset.json';
+const objAlfa = objAlfaAsset.url;
+import objBravoAsset from '@/assets/teams/bravo-helmet-pro.png.asset.json';
+const objBravo = objBravoAsset.url;
+import objCharlieAsset from '@/assets/teams/charlie-badge-pro.png.asset.json';
+const objCharlie = objCharlieAsset.url;
+import objDeltaAsset from '@/assets/teams/delta-radio-pro.png.asset.json';
+const objDelta = objDeltaAsset.url;
+import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
+const bgAlfa = bgAlfaAsset.url;
+import bgBravoAsset from '@/assets/teams/bg-bravo.jpg.asset.json';
+const bgBravo = bgBravoAsset.url;
+import bgCharlieAsset from '@/assets/teams/bg-charlie.jpg.asset.json';
+const bgCharlie = bgCharlieAsset.url;
+import bgDeltaAsset from '@/assets/teams/bg-delta.jpg.asset.json';
+const bgDelta = bgDeltaAsset.url;
 interface Props {
   onTeamClick: (team: string) => void;
 }
