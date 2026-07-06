@@ -14,18 +14,10 @@ import agentVehicleScene from '@/assets/hero/agent-vehicle-scene.png';
 import agentVehicleSceneWebp from '@/assets/hero/agent-vehicle-scene.webp';
 
 
-import objAlfa from '@/assets/teams/alfa-vest-real.png';
-import objAlfaWebp from '@/assets/teams/alfa-vest-real.webp';
-import objAlfaAvif from '@/assets/teams/alfa-vest-real.avif';
-import objBravo from '@/assets/teams/bravo-helmet-real.png';
-import objBravoWebp from '@/assets/teams/bravo-helmet-real.webp';
-import objBravoAvif from '@/assets/teams/bravo-helmet-real.avif';
-import objCharlie from '@/assets/teams/charlie-badge-real.png';
-import objCharlieWebp from '@/assets/teams/charlie-badge-real.webp';
-import objCharlieAvif from '@/assets/teams/charlie-badge-real.avif';
-import objDelta from '@/assets/teams/delta-radio-real.png';
-import objDeltaWebp from '@/assets/teams/delta-radio-real.webp';
-import objDeltaAvif from '@/assets/teams/delta-radio-real.avif';
+import objAlfa from '@/assets/teams/alfa-vest-pro.png';
+import objBravo from '@/assets/teams/bravo-helmet-pro.png';
+import objCharlie from '@/assets/teams/charlie-badge-pro.png';
+import objDelta from '@/assets/teams/delta-radio-pro.png';
 
 import bgAlfa from '@/assets/teams/bg-alfa.jpg';
 import bgAlfaWebp from '@/assets/teams/bg-alfa.webp';
