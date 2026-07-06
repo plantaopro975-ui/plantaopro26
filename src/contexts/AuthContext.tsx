@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { pushDiagEvent } from '@/lib/diagLog';
+import { clearAllCredentials } from '@/components/auth/SavedCredentials';
 
 
 type UserRole = 'admin' | 'user' | 'master';
