@@ -31,30 +31,16 @@ export function DeveloperSignature({ className, compact = false }: DeveloperSign
         DEV//
       </span>
 
-      {/* Handwritten name — SVG */}
-      <svg
-        viewBox="0 0 120 20"
-        className={cn('shrink-0 overflow-visible', compact ? 'h-3.5 w-auto' : 'h-4 w-auto')}
-        aria-hidden
+      {/* Developer name */}
+      <span
+        className={cn(
+          'font-serif italic font-semibold text-primary tracking-wide',
+          '[text-shadow:0_0_6px_hsl(var(--primary)/0.35)]',
+          compact ? 'text-[11px]' : 'text-[12px]',
+        )}
       >
-        <defs>
-          <linearGradient id="sig-ink-hw" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.7" />
-            <stop offset="55%" stopColor="hsl(var(--primary))" stopOpacity="1" />
-            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.6" />
-          </linearGradient>
-        </defs>
-        {/* Stylized script "Franc D'nis" */}
-        <path
-          d="M2 15 C 3 6, 8 3, 10 13 C 11 17, 12 11, 14 7 L 16 15 M 19 9 C 21 5, 25 7, 23 13 M 27 13 C 29 7, 33 7, 33 13 L 33 9 M 37 13 C 39 7, 43 9, 41 13 Q 39 15, 43 15 M 49 5 L 49 15 M 53 9 C 55 5, 59 7, 59 13 C 59 17, 53 17, 53 13 M 66 3 L 66 15 M 66 9 C 70 5, 74 7, 74 13 C 74 19, 66 19, 66 13 M 79 7 L 78 9 M 80 11 L 79 15 M 84 15 L 84 9 C 86 5, 90 7, 90 13 L 90 15 M 94 9 L 94 15 M 94 7 L 94 6 M 98 15 C 100 7, 106 9, 104 13 Q 102 15, 106 15"
-          fill="none"
-          stroke="url(#sig-ink-hw)"
-          strokeWidth="1.15"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="[filter:drop-shadow(0_0_2px_hsl(var(--primary)/0.4))]"
-        />
-      </svg>
+        Franc D'nis
+      </span>
 
       {/* Profession bracketed */}
       <span
