@@ -120,6 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setSession(null);
             setUser(null);
             setUserRole(null);
+            try { clearAllCredentials(); } catch { /* ignore */ }
           }
         } else {
           // Para outros eventos, atualiza normalmente
