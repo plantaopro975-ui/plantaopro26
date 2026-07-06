@@ -586,7 +586,7 @@ function Section({
   );
 }
 
-export function RoundsManager() {
+export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
 
   const [open, setOpen] = useState(false);
   const [team, setTeam] = useState<TeamKey>('ALFA');
@@ -1185,6 +1185,7 @@ export function RoundsManager() {
     <>
       <Dialog open={open} onOpenChange={(o) => { if (o) setOpen(true); else requestExit(); }}>
         <DialogTrigger asChild>
+          {customTrigger ?? (
           <button
             type="button"
             aria-label="Abrir Gestor de Rondas"
@@ -1234,7 +1235,9 @@ export function RoundsManager() {
             {/* glass reflection */}
             <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
+          )}
         </DialogTrigger>
+
 
         <DialogContent
           className="w-[min(100vw-0.5rem,72rem)] max-w-none max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
