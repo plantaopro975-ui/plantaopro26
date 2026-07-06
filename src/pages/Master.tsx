@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
 import { Icon3D, Icon3DAction, type Icon3DName } from '@/components/ui/Icon3D';
@@ -58,24 +58,24 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
-import { TransferApprovalPanel } from '@/components/agents/TransferApprovalPanel';
-import { AdminResetPasswordDialog } from '@/components/agents/AdminResetPasswordDialog';
-import { EditAgentDialog } from '@/components/admin/EditAgentDialog';
-import { EditUnitDialog } from '@/components/admin/EditUnitDialog';
-import { DeleteAgentDialog } from '@/components/admin/DeleteAgentDialog';
-import { LicenseManagementDialog } from '@/components/admin/LicenseManagementDialog';
-import { DeleteUserDialog } from '@/components/admin/DeleteUserDialog';
-import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
-import { CredentialsViewer } from '@/components/admin/CredentialsViewer';
-import { PasswordRequestsManager } from '@/components/admin/PasswordRequestsManager';
-import { AnnouncementsManager } from '@/components/admin/AnnouncementsManager';
-import { PromosToggleCard } from '@/components/admin/PromosToggleCard';
-import { WelcomeHintToggleCard } from '@/components/admin/WelcomeHintToggleCard';
-import { SwapManagementPanel } from '@/components/admin/SwapManagementPanel';
-import { LicenseFinanceControl } from '@/components/admin/LicenseFinanceControl';
-import { UnitsManagementCard } from '@/components/admin/UnitsManagementCard';
-import { AgentAccessControl } from '@/components/admin/AgentAccessControl';
-import { PendingApprovalsManager } from '@/components/admin/PendingApprovalsManager';
+const TransferApprovalPanel = lazy(() => import('@/components/agents/TransferApprovalPanel').then(m => ({ default: m.TransferApprovalPanel })));
+const AdminResetPasswordDialog = lazy(() => import('@/components/agents/AdminResetPasswordDialog').then(m => ({ default: m.AdminResetPasswordDialog })));
+const EditAgentDialog = lazy(() => import('@/components/admin/EditAgentDialog').then(m => ({ default: m.EditAgentDialog })));
+const EditUnitDialog = lazy(() => import('@/components/admin/EditUnitDialog').then(m => ({ default: m.EditUnitDialog })));
+const DeleteAgentDialog = lazy(() => import('@/components/admin/DeleteAgentDialog').then(m => ({ default: m.DeleteAgentDialog })));
+const LicenseManagementDialog = lazy(() => import('@/components/admin/LicenseManagementDialog').then(m => ({ default: m.LicenseManagementDialog })));
+const DeleteUserDialog = lazy(() => import('@/components/admin/DeleteUserDialog').then(m => ({ default: m.DeleteUserDialog })));
+const AgentPasswordManager = lazy(() => import('@/components/admin/AgentPasswordManager').then(m => ({ default: m.AgentPasswordManager })));
+const CredentialsViewer = lazy(() => import('@/components/admin/CredentialsViewer').then(m => ({ default: m.CredentialsViewer })));
+const PasswordRequestsManager = lazy(() => import('@/components/admin/PasswordRequestsManager').then(m => ({ default: m.PasswordRequestsManager })));
+const AnnouncementsManager = lazy(() => import('@/components/admin/AnnouncementsManager').then(m => ({ default: m.AnnouncementsManager })));
+const PromosToggleCard = lazy(() => import('@/components/admin/PromosToggleCard').then(m => ({ default: m.PromosToggleCard })));
+const WelcomeHintToggleCard = lazy(() => import('@/components/admin/WelcomeHintToggleCard').then(m => ({ default: m.WelcomeHintToggleCard })));
+const SwapManagementPanel = lazy(() => import('@/components/admin/SwapManagementPanel').then(m => ({ default: m.SwapManagementPanel })));
+const LicenseFinanceControl = lazy(() => import('@/components/admin/LicenseFinanceControl').then(m => ({ default: m.LicenseFinanceControl })));
+const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagementCard').then(m => ({ default: m.UnitsManagementCard })));
+const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
+const PendingApprovalsManager = lazy(() => import('@/components/admin/PendingApprovalsManager').then(m => ({ default: m.PendingApprovalsManager })));
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
@@ -562,6 +562,7 @@ export default function Master() {
   if (!masterSession) return null;
 
   return (
+    <Suspense fallback={<PanelSkeleton rows={5} />}>
     <div className="min-h-dvh p-4 md:p-6 hud-scope hud-page-bg" style={hudBgStyle}>
       <div className="max-w-7xl mx-auto space-y-6 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
         {/* Header */}
@@ -1302,5 +1303,6 @@ export default function Master() {
       {/* Footer Copyright */}
       <CopyrightFooter className="border-t border-border/30 mt-6" />
     </div>
+    </Suspense>
   );
 }
