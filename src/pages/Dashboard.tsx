@@ -172,7 +172,9 @@ export default function Dashboard() {
               <TeamShiftsPanel />
 
               {/* Overtime Chart */}
-              <OvertimeChart />
+              <Suspense fallback={<div className="h-64 rounded-lg bg-muted/20 animate-pulse" />}>
+                <OvertimeChart />
+              </Suspense>
 
               {/* Footer Copyright */}
               <CopyrightFooter className="border-t border-border/30 mt-4" />
