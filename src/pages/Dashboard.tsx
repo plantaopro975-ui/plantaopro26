@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { PanelSkeleton } from '@/components/ui/panel-skeleton';
-import { Header } from '@/components/layout/Header';
 import { SystemOverviewCard } from '@/components/dashboard/SystemOverviewCard';
 import { ActivityLogsCard } from '@/components/dashboard/ActivityLogsCard';
 import { UnitsManagementCard } from '@/components/dashboard/UnitsManagementCard';
