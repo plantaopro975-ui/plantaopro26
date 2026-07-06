@@ -820,6 +820,7 @@ export default function AgentPanel() {
                 <BHEvolutionChart agentId={agent.id} />
               </TabsContent>
             </Tabs>
+            </Suspense>
 
             {/* Mural de Comunicados Rápidos */}
             <AnnouncementsMural className="mt-4" />
