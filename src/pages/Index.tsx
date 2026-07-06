@@ -1527,29 +1527,14 @@ export default function Index() {
         team={selectedTeam}
       >
         <form onSubmit={handleLogin} className="space-y-5" data-login-form="true">
-          <AuthInput
+          <MaskedCpfInput
             label="CPF"
             value={loginCpf}
-            onChange={(e) => {
-              // Aceita só dígitos, máx 11 (formatCPF aplica a máscara)
-              const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
-              setLoginCpf(formatCPF(digits));
-            }}
-            onKeyDown={(e) => {
-              if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault();
-            }}
-            onPaste={(e) => {
-              e.preventDefault();
-              const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 11);
-              setLoginCpf(formatCPF(digits));
-            }}
+            onChange={(e) => setLoginCpf(e.target.value)}
             placeholder="000.000.000-00"
-            variant="centered"
-            maxLength={14}
-            inputMode="numeric"
-            autoComplete="off"
             disabled={!!selectedTeam}
             error={loginErrors.cpf}
+            showValidation
           />
           
           <AuthInput
