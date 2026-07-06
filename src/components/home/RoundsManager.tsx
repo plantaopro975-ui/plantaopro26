@@ -1845,6 +1845,7 @@ export function RoundsManager() {
                 </Section>
               </div>
             </div>
+            </div>
           </div>
         </DialogContent>
 
