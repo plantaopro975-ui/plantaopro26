@@ -14,8 +14,6 @@ import {
   addHours, differenceInSeconds, format, isWithinInterval, parseISO, subDays,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useLowMotion } from '@/hooks/useLowMotion';
