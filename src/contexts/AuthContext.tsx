@@ -131,6 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   duration: 6000,
                 });
               } catch { /* ignore */ }
+              // Redireciona para home se estiver em rota protegida
+              try {
+                if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+                  setTimeout(() => window.location.replace('/'), 150);
+                }
+              } catch { /* ignore */ }
             }
             intentionalSignOutRef.current = false;
           }
@@ -186,6 +192,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 description: 'Suas credenciais salvas foram limpas por segurança. Faça login novamente.',
                 duration: 6000,
               });
+            } catch { /* ignore */ }
+            // Redireciona para home se estiver em rota protegida
+            try {
+              if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+                setTimeout(() => window.location.replace('/'), 150);
+              }
             } catch { /* ignore */ }
             setSession(null);
             setUser(null);
