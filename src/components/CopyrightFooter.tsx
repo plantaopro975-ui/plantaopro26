@@ -68,6 +68,8 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
 
             {/* Right: Meta + signature */}
             <div className="flex items-center gap-2 text-[9px] text-muted-foreground/70 tracking-[0.18em] uppercase">
+              <DeveloperSignature compact className="hidden md:inline-flex" />
+              <span className="hidden md:inline text-muted-foreground/30">·</span>
               <Lock className="h-3 w-3 text-primary/60" />
               <span className="hidden sm:inline">LGPD · TLS 1.3</span>
               <span className="text-muted-foreground/40">·</span>
