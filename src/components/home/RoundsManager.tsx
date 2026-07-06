@@ -31,15 +31,26 @@ function toMinutes(hhmm: string): number | null {
   return h * 60 + mi;
 }
 function fromMinutes(total: number): string {
-  const t = ((total % 1440) + 1440) % 1440;
-  return `${pad(Math.floor(t / 60))}:${pad(t % 60)}`;
+  // Aceita minutos fracionários — mostra HH:mm:ss quando houver segundos, senão HH:mm.
+  const totalSec = Math.round(total * 60);
+  const daySec = 24 * 3600;
+  const t = ((totalSec % daySec) + daySec) % daySec;
+  const h = Math.floor(t / 3600);
+  const m = Math.floor((t % 3600) / 60);
+  const s = t % 60;
+  return s === 0 ? `${pad(h)}:${pad(m)}` : `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 function fmtDuration(mins: number): string {
-  const h = Math.floor(mins / 60);
-  const m = Math.round(mins % 60);
-  if (h && m) return `${h}h${pad(m)}`;
-  if (h) return `${h}h`;
-  return `${m}min`;
+  // Aceita minutos fracionários (com segundos).
+  const totalSec = Math.max(0, Math.round(mins * 60));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const parts: string[] = [];
+  if (h) parts.push(`${h}h`);
+  if (m) parts.push(`${pad(m)}min`);
+  if (s) parts.push(`${pad(s)}s`);
+  return parts.length ? parts.join('') : '0min';
 }
 function fmtHMS(seconds: number): string {
   const s = Math.max(0, Math.round(seconds));
