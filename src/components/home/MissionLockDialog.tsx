@@ -16,13 +16,14 @@ interface MissionLockDialogProps {
   color: string;
   agentName?: string;
   remainingLabel?: string;
+  silent?: boolean;
 }
 
 /**
  * Professional lock dialog shown when an agent tries to pause/reset
  * an ongoing rounds countdown. Reinforces mission integrity.
  */
-export function MissionLockDialog({ open, onClose, color, agentName, remainingLabel }: MissionLockDialogProps) {
+export function MissionLockDialog({ open, onClose, color, agentName, remainingLabel, silent = false }: MissionLockDialogProps) {
   const [dots, setDots] = useState(0);
   useEffect(() => {
     if (!open) return;
