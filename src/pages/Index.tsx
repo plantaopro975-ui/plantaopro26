@@ -1248,7 +1248,15 @@ export default function Index() {
 
   return (
     <>
-      <div className="h-[100dvh] flex flex-col bg-background relative overflow-hidden overscroll-none">
+      <div
+        className="h-full flex flex-col bg-background relative overflow-hidden overscroll-none home-compact"
+        style={{
+          fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
+          ['--home-gap' as any]: 'clamp(4px, 0.6vh, 12px)',
+          ['--home-pad-x' as any]: 'clamp(6px, 1.2vw, 16px)',
+          ['--home-pad-y' as any]: 'clamp(4px, 0.8vh, 12px)',
+        }}
+      >
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
@@ -1261,20 +1269,26 @@ export default function Index() {
               else if (isAdmin) navigate('/admin');
               else navigate('/agent-panel');
             }}
-            className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
+            className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
+            style={{ fontSize: 'clamp(9px, 0.6vw + 0.4rem, 12px)' }}
           >
-            <User className="h-3.5 w-3.5" />
+            <User className="h-3 w-3" />
             Meu Painel
           </button>
         )}
 
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden text-[13px] [--card-scale:0.85]">
+      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
         {(() => {
           const savedCount = getSavedCredentials().length;
           const wrap = (child: JSX.Element, extra = '') => (
-            <div className={cn('w-full max-w-6xl mx-auto px-2 sm:px-3', extra)}>{child}</div>
+            <div
+              className={cn('w-full max-w-6xl mx-auto', extra)}
+              style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
+            >
+              {child}
+            </div>
           );
           const blocks: Record<HomeCardId, { node: JSX.Element; grow?: boolean } | null> = {
             rounds: {
@@ -1289,7 +1303,10 @@ export default function Index() {
             hero: {
               grow: true,
               node: (
-                <div className="w-full max-w-7xl mx-auto px-2 sm:px-3 h-full">
+                <div
+                  className="w-full max-w-7xl mx-auto h-full"
+                  style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
+                >
                   <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block h-full">
                     <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
                   </DraggableHomeCard>
@@ -1321,7 +1338,10 @@ export default function Index() {
               : null,
           };
           return (
-            <div className="flex min-h-0 flex-1 flex-col gap-2 py-2">
+            <div
+              className="flex min-h-0 flex-1 flex-col"
+              style={{ gap: 'var(--home-gap)', paddingTop: 'var(--home-pad-y)', paddingBottom: 'var(--home-pad-y)' }}
+            >
               {homeCardOrder.map((id) => {
                 const b = blocks[id];
                 if (!b) return null;
