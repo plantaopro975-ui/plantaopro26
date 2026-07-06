@@ -1321,7 +1321,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Corpo auto-ajustado — sem barra de rolagem, escala para caber tudo */}
           <div
             ref={fitRef}
-            className="flex-1 min-h-0 overflow-auto"
+            className="flex-1 min-h-0 overflow-hidden"
           >
             <div
               ref={fitInnerRef}
@@ -1329,8 +1329,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 transform: `scale(${fitScale})`,
                 transformOrigin: 'top left',
                 width: `${100 / fitScale}%`,
+                height: `${100 / fitScale}%`,
               }}
-              className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4"
+              className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3"
             >
               <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 items-start lg:divide-x lg:divide-border/40">
                 <div className="min-w-0 lg:pr-4">
