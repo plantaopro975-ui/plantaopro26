@@ -51,7 +51,10 @@ export function MotivationalTicker({ color, active, progress = 0, silent = false
   return (
     <div
       key={idx}
-      className="relative w-full max-w-2xl mx-auto rounded-lg border overflow-hidden animate-fade-in"
+      className={cn(
+        'relative w-full max-w-2xl mx-auto rounded-lg border overflow-hidden',
+        !silent && 'animate-fade-in',
+      )}
       style={{
         borderColor: `${color}55`,
         background: `linear-gradient(90deg, ${color}0A, transparent 20%, transparent 80%, ${color}0A)`,
