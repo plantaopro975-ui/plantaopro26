@@ -20,6 +20,8 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { ConfirmDialog } from './ConfirmDialog';
 import { RoundsRadarSVG } from './RoundsRadarSVG';
+import { MissionLockDialog } from './MissionLockDialog';
+import { MotivationalTicker } from './MotivationalTicker';
 
 /* ================= helpers ================= */
 const pad = (n: number) => n.toString().padStart(2, '0');
@@ -764,6 +766,7 @@ export function RoundsManager() {
   /* ---------- live timer ---------- */
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
+  const [lockOpen, setLockOpen] = useState(false);
   const startedAtRef = useRef<number | null>(null);
   const firedRef = useRef<Set<number>>(new Set());
   const [alarm, setAlarm] = useState<{ open: boolean; index: number; name: string }>({
@@ -1558,22 +1561,50 @@ export function RoundsManager() {
                                  style={{ width: `${100 - (live.remaining / live.slotSec) * 100}%`, backgroundColor: teamColor }} />
                           </div>
                         )}
+                        {/* Motivational strip — only visible while running to keep the agent alert */}
+                        <MotivationalTicker color={teamColor} active={running && !!live && !live.done} />
+
                         <div className="flex items-center gap-2 pt-1">
                           {!running ? (
                             <Button type="button" size="sm" onClick={startTimer} className="h-9 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
                               <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
                             </Button>
                           ) : (
-                            <Button type="button" size="sm" onClick={pauseTimer} className="h-9 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950">
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => {
+                                if (live && !live.done) { setLockOpen(true); return; }
+                                pauseTimer();
+                              }}
+                              className="h-9 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950"
+                            >
                               <Pause className="h-3.5 w-3.5 mr-1.5" /> Pausar
                             </Button>
                           )}
-                          <Button type="button" size="icon" variant="ghost" onClick={resetTimer}
-                            className="h-9 w-9 text-muted-foreground hover:text-primary" aria-label="Reiniciar">
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => {
+                              if (running && live && !live.done) { setLockOpen(true); return; }
+                              resetTimer();
+                            }}
+                            className="h-9 w-9 text-muted-foreground hover:text-primary"
+                            aria-label="Reiniciar"
+                          >
                             <RotateCcw className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </div>
+
+                      <MissionLockDialog
+                        open={lockOpen}
+                        onClose={() => setLockOpen(false)}
+                        color={teamColor}
+                        agentName={live && !live.done ? schedule.rows[live.index]?.name : undefined}
+                        remainingLabel={live && !live.done ? fmtHMS(live.remaining) : undefined}
+                      />
 
                       {/* Rows — sem caixas, apenas linhas */}
                       <ul className="divide-y divide-border/40">
