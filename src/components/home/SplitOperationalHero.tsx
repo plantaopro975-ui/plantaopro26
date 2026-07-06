@@ -168,73 +168,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
   return (
     <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0">
-      <TopHudBar />
 
-      {/* ============ TACTICAL TITLE STRIP — Noir & Gold (matches Header) ============ */}
-      <div className="relative mx-2 sm:mx-3 mt-0 shrink-0 overflow-hidden rounded-md border-b border-t border-primary/25 bg-slate-950 bg-[radial-gradient(ellipse_at_top,hsl(217_60%_10%)_0%,hsl(217_62%_5%)_60%,hsl(217_62%_3%)_100%)] shadow-[0_8px_28px_-12px_hsl(217_62%_2%/0.9)]">
-        {/* subtle photo background — low contrast so it doesn't fight the text */}
-        <img
-          src={hudBg.url}
-          alt=""
-          aria-hidden
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 grayscale-[0.4] blur-[1px] select-none"
-          draggable={false}
-        />
-        {/* strong dark overlay for legibility */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,hsl(217_62%_3%/0.96)_0%,hsl(217_62%_4%/0.82)_50%,hsl(217_62%_3%/0.96)_100%)]"
-        />
-        {/* blueprint grid */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.12]"
-          style={{
-            backgroundImage:
-              'linear-gradient(hsl(var(--primary)/0.35) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)/0.35) 1px, transparent 1px)',
-            backgroundSize: '22px 22px',
-            maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 90%)',
-          }}
-        />
-        {/* corner brackets — hidden on very small screens to avoid overlap */}
-        <span aria-hidden className="pointer-events-none absolute left-1 top-1 h-2 w-2 sm:h-2.5 sm:w-2.5 border-l border-t border-primary/70 hidden xs:block sm:block" />
-        <span aria-hidden className="pointer-events-none absolute right-1 top-1 h-2 w-2 sm:h-2.5 sm:w-2.5 border-r border-t border-primary/70 hidden xs:block sm:block" />
-        <span aria-hidden className="pointer-events-none absolute left-1 bottom-1 h-2 w-2 sm:h-2.5 sm:w-2.5 border-l border-b border-primary/70 hidden xs:block sm:block" />
-        <span aria-hidden className="pointer-events-none absolute right-1 bottom-1 h-2 w-2 sm:h-2.5 sm:w-2.5 border-r border-b border-primary/70 hidden xs:block sm:block" />
-        {/* gold glow lines (match header top/bottom) */}
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90" />
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
-        <div className="relative flex items-center justify-between gap-2 sm:gap-4 px-2.5 sm:px-6 py-2 sm:py-2.5 min-w-0">
-          {/* left rail — op code */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-60" />
-              <span className="relative h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.8)]" />
-            </span>
-            <span className="hidden [@media(min-width:380px)]:inline font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.24em] sm:tracking-[0.28em] text-primary drop-shadow-[0_1px_2px_hsl(217_62%_2%/0.9)]">
-              OP&nbsp;//&nbsp;01
-            </span>
-          </div>
-
-          {/* center — title */}
-          <div className="flex min-w-0 flex-1 items-baseline justify-center gap-2 sm:gap-3">
-            <span aria-hidden className="hidden sm:block h-[2px] w-6 lg:w-10 bg-[linear-gradient(90deg,transparent,hsl(var(--primary)))]" />
-            <h1
-              id="mission-title"
-              className="min-w-0 font-sans font-black uppercase tracking-[0.02em] text-foreground text-[11px] [@media(min-width:380px)]:text-[12px] sm:text-[16px] lg:text-[20px] leading-none truncate drop-shadow-[0_1px_2px_hsl(217_62%_2%/0.9)]"
-            >
-              Sistema <span className="text-primary">Socioeducativo</span>
-            </h1>
-            <span aria-hidden className="hidden sm:block h-[2px] w-6 lg:w-10 bg-[linear-gradient(270deg,transparent,hsl(var(--primary)))]" />
-          </div>
-
-          {/* right rail — subtitle */}
-          <p className="hidden md:block font-mono text-[9px] lg:text-[10px] uppercase tracking-[0.28em] text-muted-foreground shrink-0">
-            Comando&nbsp;·&nbsp;Escalas
-          </p>
-        </div>
-      </div>
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
