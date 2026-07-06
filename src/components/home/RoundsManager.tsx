@@ -586,7 +586,7 @@ function Section({
   );
 }
 
-export function RoundsManager() {
+export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
 
   const [open, setOpen] = useState(false);
   const [team, setTeam] = useState<TeamKey>('ALFA');
