@@ -1303,5 +1303,6 @@ export default function Master() {
       {/* Footer Copyright */}
       <CopyrightFooter className="border-t border-border/30 mt-6" />
     </div>
+    </Suspense>
   );
 }
