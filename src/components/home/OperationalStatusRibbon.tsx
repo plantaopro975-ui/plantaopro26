@@ -175,13 +175,24 @@ export function OperationalStatusRibbon() {
         )}
       </svg>
 
-      {/* Lema institucional — flanqueado por hairlines finas (discreto) */}
-      <div className="mt-1.5 flex items-center justify-center gap-3 px-2" aria-label="Lema institucional">
-        <span aria-hidden className="h-px w-16 sm:w-24 bg-gradient-to-r from-transparent to-amber-300/40" />
-        <p className="text-center font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-200">
-          Servir · Proteger · Ressocializar
-        </p>
-        <span aria-hidden className="h-px w-16 sm:w-24 bg-gradient-to-l from-transparent to-amber-300/40" />
+      {/* Wordmark institucional — PLANTÃO PRO */}
+      <div className="mt-1.5 flex items-center justify-center gap-3 px-2" aria-label="Plantão Pro">
+        <span aria-hidden className="h-px flex-1 max-w-[8rem] bg-gradient-to-r from-transparent to-amber-300/40" />
+        <div className="flex items-baseline gap-1.5 select-none">
+          <span
+            className="font-serif text-[15px] sm:text-[17px] font-semibold tracking-[0.22em] uppercase text-amber-100"
+            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.85), 0 0 12px hsl(43 92% 58% / 0.25)' }}
+          >
+            Plantão
+          </span>
+          <span
+            className="font-mono text-[10px] sm:text-[11px] font-bold tracking-[0.42em] uppercase text-amber-400"
+            style={{ textShadow: '0 0 6px hsl(43 92% 58% / 0.5)' }}
+          >
+            PRO
+          </span>
+        </div>
+        <span aria-hidden className="h-px flex-1 max-w-[8rem] bg-gradient-to-l from-transparent to-amber-300/40" />
       </div>
     </div>
   );
