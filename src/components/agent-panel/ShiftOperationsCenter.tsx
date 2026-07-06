@@ -285,11 +285,15 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
     if (obsStorageKey) localStorage.setItem(obsStorageKey, v);
   };
 
-  const exportPDF = () => {
+  const exportPDF = async () => {
     if (!currentShift) {
       toast.error('Nenhum plantão em curso para exportar.');
       return;
     }
+    const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+      import('jspdf'),
+      import('jspdf-autotable'),
+    ]);
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
 
