@@ -1247,6 +1247,7 @@ export default function Index() {
   }
 
   return (
+    <Suspense fallback={null}>
     <>
       <div
         className="h-full flex flex-col bg-background relative overflow-hidden overscroll-none home-compact"
