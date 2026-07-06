@@ -105,13 +105,13 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
 
 
 export function SplitOperationalHero({ onTeamClick }: Props) {
-  // Preload only the first-in-viewport 3D image (ALFA), AVIF variant
+  // Preload only the first-in-viewport 3D image (ALFA)
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'preload';
     link.as = 'image';
-    link.href = objAlfaAvif;
-    link.type = 'image/avif';
+    link.href = objAlfa;
+    link.type = 'image/png';
     (link as any).fetchPriority = 'high';
     document.head.appendChild(link);
     return () => { document.head.removeChild(link); };
