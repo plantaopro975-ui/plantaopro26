@@ -56,7 +56,7 @@ const MasterLoginDialog = lazy(() => import('@/components/auth/MasterLoginDialog
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
-import { DeveloperSignature } from '@/components/DeveloperSignature';
+
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
