@@ -56,7 +56,7 @@ const MasterLoginDialog = lazy(() => import('@/components/auth/MasterLoginDialog
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
-import { DeveloperSignature } from '@/components/DeveloperSignature';
+
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
@@ -1393,9 +1393,8 @@ export default function Index() {
             <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
           </div>
 
-          {/* Center: Developer signature + © line */}
+          {/* Center: © line */}
           <div className="flex flex-col items-center leading-tight gap-0.5 min-w-0">
-            <DeveloperSignature compact />
             <span className="hidden sm:inline text-[8px] uppercase tracking-[0.28em] text-muted-foreground/50 font-mono">
               © {new Date().getFullYear()} · PlantãoPro
             </span>
