@@ -120,6 +120,8 @@ export function AuthDialog({
           !teamBranded && styles.border,
           "shadow-2xl",
           !teamBranded && styles.glow,
+          // Instant open/close — no zoom/slide/fade delays
+          "!duration-0 data-[state=open]:!animate-none data-[state=closed]:!animate-none",
           variant === 'register' && "max-h-[90vh] overflow-y-auto"
         )}
         style={teamBranded && teamColor ? {
