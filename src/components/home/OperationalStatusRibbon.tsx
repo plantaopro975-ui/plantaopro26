@@ -66,10 +66,8 @@ export function OperationalStatusRibbon() {
         <rect x="0" y="0"  width="800" height="1" fill="url(#ribbonEdge2)" />
         <rect x="0" y="51" width="800" height="1" fill="url(#ribbonEdge2)" />
 
-        {/* varredura sutil */}
-        <rect x="-220" y="0" width="220" height="52" fill={`${accentColor.replace(')', ' / 0.07)')}`}>
-          <animate attributeName="x" from="-220" to="800" dur="6.2s" repeatCount="indefinite" />
-        </rect>
+        {/* varredura removida — barra estática */}
+
 
         {/* Selo esquerdo: brasão + status */}
         <g transform="translate(28,26)">
