@@ -71,6 +71,10 @@ export function QuickAccessPanel({ onQuickLogin, onSelectCredential, isLoading, 
     e.stopPropagation();
     removeCredential(cpf);
     setCredentials(getSavedCredentials());
+    toast.success('Credencial removida', {
+      description: `CPF •••${cpf.slice(-2)} apagado deste dispositivo`,
+      duration: 2500,
+    });
   };
 
   const handleCardClick = (cred: SavedCredential) => {
