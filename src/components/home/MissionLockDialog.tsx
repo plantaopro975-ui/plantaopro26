@@ -9,6 +9,7 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 import { Lock, ShieldAlert, Radio } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface MissionLockDialogProps {
   open: boolean;
