@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Radio, ShieldCheck, Activity, Clock3, User2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { OperationalStatusRibbon } from './OperationalStatusRibbon';
+
 
 import agent3d from '@/assets/hero/agent-ise-3d.png';
 import agent3dWebp from '@/assets/hero/agent-ise-3d.webp';
@@ -510,97 +512,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           </div>
 
           {/* ============ TACTICAL STATUS RIBBON — SVG HUD ============ */}
-          <div className="relative mt-2 px-1">
-            <svg
-              viewBox="0 0 800 44"
-              preserveAspectRatio="none"
-              className="block w-full h-9 sm:h-11"
-              role="img"
-              aria-label="Status operacional em tempo real"
-            >
-              <defs>
-                <linearGradient id="ribbonBg" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%"   stopColor="hsl(222 55% 6%)" stopOpacity="0.95" />
-                  <stop offset="50%"  stopColor="hsl(222 45% 10%)" stopOpacity="0.85" />
-                  <stop offset="100%" stopColor="hsl(222 55% 6%)" stopOpacity="0.95" />
-                </linearGradient>
-                <linearGradient id="ribbonEdge" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%"   stopColor="hsl(42 90% 55% / 0)" />
-                  <stop offset="50%"  stopColor="hsl(42 90% 55% / 0.85)" />
-                  <stop offset="100%" stopColor="hsl(42 90% 55% / 0)" />
-                </linearGradient>
-                <pattern id="ribbonHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                  <line x1="0" y1="0" x2="0" y2="6" stroke="hsl(42 90% 55% / 0.10)" strokeWidth="1" />
-                </pattern>
-              </defs>
+          <OperationalStatusRibbon />
 
-              {/* base + chanfros */}
-              <path d="M0,4 L14,4 L20,0 L780,0 L786,4 L800,4 L800,40 L786,40 L780,44 L20,44 L14,40 L0,40 Z" fill="url(#ribbonBg)" stroke="hsl(42 90% 55% / 0.35)" strokeWidth="0.6" />
-              <rect x="0" y="0" width="800" height="44" fill="url(#ribbonHatch)" opacity="0.5" />
-              <rect x="0" y="0"  width="800" height="1" fill="url(#ribbonEdge)" />
-              <rect x="0" y="43" width="800" height="1" fill="url(#ribbonEdge)" />
-
-              {/* ticker de fundo (varredura) */}
-              <rect x="-200" y="0" width="200" height="44" fill="hsl(42 90% 55% / 0.06)">
-                <animate attributeName="x" from="-200" to="800" dur="5.5s" repeatCount="indefinite" />
-              </rect>
-
-              {/* Selo esquerdo */}
-              <g transform="translate(24,22)" fontFamily="'IBM Plex Mono', ui-monospace, monospace">
-                <circle r="4" fill="hsl(142 72% 45%)">
-                  <animate attributeName="opacity" values="1;0.35;1" dur="1.6s" repeatCount="indefinite" />
-                </circle>
-                <text x="12" y="-2" fontSize="8" letterSpacing="2.2" fill="hsl(42 80% 75%)">MISSÃO</text>
-                <text x="12" y="9" fontSize="9" letterSpacing="2" fontWeight="700" fill="hsl(48 100% 88%)">EM CURSO</text>
-              </g>
-
-              {/* Divisores verticais */}
-              {[160, 340, 520, 680].map((x) => (
-                <line key={x} x1={x} y1="10" x2={x} y2="34" stroke="hsl(42 90% 55% / 0.28)" strokeWidth="0.6" strokeDasharray="2 2" />
-              ))}
-
-              {/* KPI 1 */}
-              <g transform="translate(200,22)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="middle">
-                <text y="-2" fontSize="7.5" letterSpacing="2" fill="hsl(42 60% 70% / 0.85)">UNIDADES</text>
-                <text y="10" fontSize="12" fontWeight="700" fill="hsl(48 100% 90%)">09 / 09</text>
-              </g>
-
-              {/* KPI 2 */}
-              <g transform="translate(380,22)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="middle">
-                <text y="-2" fontSize="7.5" letterSpacing="2" fill="hsl(42 60% 70% / 0.85)">RONDAS 24H</text>
-                <text y="10" fontSize="12" fontWeight="700" fill="hsl(48 100% 90%)">
-                  148
-                  <animate attributeName="opacity" values="1;0.6;1" dur="2.4s" repeatCount="indefinite" />
-                </text>
-              </g>
-
-              {/* KPI 3 */}
-              <g transform="translate(560,22)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="middle">
-                <text y="-2" fontSize="7.5" letterSpacing="2" fill="hsl(42 60% 70% / 0.85)">EFETIVO</text>
-                <text y="10" fontSize="12" fontWeight="700" fill="hsl(142 72% 70%)">ATIVO</text>
-              </g>
-
-              {/* KPI 4 — barra de sinal */}
-              <g transform="translate(700,22)" fontFamily="'IBM Plex Mono', ui-monospace, monospace">
-                <text x="0" y="-2" fontSize="7.5" letterSpacing="2" fill="hsl(42 60% 70% / 0.85)">UPLINK</text>
-                {[0,1,2,3,4].map((i) => (
-                  <rect key={i} x={i*6} y={4 - i} width="4" height={4 + i*2} fill={i < 4 ? "hsl(142 72% 55%)" : "hsl(142 72% 55% / 0.35)"} rx="0.5">
-                    <animate attributeName="opacity" values="1;0.55;1" dur={`${1.2 + i*0.15}s`} repeatCount="indefinite" />
-                  </rect>
-                ))}
-              </g>
-
-              {/* Selo direito */}
-              <g transform="translate(776,22)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="end">
-                <text y="-2" fontSize="7.5" letterSpacing="2" fill="hsl(42 60% 70% / 0.85)">CANAL</text>
-                <text y="10" fontSize="9" fontWeight="700" letterSpacing="2" fill="hsl(48 100% 88%)">SEGURO · AES-256</text>
-              </g>
-            </svg>
-
-            <p className="mt-1 text-center font-mono text-[9px] uppercase tracking-[0.32em] text-amber-200/60">
-              Servir · Proteger · Ressocializar
-            </p>
-          </div>
         </div>
 
       </article>
