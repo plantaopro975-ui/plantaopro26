@@ -219,6 +219,20 @@ export default function Index() {
     // Permite navegação livre para a home sem deslogar (vindo do painel interno)
     const params = new URLSearchParams(window.location.search);
     if (params.get('home') === '1') return;
+
+    // Retomada de rota após expiração de sessão / login: aceita ?next= (mesmo origem)
+    const rawNext = params.get('next');
+    if (rawNext) {
+      try {
+        const decoded = decodeURIComponent(rawNext);
+        // Aceita apenas paths internos absolutos, sem esquemas ou host
+        if (decoded.startsWith('/') && !decoded.startsWith('//') && decoded !== '/') {
+          navigate(decoded, { replace: true });
+          return;
+        }
+      } catch { /* ignore */ }
+    }
+
     if (isMaster) navigate('/master', { replace: true });
     else if (isAdmin) navigate('/admin', { replace: true });
     else navigate('/agent-panel', { replace: true });
@@ -1280,6 +1294,25 @@ export default function Index() {
 
       {/* Header is rendered by AppShell layout */}
       <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
+        {user && (
+          <div
+            className="w-full max-w-6xl mx-auto pt-2"
+            style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                if (isMaster) navigate('/master');
+                else if (isAdmin) navigate('/admin');
+                else navigate('/agent-panel');
+              }}
+              className="inline-flex items-center gap-2 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:bg-primary/20 hover:border-primary/60 transition"
+            >
+              <User className="h-3.5 w-3.5" />
+              Voltar para o Meu Painel
+            </button>
+          </div>
+        )}
         {(() => {
           const savedCount = getSavedCredentials().length;
           const wrap = (child: JSX.Element, extra = '') => (

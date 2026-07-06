@@ -131,10 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   duration: 6000,
                 });
               } catch { /* ignore */ }
-              // Redireciona para home se estiver em rota protegida
+              // Redireciona para home se estiver em rota protegida, preservando ?next para retorno
               try {
                 if (typeof window !== 'undefined' && window.location.pathname !== '/') {
-                  setTimeout(() => window.location.replace('/'), 150);
+                  const next = window.location.pathname + window.location.search + window.location.hash;
+                  const target = `/?next=${encodeURIComponent(next)}`;
+                  setTimeout(() => window.location.replace(target), 150);
                 }
               } catch { /* ignore */ }
             }
@@ -193,10 +195,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 duration: 6000,
               });
             } catch { /* ignore */ }
-            // Redireciona para home se estiver em rota protegida
+            // Redireciona para home se estiver em rota protegida, preservando ?next para retorno
             try {
               if (typeof window !== 'undefined' && window.location.pathname !== '/') {
-                setTimeout(() => window.location.replace('/'), 150);
+                const next = window.location.pathname + window.location.search + window.location.hash;
+                const target = `/?next=${encodeURIComponent(next)}`;
+                setTimeout(() => window.location.replace(target), 150);
               }
             } catch { /* ignore */ }
             setSession(null);
