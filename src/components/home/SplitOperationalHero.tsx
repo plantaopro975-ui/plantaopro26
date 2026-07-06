@@ -112,42 +112,6 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
 
 
 
-// Relógio sincronizado com o servidor (não confia no relógio local do dispositivo)
-import { useServerTime } from '@/hooks/useServerTime';
-function useNow() {
-  return useServerTime(1000);
-}
-
-function pad(n: number) { return n.toString().padStart(2, '0'); }
-
-/* ============ COMPACT TOP HUD BAR ============ */
-function TopHudBar() {
-  const now = useNow();
-  const clock = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-  const weekday = now.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '').slice(0, 3).toUpperCase();
-  const dateStr = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}`;
-  return (
-    <div className="relative w-full border-y border-white/5 bg-slate-950/70 backdrop-blur-md shrink-0">
-      <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-primary/40" />
-      <div className="mx-auto max-w-[1600px] px-3 sm:px-5">
-        <div className="flex items-center justify-end h-8 font-mono text-[10px] uppercase tracking-[0.22em]">
-          {/* Único destaque: DATA + HORA (fonte autoritativa do horário de rede). */}
-          <div className="flex items-stretch overflow-hidden rounded-md border border-primary/40 bg-slate-950/80 shadow-[0_0_10px_-4px_hsl(var(--primary)/0.6)]">
-            <span className="flex items-center gap-1 px-1.5 sm:px-2 py-1 text-primary/90 tabular-nums text-[10px] sm:text-[11px] tracking-[0.18em]">
-              <span className="hidden xs:inline">{weekday}</span>
-              <span className="font-bold">{dateStr}</span>
-            </span>
-            <span aria-hidden className="w-px bg-primary/30" />
-            <span className="flex items-center gap-1 px-1.5 sm:px-2 py-1 text-primary font-bold tabular-nums text-[11px] sm:text-[12px] tracking-[0.14em] drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]">
-              <Clock3 className="h-3 w-3" strokeWidth={2.4} />
-              {clock}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 
 export function SplitOperationalHero({ onTeamClick }: Props) {
