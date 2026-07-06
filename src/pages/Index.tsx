@@ -1296,7 +1296,7 @@ export default function Index() {
               node: wrap(
                 <div className="animate-fade-in">
                   <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
-                    <RoundsManager />
+                    <RoundsCommandBar />
                   </DraggableHomeCard>
                 </div>,
               ),
