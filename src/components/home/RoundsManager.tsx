@@ -769,6 +769,7 @@ export function RoundsManager() {
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
   const [lockOpen, setLockOpen] = useState(false);
+  const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
   const [silentMode, setSilentMode] = useState<boolean>(() => {
