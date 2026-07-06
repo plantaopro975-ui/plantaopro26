@@ -206,7 +206,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </svg>
             <div
               aria-hidden
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 h-12 w-[70%] rounded-[50%]"
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 md:left-[28%] lg:left-[22%] xl:left-[18%] h-12 w-[70%] rounded-[50%]"
               style={{
                 background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.35) 0%, transparent 70%)',
                 filter: 'blur(20px)',
