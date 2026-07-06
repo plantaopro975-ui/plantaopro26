@@ -213,7 +213,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               }}
             />
             {/* Cena composta: agente + viatura em escala realista */}
-            <div className="relative inline-block leading-[0] isolate" style={{ height: 'clamp(130px, 18vw, 240px)' }}>
+            <div className="relative inline-block leading-[0] isolate md:-translate-x-[22%] lg:-translate-x-[28%] xl:-translate-x-[32%]" style={{ height: 'clamp(130px, 18vw, 240px)' }}>
               <picture>
                 <source srcSet={agentVehicleSceneWebp} type="image/webp" />
                 <img
