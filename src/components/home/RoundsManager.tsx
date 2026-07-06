@@ -1329,7 +1329,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 transform: `scale(${fitScale})`,
                 transformOrigin: 'top left',
                 width: `${100 / fitScale}%`,
-                height: `${100 / fitScale}%`,
+                
               }}
               className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3"
             >
