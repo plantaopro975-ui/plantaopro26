@@ -62,6 +62,7 @@ import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { HeroCinematic } from '@/components/home/HeroCinematic';
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 import { RoundsManager } from '@/components/home/RoundsManager';
+import { RoundsCommandBar } from '@/components/home/RoundsCommandBar';
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
 import { useHomeCardOrder, type HomeCardId } from '@/hooks/useHomeCardOrder';
 
@@ -1295,7 +1296,7 @@ export default function Index() {
               node: wrap(
                 <div className="animate-fade-in">
                   <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
-                    <RoundsManager />
+                    <RoundsCommandBar />
                   </DraggableHomeCard>
                 </div>,
               ),
