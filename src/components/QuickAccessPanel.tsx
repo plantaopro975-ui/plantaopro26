@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { User, Clock, ShieldCheck, Zap, Trash2, KeyRound, Loader2, ChevronRight } from 'lucide-react';
+import { toast } from 'sonner';
 import { formatCPF } from '@/lib/validators';
 import {
   getSavedCredentials,
