@@ -175,9 +175,105 @@ export function OperationalStatusRibbon() {
         )}
       </svg>
 
-      <p className="mt-1 text-center font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-200">
-        Servir · Proteger · Ressocializar
-      </p>
+      {/* ============ FAIXA HERÁLDICA INSTITUCIONAL ============ */}
+      <div className="mt-1.5 px-1" aria-label="Lema institucional: Servir, Proteger e Ressocializar">
+        <svg
+          viewBox="0 0 800 34"
+          preserveAspectRatio="none"
+          className="block w-full h-7 sm:h-8"
+          role="img"
+        >
+          <defs>
+            <linearGradient id="heraldGold" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor="hsl(48 96% 78%)" />
+              <stop offset="45%"  stopColor="hsl(43 92% 58%)" />
+              <stop offset="100%" stopColor="hsl(36 78% 38%)" />
+            </linearGradient>
+            <linearGradient id="heraldLine" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stopColor="hsl(43 92% 58% / 0)" />
+              <stop offset="20%"  stopColor="hsl(43 92% 58% / 0.85)" />
+              <stop offset="50%"  stopColor="hsl(48 96% 78% / 1)" />
+              <stop offset="80%"  stopColor="hsl(43 92% 58% / 0.85)" />
+              <stop offset="100%" stopColor="hsl(43 92% 58% / 0)" />
+            </linearGradient>
+            <filter id="heraldGlow" x="-20%" y="-40%" width="140%" height="180%">
+              <feGaussianBlur stdDeviation="0.5" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+
+          {/* Linha ornamental esquerda */}
+          <g transform="translate(0,17)">
+            <line x1="10" y1="0" x2="330" y2="0" stroke="url(#heraldLine)" strokeWidth="0.8" />
+            <line x1="60" y1="-3" x2="60" y2="3" stroke="hsl(43 92% 58% / 0.6)" strokeWidth="0.6" />
+            <line x1="120" y1="-4" x2="120" y2="4" stroke="hsl(43 92% 58% / 0.7)" strokeWidth="0.6" />
+            <line x1="180" y1="-3" x2="180" y2="3" stroke="hsl(43 92% 58% / 0.6)" strokeWidth="0.6" />
+            {/* Ponta diamante esquerda ao lado do brasão */}
+            <path d="M310,0 L322,-4 L334,0 L322,4 Z" fill="url(#heraldGold)" opacity="0.9" />
+            <circle cx="290" cy="0" r="1.2" fill="hsl(48 96% 78%)" />
+            <circle cx="270" cy="0" r="0.9" fill="hsl(43 92% 58% / 0.7)" />
+          </g>
+
+          {/* Brasão central minimalista */}
+          <g transform="translate(400,17)" filter="url(#heraldGlow)">
+            {/* Laurel esquerdo */}
+            <path
+              d="M-30,0 C-26,-6 -20,-9 -14,-9 M-30,0 C-26,6 -20,9 -14,9 M-25,-4 L-22,-7 M-25,4 L-22,7 M-20,-7 L-17,-9 M-20,7 L-17,9"
+              stroke="url(#heraldGold)" strokeWidth="0.9" fill="none" strokeLinecap="round"
+            />
+            {/* Laurel direito */}
+            <path
+              d="M30,0 C26,-6 20,-9 14,-9 M30,0 C26,6 20,9 14,9 M25,-4 L22,-7 M25,4 L22,7 M20,-7 L17,-9 M20,7 L17,9"
+              stroke="url(#heraldGold)" strokeWidth="0.9" fill="none" strokeLinecap="round"
+            />
+            {/* Escudo central */}
+            <path
+              d="M0,-11 L9,-8 V2 C9,7 5,11 0,13 C-5,11 -9,7 -9,2 V-8 Z"
+              fill="hsl(222 55% 8% / 0.9)"
+              stroke="url(#heraldGold)"
+              strokeWidth="1"
+            />
+            {/* Estrela dentro do escudo */}
+            <path
+              d="M0,-6 L1.6,-1.8 L6,-1.8 L2.4,0.9 L3.8,5 L0,2.5 L-3.8,5 L-2.4,0.9 L-6,-1.8 L-1.6,-1.8 Z"
+              fill="url(#heraldGold)"
+            />
+          </g>
+
+          {/* Linha ornamental direita */}
+          <g transform="translate(0,17)">
+            <line x1="470" y1="0" x2="790" y2="0" stroke="url(#heraldLine)" strokeWidth="0.8" />
+            <path d="M490,0 L478,-4 L466,0 L478,4 Z" fill="url(#heraldGold)" opacity="0.9" />
+            <circle cx="510" cy="0" r="1.2" fill="hsl(48 96% 78%)" />
+            <circle cx="530" cy="0" r="0.9" fill="hsl(43 92% 58% / 0.7)" />
+            <line x1="620" y1="-3" x2="620" y2="3" stroke="hsl(43 92% 58% / 0.6)" strokeWidth="0.6" />
+            <line x1="680" y1="-4" x2="680" y2="4" stroke="hsl(43 92% 58% / 0.7)" strokeWidth="0.6" />
+            <line x1="740" y1="-3" x2="740" y2="3" stroke="hsl(43 92% 58% / 0.6)" strokeWidth="0.6" />
+          </g>
+
+          {/* Textos institucionais laterais */}
+          <text
+            x="30" y="21"
+            fontFamily="'IBM Plex Mono', ui-monospace, monospace"
+            fontSize="8" fontWeight="700" letterSpacing="3"
+            fill="hsl(48 96% 82%)"
+          >
+            EST · 2015
+          </text>
+          <text
+            x="770" y="21" textAnchor="end"
+            fontFamily="'IBM Plex Mono', ui-monospace, monospace"
+            fontSize="8" fontWeight="700" letterSpacing="3"
+            fill="hsl(48 96% 82%)"
+          >
+            ISE-AC · SEJUSP
+          </text>
+        </svg>
+
+        <p className="mt-1 text-center font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-200">
+          Servir · Proteger · Ressocializar
+        </p>
+      </div>
     </div>
   );
 }
