@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -195,7 +194,6 @@ export default function Units() {
       <div className="min-h-screen flex bg-slate-900">
         <Sidebar />
         <div className="flex-1 flex flex-col">
-          <Header />
           <main className="flex-1 p-6 overflow-auto">
             <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
               {/* Page Header */}
@@ -329,7 +327,6 @@ export default function Units() {
     <div className="min-h-screen flex bg-slate-900 hud-scope hud-page-bg" style={{ ['--hud-bg-url' as any]: `url(${hudPageBg})` }}>
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Header />
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
             <PanelHeroHUD
