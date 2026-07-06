@@ -219,6 +219,20 @@ export default function Index() {
     // Permite navegação livre para a home sem deslogar (vindo do painel interno)
     const params = new URLSearchParams(window.location.search);
     if (params.get('home') === '1') return;
+
+    // Retomada de rota após expiração de sessão / login: aceita ?next= (mesmo origem)
+    const rawNext = params.get('next');
+    if (rawNext) {
+      try {
+        const decoded = decodeURIComponent(rawNext);
+        // Aceita apenas paths internos absolutos, sem esquemas ou host
+        if (decoded.startsWith('/') && !decoded.startsWith('//') && decoded !== '/') {
+          navigate(decoded, { replace: true });
+          return;
+        }
+      } catch { /* ignore */ }
+    }
+
     if (isMaster) navigate('/master', { replace: true });
     else if (isAdmin) navigate('/admin', { replace: true });
     else navigate('/agent-panel', { replace: true });
