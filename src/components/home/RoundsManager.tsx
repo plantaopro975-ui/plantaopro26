@@ -1612,7 +1612,15 @@ export function RoundsManager() {
 
                         <div className="flex items-center gap-2 pt-1">
                           {!running ? (
-                            <Button type="button" size="sm" onClick={startTimer} className="h-9 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950">
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => {
+                                if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
+                                setStartConfirmOpen(true);
+                              }}
+                              className="h-9 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950"
+                            >
                               <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
                             </Button>
                           ) : (
