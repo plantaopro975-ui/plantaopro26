@@ -256,6 +256,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 </div>
               </div>
             </div>
+          </div>
 
 
           {/* RIGHT — Agent 3D */}
