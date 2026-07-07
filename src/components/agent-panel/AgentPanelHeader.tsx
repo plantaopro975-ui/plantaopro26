@@ -247,7 +247,7 @@ function ActionButton({
 export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed, compact = false, onToggleCompact }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const trial = getRemainingTrialDays();
+  // trial removido — sistema gratuito
 
   const handleLogout = async () => {
     // Logout robusto para mobile: usa o contexto (limpa user/session/master),
