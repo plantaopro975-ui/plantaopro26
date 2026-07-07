@@ -259,193 +259,202 @@ export function ScheduledRoundsManager() {
       </CardContent>
 
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogContent className="max-w-2xl bg-slate-900 border-slate-700 text-slate-100 max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editing.id ? 'Editar agendamento' : 'Novo agendamento'}</DialogTitle>
+        <DialogContent className="max-w-5xl w-[95vw] bg-slate-900 border-slate-700 text-slate-100 max-h-[92vh] p-0 gap-0 flex flex-col">
+          <DialogHeader className="px-5 py-3 border-b border-slate-800 shrink-0">
+            <DialogTitle className="text-base">{editing.id ? 'Editar agendamento' : 'Novo agendamento'}</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>Nome</Label>
-                <Input
-                  value={editing.name || ''}
-                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                  placeholder="Ex: Ronda noturna diária"
-                  className="bg-slate-800 border-slate-700"
-                />
-              </div>
-              <div>
-                <Label>Equipe</Label>
-                <Select value={editing.team} onValueChange={(v) => setEditing({ ...editing, team: v })}>
-                  <SelectTrigger className="bg-slate-800 border-slate-700"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {TEAMS.map(t => <SelectItem key={t} value={t}>{t === 'ALL' ? 'Todas as equipes' : t}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label>Unidade</Label>
-              <Select
-                value={editing.unit_id || 'all'}
-                onValueChange={(v) => setEditing({ ...editing, unit_id: v === 'all' ? null : v })}
-              >
-                <SelectTrigger className="bg-slate-800 border-slate-700"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as unidades</SelectItem>
-                  {units.map(u => <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label>Modo de agendamento</Label>
-              <Tabs value={editing.mode} onValueChange={(v) => setEditing({ ...editing, mode: v as Mode })}>
-                <TabsList className="grid grid-cols-3 w-full bg-slate-800">
-                  <TabsTrigger value="once"><Clock className="h-4 w-4 mr-1" /> Uma vez</TabsTrigger>
-                  <TabsTrigger value="recurring"><Repeat className="h-4 w-4 mr-1" /> Recorrente</TabsTrigger>
-                  <TabsTrigger value="interval"><Timer className="h-4 w-4 mr-1" /> Intervalo</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="once" className="pt-3">
-                  <Label>Data e hora</Label>
-                  <Input
-                    type="datetime-local"
-                    value={editing.scheduled_at ? new Date(editing.scheduled_at).toISOString().slice(0, 16) : ''}
-                    onChange={(e) => setEditing({ ...editing, scheduled_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
-                    className="bg-slate-800 border-slate-700"
-                  />
-                </TabsContent>
-
-                <TabsContent value="recurring" className="pt-3 space-y-3">
+          <div className="flex-1 overflow-y-auto px-5 py-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-3">
+              {/* Coluna esquerda: identificação + modo */}
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label>Horários (HH:MM)</Label>
-                    <div className="flex gap-2">
+                    <Label className="text-xs">Nome</Label>
+                    <Input
+                      value={editing.name || ''}
+                      onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                      placeholder="Ex: Ronda noturna"
+                      className="bg-slate-800 border-slate-700 h-9"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Equipe</Label>
+                    <Select value={editing.team} onValueChange={(v) => setEditing({ ...editing, team: v })}>
+                      <SelectTrigger className="bg-slate-800 border-slate-700 h-9"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {TEAMS.map(t => <SelectItem key={t} value={t}>{t === 'ALL' ? 'Todas as equipes' : t}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-xs">Unidade</Label>
+                  <Select
+                    value={editing.unit_id || 'all'}
+                    onValueChange={(v) => setEditing({ ...editing, unit_id: v === 'all' ? null : v })}
+                  >
+                    <SelectTrigger className="bg-slate-800 border-slate-700 h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as unidades</SelectItem>
+                      {units.map(u => <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-xs">Modo de agendamento</Label>
+                  <Tabs value={editing.mode} onValueChange={(v) => setEditing({ ...editing, mode: v as Mode })}>
+                    <TabsList className="grid grid-cols-3 w-full bg-slate-800 h-9">
+                      <TabsTrigger value="once" className="text-xs"><Clock className="h-3.5 w-3.5 mr-1" /> Uma vez</TabsTrigger>
+                      <TabsTrigger value="recurring" className="text-xs"><Repeat className="h-3.5 w-3.5 mr-1" /> Recorrente</TabsTrigger>
+                      <TabsTrigger value="interval" className="text-xs"><Timer className="h-3.5 w-3.5 mr-1" /> Intervalo</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="once" className="pt-2 mt-0">
+                      <Label className="text-xs">Data e hora</Label>
                       <Input
-                        type="time"
-                        value={newTime}
-                        onChange={(e) => setNewTime(e.target.value)}
-                        className="bg-slate-800 border-slate-700 w-32"
+                        type="datetime-local"
+                        value={editing.scheduled_at ? new Date(editing.scheduled_at).toISOString().slice(0, 16) : ''}
+                        onChange={(e) => setEditing({ ...editing, scheduled_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                        className="bg-slate-800 border-slate-700 h-9"
                       />
-                      <Button type="button" onClick={addTime} variant="outline">Adicionar</Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {(editing.recur_times || []).map(t => (
-                        <Badge key={t} variant="outline" className="gap-1 border-amber-500/40 text-amber-300">
-                          {t}
-                          <button onClick={() => removeTime(t)} className="ml-1 hover:text-red-400">×</button>
-                        </Badge>
-                      ))}
-                    </div>
+                    </TabsContent>
+
+                    <TabsContent value="recurring" className="pt-2 mt-0 space-y-2">
+                      <div>
+                        <Label className="text-xs">Horários (HH:MM)</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="time"
+                            value={newTime}
+                            onChange={(e) => setNewTime(e.target.value)}
+                            className="bg-slate-800 border-slate-700 w-28 h-9"
+                          />
+                          <Button type="button" size="sm" onClick={addTime} variant="outline">Adicionar</Button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 mt-2 min-h-[24px]">
+                          {(editing.recur_times || []).map(t => (
+                            <Badge key={t} variant="outline" className="gap-1 border-amber-500/40 text-amber-300">
+                              {t}
+                              <button onClick={() => removeTime(t)} className="ml-1 hover:text-red-400">×</button>
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Dias da semana</Label>
+                        <div className="flex gap-1.5 mt-1 flex-wrap">
+                          {WEEKDAYS.map((d, i) => {
+                            const active = (editing.recur_weekdays || []).includes(i);
+                            return (
+                              <button
+                                key={d}
+                                type="button"
+                                onClick={() => toggleWeekday(i)}
+                                className={`w-9 h-9 rounded-md text-xs font-semibold border transition ${
+                                  active ? 'bg-amber-600 text-slate-950 border-amber-500' : 'bg-slate-800 text-slate-400 border-slate-700'
+                                }`}
+                              >{d}</button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="interval" className="pt-2 mt-0">
+                      <Label className="text-xs">Intervalo (minutos)</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        value={editing.interval_minutes || 60}
+                        onChange={(e) => setEditing({ ...editing, interval_minutes: parseInt(e.target.value) || 60 })}
+                        className="bg-slate-800 border-slate-700 w-32 h-9"
+                      />
+                      <p className="text-[11px] text-slate-400 mt-1">Uma ronda a cada N minutos dentro da vigência.</p>
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </div>
+
+              {/* Coluna direita: vigência + config ronda + switches */}
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs">Vigência início (opcional)</Label>
+                    <Input
+                      type="datetime-local"
+                      value={editing.active_from ? new Date(editing.active_from).toISOString().slice(0, 16) : ''}
+                      onChange={(e) => setEditing({ ...editing, active_from: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                      className="bg-slate-800 border-slate-700 h-9"
+                    />
                   </div>
                   <div>
-                    <Label>Dias da semana</Label>
-                    <div className="flex gap-2 mt-1">
-                      {WEEKDAYS.map((d, i) => {
-                        const active = (editing.recur_weekdays || []).includes(i);
-                        return (
-                          <button
-                            key={d}
-                            type="button"
-                            onClick={() => toggleWeekday(i)}
-                            className={`w-10 h-10 rounded-md text-xs font-semibold border transition ${
-                              active ? 'bg-amber-600 text-slate-950 border-amber-500' : 'bg-slate-800 text-slate-400 border-slate-700'
-                            }`}
-                          >{d}</button>
-                        );
-                      })}
+                    <Label className="text-xs">Vigência fim (opcional)</Label>
+                    <Input
+                      type="datetime-local"
+                      value={editing.active_until ? new Date(editing.active_until).toISOString().slice(0, 16) : ''}
+                      onChange={(e) => setEditing({ ...editing, active_until: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                      className="bg-slate-800 border-slate-700 h-9"
+                    />
+                  </div>
+                </div>
+
+                <div className="border border-slate-700 rounded-lg p-3 bg-slate-800/40">
+                  <div className="text-xs font-semibold text-slate-200 mb-2 uppercase tracking-wide">Configuração da ronda gerada</div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div>
+                      <Label className="text-[11px]">Início</Label>
+                      <Input type="time" value={editing.round_start_time} onChange={e => setEditing({ ...editing, round_start_time: e.target.value })} className="bg-slate-800 border-slate-700 h-9" />
+                    </div>
+                    <div>
+                      <Label className="text-[11px]">Fim</Label>
+                      <Input type="time" value={editing.round_end_time} onChange={e => setEditing({ ...editing, round_end_time: e.target.value })} className="bg-slate-800 border-slate-700 h-9" />
+                    </div>
+                    <div>
+                      <Label className="text-[11px]">Intervalo (min)</Label>
+                      <Input type="number" min={1} value={editing.round_interval_min} onChange={e => setEditing({ ...editing, round_interval_min: parseInt(e.target.value) || 60 })} className="bg-slate-800 border-slate-700 h-9" />
+                    </div>
+                    <div>
+                      <Label className="text-[11px]">Duração (min)</Label>
+                      <Input type="number" min={1} value={editing.ronda_duration_min} onChange={e => setEditing({ ...editing, ronda_duration_min: parseInt(e.target.value) || 60 })} className="bg-slate-800 border-slate-700 h-9" />
                     </div>
                   </div>
-                </TabsContent>
+                </div>
 
-                <TabsContent value="interval" className="pt-3">
-                  <Label>Intervalo (minutos)</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    value={editing.interval_minutes || 60}
-                    onChange={(e) => setEditing({ ...editing, interval_minutes: parseInt(e.target.value) || 60 })}
-                    className="bg-slate-800 border-slate-700 w-32"
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="flex items-center gap-2 p-2 rounded-md border border-slate-700 bg-slate-800/40 cursor-pointer">
+                    <Switch
+                      checked={editing.require_confirmation_to_stop ?? true}
+                      onCheckedChange={(v) => setEditing({ ...editing, require_confirmation_to_stop: v })}
+                    />
+                    <span className="text-xs text-slate-200">Confirmação p/ encerrar</span>
+                  </label>
+                  <label className="flex items-center gap-2 p-2 rounded-md border border-slate-700 bg-slate-800/40 cursor-pointer">
+                    <Switch
+                      checked={editing.is_enabled ?? true}
+                      onCheckedChange={(v) => setEditing({ ...editing, is_enabled: v })}
+                    />
+                    <span className="text-xs text-slate-200">Ativado</span>
+                  </label>
+                </div>
+
+                <div>
+                  <Label className="text-xs">Observações</Label>
+                  <Textarea
+                    value={editing.notes || ''}
+                    onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
+                    placeholder="Opcional"
+                    rows={2}
+                    className="bg-slate-800 border-slate-700 resize-none"
                   />
-                  <p className="text-xs text-slate-400 mt-1">Uma ronda será criada a cada N minutos dentro da janela de vigência.</p>
-                </TabsContent>
-              </Tabs>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>Vigência início (opcional)</Label>
-                <Input
-                  type="datetime-local"
-                  value={editing.active_from ? new Date(editing.active_from).toISOString().slice(0, 16) : ''}
-                  onChange={(e) => setEditing({ ...editing, active_from: e.target.value ? new Date(e.target.value).toISOString() : null })}
-                  className="bg-slate-800 border-slate-700"
-                />
-              </div>
-              <div>
-                <Label>Vigência fim (opcional)</Label>
-                <Input
-                  type="datetime-local"
-                  value={editing.active_until ? new Date(editing.active_until).toISOString().slice(0, 16) : ''}
-                  onChange={(e) => setEditing({ ...editing, active_until: e.target.value ? new Date(e.target.value).toISOString() : null })}
-                  className="bg-slate-800 border-slate-700"
-                />
-              </div>
-            </div>
-
-            <div className="border border-slate-700 rounded-lg p-3 bg-slate-800/40">
-              <div className="text-sm font-semibold text-slate-200 mb-2">Configuração da ronda gerada</div>
-              <div className="grid grid-cols-4 gap-3">
-                <div>
-                  <Label className="text-xs">Início</Label>
-                  <Input type="time" value={editing.round_start_time} onChange={e => setEditing({ ...editing, round_start_time: e.target.value })} className="bg-slate-800 border-slate-700" />
-                </div>
-                <div>
-                  <Label className="text-xs">Fim</Label>
-                  <Input type="time" value={editing.round_end_time} onChange={e => setEditing({ ...editing, round_end_time: e.target.value })} className="bg-slate-800 border-slate-700" />
-                </div>
-                <div>
-                  <Label className="text-xs">Intervalo (min)</Label>
-                  <Input type="number" min={1} value={editing.round_interval_min} onChange={e => setEditing({ ...editing, round_interval_min: parseInt(e.target.value) || 60 })} className="bg-slate-800 border-slate-700" />
-                </div>
-                <div>
-                  <Label className="text-xs">Duração (min)</Label>
-                  <Input type="number" min={1} value={editing.ronda_duration_min} onChange={e => setEditing({ ...editing, ronda_duration_min: parseInt(e.target.value) || 60 })} className="bg-slate-800 border-slate-700" />
                 </div>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between gap-3 pt-1">
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={editing.require_confirmation_to_stop ?? true}
-                  onCheckedChange={(v) => setEditing({ ...editing, require_confirmation_to_stop: v })}
-                />
-                <Label className="cursor-pointer">Exigir confirmação para encerrar</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={editing.is_enabled ?? true}
-                  onCheckedChange={(v) => setEditing({ ...editing, is_enabled: v })}
-                />
-                <Label className="cursor-pointer">Ativado</Label>
-              </div>
-            </div>
-
-            <div>
-              <Label>Observações</Label>
-              <Textarea
-                value={editing.notes || ''}
-                onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
-                placeholder="Opcional"
-                className="bg-slate-800 border-slate-700"
-              />
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="px-5 py-3 border-t border-slate-800 shrink-0">
             <Button variant="outline" onClick={() => setOpenForm(false)}>Cancelar</Button>
             <Button className="bg-amber-600 hover:bg-amber-700 text-slate-950 font-semibold" onClick={save}>
               Salvar agendamento
