@@ -708,7 +708,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10"
-                    onClick={clearConversationForMe}
+                    onClick={() => setClearAllOpen(true)}
                     aria-label="Limpar conversa para mim"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
