@@ -329,21 +329,33 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 filter: 'blur(20px)',
               }}
             />
-            {/* Cena composta: agente + viatura em escala realista */}
-            <div className="relative inline-block leading-[0] isolate md:-translate-x-[22%] lg:-translate-x-[28%] xl:-translate-x-[32%]" style={{ height: 'clamp(130px, 18vw, 240px)' }}>
-              <picture>
-                <source srcSet={agentVehicleSceneWebp} type="image/webp" />
+            {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
+            <div
+              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 leading-[0] isolate md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%]"
+              style={{ height: 'clamp(130px, 18vw, 240px)' }}
+            >
+              {/* Viatura — permanece à esquerda */}
+              <picture className="block h-full">
+                <source srcSet={vehicle3dWebp} type="image/webp" />
                 <img
-                  src={agentVehicleScene}
-                  alt="Agente Socioeducativo ao lado da viatura tática ISE"
+                  src={vehicle3d}
+                  alt="Viatura tática ISE"
                   className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
                   draggable={false}
                 />
               </picture>
 
-
-
-
+              {/* Agente — à direita da viatura, levemente maior para presença sem quebrar proporção */}
+              <picture className="block" style={{ height: '112%' }}>
+                <source srcSet={agent3dWebp} type="image/webp" />
+                <img
+                  src={agent3d}
+                  alt="Agente Socioeducativo ISE"
+                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-1 sm:-ml-2"
+                  draggable={false}
+                  style={{ transformOrigin: 'bottom center' }}
+                />
+              </picture>
             </div>
           </div>
 
