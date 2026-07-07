@@ -499,32 +499,62 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                         )}
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[240px] bg-slate-900 border-slate-700 p-2.5">
+                    <TooltipContent side="top" className="max-w-[260px] bg-slate-900 border-slate-700 p-2.5">
                       <div className="space-y-1.5 text-xs">
-                        <div className="flex items-center gap-1.5 font-bold text-amber-300 pb-1 border-b border-slate-700">
-                          {isTodayDay ? '📅 Jornada de Hoje' : format(day, "EEE, dd 'de' MMM", { locale: ptBR })}
+                        <div className="flex items-center gap-1.5 font-bold text-amber-300 pb-1 border-b border-slate-700 capitalize">
+                          {format(day, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                          {isTodayDay && <span className="text-[9px] text-amber-400/80">(hoje)</span>}
                         </div>
-                        {isShiftDone && dayShift && (
+
+                        {/* Bloco de status do plantão — sempre visível quando há plantão */}
+                        {dayShift && isShiftDone && (
                           <div className="flex items-start gap-1.5 text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-1.5 py-1">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="mt-0.5 flex-shrink-0">
-                              <path d="M5 12l5 5L20 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+                            <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
                               <span className="font-bold uppercase tracking-wide">Plantão cumprido</span>
                               <br />
-                              <span className="text-[10px] text-emerald-200/80">
-                                {shiftStartStr}–{shiftEndStr || '—'} · finalizado
+                              <span className="text-[10px] text-emerald-200/80 tabular-nums">
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
                               </span>
                             </span>
                           </div>
                         )}
-                        {isShiftMissed && (
+                        {dayShift && isShiftMissed && (
                           <div className="flex items-start gap-1.5 text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded px-1.5 py-1">
-                            <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                            <span className="leading-tight font-semibold uppercase">Plantão não cumprido</span>
+                            <XCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">Plantão não cumprido</span>
+                              <br />
+                              <span className="text-[10px] text-rose-200/80 tabular-nums">
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
+                              </span>
+                            </span>
                           </div>
                         )}
-                        {!isShiftDone && !isShiftMissed && restUntil && (
+                        {dayShift && isShiftScheduled && (
+                          <div className={`flex items-start gap-1.5 rounded px-1.5 py-1 border ${shiftIsNight ? 'text-indigo-300 bg-indigo-500/10 border-indigo-500/30' : 'text-sky-300 bg-sky-500/10 border-sky-500/30'}`}>
+                            {shiftIsNight
+                              ? <Moon className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                              : <Sun className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />}
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">
+                                Plantão agendado ({shiftIsNight ? 'noturno' : 'diurno'})
+                              </span>
+                              <br />
+                              <span className="text-[10px] opacity-80 tabular-nums">
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
+                              </span>
+                            </span>
+                          </div>
+                        )}
+
+                        {!dayShift && dayInfo.types.includes('leave') && (
+                          <div className="flex items-start gap-1.5 text-blue-300">
+                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight font-semibold">Folga aprovada</span>
+                          </div>
+                        )}
+                        {!dayShift && !dayInfo.types.includes('leave') && restUntil && (
                           <div className="flex items-start gap-1.5 text-emerald-300">
                             <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
@@ -532,31 +562,15 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             </span>
                           </div>
                         )}
-                        {dayShift && !isShiftDone && !isShiftMissed ? (
-                          <div className={`flex items-start gap-1.5 ${shiftIsNight ? 'text-indigo-300' : 'text-sky-300'}`}>
-                            {shiftIsNight
-                              ? <Moon className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                              : <Sun className="h-3 w-3 mt-0.5 flex-shrink-0" />}
-                            <span className="leading-tight">
-                              <span className="font-semibold">Plantão {shiftIsNight ? 'Noturno' : 'Diurno'}:</span>{' '}
-                              {shiftStartStr}–{shiftEndStr || '—'}
-                            </span>
-                          </div>
-                        ) : !dayShift && dayInfo.types.includes('leave') ? (
-                          <div className="flex items-start gap-1.5 text-blue-300">
-                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                            <span className="leading-tight font-semibold">Folga aprovada</span>
-                          </div>
-                        ) : !dayShift && !isShiftDone ? (
-                          <div className="flex items-start gap-1.5 text-amber-400">
+                        {!dayShift && !dayInfo.types.includes('leave') && !restUntil && (
+                          <div className="flex items-start gap-1.5 text-muted-foreground">
                             <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                            <span className="leading-tight">
-                              {isTodayDay ? 'Revisar cadastro do agente' : 'Sem plantão cadastrado'}
-                            </span>
+                            <span className="leading-tight">Sem plantão cadastrado</span>
                           </div>
-                        ) : null}
+                        )}
+
                         <div className="text-[9px] text-muted-foreground pt-1 border-t border-slate-700/60 italic">
-                          Clique para ver a jornada completa
+                          {dayShift ? 'Clique para ver detalhes do plantão' : 'Clique para ver a jornada completa'}
                         </div>
                       </div>
                     </TooltipContent>
