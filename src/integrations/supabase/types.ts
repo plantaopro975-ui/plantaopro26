@@ -1737,6 +1737,103 @@ export type Database = {
           },
         ]
       }
+      shift_briefings: {
+        Row: {
+          adolescents_counted: number | null
+          adolescents_expected: number | null
+          agent_id: string
+          book_entry: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          handcuff_keys_counted: number | null
+          handcuff_keys_expected: number | null
+          handcuffs_counted: number | null
+          handcuffs_expected: number | null
+          id: string
+          observations: string | null
+          radios: Json
+          schedule_notes: string | null
+          schedule_ok: boolean
+          shift_date: string
+          shift_id: string | null
+          signature: string | null
+          team: string | null
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          adolescents_counted?: number | null
+          adolescents_expected?: number | null
+          agent_id: string
+          book_entry?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          handcuff_keys_counted?: number | null
+          handcuff_keys_expected?: number | null
+          handcuffs_counted?: number | null
+          handcuffs_expected?: number | null
+          id?: string
+          observations?: string | null
+          radios?: Json
+          schedule_notes?: string | null
+          schedule_ok?: boolean
+          shift_date: string
+          shift_id?: string | null
+          signature?: string | null
+          team?: string | null
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adolescents_counted?: number | null
+          adolescents_expected?: number | null
+          agent_id?: string
+          book_entry?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          handcuff_keys_counted?: number | null
+          handcuff_keys_expected?: number | null
+          handcuffs_counted?: number | null
+          handcuffs_expected?: number | null
+          id?: string
+          observations?: string | null
+          radios?: Json
+          schedule_notes?: string | null
+          schedule_ok?: boolean
+          shift_date?: string
+          shift_id?: string | null
+          signature?: string | null
+          team?: string | null
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_briefings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_briefings_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "agent_shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_briefings_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_checklists: {
         Row: {
           agent_id: string
