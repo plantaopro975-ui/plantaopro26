@@ -179,6 +179,46 @@ export default function UnitDashboard() {
     }
   };
 
+  // Histórico de alterações (admin/master apenas)
+  useEffect(() => {
+    if (!unitId || !canSeeHistory) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        setHistoryLoading(true);
+        // Busca logs relacionados a esta unidade (resource_type='unit' + detalhes contendo unit_id)
+        const { data, error } = await supabase
+          .from('activity_logs')
+          .select('id, action, agent_name, details, created_at')
+          .or(`and(resource_type.eq.unit,resource_id.eq.${unitId}),details->>unit_id.eq.${unitId}`)
+          .order('created_at', { ascending: false })
+          .limit(30);
+        if (error) throw error;
+        if (!cancelled) setHistory((data || []) as UnitHistoryEntry[]);
+      } catch (e) {
+        console.error('Error fetching unit history:', e);
+        if (!cancelled) setHistory([]);
+      } finally {
+        if (!cancelled) setHistoryLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [unitId, canSeeHistory]);
+
+  const actionLabel = (action: string) => {
+    const map: Record<string, string> = {
+      unit_created: 'Unidade criada',
+      unit_updated: 'Unidade atualizada',
+      unit_deleted: 'Unidade removida',
+      agent_transferred: 'Agente transferido',
+      agent_created: 'Agente cadastrado',
+      agent_updated: 'Agente atualizado',
+      agent_deleted: 'Agente excluído',
+    };
+    return map[action] || action.replace(/_/g, ' ');
+  };
+
+
   if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
