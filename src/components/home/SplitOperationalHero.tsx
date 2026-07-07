@@ -153,6 +153,26 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
         }}
       >
+        {/* Imagem de fundo profissional */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `url(${loginHeroImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.35,
+          }}
+        />
+        {/* Overlay de leitura */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(5,5,10,0.85) 0%, rgba(10,17,40,0.75) 45%, rgba(5,5,10,0.92) 100%)',
+          }}
+        />
         {/* Backdrop layers */}
         <div
           aria-hidden
@@ -169,6 +189,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(234,179,8,0.16), transparent 70%)' }}
         />
+
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
         <div className="relative grid gap-3 sm:gap-4 px-3 sm:px-5 pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0">
