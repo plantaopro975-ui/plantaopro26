@@ -235,8 +235,15 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   };
 
   useEffect(() => {
+  useEffect(() => {
     fetchData();
   }, [agentId, currentMonth]);
+
+  // Roda a validação de divergências uma vez por agente (independente do mês)
+  useEffect(() => {
+    checkDivergences();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [agentId]);
 
   const fetchData = async () => {
     try {
