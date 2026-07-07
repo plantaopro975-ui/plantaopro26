@@ -695,7 +695,7 @@ export default function AgentPanel() {
                 onComplete={checkAgentShifts}
               />
 
-              <TabsContent value="equipe" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+              <TabsContent value="equipe" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 {/* Ad Display System temporariamente desativado a pedido do administrador */}
                 {promosEnabled && <AdDisplaySystem />}
 
@@ -710,7 +710,7 @@ export default function AgentPanel() {
                 {/* Unit Summary Card */}
                 <UnitSummaryCard unitId={agent.unit_id} />
                 
-                <div className="grid grid-cols-1 xl:grid-cols-4 gap-3 md:gap-4 lg:gap-5">
+                <div className="grid grid-cols-1 xl:grid-cols-4 gap-2.5 md:gap-3 lg:gap-4">
                   <div className="xl:col-span-3">
                     <TeamMembersCard 
                       unitId={agent.unit_id} 
@@ -734,26 +734,26 @@ export default function AgentPanel() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="plantoes" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+              <TabsContent value="plantoes" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 {/* Next Shift Countdown - Top Priority */}
                 <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
                   <ProfessionalShiftTimer agentId={agent.id} />
                   <ShiftScheduleCard agentId={agent.id} />
                 </div>
                 <ShiftCalendarOverview agentId={agent.id} />
               </TabsContent>
 
-              <TabsContent value="bh" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+              <TabsContent value="bh" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 <BHTracker agentId={agent.id} />
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
                   <BHEvolutionChart agentId={agent.id} />
                   <BHHistoryTracker agentId={agent.id} />
                 </div>
               </TabsContent>
 
-              <TabsContent value="folgas" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+              <TabsContent value="folgas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 <LeaveRequestCard 
                   agentId={agent.id} 
                   agentTeam={agent.team}
@@ -761,15 +761,15 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="agenda" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+              <TabsContent value="agenda" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 <AgentEventsCard agentId={agent.id} />
               </TabsContent>
 
-              <TabsContent value="planejador" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+              <TabsContent value="planejador" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 <ShiftPlannerCard agentId={agent.id} />
               </TabsContent>
 
-              <TabsContent value="permutas" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+              <TabsContent value="permutas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 <SwapRequestsCard 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
@@ -777,7 +777,7 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="chat" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
+              <TabsContent value="chat" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 <ChatPanel 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
@@ -788,8 +788,8 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="config" className="space-y-3 md:space-y-4 animate-fade-in mt-0">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-4 lg:gap-5">
+              <TabsContent value="config" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5 md:gap-3 lg:gap-4">
                   <AgentSettingsCard
                     agentId={agent.id}
                     agentName={agent.name}
