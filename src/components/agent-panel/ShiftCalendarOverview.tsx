@@ -58,6 +58,35 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailData, setDetailData] = useState<JourneyDetailsData | null>(null);
+  const [shiftModalOpen, setShiftModalOpen] = useState(false);
+  const [shiftModalData, setShiftModalData] = useState<{
+    date: Date;
+    shift: Shift;
+    status: 'done' | 'missed' | 'scheduled';
+    startStr: string;
+    endStr: string;
+  } | null>(null);
+
+  // Local "today" (fuso do usuário) — usado para saber se uma data já passou
+  const localToday = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  const isPastLocalDay = (day: Date) => {
+    const d = new Date(day);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime() < localToday.getTime();
+  };
+
+  const computeShiftStatus = (day: Date, shift: Shift): 'done' | 'missed' | 'scheduled' => {
+    if (shift.status === 'completed' || shift.status === 'compensated') return 'done';
+    if (shift.status === 'missed') return 'missed';
+    // Passado com status 'scheduled' => considerar cumprido
+    if (isPastLocalDay(day) && shift.status === 'scheduled') return 'done';
+    return 'scheduled';
+  };
 
   const buildDT = (dateStr: string, time: string | null, fallback: string) => {
     const [h, m] = (time || fallback).split(':').map(Number);
