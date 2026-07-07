@@ -98,7 +98,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const classifyRestDay = (
     day: Date,
     allShifts: Shift[],
-  ): { kind: 'off_24h' | 'half_post' | 'none'; prev?: Shift; next?: Shift } => {
+  ): {
+    kind: 'off_24h' | 'half_post' | 'off_12h_exceptional' | 'none';
+    prev?: Shift;
+    next?: Shift;
+    windowLabel?: string;
+  } => {
     const dateStr = format(day, 'yyyy-MM-dd');
     const nonVac = allShifts.filter((s) => !s.is_vacation);
     const prev = [...nonVac]
@@ -110,7 +115,6 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
 
     if (!prev && !next) return { kind: 'none' };
 
-    // Diferença em dias entre o plantão anterior e este dia
     const diffFromPrev = prev
       ? Math.round(
           (parseISO(dateStr).getTime() - parseISO(prev.shift_date).getTime()) /
@@ -118,16 +122,32 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         )
       : Infinity;
 
-    // Se o plantão anterior foi ontem e ele terminou de madrugada (end<=start),
-    // a madrugada de hoje ainda está no plantão → meia folga (~12h/17h).
+    const durationOf = (s?: Shift) => {
+      if (!s?.start_time || !s?.end_time) return null;
+      const [sh, sm] = s.start_time.slice(0, 5).split(':').map(Number);
+      const [eh, em] = s.end_time.slice(0, 5).split(':').map(Number);
+      let mins = (eh * 60 + em) - (sh * 60 + sm);
+      if (mins <= 0) mins += 24 * 60;
+      return Math.round(mins / 60);
+    };
+
+    // Folga excepcional 07:00–19:00 → dia sem plantão logo após um plantão
+    // noturno excepcional de 12h (19→07). O período diurno fica integralmente
+    // livre, sem madrugada no serviço.
     if (prev && diffFromPrev === 1) {
       const pStart = prev.start_time?.slice(0, 5) ?? '07:00';
       const pEnd = prev.end_time?.slice(0, 5) ?? '07:00';
+      const pDur = durationOf(prev);
+      if (pDur === 12 && pStart === '19:00' && pEnd === '07:00') {
+        return { kind: 'off_12h_exceptional', prev, next, windowLabel: '07:00–19:00' };
+      }
+      // Plantão anterior 24h (07→07 ou similar): madrugada de hoje ainda no serviço
       if (pEnd <= pStart) return { kind: 'half_post', prev, next };
     }
 
     return { kind: 'off_24h', prev, next };
   };
+
 
   // Estado para divergências detectadas pelo backend
   type Divergence = {
