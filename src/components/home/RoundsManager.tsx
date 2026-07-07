@@ -791,13 +791,32 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   );
   const hasError = (field: string) => issues.some((i) => i.field === field);
 
+  /* ---------- início efetivo (turno noturno) ----------
+   * Quando o modal é aberto DENTRO da janela 22:00→06:00, o campo "Início" fica
+   * travado em 22:00 por regra de segurança — porém a divisão do turno entre os
+   * agentes deve considerar o tempo REAL restante (agora → 06:00) para que o
+   * primeiro agente entre em serviço imediatamente e cada posto seja proporcional.
+   * Quando o cronômetro está rodando, congelamos o valor no momento do início.
+   */
+  const frozenStartMinRef = useRef<number | null>(null);
+  const effectiveStartMin = useMemo<number | null>(() => {
+    if (mode === 'split' && running && frozenStartMinRef.current != null) {
+      return frozenStartMinRef.current;
+    }
+    if (mode === 'split' && nightEffectivelyLocked && !running && serverClock) {
+      return acreMinutesFloat(serverClock);
+    }
+    return toMinutes(startTime);
+  }, [mode, nightEffectivelyLocked, running, serverClock, startTime]);
+
   /* ---------- schedule com RECALIBRAGEM AUTOMÁTICA (precisão em segundos) ---------- */
   const schedule = useMemo(() => {
     if (issues.length) return null;
     const n = agents.length;
     if (n === 0) return null;
-    const s = toMinutes(startTime)!;
-    const startSec = s * 60;
+    if (effectiveStartMin == null) return null;
+    const s = effectiveStartMin;
+    const startSec = Math.round(s * 60);
 
     // Total em segundos (split = janela do turno; interval = intervalo × N)
     let totalSec: number;
@@ -805,10 +824,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const e = toMinutes(endTime)!;
       let totalMin = e - s;
       if (totalMin <= 0) totalMin += 24 * 60; // suporta virada de meia-noite
-      totalSec = totalMin * 60;
+      totalSec = Math.max(1, Math.round(totalMin * 60));
     } else {
       totalSec = Math.max(1, Math.round(intervalMin * 60)) * n;
     }
+
 
     // Estratégia de fatiamento em SEGUNDOS
     const slotsSec: number[] = new Array(n).fill(0);
