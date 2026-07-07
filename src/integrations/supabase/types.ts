@@ -1388,6 +1388,7 @@ export type Database = {
       }
       round_sessions: {
         Row: {
+          auto_started: boolean
           created_at: string
           end_time: string
           ended_at: string | null
@@ -1396,14 +1397,19 @@ export type Database = {
           is_active: boolean
           mode: string
           notified_indices: number[]
+          require_confirmation_to_stop: boolean
           rows: Json
+          scheduled_round_id: string | null
           server_started_at: string
           start_time: string
+          stop_confirmed_at: string | null
+          stop_confirmed_by: string | null
           team: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          auto_started?: boolean
           created_at?: string
           end_time: string
           ended_at?: string | null
@@ -1412,14 +1418,19 @@ export type Database = {
           is_active?: boolean
           mode: string
           notified_indices?: number[]
+          require_confirmation_to_stop?: boolean
           rows?: Json
+          scheduled_round_id?: string | null
           server_started_at?: string
           start_time: string
+          stop_confirmed_at?: string | null
+          stop_confirmed_by?: string | null
           team: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          auto_started?: boolean
           created_at?: string
           end_time?: string
           ended_at?: string | null
@@ -1428,14 +1439,26 @@ export type Database = {
           is_active?: boolean
           mode?: string
           notified_indices?: number[]
+          require_confirmation_to_stop?: boolean
           rows?: Json
+          scheduled_round_id?: string | null
           server_started_at?: string
           start_time?: string
+          stop_confirmed_at?: string | null
+          stop_confirmed_by?: string | null
           team?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "round_sessions_scheduled_round_id_fkey"
+            columns: ["scheduled_round_id"]
+            isOneToOne: false
+            referencedRelation: "scheduled_rounds"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       saved_credentials: {
         Row: {
@@ -1492,6 +1515,95 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scheduled_rounds: {
+        Row: {
+          active_from: string | null
+          active_until: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          interval_minutes: number | null
+          is_enabled: boolean
+          last_triggered_at: string | null
+          mode: string
+          name: string
+          next_trigger_at: string | null
+          notes: string | null
+          recur_times: string[] | null
+          recur_weekdays: number[] | null
+          require_confirmation_to_stop: boolean
+          ronda_duration_min: number
+          round_end_time: string
+          round_interval_min: number
+          round_mode: string
+          round_start_time: string
+          scheduled_at: string | null
+          team: string
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active_from?: string | null
+          active_until?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          interval_minutes?: number | null
+          is_enabled?: boolean
+          last_triggered_at?: string | null
+          mode: string
+          name: string
+          next_trigger_at?: string | null
+          notes?: string | null
+          recur_times?: string[] | null
+          recur_weekdays?: number[] | null
+          require_confirmation_to_stop?: boolean
+          ronda_duration_min?: number
+          round_end_time?: string
+          round_interval_min?: number
+          round_mode?: string
+          round_start_time?: string
+          scheduled_at?: string | null
+          team: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active_from?: string | null
+          active_until?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          interval_minutes?: number | null
+          is_enabled?: boolean
+          last_triggered_at?: string | null
+          mode?: string
+          name?: string
+          next_trigger_at?: string | null
+          notes?: string | null
+          recur_times?: string[] | null
+          recur_weekdays?: number[] | null
+          require_confirmation_to_stop?: boolean
+          ronda_duration_min?: number
+          round_end_time?: string
+          round_interval_min?: number
+          round_mode?: string
+          round_start_time?: string
+          scheduled_at?: string | null
+          team?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_rounds_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
             referencedColumns: ["id"]
           },
         ]
@@ -1948,6 +2060,19 @@ export type Database = {
       agents_same_unit: {
         Args: { agent_id_1: string; agent_id_2: string }
         Returns: boolean
+      }
+      calc_next_scheduled_round_trigger: {
+        Args: {
+          p_active_from: string
+          p_active_until: string
+          p_interval_minutes: number
+          p_last_triggered_at: string
+          p_mode: string
+          p_recur_times: string[]
+          p_recur_weekdays: number[]
+          p_scheduled_at: string
+        }
+        Returns: string
       }
       calculate_bh_balance: { Args: { p_agent_id: string }; Returns: number }
       calculate_bh_value: { Args: { p_agent_id: string }; Returns: number }
