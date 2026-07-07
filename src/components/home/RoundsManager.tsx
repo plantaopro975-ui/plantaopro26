@@ -416,8 +416,9 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
 /* ================= SVG time field ================= */
 
 function TimeField({
-  id, value, onChange, label, invalid, accent,
-}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string }) {
+  id, value, onChange, label, invalid, accent, locked, lockedHint,
+}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string; locked?: boolean; lockedHint?: string }) {
+
   const [h, m] = value.split(':');
   const setH = (nh: string) => {
     const v = Math.max(0, Math.min(23, parseInt(nh || '0', 10) || 0));
@@ -433,13 +434,21 @@ function TimeField({
   };
   return (
     <div className="grid gap-1.5">
-      <label htmlFor={`${id}-h`} className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground">
+      <label htmlFor={`${id}-h`} className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
         {label}
+        {locked && (
+          <span title={lockedHint || 'Bloqueado'} className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-mono uppercase text-amber-300">
+            <svg viewBox="0 0 16 16" className="h-2.5 w-2.5"><path d="M4 7V5a4 4 0 118 0v2h1v7H3V7h1zm2 0h4V5a2 2 0 10-4 0v2z" fill="currentColor"/></svg>
+            Turno noturno
+          </span>
+        )}
       </label>
       <div className={cn(
         'group relative flex items-center gap-2 rounded-md border bg-background/60 pl-2 pr-1 h-11 transition-colors',
         invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
+        locked && 'opacity-70 cursor-not-allowed pointer-events-none select-none',
       )}>
+
         <svg viewBox="0 0 32 32" className="h-6 w-6 shrink-0" aria-hidden>
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
@@ -653,6 +662,40 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     } catch { /* offline: keep local clock */ }
   };
   const nowServer = () => Date.now() + clockOffsetRef.current;
+
+  /* ---------- Night shift auto-lock (22:00 → 06:00) ---------- */
+  const NIGHT_START = '22:00';
+  const NIGHT_END = '06:00';
+  const isNightHour = (d: Date) => {
+    const h = d.getHours();
+    return h >= 22 || h < 6;
+  };
+  const [nightLocked, setNightLocked] = useState<boolean>(() => isNightHour(new Date()));
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    const evaluate = async () => {
+      await syncServerClock();
+      if (cancelled) return;
+      const night = isNightHour(new Date(nowServer()));
+      setNightLocked(night);
+      if (night) {
+        setStartTime(NIGHT_START);
+        setEndTime(NIGHT_END);
+      }
+    };
+    evaluate();
+    const iv = setInterval(evaluate, 60_000);
+    return () => { cancelled = true; clearInterval(iv); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+  // Guard: while locked, revert any external change to start/end
+  useEffect(() => {
+    if (!nightLocked) return;
+    if (startTime !== NIGHT_START) setStartTime(NIGHT_START);
+    if (endTime !== NIGHT_END) setEndTime(NIGHT_END);
+  }, [nightLocked, startTime, endTime]);
+
 
 
   const addAgent = () => setAgents((a) => [...a, `Agente ${a.length + 1}`]);
@@ -1379,17 +1422,31 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </div>
 
                 {/* Times / interval */}
+                {nightLocked && (
+                  <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[11px] text-amber-200/90">
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 mt-0.5 shrink-0 text-amber-400" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span>
+                      <b className="text-amber-300">Turno noturno detectado.</b> O horário inicial está fixado em <b>22:00</b> e o encerramento em <b>06:00</b> do dia seguinte. Não é possível alterar durante este período.
+                    </span>
+                  </div>
+                )}
                 {mode === 'split' ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
-                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
+                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
+                      locked={nightLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
                     <TimeField id="rm-end" label="Término do turno" value={endTime}
-                      onChange={setEndTime} invalid={hasError('end')} accent={teamColor} />
+                      onChange={setEndTime} invalid={hasError('end')} accent={teamColor}
+                      locked={nightLocked} lockedHint="Fixado às 06:00 durante o turno noturno" />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start2" label="Início" value={startTime}
-                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
+                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
+                      locked={nightLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
+
                     <div className="grid gap-1.5">
                       <label htmlFor="rm-int" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
                         <Timer className="h-3 w-3" /> Intervalo (min)
