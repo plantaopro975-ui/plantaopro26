@@ -1675,10 +1675,27 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       </SelectContent>
                     </Select>
                     {schedule && (
-                      <p className="text-[10px] font-mono text-muted-foreground/80 mt-0.5">
-                        {agents.length} × ~{fmtDuration(schedule.slot)} · total {fmtDuration(schedule.total)} ({startTime} → {endTime})
-                      </p>
+                      <div className="mt-0.5 grid gap-0.5">
+                        <p className="text-[10px] font-mono text-muted-foreground/80">
+                          {agents.length} × ~{fmtDuration(schedule.slot)} · total {fmtDuration(schedule.total)} ({schedule.rows[0]?.from ?? startTime} → {endTime})
+                        </p>
+                        {nightEffectivelyLocked && !running && agents.length >= 1 && (
+                          <p
+                            className="text-[10.5px] font-mono text-amber-200/90"
+                            data-testid="next-agent-countdown"
+                          >
+                            ⏱ Próximo agente inicia em&nbsp;
+                            <b className="text-amber-100 tabular-nums">
+                              {fmtHMS(schedule.rows[0].duration * 60)}
+                            </b>
+                            {agents.length > 1 && (
+                              <> · <span className="text-muted-foreground">{schedule.rows[0].name} → {schedule.rows[1]?.name}</span></>
+                            )}
+                          </p>
+                        )}
+                      </div>
                     )}
+
                   </div>
                 )}
 
