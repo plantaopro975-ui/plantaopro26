@@ -536,7 +536,7 @@ function TimeField({
 
       </label>
       <div className={cn(
-        'group relative flex items-center gap-2 rounded-md border bg-background/95 pl-2 pr-1 h-11 transition-colors',
+        'group relative flex items-center gap-2 rounded-md border bg-background pl-2 pr-1 h-11 transition-colors',
         invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
         locked && 'opacity-70 cursor-not-allowed pointer-events-none select-none',
       )}>
@@ -671,7 +671,7 @@ function Section({
       onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
       className="group min-w-0"
     >
-      <summary className="lg:hidden flex items-center gap-2 cursor-pointer py-2 select-none list-none [&::-webkit-details-marker]:hidden border-b border-border/60">
+      <summary className="lg:hidden flex items-center gap-2 cursor-pointer py-2 select-none list-none [&::-webkit-details-marker]:hidden border-b border-border">
         {icon}
         <span className="font-sans text-[12px] uppercase tracking-[0.14em] text-muted-foreground">{title}</span>
         <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
@@ -1480,14 +1480,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             aria-label="Abrir Gestor de Rondas"
             className={cn(
               'group relative inline-flex items-center gap-2.5 sm:gap-4 p-1 sm:p-1.5 pr-3 sm:pr-6 rounded-xl sm:rounded-2xl',
-              'bg-card/85 backdrop-blur-sm border border-border/80',
+              'bg-card backdrop-blur-sm border border-border/80',
               'transition-all duration-300',
-              'hover:bg-card/90 hover:border-primary/40 active:scale-[0.98]',
+              'hover:bg-card hover:border-primary/40 active:scale-[0.98]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             )}
           >
             {/* Icon module — inset panel with radar crosshair */}
-            <span className="relative flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center overflow-hidden rounded-lg sm:rounded-xl border border-border bg-background shadow-inner">
+            <span className="relative flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center overflow-hidden rounded-lg sm:rounded-xl border border-border/90 bg-background shadow-inner">
               {/* subtle radar tint */}
               <span aria-hidden className="absolute inset-0 bg-primary/5 animate-pulse" />
               {/* crosshair */}
@@ -1546,7 +1546,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Sticky header — sempre visível */}
           <DialogHeader
             className={cn(
-              'sticky top-0 z-20 border-b bg-background/98 px-2.5 sm:px-3 py-1.5 select-none touch-none',
+              'sticky top-0 z-20 border-b bg-background px-2.5 sm:px-3 py-1.5 select-none touch-none',
               canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
             )}
             style={{ borderColor: `${teamColor}33` }}
@@ -1583,7 +1583,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               {(drag.x !== 0 || drag.y !== 0) && (
                 <button type="button" onClick={resetPosition} aria-label="Recentrar janela"
                   onPointerDown={(e) => e.stopPropagation()}
-                  className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border bg-card/90 text-muted-foreground hover:text-foreground transition-colors"
+                  className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border/90 bg-card text-muted-foreground hover:text-foreground transition-colors"
                   title="Recentrar janela">
                   <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                     <path d="M12 3v3M12 18v3M3 12h3M18 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -1593,7 +1593,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
               <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
                 onPointerDown={(e) => e.stopPropagation()}
-                className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border bg-card/90 text-muted-foreground hover:text-foreground transition-colors">
+                className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border/90 bg-card text-muted-foreground hover:text-foreground transition-colors">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
                   <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M10 8l-4 4 4 4M6 12h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -1612,7 +1612,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               ref={fitInnerRef}
                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
             >
-              <div className="mx-auto mb-2.5 overflow-hidden rounded-lg border bg-card/85" style={{ borderColor: `${teamColor}38`, boxShadow: `inset 0 1px 0 ${teamColor}18` }}>
+              <div className="mx-auto mb-2.5 overflow-hidden rounded-lg border bg-card" style={{ borderColor: `${teamColor}38`, boxShadow: `inset 0 1px 0 ${teamColor}18` }}>
                 <div className="relative flex items-center gap-3 px-3 py-2.5 sm:px-4 sm:py-3">
                   <div className="absolute inset-0 pointer-events-none opacity-70" style={{ background: `radial-gradient(circle at 80% 25%, ${teamColor}24, transparent 42%), linear-gradient(90deg, ${teamColor}0, ${teamColor}10, ${teamColor}0)` }} />
                   <div className="relative flex min-w-0 flex-1 items-center gap-3">
@@ -1656,7 +1656,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                           className={cn(
                              'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[10px] transition-all',
-                            active ? 'border-transparent shadow-sm' : 'border-border bg-card/90 text-foreground hover:border-border',
+                            active ? 'border-transparent shadow-sm' : 'border-border bg-card text-foreground hover:border-border',
                           )}
                           style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))', boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
                         >
@@ -1676,7 +1676,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <button key={m} type="button" onClick={() => setMode(m)}
                         className={cn(
                           'rounded-md border px-3 py-2 text-[11px] font-mono uppercase tracking-wide transition-all',
-                          mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card/90 text-muted-foreground hover:text-foreground',
+                          mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground',
                         )}>
                         {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
                       </button>
@@ -1751,7 +1751,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           value={overrideReason}
                           onChange={(e) => setOverrideReason(e.target.value)}
                           placeholder="Motivo (mín. 5 caracteres) — será registrado em auditoria"
-                          className="bg-background/95 border-border h-9 text-xs"
+                          className="bg-background border-border h-9 text-xs"
                           maxLength={280}
                           autoComplete="off"
                         />
@@ -1765,11 +1765,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 )}
                 {nightEffectivelyLocked ? (
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-md border border-border/60 bg-card/90 px-2 py-1.5">
+                    <div className="rounded-md border border-border/90 bg-card px-2 py-1.5">
                       <div className="text-[9px] uppercase tracking-wide text-muted-foreground">Início</div>
                       <div className="font-mono text-sm text-foreground">22:00</div>
                     </div>
-                    <div className="rounded-md border border-border/60 bg-card/90 px-2 py-1.5">
+                    <div className="rounded-md border border-border/90 bg-card px-2 py-1.5">
                       <div className="text-[9px] uppercase tracking-wide text-muted-foreground">Final</div>
                       <div className="font-mono text-sm text-foreground">06:00</div>
                     </div>
@@ -1796,7 +1796,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       </label>
                       <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
                         onChange={(e) => setIntervalMin(Math.max(1, Math.min(240, +e.target.value || 1)))}
-                        className={cn('bg-background/95 border-border font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
+                        className={cn('bg-background border-border font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
                         autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
                     </div>
                   </div>
@@ -1808,7 +1808,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       Divisão automática entre {agents.length} agente{agents.length === 1 ? '' : 's'}
                     </Label>
                     <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
-                      <SelectTrigger className="bg-card/90 border-border h-9 text-xs">
+                      <SelectTrigger className="bg-card border-border h-9 text-xs">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -1860,7 +1860,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                          <span className="w-6 shrink-0 text-center font-mono text-[10px] text-primary tabular-nums">{pad(i + 1)}</span>
                         <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))}
                           placeholder={`Agente ${i + 1}`}
-                           className={cn('bg-card/90 border-border h-7 text-xs min-w-0 flex-1', !a.trim() && 'border-destructive/60')}
+                           className={cn('bg-card border-border h-7 text-xs min-w-0 flex-1', !a.trim() && 'border-destructive/60')}
                           autoComplete="off" />
                         <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
                            disabled={agents.length <= 1} className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
@@ -1892,7 +1892,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 <Section icon={<Timer className="h-3.5 w-3.5 text-primary" />} title="Cronograma" defaultOpen={!!schedule}>
                   {!schedule ? (
-                    <div className="rounded-lg border border-dashed border-border bg-card/80 p-6 text-center text-[12px] text-muted-foreground font-sans">
+                    <div className="rounded-lg border border-dashed border-border bg-card/95 p-6 text-center text-[12px] text-muted-foreground font-sans">
                       Preencha a configuração para gerar o cronograma.
                     </div>
                   ) : (
@@ -2128,7 +2128,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           return (
                             <li key={i}
                                 className={cn(
-                                   'relative overflow-hidden grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card/85 px-1.5 py-1.5 transition-all min-w-0',
+                                   'relative overflow-hidden grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card px-1.5 py-1.5 transition-all min-w-0',
                                   isCurrent && 'bg-primary/10',
                                   isDone && 'opacity-70',
                                 )}
