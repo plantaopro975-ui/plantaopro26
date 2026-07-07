@@ -111,6 +111,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(newSession);
           setUser(newSession?.user ?? null);
           if (newSession?.user) {
+            // Otimista: assume 'user' para liberar navegação imediata (sem tela preta).
+            // fetchUserRole corrige para 'admin'/'master' logo em seguida se aplicável.
+            setUserRole((prev) => prev ?? ('user' as UserRole));
             setTimeout(() => {
               fetchUserRole(newSession.user.id);
             }, 0);
