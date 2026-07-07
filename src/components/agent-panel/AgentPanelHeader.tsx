@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
-import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
+// getRemainingTrialDays removido — sistema gratuito
 import { FontSizeControl } from '@/components/FontSizeControl';
 import { cn } from '@/lib/utils';
 import { TeamEmblem } from '@/components/TeamEmblem';
@@ -247,7 +247,7 @@ function ActionButton({
 export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed, compact = false, onToggleCompact }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const trial = getRemainingTrialDays();
+  // trial removido — sistema gratuito
 
   const handleLogout = async () => {
     // Logout robusto para mobile: usa o contexto (limpa user/session/master),
@@ -288,13 +288,10 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
         <rect width="100%" height="100%" fill="url(#tacstripes)" />
       </svg>
 
-      {/* gold top accent + chevron ribbon */}
-      <div className="relative h-[3px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-      <svg aria-hidden viewBox="0 0 1200 8" preserveAspectRatio="none" className="relative w-full h-2 text-amber-500/70">
-        <path d="M0 0 L20 8 L40 0 L60 8 L80 0 L100 8 L120 0" fill="none" stroke="currentColor" strokeWidth=".5" opacity=".4" />
-      </svg>
+      {/* gold top accent (chevron ribbon removed for less vertical space) */}
+      <div className="relative h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
 
-      <div className={cn('relative', compact ? 'p-2 md:p-2.5' : 'p-2.5 md:p-3')}>
+      <div className={cn('relative', compact ? 'px-2 py-1.5 md:px-2.5 md:py-2' : 'px-2.5 py-2 md:px-3 md:py-2.5')}>
         <div className="flex items-center justify-between gap-2">
           {/* ── Identity block ── */}
           <button
@@ -432,8 +429,8 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
         {/* ── Faixa de destaque: UNIDADE + EQUIPE ── */}
         {(agent.unit_id || agent.team) && (
           <div className={cn(
-            'flex flex-wrap items-center gap-2 border-t border-amber-500/20',
-            compact ? 'mt-2 pt-2' : 'mt-2.5 pt-2.5'
+            'flex flex-wrap items-center gap-1.5 border-t border-amber-500/20',
+            compact ? 'mt-1.5 pt-1.5' : 'mt-2 pt-2'
           )}>
             {agent.unit_id && <UnitBadge unitId={agent.unit_id} prominent />}
             {agent.team && <TeamInsignia team={agent.team} prominent />}
