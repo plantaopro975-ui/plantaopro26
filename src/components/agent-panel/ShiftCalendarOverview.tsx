@@ -326,59 +326,93 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
               <div key={`empty-${i}`} className="h-7 sm:h-8" />
             ))}
 
-            {days.map((day) => {
-              const dayInfo = getDayInfo(day);
-              const colors = getDayColors(dayInfo.types);
-              const marker = getDayMarker(dayInfo.types);
-              const isTodayDay = dayInfo.types.includes('today');
+            <TooltipProvider delayDuration={150}>
+              {days.map((day) => {
+                const dayInfo = getDayInfo(day);
+                const colors = getDayColors(dayInfo.types);
+                const marker = getDayMarker(dayInfo.types);
+                const isTodayDay = dayInfo.types.includes('today');
 
-              // Tooltip detalhado para HOJE: mostra descanso + plantão do dia
-              let tooltip = format(day, "EEEE, dd 'de' MMMM", { locale: ptBR });
-              if (isTodayDay) {
+                // Dados profissionais do tooltip (folga + plantão)
                 const dateStr = format(day, 'yyyy-MM-dd');
-                const todayShift = shifts.find(s => s.shift_date === dateStr && !s.is_vacation);
+                const dayShift = shifts.find(s => s.shift_date === dateStr && !s.is_vacation);
                 const prevShift = [...shifts]
                   .filter(s => s.shift_date < dateStr && !s.is_vacation)
                   .sort((a, b) => (a.shift_date < b.shift_date ? 1 : -1))[0];
 
-                const parts: string[] = ['📅 Jornada de Hoje'];
-                if (prevShift?.start_time && (prevShift as Shift & { end_time?: string }).end_time) {
-                  const pEnd = (prevShift as Shift & { end_time?: string }).end_time as string;
-                  parts.push(`☀ Descanso: até ${pEnd.slice(0, 5)}`);
-                } else if (todayShift?.start_time) {
-                  parts.push(`☀ Descanso: até ${todayShift.start_time.slice(0, 5)}`);
-                }
-                if (todayShift?.start_time) {
-                  const s = todayShift.start_time.slice(0, 5);
-                  const e = (todayShift as Shift & { end_time?: string }).end_time?.slice(0, 5) || '—';
-                  const startH = Number(s.split(':')[0]);
-                  const isNight = startH >= 18 || startH < 6;
-                  parts.push(`${isNight ? '🌙' : '☀'} Plantão: ${s}–${e} (${isNight ? 'Noturno' : 'Diurno'})`);
-                } else if (!todayShift) {
-                  parts.push('⚠ Sem plantão cadastrado — revisar cadastro do agente');
-                }
-                tooltip = parts.join('\n');
-              }
+                const shiftStartStr = dayShift?.start_time?.slice(0, 5);
+                const shiftEndStr = dayShift?.end_time?.slice(0, 5);
+                const shiftIsNight = shiftStartStr
+                  ? Number(shiftStartStr.split(':')[0]) >= 18 || Number(shiftStartStr.split(':')[0]) < 6
+                  : false;
+                const restUntil = shiftStartStr || prevShift?.end_time?.slice(0, 5);
 
-              return (
-                <div
-                  key={day.toISOString()}
-                  title={tooltip}
-                  className={`relative h-7 sm:h-8 rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all ${colors} ${
-                    isTodayDay ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900 shadow-lg shadow-amber-500/30' : ''
-                  }`}
-                >
-                  <span className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
-                  {marker}
-                  {isTodayDay && (
-                    <span
-                      aria-label="Jornada de hoje"
-                      className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)] animate-pulse"
-                    />
-                  )}
-                </div>
-              );
-            })}
+                return (
+                  <Tooltip key={day.toISOString()}>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={() => openDay(day)}
+                        aria-label={`Abrir jornada de ${format(day, "d 'de' MMMM", { locale: ptBR })}`}
+                        className={`relative h-7 sm:h-8 w-full rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all cursor-pointer hover:brightness-125 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${colors} ${
+                          isTodayDay ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900 shadow-lg shadow-amber-500/30' : ''
+                        }`}
+                      >
+                        <span className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
+                        {marker}
+                        {isTodayDay && (
+                          <span
+                            aria-hidden
+                            className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)] animate-pulse"
+                          />
+                        )}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[240px] bg-slate-900 border-slate-700 p-2.5">
+                      <div className="space-y-1.5 text-xs">
+                        <div className="flex items-center gap-1.5 font-bold text-amber-300 pb-1 border-b border-slate-700">
+                          {isTodayDay ? '📅 Jornada de Hoje' : format(day, "EEE, dd 'de' MMM", { locale: ptBR })}
+                        </div>
+                        {restUntil && (
+                          <div className="flex items-start gap-1.5 text-emerald-300">
+                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              <span className="font-semibold">Descanso</span> até {restUntil}
+                            </span>
+                          </div>
+                        )}
+                        {dayShift ? (
+                          <div className={`flex items-start gap-1.5 ${shiftIsNight ? 'text-indigo-300' : 'text-sky-300'}`}>
+                            {shiftIsNight
+                              ? <Moon className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                              : <Sun className="h-3 w-3 mt-0.5 flex-shrink-0" />}
+                            <span className="leading-tight">
+                              <span className="font-semibold">Plantão {shiftIsNight ? 'Noturno' : 'Diurno'}:</span>{' '}
+                              {shiftStartStr}–{shiftEndStr || '—'}
+                            </span>
+                          </div>
+                        ) : dayInfo.types.includes('leave') ? (
+                          <div className="flex items-start gap-1.5 text-blue-300">
+                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight font-semibold">Folga aprovada</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-start gap-1.5 text-amber-400">
+                            <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              {isTodayDay ? 'Revisar cadastro do agente' : 'Sem plantão cadastrado'}
+                            </span>
+                          </div>
+                        )}
+                        <div className="text-[9px] text-muted-foreground pt-1 border-t border-slate-700/60 italic">
+                          Clique para ver a jornada completa
+                        </div>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </TooltipProvider>
           </div>
         </div>
 
