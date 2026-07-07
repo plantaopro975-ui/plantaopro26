@@ -73,7 +73,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
         const [shiftResult, leaveResult, bhResult, agentResult, announcementsResult] = await Promise.all([
           supabase
             .from('agent_shifts')
-            .select('id, shift_date, start_time')
+            .select('id, shift_date, start_time, end_time, shift_type')
             .eq('agent_id', agentId)
             .gte('shift_date', today)
             .eq('status', 'scheduled')
