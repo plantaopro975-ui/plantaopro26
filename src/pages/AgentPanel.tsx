@@ -489,6 +489,19 @@ export default function AgentPanel() {
               />
             </Suspense>
 
+            {/* Briefing de Entrada (Chefe/Apoio) */}
+            <Suspense fallback={null}>
+              <ShiftBriefingCard
+                agentId={agent.id}
+                agentName={agent.name}
+                agentTeam={agent.team}
+                unitId={agent.unit_id}
+                agentRole={(agent as any).role}
+              />
+            </Suspense>
+
+
+
 
             {/* HERO PANEL - Futuristic Status Dashboard */}
             <AgentHeroPanel 
