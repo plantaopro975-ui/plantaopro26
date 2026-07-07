@@ -2169,6 +2169,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      insert_round_session_override: {
+        Args: {
+          p_end_time: string
+          p_interval_min: number
+          p_mode: string
+          p_reason: string
+          p_rows: Json
+          p_server_started_at: string
+          p_start_time: string
+          p_team: string
+        }
+        Returns: string
+      }
       is_admin_or_master: { Args: { _user_id: string }; Returns: boolean }
       is_license_expired: { Args: { p_agent_id: string }; Returns: boolean }
       is_night_window: { Args: { p_ts?: string }; Returns: boolean }
