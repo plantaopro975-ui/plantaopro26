@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getServerDate } from '@/hooks/useServerTime';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Radar, Users, Activity, Wifi, Building2, Signal } from 'lucide-react';
