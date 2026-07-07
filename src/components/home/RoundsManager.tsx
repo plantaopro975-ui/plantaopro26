@@ -25,6 +25,38 @@ import {
   NIGHT_START, NIGHT_END, NIGHT_TZ,
 } from '@/lib/nightShift';
 
+/** Registra ação no histórico de atividades (activity_logs). */
+async function logRoundActivity(
+  action: 'create' | 'update',
+  details: Record<string, unknown>,
+) {
+  try {
+    const { data: userData } = await supabase.auth.getUser();
+    const email = userData?.user?.email;
+    let agentId: string | null = null;
+    let agentName: string | null = null;
+    if (email) {
+      const cpf = email.split('@')[0];
+      const { data: agent } = await supabase
+        .from('agents')
+        .select('id, name')
+        .eq('cpf', cpf)
+        .maybeSingle();
+      if (agent) { agentId = agent.id; agentName = agent.name; }
+    }
+    await supabase.from('activity_logs').insert({
+      agent_id: agentId,
+      agent_name: agentName,
+      action,
+      resource_type: 'rounds',
+      details: details as any,
+      user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 200) : null,
+    });
+  } catch (err) {
+    console.warn('[rounds] activity log falhou', err);
+  }
+}
+
 /** Minutos (float, com segundos) do horário local em America/Rio_Branco. */
 function acreMinutesFloat(d: Date): number {
   const parts = new Intl.DateTimeFormat('en-US', {
@@ -1144,6 +1176,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
           .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
       }
+      void logRoundActivity('update', {
+        event: 'rounds_completed',
+        team,
+        mode,
+        start_time: startTime,
+        end_time: endTime,
+        interval_min: intervalMin,
+        agents_count: schedule.rows.length,
+        total_seconds: Math.round(live.elapsed),
+        completed_at: new Date().toISOString(),
+      });
     }
   }, [live, schedule, team]);
 
@@ -1313,6 +1356,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       }
       /* ignore other errors — offline: sessão só local */
     }
+    // Registro profissional no histórico de atividades
+    void logRoundActivity('create', {
+      event: 'rounds_started',
+      team,
+      mode,
+      start_time: startTime,
+      end_time: endTime,
+      interval_min: intervalMin,
+      agents_count: schedule.rows.length,
+      agents: schedule.rows.map((r) => r.name),
+      night_locked: nightEffectivelyLocked,
+      started_at: new Date(anchorMs).toISOString(),
+    });
   };
 
   const pauseTimer = () => setRunning(false);
