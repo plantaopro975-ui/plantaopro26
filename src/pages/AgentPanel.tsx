@@ -497,7 +497,7 @@ export default function AgentPanel() {
             paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
           }}
         >
-          <div className="max-w-7xl w-full mx-auto space-y-3 md:space-y-4 lg:space-y-5 pb-16 sm:pb-20">
+          <div className="max-w-6xl w-full mx-auto space-y-3 md:space-y-4 pb-16 sm:pb-20">
             {/* Futuristic HUD Hero */}
             <PanelHeroHUD
               variant="command"
