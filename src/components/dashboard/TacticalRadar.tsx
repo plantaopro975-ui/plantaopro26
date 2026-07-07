@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Radar, Users, Activity, Wifi, Building2, Signal } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useOnlineAgents } from '@/hooks/useOnlineAgents';
+import { AgentDetailsDialog } from '@/components/agents/AgentDetailsDialog';
 import radarBg from '@/assets/radar-bg.jpg';
+
 
 
 interface AgentBlip {
@@ -27,6 +30,9 @@ interface TacticalRadarProps {
 export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(function TacticalRadar({ unitId, unitName, className, compact = false }, ref) {
   const [agents, setAgents] = useState<AgentBlip[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(() => getServerDate());
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const onlineIds = useOnlineAgents();
+
 
   // Fetch agents ONLY from the same unit - each unit is independent
   useEffect(() => {
@@ -220,11 +226,9 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
                 </span>
               </div>
               <span className="text-[9px] font-mono text-zinc-500">
-                {agents.filter(a => {
-                  if (!a.lastActivity) return false;
-                  return Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000;
-                }).length}/{agents.length}
+                {agents.filter((a) => onlineIds.has(a.id)).length}/{agents.length}
               </span>
+
             </div>
             <ul
               className="max-h-40 overflow-y-auto divide-y divide-zinc-800/60"
@@ -233,20 +237,28 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
             >
               {[...agents]
                 .sort((a, b) => {
-                  const ta = a.lastActivity ? new Date(a.lastActivity).getTime() : 0;
-                  const tb = b.lastActivity ? new Date(b.lastActivity).getTime() : 0;
-                  return tb - ta;
+                  const ao = onlineIds.has(a.id) ? 1 : 0;
+                  const bo = onlineIds.has(b.id) ? 1 : 0;
+                  if (ao !== bo) return bo - ao;
+                  return a.name.localeCompare(b.name);
                 })
                 .map((agent) => {
                   const colors = teamColors[agent.team || 'default'] || teamColors.default;
-                  const isOnline = agent.lastActivity
-                    ? Date.now() - new Date(agent.lastActivity).getTime() < 5 * 60 * 1000
-                    : false;
+                  const isOnline = onlineIds.has(agent.id);
                   return (
                     <li
                       key={agent.id}
-                      className="flex items-center justify-between gap-2 px-2 py-1.5 hover:bg-zinc-800/40 transition-colors"
-                      title={`${agent.name}${agent.team ? ` • ${agent.team}` : ''}`}
+                      className="flex items-center justify-between gap-2 px-2 py-1.5 hover:bg-zinc-800/40 transition-colors cursor-pointer"
+                      title={`${agent.name}${agent.team ? ` • ${agent.team}` : ''} — clique para detalhes`}
+                      onClick={() => setSelectedAgentId(agent.id)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedAgentId(agent.id);
+                        }
+                      }}
                     >
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         <span className="relative flex h-2 w-2 shrink-0">
@@ -284,6 +296,13 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
             </ul>
           </div>
         )}
+
+        <AgentDetailsDialog
+          agentId={selectedAgentId}
+          open={!!selectedAgentId}
+          onClose={() => setSelectedAgentId(null)}
+        />
+
 
         {/* Team legend - Compact */}
         {!compact && (

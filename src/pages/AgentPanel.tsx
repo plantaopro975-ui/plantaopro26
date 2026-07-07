@@ -9,6 +9,9 @@ import { useShiftNotifications } from '@/hooks/useShiftNotifications';
 import { useBHReminder } from '@/hooks/useBHReminder';
 import { useBHReminderHour } from '@/components/agent-panel/BHReminderSettings';
 import { useAlarmNotifications } from '@/hooks/useAlarmNotifications';
+import { useShiftLifecycleNotifications } from '@/hooks/useShiftLifecycleNotifications';
+import { useTrackAgentPresence } from '@/hooks/useOnlineAgents';
+
 import { TeamMembersCard } from '@/components/agent-panel/TeamMembersCard';
 import { OnDutyOverlay } from '@/components/agent-panel/OnDutyOverlay';
 const ShiftOperationsCenter = lazy(() => import('@/components/agent-panel/ShiftOperationsCenter').then(m => ({ default: m.ShiftOperationsCenter })));
@@ -141,6 +144,18 @@ export default function AgentPanel() {
     enabled: !!agent?.id,
     alarmBeforeMinutes: 60, // 1 hour before shift
   });
+
+  // Web push: 1h antes + fim do plantão
+  useShiftLifecycleNotifications({ agentId: agent?.id, enabled: !!agent?.id });
+
+  // Publica presença do agente em tempo real
+  useTrackAgentPresence(agent?.id, {
+    unit_id: (agent as any)?.unit_id,
+    team: agent?.team,
+    name: agent?.name,
+  });
+
+
 
   useEffect(() => {
     if (agent?.id) {

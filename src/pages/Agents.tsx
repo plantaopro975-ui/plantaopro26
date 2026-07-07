@@ -32,7 +32,9 @@ import {
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Plus, Search, Loader2, Pencil, Trash2, ArrowRightLeft } from 'lucide-react';
+import { Users, Plus, Search, Loader2, Pencil, Trash2, ArrowRightLeft, Eye } from 'lucide-react';
+import { AgentDetailsDialog } from '@/components/agents/AgentDetailsDialog';
+
 import { TransferRequestDialog } from '@/components/agents/TransferRequestDialog';
 import { formatCPF, formatMatricula, formatPhone, formatBirthDate, validateCPF, parseBirthDate, calculateAge } from '@/lib/validators';
 
@@ -75,6 +77,8 @@ export default function Agents() {
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
   const [transferDialogOpen, setTransferDialogOpen] = useState(false);
   const [selectedAgentForTransfer, setSelectedAgentForTransfer] = useState<Agent | null>(null);
+  const [detailsAgentId, setDetailsAgentId] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     cpf: '',
@@ -640,6 +644,9 @@ export default function Agents() {
                           {(isAdmin || isMaster) && (
                             <TableCell>
                               <div className="flex items-center gap-1">
+                                <Button variant="ghost" size="icon" onClick={() => setDetailsAgentId(agent.id)} title="Ver detalhes">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
                                 <Button variant="ghost" size="icon" onClick={() => handleTransferRequest(agent)} title="Solicitar Transferência">
                                   <ArrowRightLeft className="h-4 w-4" />
                                 </Button>
@@ -650,6 +657,7 @@ export default function Agents() {
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
+
                             </TableCell>
                           )}
                         </TableRow>
@@ -671,7 +679,22 @@ export default function Agents() {
         </main>
       </div>
 
+      <AgentDetailsDialog
+        agentId={detailsAgentId}
+        open={!!detailsAgentId}
+        onClose={() => setDetailsAgentId(null)}
+        canManage={isAdmin || isMaster}
+        onTransferClick={(id) => {
+          const a = agents.find((x) => x.id === id);
+          if (a) {
+            setDetailsAgentId(null);
+            handleTransferRequest(a);
+          }
+        }}
+      />
+
       {/* Transfer Request Dialog */}
+
       <TransferRequestDialog
         open={transferDialogOpen}
         onOpenChange={setTransferDialogOpen}

@@ -10,6 +10,8 @@ import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText, Info, Coffee } from 'lucide-react';
 import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
+import { ShiftSchedulePDFExport } from './ShiftSchedulePDFExport';
+
 
 interface ShiftCalendarOverviewProps {
   agentId: string;
@@ -52,6 +54,8 @@ interface DayInfo {
 
 export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [filter, setFilter] = useState<'all' | 'shift' | 'leave'>('all');
+
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [bhEntries, setBhEntries] = useState<BHEntry[]>([]);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
@@ -506,19 +510,37 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
               </TooltipProvider>
             )}
           </CardTitle>
-          <div className="flex items-center gap-0.5">
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} aria-label="Mês anterior">
-              <ChevronLeft className="h-3 w-3" />
-            </Button>
-            <span className="text-[11px] font-medium min-w-[86px] text-center capitalize tabular-nums">
-              {format(currentMonth, "MMM yyyy", { locale: ptBR })}
-            </span>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} aria-label="Próximo mês">
-              <ChevronRight className="h-3 w-3" />
-            </Button>
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            <div className="flex items-center rounded-md border border-slate-700 bg-slate-900/60 p-0.5" role="group" aria-label="Filtrar tipos">
+              {(['all', 'shift', 'leave'] as const).map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setFilter(f)}
+                  className={`px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded transition-colors ${
+                    filter === f ? 'bg-amber-500/30 text-amber-300' : 'text-slate-400 hover:text-amber-300'
+                  }`}
+                >
+                  {f === 'all' ? 'Todos' : f === 'shift' ? 'Plantão' : 'Folga'}
+                </button>
+              ))}
+            </div>
+            <ShiftSchedulePDFExport agentId={agentId} />
+            <div className="flex items-center gap-0.5">
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} aria-label="Mês anterior">
+                <ChevronLeft className="h-3 w-3" />
+              </Button>
+              <span className="text-[11px] font-medium min-w-[86px] text-center capitalize tabular-nums">
+                {format(currentMonth, "MMM yyyy", { locale: ptBR })}
+              </span>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} aria-label="Próximo mês">
+                <ChevronRight className="h-3 w-3" />
+              </Button>
+            </div>
           </div>
         </div>
       </CardHeader>
+
 
       <CardContent className="space-y-2 relative px-3 pb-3">
         {/* Resumo do mês: Cumpridos x Não cumpridos */}
@@ -620,6 +642,10 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   ? 'bg-fuchsia-500/15 border-fuchsia-500/35 text-fuchsia-300'
                   : colors;
 
+                const isShiftLike = dayInfo.types.includes('shift');
+                const isLeaveLike = dayInfo.types.includes('leave') || dayInfo.types.includes('vacation') || (!dayShift && (restInfo.kind === 'off_24h' || restInfo.kind === 'off_12h_exceptional' || restInfo.kind === 'half_post'));
+                const matchesFilter = filter === 'all' || (filter === 'shift' && isShiftLike) || (filter === 'leave' && isLeaveLike);
+                const filterDimClass = matchesFilter ? '' : 'opacity-25 saturate-50';
                 return (
                   <Tooltip key={day.toISOString()}>
                     <TooltipTrigger asChild>
@@ -627,10 +653,11 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                         type="button"
                         onClick={() => openDay(day)}
                         aria-label={`Abrir jornada de ${format(day, "d 'de' MMMM", { locale: ptBR })}`}
-                        className={`relative h-7 sm:h-8 w-full rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all cursor-pointer hover:brightness-125 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${dayColors} ${
+                        className={`relative h-7 sm:h-8 w-full rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all cursor-pointer hover:brightness-125 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${dayColors} ${filterDimClass} ${
                           isTodayDay ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900 shadow-lg shadow-amber-500/30' : ''
                         }`}
                       >
+
                         <span
                           className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''} ${
                             isShiftDone ? 'line-through decoration-emerald-400/70 decoration-[1.5px]' : ''
