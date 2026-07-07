@@ -783,6 +783,15 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                 : { icon: Clock, label: 'PLANTÃO AGENDADO', color: 'sky', bg: 'bg-sky-500/10 border-sky-500/30 text-sky-300' };
             const StatusIcon = statusMeta.icon;
             const nightShift = Number(startStr.split(':')[0]) >= 19 || Number(startStr.split(':')[0]) < 7;
+            const modalDurationH = (() => {
+              const [sh, sm] = startStr.split(':').map(Number);
+              const [eh, em] = endStr.split(':').map(Number);
+              if ([sh, sm, eh, em].some((n) => Number.isNaN(n))) return null;
+              let mins = (eh * 60 + em) - (sh * 60 + sm);
+              if (mins <= 0) mins += 24 * 60;
+              return Math.round(mins / 60);
+            })();
+            const modalIsExceptional = modalDurationH === 12;
 
             return (
               <>
@@ -800,8 +809,15 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   {/* Status destacado */}
                   <div className={`flex items-center gap-2 rounded-md border px-3 py-2 ${statusMeta.bg}`}>
                     <StatusIcon className="h-5 w-5 flex-shrink-0" />
-                    <div className="min-w-0">
-                      <p className="font-bold text-sm tracking-wide">{statusMeta.label}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-sm tracking-wide flex items-center gap-1.5 flex-wrap">
+                        {statusMeta.label}
+                        {modalIsExceptional && (
+                          <span className="text-[9px] font-bold px-1.5 py-[1px] rounded bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40 uppercase tracking-wider">
+                            Excepcional 12h
+                          </span>
+                        )}
+                      </p>
                       <p className="text-[10px] opacity-80 tabular-nums">
                         {format(date, "dd/MM/yyyy", { locale: ptBR })}
                       </p>
@@ -815,11 +831,19 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                     </p>
                     <p className="text-lg font-bold tabular-nums text-slate-100 mt-0.5">
                       {startStr} <span className="text-slate-500">→</span> {endStr}
+                      {modalDurationH !== null && (
+                        <span className="ml-2 text-xs font-semibold text-slate-400">({modalDurationH}h)</span>
+                      )}
                     </p>
                     <p className="text-[10px] text-slate-500 mt-0.5">
-                      Turno {nightShift ? 'noturno' : 'diurno'} · {shift.shift_date}
+                      Turno {nightShift ? 'noturno' : 'diurno'}
+                      {modalIsExceptional
+                        ? ` · escala excepcional de 12h (${nightShift ? '19→07' : '07→19'})`
+                        : ' · escala padrão 24h'}
+                      {' · '}{shift.shift_date}
                     </p>
                   </div>
+
 
                   {/* Observações */}
                   <div className="rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2">
