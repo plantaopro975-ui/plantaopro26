@@ -1523,13 +1523,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Corpo compacto — deixa só o operacional essencial visível */}
           <div
             ref={fitRef}
-            className="max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
+            className="max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
           >
             <div
               ref={fitInnerRef}
-               className="px-2.5 sm:px-3 lg:px-4 py-2"
+               className="px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2"
             >
-              <div className="mx-auto w-full max-w-4xl grid grid-cols-1 lg:grid-cols-[0.68fr_1.32fr] gap-x-3 gap-y-2 items-start lg:divide-x lg:divide-border/40">
+              <div className="mx-auto w-full max-w-4xl grid grid-cols-1 lg:grid-cols-[0.68fr_1.32fr] gap-x-3 gap-y-1.5 sm:gap-y-2 items-start lg:divide-x lg:divide-border/40">
+
                 <div className="min-w-0 lg:pr-3">
 
 
