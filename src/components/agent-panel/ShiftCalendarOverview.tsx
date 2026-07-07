@@ -427,6 +427,63 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
               <path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
             <span>Calendário</span>
+            <TooltipProvider delayDuration={100}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="text-slate-400 hover:text-amber-300 transition-colors"
+                    aria-label="Ajuda do calendário"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-[260px] bg-slate-900 border-slate-700 p-2.5 text-[11px] leading-snug">
+                  <p className="font-semibold text-amber-300 mb-1">Como ler este calendário</p>
+                  <ul className="space-y-1 text-slate-200 list-disc pl-3">
+                    <li>Colunas: <b>D S T Q Q S S</b> (Dom → Sáb).</li>
+                    <li>Se o mês começa numa <b>quarta</b>, o dia <b>01</b> aparece na 4ª coluna — coladinho ao <b>02</b>. É fácil confundir os dois; passe o mouse em cada célula para ver a data exata.</li>
+                    <li><span className="text-emerald-300 font-semibold">Verde ✓</span>: plantão cumprido. <span className="text-rose-300 font-semibold">Vermelho ✕</span>: não cumprido. <span className="text-amber-300 font-semibold">Amarelo</span>: agendado.</li>
+                    <li>Folgas: <span className="text-sky-300">24h</span> (dia integralmente livre) e <span className="text-indigo-300">12h</span> (meia folga pós-plantão, madrugada ainda no serviço).</li>
+                  </ul>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            {divergences.length > 0 && (
+              <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="ml-1 inline-flex items-center gap-1 rounded-full border border-yellow-500/40 bg-yellow-500/10 px-1.5 py-0.5 text-[9px] font-bold text-yellow-300"
+                      aria-label="Divergências detectadas"
+                    >
+                      <AlertCircle className="h-2.5 w-2.5" /> {divergences.length}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[280px] bg-slate-900 border-slate-700 p-2.5 text-[11px]">
+                    <p className="font-semibold text-yellow-300 mb-1">
+                      {divergences.length} divergência(s) detectada(s) pelo backend
+                    </p>
+                    <p className="text-slate-300 mb-1.5">Comparação: <code className="text-amber-300">first_shift_date</code> + ciclo de 4 dias × plantões cadastrados (fuso America/Rio_Branco).</p>
+                    <ul className="space-y-0.5 max-h-40 overflow-y-auto text-slate-200">
+                      {divergences.slice(0, 8).map((d, i) => (
+                        <li key={i} className="flex items-start gap-1">
+                          <span className={d.divergence_type === 'unexpected_shift' ? 'text-rose-300' : 'text-amber-300'}>
+                            {d.divergence_type === 'unexpected_shift' ? '✕' : '○'}
+                          </span>
+                          <span>
+                            <b className="tabular-nums">{d.shift_date}</b>
+                            {' — '}
+                            {d.divergence_type === 'unexpected_shift' ? 'fora do ciclo' : 'esperado no ciclo, sem cadastro'}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </CardTitle>
           <div className="flex items-center gap-0.5">
             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} aria-label="Mês anterior">
