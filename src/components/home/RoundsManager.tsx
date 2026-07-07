@@ -1165,7 +1165,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             p_end_time: endTime,
             p_interval_min: intervalMin,
             p_rows: rows,
-            p_server_started_at: new Date(startMs).toISOString(),
+            p_server_started_at: new Date(anchorMs).toISOString(),
           });
           if (error) throw error;
           if (typeof data === 'string') sessionIdRef.current = data;
@@ -1178,7 +1178,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             team, mode, start_time: startTime, end_time: endTime,
             interval_min: intervalMin,
             rows,
-            server_started_at: new Date(startMs).toISOString(),
+            server_started_at: new Date(anchorMs).toISOString(),
             is_active: true,
           }).select('id').maybeSingle();
           if (error) throw error;
