@@ -77,6 +77,8 @@ export default function Agents() {
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
   const [transferDialogOpen, setTransferDialogOpen] = useState(false);
   const [selectedAgentForTransfer, setSelectedAgentForTransfer] = useState<Agent | null>(null);
+  const [detailsAgentId, setDetailsAgentId] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     cpf: '',
