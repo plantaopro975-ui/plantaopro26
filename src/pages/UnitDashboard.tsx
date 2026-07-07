@@ -391,7 +391,66 @@ export default function UnitDashboard() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Histórico de alterações — Admin/Master */}
+            {canSeeHistory && (
+              <Card className="bg-slate-800/40 border-slate-700/50 tactical-card relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+                <CardHeader className="p-3 pb-2">
+                  <CardTitle className="flex items-center gap-2 text-sm text-white">
+                    <History className="h-4 w-4 text-amber-400" />
+                    Histórico de alterações
+                    <Badge variant="secondary" className="ml-auto text-[10px] h-5">
+                      {history.length}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                  {historyLoading ? (
+                    <div className="flex items-center justify-center py-6">
+                      <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
+                    </div>
+                  ) : history.length === 0 ? (
+                    <div className="text-center py-6 space-y-1">
+                      <p className="text-xs text-slate-400">Nenhuma alteração registrada para esta unidade.</p>
+                      <p className="text-[10px] text-slate-500">
+                        Ações administrativas (edições, transferências, cadastros) aparecerão aqui automaticamente.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                      {history.map((h) => (
+                        <div
+                          key={h.id}
+                          className="flex items-start gap-2 p-2 rounded bg-slate-900/40 border border-slate-800/60 text-xs"
+                        >
+                          <div className="h-6 w-6 shrink-0 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center">
+                            <History className="h-3 w-3 text-amber-400" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-slate-100 font-medium truncate">{actionLabel(h.action)}</p>
+                            <p className="text-[10px] text-slate-400 truncate">
+                              {h.agent_name || 'Sistema'} · {formatDistanceToNow(new Date(h.created_at), { locale: ptBR, addSuffix: true })}
+                            </p>
+                            {h.details && typeof h.details === 'object' && (
+                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                                {Object.entries(h.details)
+                                  .filter(([k]) => !['unit_id', 'agent_id'].includes(k))
+                                  .slice(0, 3)
+                                  .map(([k, v]) => `${k}: ${typeof v === 'string' ? v : JSON.stringify(v)}`)
+                                  .join(' · ')}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
+
         </main>
       </div>
     </div>
