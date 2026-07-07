@@ -79,8 +79,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
             .eq('status', 'scheduled')
             .eq('is_vacation', false)
             .order('shift_date', { ascending: true })
-            .limit(1)
-            .maybeSingle(),
+            .limit(6),
           supabase
             .from('agent_leaves')
             .select('id, leave_type, start_date, end_date')
@@ -107,8 +106,10 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
             .limit(5)
         ]);
 
-        if (shiftResult.data) {
-          setNextShift(shiftResult.data as NextShift);
+        const shiftsArr = (shiftResult.data as NextShift[] | null) || [];
+        if (shiftsArr.length > 0) {
+          setNextShift(shiftsArr[0]);
+          setUpcomingShifts(shiftsArr);
         }
 
         if (leaveResult.data) {
