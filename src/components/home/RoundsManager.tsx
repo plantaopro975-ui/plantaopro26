@@ -2003,7 +2003,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       {/* Rows — grid responsivo, se adapta a qualquer quantidade de agentes */}
                       <ul
                         className={cn(
-                          'grid gap-1 gap-x-2 max-h-[18rem] overflow-y-auto pr-1',
+                          'grid gap-1 gap-x-2 max-h-[13rem] sm:max-h-[18rem] overflow-y-auto pr-1',
                           agents.length <= 6
                             ? 'grid-cols-1 sm:grid-cols-2'
                             : agents.length <= 16
@@ -2011,6 +2011,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               : 'grid-cols-2 sm:grid-cols-3 xl:grid-cols-4',
                         )}
                       >
+
                         {schedule.rows.map((r, i) => {
                           const isCurrent = running && !!live && !live.done && i === live.index;
                           const isDone = running && !!live && (live.done ? i <= live.index : i < live.index);
