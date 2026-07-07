@@ -196,6 +196,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       periodLabel: string;
       PeriodIcon: typeof Sun;
       shiftLabel: string;
+      scaleLabel: string;
       startStr: string;
       endStr: string;
       dateStr: string;
@@ -213,12 +214,14 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       if (shiftEnd <= shiftStart) shiftEnd.setDate(shiftEnd.getDate() + 1);
       const durationHours = Math.round((shiftEnd.getTime() - shiftStart.getTime()) / 3_600_000);
       const p = classifyPeriod(hh || 7, durationHours);
+      const scaleLabel = detectScale(upcomingShifts, durationHours);
       shiftMeta = {
         shiftDate,
         shiftStart,
         shiftEnd,
         durationHours,
         ...p,
+        scaleLabel,
         startStr: (nextShift.start_time || '07:00').slice(0, 5),
         endStr: (nextShift.end_time || '19:00').slice(0, 5),
         dateStr: format(shiftDate, "EEE, dd/MM", { locale: ptBR }),
