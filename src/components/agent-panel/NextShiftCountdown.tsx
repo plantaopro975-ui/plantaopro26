@@ -139,7 +139,59 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
   const infoCards = useMemo(() => {
     const cards: InfoCard[] = [];
 
-    // Leave card (highest priority if on leave today)
+    // ---------- Helpers ----------
+    const classifyPeriod = (startH: number, durationH: number) => {
+      // Noturno: começa 18h-05h59 OU cruza a madrugada
+      const isNight = startH >= 18 || startH < 6;
+      return {
+        isNight,
+        periodLabel: isNight ? 'Noturno' : 'Diurno',
+        PeriodIcon: isNight ? Moon : Sun,
+        shiftLabel: `${durationH}h ${isNight ? 'Noturno' : 'Diurno'}`,
+      };
+    };
+
+    // Pré-computa dados do próximo plantão
+    let shiftMeta: null | {
+      shiftDate: Date;
+      shiftStart: Date;
+      shiftEnd: Date;
+      durationHours: number;
+      isNight: boolean;
+      periodLabel: string;
+      PeriodIcon: typeof Sun;
+      shiftLabel: string;
+      startStr: string;
+      endStr: string;
+      dateStr: string;
+      isTodayShift: boolean;
+    } = null;
+
+    if (nextShift) {
+      const shiftDate = parseISO(nextShift.shift_date);
+      const [hh, mm] = (nextShift.start_time || '07:00').split(':').map(Number);
+      const shiftStart = new Date(shiftDate);
+      shiftStart.setHours(hh || 7, mm || 0, 0, 0);
+      const [eh, em] = (nextShift.end_time || '19:00').split(':').map(Number);
+      const shiftEnd = new Date(shiftStart);
+      shiftEnd.setHours(eh || 19, em || 0, 0, 0);
+      if (shiftEnd <= shiftStart) shiftEnd.setDate(shiftEnd.getDate() + 1);
+      const durationHours = Math.round((shiftEnd.getTime() - shiftStart.getTime()) / 3_600_000);
+      const p = classifyPeriod(hh || 7, durationHours);
+      shiftMeta = {
+        shiftDate,
+        shiftStart,
+        shiftEnd,
+        durationHours,
+        ...p,
+        startStr: (nextShift.start_time || '07:00').slice(0, 5),
+        endStr: (nextShift.end_time || '19:00').slice(0, 5),
+        dateStr: format(shiftDate, "EEE, dd/MM", { locale: ptBR }),
+        isTodayShift: isToday(shiftDate),
+      };
+    }
+
+    // ---------- FOLGA (licença aprovada) ----------
     if (todayLeave) {
       const leaveLabels: Record<string, string> = {
         vacation: 'Férias',
@@ -147,6 +199,9 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
         special: 'Folga Especial',
         training: 'Treinamento',
       };
+      const nextInfo = shiftMeta
+        ? ` • retorna ${shiftMeta.dateStr} ${shiftMeta.startStr} (${shiftMeta.shiftLabel})`
+        : '';
       cards.push({
         id: 'leave',
         type: 'leave',
@@ -154,7 +209,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
         icon: <Palmtree className="h-5 w-5 text-white" />,
         title: 'VOCÊ ESTÁ DE FOLGA',
         value: leaveLabels[todayLeave.leave_type] || todayLeave.leave_type,
-        subtitle: `até ${format(parseISO(todayLeave.end_date), 'dd/MM', { locale: ptBR })}`,
+        subtitle: `até ${format(parseISO(todayLeave.end_date), 'dd/MM', { locale: ptBR })}${nextInfo}`,
         colorClass: 'text-green-400',
         bgClass: 'bg-gradient-to-br from-green-500 to-emerald-600',
         borderClass: 'border-green-500/60 bg-gradient-to-r from-green-500/20 via-emerald-500/15 to-green-500/20 shadow-lg shadow-green-500/20',
@@ -162,61 +217,49 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       });
     }
 
-    // Shift card
-    if (nextShift) {
-      const shiftDate = parseISO(nextShift.shift_date);
-      const [hh, mm] = (nextShift.start_time || '07:00').split(':').map(Number);
-      const shiftStart = new Date(shiftDate);
-      shiftStart.setHours(hh || 7, mm || 0, 0, 0);
+    // ---------- DESCANSO entre plantões (12x12, 24x72, etc.) ----------
+    // Se não há licença hoje e o próximo plantão NÃO é hoje → agente está de folga/descanso
+    if (!todayLeave && shiftMeta && !shiftMeta.isTodayShift) {
+      const now = new Date();
+      const hoursOff = Math.max(0, Math.round((shiftMeta.shiftStart.getTime() - now.getTime()) / 3_600_000));
+      const daysOff = differenceInCalendarDays(shiftMeta.shiftDate, startOfDay(now));
+      const restLabel =
+        daysOff === 1 ? 'até amanhã' : daysOff > 1 ? `por ${daysOff} dias` : `por ${hoursOff}h`;
 
-      // Fim do plantão (pode virar o dia — noturno)
-      const [eh, em] = (nextShift.end_time || '19:00').split(':').map(Number);
-      const shiftEnd = new Date(shiftStart);
-      shiftEnd.setHours(eh || 19, em || 0, 0, 0);
-      if (shiftEnd <= shiftStart) {
-        // Vira o dia (ex.: 19:00 → 07:00)
-        shiftEnd.setDate(shiftEnd.getDate() + 1);
-      }
-      const durationHours = Math.round((shiftEnd.getTime() - shiftStart.getTime()) / 3_600_000);
+      cards.push({
+        id: 'rest',
+        type: 'leave',
+        priority: 5,
+        icon: <Palmtree className="h-5 w-5 text-white" />,
+        title: 'DESCANSO • FOLGA OPERACIONAL',
+        value: restLabel,
+        subtitle: `Próximo: ${shiftMeta.shiftLabel} • ${shiftMeta.dateStr} ${shiftMeta.startStr}–${shiftMeta.endStr}`,
+        colorClass: 'text-teal-400',
+        bgClass: 'bg-gradient-to-br from-teal-500 to-cyan-600',
+        borderClass: 'border-teal-500/50 bg-gradient-to-r from-teal-500/15 via-cyan-500/10 to-teal-500/15 shadow-lg shadow-teal-500/15',
+      });
+    }
 
-      // Período: noturno se começa 18:00-05:59, senão diurno
-      const startHour = hh || 7;
-      const isNight = startHour >= 18 || startHour < 6;
-      const periodLabel = isNight ? 'Noturno' : 'Diurno';
-      const PeriodIcon = isNight ? Moon : Sun;
-
-      // Tipo declarado (12h, 24h, extra, etc.)
-      const rawType = (nextShift.shift_type || '').trim();
-      const typeLabel = rawType
-        ? rawType.charAt(0).toUpperCase() + rawType.slice(1).toLowerCase()
-        : `${durationHours}h`;
-
+    // ---------- PRÓXIMO PLANTÃO ----------
+    if (shiftMeta) {
+      const { shiftStart, shiftDate, durationHours, isNight, periodLabel, PeriodIcon, shiftLabel, startStr, endStr, dateStr, isTodayShift } = shiftMeta;
       const now = new Date();
       const daysUntil = differenceInCalendarDays(shiftDate, startOfDay(now));
       const hoursUntil = differenceInHours(shiftStart, now);
       const minutesUntil = differenceInMinutes(shiftStart, now);
-      const isTodayShift = isToday(shiftDate);
       const isUrgent = isTodayShift || (hoursUntil >= 0 && hoursUntil <= 12);
       const isSoon = daysUntil <= 1;
 
       let displayValue: string;
       if (isTodayShift) {
-        if (minutesUntil > 0 && minutesUntil < 60) {
-          displayValue = `em ${minutesUntil}min`;
-        } else if (hoursUntil > 0 && hoursUntil < 24) {
-          displayValue = `em ${hoursUntil}h`;
-        } else {
-          displayValue = `às ${nextShift.start_time?.slice(0, 5) || '07:00'}`;
-        }
+        if (minutesUntil > 0 && minutesUntil < 60) displayValue = `em ${minutesUntil}min`;
+        else if (hoursUntil > 0 && hoursUntil < 24) displayValue = `em ${hoursUntil}h`;
+        else displayValue = `às ${startStr}`;
       } else if (daysUntil === 1) {
         displayValue = hoursUntil > 0 ? `amanhã em ${hoursUntil}h` : 'amanhã';
       } else {
         displayValue = `em ${daysUntil} dias`;
       }
-
-      const startStr = nextShift.start_time?.slice(0, 5) || '07:00';
-      const endStr = (nextShift.end_time || '19:00').slice(0, 5);
-      const dateStr = format(shiftDate, "EEE, dd/MM", { locale: ptBR });
 
       cards.push({
         id: 'shift',
@@ -224,8 +267,8 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
         priority: isTodayShift ? 2 : 10,
         icon: isUrgent ? <Zap className="h-5 w-5 text-white" /> : isSoon ? <AlertTriangle className="h-5 w-5 text-white" /> : <PeriodIcon className="h-5 w-5 text-white" />,
         title: isTodayShift
-          ? `PLANTÃO HOJE • ${typeLabel} ${periodLabel}`
-          : `Próximo Plantão • ${typeLabel} ${periodLabel}`,
+          ? `PLANTÃO HOJE • ${shiftLabel}`
+          : `PRÓXIMO PLANTÃO • ${shiftLabel}`,
         value: displayValue,
         subtitle: `${dateStr} • ${startStr}–${endStr} (${durationHours}h ${periodLabel.toLowerCase()})`,
         colorClass: isUrgent ? 'text-emerald-400' : isSoon ? 'text-amber-400' : isNight ? 'text-indigo-400' : 'text-sky-400',
