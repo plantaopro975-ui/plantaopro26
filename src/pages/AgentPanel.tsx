@@ -554,36 +554,36 @@ export default function AgentPanel() {
 
             {/* Main Tabs - REDESIGNED: Modern, Legible, Mobile-First */}
             <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-amber-500" /></div>}>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-3 md:space-y-4">
               {/* Control Panel Container - Modern Glass Design */}
-              <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-2xl md:rounded-3xl border-2 md:border-3 border-amber-500/50 shadow-2xl shadow-amber-500/15 backdrop-blur-xl overflow-hidden hover-lift">
+              <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl md:rounded-2xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
                 {/* Decorative glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5 pointer-events-none" />
                 
-                {/* Control Panel Header - MUCH LARGER & Professional */}
-                <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 md:p-6 border-b border-amber-500/20">
-                  <div className="flex items-center gap-3 md:gap-4">
-                    <div className="p-3 md:p-4 bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 rounded-xl md:rounded-2xl shadow-xl shadow-amber-500/40 ring-2 ring-amber-300/30">
-                      <Shield className="h-7 w-7 md:h-9 md:w-9 text-black" />
+                {/* Control Panel Header - Compact & Professional */}
+                <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 md:p-4 border-b border-amber-500/20">
+                  <div className="flex items-center gap-2.5 md:gap-3">
+                    <div className="p-2 md:p-2.5 bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 rounded-lg md:rounded-xl shadow-md shadow-amber-500/30 ring-1 ring-amber-300/30">
+                      <Shield className="h-5 w-5 md:h-6 md:w-6 text-black" />
                     </div>
                     <div>
-                      <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-amber-100 tracking-tight leading-tight">
+                      <h2 className="text-base md:text-lg font-black text-amber-100 tracking-tight leading-tight">
                         PAINEL DE CONTROLE
                       </h2>
-                      <p className="text-sm md:text-base text-amber-400/90 font-medium tracking-wide mt-0.5">
+                      <p className="text-[11px] md:text-xs text-amber-400/90 font-medium tracking-wide mt-0.5">
                         Sistema Operacional Integrado
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 md:gap-3 bg-emerald-500/25 px-4 md:px-5 py-2 md:py-2.5 rounded-xl border-2 border-emerald-500/50 shadow-lg shadow-emerald-500/20">
-                    <Zap className="h-5 w-5 md:h-6 md:w-6 text-emerald-400 animate-pulse" />
-                    <span className="text-sm md:text-base font-bold text-emerald-300 tracking-wider">ONLINE</span>
+                  <div className="flex items-center gap-1.5 md:gap-2 bg-emerald-500/20 px-2.5 md:px-3 py-1 md:py-1.5 rounded-lg border border-emerald-500/40 shadow-sm shadow-emerald-500/10">
+                    <Zap className="h-3.5 w-3.5 md:h-4 md:w-4 text-emerald-400 animate-pulse" />
+                    <span className="text-[11px] md:text-xs font-bold text-emerald-300 tracking-wider">ONLINE</span>
                   </div>
                 </div>
                 
-                {/* Tabs Grid - MODERN, LARGE, FULLY READABLE */}
-                <div className="p-3 md:p-5 lg:p-6">
-                  <TabsList className="bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border-2 border-amber-500/25 p-2 md:p-3 lg:p-4 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2 md:gap-3 rounded-xl md:rounded-2xl shadow-inner">
+                {/* Tabs Grid - Compact, readable */}
+                <div className="p-2 md:p-3">
+                  <TabsList className="bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 p-1.5 md:p-2 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-1.5 md:gap-2 rounded-lg md:rounded-xl shadow-inner">
                     {/* Equipe Tab */}
                     <TabsTrigger 
                       value="equipe" 
