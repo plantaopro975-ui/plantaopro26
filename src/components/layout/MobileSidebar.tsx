@@ -9,9 +9,11 @@ import {
   LayoutDashboard,
   Settings,
   Shield,
+  MapPin,
   UserCircle,
   ClipboardCheck,
   Home,
+  Building2,
 } from 'lucide-react';
 import {
   SidebarNavItem,
@@ -26,7 +28,13 @@ const navItems: NavItemDef[] = [
   { icon: UserCircle, label: 'Meu Painel', href: '/agent-panel' },
   { icon: Users, label: 'Agentes', href: '/agents' },
   { icon: Clock, label: 'Banco de Horas', href: '/overtime' },
+  { icon: MapPin, label: 'Unidades', href: '/units' },
   { icon: Settings, label: 'Configurações', href: '/settings' },
+];
+
+const adminItems: NavItemDef[] = [
+  { icon: Building2, label: 'Gerenciar Unidades', href: '/units' },
+  { icon: ClipboardCheck, label: 'Auditoria de Unidades', href: '/admin/units-audit' },
 ];
 
 const masterItems: NavItemDef[] = [
