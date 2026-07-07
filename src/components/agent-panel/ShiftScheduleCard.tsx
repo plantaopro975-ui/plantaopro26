@@ -492,23 +492,57 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
               </div>
             </div>
 
-            {/* Past Shifts - Compact List */}
+            {/* Past Shifts - Professional "crossed off" list */}
             {pastShifts.length > 0 && (
               <div className="pt-2 border-t border-slate-700/50">
-                <h4 className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">Recentes</h4>
-                <div className="flex flex-wrap gap-1">
+                <div className="flex items-center justify-between mb-1.5">
+                  <h4 className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Plantões cumpridos</h4>
+                  <span className="text-[9px] text-emerald-400/80 font-semibold tracking-wider">
+                    ✓ {pastShifts.filter(s => s.status !== 'missed').length}/{pastShifts.length}
+                  </span>
+                </div>
+                <div className="space-y-1">
                   {pastShifts.map((shift) => {
                     const shiftDate = parseISO(shift.shift_date);
-                    const statusInfo = getStatusInfo(shift.status);
-                    
+                    // Past shifts default to "cumprido" visually unless explicitly missed
+                    const effectiveStatus = shift.status === 'scheduled' ? 'completed' : shift.status;
+                    const statusInfo = getStatusInfo(effectiveStatus);
+                    const StatusIcon = statusInfo.icon;
+                    const isMissed = effectiveStatus === 'missed';
+                    const isDone = effectiveStatus === 'completed' || effectiveStatus === 'compensated';
                     return (
                       <button
                         key={shift.id}
                         onClick={() => handleShiftClick(shift)}
-                        className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium ${statusInfo.color} ${statusInfo.textColor} hover:opacity-80 transition-opacity`}
+                        className={`group w-full flex items-center gap-2 px-2 py-1.5 rounded-md border transition-all ${
+                          isMissed
+                            ? 'border-red-500/30 bg-red-500/5 hover:bg-red-500/10'
+                            : 'border-emerald-500/20 bg-emerald-500/[0.04] hover:bg-emerald-500/10'
+                        }`}
+                        title={`${statusInfo.label} • ${format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}`}
                       >
-                        <div className={`w-1.5 h-1.5 rounded-full ${statusInfo.dotColor}`} />
-                        {format(shiftDate, "dd/MM", { locale: ptBR })}
+                        <span
+                          className={`inline-flex items-center justify-center h-4 w-4 rounded-full flex-shrink-0 ${
+                            isMissed ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'
+                          }`}
+                        >
+                          <StatusIcon className="h-2.5 w-2.5" strokeWidth={3} />
+                        </span>
+                        <span
+                          className={`text-[11px] font-mono tabular-nums flex-1 text-left ${
+                            isDone ? 'text-slate-400 line-through decoration-emerald-500/60 decoration-[1.5px]' : 'text-slate-300'
+                          }`}
+                        >
+                          {format(shiftDate, "EEE dd/MM", { locale: ptBR })}
+                          {shift.start_time && (
+                            <span className="ml-1.5 text-slate-500">· {shift.start_time.slice(0, 5)}</span>
+                          )}
+                        </span>
+                        <span
+                          className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${statusInfo.textColor} ${statusInfo.color}`}
+                        >
+                          {statusInfo.label}
+                        </span>
                       </button>
                     );
                   })}
