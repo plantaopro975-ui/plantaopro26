@@ -288,6 +288,28 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
     }
   };
 
+  const clearConversationForMe = async () => {
+    if (!activeRoom) return;
+    const visibleIds = messages.filter(m => !deletedMessageIds.has(m.id)).map(m => m.id);
+    if (visibleIds.length === 0) {
+      toast.info('Nenhuma mensagem para limpar');
+      return;
+    }
+    if (!window.confirm(`Ocultar ${visibleIds.length} mensagem(ns) desta conversa apenas para você?`)) return;
+    try {
+      const rows = visibleIds.map(id => ({ message_id: id, agent_id: agentId }));
+      const { error } = await (supabase as any)
+        .from('deleted_messages')
+        .upsert(rows, { onConflict: 'message_id,agent_id' });
+      if (error) throw error;
+      setDeletedMessageIds(prev => new Set([...prev, ...visibleIds]));
+      toast.success('Conversa limpa para você');
+    } catch (error) {
+      console.error('Error clearing conversation:', error);
+      toast.error('Erro ao limpar conversa');
+    }
+
+
   const initializeChatRooms = async () => {
     try {
       setIsLoading(true);
