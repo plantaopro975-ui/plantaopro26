@@ -346,7 +346,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
 
               {/* Agente — à direita da viatura, levemente maior para presença sem quebrar proporção */}
-              <picture className="block" style={{ height: '112%' }}>
+              <picture className="block" style={{ height: '100%' }}>
                 <source srcSet={agent3dWebp} type="image/webp" />
                 <img
                   src={agent3d}
