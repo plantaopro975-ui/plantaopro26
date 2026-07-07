@@ -1400,7 +1400,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             type="button"
             aria-label="Abrir Gestor de Rondas"
             className={cn(
-              'group relative inline-flex items-center gap-4 p-1.5 pr-6 rounded-2xl',
+              'group relative inline-flex items-center gap-2.5 sm:gap-4 p-1 sm:p-1.5 pr-3 sm:pr-6 rounded-xl sm:rounded-2xl',
               'bg-card/40 backdrop-blur-xl border border-border/80',
               'transition-all duration-300',
               'hover:bg-card/60 hover:border-primary/40 active:scale-[0.98]',
@@ -1408,13 +1408,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             )}
           >
             {/* Icon module — inset panel with radar crosshair */}
-            <span className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-inner">
+            <span className="relative flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center overflow-hidden rounded-lg sm:rounded-xl border border-border bg-background shadow-inner">
               {/* subtle radar tint */}
               <span aria-hidden className="absolute inset-0 bg-primary/5 animate-pulse" />
               {/* crosshair */}
               <span aria-hidden className="absolute top-1/2 left-0 right-0 h-px -translate-y-1/2 bg-primary/20" />
               <span aria-hidden className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-primary/20" />
-              <svg viewBox="0 0 24 24" className="relative z-10 h-6 w-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <svg viewBox="0 0 24 24" className="relative z-10 h-4 w-4 sm:h-6 sm:w-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M12 17h.01" />
                 <path d="M19 10.5c0-3.87-3.13-7-7-7s-7 3.13-7 7" />
                 <path d="M16.5 14.5c0-2.48-2.02-4.5-4.5-4.5s-4.5 2.02-4.5 4.5" />
@@ -1424,11 +1424,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
             {/* Content */}
             <span className="flex flex-col items-start leading-none">
-              <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-primary">
+              <span className="hidden sm:flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-primary">
                 <span aria-hidden className="h-1 w-1 rounded-full bg-primary animate-pulse" />
                 Ferramenta Tática
               </span>
-              <span className="mt-1 text-lg font-bold tracking-tight text-foreground">
+              <span className="sm:mt-1 text-sm sm:text-lg font-bold tracking-tight text-foreground">
                 Gestor de Rondas
               </span>
             </span>
@@ -1440,17 +1440,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               </span>
             )}
 
-            <ChevronRight className="ml-2 h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" strokeWidth={2.5} />
+            <ChevronRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" strokeWidth={2.5} />
 
             {/* glass reflection */}
             <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
+
           )}
         </DialogTrigger>
 
 
         <DialogContent
-          className="w-[min(100vw-0.5rem,52rem)] max-w-none max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
+          className="w-[min(100vw-0.25rem,52rem)] sm:w-[min(100vw-0.5rem,52rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col rounded-lg sm:rounded-xl"
+
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
@@ -1521,13 +1523,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Corpo compacto — deixa só o operacional essencial visível */}
           <div
             ref={fitRef}
-            className="max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
+            className="max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
           >
             <div
               ref={fitInnerRef}
-               className="px-2.5 sm:px-3 lg:px-4 py-2"
+               className="px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2"
             >
-              <div className="mx-auto w-full max-w-4xl grid grid-cols-1 lg:grid-cols-[0.68fr_1.32fr] gap-x-3 gap-y-2 items-start lg:divide-x lg:divide-border/40">
+              <div className="mx-auto w-full max-w-4xl grid grid-cols-1 lg:grid-cols-[0.68fr_1.32fr] gap-x-3 gap-y-1.5 sm:gap-y-2 items-start lg:divide-x lg:divide-border/40">
+
                 <div className="min-w-0 lg:pr-3">
 
 
@@ -1815,8 +1818,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   className={cn(
                                     'font-mono font-light tabular-nums tracking-tight leading-none break-all transition-all',
                                     urgent
-                                      ? 'text-3xl sm:text-4xl font-black'
-                                      : 'text-2xl sm:text-3xl',
+                                      ? 'text-2xl sm:text-3xl md:text-4xl font-black'
+                                      : 'text-xl sm:text-2xl md:text-3xl',
+
                                     critical && !silentMode && 'animate-pulse',
                                   )}
                                   style={{
@@ -1844,11 +1848,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Nome grande — agente ATIVO agora (live ou preview) */}
                               {activeAgentName && (
                                 <div
-                                  className="font-sans font-black uppercase tracking-tight text-lg sm:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                                  className="font-sans font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                                   style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
                                 >
                                   {activeAgentName}
                                 </div>
+
                               )}
                               {!view && (
                                 <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
@@ -1856,10 +1861,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 </div>
                               )}
                               {view?.done && (
-                                <div className="font-sans font-black uppercase tracking-[0.15em] text-2xl sm:text-3xl text-emerald-500 flex items-center gap-2">
-                                  <CheckCircle2 className="h-7 w-7" /> {isPreview ? 'TURNO ENCERRADO' : 'MISSÃO CUMPRIDA'}
+                                <div className="font-sans font-black uppercase tracking-[0.15em] text-lg sm:text-2xl md:text-3xl text-emerald-500 flex items-center gap-2">
+                                  <CheckCircle2 className="h-5 w-5 sm:h-7 sm:w-7" /> {isPreview ? 'TURNO ENCERRADO' : 'MISSÃO CUMPRIDA'}
                                 </div>
                               )}
+
 
                               {view && !view.done && 'slotSec' in view && view.slotSec > 0 && (
                                 <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
@@ -1997,7 +2003,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       {/* Rows — grid responsivo, se adapta a qualquer quantidade de agentes */}
                       <ul
                         className={cn(
-                          'grid gap-1 gap-x-2 max-h-[18rem] overflow-y-auto pr-1',
+                          'grid gap-1 gap-x-2 max-h-[13rem] sm:max-h-[18rem] overflow-y-auto pr-1',
                           agents.length <= 6
                             ? 'grid-cols-1 sm:grid-cols-2'
                             : agents.length <= 16
@@ -2005,6 +2011,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               : 'grid-cols-2 sm:grid-cols-3 xl:grid-cols-4',
                         )}
                       >
+
                         {schedule.rows.map((r, i) => {
                           const isCurrent = running && !!live && !live.done && i === live.index;
                           const isDone = running && !!live && (live.done ? i <= live.index : i < live.index);
