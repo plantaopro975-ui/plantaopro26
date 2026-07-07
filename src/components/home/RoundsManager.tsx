@@ -2037,9 +2037,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 if (live && !live.done) { setLockOpen(true); return; }
                                 pauseTimer();
                               }}
-                              className="h-9 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950"
+                              aria-label="Pausa bloqueada durante a ronda"
+                              title="Pausa bloqueada — clique para ver o protocolo"
+                              className="h-9 px-4 border border-destructive/45 bg-destructive/10 text-destructive hover:bg-destructive/15"
                             >
-                              <Pause className="h-3.5 w-3.5 mr-1.5" /> Pausar
+                              <Pause className="h-3.5 w-3.5 mr-1.5" /> Bloqueado
                             </Button>
                           )}
                           <Button
@@ -2120,30 +2122,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       >
 
                         {schedule.rows.map((r, i) => {
-                          const isCurrent = running && !!live && !live.done && i === live.index;
-                          const isDone = running && !!live && (live.done ? i <= live.index : i < live.index);
+                          const view = live ?? preview;
+                          const isCurrent = !!view && !view.done && i === view.index;
+                          const isDone = !!view && (view.done ? i <= view.index : i < view.index);
+                          const isWaiting = !isCurrent && !isDone;
+                          const remainingForRow = isCurrent && !view.done ? view.remaining : Math.max(0, r.duration * 60);
                           return (
                             <li key={i}
                                 className={cn(
-                                   'grid grid-cols-[20px_minmax(0,1fr)_auto] items-center gap-x-1.5 rounded-md border border-border/40 bg-card/30 px-1.5 py-1 transition-colors min-w-0',
-                                  isCurrent && 'border-primary/60 bg-primary/10',
+                                   'relative overflow-hidden grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card/35 px-1.5 py-1.5 transition-all min-w-0',
+                                  isCurrent && 'bg-primary/10',
                                   isDone && 'opacity-70',
                                 )}
-                                style={isCurrent ? { boxShadow: `inset 3px 0 0 0 ${teamColor}` } : undefined}>
+                                style={{
+                                  borderColor: isCurrent ? `${teamColor}88` : isDone ? 'hsl(var(--success) / 0.32)' : `${teamColor}20`,
+                                  boxShadow: isCurrent ? `inset 3px 0 0 0 ${teamColor}, 0 0 22px -14px ${teamColor}` : undefined,
+                                }}>
+                              {isCurrent && !silentMode && (
+                                <span className="pointer-events-none absolute inset-y-0 left-0 w-1/2 opacity-20 animate-shimmer" style={{ background: `linear-gradient(90deg, transparent, ${teamColor}, transparent)` }} />
+                              )}
                               <span className="font-mono text-[9px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
-                              <span className={cn(
-                                'font-sans font-medium text-[11.5px] leading-tight truncate min-w-0 flex items-center gap-1.5',
-                                isDone && 'line-through text-muted-foreground decoration-emerald-500/70'
-                              )}>
-                                {r.name}
-                                {isDone && (
-                                  <CheckCircle2 className="h-3 w-3 text-emerald-500 no-underline shrink-0" />
-                                )}
+                              <span className="min-w-0">
+                                <span className={cn(
+                                  'font-sans font-semibold text-[11.5px] leading-tight truncate min-w-0 flex items-center gap-1.5',
+                                  isDone && 'line-through text-muted-foreground decoration-success/70',
+                                )}>
+                                  {r.name}
+                                  {isDone && <CheckCircle2 className="h-3 w-3 text-success no-underline shrink-0" />}
+                                </span>
+                                <span className="mt-0.5 block truncate font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+                                  {isCurrent
+                                    ? `Em ronda · faltam ${fmtHMS(remainingForRow)}`
+                                    : isDone
+                                      ? 'Missão cumprida · posto encerrado'
+                                      : `Aguardando acionamento · duração ${fmtDuration(r.duration)}`}
+                                </span>
                               </span>
-                              <span className="font-mono text-[10px] tabular-nums flex items-center gap-x-1 text-muted-foreground whitespace-nowrap">
-                                <span className="text-foreground">{r.from}</span>
-                                <span style={{ color: teamColor }}>→</span>
-                                <span className="text-foreground">{r.to}</span>
+                              <span className="flex flex-col items-end gap-0.5">
+                                <AgentStatusSVG status={isCurrent ? 'active' : isDone ? 'done' : 'waiting'} color={teamColor} compact />
+                                <span className="font-mono text-[10px] tabular-nums flex items-center gap-x-1 text-muted-foreground whitespace-nowrap">
+                                  <span className="text-foreground">{r.from}</span>
+                                  <span style={{ color: teamColor }}>→</span>
+                                  <span className="text-foreground">{r.to}</span>
+                                </span>
                               </span>
                             </li>
                           );
