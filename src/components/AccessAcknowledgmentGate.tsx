@@ -48,17 +48,17 @@ export function AccessAcknowledgmentGate() {
     >
       <div className="relative w-full max-w-sm">
         <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-b from-[#0b0d14]/95 to-[#05070d]/95 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.3)] backdrop-blur">
-          {/* Imagem hero cinematográfica */}
-          <div className="relative h-40 w-full overflow-hidden">
+          {/* Imagem hero cinematográfica — proporção 4:3 mostrada por inteiro */}
+          <div className="relative w-full overflow-hidden bg-[#05070d]" style={{ aspectRatio: '4 / 3' }}>
             <img
               src={heroImage}
               alt="Agente em corredor operacional"
               width={1024}
               height={768}
-              className="h-full w-full object-cover object-center"
+              className="absolute inset-0 h-full w-full object-contain"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/60 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#05070d]/70 via-transparent to-[#05070d]/40" />
+            <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#05070d]/85 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#05070d] to-transparent pointer-events-none" />
 
             {/* Faixa superior sobre a imagem */}
             <div
