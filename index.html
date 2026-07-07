@@ -24,14 +24,21 @@
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Saira+Condensed:wght@500;600;700&family=Stardos+Stencil:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Saira+Condensed:wght@500;600;700&display=swap"
     />
     <!-- Stylesheet síncrona — garante aplicação consistente em web e mobile (evita FOUT/FOIT no iOS Safari) -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Saira+Condensed:wght@500;600;700&family=Stardos+Stencil:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Saira+Condensed:wght@500;600;700&display=swap"
     />
-    <!-- Preload dos arquivos WOFF2 críticos (regular + bold das duas famílias primárias) -->
+    <!-- Stardos Stencil isolada com display=block: evita flash de fonte fallback (Impact) no nome das equipes -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Stardos+Stencil:wght@400;700&display=block"
+    />
+    <!-- Preload dos arquivos críticos -->
+    <link rel="preload" as="font" type="font/ttf" crossorigin
+      href="https://fonts.gstatic.com/s/stardosstencil/v15/X7n44bcuGPC8hrvEOHXOgaKCc2TpU3tTvg.ttf" />
     <link rel="preload" as="font" type="font/woff2" crossorigin
       href="https://fonts.gstatic.com/s/librebaskerville/v14/kmKnZrc3Hgbbcjq75U4uslyuy4kn0pNeYRI4CN2V.woff2" />
     <link rel="preload" as="font" type="font/woff2" crossorigin
@@ -43,9 +50,10 @@
     <noscript>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Stardos+Stencil:wght@400;700&display=block"
       />
     </noscript>
+
 
 
     <!-- Favicon - PlantãoPro Tactical Shield -->
