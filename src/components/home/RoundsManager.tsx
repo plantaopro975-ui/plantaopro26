@@ -1400,7 +1400,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             type="button"
             aria-label="Abrir Gestor de Rondas"
             className={cn(
-              'group relative inline-flex items-center gap-4 p-1.5 pr-6 rounded-2xl',
+              'group relative inline-flex items-center gap-2.5 sm:gap-4 p-1 sm:p-1.5 pr-3 sm:pr-6 rounded-xl sm:rounded-2xl',
               'bg-card/40 backdrop-blur-xl border border-border/80',
               'transition-all duration-300',
               'hover:bg-card/60 hover:border-primary/40 active:scale-[0.98]',
@@ -1408,13 +1408,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             )}
           >
             {/* Icon module — inset panel with radar crosshair */}
-            <span className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-inner">
+            <span className="relative flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center overflow-hidden rounded-lg sm:rounded-xl border border-border bg-background shadow-inner">
               {/* subtle radar tint */}
               <span aria-hidden className="absolute inset-0 bg-primary/5 animate-pulse" />
               {/* crosshair */}
               <span aria-hidden className="absolute top-1/2 left-0 right-0 h-px -translate-y-1/2 bg-primary/20" />
               <span aria-hidden className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-primary/20" />
-              <svg viewBox="0 0 24 24" className="relative z-10 h-6 w-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <svg viewBox="0 0 24 24" className="relative z-10 h-4 w-4 sm:h-6 sm:w-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M12 17h.01" />
                 <path d="M19 10.5c0-3.87-3.13-7-7-7s-7 3.13-7 7" />
                 <path d="M16.5 14.5c0-2.48-2.02-4.5-4.5-4.5s-4.5 2.02-4.5 4.5" />
@@ -1424,11 +1424,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
             {/* Content */}
             <span className="flex flex-col items-start leading-none">
-              <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-primary">
+              <span className="hidden sm:flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-primary">
                 <span aria-hidden className="h-1 w-1 rounded-full bg-primary animate-pulse" />
                 Ferramenta Tática
               </span>
-              <span className="mt-1 text-lg font-bold tracking-tight text-foreground">
+              <span className="sm:mt-1 text-sm sm:text-lg font-bold tracking-tight text-foreground">
                 Gestor de Rondas
               </span>
             </span>
@@ -1440,11 +1440,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               </span>
             )}
 
-            <ChevronRight className="ml-2 h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" strokeWidth={2.5} />
+            <ChevronRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" strokeWidth={2.5} />
 
             {/* glass reflection */}
             <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
+
           )}
         </DialogTrigger>
 
