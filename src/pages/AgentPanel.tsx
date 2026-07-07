@@ -724,6 +724,12 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
+              <TabsContent value="rondas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+                <RoundsHistoryCard agentId={agent.id} />
+              </TabsContent>
+
+
+
               <TabsContent value="chat" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 <ChatPanel 
                   agentId={agent.id} 
