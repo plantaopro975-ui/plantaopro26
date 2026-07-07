@@ -798,22 +798,29 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
   /* ---------- início efetivo (turno noturno) ----------
-   * Quando o modal é aberto DENTRO da janela 22:00→06:00, o campo "Início" fica
-   * travado em 22:00 por regra de segurança — porém a divisão do turno entre os
-   * agentes deve considerar o tempo REAL restante (agora → 06:00) para que o
-   * primeiro agente entre em serviço imediatamente e cada posto seja proporcional.
-   * Quando o cronômetro está rodando, congelamos o valor no momento do início.
+   * REGRA DE ANCORAGEM (22:00–06:00):
+   * O cronograma é sempre ancorado no relógio de parede às 22:00, dividido em N
+   * fatias iguais (8h ÷ N). Cada agente ocupa uma janela fixa (ex.: 3 agentes →
+   * 22:00–00:40, 00:40–03:20, 03:20–06:00). Se o operador iniciar a contagem
+   * atrasado (ex.: 23:00), o Agente 1 continua com fim em 00:40 (recebe apenas
+   * o tempo restante do próprio slot); ao esgotar, é riscado e passa-se ao
+   * próximo agente com o slot inteiro. Se iniciar tão tarde que o slot do
+   * primeiro já venceu, ele entra "cumprido" e a ronda começa no agente ativo.
+   *
+   * Fora do turno noturno, mantém o comportamento anterior (início = campo).
    */
   const frozenStartMinRef = useRef<number | null>(null);
   const effectiveStartMin = useMemo<number | null>(() => {
+    if (mode === 'split' && nightEffectivelyLocked) {
+      // Âncora fixa em 22:00, independentemente de quando o operador iniciar.
+      return toMinutes(NIGHT_START);
+    }
     if (mode === 'split' && running && frozenStartMinRef.current != null) {
       return frozenStartMinRef.current;
     }
-    if (mode === 'split' && nightEffectivelyLocked && !running && serverClock) {
-      return acreMinutesFloat(serverClock);
-    }
     return toMinutes(startTime);
-  }, [mode, nightEffectivelyLocked, running, serverClock, startTime]);
+  }, [mode, nightEffectivelyLocked, running, startTime]);
+
 
   /* ---------- schedule com RECALIBRAGEM AUTOMÁTICA (precisão em segundos) ---------- */
   const schedule = useMemo(() => {
@@ -1108,10 +1115,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       return;
     }
     await syncServerClock();
-    const startMs = nowServer();
-    startedAtRef.current = startMs;
+    const nowMs = nowServer();
+    // No turno noturno em modo split, ANCORAMOS o cronômetro no relógio de
+    // parede às 22:00 (mesmo que o operador aperte Iniciar depois). Isso faz o
+    // "elapsed" refletir o tempo desde 22:00, então o live timer pula agentes
+    // cujos slots já expiraram e entrega ao agente atual apenas o tempo que
+    // sobra na janela dele — exatamente a regra de negócio pedida.
+    const anchorMs = (nightEffectivelyLocked && mode === 'split')
+      ? getNightWindow(new Date(nowMs)).startsAt.getTime()
+      : nowMs;
+    startedAtRef.current = anchorMs;
     // Congela o "início efetivo" — a partir daqui, a divisão não desliza mais.
     frozenStartMinRef.current = effectiveStartMin ?? toMinutes(startTime) ?? 0;
+
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setRunning(true);
@@ -1149,7 +1165,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             p_end_time: endTime,
             p_interval_min: intervalMin,
             p_rows: rows,
-            p_server_started_at: new Date(startMs).toISOString(),
+            p_server_started_at: new Date(anchorMs).toISOString(),
           });
           if (error) throw error;
           if (typeof data === 'string') sessionIdRef.current = data;
@@ -1162,7 +1178,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             team, mode, start_time: startTime, end_time: endTime,
             interval_min: intervalMin,
             rows,
-            server_started_at: new Date(startMs).toISOString(),
+            server_started_at: new Date(anchorMs).toISOString(),
             is_active: true,
           }).select('id').maybeSingle();
           if (error) throw error;
@@ -1573,11 +1589,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         </div>
                         {!overrideActive && (
                           <div className="mt-1 text-[10.5px]">
-                            Horário fixado em <b>22:00 → 06:00</b>. A divisão entre os agentes usa o
-                            <b> tempo real restante</b> (agora → 06:00), então cada posto é sempre
-                            proporcional — mesmo que a ronda seja criada depois das 22:00.
+                            Janela fixa <b>22:00 → 06:00</b> dividida em partes iguais entre os
+                            <b> {agents.length || 'N'} agente(s)</b> (~<b>{schedule ? fmtHMS(schedule.rows[0]?.duration * 60 || 0) : '—'}</b> cada).
+                            Se a contagem começar depois das 22:00, o Agente 1 assume com o tempo
+                            restante do próprio slot; ao esgotar, é <b>riscado</b> e a vez passa
+                            automaticamente ao próximo, que recebe o slot completo.
                           </div>
                         )}
+
 
 
                         {overrideActive && (
