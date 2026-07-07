@@ -1439,7 +1439,7 @@ export default function Index() {
 
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             {getSavedCredentials().length > 0 && (
               <button
                 onClick={() => setShowCredentialsManager(true)}
