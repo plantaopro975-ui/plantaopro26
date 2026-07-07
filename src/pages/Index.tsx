@@ -385,7 +385,10 @@ export default function Index() {
   };
 
   // Real-time CPF search with auto-login for registered agents
-  const handleCpfInputChange = async (value: string) => {
+  // `silent` = chamada automática (prefill). Nunca fecha o diálogo nem dispara
+  // o alerta de "equipe incorreta" — evita travar a UI logo após clicar no card
+  // quando o último CPF salvo pertence a outra equipe.
+  const handleCpfInputChange = async (value: string, silent: boolean = false) => {
     const formatted = formatCPF(value);
     setCheckCpf(formatted);
     
@@ -400,6 +403,14 @@ export default function Index() {
           .eq('cpf', cleanCpf)
           .maybeSingle();
         
+        // Prefill silencioso com CPF de outra equipe → descarta e libera input
+        if (silent && data && data.team && data.team !== selectedTeam) {
+          setCheckCpf('');
+          setFoundAgent(null);
+          setIsSearchingAgent(false);
+          return;
+        }
+
         setFoundAgent(data);
         
         // Auto-login: If agent exists and belongs to selected team, auto-proceed to login
@@ -415,7 +426,7 @@ export default function Index() {
               duration: 3000,
             });
           }, 800);
-        } else if (data && data.team && data.team !== selectedTeam) {
+        } else if (!silent && data && data.team && data.team !== selectedTeam) {
           // Wrong team - show professional security-style warning via ErrorDialog
           playSound('access-denied');
           setShowCpfCheck(false);
