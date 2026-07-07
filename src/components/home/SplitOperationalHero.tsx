@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import loginHeroImage from '@/assets/login-hero.jpg';
+
 
 
 import agent3dAsset from '@/assets/hero/agent-ise-3d.png.asset.json';
