@@ -3,11 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 // Ícones inline via SVG mantêm o visual leve e profissional
 import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText } from 'lucide-react';
 import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 
 interface ShiftCalendarOverviewProps {
@@ -57,6 +58,35 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailData, setDetailData] = useState<JourneyDetailsData | null>(null);
+  const [shiftModalOpen, setShiftModalOpen] = useState(false);
+  const [shiftModalData, setShiftModalData] = useState<{
+    date: Date;
+    shift: Shift;
+    status: 'done' | 'missed' | 'scheduled';
+    startStr: string;
+    endStr: string;
+  } | null>(null);
+
+  // Local "today" (fuso do usuário) — usado para saber se uma data já passou
+  const localToday = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  const isPastLocalDay = (day: Date) => {
+    const d = new Date(day);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime() < localToday.getTime();
+  };
+
+  const computeShiftStatus = (day: Date, shift: Shift): 'done' | 'missed' | 'scheduled' => {
+    if (shift.status === 'completed' || shift.status === 'compensated') return 'done';
+    if (shift.status === 'missed') return 'missed';
+    // Passado com status 'scheduled' => considerar cumprido
+    if (isPastLocalDay(day) && shift.status === 'scheduled') return 'done';
+    return 'scheduled';
+  };
 
   const buildDT = (dateStr: string, time: string | null, fallback: string) => {
     const [h, m] = (time || fallback).split(':').map(Number);
@@ -127,6 +157,19 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   };
 
   const openDay = (day: Date) => {
+    const dateStr = format(day, 'yyyy-MM-dd');
+    const dayShift = shifts.find((s) => s.shift_date === dateStr && !s.is_vacation);
+    if (dayShift) {
+      setShiftModalData({
+        date: day,
+        shift: dayShift,
+        status: computeShiftStatus(day, dayShift),
+        startStr: dayShift.start_time?.slice(0, 5) || '—',
+        endStr: dayShift.end_time?.slice(0, 5) || '—',
+      });
+      setShiftModalOpen(true);
+      return;
+    }
     setDetailData(buildJourneyFromShifts(day, shifts));
     setDetailOpen(true);
   };
@@ -255,10 +298,21 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const startingDayOfWeek = firstDayOfMonth.getDay();
 
   // Stats for the month
-  const shiftDays = shifts.filter(s => !s.is_vacation).length;
-  const vacationDays = shifts.filter(s => s.is_vacation).length;
+  const nonVacationShifts = shifts.filter((s) => !s.is_vacation);
+  const shiftDays = nonVacationShifts.length;
+  const vacationDays = shifts.filter((s) => s.is_vacation).length;
   const leaveDays = leaves.length;
   const totalBhHours = bhEntries.reduce((acc, b) => acc + (b.operation_type === 'credit' ? b.hours : -b.hours), 0);
+
+  // Cumpridos vs Não cumpridos (para o mês exibido)
+  let doneCount = 0;
+  let missedCount = 0;
+  for (const s of nonVacationShifts) {
+    const d = parseISO(s.shift_date);
+    const st = computeShiftStatus(d, s);
+    if (st === 'done') doneCount++;
+    else if (st === 'missed') missedCount++;
+  }
 
   if (isLoading) {
     return (
@@ -319,6 +373,24 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
       </CardHeader>
 
       <CardContent className="space-y-2 relative px-3 pb-3">
+        {/* Resumo do mês: Cumpridos x Não cumpridos */}
+        <div className="grid grid-cols-2 gap-1.5">
+          <div className="flex items-center gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1.5">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-emerald-300 leading-none tabular-nums">{doneCount}</p>
+              <p className="text-[9px] text-emerald-200/70 uppercase tracking-wide mt-0.5">Cumpridos</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-1.5">
+            <XCircle className="h-4 w-4 text-rose-400 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-rose-300 leading-none tabular-nums">{missedCount}</p>
+              <p className="text-[9px] text-rose-200/70 uppercase tracking-wide mt-0.5">Não cumpridos</p>
+            </div>
+          </div>
+        </div>
+
         {/* Stats compactos */}
         <div className="grid grid-cols-4 gap-1">
           {[
@@ -371,16 +443,11 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   : false;
                 const restUntil = shiftStartStr || prevShift?.end_time?.slice(0, 5);
 
-                // Plantão já cumprido: dia < hoje e existe plantão agendado/registrado
-                const startOfToday = new Date();
-                startOfToday.setHours(0, 0, 0, 0);
-                const isPastDay = day < startOfToday && !isTodayDay;
-                const effectiveShiftStatus = dayShift
-                  ? (isPastDay && dayShift.status === 'scheduled' ? 'completed' : dayShift.status)
-                  : null;
-                const isShiftDone =
-                  effectiveShiftStatus === 'completed' || effectiveShiftStatus === 'compensated';
-                const isShiftMissed = effectiveShiftStatus === 'missed';
+                // Status do plantão (usa fuso local para "hoje")
+                const shiftStatus = dayShift ? computeShiftStatus(day, dayShift) : null;
+                const isShiftDone = shiftStatus === 'done';
+                const isShiftMissed = shiftStatus === 'missed';
+                const isShiftScheduled = shiftStatus === 'scheduled';
 
                 // Cores especiais para plantão cumprido (emerald) — sobrescreve amber
                 const dayColors = isShiftDone
@@ -432,32 +499,62 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                         )}
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[240px] bg-slate-900 border-slate-700 p-2.5">
+                    <TooltipContent side="top" className="max-w-[260px] bg-slate-900 border-slate-700 p-2.5">
                       <div className="space-y-1.5 text-xs">
-                        <div className="flex items-center gap-1.5 font-bold text-amber-300 pb-1 border-b border-slate-700">
-                          {isTodayDay ? '📅 Jornada de Hoje' : format(day, "EEE, dd 'de' MMM", { locale: ptBR })}
+                        <div className="flex items-center gap-1.5 font-bold text-amber-300 pb-1 border-b border-slate-700 capitalize">
+                          {format(day, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                          {isTodayDay && <span className="text-[9px] text-amber-400/80">(hoje)</span>}
                         </div>
-                        {isShiftDone && dayShift && (
+
+                        {/* Bloco de status do plantão — sempre visível quando há plantão */}
+                        {dayShift && isShiftDone && (
                           <div className="flex items-start gap-1.5 text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-1.5 py-1">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="mt-0.5 flex-shrink-0">
-                              <path d="M5 12l5 5L20 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+                            <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
                               <span className="font-bold uppercase tracking-wide">Plantão cumprido</span>
                               <br />
-                              <span className="text-[10px] text-emerald-200/80">
-                                {shiftStartStr}–{shiftEndStr || '—'} · finalizado
+                              <span className="text-[10px] text-emerald-200/80 tabular-nums">
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
                               </span>
                             </span>
                           </div>
                         )}
-                        {isShiftMissed && (
+                        {dayShift && isShiftMissed && (
                           <div className="flex items-start gap-1.5 text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded px-1.5 py-1">
-                            <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                            <span className="leading-tight font-semibold uppercase">Plantão não cumprido</span>
+                            <XCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">Plantão não cumprido</span>
+                              <br />
+                              <span className="text-[10px] text-rose-200/80 tabular-nums">
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
+                              </span>
+                            </span>
                           </div>
                         )}
-                        {!isShiftDone && !isShiftMissed && restUntil && (
+                        {dayShift && isShiftScheduled && (
+                          <div className={`flex items-start gap-1.5 rounded px-1.5 py-1 border ${shiftIsNight ? 'text-indigo-300 bg-indigo-500/10 border-indigo-500/30' : 'text-sky-300 bg-sky-500/10 border-sky-500/30'}`}>
+                            {shiftIsNight
+                              ? <Moon className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                              : <Sun className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />}
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">
+                                Plantão agendado ({shiftIsNight ? 'noturno' : 'diurno'})
+                              </span>
+                              <br />
+                              <span className="text-[10px] opacity-80 tabular-nums">
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
+                              </span>
+                            </span>
+                          </div>
+                        )}
+
+                        {!dayShift && dayInfo.types.includes('leave') && (
+                          <div className="flex items-start gap-1.5 text-blue-300">
+                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight font-semibold">Folga aprovada</span>
+                          </div>
+                        )}
+                        {!dayShift && !dayInfo.types.includes('leave') && restUntil && (
                           <div className="flex items-start gap-1.5 text-emerald-300">
                             <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
@@ -465,31 +562,15 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             </span>
                           </div>
                         )}
-                        {dayShift && !isShiftDone && !isShiftMissed ? (
-                          <div className={`flex items-start gap-1.5 ${shiftIsNight ? 'text-indigo-300' : 'text-sky-300'}`}>
-                            {shiftIsNight
-                              ? <Moon className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                              : <Sun className="h-3 w-3 mt-0.5 flex-shrink-0" />}
-                            <span className="leading-tight">
-                              <span className="font-semibold">Plantão {shiftIsNight ? 'Noturno' : 'Diurno'}:</span>{' '}
-                              {shiftStartStr}–{shiftEndStr || '—'}
-                            </span>
-                          </div>
-                        ) : !dayShift && dayInfo.types.includes('leave') ? (
-                          <div className="flex items-start gap-1.5 text-blue-300">
-                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                            <span className="leading-tight font-semibold">Folga aprovada</span>
-                          </div>
-                        ) : !dayShift && !isShiftDone ? (
-                          <div className="flex items-start gap-1.5 text-amber-400">
+                        {!dayShift && !dayInfo.types.includes('leave') && !restUntil && (
+                          <div className="flex items-start gap-1.5 text-muted-foreground">
                             <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                            <span className="leading-tight">
-                              {isTodayDay ? 'Revisar cadastro do agente' : 'Sem plantão cadastrado'}
-                            </span>
+                            <span className="leading-tight">Sem plantão cadastrado</span>
                           </div>
-                        ) : null}
+                        )}
+
                         <div className="text-[9px] text-muted-foreground pt-1 border-t border-slate-700/60 italic">
-                          Clique para ver a jornada completa
+                          {dayShift ? 'Clique para ver detalhes do plantão' : 'Clique para ver a jornada completa'}
                         </div>
                       </div>
                     </TooltipContent>
@@ -500,11 +581,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
           </div>
         </div>
 
-        {/* Legenda com dots SVG */}
+        {/* Legenda com dots SVG — sempre visível */}
         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 pt-1 border-t border-slate-700/50">
           {[
             { c: 'hsl(43 96% 56%)', label: 'Plantão' },
             { c: 'hsl(142 71% 45%)', label: 'Cumprido ✓' },
+            { c: 'hsl(0 84% 60%)', label: 'Não cumprido ✕' },
             { c: 'hsl(270 91% 65%)', label: 'Férias' },
             { c: 'hsl(217 91% 60%)', label: 'Folga' },
           ].map((it) => (
@@ -522,6 +604,97 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         onRequestDate={fetchJourneyForDate}
         storageKey={`journey:last-date:${agentId}`}
       />
+
+      {/* Modal de detalhes do plantão (horário, status, observações) */}
+      <Dialog open={shiftModalOpen} onOpenChange={setShiftModalOpen}>
+        <DialogContent className="max-w-sm bg-slate-900 border-slate-700 text-slate-100">
+          {shiftModalData && (() => {
+            const { date, shift, status, startStr, endStr } = shiftModalData;
+            const statusMeta =
+              status === 'done'
+                ? { icon: CheckCircle2, label: 'PLANTÃO CUMPRIDO', color: 'emerald', bg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' }
+                : status === 'missed'
+                ? { icon: XCircle, label: 'PLANTÃO NÃO CUMPRIDO', color: 'rose', bg: 'bg-rose-500/10 border-rose-500/30 text-rose-300' }
+                : { icon: Clock, label: 'PLANTÃO AGENDADO', color: 'sky', bg: 'bg-sky-500/10 border-sky-500/30 text-sky-300' };
+            const StatusIcon = statusMeta.icon;
+            const nightShift = Number(startStr.split(':')[0]) >= 19 || Number(startStr.split(':')[0]) < 7;
+
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 capitalize text-amber-300">
+                    {nightShift ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                    {format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-400 text-xs">
+                    Detalhes do plantão registrado para este dia.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-3 pt-1">
+                  {/* Status destacado */}
+                  <div className={`flex items-center gap-2 rounded-md border px-3 py-2 ${statusMeta.bg}`}>
+                    <StatusIcon className="h-5 w-5 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm tracking-wide">{statusMeta.label}</p>
+                      <p className="text-[10px] opacity-80 tabular-nums">
+                        {format(date, "dd/MM/yyyy", { locale: ptBR })}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Horário */}
+                  <div className="rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Horário
+                    </p>
+                    <p className="text-lg font-bold tabular-nums text-slate-100 mt-0.5">
+                      {startStr} <span className="text-slate-500">→</span> {endStr}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">
+                      Turno {nightShift ? 'noturno' : 'diurno'} · {shift.shift_date}
+                    </p>
+                  </div>
+
+                  {/* Observações */}
+                  <div className="rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                      <FileText className="h-3 w-3" /> Observações
+                    </p>
+                    <p className="text-xs text-slate-200 mt-1 whitespace-pre-wrap">
+                      {shift.notes && shift.notes.trim().length > 0
+                        ? shift.notes
+                        : <span className="text-slate-500 italic">Nenhuma observação registrada.</span>}
+                    </p>
+                  </div>
+                </div>
+
+                <DialogFooter className="flex-row justify-between gap-2 sm:justify-between">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-slate-700 text-slate-200 hover:bg-slate-800"
+                    onClick={() => {
+                      setShiftModalOpen(false);
+                      setDetailData(buildJourneyFromShifts(date, shifts));
+                      setDetailOpen(true);
+                    }}
+                  >
+                    Ver jornada completa
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-amber-500 text-black hover:bg-amber-400"
+                    onClick={() => setShiftModalOpen(false)}
+                  >
+                    Fechar
+                  </Button>
+                </DialogFooter>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
