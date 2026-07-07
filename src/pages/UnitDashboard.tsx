@@ -177,13 +177,7 @@ export default function UnitDashboard() {
 
   return (
     <div className="min-h-screen flex bg-slate-900 hud-scope hud-page-bg" style={{ ['--hud-bg-url' as any]: `url(${hudPageBg})` }}>
-      {/* Welcome Trial Dialog */}
-      {showWelcomeDialog && (
-        <WelcomeTrialDialog 
-          agentName={welcomeName} 
-          onClose={() => setShowWelcomeDialog(false)} 
-        />
-      )}
+      {/* WelcomeTrialDialog removido — sistema gratuito */}
 
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
