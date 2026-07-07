@@ -579,6 +579,12 @@ export default function AgentPanel() {
                           text: 'text-yellow-200 group-data-[state=active]:text-black',
                         },
                         {
+                          value: 'rondas', label: 'Rondas', full: 'Histórico de Rondas', Icon: Radio,
+                          trigger: 'hover:bg-red-500/15 hover:border-red-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-400 data-[state=active]:via-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-red-500/40 data-[state=active]:border-red-300',
+                          icon: 'text-red-400 group-data-[state=active]:text-white',
+                          text: 'text-red-200 group-data-[state=active]:text-white',
+                        },
+                        {
                           value: 'chat', label: 'Chat', full: 'Chat Interno', Icon: MessageCircle,
                           trigger: 'hover:bg-blue-500/15 hover:border-blue-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-blue-500/40 data-[state=active]:border-blue-300',
                           icon: 'text-blue-400 group-data-[state=active]:text-white',
