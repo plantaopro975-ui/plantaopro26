@@ -153,15 +153,22 @@ export function RecentShiftCyclesCard({ agentId, className }: RecentShiftCyclesC
               <div
                 key={c.id}
                 className={cn(
-                  'rounded-md border p-2 space-y-1',
+                  'relative rounded-md border p-2 space-y-1 overflow-hidden',
                   c.isNight
                     ? 'border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 via-slate-800/40 to-slate-900/60'
                     : 'border-sky-500/30 bg-gradient-to-br from-sky-500/10 via-slate-800/40 to-slate-900/60'
                 )}
               >
+                {/* Diagonal "CUMPRIDO" stamp */}
+                <div className="pointer-events-none absolute -right-8 top-2 rotate-12 select-none">
+                  <div className="px-6 py-0.5 border-2 border-emerald-400/60 rounded-sm bg-emerald-500/10 text-emerald-300/90 text-[9px] font-black tracking-[0.2em] uppercase shadow-inner">
+                    ✓ Cumprido
+                  </div>
+                </div>
+
                 <div className="flex items-center gap-1.5">
                   <PeriodIcon className={cn('h-3.5 w-3.5', c.isNight ? 'text-indigo-300' : 'text-amber-300')} />
-                  <span className={cn('text-[11px] font-bold uppercase tracking-wide', c.isNight ? 'text-indigo-300' : 'text-sky-300')}>
+                  <span className={cn('text-[11px] font-bold uppercase tracking-wide line-through decoration-emerald-500/50 decoration-[1.5px]', c.isNight ? 'text-indigo-300/80' : 'text-sky-300/80')}>
                     Plantão {c.durationH}h {periodLabel}
                   </span>
                   <span className="ml-auto text-[10px] text-muted-foreground tabular-nums">
@@ -175,9 +182,9 @@ export function RecentShiftCyclesCard({ agentId, className }: RecentShiftCyclesC
                       <span className="font-semibold">Descanso:</span> {restStr}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-slate-200">
+                  <div className="flex items-center gap-1 text-slate-300">
                     <PeriodIcon className="h-3 w-3 flex-shrink-0" />
-                    <span className="truncate">
+                    <span className="truncate line-through decoration-emerald-500/40">
                       <span className="font-semibold">Plantão:</span> {format(c.shiftStart, 'HH:mm')}–{format(c.shiftEnd, 'HH:mm')}
                       {' • '}{c.durationH}h {periodLabel.toLowerCase()}
                     </span>
