@@ -504,9 +504,9 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 pt-1 border-t border-slate-700/50">
           {[
             { c: 'hsl(43 96% 56%)', label: 'Plantão' },
+            { c: 'hsl(142 71% 45%)', label: 'Cumprido ✓' },
             { c: 'hsl(270 91% 65%)', label: 'Férias' },
             { c: 'hsl(217 91% 60%)', label: 'Folga' },
-            { c: 'hsl(142 71% 45%)', label: 'BH' },
           ].map((it) => (
             <div key={it.label} className="flex items-center gap-1">
               <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill={it.c} /></svg>
