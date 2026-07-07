@@ -242,23 +242,23 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
       </CardHeader>
       
       <CardContent className="space-y-3 relative">
-        {/* Month Stats — compacto */}
-        <div className="grid grid-cols-4 gap-1.5">
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-md py-1.5 px-1 text-center">
+        {/* Month Stats — 2 col em telas muito pequenas, 4 col a partir de xs */}
+        <div className="grid grid-cols-2 min-[420px]:grid-cols-4 gap-1.5">
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-md py-1.5 px-1.5 text-center">
             <p className="text-sm md:text-base font-bold text-amber-400 leading-none tabular-nums">{shiftDays}</p>
-            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">Plantões</p>
+            <p className="text-[9px] text-muted-foreground uppercase mt-0.5 truncate">Plantões</p>
           </div>
-          <div className="bg-purple-500/10 border border-purple-500/30 rounded-md py-1.5 px-1 text-center">
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-md py-1.5 px-1.5 text-center">
             <p className="text-sm md:text-base font-bold text-purple-400 leading-none tabular-nums">{vacationDays}</p>
-            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">Férias</p>
+            <p className="text-[9px] text-muted-foreground uppercase mt-0.5 truncate">Férias</p>
           </div>
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-md py-1.5 px-1 text-center">
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-md py-1.5 px-1.5 text-center">
             <p className="text-sm md:text-base font-bold text-blue-400 leading-none tabular-nums">{leaveDays}</p>
-            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">Folgas</p>
+            <p className="text-[9px] text-muted-foreground uppercase mt-0.5 truncate">Folgas</p>
           </div>
-          <div className="bg-green-500/10 border border-green-500/30 rounded-md py-1.5 px-1 text-center">
+          <div className="bg-green-500/10 border border-green-500/30 rounded-md py-1.5 px-1.5 text-center">
             <p className="text-sm md:text-base font-bold text-green-400 leading-none tabular-nums">{totalBhHours > 0 ? '+' : ''}{totalBhHours}</p>
-            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">BH (h)</p>
+            <p className="text-[9px] text-muted-foreground uppercase mt-0.5 truncate">BH (h)</p>
           </div>
         </div>
 
