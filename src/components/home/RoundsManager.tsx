@@ -1345,6 +1345,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       }
       /* ignore other errors — offline: sessão só local */
     }
+    // Registro profissional no histórico de atividades
+    void logRoundActivity('create', {
+      event: 'rounds_started',
+      team,
+      mode,
+      start_time: startTime,
+      end_time: endTime,
+      interval_min: intervalMin,
+      agents_count: schedule.rows.length,
+      agents: schedule.rows.map((r) => r.name),
+      night_locked: nightEffectivelyLocked,
+      started_at: new Date(anchorMs).toISOString(),
+    });
   };
 
   const pauseTimer = () => setRunning(false);
