@@ -339,8 +339,8 @@ export default function Index() {
     // Only prefill if user hasn't typed anything yet
     if (!checkCpf) {
       setPrefillAttempted(true);
-      // Reuse the existing real-time lookup flow
-      handleCpfInputChange(lastCpf);
+      // Reuse the existing real-time lookup flow (modo silencioso)
+      handleCpfInputChange(lastCpf, true);
     }
   }, [showCpfCheck, prefillAttempted, checkCpf]);
 
