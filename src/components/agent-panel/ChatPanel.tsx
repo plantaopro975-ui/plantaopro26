@@ -943,6 +943,112 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
           </div>
         </div>
       </CardContent>
+
+      {/* Confirmação profissional — apagar uma mensagem */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && !isDeleting && setDeleteTarget(null)}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-700 text-zinc-100 max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto mb-3 grid place-items-center h-16 w-16 rounded-full bg-gradient-to-br from-rose-500/20 to-rose-500/5 ring-1 ring-rose-500/40">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="trashGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#fda4af" />
+                    <stop offset="100%" stopColor="#e11d48" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-8 0v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7M10 11v6M14 11v6"
+                  stroke="url(#trashGrad)"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <AlertDialogTitle className="text-center text-base tracking-wide">
+              {deleteTarget?.scope === 'all' ? 'Apagar para todos?' : 'Ocultar para você?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-xs text-zinc-400 leading-relaxed">
+              {deleteTarget?.scope === 'all'
+                ? 'A mensagem será removida permanentemente da conversa para todos os participantes. Esta ação não pode ser desfeita.'
+                : 'A mensagem some apenas do seu histórico neste dispositivo. Os demais participantes continuam vendo normalmente.'}
+            </AlertDialogDescription>
+            {deleteTarget?.preview ? (
+              <div className="mt-2 mx-auto max-w-full rounded-md border border-zinc-700/70 bg-zinc-800/70 px-3 py-2 text-[11px] italic text-zinc-300 line-clamp-3">
+                "{deleteTarget.preview}"
+              </div>
+            ) : null}
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel disabled={isDeleting} className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(e) => { e.preventDefault(); confirmDeleteMessage(); }}
+              className={
+                deleteTarget?.scope === 'all'
+                  ? 'bg-rose-600 hover:bg-rose-500 text-white'
+                  : 'bg-amber-500 hover:bg-amber-400 text-black'
+              }
+            >
+              {isDeleting ? (
+                <><Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />Processando…</>
+              ) : deleteTarget?.scope === 'all' ? (
+                <><Trash2 className="h-3.5 w-3.5 mr-2" />Apagar para todos</>
+              ) : (
+                <><Trash2 className="h-3.5 w-3.5 mr-2" />Ocultar para mim</>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Confirmação profissional — limpar toda a conversa (só para mim) */}
+      <AlertDialog open={clearAllOpen} onOpenChange={(o) => !isDeleting && setClearAllOpen(o)}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-700 text-zinc-100 max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto mb-3 grid place-items-center h-16 w-16 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-500/40">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" aria-hidden="true">
+                <path
+                  d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                  stroke="#f59e0b"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path d="M12 11v6" stroke="#fbbf24" strokeWidth="1.7" strokeLinecap="round" />
+              </svg>
+            </div>
+            <AlertDialogTitle className="text-center text-base tracking-wide">
+              Limpar esta conversa?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-xs text-zinc-400 leading-relaxed">
+              Todas as mensagens visíveis serão ocultadas <strong>apenas no seu dispositivo</strong>.
+              A conversa continua íntegra para os demais agentes. Ação irreversível para você.
+            </AlertDialogDescription>
+            <div className="mt-2 mx-auto text-[11px] text-zinc-300 bg-zinc-800/70 border border-zinc-700/70 rounded-md px-3 py-1.5">
+              {messages.filter(m => !deletedMessageIds.has(m.id)).length} mensagem(ns) serão ocultadas
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel disabled={isDeleting} className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(e) => { e.preventDefault(); clearConversationForMe(); }}
+              className="bg-amber-500 hover:bg-amber-400 text-black"
+            >
+              {isDeleting ? (
+                <><Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />Limpando…</>
+              ) : (
+                <><Trash2 className="h-3.5 w-3.5 mr-2" />Limpar para mim</>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
