@@ -448,9 +448,7 @@ export default function AgentPanel() {
             paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
           }}
         >
-          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-4xl space-y-2 md:space-y-2.5' : 'max-w-5xl space-y-2.5 md:space-y-3'}`}>
-            {/* Hero HUD removido — redundante com o AgentPanelHeader, reduzindo altura da página */}
-
+          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
             {/* Professional Header Bar */}
             <AgentPanelHeader 
               agent={{
@@ -463,7 +461,6 @@ export default function AgentPanel() {
                 unit_id: (agent as any).unit_id
               }}
               isOnline={isOnline}
-              onShowWelcome={() => { /* trial removido */ }}
               onReactivateShiftBanner={reactivateShiftBanner}
               isShiftBannerDismissed={isShiftBannerDismissed}
               compact={compact}
