@@ -17,6 +17,7 @@ const ActivityLogsCard = lazy(() => import('@/components/dashboard/ActivityLogsC
 const SystemOverviewCard = lazy(() => import('@/components/dashboard/SystemOverviewCard').then(m => ({ default: m.SystemOverviewCard })));
 const AdvertisementsManager = lazy(() => import('@/components/admin/AdvertisementsManager').then(m => ({ default: m.AdvertisementsManager })));
 const DynamicScreensManager = lazy(() => import('@/components/admin/DynamicScreensManager').then(m => ({ default: m.DynamicScreensManager })));
+const ScheduledRoundsManager = lazy(() => import('@/components/admin/ScheduledRoundsManager').then(m => ({ default: m.ScheduledRoundsManager })));
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
