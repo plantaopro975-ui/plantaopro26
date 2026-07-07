@@ -88,6 +88,66 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
     return 'scheduled';
   };
 
+  // Classifica a folga de um dia SEM plantão.
+  // Ciclo padrão: plantão 07:00 → 07:00 (24h) + 3 dias de descanso (72h).
+  //  - Dia logo após o plantão (D+1): a madrugada 00:00-07:00 ainda está no plantão
+  //    anterior, restando ~17h livres → chamamos "Meia folga (12h)".
+  //  - Dias D+2 e D+3: totalmente livres → "Folga integral (24h)".
+  //  - Dia antes do próximo plantão: apenas a madrugada é livre — porém esse
+  //    dia É o próprio plantão, então já foi tratado como shift day.
+  const classifyRestDay = (
+    day: Date,
+    allShifts: Shift[],
+  ): { kind: 'off_24h' | 'half_post' | 'none'; prev?: Shift; next?: Shift } => {
+    const dateStr = format(day, 'yyyy-MM-dd');
+    const nonVac = allShifts.filter((s) => !s.is_vacation);
+    const prev = [...nonVac]
+      .filter((s) => s.shift_date < dateStr)
+      .sort((a, b) => (a.shift_date < b.shift_date ? 1 : -1))[0];
+    const next = nonVac
+      .filter((s) => s.shift_date > dateStr)
+      .sort((a, b) => (a.shift_date < b.shift_date ? -1 : 1))[0];
+
+    if (!prev && !next) return { kind: 'none' };
+
+    // Diferença em dias entre o plantão anterior e este dia
+    const diffFromPrev = prev
+      ? Math.round(
+          (parseISO(dateStr).getTime() - parseISO(prev.shift_date).getTime()) /
+            (1000 * 60 * 60 * 24),
+        )
+      : Infinity;
+
+    // Se o plantão anterior foi ontem e ele terminou de madrugada (end<=start),
+    // a madrugada de hoje ainda está no plantão → meia folga (~12h/17h).
+    if (prev && diffFromPrev === 1) {
+      const pStart = prev.start_time?.slice(0, 5) ?? '07:00';
+      const pEnd = prev.end_time?.slice(0, 5) ?? '07:00';
+      if (pEnd <= pStart) return { kind: 'half_post', prev, next };
+    }
+
+    return { kind: 'off_24h', prev, next };
+  };
+
+  // Estado para divergências detectadas pelo backend
+  const [divergences, setDivergences] = useState<
+    Array<{ divergence_type: string; shift_date: string; expected_date: string | null; notes: string | null }>
+  >([]);
+
+  const checkDivergences = async () => {
+    try {
+      const { data, error } = await supabase.rpc('check_agent_shift_divergences', {
+        p_agent_id: agentId,
+        p_months_ahead: 3,
+      });
+      if (!error && Array.isArray(data)) {
+        setDivergences(data as any);
+      }
+    } catch (e) {
+      // silencioso — validação é auxiliar
+    }
+  };
+
   const buildDT = (dateStr: string, time: string | null, fallback: string) => {
     const [h, m] = (time || fallback).split(':').map(Number);
     const d = parseISO(dateStr);
