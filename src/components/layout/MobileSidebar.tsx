@@ -9,9 +9,11 @@ import {
   LayoutDashboard,
   Settings,
   Shield,
+  MapPin,
   UserCircle,
   ClipboardCheck,
   Home,
+  Building2,
 } from 'lucide-react';
 import {
   SidebarNavItem,
@@ -26,7 +28,13 @@ const navItems: NavItemDef[] = [
   { icon: UserCircle, label: 'Meu Painel', href: '/agent-panel' },
   { icon: Users, label: 'Agentes', href: '/agents' },
   { icon: Clock, label: 'Banco de Horas', href: '/overtime' },
+  { icon: MapPin, label: 'Unidades', href: '/units' },
   { icon: Settings, label: 'Configurações', href: '/settings' },
+];
+
+const adminItems: NavItemDef[] = [
+  { icon: Building2, label: 'Gerenciar Unidades', href: '/units' },
+  { icon: ClipboardCheck, label: 'Auditoria de Unidades', href: '/admin/units-audit' },
 ];
 
 const masterItems: NavItemDef[] = [
@@ -39,9 +47,10 @@ interface MobileSidebarProps {
 }
 
 export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
-  const { masterSession, user } = useAuth();
+  const { masterSession, user, isAdmin } = useAuth();
   const [restricted, setRestricted] = useState<string | null>(null);
   const isAuthed = !!user || !!masterSession;
+
 
   const handleClick =
     (label: string, isMaster = false) =>
@@ -85,6 +94,20 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
           />
         ))}
 
+        {isAdmin && !masterSession && (
+          <>
+            <SidebarDivider />
+            <SidebarSectionLabel accent>Administração</SidebarSectionLabel>
+            {adminItems.map((item) => (
+              <SidebarNavItem
+                key={`admin-${item.href}`}
+                item={item}
+                onClick={handleClick(item.label, true)}
+              />
+            ))}
+          </>
+        )}
+
         {masterSession && (
           <>
             <SidebarDivider />
@@ -99,6 +122,7 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
           </>
         )}
       </nav>
+
 
       {/* Footer */}
       <div className="px-5 py-3 border-t border-sidebar-border/60 flex items-center justify-between">

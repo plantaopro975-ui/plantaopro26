@@ -11,18 +11,23 @@ import { TeamEmblem } from '@/components/TeamEmblem';
 import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
-import { 
-  Loader2, 
-  MapPin, 
-  Users, 
-  Shield, 
-  Sword, 
-  Target, 
+import {
+  Loader2,
+  MapPin,
+  Users,
+  Shield,
+  Sword,
+  Target,
   Calendar,
   Building2,
   User,
-  Clock
+  Clock,
+  History,
+  ArrowLeft,
 } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
 
 interface Unit {
   id: string;
@@ -53,17 +58,30 @@ const teamConfigs: Record<string, { icon: any; color: string; bgColor: string }>
   DELTA: { icon: Users, color: 'text-violet-400', bgColor: 'bg-violet-500/20' },
 };
 
+interface UnitHistoryEntry {
+  id: string;
+  action: string;
+  agent_name: string | null;
+  details: any;
+  created_at: string;
+}
+
 export default function UnitDashboard() {
   const { unitId } = useParams<{ unitId: string }>();
-  const { user, isLoading: authLoading, masterSession } = useAuth();
+  const { user, isLoading: authLoading, masterSession, isAdmin } = useAuth();
   const { agent: currentAgent } = useAgentProfile();
   const navigate = useNavigate();
-  
+
   const [unit, setUnit] = useState<Unit | null>(null);
   const [teamStats, setTeamStats] = useState<TeamStats[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [welcomeName, setWelcomeName] = useState('');
+  const [history, setHistory] = useState<UnitHistoryEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
+  const canSeeHistory = !!masterSession || isAdmin;
+
 
   // Redirect only after loading is complete
   useEffect(() => {
@@ -161,6 +179,46 @@ export default function UnitDashboard() {
     }
   };
 
+  // Histórico de alterações (admin/master apenas)
+  useEffect(() => {
+    if (!unitId || !canSeeHistory) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        setHistoryLoading(true);
+        // Busca logs relacionados a esta unidade (resource_type='unit' + detalhes contendo unit_id)
+        const { data, error } = await supabase
+          .from('activity_logs')
+          .select('id, action, agent_name, details, created_at')
+          .or(`and(resource_type.eq.unit,resource_id.eq.${unitId}),details->>unit_id.eq.${unitId}`)
+          .order('created_at', { ascending: false })
+          .limit(30);
+        if (error) throw error;
+        if (!cancelled) setHistory((data || []) as UnitHistoryEntry[]);
+      } catch (e) {
+        console.error('Error fetching unit history:', e);
+        if (!cancelled) setHistory([]);
+      } finally {
+        if (!cancelled) setHistoryLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [unitId, canSeeHistory]);
+
+  const actionLabel = (action: string) => {
+    const map: Record<string, string> = {
+      unit_created: 'Unidade criada',
+      unit_updated: 'Unidade atualizada',
+      unit_deleted: 'Unidade removida',
+      agent_transferred: 'Agente transferido',
+      agent_created: 'Agente cadastrado',
+      agent_updated: 'Agente atualizado',
+      agent_deleted: 'Agente excluído',
+    };
+    return map[action] || action.replace(/_/g, ' ');
+  };
+
+
   if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -183,6 +241,15 @@ export default function UnitDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 p-3 md:p-5 overflow-auto">
           <div className="max-w-6xl mx-auto space-y-4 animate-fade-in">
+            {canSeeHistory && (
+              <button
+                type="button"
+                onClick={() => navigate('/units')}
+                className="inline-flex items-center gap-1.5 text-xs text-slate-300 hover:text-amber-300 transition-colors"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" /> Voltar para Unidades
+              </button>
+            )}
             <PanelHeroHUD
               variant="units"
               icon="building"
@@ -324,7 +391,66 @@ export default function UnitDashboard() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Histórico de alterações — Admin/Master */}
+            {canSeeHistory && (
+              <Card className="bg-slate-800/40 border-slate-700/50 tactical-card relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+                <CardHeader className="p-3 pb-2">
+                  <CardTitle className="flex items-center gap-2 text-sm text-white">
+                    <History className="h-4 w-4 text-amber-400" />
+                    Histórico de alterações
+                    <Badge variant="secondary" className="ml-auto text-[10px] h-5">
+                      {history.length}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                  {historyLoading ? (
+                    <div className="flex items-center justify-center py-6">
+                      <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
+                    </div>
+                  ) : history.length === 0 ? (
+                    <div className="text-center py-6 space-y-1">
+                      <p className="text-xs text-slate-400">Nenhuma alteração registrada para esta unidade.</p>
+                      <p className="text-[10px] text-slate-500">
+                        Ações administrativas (edições, transferências, cadastros) aparecerão aqui automaticamente.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                      {history.map((h) => (
+                        <div
+                          key={h.id}
+                          className="flex items-start gap-2 p-2 rounded bg-slate-900/40 border border-slate-800/60 text-xs"
+                        >
+                          <div className="h-6 w-6 shrink-0 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center">
+                            <History className="h-3 w-3 text-amber-400" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-slate-100 font-medium truncate">{actionLabel(h.action)}</p>
+                            <p className="text-[10px] text-slate-400 truncate">
+                              {h.agent_name || 'Sistema'} · {formatDistanceToNow(new Date(h.created_at), { locale: ptBR, addSuffix: true })}
+                            </p>
+                            {h.details && typeof h.details === 'object' && (
+                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                                {Object.entries(h.details)
+                                  .filter(([k]) => !['unit_id', 'agent_id'].includes(k))
+                                  .slice(0, 3)
+                                  .map(([k, v]) => `${k}: ${typeof v === 'string' ? v : JSON.stringify(v)}`)
+                                  .join(' · ')}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
+
         </main>
       </div>
     </div>
