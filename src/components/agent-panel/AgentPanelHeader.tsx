@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
-import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
+// getRemainingTrialDays removido — sistema gratuito
 import { FontSizeControl } from '@/components/FontSizeControl';
 import { cn } from '@/lib/utils';
 import { TeamEmblem } from '@/components/TeamEmblem';

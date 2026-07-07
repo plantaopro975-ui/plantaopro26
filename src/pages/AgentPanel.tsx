@@ -797,15 +797,7 @@ export default function AgentPanel() {
       </div>
     </ThemedPanelBackground>
 
-    {/* Welcome Trial Dialog */}
-    {showWelcomeDialog && agent && (
-      <Suspense fallback={null}>
-        <WelcomeTrialDialog 
-          agentName={agent.name} 
-          onClose={() => setShowWelcomeDialog(false)} 
-        />
-      </Suspense>
-    )}
+    {/* WelcomeTrialDialog removido — sistema gratuito */}
     </>
   );
 }
