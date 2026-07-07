@@ -1089,21 +1089,52 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData?.user?.id;
       if (uid) {
-        await supabase.from('round_sessions')
-          .update({ is_active: false, ended_at: new Date().toISOString() })
-          .eq('user_id', uid).eq('is_active', true);
-        const { data } = await supabase.from('round_sessions').insert({
-          user_id: uid,
-          team, mode, start_time: startTime, end_time: endTime,
-          interval_min: intervalMin,
-          rows: schedule.rows.map((r) => ({ name: r.name, duration: r.duration })),
-          server_started_at: new Date(startMs).toISOString(),
-          is_active: true,
-        }).select('id').maybeSingle();
-        if (data?.id) sessionIdRef.current = data.id;
+        const rows = schedule.rows.map((r) => ({ name: r.name, duration: r.duration }));
+        // Atomic path when master override is active (trigger reads reason via GUC).
+        if (overrideActive && nightLocked) {
+          const { data, error } = await supabase.rpc('insert_round_session_override' as any, {
+            p_reason: overrideReason.trim(),
+            p_team: team,
+            p_mode: mode,
+            p_start_time: startTime,
+            p_end_time: endTime,
+            p_interval_min: intervalMin,
+            p_rows: rows,
+            p_server_started_at: new Date(startMs).toISOString(),
+          });
+          if (error) throw error;
+          if (typeof data === 'string') sessionIdRef.current = data;
+        } else {
+          await supabase.from('round_sessions')
+            .update({ is_active: false, ended_at: new Date().toISOString() })
+            .eq('user_id', uid).eq('is_active', true);
+          const { data, error } = await supabase.from('round_sessions').insert({
+            user_id: uid,
+            team, mode, start_time: startTime, end_time: endTime,
+            interval_min: intervalMin,
+            rows,
+            server_started_at: new Date(startMs).toISOString(),
+            is_active: true,
+          }).select('id').maybeSingle();
+          if (error) throw error;
+          if (data?.id) sessionIdRef.current = data.id;
+        }
       }
-    } catch { /* ignore — offline: sessão só local */ }
+    } catch (e: any) {
+      const msg = String(e?.message ?? '');
+      if (msg.includes('NIGHT_SHIFT_LOCK')) {
+        toast({
+          title: 'Bloqueio de turno noturno',
+          description: 'O servidor rejeitou horários fora de 22:00→06:00. Ative o override master se autorizado.',
+          variant: 'destructive',
+        });
+        setRunning(false);
+        return;
+      }
+      /* ignore other errors — offline: sessão só local */
+    }
   };
+
   const pauseTimer = () => setRunning(false);
   const resetTimer = () => {
     setRunning(false);
