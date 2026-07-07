@@ -559,36 +559,45 @@ export default function AgentPanel() {
 
             {/* Main Tabs - REDESIGNED: Modern, Legible, Mobile-First */}
             <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-amber-500" /></div>}>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-3 md:space-y-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-3 md:space-y-4'}>
               {/* Control Panel Container - Modern Glass Design */}
-              <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl md:rounded-2xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
+              <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
                 {/* Decorative glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5 pointer-events-none" />
                 
                 {/* Control Panel Header - Compact & Professional */}
-                <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 md:p-4 border-b border-amber-500/20">
-                  <div className="flex items-center gap-2.5 md:gap-3">
-                    <div className="p-2 md:p-2.5 bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 rounded-lg md:rounded-xl shadow-md shadow-amber-500/30 ring-1 ring-amber-300/30">
-                      <Shield className="h-5 w-5 md:h-6 md:w-6 text-black" />
+                <div className={cn(
+                  'relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-amber-500/20',
+                  compact ? 'p-2 md:p-2.5' : 'p-2.5 md:p-3'
+                )}>
+                  <div className="flex items-center gap-2 md:gap-2.5">
+                    <div className={cn(
+                      'bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 rounded-lg shadow-md shadow-amber-500/30 ring-1 ring-amber-300/30',
+                      compact ? 'p-1.5' : 'p-1.5 md:p-2'
+                    )}>
+                      <Shield className={cn('text-black', compact ? 'h-4 w-4' : 'h-4 w-4 md:h-5 md:w-5')} />
                     </div>
                     <div>
-                      <h2 className="text-base md:text-lg font-black text-amber-100 tracking-tight leading-tight">
+                      <h2 className={cn('font-black text-amber-100 tracking-tight leading-tight', compact ? 'text-xs md:text-sm' : 'text-sm md:text-base')}>
                         PAINEL DE CONTROLE
                       </h2>
-                      <p className="text-[11px] md:text-xs text-amber-400/90 font-medium tracking-wide mt-0.5">
+                      <p className={cn('text-amber-400/90 font-medium tracking-wide mt-0.5', compact ? 'text-[10px]' : 'text-[10px] md:text-[11px]')}>
                         Sistema Operacional Integrado
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 md:gap-2 bg-emerald-500/20 px-2.5 md:px-3 py-1 md:py-1.5 rounded-lg border border-emerald-500/40 shadow-sm shadow-emerald-500/10">
-                    <Zap className="h-3.5 w-3.5 md:h-4 md:w-4 text-emerald-400 animate-pulse" />
-                    <span className="text-[11px] md:text-xs font-bold text-emerald-300 tracking-wider">ONLINE</span>
+                  <div className="flex items-center gap-1.5 bg-emerald-500/20 px-2 py-1 rounded-md border border-emerald-500/40 shadow-sm shadow-emerald-500/10">
+                    <Zap className="h-3 w-3 md:h-3.5 md:w-3.5 text-emerald-400 animate-pulse" />
+                    <span className="text-[10px] md:text-[11px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
                   </div>
                 </div>
                 
                 {/* Tabs Grid - Compact, readable */}
-                <div className="p-2 md:p-3">
-                  <TabsList className="bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 p-1.5 md:p-2 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-1.5 md:gap-2 rounded-lg md:rounded-xl shadow-inner">
+                <div className={compact ? 'p-1.5 md:p-2' : 'p-2 md:p-2.5'}>
+                  <TabsList className={cn(
+                    'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 rounded-lg shadow-inner w-full',
+                    compact ? 'p-1 gap-1' : 'p-1.5 gap-1.5'
+                  )}>
                     {/* Equipe Tab */}
                     <TabsTrigger 
                       value="equipe" 
