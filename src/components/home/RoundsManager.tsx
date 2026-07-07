@@ -836,24 +836,30 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     }
 
 
+    // No turno noturno travado, sempre usamos distribuição EXATA em segundos
+    // — assim os postos consomem 100% do tempo restante até 06:00 sem sobras.
+    const effRounding: Rounding =
+      (nightEffectivelyLocked && mode === 'split') ? 'exact' : rounding;
+
     // Estratégia de fatiamento em SEGUNDOS
     const slotsSec: number[] = new Array(n).fill(0);
     if (mode === 'interval') {
       // Intervalo fixo — cada agente recebe exatamente o intervalo escolhido
       const per = Math.round(intervalMin * 60);
       for (let i = 0; i < n; i++) slotsSec[i] = per;
-    } else if (rounding === 'exact') {
-      // Distribui em segundos inteiros, encaixando o resto nos primeiros (fecha 100% no endTime)
+    } else if (effRounding === 'exact') {
+      // Distribui em segundos inteiros, encaixando o resto nos primeiros (fecha 100% no endTime).
+      // A soma dos slots é IGUAL a totalSec — nenhuma sobra ou déficit acumulado.
       const base = Math.floor(totalSec / n);
       let leftover = totalSec - base * n;
       for (let i = 0; i < n; i++) {
         slotsSec[i] = base + (leftover > 0 ? 1 : 0);
         if (leftover > 0) leftover--;
       }
-    } else if (rounding === 'floor') {
+    } else if (effRounding === 'floor') {
       const perMin = Math.floor(totalSec / 60 / n);
       for (let i = 0; i < n; i++) slotsSec[i] = perMin * 60;
-    } else if (rounding === 'ceil') {
+    } else if (effRounding === 'ceil') {
       const perMin = Math.ceil(totalSec / 60 / n);
       for (let i = 0; i < n; i++) slotsSec[i] = perMin * 60;
     } else {
@@ -871,6 +877,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const drift = totalSec - slotsSec.reduce((a, v) => a + v, 0);
       if (drift !== 0) slotsSec[n - 1] += drift;
     }
+
 
     // Monta linhas com precisão de segundos; fromAbs/toAbs em minutos (float) mantém compat com o live timer.
     let cursorSec = startSec;
