@@ -14,6 +14,7 @@ import {
   UserCircle,
   ClipboardCheck,
   Home,
+  Building2,
 } from 'lucide-react';
 import {
   SidebarNavItem,
@@ -32,6 +33,11 @@ const navItems: NavItemDef[] = [
   { icon: Settings, label: 'Configurações', href: '/settings' },
 ];
 
+const adminItems: NavItemDef[] = [
+  { icon: Building2, label: 'Gerenciar Unidades', href: '/units' },
+  { icon: ClipboardCheck, label: 'Auditoria de Unidades', href: '/admin/units-audit' },
+];
+
 const masterItems: NavItemDef[] = [
   { icon: Shield, label: 'Painel Master', href: '/master' },
   { icon: ClipboardCheck, label: 'Auditoria de Unidades', href: '/admin/units-audit' },
@@ -39,7 +45,7 @@ const masterItems: NavItemDef[] = [
 
 export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
   (props, ref) => {
-    const { masterSession, user } = useAuth();
+    const { masterSession, user, isAdmin } = useAuth();
     const [restricted, setRestricted] = useState<string | null>(null);
     const isAuthed = !!user || !!masterSession;
 
@@ -84,6 +90,16 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
             <SidebarNavItem key={item.href} item={item} onClick={guard(item.label)} />
           ))}
 
+          {isAdmin && !masterSession && (
+            <>
+              <SidebarDivider />
+              <SidebarSectionLabel accent>Administração</SidebarSectionLabel>
+              {adminItems.map((item) => (
+                <SidebarNavItem key={`admin-${item.href}`} item={item} />
+              ))}
+            </>
+          )}
+
           {masterSession && (
             <>
               <SidebarDivider />
@@ -114,3 +130,4 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
 );
 
 Sidebar.displayName = 'Sidebar';
+
