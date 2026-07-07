@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { TeamEmblem } from '@/components/TeamEmblem';
-import { WelcomeTrialDialog } from '@/components/WelcomeTrialDialog';
 import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
@@ -178,13 +177,7 @@ export default function UnitDashboard() {
 
   return (
     <div className="min-h-screen flex bg-slate-900 hud-scope hud-page-bg" style={{ ['--hud-bg-url' as any]: `url(${hudPageBg})` }}>
-      {/* Welcome Trial Dialog */}
-      {showWelcomeDialog && (
-        <WelcomeTrialDialog 
-          agentName={welcomeName} 
-          onClose={() => setShowWelcomeDialog(false)} 
-        />
-      )}
+      {/* WelcomeTrialDialog removido — sistema gratuito */}
 
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">

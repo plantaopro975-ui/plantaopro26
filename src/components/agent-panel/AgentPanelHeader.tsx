@@ -25,7 +25,6 @@ interface Agent {
 interface AgentPanelHeaderProps {
   agent: Agent;
   isOnline: boolean;
-  onShowWelcome: () => void;
   onReactivateShiftBanner?: () => void;
   isShiftBannerDismissed?: boolean;
   compact?: boolean;
@@ -244,7 +243,7 @@ function ActionButton({
    Main header
    ──────────────────────────────────────────────────────────────── */
 
-export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed, compact = false, onToggleCompact }: AgentPanelHeaderProps) {
+export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isShiftBannerDismissed, compact = false, onToggleCompact }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   // trial removido — sistema gratuito
