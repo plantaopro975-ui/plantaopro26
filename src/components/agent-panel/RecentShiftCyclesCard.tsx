@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Sun, Moon, Palmtree, History, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sun, Moon, Palmtree, History, AlertCircle, Eye } from 'lucide-react';
 import { format, parseISO, differenceInHours } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 
 interface RecentShiftCyclesCardProps {
   agentId: string;
