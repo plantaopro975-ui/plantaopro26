@@ -136,7 +136,7 @@ export default function UnitsAudit() {
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {u.director_name ?? "—"} · {u.email ?? "sem email"}
+                  {u.email ?? "sem email"}
                 </p>
                 <p className="text-[10px] font-mono text-muted-foreground/60 mt-1">{u.id}</p>
               </div>
