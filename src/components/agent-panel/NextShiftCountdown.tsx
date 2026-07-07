@@ -162,12 +162,35 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
     // Shift card
     if (nextShift) {
       const shiftDate = parseISO(nextShift.shift_date);
+      const [hh, mm] = (nextShift.start_time || '07:00').split(':').map(Number);
+      const shiftStart = new Date(shiftDate);
+      shiftStart.setHours(hh || 7, mm || 0, 0, 0);
+
       const now = new Date();
-      const daysUntil = differenceInDays(shiftDate, now);
-      const hoursUntil = differenceInHours(shiftDate, now);
+      // Dias de calendário (não afetados por horário atual)
+      const daysUntil = differenceInCalendarDays(shiftDate, startOfDay(now));
+      // Horas até o início real do plantão
+      const hoursUntil = differenceInHours(shiftStart, now);
+      const minutesUntil = differenceInMinutes(shiftStart, now);
       const isTodayShift = isToday(shiftDate);
-      const isUrgent = isTodayShift || hoursUntil <= 12;
+      const isUrgent = isTodayShift || (hoursUntil >= 0 && hoursUntil <= 12);
       const isSoon = daysUntil <= 1;
+
+      // Valor exibido — inclui horas quando faltam <24h e dias em outros casos
+      let displayValue: string;
+      if (isTodayShift) {
+        if (minutesUntil > 0 && minutesUntil < 60) {
+          displayValue = `em ${minutesUntil}min`;
+        } else if (hoursUntil > 0 && hoursUntil < 24) {
+          displayValue = `em ${hoursUntil}h`;
+        } else {
+          displayValue = `às ${nextShift.start_time?.slice(0, 5) || '07:00'}`;
+        }
+      } else if (daysUntil === 1) {
+        displayValue = `amanhã, ${hoursUntil > 0 ? `${hoursUntil}h` : ''}`.trim().replace(/,\s*$/, '');
+      } else {
+        displayValue = `${daysUntil} dias`;
+      }
 
       cards.push({
         id: 'shift',
@@ -175,8 +198,8 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
         priority: isTodayShift ? 2 : 10,
         icon: isUrgent ? <Zap className="h-5 w-5 text-white" /> : isSoon ? <AlertTriangle className="h-5 w-5 text-white" /> : <Calendar className="h-5 w-5 text-white" />,
         title: isTodayShift ? 'PLANTÃO HOJE' : 'Próximo Plantão',
-        value: isTodayShift ? `às ${nextShift.start_time?.slice(0, 5) || '07:00'}` : `${daysUntil} dia${daysUntil !== 1 ? 's' : ''}`,
-        subtitle: format(shiftDate, "EEEE, dd/MM", { locale: ptBR }),
+        value: displayValue,
+        subtitle: `${format(shiftDate, "EEEE, dd/MM", { locale: ptBR })} • ${nextShift.start_time?.slice(0, 5) || '07:00'}`,
         colorClass: isUrgent ? 'text-emerald-400' : isSoon ? 'text-amber-400' : 'text-slate-400',
         bgClass: isUrgent ? 'bg-gradient-to-br from-emerald-500 to-green-600' : isSoon ? 'bg-gradient-to-br from-amber-500 to-orange-600' : 'bg-gradient-to-br from-slate-600 to-slate-700',
         borderClass: isUrgent 
