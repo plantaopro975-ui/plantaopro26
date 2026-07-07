@@ -5,7 +5,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 import { useSessionPersistence } from '@/hooks/useSessionPersistence';
-// License hooks removidos — sistema gratuito
 import { useShiftNotifications } from '@/hooks/useShiftNotifications';
 import { useBHReminder } from '@/hooks/useBHReminder';
 import { useBHReminderHour } from '@/components/agent-panel/BHReminderSettings';
@@ -112,7 +111,6 @@ export default function AgentPanel() {
     },
   });
 
-  // Licenças e trial removidos — sistema gratuito
 
 
   // Shift notifications - checks for upcoming shifts and sends reminders
@@ -420,7 +418,6 @@ export default function AgentPanel() {
     <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
       <div className="hud-scope flex-1 flex flex-col w-full min-w-0 min-h-0">
 
-      {/* License warning banner removido — sistema gratuito */}
 
       {/* Session Monitor Banner - Visual session status */}
       <SessionMonitorBanner />
@@ -791,7 +788,6 @@ export default function AgentPanel() {
       </div>
     </ThemedPanelBackground>
 
-    {/* WelcomeTrialDialog removido — sistema gratuito */}
     </>
   );
 }
