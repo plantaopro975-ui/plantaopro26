@@ -253,21 +253,30 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       nextIsNight: boolean;
     } = null;
 
-    if (!todayLeave && shiftMeta && shiftMeta.isTodayShift && previousShift) {
-      const prevDate = parseISO(previousShift.shift_date);
-      const [phh, pmm] = (previousShift.start_time || '19:00').split(':').map(Number);
-      const [peh, pem] = (previousShift.end_time || '07:00').split(':').map(Number);
-      const prevStart = new Date(prevDate);
-      prevStart.setHours(phh || 19, pmm || 0, 0, 0);
-      const prevEnd = new Date(prevStart);
-      prevEnd.setHours(peh || 7, pem || 0, 0, 0);
-      if (prevEnd <= prevStart) prevEnd.setDate(prevEnd.getDate() + 1);
-
-      // O descanso de hoje começa quando o plantão anterior terminou (se foi hoje)
-      // e vai até o início do plantão de hoje.
+    if (!todayLeave && shiftMeta && shiftMeta.isTodayShift) {
       const now = new Date();
       const dayStart = startOfDay(now);
-      const restStart = prevEnd > dayStart ? prevEnd : dayStart;
+
+      // Início do descanso = fim do plantão anterior (se foi hoje) OU 07:00 de hoje
+      // (padrão operacional: folga diurna 07:00–19:00 antes do plantão noturno).
+      let restStart = new Date(dayStart);
+      restStart.setHours(7, 0, 0, 0);
+
+      if (previousShift) {
+        const prevDate = parseISO(previousShift.shift_date);
+        const [phh, pmm] = (previousShift.start_time || '19:00').split(':').map(Number);
+        const [peh, pem] = (previousShift.end_time || '07:00').split(':').map(Number);
+        const prevStart = new Date(prevDate);
+        prevStart.setHours(phh || 19, pmm || 0, 0, 0);
+        const prevEnd = new Date(prevStart);
+        prevEnd.setHours(peh || 7, pem || 0, 0, 0);
+        if (prevEnd <= prevStart) prevEnd.setDate(prevEnd.getDate() + 1);
+        // Se o plantão anterior terminou dentro do dia de hoje, usa esse término.
+        if (prevEnd > dayStart && isSameDay(prevEnd, now)) {
+          restStart = prevEnd;
+        }
+      }
+
       const restEnd = shiftMeta.shiftStart;
 
       if (restEnd > restStart && isSameDay(restEnd, now)) {
