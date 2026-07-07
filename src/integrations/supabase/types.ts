@@ -1084,6 +1084,56 @@ export type Database = {
         }
         Relationships: []
       }
+      night_shift_overrides: {
+        Row: {
+          applied_end_time: string
+          applied_start_time: string
+          created_at: string
+          id: string
+          local_time_acre: string
+          original_end_time: string
+          original_start_time: string
+          reason: string
+          server_time_at_override: string
+          session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          applied_end_time: string
+          applied_start_time: string
+          created_at?: string
+          id?: string
+          local_time_acre?: string
+          original_end_time: string
+          original_start_time: string
+          reason: string
+          server_time_at_override?: string
+          session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          applied_end_time?: string
+          applied_start_time?: string
+          created_at?: string
+          id?: string
+          local_time_acre?: string
+          original_end_time?: string
+          original_start_time?: string
+          reason?: string
+          server_time_at_override?: string
+          session_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "night_shift_overrides_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "round_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           agent_id: string
@@ -2119,12 +2169,30 @@ export type Database = {
         }
         Returns: boolean
       }
+      insert_round_session_override: {
+        Args: {
+          p_end_time: string
+          p_interval_min: number
+          p_mode: string
+          p_reason: string
+          p_rows: Json
+          p_server_started_at: string
+          p_start_time: string
+          p_team: string
+        }
+        Returns: string
+      }
       is_admin_or_master: { Args: { _user_id: string }; Returns: boolean }
       is_license_expired: { Args: { p_agent_id: string }; Returns: boolean }
+      is_night_window: { Args: { p_ts?: string }; Returns: boolean }
       is_own_agent: { Args: { check_agent_id: string }; Returns: boolean }
       is_same_unit: { Args: { shift_agent_id: string }; Returns: boolean }
       record_login_attempt: {
         Args: { p_identifier: string; p_ip?: string; p_success: boolean }
+        Returns: undefined
+      }
+      set_night_override_reason: {
+        Args: { p_reason: string }
         Returns: undefined
       }
       sync_offline_license_cache: { Args: never; Returns: number }

@@ -22,6 +22,11 @@ import { MissionLockDialog } from './MissionLockDialog';
 import { MotivationalTicker } from './MotivationalTicker';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
+import {
+  isNightShift, getNightWindow, formatAcreClock,
+  NIGHT_START, NIGHT_END,
+} from '@/lib/nightShift';
+
 
 /* ================= helpers ================= */
 const pad = (n: number) => n.toString().padStart(2, '0');
@@ -437,11 +442,16 @@ function TimeField({
       <label htmlFor={`${id}-h`} className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
         {label}
         {locked && (
-          <span title={lockedHint || 'Bloqueado'} className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-mono uppercase text-amber-300">
+          <span
+            title={lockedHint || 'Bloqueado — janela 22:00 → 06:00 (America/Rio_Branco)'}
+            data-testid="night-lock-badge"
+            className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-mono uppercase text-amber-300"
+          >
             <svg viewBox="0 0 16 16" className="h-2.5 w-2.5"><path d="M4 7V5a4 4 0 118 0v2h1v7H3V7h1zm2 0h4V5a2 2 0 10-4 0v2z" fill="currentColor"/></svg>
-            Turno noturno
+            22:00→06:00
           </span>
         )}
+
       </label>
       <div className={cn(
         'group relative flex items-center gap-2 rounded-md border bg-background/60 pl-2 pr-1 h-11 transition-colors',
@@ -663,38 +673,87 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const nowServer = () => Date.now() + clockOffsetRef.current;
 
-  /* ---------- Night shift auto-lock (22:00 → 06:00) ---------- */
-  const NIGHT_START = '22:00';
-  const NIGHT_END = '06:00';
-  const isNightHour = (d: Date) => {
-    const h = d.getHours();
-    return h >= 22 || h < 6;
-  };
-  const [nightLocked, setNightLocked] = useState<boolean>(() => isNightHour(new Date()));
+  /* ---------- Night shift auto-lock (22:00 → 06:00 Acre) ---------- */
+  const [nightLocked, setNightLocked] = useState<boolean>(() => isNightShift(new Date()));
+  const [serverClock, setServerClock] = useState<Date>(() => new Date());
+  const [nightWindow, setNightWindow] = useState(() => getNightWindow(new Date()));
+
+  // Master override state
+  const [isMaster, setIsMaster] = useState(false);
+  const [overrideActive, setOverrideActive] = useState(false);
+  const [overrideReason, setOverrideReason] = useState('');
+  const [overridePromptOpen, setOverridePromptOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getUser();
+        const uid = data?.user?.id;
+        if (!uid || cancelled) return;
+        const { data: roles } = await supabase
+          .from('user_roles').select('role').eq('user_id', uid);
+        if (cancelled) return;
+        setIsMaster(!!roles?.some((r) => r.role === 'master'));
+      } catch { /* ignore */ }
+    })();
+    return () => { cancelled = true; };
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
     const evaluate = async () => {
       await syncServerClock();
       if (cancelled) return;
-      const night = isNightHour(new Date(nowServer()));
+      const now = new Date(nowServer());
+      setServerClock(now);
+      setNightWindow(getNightWindow(now));
+      const night = isNightShift(now);
       setNightLocked(night);
-      if (night) {
+      if (night && !overrideActive) {
         setStartTime(NIGHT_START);
         setEndTime(NIGHT_END);
       }
+      if (!night) {
+        // Leaving window automatically clears override
+        setOverrideActive(false);
+      }
     };
     evaluate();
-    const iv = setInterval(evaluate, 60_000);
+    const iv = setInterval(evaluate, 1000);
     return () => { cancelled = true; clearInterval(iv); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, overrideActive]);
+
+  const nightEffectivelyLocked = nightLocked && !overrideActive;
+
   // Guard: while locked, revert any external change to start/end
   useEffect(() => {
-    if (!nightLocked) return;
+    if (!nightEffectivelyLocked) return;
     if (startTime !== NIGHT_START) setStartTime(NIGHT_START);
     if (endTime !== NIGHT_END) setEndTime(NIGHT_END);
-  }, [nightLocked, startTime, endTime]);
+  }, [nightEffectivelyLocked, startTime, endTime]);
+
+  const activateOverride = () => {
+    const reason = overrideReason.trim();
+    if (reason.length < 5) {
+      toast({ title: 'Motivo obrigatório', description: 'Informe ao menos 5 caracteres.', variant: 'destructive' });
+      return;
+    }
+    if (!isMaster) {
+      toast({ title: 'Apenas o master pode fazer override.', variant: 'destructive' });
+      return;
+    }
+    setOverrideActive(true);
+    setOverridePromptOpen(false);
+    toast({ title: 'Override master ativado', description: 'Auditoria será registrada ao iniciar a ronda.' });
+  };
+
+
+
+
 
 
 
@@ -1030,21 +1089,52 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData?.user?.id;
       if (uid) {
-        await supabase.from('round_sessions')
-          .update({ is_active: false, ended_at: new Date().toISOString() })
-          .eq('user_id', uid).eq('is_active', true);
-        const { data } = await supabase.from('round_sessions').insert({
-          user_id: uid,
-          team, mode, start_time: startTime, end_time: endTime,
-          interval_min: intervalMin,
-          rows: schedule.rows.map((r) => ({ name: r.name, duration: r.duration })),
-          server_started_at: new Date(startMs).toISOString(),
-          is_active: true,
-        }).select('id').maybeSingle();
-        if (data?.id) sessionIdRef.current = data.id;
+        const rows = schedule.rows.map((r) => ({ name: r.name, duration: r.duration }));
+        // Atomic path when master override is active (trigger reads reason via GUC).
+        if (overrideActive && nightLocked) {
+          const { data, error } = await supabase.rpc('insert_round_session_override' as any, {
+            p_reason: overrideReason.trim(),
+            p_team: team,
+            p_mode: mode,
+            p_start_time: startTime,
+            p_end_time: endTime,
+            p_interval_min: intervalMin,
+            p_rows: rows,
+            p_server_started_at: new Date(startMs).toISOString(),
+          });
+          if (error) throw error;
+          if (typeof data === 'string') sessionIdRef.current = data;
+        } else {
+          await supabase.from('round_sessions')
+            .update({ is_active: false, ended_at: new Date().toISOString() })
+            .eq('user_id', uid).eq('is_active', true);
+          const { data, error } = await supabase.from('round_sessions').insert({
+            user_id: uid,
+            team, mode, start_time: startTime, end_time: endTime,
+            interval_min: intervalMin,
+            rows,
+            server_started_at: new Date(startMs).toISOString(),
+            is_active: true,
+          }).select('id').maybeSingle();
+          if (error) throw error;
+          if (data?.id) sessionIdRef.current = data.id;
+        }
       }
-    } catch { /* ignore — offline: sessão só local */ }
+    } catch (e: any) {
+      const msg = String(e?.message ?? '');
+      if (msg.includes('NIGHT_SHIFT_LOCK')) {
+        toast({
+          title: 'Bloqueio de turno noturno',
+          description: 'O servidor rejeitou horários fora de 22:00→06:00. Ative o override master se autorizado.',
+          variant: 'destructive',
+        });
+        setRunning(false);
+        return;
+      }
+      /* ignore other errors — offline: sessão só local */
+    }
   };
+
   const pauseTimer = () => setRunning(false);
   const resetTimer = () => {
     setRunning(false);
@@ -1423,29 +1513,99 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 {/* Times / interval */}
                 {nightLocked && (
-                  <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[11px] text-amber-200/90">
-                    <svg viewBox="0 0 24 24" className="h-4 w-4 mt-0.5 shrink-0 text-amber-400" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    <span>
-                      <b className="text-amber-300">Turno noturno detectado.</b> O horário inicial está fixado em <b>22:00</b> e o encerramento em <b>06:00</b> do dia seguinte. Não é possível alterar durante este período.
-                    </span>
+                  <div
+                    data-testid="night-shift-banner"
+                    className={cn(
+                      'rounded-md border px-3 py-2.5 text-[11px] transition-colors',
+                      overrideActive
+                        ? 'border-red-500/40 bg-red-500/5 text-red-200/90'
+                        : 'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
+                    )}
+                  >
+                    <div className="flex items-start gap-2">
+                      <svg viewBox="0 0 24 24" className={cn('h-4 w-4 mt-0.5 shrink-0', overrideActive ? 'text-red-400' : 'text-amber-400')} fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <div className="min-w-0 flex-1">
+                        <div className={cn('font-semibold', overrideActive ? 'text-red-300' : 'text-amber-300')}>
+                          {overrideActive ? 'Override MASTER ativo — auditoria em curso' : 'Turno noturno detectado'}
+                        </div>
+                        <div className="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-0.5 text-[10.5px]">
+                          <span>
+                            Hora do servidor:&nbsp;
+                            <b className="font-mono tabular-nums text-foreground/90" data-testid="server-clock">
+                              {formatAcreClock(serverClock)}
+                            </b>
+                            <span className="ml-1 text-muted-foreground">(America/Rio_Branco)</span>
+                          </span>
+                          <span data-testid="night-window">
+                            Janela: <b className="font-mono">{nightWindow.startLabel}</b> → <b className="font-mono">{nightWindow.endLabel}</b>
+                          </span>
+                        </div>
+                        {!overrideActive && (
+                          <div className="mt-1 text-[10.5px]">
+                            Horário fixado em <b>22:00 → 06:00</b>. Alterações bloqueadas pelo servidor durante todo o período.
+                          </div>
+                        )}
+                        {overrideActive && (
+                          <div className="mt-1 text-[10.5px]">
+                            Motivo registrado: <i>"{overrideReason.trim()}"</i>. Cada gravação será auditada em <code>night_shift_overrides</code>.
+                          </div>
+                        )}
+                      </div>
+                      {isMaster && !overrideActive && (
+                        <button
+                          type="button"
+                          onClick={() => setOverridePromptOpen(true)}
+                          className="shrink-0 rounded border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-[10px] font-mono uppercase tracking-wide text-amber-200 hover:bg-amber-500/20"
+                          data-testid="night-override-btn"
+                        >
+                          Override master
+                        </button>
+                      )}
+                      {overrideActive && (
+                        <button
+                          type="button"
+                          onClick={() => { setOverrideActive(false); setOverrideReason(''); toast({ title: 'Override desativado' }); }}
+                          className="shrink-0 rounded border border-red-500/50 bg-red-500/10 px-2 py-1 text-[10px] font-mono uppercase tracking-wide text-red-200 hover:bg-red-500/20"
+                        >
+                          Encerrar override
+                        </button>
+                      )}
+                    </div>
+                    {overridePromptOpen && (
+                      <div className="mt-2 flex flex-col sm:flex-row gap-2 items-stretch">
+                        <Input
+                          value={overrideReason}
+                          onChange={(e) => setOverrideReason(e.target.value)}
+                          placeholder="Motivo (mín. 5 caracteres) — será registrado em auditoria"
+                          className="bg-background/60 border-border h-9 text-xs"
+                          maxLength={280}
+                          autoComplete="off"
+                        />
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" onClick={() => setOverridePromptOpen(false)} className="h-9">Cancelar</Button>
+                          <Button size="sm" onClick={activateOverride} className="h-9 bg-amber-600 hover:bg-amber-700 text-slate-950">Confirmar</Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
                 {mode === 'split' ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
-                      locked={nightLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
+                      locked={nightEffectivelyLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
                     <TimeField id="rm-end" label="Término do turno" value={endTime}
                       onChange={setEndTime} invalid={hasError('end')} accent={teamColor}
-                      locked={nightLocked} lockedHint="Fixado às 06:00 durante o turno noturno" />
+                      locked={nightEffectivelyLocked} lockedHint="Fixado às 06:00 durante o turno noturno" />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start2" label="Início" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
-                      locked={nightLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
+                      locked={nightEffectivelyLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
+
 
                     <div className="grid gap-1.5">
                       <label htmlFor="rm-int" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
