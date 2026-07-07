@@ -334,14 +334,25 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               className="relative inline-flex items-end justify-center gap-1 sm:gap-2 leading-[0] isolate md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%]"
               style={{ height: 'clamp(130px, 18vw, 240px)' }}
             >
-              {/* Viatura — permanece à esquerda */}
-              <picture className="block h-full">
+              {/* Viatura — permanece à esquerda, com giroflex discretamente animado */}
+              <picture className="relative block h-full">
                 <source srcSet={vehicle3dWebp} type="image/webp" />
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
                   className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
                   draggable={false}
+                />
+                {/* Giroflex — dois pontos de luz discretos, alternando azul/vermelho */}
+                <span
+                  aria-hidden
+                  className="beacon-light beacon-blue motion-reduce:hidden"
+                  style={{ top: '4.5%', left: '41%' }}
+                />
+                <span
+                  aria-hidden
+                  className="beacon-light beacon-red motion-reduce:hidden"
+                  style={{ top: '4.5%', left: '55%' }}
                 />
               </picture>
 
