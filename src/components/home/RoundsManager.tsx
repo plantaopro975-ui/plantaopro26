@@ -663,38 +663,87 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const nowServer = () => Date.now() + clockOffsetRef.current;
 
-  /* ---------- Night shift auto-lock (22:00 → 06:00) ---------- */
-  const NIGHT_START = '22:00';
-  const NIGHT_END = '06:00';
-  const isNightHour = (d: Date) => {
-    const h = d.getHours();
-    return h >= 22 || h < 6;
-  };
-  const [nightLocked, setNightLocked] = useState<boolean>(() => isNightHour(new Date()));
+  /* ---------- Night shift auto-lock (22:00 → 06:00 Acre) ---------- */
+  const [nightLocked, setNightLocked] = useState<boolean>(() => isNightShift(new Date()));
+  const [serverClock, setServerClock] = useState<Date>(() => new Date());
+  const [nightWindow, setNightWindow] = useState(() => getNightWindow(new Date()));
+
+  // Master override state
+  const [isMaster, setIsMaster] = useState(false);
+  const [overrideActive, setOverrideActive] = useState(false);
+  const [overrideReason, setOverrideReason] = useState('');
+  const [overridePromptOpen, setOverridePromptOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getUser();
+        const uid = data?.user?.id;
+        if (!uid || cancelled) return;
+        const { data: roles } = await supabase
+          .from('user_roles').select('role').eq('user_id', uid);
+        if (cancelled) return;
+        setIsMaster(!!roles?.some((r) => r.role === 'master'));
+      } catch { /* ignore */ }
+    })();
+    return () => { cancelled = true; };
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
     const evaluate = async () => {
       await syncServerClock();
       if (cancelled) return;
-      const night = isNightHour(new Date(nowServer()));
+      const now = new Date(nowServer());
+      setServerClock(now);
+      setNightWindow(getNightWindow(now));
+      const night = isNightShift(now);
       setNightLocked(night);
-      if (night) {
+      if (night && !overrideActive) {
         setStartTime(NIGHT_START);
         setEndTime(NIGHT_END);
       }
+      if (!night) {
+        // Leaving window automatically clears override
+        setOverrideActive(false);
+      }
     };
     evaluate();
-    const iv = setInterval(evaluate, 60_000);
+    const iv = setInterval(evaluate, 1000);
     return () => { cancelled = true; clearInterval(iv); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, overrideActive]);
+
+  const nightEffectivelyLocked = nightLocked && !overrideActive;
+
   // Guard: while locked, revert any external change to start/end
   useEffect(() => {
-    if (!nightLocked) return;
+    if (!nightEffectivelyLocked) return;
     if (startTime !== NIGHT_START) setStartTime(NIGHT_START);
     if (endTime !== NIGHT_END) setEndTime(NIGHT_END);
-  }, [nightLocked, startTime, endTime]);
+  }, [nightEffectivelyLocked, startTime, endTime]);
+
+  const activateOverride = async () => {
+    const reason = overrideReason.trim();
+    if (reason.length < 5) {
+      toast({ title: 'Motivo obrigatório', description: 'Informe ao menos 5 caracteres.', variant: 'destructive' });
+      return;
+    }
+    try {
+      const { error } = await supabase.rpc('set_night_override_reason' as any, { p_reason: reason });
+      if (error) throw error;
+      setOverrideActive(true);
+      setOverridePromptOpen(false);
+      toast({ title: 'Override master ativado', description: 'Ajustes noturnos serão auditados.' });
+    } catch (e: any) {
+      toast({ title: 'Falha ao ativar override', description: e?.message ?? 'Erro desconhecido', variant: 'destructive' });
+    }
+  };
+
+
 
 
 
