@@ -82,6 +82,9 @@ export function formatAcreClock(date: Date): string {
     second: '2-digit',
     hour12: false,
   }).format(date);
+}
+
+
 
 /**
  * Applies the night shift lock rule to a candidate start/end pair.
