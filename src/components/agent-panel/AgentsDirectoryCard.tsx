@@ -43,7 +43,7 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const debouncedSearch = useDebouncedValue(search, 200);
-  const { onlineIds } = useOnlineAgents();
+  const onlineIds = useOnlineAgents();
 
   useEffect(() => {
     (async () => {
