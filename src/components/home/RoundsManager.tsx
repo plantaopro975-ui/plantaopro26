@@ -24,8 +24,19 @@ import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import {
   isNightShift, getNightWindow, formatAcreClock,
-  NIGHT_START, NIGHT_END,
+  NIGHT_START, NIGHT_END, NIGHT_TZ,
 } from '@/lib/nightShift';
+
+/** Minutos (float, com segundos) do horário local em America/Rio_Branco. */
+function acreMinutesFloat(d: Date): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false, timeZone: NIGHT_TZ,
+  }).formatToParts(d);
+  const g = (t: string) => +((parts.find((p) => p.type === t)?.value) || '0');
+  return (g('hour') % 24) * 60 + g('minute') + g('second') / 60;
+}
+
 
 
 /* ================= helpers ================= */
@@ -780,13 +791,38 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   );
   const hasError = (field: string) => issues.some((i) => i.field === field);
 
+  // Estado do cronômetro (hoisted — usado no cálculo do início efetivo abaixo).
+  const [running, setRunning] = useState(false);
+  const [tick, setTick] = useState(0);
+
+
+
+  /* ---------- início efetivo (turno noturno) ----------
+   * Quando o modal é aberto DENTRO da janela 22:00→06:00, o campo "Início" fica
+   * travado em 22:00 por regra de segurança — porém a divisão do turno entre os
+   * agentes deve considerar o tempo REAL restante (agora → 06:00) para que o
+   * primeiro agente entre em serviço imediatamente e cada posto seja proporcional.
+   * Quando o cronômetro está rodando, congelamos o valor no momento do início.
+   */
+  const frozenStartMinRef = useRef<number | null>(null);
+  const effectiveStartMin = useMemo<number | null>(() => {
+    if (mode === 'split' && running && frozenStartMinRef.current != null) {
+      return frozenStartMinRef.current;
+    }
+    if (mode === 'split' && nightEffectivelyLocked && !running && serverClock) {
+      return acreMinutesFloat(serverClock);
+    }
+    return toMinutes(startTime);
+  }, [mode, nightEffectivelyLocked, running, serverClock, startTime]);
+
   /* ---------- schedule com RECALIBRAGEM AUTOMÁTICA (precisão em segundos) ---------- */
   const schedule = useMemo(() => {
     if (issues.length) return null;
     const n = agents.length;
     if (n === 0) return null;
-    const s = toMinutes(startTime)!;
-    const startSec = s * 60;
+    if (effectiveStartMin == null) return null;
+    const s = effectiveStartMin;
+    const startSec = Math.round(s * 60);
 
     // Total em segundos (split = janela do turno; interval = intervalo × N)
     let totalSec: number;
@@ -794,10 +830,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const e = toMinutes(endTime)!;
       let totalMin = e - s;
       if (totalMin <= 0) totalMin += 24 * 60; // suporta virada de meia-noite
-      totalSec = totalMin * 60;
+      totalSec = Math.max(1, Math.round(totalMin * 60));
     } else {
       totalSec = Math.max(1, Math.round(intervalMin * 60)) * n;
     }
+
 
     // Estratégia de fatiamento em SEGUNDOS
     const slotsSec: number[] = new Array(n).fill(0);
@@ -862,13 +899,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       startMin: s,
       hasRemainder: hasSeconds,
     };
-  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents]);
+  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents, effectiveStartMin]);
 
 
   /* ---------- live timer ---------- */
-  const [running, setRunning] = useState(false);
-  const [tick, setTick] = useState(0);
   const [lockOpen, setLockOpen] = useState(false);
+
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
@@ -1064,9 +1100,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     await syncServerClock();
     const startMs = nowServer();
     startedAtRef.current = startMs;
+    // Congela o "início efetivo" — a partir daqui, a divisão não desliza mais.
+    frozenStartMinRef.current = effectiveStartMin ?? toMinutes(startTime) ?? 0;
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setRunning(true);
+
     try {
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
         Notification.requestPermission().catch(() => { /* ignore */ });
@@ -1544,9 +1583,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         </div>
                         {!overrideActive && (
                           <div className="mt-1 text-[10.5px]">
-                            Horário fixado em <b>22:00 → 06:00</b>. Alterações bloqueadas pelo servidor durante todo o período.
+                            Horário fixado em <b>22:00 → 06:00</b>. A divisão entre os agentes usa o
+                            <b> tempo real restante</b> (agora → 06:00), então cada posto é sempre
+                            proporcional — mesmo que a ronda seja criada depois das 22:00.
                           </div>
                         )}
+
                         {overrideActive && (
                           <div className="mt-1 text-[10.5px]">
                             Motivo registrado: <i>"{overrideReason.trim()}"</i>. Cada gravação será auditada em <code>night_shift_overrides</code>.
@@ -1636,10 +1678,27 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       </SelectContent>
                     </Select>
                     {schedule && (
-                      <p className="text-[10px] font-mono text-muted-foreground/80 mt-0.5">
-                        {agents.length} × ~{fmtDuration(schedule.slot)} · total {fmtDuration(schedule.total)} ({startTime} → {endTime})
-                      </p>
+                      <div className="mt-0.5 grid gap-0.5">
+                        <p className="text-[10px] font-mono text-muted-foreground/80">
+                          {agents.length} × ~{fmtDuration(schedule.slot)} · total {fmtDuration(schedule.total)} ({schedule.rows[0]?.from ?? startTime} → {endTime})
+                        </p>
+                        {nightEffectivelyLocked && !running && agents.length >= 1 && (
+                          <p
+                            className="text-[10.5px] font-mono text-amber-200/90"
+                            data-testid="next-agent-countdown"
+                          >
+                            ⏱ Próximo agente inicia em&nbsp;
+                            <b className="text-amber-100 tabular-nums">
+                              {fmtHMS(schedule.rows[0].duration * 60)}
+                            </b>
+                            {agents.length > 1 && (
+                              <> · <span className="text-muted-foreground">{schedule.rows[0].name} → {schedule.rows[1]?.name}</span></>
+                            )}
+                          </p>
+                        )}
+                      </div>
                     )}
+
                   </div>
                 )}
 
