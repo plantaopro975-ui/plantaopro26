@@ -423,20 +423,7 @@ export default function AgentPanel() {
     <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
       <div className="hud-scope flex-1 flex flex-col w-full min-w-0 min-h-0">
 
-      {/* License Warning Banner */}
-      {showLicenseWarning && (
-        <LicenseWarningBanner
-          licenseStatus={licenseStatus}
-          expiresAt={agent?.license_expires_at || null}
-          secondsUntilLogout={secondsUntilLogout}
-          onContactAdmin={() => {
-            toast({
-              title: 'Contato do Administrador',
-              description: 'Entre em contato pelo e-mail: admin@plantaopro.app',
-            });
-          }}
-        />
-      )}
+      {/* License warning banner removido — sistema gratuito */}
 
       {/* Session Monitor Banner - Visual session status */}
       <SessionMonitorBanner />
@@ -449,7 +436,7 @@ export default function AgentPanel() {
       <div className="flex-1 flex flex-col w-full min-w-0 min-h-0 no-swipe-back">
         <main 
           data-compact={compact ? 'true' : 'false'}
-          className={`flex-1 w-full min-w-0 overflow-y-auto overflow-x-hidden no-swipe-back ${compact ? 'px-2 py-2 sm:p-2.5 md:p-3' : 'px-2 py-2 sm:p-3 md:p-4 lg:p-5'} ${showLicenseWarning ? 'pt-28' : ''}`}
+          className={`flex-1 w-full min-w-0 overflow-y-auto overflow-x-hidden no-swipe-back ${compact ? 'px-2 py-2 sm:p-2.5 md:p-3' : 'px-2 py-2 sm:p-3 md:p-4 lg:p-5'}`}
           style={{
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
@@ -479,7 +466,7 @@ export default function AgentPanel() {
                 unit_id: (agent as any).unit_id
               }}
               isOnline={isOnline}
-              onShowWelcome={() => setShowWelcomeDialog(true)}
+              onShowWelcome={() => { /* trial removido */ }}
               onReactivateShiftBanner={reactivateShiftBanner}
               isShiftBannerDismissed={isShiftBannerDismissed}
               compact={compact}
