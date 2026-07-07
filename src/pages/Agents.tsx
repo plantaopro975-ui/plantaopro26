@@ -644,6 +644,9 @@ export default function Agents() {
                           {(isAdmin || isMaster) && (
                             <TableCell>
                               <div className="flex items-center gap-1">
+                                <Button variant="ghost" size="icon" onClick={() => setDetailsAgentId(agent.id)} title="Ver detalhes">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
                                 <Button variant="ghost" size="icon" onClick={() => handleTransferRequest(agent)} title="Solicitar Transferência">
                                   <ArrowRightLeft className="h-4 w-4" />
                                 </Button>
@@ -654,6 +657,7 @@ export default function Agents() {
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
+
                             </TableCell>
                           )}
                         </TableRow>
