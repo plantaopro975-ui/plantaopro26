@@ -794,12 +794,12 @@ export default function AgentPanel() {
                     <SessionDiagnosticCard />
                     
                     {/* Diagnostic Tools Section - IMPROVED */}
-                    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-2 border-slate-600/60 rounded-2xl p-4 md:p-5 space-y-3 shadow-xl">
-                      <h3 className="font-bold text-base md:text-lg flex items-center gap-2 md:gap-3 text-slate-100">
-                        <Settings className="h-5 w-5 md:h-6 md:w-6 text-amber-400" />
+                    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-600/50 rounded-xl p-3 md:p-4 space-y-2 shadow-md">
+                      <h3 className="font-bold text-sm md:text-base flex items-center gap-2 text-slate-100">
+                        <Settings className="h-4 w-4 md:h-5 md:w-5 text-amber-400" />
                         Ferramentas de Diagnóstico
                       </h3>
-                      <p className="text-sm md:text-base text-slate-400 leading-relaxed">
+                      <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
                         Resolva problemas de conexão ou sessão.
                       </p>
                       <div className="flex flex-wrap gap-2 md:gap-3">
@@ -809,12 +809,12 @@ export default function AgentPanel() {
                     </div>
 
                     {/* Password & Security Section - IMPROVED */}
-                    <div className="bg-gradient-to-br from-purple-900/40 to-slate-900/90 border-2 border-purple-500/40 rounded-2xl p-4 md:p-5 space-y-3 shadow-xl">
-                      <h3 className="font-bold text-base md:text-lg flex items-center gap-2 md:gap-3 text-slate-100">
-                        <Key className="h-5 w-5 md:h-6 md:w-6 text-purple-400" />
+                    <div className="bg-gradient-to-br from-purple-900/40 to-slate-900/90 border border-purple-500/40 rounded-xl p-3 md:p-4 space-y-2 shadow-md">
+                      <h3 className="font-bold text-sm md:text-base flex items-center gap-2 text-slate-100">
+                        <Key className="h-4 w-4 md:h-5 md:w-5 text-purple-400" />
                         Segurança da Conta
                       </h3>
-                      <p className="text-sm md:text-base text-slate-400 leading-relaxed">
+                      <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
                         Altere sua senha via solicitação ao administrador.
                       </p>
                       <div className="flex flex-wrap gap-2 md:gap-3">
