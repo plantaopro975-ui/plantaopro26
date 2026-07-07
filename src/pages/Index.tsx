@@ -1123,8 +1123,8 @@ export default function Index() {
         persistLastCpf(cleanCpf);
         updateLastLogin(cleanCpf);
         toast({
-          title: 'Bem-vindo!',
-          description: 'Login rápido realizado com sucesso.',
+          title: 'Acesso rápido confirmado',
+          description: 'Sessão iniciada com credenciais do dispositivo.',
         });
         navigate('/agent-panel', { replace: true });
       }
