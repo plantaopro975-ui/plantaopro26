@@ -239,7 +239,6 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   };
 
   useEffect(() => {
-  useEffect(() => {
     fetchData();
   }, [agentId, currentMonth]);
 
