@@ -30,6 +30,9 @@ interface TacticalRadarProps {
 export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(function TacticalRadar({ unitId, unitName, className, compact = false }, ref) {
   const [agents, setAgents] = useState<AgentBlip[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(() => getServerDate());
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const onlineIds = useOnlineAgents();
+
 
   // Fetch agents ONLY from the same unit - each unit is independent
   useEffect(() => {
