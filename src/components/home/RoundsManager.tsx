@@ -24,8 +24,19 @@ import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import {
   isNightShift, getNightWindow, formatAcreClock,
-  NIGHT_START, NIGHT_END,
+  NIGHT_START, NIGHT_END, NIGHT_TZ,
 } from '@/lib/nightShift';
+
+/** Minutos (float, com segundos) do horário local em America/Rio_Branco. */
+function acreMinutesFloat(d: Date): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false, timeZone: NIGHT_TZ,
+  }).formatToParts(d);
+  const g = (t: string) => +((parts.find((p) => p.type === t)?.value) || '0');
+  return (g('hour') % 24) * 60 + g('minute') + g('second') / 60;
+}
+
 
 
 /* ================= helpers ================= */
