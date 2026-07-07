@@ -1500,19 +1500,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </div>
           </DialogHeader>
 
-          {/* Corpo auto-ajustado — sem barra de rolagem, escala para caber tudo */}
+          {/* Corpo com rolagem vertical — organiza tudo sem cortar nada */}
           <div
             ref={fitRef}
-            className="flex-1 min-h-0 overflow-hidden"
+            className="flex-1 min-h-0 overflow-y-auto overscroll-contain"
           >
             <div
               ref={fitInnerRef}
-              style={{
-                transform: `scale(${fitScale})`,
-                transformOrigin: 'top left',
-                width: `${100 / fitScale}%`,
-                
-              }}
               className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3"
             >
               <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 items-start lg:divide-x lg:divide-border/40">
