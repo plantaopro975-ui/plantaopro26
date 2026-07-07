@@ -1513,7 +1513,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </span>
 
             {running && live && !live.done && schedule && (
-              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full border border-emerald-500/60 bg-emerald-500/20 px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums text-emerald-300">
+              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}18` }}>
                 <Timer className="h-3 w-3" />
                 {fmtHMS(live.remaining)}
               </span>
@@ -1656,9 +1656,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                           className={cn(
                              'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[10px] transition-all',
-                            active ? 'border-transparent text-slate-950 shadow-sm' : 'border-border bg-card/60 text-foreground hover:border-border',
+                            active ? 'border-transparent shadow-sm' : 'border-border bg-card/60 text-foreground hover:border-border',
                           )}
-                          style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
+                          style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))', boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
                         >
                           {t.label}
                           <span aria-hidden
@@ -1711,7 +1711,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <span data-testid="night-total-remaining">
                               Restante&nbsp;
                               <b className="font-mono tabular-nums text-amber-100">
-                                {fmtHMS(schedule.totalSec)}
+                                {fmtHMS(totalRemainingSeconds)}
                               </b>
                             </span>
                           )}
