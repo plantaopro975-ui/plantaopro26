@@ -1422,17 +1422,31 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </div>
 
                 {/* Times / interval */}
+                {nightLocked && (
+                  <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[11px] text-amber-200/90">
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 mt-0.5 shrink-0 text-amber-400" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span>
+                      <b className="text-amber-300">Turno noturno detectado.</b> O horário inicial está fixado em <b>22:00</b> e o encerramento em <b>06:00</b> do dia seguinte. Não é possível alterar durante este período.
+                    </span>
+                  </div>
+                )}
                 {mode === 'split' ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
-                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
+                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
+                      locked={nightLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
                     <TimeField id="rm-end" label="Término do turno" value={endTime}
-                      onChange={setEndTime} invalid={hasError('end')} accent={teamColor} />
+                      onChange={setEndTime} invalid={hasError('end')} accent={teamColor}
+                      locked={nightLocked} lockedHint="Fixado às 06:00 durante o turno noturno" />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start2" label="Início" value={startTime}
-                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor} />
+                      onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
+                      locked={nightLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
+
                     <div className="grid gap-1.5">
                       <label htmlFor="rm-int" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
                         <Timer className="h-3 w-3" /> Intervalo (min)
