@@ -29,8 +29,8 @@ export function RoundsCommandBar() {
 
   // Relógio de rede — HH:mm:ss (tick 1s).
   const now = useServerTime(1000);
-  const clock = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
+  const clock = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/Rio_Branco' });
+  const dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Rio_Branco' })
     .replace('.', '')
     .toUpperCase();
 
