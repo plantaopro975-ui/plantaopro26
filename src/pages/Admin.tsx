@@ -17,6 +17,7 @@ const ActivityLogsCard = lazy(() => import('@/components/dashboard/ActivityLogsC
 const SystemOverviewCard = lazy(() => import('@/components/dashboard/SystemOverviewCard').then(m => ({ default: m.SystemOverviewCard })));
 const AdvertisementsManager = lazy(() => import('@/components/admin/AdvertisementsManager').then(m => ({ default: m.AdvertisementsManager })));
 const DynamicScreensManager = lazy(() => import('@/components/admin/DynamicScreensManager').then(m => ({ default: m.DynamicScreensManager })));
+const ScheduledRoundsManager = lazy(() => import('@/components/admin/ScheduledRoundsManager').then(m => ({ default: m.ScheduledRoundsManager })));
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -43,7 +44,8 @@ import {
   LayoutDashboard,
   Settings2,
   Palette,
-  Sparkles
+  Sparkles,
+  CalendarClock
 } from 'lucide-react';
 
 interface AdminPermissions {
@@ -372,6 +374,14 @@ export default function Admin() {
                     )}
 
                     <TabsTrigger
+                      value="rondas"
+                      className="px-4 py-2 data-[state=active]:bg-amber-600 data-[state=active]:text-slate-950 rounded-md whitespace-nowrap"
+                    >
+                      <CalendarClock className="h-4 w-4 mr-2" />
+                      Rondas
+                    </TabsTrigger>
+
+                    <TabsTrigger
                       value="appearance"
                       className="px-4 py-2 data-[state=active]:bg-pink-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
                     >
@@ -455,6 +465,12 @@ export default function Admin() {
                     </Suspense>
                   </TabsContent>
                 )}
+
+                <TabsContent value="rondas" className="mt-4">
+                  <Suspense fallback={<PanelSkeleton />}>
+                    <ScheduledRoundsManager />
+                  </Suspense>
+                </TabsContent>
 
                 <TabsContent value="appearance" className="mt-4">
                   <Card className="bg-slate-800/50 border-slate-700">

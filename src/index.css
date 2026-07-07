@@ -1051,3 +1051,41 @@ html.tab-hidden *::after {
     animation: none !important;
   }
 }
+
+/* ===== Giroflex — luzes discretas sobre a viatura ===== */
+.beacon-light {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  will-change: opacity, box-shadow;
+}
+@media (min-width: 640px) {
+  .beacon-light { width: 8px; height: 8px; }
+}
+.beacon-blue {
+  background: rgba(96, 165, 250, 0.95);
+  box-shadow: 0 0 6px 2px rgba(59, 130, 246, 0.7), 0 0 14px 4px rgba(59, 130, 246, 0.35);
+  animation: beacon-blink-blue 1.2s ease-in-out infinite;
+}
+.beacon-red {
+  background: rgba(248, 113, 113, 0.95);
+  box-shadow: 0 0 6px 2px rgba(239, 68, 68, 0.7), 0 0 14px 4px rgba(239, 68, 68, 0.35);
+  animation: beacon-blink-red 1.2s ease-in-out infinite;
+}
+@keyframes beacon-blink-blue {
+  0%, 45%   { opacity: 0.25; box-shadow: 0 0 3px 1px rgba(59,130,246,0.35); }
+  50%, 95%  { opacity: 1;    box-shadow: 0 0 8px 3px rgba(59,130,246,0.75), 0 0 16px 5px rgba(59,130,246,0.4); }
+  100%      { opacity: 0.25; }
+}
+@keyframes beacon-blink-red {
+  0%, 45%   { opacity: 1;    box-shadow: 0 0 8px 3px rgba(239,68,68,0.75), 0 0 16px 5px rgba(239,68,68,0.4); }
+  50%, 95%  { opacity: 0.25; box-shadow: 0 0 3px 1px rgba(239,68,68,0.35); }
+  100%      { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .beacon-blue, .beacon-red { animation: none; opacity: 0.5; }
+}
