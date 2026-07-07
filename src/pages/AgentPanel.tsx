@@ -679,7 +679,10 @@ export default function AgentPanel() {
                   <ProfessionalShiftTimer agentId={agent.id} />
                   <ShiftScheduleCard agentId={agent.id} />
                 </div>
-                <ShiftCalendarOverview agentId={agent.id} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
+                  <ShiftCalendarOverview agentId={agent.id} />
+                  <RecentShiftCyclesCard agentId={agent.id} />
+                </div>
               </TabsContent>
 
               <TabsContent value="bh" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
