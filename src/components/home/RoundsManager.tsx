@@ -1328,36 +1328,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const resetPosition = () => setDrag({ x: 0, y: 0 });
 
-  /* Auto-fit: escala o conteúdo para caber inteiro na janela, sem barra de rolagem */
+  /* Refs mantidos para eventual medição futura — conteúdo agora rola verticalmente */
   const fitRef = useRef<HTMLDivElement>(null);
   const fitInnerRef = useRef<HTMLDivElement>(null);
-  const [fitScale, setFitScale] = useState(1);
-  useEffect(() => {
-    if (!open) return;
-    const container = fitRef.current;
-    const inner = fitInnerRef.current;
-    if (!container || !inner) return;
-    let raf = 0;
-    const compute = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const cH = container.clientHeight;
-        const cW = container.clientWidth;
-        // medir altura/largura natural (sem escala)
-        const naturalH = inner.scrollHeight;
-        const naturalW = inner.scrollWidth;
-        if (!cH || !naturalH) return;
-        const s = Math.min(1, cH / naturalH, cW / naturalW);
-        setFitScale(Number.isFinite(s) && s > 0 ? Math.max(0.35, s) : 1);
-      });
-    };
-    compute();
-    const ro = new ResizeObserver(compute);
-    ro.observe(container);
-    ro.observe(inner);
-    window.addEventListener('resize', compute);
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('resize', compute); };
-  }, [open]);
+
 
 
 
@@ -1500,19 +1474,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </div>
           </DialogHeader>
 
-          {/* Corpo auto-ajustado — sem barra de rolagem, escala para caber tudo */}
+          {/* Corpo com rolagem vertical — organiza tudo sem cortar nada */}
           <div
             ref={fitRef}
-            className="flex-1 min-h-0 overflow-hidden"
+            className="flex-1 min-h-0 overflow-y-auto overscroll-contain"
           >
             <div
               ref={fitInnerRef}
-              style={{
-                transform: `scale(${fitScale})`,
-                transformOrigin: 'top left',
-                width: `${100 / fitScale}%`,
-                
-              }}
               className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3"
             >
               <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 items-start lg:divide-x lg:divide-border/40">
@@ -2078,34 +2046,43 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         silent={silentMode}
                       />
 
-                      {/* Rows — sem caixas, apenas linhas */}
-                      <ul className="divide-y divide-border/40">
+                      {/* Rows — grid responsivo, se adapta a qualquer quantidade de agentes */}
+                      <ul
+                        className={cn(
+                          'grid gap-1.5 gap-x-3',
+                          agents.length <= 6
+                            ? 'grid-cols-1 sm:grid-cols-2'
+                            : agents.length <= 16
+                              ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3'
+                              : 'grid-cols-2 sm:grid-cols-3 xl:grid-cols-4',
+                        )}
+                      >
                         {schedule.rows.map((r, i) => {
                           const isCurrent = running && !!live && !live.done && i === live.index;
                           const isDone = running && !!live && (live.done ? i <= live.index : i < live.index);
                           return (
                             <li key={i}
-                                className={cn('grid grid-cols-[28px_minmax(0,1fr)] sm:grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-2.5 transition-colors',
-                                  isCurrent && 'bg-primary/5 -mx-2 px-2 rounded',
-                                  isDone && 'opacity-70')}
+                                className={cn(
+                                  'grid grid-cols-[24px_minmax(0,1fr)] items-center gap-x-2 gap-y-0.5 rounded-md border border-border/40 bg-card/30 px-2 py-1.5 transition-colors min-w-0',
+                                  isCurrent && 'border-primary/60 bg-primary/10',
+                                  isDone && 'opacity-70',
+                                )}
                                 style={isCurrent ? { boxShadow: `inset 3px 0 0 0 ${teamColor}` } : undefined}>
-                              <span className="font-mono text-[11px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
+                              <span className="font-mono text-[10px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
                               <span className={cn(
-                                'font-sans font-medium text-sm break-words min-w-0 flex items-center gap-2 flex-wrap',
+                                'font-sans font-medium text-[12.5px] leading-tight break-words min-w-0 flex items-center gap-1.5 flex-wrap',
                                 isDone && 'line-through text-muted-foreground decoration-emerald-500/70'
                               )}>
                                 {r.name}
                                 {isDone && (
-                                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[9px] uppercase tracking-[0.15em] text-emerald-400 no-underline">
-                                    <CheckCircle2 className="h-2.5 w-2.5" /> Missão cumprida
-                                  </span>
+                                  <CheckCircle2 className="h-3 w-3 text-emerald-500 no-underline shrink-0" />
                                 )}
                               </span>
-                              <span className="col-span-2 sm:col-auto font-mono text-[11px] tabular-nums flex flex-wrap items-center gap-2 justify-start sm:justify-end text-muted-foreground">
+                              <span className="col-span-2 font-mono text-[10.5px] tabular-nums flex flex-wrap items-center gap-x-1.5 gap-y-0 text-muted-foreground">
                                 <span className="text-foreground">{r.from}</span>
                                 <span style={{ color: teamColor }}>→</span>
                                 <span className="text-foreground">{r.to}</span>
-                                <span className="uppercase tracking-wide whitespace-nowrap" style={{ color: teamColor }}>
+                                <span className="uppercase tracking-wide whitespace-nowrap ml-auto" style={{ color: teamColor }}>
                                   {fmtDuration(r.duration)}
                                 </span>
                               </span>
