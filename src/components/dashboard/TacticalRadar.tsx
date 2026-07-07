@@ -226,11 +226,9 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
                 </span>
               </div>
               <span className="text-[9px] font-mono text-zinc-500">
-                {agents.filter(a => {
-                  if (!a.lastActivity) return false;
-                  return Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000;
-                }).length}/{agents.length}
+                {agents.filter((a) => onlineIds.has(a.id)).length}/{agents.length}
               </span>
+
             </div>
             <ul
               className="max-h-40 overflow-y-auto divide-y divide-zinc-800/60"
