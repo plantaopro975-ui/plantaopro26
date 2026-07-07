@@ -183,11 +183,23 @@ export function RecentShiftCyclesCard({ agentId, className }: RecentShiftCyclesC
                     </span>
                   </div>
                 </div>
+                <div className="flex justify-end pt-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openDetails(c)}
+                    className="h-6 px-2 text-[10px] text-amber-300 hover:text-amber-200 hover:bg-amber-500/10"
+                  >
+                    <Eye className="h-3 w-3 mr-1" />
+                    Ver detalhes
+                  </Button>
+                </div>
               </div>
             );
           })
         )}
       </CardContent>
+      <JourneyDetailsDialog open={detailOpen} onOpenChange={setDetailOpen} data={detailData} />
     </Card>
   );
 }
