@@ -1115,10 +1115,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       return;
     }
     await syncServerClock();
-    const startMs = nowServer();
-    startedAtRef.current = startMs;
+    const nowMs = nowServer();
+    // No turno noturno em modo split, ANCORAMOS o cronômetro no relógio de
+    // parede às 22:00 (mesmo que o operador aperte Iniciar depois). Isso faz o
+    // "elapsed" refletir o tempo desde 22:00, então o live timer pula agentes
+    // cujos slots já expiraram e entrega ao agente atual apenas o tempo que
+    // sobra na janela dele — exatamente a regra de negócio pedida.
+    const anchorMs = (nightEffectivelyLocked && mode === 'split')
+      ? getNightWindow(new Date(nowMs)).startsAt.getTime()
+      : nowMs;
+    startedAtRef.current = anchorMs;
     // Congela o "início efetivo" — a partir daqui, a divisão não desliza mais.
     frozenStartMinRef.current = effectiveStartMin ?? toMinutes(startTime) ?? 0;
+
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setRunning(true);
