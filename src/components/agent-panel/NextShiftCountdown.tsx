@@ -423,7 +423,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
 
     // Sort by priority
     return cards.sort((a, b) => a.priority - b.priority);
-  }, [nextShift, todayLeave, bhBalance, bhValue, announcements]);
+  }, [nextShift, upcomingShifts, todayLeave, bhBalance, bhValue, announcements]);
 
   // Auto-rotate cards
   useEffect(() => {
