@@ -78,10 +78,10 @@ function fmtHMS(seconds: number): string {
 }
 
 const TEAM_PRESETS = [
-  { key: 'ALFA',    label: 'ALFA',    color: '#f59e0b' },
-  { key: 'BRAVO',   label: 'BRAVO',   color: '#3b82f6' },
-  { key: 'CHARLIE', label: 'CHARLIE', color: '#22c55e' },
-  { key: 'DELTA',   label: 'DELTA',   color: '#ef4444' },
+  { key: 'ALFA',    label: 'ALFA',    color: '#34d399' },
+  { key: 'BRAVO',   label: 'BRAVO',   color: '#fb923c' },
+  { key: 'CHARLIE', label: 'CHARLIE', color: '#60a5fa' },
+  { key: 'DELTA',   label: 'DELTA',   color: '#fcd34d' },
 ] as const;
 
 type TeamKey = typeof TEAM_PRESETS[number]['key'];
@@ -423,6 +423,79 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
             fill={fx.url('gold')} stroke="#78350f" strokeWidth="0.6" strokeLinejoin="round" />
       <path d="M36 8 L21 32 H29" fill="none" stroke="#fef3c7" strokeOpacity="0.85" strokeWidth="0.8" strokeLinecap="round" />
       <ellipse cx="26" cy="22" rx="10" ry="5" fill={fx.url('gloss')} />
+    </svg>
+  );
+}
+
+function RoundsHeroSVG({ color, active, silent }: { color: string; active: boolean; silent: boolean }) {
+  return (
+    <svg viewBox="0 0 220 116" className="h-20 w-36 sm:h-24 sm:w-44 shrink-0" aria-hidden>
+      <style>{`@keyframes roundsRadarSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <defs>
+        <radialGradient id="roundsHeroGlow" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stopColor={color} stopOpacity="0.5" />
+          <stop offset="65%" stopColor={color} stopOpacity="0.12" />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+        <linearGradient id="roundsHeroRail" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity="0" />
+          <stop offset="50%" stopColor={color} stopOpacity="0.92" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <filter id="roundsHeroShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.4" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+      <rect x="6" y="10" width="208" height="96" rx="10" fill="hsl(var(--card))" fillOpacity="0.74" stroke={color} strokeOpacity="0.34" />
+      <path d="M20 28H84M136 28H200M20 88H84M136 88H200" stroke="url(#roundsHeroRail)" strokeWidth="1.2" />
+      <circle cx="110" cy="58" r="45" fill="url(#roundsHeroGlow)" />
+      <g filter="url(#roundsHeroShadow)">
+        <circle cx="110" cy="58" r="32" fill="none" stroke={color} strokeOpacity="0.42" strokeWidth="1.5" />
+        <circle cx="110" cy="58" r="22" fill="none" stroke={color} strokeOpacity="0.28" strokeWidth="1" />
+        <line x1="110" y1="24" x2="110" y2="92" stroke={color} strokeOpacity="0.32" strokeWidth="0.8" />
+        <line x1="76" y1="58" x2="144" y2="58" stroke={color} strokeOpacity="0.32" strokeWidth="0.8" />
+        <path
+          d="M110 58 L110 27 A31 31 0 0 1 138 44 Z"
+          fill={color}
+          fillOpacity="0.22"
+          style={{
+            transformOrigin: '110px 58px',
+            animation: active && !silent ? 'roundsRadarSweep 2.8s linear infinite' : undefined,
+          }}
+        />
+        <circle cx="110" cy="58" r="4" fill={color} />
+      </g>
+      {[0, 1, 2, 3].map((i) => (
+        <g key={i} opacity={active ? 1 : 0.42}>
+          <circle cx={42 + i * 44} cy="58" r="4" fill={color} opacity={i === 0 ? 0.96 : 0.45}>
+            {active && !silent && <animate attributeName="opacity" values="0.3;1;0.3" dur="1.8s" begin={`${i * 0.18}s`} repeatCount="indefinite" />}
+          </circle>
+          <path d={`M${46 + i * 44} 58 H${74 + i * 44}`} stroke={color} strokeOpacity="0.35" strokeWidth="1" />
+        </g>
+      ))}
+      <text x="110" y="102" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="7" letterSpacing="2.4" fill={color} opacity="0.78">
+        RONDA OPERACIONAL
+      </text>
+    </svg>
+  );
+}
+
+function AgentStatusSVG({ status, color, compact = false }: { status: 'active' | 'done' | 'waiting'; color: string; compact?: boolean }) {
+  const label = status === 'active' ? 'EM RONDA' : status === 'done' ? 'CUMPRIDA' : 'NA FILA';
+  const tone = status === 'done' ? 'hsl(var(--success))' : status === 'waiting' ? 'hsl(var(--muted-foreground))' : color;
+  return (
+    <svg viewBox="0 0 116 24" className={cn('shrink-0', compact ? 'h-5 w-20' : 'h-6 w-28')} aria-label={label} role="img">
+      <path d="M8 2H108L114 12L108 22H8L2 12Z" fill="hsl(var(--card))" fillOpacity="0.72" stroke={tone} strokeOpacity="0.62" />
+      <path d="M10 5H106" stroke={tone} strokeOpacity="0.34" />
+      {status === 'active' && (
+        <circle cx="15" cy="12" r="3" fill={tone}>
+          <animate attributeName="opacity" values="0.35;1;0.35" dur="1.2s" repeatCount="indefinite" />
+        </circle>
+      )}
+      {status === 'done' && <path d="M11 12.2L14.2 15.4L19.6 8.8" fill="none" stroke={tone} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />}
+      {status === 'waiting' && <path d="M12 8H18M12 12H18M12 16H18" stroke={tone} strokeWidth="1.4" strokeLinecap="round" />}
+      <text x="63" y="15" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="8" fontWeight="700" letterSpacing="1.2" fill={tone}>{label}</text>
     </svg>
   );
 }
@@ -993,6 +1066,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     };
   }, [running, schedule, nightEffectivelyLocked, mode, tick]);
 
+  const currentView = live ?? preview;
+  const activeRoundName = currentView && !currentView.done ? schedule?.rows[currentView.index]?.name : undefined;
+  const totalRemainingSeconds = schedule
+    ? Math.max(0, schedule.totalSec - (currentView?.elapsed ?? 0))
+    : 0;
+
 
   // Trava persistida: quais postos já dispararam a notificação
   const notifiedRef = useRef<Set<number>>(new Set());
@@ -1349,7 +1428,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* ================= Drag da janela (antes de iniciar o cronômetro) ================= */
   const [drag, setDrag] = useState({ x: 0, y: 0 });
   const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
-  const canDrag = !running;
+  const canDrag = true;
 
   const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!canDrag) return;
@@ -1434,7 +1513,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </span>
 
             {running && live && !live.done && schedule && (
-              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full border border-emerald-500/60 bg-emerald-500/20 px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums text-emerald-300">
+              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}18` }}>
                 <Timer className="h-3 w-3" />
                 {fmtHMS(live.remaining)}
               </span>
@@ -1451,10 +1530,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
         <DialogContent
-          className="w-[min(100vw-0.25rem,52rem)] sm:w-[min(100vw-0.5rem,52rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col rounded-lg sm:rounded-xl"
+          className="w-[min(100vw-0.25rem,60rem)] sm:w-[min(100vw-0.75rem,60rem)] xl:w-[min(100vw-1rem,66rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col rounded-lg sm:rounded-xl shadow-2xl"
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
+            borderColor: `${teamColor}55`,
+            background: `linear-gradient(145deg, hsl(var(--background)) 0%, ${teamColor}12 48%, hsl(var(--card)) 100%)`,
+            boxShadow: `0 28px 90px -32px ${teamColor}88, 0 0 0 1px ${teamColor}22`,
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
           }}
           onEscapeKeyDown={(e) => e.preventDefault()}
@@ -1464,14 +1546,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Sticky header — sempre visível */}
           <DialogHeader
             className={cn(
-              'sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur px-2.5 sm:px-3 py-1.5 select-none touch-none',
+              'sticky top-0 z-20 border-b bg-background/90 backdrop-blur px-2.5 sm:px-3 py-1.5 select-none touch-none',
               canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
             )}
+            style={{ borderColor: `${teamColor}33` }}
             onPointerDown={onDragStart}
             onPointerMove={onDragMove}
             onPointerUp={onDragEnd}
             onPointerCancel={onDragEnd}
-            title={canDrag ? 'Arraste para reposicionar a janela' : 'Janela travada durante a operação'}
+            title="Arraste pelo topo para reposicionar a janela"
           >
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <div className="min-w-0 flex-1 basis-44">
@@ -1480,7 +1563,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <span>Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-sans text-sm font-medium tracking-tight leading-tight text-foreground truncate">
+                <DialogTitle className="font-display text-base sm:text-lg font-bold tracking-tight leading-tight text-foreground truncate">
                   Gestor de Rondas
                 </DialogTitle>
                 <DialogDescription className="sr-only">
@@ -1491,7 +1574,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               <div className="flex flex-wrap items-center gap-2 ml-auto shrink-0">
 
               {running && live && !live.done && schedule && (
-                <span className="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/50 px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums text-emerald-300">
+                  <span className="hidden md:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}18` }}>
                   <Timer className="h-3 w-3" />
                   {fmtHMS(live.remaining)}
                 </span>
@@ -1527,9 +1610,34 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           >
             <div
               ref={fitInnerRef}
-               className="px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2"
+               className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
             >
-              <div className="mx-auto w-full max-w-4xl grid grid-cols-1 lg:grid-cols-[0.68fr_1.32fr] gap-x-3 gap-y-1.5 sm:gap-y-2 items-start lg:divide-x lg:divide-border/40">
+              <div className="mx-auto mb-2.5 overflow-hidden rounded-lg border bg-card/45" style={{ borderColor: `${teamColor}38`, boxShadow: `inset 0 1px 0 ${teamColor}18` }}>
+                <div className="relative flex items-center gap-3 px-3 py-2.5 sm:px-4 sm:py-3">
+                  <div className="absolute inset-0 pointer-events-none opacity-70" style={{ background: `radial-gradient(circle at 80% 25%, ${teamColor}24, transparent 42%), linear-gradient(90deg, ${teamColor}0, ${teamColor}10, ${teamColor}0)` }} />
+                  <div className="relative flex min-w-0 flex-1 items-center gap-3">
+                    <div className="hidden sm:block"><TeamHero team={team} color={teamColor} /></div>
+                    <div className="min-w-0">
+                      <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em]" style={{ color: teamColor }}>
+                        Central de Ronda · Equipe {team}
+                      </div>
+                      <h2 className="font-display text-lg sm:text-2xl leading-tight text-foreground">
+                        Operação em tempo real
+                      </h2>
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+                        <span className="rounded-sm border px-1.5 py-0.5" style={{ borderColor: `${teamColor}44`, color: teamColor }}>
+                          Restante {fmtHMS(totalRemainingSeconds)}
+                        </span>
+                        <span>{schedule?.rows.length ?? agents.length} agentes</span>
+                        {activeRoundName && <span className="truncate">No ar: <b className="uppercase text-foreground">{activeRoundName}</b></span>}
+                      </div>
+                    </div>
+                  </div>
+                  <RoundsHeroSVG color={teamColor} active={!!currentView && !currentView.done} silent={silentMode} />
+                </div>
+              </div>
+
+              <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[0.7fr_1.3fr] gap-x-4 gap-y-2 items-start lg:divide-x lg:divide-border/40">
 
                 <div className="min-w-0 lg:pr-3">
 
@@ -1548,9 +1656,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                           className={cn(
                              'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[10px] transition-all',
-                            active ? 'border-transparent text-slate-950 shadow-sm' : 'border-border bg-card/60 text-foreground hover:border-border',
+                            active ? 'border-transparent shadow-sm' : 'border-border bg-card/60 text-foreground hover:border-border',
                           )}
-                          style={active ? { backgroundColor: t.color, boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
+                          style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))', boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
                         >
                           {t.label}
                           <span aria-hidden
@@ -1603,7 +1711,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <span data-testid="night-total-remaining">
                               Restante&nbsp;
                               <b className="font-mono tabular-nums text-amber-100">
-                                {fmtHMS(schedule.totalSec)}
+                                {fmtHMS(totalRemainingSeconds)}
                               </b>
                             </span>
                           )}
@@ -1848,7 +1956,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Nome grande — agente ATIVO agora (live ou preview) */}
                               {activeAgentName && (
                                 <div
-                                  className="font-sans font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                                  className="font-display font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                                   style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
                                 >
                                   {activeAgentName}
@@ -1918,7 +2026,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
                                 setStartConfirmOpen(true);
                               }}
-                              className="h-9 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950"
+                              className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
+                              style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
                             >
                               <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
                             </Button>
@@ -1926,13 +2035,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <Button
                               type="button"
                               size="sm"
-                              onClick={() => {
-                                if (live && !live.done) { setLockOpen(true); return; }
-                                pauseTimer();
-                              }}
-                              className="h-9 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950"
+                              onClick={() => setLockOpen(true)}
+                              aria-label="Pausa bloqueada durante a ronda"
+                              title="Pausa bloqueada — clique para ver o protocolo"
+                              className="h-9 px-4 border border-destructive/45 bg-destructive/10 text-destructive hover:bg-destructive/15"
                             >
-                              <Pause className="h-3.5 w-3.5 mr-1.5" /> Pausar
+                              <Pause className="h-3.5 w-3.5 mr-1.5" /> Bloqueado
                             </Button>
                           )}
                           <Button
@@ -2013,30 +2121,48 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       >
 
                         {schedule.rows.map((r, i) => {
-                          const isCurrent = running && !!live && !live.done && i === live.index;
-                          const isDone = running && !!live && (live.done ? i <= live.index : i < live.index);
+                          const view = live ?? preview;
+                          const isCurrent = !!view && !view.done && i === view.index;
+                          const isDone = !!view && (view.done ? i <= view.index : i < view.index);
+                          const remainingForRow = isCurrent && view && !view.done ? view.remaining : Math.max(0, r.duration * 60);
                           return (
                             <li key={i}
                                 className={cn(
-                                   'grid grid-cols-[20px_minmax(0,1fr)_auto] items-center gap-x-1.5 rounded-md border border-border/40 bg-card/30 px-1.5 py-1 transition-colors min-w-0',
-                                  isCurrent && 'border-primary/60 bg-primary/10',
+                                   'relative overflow-hidden grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card/35 px-1.5 py-1.5 transition-all min-w-0',
+                                  isCurrent && 'bg-primary/10',
                                   isDone && 'opacity-70',
                                 )}
-                                style={isCurrent ? { boxShadow: `inset 3px 0 0 0 ${teamColor}` } : undefined}>
+                                style={{
+                                  borderColor: isCurrent ? `${teamColor}88` : isDone ? 'hsl(var(--success) / 0.32)' : `${teamColor}20`,
+                                  boxShadow: isCurrent ? `inset 3px 0 0 0 ${teamColor}, 0 0 22px -14px ${teamColor}` : undefined,
+                                }}>
+                              {isCurrent && !silentMode && (
+                                <span className="pointer-events-none absolute inset-y-0 left-0 w-1/2 opacity-20 animate-shimmer" style={{ background: `linear-gradient(90deg, transparent, ${teamColor}, transparent)` }} />
+                              )}
                               <span className="font-mono text-[9px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
-                              <span className={cn(
-                                'font-sans font-medium text-[11.5px] leading-tight truncate min-w-0 flex items-center gap-1.5',
-                                isDone && 'line-through text-muted-foreground decoration-emerald-500/70'
-                              )}>
-                                {r.name}
-                                {isDone && (
-                                  <CheckCircle2 className="h-3 w-3 text-emerald-500 no-underline shrink-0" />
-                                )}
+                              <span className="min-w-0">
+                                <span className={cn(
+                                  'font-sans font-semibold text-[11.5px] leading-tight truncate min-w-0 flex items-center gap-1.5',
+                                  isDone && 'line-through text-muted-foreground decoration-success/70',
+                                )}>
+                                  {r.name}
+                                  {isDone && <CheckCircle2 className="h-3 w-3 text-success no-underline shrink-0" />}
+                                </span>
+                                <span className="mt-0.5 block truncate font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+                                  {isCurrent
+                                    ? `Em ronda · faltam ${fmtHMS(remainingForRow)}`
+                                    : isDone
+                                      ? 'Missão cumprida · posto encerrado'
+                                      : `Aguardando acionamento · duração ${fmtDuration(r.duration)}`}
+                                </span>
                               </span>
-                              <span className="font-mono text-[10px] tabular-nums flex items-center gap-x-1 text-muted-foreground whitespace-nowrap">
-                                <span className="text-foreground">{r.from}</span>
-                                <span style={{ color: teamColor }}>→</span>
-                                <span className="text-foreground">{r.to}</span>
+                              <span className="flex flex-col items-end gap-0.5">
+                                <AgentStatusSVG status={isCurrent ? 'active' : isDone ? 'done' : 'waiting'} color={teamColor} compact />
+                                <span className="font-mono text-[10px] tabular-nums flex items-center gap-x-1 text-muted-foreground whitespace-nowrap">
+                                  <span className="text-foreground">{r.from}</span>
+                                  <span style={{ color: teamColor }}>→</span>
+                                  <span className="text-foreground">{r.to}</span>
+                                </span>
                               </span>
                             </li>
                           );
