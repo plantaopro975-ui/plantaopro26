@@ -61,6 +61,8 @@ const SmartAlarmClock = lazy(() => import('@/components/agent-panel/SmartAlarmCl
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 
