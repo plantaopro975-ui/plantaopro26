@@ -17,6 +17,7 @@ import { RequireAuth } from "@/components/auth/RequireAuth";
 import { ConfirmProvider } from "@/components/ui/confirm-provider";
 import { SingleDeviceGuard } from "@/components/SingleDeviceGuard";
 import { SplashScreen } from "@/components/SplashScreen";
+import { AccessAcknowledgmentGate } from "@/components/AccessAcknowledgmentGate";
 import { PanelSkeleton } from "@/components/ui/panel-skeleton";
 import { InactivityGuard } from "@/components/InactivityGuard";
 
