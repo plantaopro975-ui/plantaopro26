@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Radar, Users, Activity, Wifi, Building2, Signal } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useOnlineAgents } from '@/hooks/useOnlineAgents';
+import { AgentDetailsDialog } from '@/components/agents/AgentDetailsDialog';
 import radarBg from '@/assets/radar-bg.jpg';
+
 
 
 interface AgentBlip {
