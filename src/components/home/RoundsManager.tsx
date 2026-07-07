@@ -901,12 +901,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
     return {
       total: totalMinOut,
+      totalSec,
       slot: baseSlot,
       rows,
       startMin: s,
       hasRemainder: hasSeconds,
+      effectiveRounding: effRounding,
     };
-  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents, effectiveStartMin]);
+  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents, effectiveStartMin, nightEffectivelyLocked]);
+
 
 
   /* ---------- live timer ---------- */
