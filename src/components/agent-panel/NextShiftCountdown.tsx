@@ -169,17 +169,36 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       const shiftStart = new Date(shiftDate);
       shiftStart.setHours(hh || 7, mm || 0, 0, 0);
 
+      // Fim do plantão (pode virar o dia — noturno)
+      const [eh, em] = (nextShift.end_time || '19:00').split(':').map(Number);
+      const shiftEnd = new Date(shiftStart);
+      shiftEnd.setHours(eh || 19, em || 0, 0, 0);
+      if (shiftEnd <= shiftStart) {
+        // Vira o dia (ex.: 19:00 → 07:00)
+        shiftEnd.setDate(shiftEnd.getDate() + 1);
+      }
+      const durationHours = Math.round((shiftEnd.getTime() - shiftStart.getTime()) / 3_600_000);
+
+      // Período: noturno se começa 18:00-05:59, senão diurno
+      const startHour = hh || 7;
+      const isNight = startHour >= 18 || startHour < 6;
+      const periodLabel = isNight ? 'Noturno' : 'Diurno';
+      const PeriodIcon = isNight ? Moon : Sun;
+
+      // Tipo declarado (12h, 24h, extra, etc.)
+      const rawType = (nextShift.shift_type || '').trim();
+      const typeLabel = rawType
+        ? rawType.charAt(0).toUpperCase() + rawType.slice(1).toLowerCase()
+        : `${durationHours}h`;
+
       const now = new Date();
-      // Dias de calendário (não afetados por horário atual)
       const daysUntil = differenceInCalendarDays(shiftDate, startOfDay(now));
-      // Horas até o início real do plantão
       const hoursUntil = differenceInHours(shiftStart, now);
       const minutesUntil = differenceInMinutes(shiftStart, now);
       const isTodayShift = isToday(shiftDate);
       const isUrgent = isTodayShift || (hoursUntil >= 0 && hoursUntil <= 12);
       const isSoon = daysUntil <= 1;
 
-      // Valor exibido — inclui horas quando faltam <24h e dias em outros casos
       let displayValue: string;
       if (isTodayShift) {
         if (minutesUntil > 0 && minutesUntil < 60) {
@@ -190,29 +209,44 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
           displayValue = `às ${nextShift.start_time?.slice(0, 5) || '07:00'}`;
         }
       } else if (daysUntil === 1) {
-        displayValue = `amanhã, ${hoursUntil > 0 ? `${hoursUntil}h` : ''}`.trim().replace(/,\s*$/, '');
+        displayValue = hoursUntil > 0 ? `amanhã em ${hoursUntil}h` : 'amanhã';
       } else {
-        displayValue = `${daysUntil} dias`;
+        displayValue = `em ${daysUntil} dias`;
       }
+
+      const startStr = nextShift.start_time?.slice(0, 5) || '07:00';
+      const endStr = (nextShift.end_time || '19:00').slice(0, 5);
+      const dateStr = format(shiftDate, "EEE, dd/MM", { locale: ptBR });
 
       cards.push({
         id: 'shift',
         type: 'shift',
         priority: isTodayShift ? 2 : 10,
-        icon: isUrgent ? <Zap className="h-5 w-5 text-white" /> : isSoon ? <AlertTriangle className="h-5 w-5 text-white" /> : <Calendar className="h-5 w-5 text-white" />,
-        title: isTodayShift ? 'PLANTÃO HOJE' : 'Próximo Plantão',
+        icon: isUrgent ? <Zap className="h-5 w-5 text-white" /> : isSoon ? <AlertTriangle className="h-5 w-5 text-white" /> : <PeriodIcon className="h-5 w-5 text-white" />,
+        title: isTodayShift
+          ? `PLANTÃO HOJE • ${typeLabel} ${periodLabel}`
+          : `Próximo Plantão • ${typeLabel} ${periodLabel}`,
         value: displayValue,
-        subtitle: `${format(shiftDate, "EEEE, dd/MM", { locale: ptBR })} • ${nextShift.start_time?.slice(0, 5) || '07:00'}`,
-        colorClass: isUrgent ? 'text-emerald-400' : isSoon ? 'text-amber-400' : 'text-slate-400',
-        bgClass: isUrgent ? 'bg-gradient-to-br from-emerald-500 to-green-600' : isSoon ? 'bg-gradient-to-br from-amber-500 to-orange-600' : 'bg-gradient-to-br from-slate-600 to-slate-700',
-        borderClass: isUrgent 
+        subtitle: `${dateStr} • ${startStr}–${endStr} (${durationHours}h ${periodLabel.toLowerCase()})`,
+        colorClass: isUrgent ? 'text-emerald-400' : isSoon ? 'text-amber-400' : isNight ? 'text-indigo-400' : 'text-sky-400',
+        bgClass: isUrgent
+          ? 'bg-gradient-to-br from-emerald-500 to-green-600'
+          : isSoon
+            ? 'bg-gradient-to-br from-amber-500 to-orange-600'
+            : isNight
+              ? 'bg-gradient-to-br from-indigo-600 to-slate-800'
+              : 'bg-gradient-to-br from-sky-500 to-blue-600',
+        borderClass: isUrgent
           ? 'border-emerald-500/60 bg-gradient-to-r from-emerald-500/20 via-green-500/15 to-emerald-500/20 shadow-lg shadow-emerald-500/20'
-          : isSoon 
+          : isSoon
             ? 'border-amber-500/50 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 shadow-lg shadow-amber-500/15'
-            : 'border-slate-700/60 bg-gradient-to-r from-slate-800/80 to-slate-900/80',
+            : isNight
+              ? 'border-indigo-500/40 bg-gradient-to-r from-indigo-500/15 via-slate-800/40 to-indigo-500/15 shadow-lg shadow-indigo-500/10'
+              : 'border-sky-500/40 bg-gradient-to-r from-sky-500/15 via-blue-500/10 to-sky-500/15 shadow-lg shadow-sky-500/10',
         animate: isUrgent,
       });
     }
+
 
     // BH Balance card (if has hours)
     if (bhBalance !== 0) {
