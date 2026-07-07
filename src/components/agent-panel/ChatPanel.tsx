@@ -143,6 +143,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [chatType, setChatType] = useState<ChatType>('team');
   const [deletedMessageIds, setDeletedMessageIds] = useState<Set<string>>(new Set());
+  const [deleteTarget, setDeleteTarget] = useState<null | { id: string; scope: 'me' | 'all'; preview: string }>(null);
+  const [clearAllOpen, setClearAllOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const presenceChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const { playSound, isSoundEnabled } = useSoundEffects();
