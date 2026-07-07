@@ -232,12 +232,12 @@ export function ScheduledRoundsManager() {
                       {unit && <Badge variant="outline" className="border-slate-600 text-slate-300">{unit.name}</Badge>}
                       {!r.is_enabled && <Badge variant="destructive">Desativado</Badge>}
                     </div>
-                    <div className="mt-1 text-xs text-slate-400 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-0.5">
-                      {r.mode === 'once' && <span>Disparo: {formatBR(r.scheduled_at)}</span>}
-                      {r.mode === 'recurring' && <span>Horários: {r.recur_times.join(', ')} · Dias: {r.recur_weekdays.map(d => WEEKDAYS[d]).join('/')}</span>}
-                      {r.mode === 'interval' && <span>A cada {r.interval_minutes} min</span>}
-                      <span>Próximo: {formatBR(r.next_trigger_at)}</span>
-                      <span>Último: {formatBR(r.last_triggered_at)}</span>
+                    <div className="mt-1 text-xs text-slate-400 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-0.5 min-w-0">
+                      {r.mode === 'once' && <span className="min-w-0 break-words">Disparo: {formatBR(r.scheduled_at)}</span>}
+                      {r.mode === 'recurring' && <span className="min-w-0 break-words">Horários: {r.recur_times.join(', ')} · Dias: {r.recur_weekdays.map(d => WEEKDAYS[d]).join('/')}</span>}
+                      {r.mode === 'interval' && <span className="min-w-0 break-words">A cada {r.interval_minutes} min</span>}
+                      <span className="min-w-0 break-words">Próximo: {formatBR(r.next_trigger_at)}</span>
+                      <span className="min-w-0 break-words">Último: {formatBR(r.last_triggered_at)}</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-end gap-1 shrink-0 self-end sm:self-start">
@@ -259,7 +259,7 @@ export function ScheduledRoundsManager() {
       </CardContent>
 
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogContent className="w-[min(96vw,1180px)] max-w-none bg-slate-900 border-slate-700 text-slate-100 max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] p-0 gap-0 flex flex-col overflow-hidden">
+        <DialogContent className="top-2 bottom-2 translate-y-0 h-auto max-h-none w-[min(96vw,1240px)] max-w-none bg-slate-900 border-slate-700 text-slate-100 p-0 gap-0 flex flex-col overflow-hidden">
           <DialogHeader className="px-4 sm:px-5 py-2.5 border-b border-slate-800 shrink-0">
             <DialogTitle className="text-sm sm:text-base leading-tight">{editing.id ? 'Editar agendamento' : 'Novo agendamento'}</DialogTitle>
           </DialogHeader>
