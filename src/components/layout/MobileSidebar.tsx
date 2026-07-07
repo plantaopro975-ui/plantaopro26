@@ -94,6 +94,20 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
           />
         ))}
 
+        {isAdmin && !masterSession && (
+          <>
+            <SidebarDivider />
+            <SidebarSectionLabel accent>Administração</SidebarSectionLabel>
+            {adminItems.map((item) => (
+              <SidebarNavItem
+                key={`admin-${item.href}`}
+                item={item}
+                onClick={handleClick(item.label, true)}
+              />
+            ))}
+          </>
+        )}
+
         {masterSession && (
           <>
             <SidebarDivider />
@@ -108,6 +122,7 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
           </>
         )}
       </nav>
+
 
       {/* Footer */}
       <div className="px-5 py-3 border-t border-sidebar-border/60 flex items-center justify-between">
