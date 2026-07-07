@@ -444,12 +444,27 @@ export function JourneyDetailsDialog({
                 )}
               </div>
 
-              <div className="rounded-md border border-slate-700 bg-slate-800/40 p-2.5 text-[11px] leading-relaxed text-slate-300">
-                <span className="font-semibold text-amber-300">Como interpretar:</span>{' '}
-                o período de descanso é o intervalo entre o fim do plantão anterior e o início do próximo.
-                O plantão {periodLabel.toLowerCase()} classifica-se pelo horário de entrada
-                ({isNight ? '18h–06h' : '06h–18h'}).
-                {current.scaleLabel && ` A escala ${current.scaleLabel} representa a proporção plantão×descanso.`}
+              <div className="rounded-md border border-slate-700 bg-slate-800/40 p-2.5 text-[11px] leading-relaxed text-slate-300 space-y-1.5">
+                <div>
+                  <span className="font-semibold text-amber-300">Como interpretar:</span>{' '}
+                  o <span className="font-semibold text-emerald-300">descanso operacional</span> é
+                  o período em que o agente está fora de escala, entre o fim de um plantão e o
+                  início do próximo.
+                </div>
+                <div>
+                  O plantão é classificado como{' '}
+                  <span className="font-semibold text-amber-300">Diurno</span> quando inicia entre
+                  <span className="tabular-nums"> 06h e 18h</span>, e como{' '}
+                  <span className="font-semibold text-indigo-300">Noturno</span> quando inicia
+                  entre <span className="tabular-nums">18h e 06h</span> (atravessa a madrugada).
+                  Este plantão é <span className="font-semibold">{periodLabel}</span>.
+                </div>
+                {current.scaleLabel && (
+                  <div>
+                    A escala <span className="font-semibold">{current.scaleLabel}</span> indica a
+                    proporção entre horas de plantão e horas de descanso.
+                  </div>
+                )}
               </div>
             </div>
           )}
