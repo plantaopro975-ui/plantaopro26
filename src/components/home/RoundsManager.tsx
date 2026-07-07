@@ -1589,11 +1589,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         </div>
                         {!overrideActive && (
                           <div className="mt-1 text-[10.5px]">
-                            Horário fixado em <b>22:00 → 06:00</b>. A divisão entre os agentes usa o
-                            <b> tempo real restante</b> (agora → 06:00), então cada posto é sempre
-                            proporcional — mesmo que a ronda seja criada depois das 22:00.
+                            Janela fixa <b>22:00 → 06:00</b> dividida em partes iguais entre os
+                            <b> {agents.length || 'N'} agente(s)</b> (~<b>{schedule ? fmtHMS(schedule.rows[0]?.duration * 60 || 0) : '—'}</b> cada).
+                            Se a contagem começar depois das 22:00, o Agente 1 assume com o tempo
+                            restante do próprio slot; ao esgotar, é <b>riscado</b> e a vez passa
+                            automaticamente ao próximo, que recebe o slot completo.
                           </div>
                         )}
+
 
 
                         {overrideActive && (
