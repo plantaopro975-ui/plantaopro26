@@ -130,9 +130,13 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   };
 
   // Estado para divergências detectadas pelo backend
-  const [divergences, setDivergences] = useState<
-    Array<{ divergence_type: string; shift_date: string; expected_date: string | null; notes: string | null }>
-  >([]);
+  type Divergence = {
+    divergence_type: string;
+    shift_date: string;
+    expected_date: string | null;
+    notes: string | null;
+  };
+  const [divergences, setDivergences] = useState<Divergence[]>([]);
 
   const checkDivergences = async () => {
     try {
