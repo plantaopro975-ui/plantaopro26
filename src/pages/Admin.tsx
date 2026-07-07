@@ -374,6 +374,14 @@ export default function Admin() {
                     )}
 
                     <TabsTrigger
+                      value="rondas"
+                      className="px-4 py-2 data-[state=active]:bg-amber-600 data-[state=active]:text-slate-950 rounded-md whitespace-nowrap"
+                    >
+                      <CalendarClock className="h-4 w-4 mr-2" />
+                      Rondas
+                    </TabsTrigger>
+
+                    <TabsTrigger
                       value="appearance"
                       className="px-4 py-2 data-[state=active]:bg-pink-600 data-[state=active]:text-white rounded-md whitespace-nowrap"
                     >
