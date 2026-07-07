@@ -82,3 +82,62 @@ describe('nightShift helpers (server-time aware)', () => {
     });
   });
 });
+
+describe('applyNightShiftLock — field locking contract', () => {
+  it('does NOT touch values outside the night window', () => {
+    const r = applyNightShiftLock({
+      now: atAcre(2026, 7, 7, 14, 0),
+      startTime: '07:00',
+      endTime: '19:00',
+    });
+    expect(r).toEqual({ startTime: '07:00', endTime: '19:00', locked: false, auditRequired: false });
+  });
+
+  it('FORCES 22:00/06:00 and marks locked=true inside the night window (no override)', () => {
+    const r = applyNightShiftLock({
+      now: atAcre(2026, 7, 7, 23, 45),
+      startTime: '07:00',       // agent tried to inject a day-shift start
+      endTime: '19:00',
+    });
+    expect(r.locked).toBe(true);
+    expect(r.startTime).toBe(NIGHT_START);
+    expect(r.endTime).toBe(NIGHT_END);
+    expect(r.auditRequired).toBe(false);
+  });
+
+  it('is TRUE at 05:59 (last minute of window) and RELEASES at 06:00', () => {
+    const insideLastMinute = applyNightShiftLock({
+      now: atAcre(2026, 7, 8, 5, 59),
+      startTime: '05:00', endTime: '13:00',
+    });
+    expect(insideLastMinute.locked).toBe(true);
+
+    const releasedAtSix = applyNightShiftLock({
+      now: atAcre(2026, 7, 8, 6, 0),
+      startTime: '05:00', endTime: '13:00',
+    });
+    expect(releasedAtSix.locked).toBe(false);
+    expect(releasedAtSix.startTime).toBe('05:00');
+  });
+
+  it('with masterOverride=true keeps custom values but flags auditRequired', () => {
+    const r = applyNightShiftLock({
+      now: atAcre(2026, 7, 7, 23, 0),
+      startTime: '20:00', endTime: '04:00',
+      masterOverride: true,
+    });
+    expect(r.locked).toBe(false);
+    expect(r.startTime).toBe('20:00');
+    expect(r.endTime).toBe('04:00');
+    expect(r.auditRequired).toBe(true);
+  });
+
+  it('with masterOverride=true AND standard values → no audit required', () => {
+    const r = applyNightShiftLock({
+      now: atAcre(2026, 7, 7, 23, 0),
+      startTime: NIGHT_START, endTime: NIGHT_END,
+      masterOverride: true,
+    });
+    expect(r.auditRequired).toBe(false);
+  });
+});
