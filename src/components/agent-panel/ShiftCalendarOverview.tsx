@@ -731,8 +731,10 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
             { c: 'hsl(43 96% 56%)', label: 'Plantão' },
             { c: 'hsl(142 71% 45%)', label: 'Cumprido ✓' },
             { c: 'hsl(0 84% 60%)', label: 'Não cumprido ✕' },
+            { c: 'hsl(199 89% 60%)', label: 'Folga 24h' },
+            { c: 'hsl(239 84% 67%)', label: 'Meia folga 12h' },
             { c: 'hsl(270 91% 65%)', label: 'Férias' },
-            { c: 'hsl(217 91% 60%)', label: 'Folga' },
+            { c: 'hsl(217 91% 60%)', label: 'Folga aprovada' },
           ].map((it) => (
             <div key={it.label} className="flex items-center gap-1">
               <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill={it.c} /></svg>
