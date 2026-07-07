@@ -288,6 +288,31 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
     }
   };
 
+  const clearConversationForMe = async () => {
+    if (!activeRoom) return;
+    const visibleIds = messages.filter(m => !deletedMessageIds.has(m.id)).map(m => m.id);
+    if (visibleIds.length === 0) {
+      toast.info('Nenhuma mensagem para limpar');
+      return;
+    }
+    if (!window.confirm(`Ocultar ${visibleIds.length} mensagem(ns) desta conversa apenas para você?`)) return;
+    try {
+      const rows = visibleIds.map(id => ({ message_id: id, agent_id: agentId }));
+      const { error } = await (supabase as any)
+        .from('deleted_messages')
+        .upsert(rows, { onConflict: 'message_id,agent_id' });
+      if (error) throw error;
+      setDeletedMessageIds(prev => new Set([...prev, ...visibleIds]));
+      toast.success('Conversa limpa para você');
+    } catch (error) {
+      console.error('Error clearing conversation:', error);
+      toast.error('Erro ao limpar conversa');
+    }
+  };
+
+
+
+
   const initializeChatRooms = async () => {
     try {
       setIsLoading(true);
@@ -638,8 +663,29 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
             </Badge>
           </div>
           
-          {/* Online Users - Compact */}
-          <TooltipProvider>
+          <div className="flex items-center gap-1.5">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10"
+                    onClick={clearConversationForMe}
+                    aria-label="Limpar conversa para mim"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-zinc-800 border-zinc-700 text-[10px]">
+                  Limpar conversa (só para mim)
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Online Users - Compact */}
+            <TooltipProvider>
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full cursor-default">
@@ -676,8 +722,10 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                 </div>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+            </TooltipProvider>
+          </div>
         </div>
+
         
         {/* Room Buttons - Professional Modern Style */}
         <div className="mt-2 flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
@@ -790,10 +838,12 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 hover:text-zinc-300"
+                              className="h-5 w-5 opacity-60 md:opacity-0 md:group-hover:opacity-100 transition-opacity text-zinc-400 hover:text-zinc-100"
+                              aria-label="Opções da mensagem"
                             >
-                              <MoreVertical className="h-2.5 w-2.5" />
+                              <MoreVertical className="h-3 w-3" />
                             </Button>
+
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align={isOwn ? 'end' : 'start'} className="bg-zinc-800 border-zinc-700">
                             <DropdownMenuItem 
