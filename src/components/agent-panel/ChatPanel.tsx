@@ -663,8 +663,29 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
             </Badge>
           </div>
           
-          {/* Online Users - Compact */}
-          <TooltipProvider>
+          <div className="flex items-center gap-1.5">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10"
+                    onClick={clearConversationForMe}
+                    aria-label="Limpar conversa para mim"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-zinc-800 border-zinc-700 text-[10px]">
+                  Limpar conversa (só para mim)
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Online Users - Compact */}
+            <TooltipProvider>
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full cursor-default">
