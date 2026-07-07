@@ -466,6 +466,12 @@ export default function Admin() {
                   </TabsContent>
                 )}
 
+                <TabsContent value="rondas" className="mt-4">
+                  <Suspense fallback={<PanelSkeleton />}>
+                    <ScheduledRoundsManager />
+                  </Suspense>
+                </TabsContent>
+
                 <TabsContent value="appearance" className="mt-4">
                   <Card className="bg-slate-800/50 border-slate-700">
                     <CardHeader>
