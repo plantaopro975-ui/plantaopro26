@@ -798,22 +798,29 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
   /* ---------- início efetivo (turno noturno) ----------
-   * Quando o modal é aberto DENTRO da janela 22:00→06:00, o campo "Início" fica
-   * travado em 22:00 por regra de segurança — porém a divisão do turno entre os
-   * agentes deve considerar o tempo REAL restante (agora → 06:00) para que o
-   * primeiro agente entre em serviço imediatamente e cada posto seja proporcional.
-   * Quando o cronômetro está rodando, congelamos o valor no momento do início.
+   * REGRA DE ANCORAGEM (22:00–06:00):
+   * O cronograma é sempre ancorado no relógio de parede às 22:00, dividido em N
+   * fatias iguais (8h ÷ N). Cada agente ocupa uma janela fixa (ex.: 3 agentes →
+   * 22:00–00:40, 00:40–03:20, 03:20–06:00). Se o operador iniciar a contagem
+   * atrasado (ex.: 23:00), o Agente 1 continua com fim em 00:40 (recebe apenas
+   * o tempo restante do próprio slot); ao esgotar, é riscado e passa-se ao
+   * próximo agente com o slot inteiro. Se iniciar tão tarde que o slot do
+   * primeiro já venceu, ele entra "cumprido" e a ronda começa no agente ativo.
+   *
+   * Fora do turno noturno, mantém o comportamento anterior (início = campo).
    */
   const frozenStartMinRef = useRef<number | null>(null);
   const effectiveStartMin = useMemo<number | null>(() => {
+    if (mode === 'split' && nightEffectivelyLocked) {
+      // Âncora fixa em 22:00, independentemente de quando o operador iniciar.
+      return toMinutes(NIGHT_START);
+    }
     if (mode === 'split' && running && frozenStartMinRef.current != null) {
       return frozenStartMinRef.current;
     }
-    if (mode === 'split' && nightEffectivelyLocked && !running && serverClock) {
-      return acreMinutesFloat(serverClock);
-    }
     return toMinutes(startTime);
-  }, [mode, nightEffectivelyLocked, running, serverClock, startTime]);
+  }, [mode, nightEffectivelyLocked, running, startTime]);
+
 
   /* ---------- schedule com RECALIBRAGEM AUTOMÁTICA (precisão em segundos) ---------- */
   const schedule = useMemo(() => {
