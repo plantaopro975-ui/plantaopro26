@@ -52,6 +52,7 @@ interface InfoCard {
 
 export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam, className }: NextShiftCountdownProps) {
   const [nextShift, setNextShift] = useState<NextShift | null>(null);
+  const [upcomingShifts, setUpcomingShifts] = useState<NextShift[]>([]);
   const [todayLeave, setTodayLeave] = useState<AgentLeave | null>(null);
   const [announcements, setAnnouncements] = useState<AdminAnnouncement[]>([]);
   const [bhBalance, setBhBalance] = useState<number>(0);
@@ -79,8 +80,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
             .eq('status', 'scheduled')
             .eq('is_vacation', false)
             .order('shift_date', { ascending: true })
-            .limit(1)
-            .maybeSingle(),
+            .limit(6),
           supabase
             .from('agent_leaves')
             .select('id, leave_type, start_date, end_date')
@@ -107,8 +107,10 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
             .limit(5)
         ]);
 
-        if (shiftResult.data) {
-          setNextShift(shiftResult.data as NextShift);
+        const shiftsArr = (shiftResult.data as NextShift[] | null) || [];
+        if (shiftsArr.length > 0) {
+          setNextShift(shiftsArr[0]);
+          setUpcomingShifts(shiftsArr);
         }
 
         if (leaveResult.data) {
@@ -151,6 +153,39 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       };
     };
 
+    // Detecta padrão de escala com base em duração + intervalo entre plantões
+    // Retorna algo como "12x12", "12x36", "24x48", "24x72", "Plantão" (fallback)
+    const detectScale = (shifts: NextShift[], durationH: number): string => {
+      if (!shifts || shifts.length < 2) {
+        // Sem histórico suficiente: usa apenas duração
+        if (durationH === 12) return '12h';
+        if (durationH === 24) return '24h';
+        return `${durationH}h`;
+      }
+      // Média de intervalos em dias entre plantões consecutivos
+      const gaps: number[] = [];
+      for (let i = 1; i < shifts.length; i++) {
+        const prev = parseISO(shifts[i - 1].shift_date);
+        const curr = parseISO(shifts[i].shift_date);
+        gaps.push(differenceInCalendarDays(curr, prev));
+      }
+      // Usa a moda (gap mais frequente) para robustez
+      const freq: Record<number, number> = {};
+      gaps.forEach((g) => { freq[g] = (freq[g] || 0) + 1; });
+      const modeGap = Number(
+        Object.entries(freq).sort((a, b) => b[1] - a[1])[0][0]
+      );
+      // Descanso em horas ≈ (gap em dias) * 24 - duração do plantão
+      const restH = Math.max(0, modeGap * 24 - durationH);
+      // Arredonda para múltiplos comuns (12, 24, 36, 48, 72)
+      const commons = [12, 24, 36, 48, 72];
+      const rest = commons.reduce((best, v) =>
+        Math.abs(v - restH) < Math.abs(best - restH) ? v : best
+      , commons[0]);
+      return `${durationH}x${rest}`;
+    };
+
+
     // Pré-computa dados do próximo plantão
     let shiftMeta: null | {
       shiftDate: Date;
@@ -161,6 +196,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       periodLabel: string;
       PeriodIcon: typeof Sun;
       shiftLabel: string;
+      scaleLabel: string;
       startStr: string;
       endStr: string;
       dateStr: string;
@@ -178,12 +214,14 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       if (shiftEnd <= shiftStart) shiftEnd.setDate(shiftEnd.getDate() + 1);
       const durationHours = Math.round((shiftEnd.getTime() - shiftStart.getTime()) / 3_600_000);
       const p = classifyPeriod(hh || 7, durationHours);
+      const scaleLabel = detectScale(upcomingShifts, durationHours);
       shiftMeta = {
         shiftDate,
         shiftStart,
         shiftEnd,
         durationHours,
         ...p,
+        scaleLabel,
         startStr: (nextShift.start_time || '07:00').slice(0, 5),
         endStr: (nextShift.end_time || '19:00').slice(0, 5),
         dateStr: format(shiftDate, "EEE, dd/MM", { locale: ptBR }),
@@ -233,7 +271,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
         icon: <Palmtree className="h-5 w-5 text-white" />,
         title: 'DESCANSO • FOLGA OPERACIONAL',
         value: restLabel,
-        subtitle: `Próximo: ${shiftMeta.shiftLabel} • ${shiftMeta.dateStr} ${shiftMeta.startStr}–${shiftMeta.endStr}`,
+        subtitle: `Próximo: ${shiftMeta.shiftLabel} (Escala ${shiftMeta.scaleLabel}) • ${shiftMeta.dateStr} ${shiftMeta.startStr}–${shiftMeta.endStr}`,
         colorClass: 'text-teal-400',
         bgClass: 'bg-gradient-to-br from-teal-500 to-cyan-600',
         borderClass: 'border-teal-500/50 bg-gradient-to-r from-teal-500/15 via-cyan-500/10 to-teal-500/15 shadow-lg shadow-teal-500/15',
@@ -242,7 +280,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
 
     // ---------- PRÓXIMO PLANTÃO ----------
     if (shiftMeta) {
-      const { shiftStart, shiftDate, durationHours, isNight, periodLabel, PeriodIcon, shiftLabel, startStr, endStr, dateStr, isTodayShift } = shiftMeta;
+      const { shiftStart, shiftDate, durationHours, isNight, periodLabel, PeriodIcon, shiftLabel, scaleLabel, startStr, endStr, dateStr, isTodayShift } = shiftMeta;
       const now = new Date();
       const daysUntil = differenceInCalendarDays(shiftDate, startOfDay(now));
       const hoursUntil = differenceInHours(shiftStart, now);
@@ -267,8 +305,8 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
         priority: isTodayShift ? 2 : 10,
         icon: isUrgent ? <Zap className="h-5 w-5 text-white" /> : isSoon ? <AlertTriangle className="h-5 w-5 text-white" /> : <PeriodIcon className="h-5 w-5 text-white" />,
         title: isTodayShift
-          ? `PLANTÃO HOJE • ${shiftLabel}`
-          : `PRÓXIMO PLANTÃO • ${shiftLabel}`,
+          ? `PLANTÃO HOJE • ${shiftLabel} • Escala ${scaleLabel}`
+          : `PRÓXIMO PLANTÃO • ${shiftLabel} • Escala ${scaleLabel}`,
         value: displayValue,
         subtitle: `${dateStr} • ${startStr}–${endStr} (${durationHours}h ${periodLabel.toLowerCase()})`,
         colorClass: isUrgent ? 'text-emerald-400' : isSoon ? 'text-amber-400' : isNight ? 'text-indigo-400' : 'text-sky-400',
@@ -385,7 +423,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
 
     // Sort by priority
     return cards.sort((a, b) => a.priority - b.priority);
-  }, [nextShift, todayLeave, bhBalance, bhValue, announcements]);
+  }, [nextShift, upcomingShifts, todayLeave, bhBalance, bhValue, announcements]);
 
   // Auto-rotate cards
   useEffect(() => {
