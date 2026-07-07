@@ -1861,10 +1861,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 </div>
                               )}
                               {view?.done && (
-                                <div className="font-sans font-black uppercase tracking-[0.15em] text-2xl sm:text-3xl text-emerald-500 flex items-center gap-2">
-                                  <CheckCircle2 className="h-7 w-7" /> {isPreview ? 'TURNO ENCERRADO' : 'MISSÃO CUMPRIDA'}
+                                <div className="font-sans font-black uppercase tracking-[0.15em] text-lg sm:text-2xl md:text-3xl text-emerald-500 flex items-center gap-2">
+                                  <CheckCircle2 className="h-5 w-5 sm:h-7 sm:w-7" /> {isPreview ? 'TURNO ENCERRADO' : 'MISSÃO CUMPRIDA'}
                                 </div>
                               )}
+
 
                               {view && !view.done && 'slotSec' in view && view.slotSec > 0 && (
                                 <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
