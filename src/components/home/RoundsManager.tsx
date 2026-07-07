@@ -1868,50 +1868,61 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       {/* Countdown — aberto, centralizado */}
                       <div className="mb-6 flex flex-col items-center text-center gap-3">
-                        <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                          {running && live && !live.done ? 'Em ronda' : running && live?.done ? 'Concluído' : 'Aguardando início'}
-                        </span>
-
-                        {/* Roster dinâmico — aparece ao iniciar a contagem */}
-                        {running && live && (
-                          <div className="w-full max-w-3xl rounded-lg border border-border/60 bg-card/40 backdrop-blur-sm p-3">
-                            <div className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
-                              Agentes participantes
-                            </div>
-                            <div className="flex flex-wrap items-center justify-center gap-1.5">
-                              {schedule.rows.map((r, i) => {
-                                const isActive = !live.done && i === live.index;
-                                const isDoneAgent = live.done ? i <= live.index : i < live.index;
-                                return (
-                                  <span
-                                    key={i}
-                                    className={cn(
-                                      'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-wide transition-all',
-                                      isActive && 'border-primary/70 bg-primary/10 text-foreground font-semibold animate-pulse',
-                                      isDoneAgent && 'border-emerald-500/40 bg-emerald-500/5 text-muted-foreground line-through decoration-emerald-500/70',
-                                      !isActive && !isDoneAgent && 'border-border/60 bg-background/40 text-muted-foreground',
-                                    )}
-                                    style={isActive ? { borderColor: teamColor, color: teamColor } : undefined}
-                                  >
-                                    <span className="font-mono text-[9px] opacity-60 no-underline">{pad(i + 1)}</span>
-                                    {r.name}
-                                    {isDoneAgent && <CheckCircle2 className="h-3 w-3 text-emerald-500 no-underline" />}
-                                  </span>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-
                         {(() => {
-                          const urgent = running && live && !live.done && live.remaining <= 10;
-                          const critical = running && live && !live.done && live.remaining <= 5;
-                          const slotProgress = running && live && !live.done && 'slotSec' in live
-                            ? 1 - live.remaining / live.slotSec : 0;
+                          // "view" unifica live (rodando) e preview (turno noturno, antes de Iniciar)
+                          const view = live ?? preview;
+                          const isPreview = !live && !!preview;
+                          const statusLabel =
+                            running && live && !live.done ? 'Em ronda' :
+                            running && live?.done ? 'Concluído' :
+                            isPreview && view?.done ? 'Turno encerrado (06:00)' :
+                            isPreview ? 'Prévia em tempo real · aguardando Iniciar' :
+                            'Aguardando início';
+                          const urgent = view && !view.done && view.remaining <= 10;
+                          const critical = view && !view.done && view.remaining <= 5;
+                          const slotProgress = view && !view.done && 'slotSec' in view && view.slotSec > 0
+                            ? 1 - view.remaining / view.slotSec : 0;
+                          const activeAgentName = view && !view.done ? schedule.rows[view.index]?.name : undefined;
                           return (
                             <>
+                              <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                                {statusLabel}
+                              </span>
+
+                              {/* Roster — aparece com contagem ao vivo OU prévia noturna */}
+                              {view && (
+                                <div className="w-full max-w-3xl rounded-lg border border-border/60 bg-card/40 backdrop-blur-sm p-3">
+                                  <div className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
+                                    Agentes participantes {isPreview && <span className="text-amber-400">· prévia</span>}
+                                  </div>
+                                  <div className="flex flex-wrap items-center justify-center gap-1.5">
+                                    {schedule.rows.map((r, i) => {
+                                      const isActive = !view.done && i === view.index;
+                                      const isDoneAgent = view.done ? i <= view.index : i < view.index;
+                                      return (
+                                        <span
+                                          key={i}
+                                          className={cn(
+                                            'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-wide transition-all',
+                                            isActive && 'border-primary/70 bg-primary/10 text-foreground font-semibold animate-pulse',
+                                            isDoneAgent && 'border-emerald-500/40 bg-emerald-500/5 text-muted-foreground line-through decoration-emerald-500/70',
+                                            !isActive && !isDoneAgent && 'border-border/60 bg-background/40 text-muted-foreground',
+                                          )}
+                                          style={isActive ? { borderColor: teamColor, color: teamColor } : undefined}
+                                        >
+                                          <span className="font-mono text-[9px] opacity-60 no-underline">{pad(i + 1)}</span>
+                                          {r.name}
+                                          <span className="font-mono text-[9px] opacity-60 no-underline">{r.from}</span>
+                                          {isDoneAgent && <CheckCircle2 className="h-3 w-3 text-emerald-500 no-underline" />}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
                               <div className="flex items-center justify-center gap-4 sm:gap-6">
-                                {running && live && !live.done && 'slotSec' in live && (
+                                {view && !view.done && 'slotSec' in view && view.slotSec > 0 && (
                                   <RoundsRadarSVG color={teamColor} progress={slotProgress} />
                                 )}
                                 <span
@@ -1925,49 +1936,53 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   style={{
                                     color: urgent
                                       ? 'hsl(var(--destructive))'
-                                      : running ? teamColor : 'hsl(var(--muted-foreground))',
+                                      : view ? teamColor : 'hsl(var(--muted-foreground))',
                                     textShadow: urgent ? '0 0 24px hsl(var(--destructive) / 0.7)' : undefined,
                                   }}
                                 >
-                                  {running && live ? fmtHMS(live.remaining) : fmtHMS(schedule.rows[0].duration * 60)}
+                                  {view && !view.done
+                                    ? fmtHMS(view.remaining)
+                                    : view?.done
+                                      ? '00:00:00'
+                                      : fmtHMS(schedule.rows[0].duration * 60)}
                                 </span>
                               </div>
 
-                              {urgent && (
+                              {urgent && view && (
                                 <div className="font-mono text-[11px] uppercase tracking-[0.35em] font-bold text-destructive animate-fade-in">
                                   ⚠ {critical ? 'ALERTA FINAL · ' : 'Contagem final · '}
-                                  {String(Math.max(0, Math.ceil(live.remaining))).padStart(2, '0')} segundos
+                                  {String(Math.max(0, Math.ceil(view.remaining))).padStart(2, '0')} segundos
                                 </div>
                               )}
 
-                              {/* Nome BEM GRANDE do agente em ronda */}
-                              {running && live && !live.done && (
+                              {/* Nome grande — agente ATIVO agora (live ou preview) */}
+                              {activeAgentName && (
                                 <div
                                   className="font-sans font-black uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                                   style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
                                 >
-                                  {schedule.rows[live.index].name}
+                                  {activeAgentName}
                                 </div>
                               )}
-                              {(!running || !live) && (
+                              {!view && (
                                 <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
                                   {schedule.rows[0].name}
                                 </div>
                               )}
-                              {running && live?.done && (
+                              {view?.done && (
                                 <div className="font-sans font-black uppercase tracking-[0.15em] text-2xl sm:text-3xl text-emerald-500 flex items-center gap-2">
-                                  <CheckCircle2 className="h-7 w-7" /> MISSÃO CUMPRIDA
+                                  <CheckCircle2 className="h-7 w-7" /> {isPreview ? 'TURNO ENCERRADO' : 'MISSÃO CUMPRIDA'}
                                 </div>
                               )}
 
-                              {running && live && !live.done && 'slotSec' in live && (
+                              {view && !view.done && 'slotSec' in view && view.slotSec > 0 && (
                                 <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
                                   <div className="h-full transition-all"
                                        style={{ width: `${slotProgress * 100}%`, backgroundColor: urgent ? 'hsl(var(--destructive))' : teamColor }} />
                                 </div>
                               )}
 
-                              {/* Restante total do turno (até 06:00 no modo noturno) + próximo agente */}
+                              {/* Restante total do turno + próximo agente */}
                               {schedule && (
                                 <div
                                   className="mt-1 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] tabular-nums"
@@ -1977,23 +1992,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                     <Timer className="h-3 w-3" />
                                     Turno {nightEffectivelyLocked ? '(até 06:00)' : 'total'}:&nbsp;
                                     <b className="text-amber-100">
-                                      {running && live
-                                        ? fmtHMS(Math.max(0, schedule.totalSec - live.elapsed))
+                                      {view
+                                        ? fmtHMS(Math.max(0, schedule.totalSec - view.elapsed))
                                         : fmtHMS(schedule.totalSec)}
                                     </b>
                                   </span>
                                   {(() => {
-                                    const nextIdx = running && live && !live.done
-                                      ? live.index + 1
-                                      : (!running ? 1 : -1);
+                                    const nextIdx = view && !view.done ? view.index + 1 : (!view ? 1 : -1);
                                     if (nextIdx < 0 || nextIdx >= schedule.rows.length) return null;
                                     const nextRow = schedule.rows[nextIdx];
-                                    const secsToNext = running && live && !live.done
-                                      ? live.remaining
-                                      : schedule.rows[0].duration * 60;
+                                    const secsToNext = view && !view.done ? view.remaining : schedule.rows[0].duration * 60;
                                     return (
                                       <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2 py-0.5 text-primary">
-                                        Próximo: <b className="uppercase">{nextRow.name}</b> em&nbsp;
+                                        Próximo: <b className="uppercase">{nextRow.name}</b> ({nextRow.from}) em&nbsp;
                                         <b>{fmtHMS(secsToNext)}</b>
                                       </span>
                                     );
@@ -2011,6 +2022,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             </>
                           );
                         })()}
+
 
                         <div className="flex items-center gap-2 pt-1">
                           {!running ? (
