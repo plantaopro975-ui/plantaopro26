@@ -455,7 +455,13 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
           ))}
         </div>
       </CardContent>
-      <JourneyDetailsDialog open={detailOpen} onOpenChange={setDetailOpen} data={detailData} />
+      <JourneyDetailsDialog
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        data={detailData}
+        onRequestDate={fetchJourneyForDate}
+        storageKey={`journey:last-date:${agentId}`}
+      />
     </Card>
   );
 }
