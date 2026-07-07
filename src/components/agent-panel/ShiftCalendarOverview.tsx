@@ -262,62 +262,58 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
           </div>
         </div>
 
-        {/* Calendar Grid — contido com max-width e células pequenas fixas */}
-        <div className="bg-slate-900/50 rounded-lg p-2 md:p-2.5 border border-slate-700/50 mx-auto w-full max-w-md">
+        {/* Calendar Grid — contido com max-width e células responsivas */}
+        <div className="bg-slate-900/50 rounded-lg p-1.5 sm:p-2 md:p-2.5 border border-slate-700/50 mx-auto w-full max-w-md">
           {/* Weekday headers */}
-          <div className="grid grid-cols-7 gap-1 mb-1.5">
+          <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-1.5">
             {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
-              <div key={i} className="text-center text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+              <div key={i} className="text-center text-[9px] sm:text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
                 {day}
               </div>
             ))}
           </div>
-          
-          {/* Days grid — altura fixa por linha para evitar cards enormes */}
-          <div className="grid grid-cols-7 gap-1">
+
+          {/* Days grid — altura fixa e hierarquia clara (data em cima, ícone abaixo) */}
+          <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
             {Array.from({ length: startingDayOfWeek }).map((_, i) => (
-              <div key={`empty-${i}`} className="h-9 md:h-10" />
+              <div key={`empty-${i}`} className="h-9 sm:h-10 md:h-11" />
             ))}
-            
+
             {days.map((day) => {
               const dayInfo = getDayInfo(day);
               const colors = getDayColors(dayInfo.types);
               const icon = getDayIcon(dayInfo.types);
               const isTodayDay = dayInfo.types.includes('today');
-              
+
               return (
                 <div
                   key={day.toISOString()}
-                  className={`relative h-9 md:h-10 rounded-md border flex flex-col items-center justify-center text-[11px] font-medium transition-all ${colors} ${
+                  className={`relative h-9 sm:h-10 md:h-11 rounded-md border flex flex-col items-center justify-center gap-0.5 px-0.5 text-[10px] sm:text-[11px] font-medium transition-all ${colors} ${
                     isTodayDay ? 'ring-2 ring-primary ring-offset-1 ring-offset-slate-900' : ''
                   }`}
                 >
-                  <span className={`leading-none ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
-                  {icon && <div className="mt-0.5 opacity-80">{icon}</div>}
+                  <span className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
+                  {icon && <div className="opacity-80">{icon}</div>}
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 pt-1.5 border-t border-slate-700/50">
-          <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50 border border-amber-500/50" />
-            <span className="text-[10px] text-muted-foreground">Plantão</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-purple-500/50 border border-purple-500/50" />
-            <span className="text-[10px] text-muted-foreground">Férias</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-blue-500/50 border border-blue-500/50" />
-            <span className="text-[10px] text-muted-foreground">Folga</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500/50 border border-green-500/50" />
-            <span className="text-[10px] text-muted-foreground">BH</span>
-          </div>
+        {/* Legend — quebra bem em telas pequenas, sem cortar textos */}
+        <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 pt-1.5 border-t border-slate-700/50">
+          {[
+            { c: 'bg-amber-500/50 border-amber-500/50', label: 'Plantão' },
+            { c: 'bg-purple-500/50 border-purple-500/50', label: 'Férias' },
+            { c: 'bg-blue-500/50 border-blue-500/50', label: 'Folga' },
+            { c: 'bg-green-500/50 border-green-500/50', label: 'BH' },
+          ].map((it) => (
+            <div key={it.label} className="flex items-center gap-1.5">
+              <div className={`w-2.5 h-2.5 rounded-full border ${it.c}`} />
+              <span className="text-[10px] text-muted-foreground whitespace-nowrap">{it.label}</span>
+            </div>
+          ))}
+        </div>
         </div>
       </CardContent>
     </Card>
