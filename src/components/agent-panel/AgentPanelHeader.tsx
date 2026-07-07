@@ -249,22 +249,21 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
   // trial removido — sistema gratuito
 
   const handleLogout = async () => {
-    // Logout robusto para mobile: usa o contexto (limpa user/session/master),
-    // e força reload total para evitar guards presos em estado stale.
+    // Logout suave — evita tela preta do reload total.
+    // signOut() já limpa storages, mostra toast profissional e faz soft-navigate para '/'.
     try {
       await Promise.race([
         signOut(),
-        new Promise((resolve) => setTimeout(resolve, 1200)),
+        new Promise((resolve) => setTimeout(resolve, 1500)),
       ]);
     } catch {
       /* ignore */
     }
     try {
-      await supabase.auth.signOut();
+      navigate('/', { replace: true });
     } catch {
-      /* ignore */
+      window.location.assign('/');
     }
-    window.location.replace('/');
   };
 
   return (

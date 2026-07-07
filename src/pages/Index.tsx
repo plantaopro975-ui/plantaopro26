@@ -948,8 +948,8 @@ export default function Index() {
       }
       
       toast({
-        title: 'Bem-vindo!',
-        description: 'Login realizado com sucesso.',
+        title: `Acesso liberado, ${(foundAgent?.name || '').split(' ')[0] || 'Agente'}`,
+        description: 'Autenticação confirmada. Boa jornada e proteja-se sempre.',
       });
       navigate('/agent-panel', { replace: true });
     }
@@ -1123,8 +1123,8 @@ export default function Index() {
         persistLastCpf(cleanCpf);
         updateLastLogin(cleanCpf);
         toast({
-          title: 'Bem-vindo!',
-          description: 'Login rápido realizado com sucesso.',
+          title: 'Acesso rápido confirmado',
+          description: 'Sessão iniciada com credenciais do dispositivo.',
         });
         navigate('/agent-panel', { replace: true });
       }
@@ -1574,7 +1574,10 @@ export default function Index() {
         subtitle="Autenticação de Agente"
         team={selectedTeam}
       >
-        <form onSubmit={handleLogin} className="space-y-5" data-login-form="true">
+        <form onSubmit={handleLogin} className="space-y-5" data-login-form="true" autoComplete="off" spellCheck={false}>
+          {/* Honeypot para desativar o prompt "salvar senha" do navegador */}
+          <input type="text" name="fakeuser" autoComplete="username" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} readOnly />
+          <input type="password" name="fakepass" autoComplete="current-password" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} readOnly />
           {foundAgent?.name ? (
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-slate-300 uppercase tracking-wider">

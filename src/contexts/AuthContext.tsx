@@ -111,6 +111,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(newSession);
           setUser(newSession?.user ?? null);
           if (newSession?.user) {
+            // Otimista: assume 'user' para liberar navegação imediata (sem tela preta).
+            // fetchUserRole corrige para 'admin'/'master' logo em seguida se aplicável.
+            setUserRole((prev) => prev ?? ('user' as UserRole));
             setTimeout(() => {
               fetchUserRole(newSession.user.id);
             }, 0);
@@ -340,6 +343,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Higieniza credenciais salvas em tempo real (todos os componentes/abas)
     try { clearAllCredentials(); } catch { /* ignore */ }
+
+    // Toast profissional de encerramento
+    try {
+      toast.success('Sessão encerrada', {
+        description: 'Você saiu com segurança do PlantãoPro. Até o próximo plantão, Agente.',
+        duration: 4000,
+      });
+    } catch { /* ignore */ }
+
 
     // Invalidate session globally on the server (revokes refresh token on all devices)
     try {
