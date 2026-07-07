@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { format, parseISO, differenceInDays, differenceInHours, isToday, isSameDay } from 'date-fns';
+import { format, parseISO, differenceInCalendarDays, differenceInHours, differenceInMinutes, isToday, isSameDay, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Calendar, Clock, Zap, AlertTriangle, Palmtree, Wallet, TrendingUp, ChevronLeft, ChevronRight, Megaphone, Bell, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
