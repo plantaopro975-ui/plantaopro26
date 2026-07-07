@@ -305,8 +305,8 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
         priority: isTodayShift ? 2 : 10,
         icon: isUrgent ? <Zap className="h-5 w-5 text-white" /> : isSoon ? <AlertTriangle className="h-5 w-5 text-white" /> : <PeriodIcon className="h-5 w-5 text-white" />,
         title: isTodayShift
-          ? `PLANTÃO HOJE • ${shiftLabel}`
-          : `PRÓXIMO PLANTÃO • ${shiftLabel}`,
+          ? `PLANTÃO HOJE • ${shiftLabel} • Escala ${scaleLabel}`
+          : `PRÓXIMO PLANTÃO • ${shiftLabel} • Escala ${scaleLabel}`,
         value: displayValue,
         subtitle: `${dateStr} • ${startStr}–${endStr} (${durationHours}h ${periodLabel.toLowerCase()})`,
         colorClass: isUrgent ? 'text-emerald-400' : isSoon ? 'text-amber-400' : isNight ? 'text-indigo-400' : 'text-sky-400',
