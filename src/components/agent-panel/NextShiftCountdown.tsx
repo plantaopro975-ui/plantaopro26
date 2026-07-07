@@ -253,7 +253,10 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       nextIsNight: boolean;
     } = null;
 
-    if (!todayLeave && shiftMeta && shiftMeta.isTodayShift) {
+    // Regra de precisão: só monta a JORNADA DE HOJE quando o próximo plantão
+    // é NOTURNO e começa hoje. Isso evita misturar "folga" com plantões
+    // diurnos ou de 24h (nesses casos a folga não é 07:00–19:00).
+    if (!todayLeave && shiftMeta && shiftMeta.isTodayShift && shiftMeta.isNight) {
       const now = new Date();
       const dayStart = startOfDay(now);
 
