@@ -245,17 +245,18 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         {/* Stats compactos */}
         <div className="grid grid-cols-4 gap-1">
           {[
-            { v: shiftDays, label: 'Plantões', color: 'amber' },
-            { v: vacationDays, label: 'Férias', color: 'purple' },
-            { v: leaveDays, label: 'Folgas', color: 'blue' },
-            { v: `${totalBhHours > 0 ? '+' : ''}${totalBhHours}`, label: 'BH', color: 'green' },
+            { v: shiftDays, label: 'Plantões', box: 'bg-amber-500/10 border-amber-500/25', text: 'text-amber-400' },
+            { v: vacationDays, label: 'Férias', box: 'bg-purple-500/10 border-purple-500/25', text: 'text-purple-400' },
+            { v: leaveDays, label: 'Folgas', box: 'bg-blue-500/10 border-blue-500/25', text: 'text-blue-400' },
+            { v: `${totalBhHours > 0 ? '+' : ''}${totalBhHours}`, label: 'BH', box: 'bg-green-500/10 border-green-500/25', text: 'text-green-400' },
           ].map((s) => (
-            <div key={s.label} className={`bg-${s.color}-500/10 border border-${s.color}-500/25 rounded py-1 px-1 text-center`}>
-              <p className={`text-xs md:text-sm font-bold text-${s.color}-400 leading-none tabular-nums`}>{s.v}</p>
+            <div key={s.label} className={`${s.box} border rounded py-1 px-1 text-center`}>
+              <p className={`text-xs md:text-sm font-bold ${s.text} leading-none tabular-nums`}>{s.v}</p>
               <p className="text-[8px] text-muted-foreground uppercase mt-0.5 truncate tracking-wide">{s.label}</p>
             </div>
           ))}
         </div>
+
 
         {/* Grid compacto do mês */}
         <div className="bg-slate-900/60 rounded-md p-1.5 border border-slate-700/50 mx-auto w-full max-w-[320px]">
