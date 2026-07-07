@@ -209,6 +209,82 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           </div>
         </div>
 
+        {/* Connected agents roster */}
+        {agents.length > 0 && (
+          <div className="w-full mt-1 rounded-md border border-zinc-700/50 bg-zinc-950/60 overflow-hidden">
+            <div className="flex items-center justify-between px-2 py-1 border-b border-zinc-700/40 bg-zinc-900/60">
+              <div className="flex items-center gap-1.5">
+                <Wifi className="h-3 w-3 text-cyan-400" />
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-300">
+                  Conectados
+                </span>
+              </div>
+              <span className="text-[9px] font-mono text-zinc-500">
+                {agents.filter(a => {
+                  if (!a.lastActivity) return false;
+                  return Date.now() - new Date(a.lastActivity).getTime() < 5 * 60 * 1000;
+                }).length}/{agents.length}
+              </span>
+            </div>
+            <ul
+              className="max-h-40 overflow-y-auto divide-y divide-zinc-800/60"
+              role="list"
+              aria-label="Agentes conectados"
+            >
+              {[...agents]
+                .sort((a, b) => {
+                  const ta = a.lastActivity ? new Date(a.lastActivity).getTime() : 0;
+                  const tb = b.lastActivity ? new Date(b.lastActivity).getTime() : 0;
+                  return tb - ta;
+                })
+                .map((agent) => {
+                  const colors = teamColors[agent.team || 'default'] || teamColors.default;
+                  const isOnline = agent.lastActivity
+                    ? Date.now() - new Date(agent.lastActivity).getTime() < 5 * 60 * 1000
+                    : false;
+                  return (
+                    <li
+                      key={agent.id}
+                      className="flex items-center justify-between gap-2 px-2 py-1.5 hover:bg-zinc-800/40 transition-colors"
+                      title={`${agent.name}${agent.team ? ` • ${agent.team}` : ''}`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className="relative flex h-2 w-2 shrink-0">
+                          {isOnline && (
+                            <span className={cn(
+                              "absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping",
+                              colors.bg
+                            )} />
+                          )}
+                          <span className={cn(
+                            "relative inline-flex rounded-full h-2 w-2",
+                            isOnline ? colors.bg : "bg-zinc-600"
+                          )} />
+                        </span>
+                        <span className={cn(
+                          "text-[11px] font-medium truncate",
+                          isOnline ? "text-zinc-100" : "text-zinc-500"
+                        )}>
+                          {agent.name}
+                        </span>
+                      </div>
+                      {agent.team && (
+                        <span className={cn(
+                          "text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded border shrink-0",
+                          isOnline
+                            ? "text-zinc-100 border-zinc-600/70 bg-zinc-800/70"
+                            : "text-zinc-500 border-zinc-700/50 bg-zinc-900/50"
+                        )}>
+                          {agent.team}
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+            </ul>
+          </div>
+        )}
+
         {/* Team legend - Compact */}
         {!compact && (
           <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 text-[9px] text-zinc-400">
