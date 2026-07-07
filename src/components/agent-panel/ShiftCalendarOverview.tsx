@@ -642,6 +642,10 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   ? 'bg-fuchsia-500/15 border-fuchsia-500/35 text-fuchsia-300'
                   : colors;
 
+                const isShiftLike = dayInfo.types.includes('shift');
+                const isLeaveLike = dayInfo.types.includes('leave') || dayInfo.types.includes('vacation') || (!dayShift && (restInfo.kind === 'off_24h' || restInfo.kind === 'off_12h_exceptional' || restInfo.kind === 'half_post'));
+                const matchesFilter = filter === 'all' || (filter === 'shift' && isShiftLike) || (filter === 'leave' && isLeaveLike);
+                const filterDimClass = matchesFilter ? '' : 'opacity-25 saturate-50';
                 return (
                   <Tooltip key={day.toISOString()}>
                     <TooltipTrigger asChild>
@@ -649,10 +653,11 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                         type="button"
                         onClick={() => openDay(day)}
                         aria-label={`Abrir jornada de ${format(day, "d 'de' MMMM", { locale: ptBR })}`}
-                        className={`relative h-7 sm:h-8 w-full rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all cursor-pointer hover:brightness-125 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${dayColors} ${
+                        className={`relative h-7 sm:h-8 w-full rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all cursor-pointer hover:brightness-125 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${dayColors} ${filterDimClass} ${
                           isTodayDay ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900 shadow-lg shadow-amber-500/30' : ''
                         }`}
                       >
+
                         <span
                           className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''} ${
                             isShiftDone ? 'line-through decoration-emerald-400/70 decoration-[1.5px]' : ''
