@@ -123,6 +123,10 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
           setUpcomingShifts(shiftsArr);
         }
 
+        if (prevShiftResult.data) {
+          setPreviousShift(prevShiftResult.data as NextShift);
+        }
+
         if (leaveResult.data) {
           setTodayLeave(leaveResult.data as AgentLeave);
         }
