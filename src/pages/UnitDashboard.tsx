@@ -241,6 +241,15 @@ export default function UnitDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 p-3 md:p-5 overflow-auto">
           <div className="max-w-6xl mx-auto space-y-4 animate-fade-in">
+            {canSeeHistory && (
+              <button
+                type="button"
+                onClick={() => navigate('/units')}
+                className="inline-flex items-center gap-1.5 text-xs text-slate-300 hover:text-amber-300 transition-colors"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" /> Voltar para Unidades
+              </button>
+            )}
             <PanelHeroHUD
               variant="units"
               icon="building"
