@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Clock, Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
-  Play, Pause, RotateCcw, Bell, Radio, ChevronRight, AlertTriangle,
-  Save, Star, History, CheckCircle2, Volume2, VolumeX,
+  Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
+  Play, Pause, RotateCcw, Radio, ChevronRight, AlertTriangle,
+  CheckCircle2, Volume2, VolumeX,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
@@ -17,9 +17,7 @@ import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { ConfirmDialog } from './ConfirmDialog';
-import { RoundsRadarSVG } from './RoundsRadarSVG';
 import { MissionLockDialog } from './MissionLockDialog';
-import { MotivationalTicker } from './MotivationalTicker';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import {
@@ -605,11 +603,11 @@ function Section({
         <span className="font-sans text-[12px] uppercase tracking-[0.14em] text-muted-foreground">{title}</span>
         <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
       </summary>
-      <div className="hidden lg:flex items-center gap-2 pb-2 mb-3 border-b border-border/40">
+      <div className="hidden lg:flex items-center gap-2 pb-1.5 mb-2 border-b border-border/40">
         {icon}
         <span className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{title}</span>
       </div>
-      <div className="grid gap-3 pt-3 lg:pt-0">{children}</div>
+      <div className="grid gap-2 pt-2 lg:pt-0">{children}</div>
     </details>
   );
 }
@@ -1452,7 +1450,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
         <DialogContent
-          className="w-[min(100vw-1rem,56rem)] max-w-none h-[calc(100dvh-2rem)] sm:h-[calc(100dvh-3rem)] max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
+          className="w-[min(100vw-0.5rem,62rem)] max-w-none h-[calc(100dvh-0.75rem)] max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col"
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
@@ -1520,7 +1518,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </div>
           </DialogHeader>
 
-          {/* Corpo com rolagem vertical — organiza tudo sem cortar nada */}
+          {/* Corpo compacto — deixa só o operacional essencial visível */}
           <div
             ref={fitRef}
             className="flex-1 min-h-0 overflow-y-auto overscroll-contain"
@@ -1529,7 +1527,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               ref={fitInnerRef}
                className="px-2.5 sm:px-3 lg:px-4 py-2"
             >
-              <div className="mx-auto w-full max-w-4xl grid grid-cols-1 lg:grid-cols-[0.82fr_1.18fr] gap-x-4 gap-y-3 items-start lg:divide-x lg:divide-border/40">
+              <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[0.7fr_1.3fr] gap-x-3 gap-y-2 items-start lg:divide-x lg:divide-border/40">
                 <div className="min-w-0 lg:pr-3">
 
 
@@ -1736,18 +1734,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
                 {/* Agents */}
-                <div className="grid gap-1.5">
+                <div className="grid gap-1">
                   <div className="flex items-center justify-between gap-2">
                     <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
                       <Users className="h-3 w-3" /> Agentes ({agents.length})
                     </Label>
-                    <Button type="button" size="sm" variant="outline" onClick={addAgent} className="h-7 border-border text-primary hover:bg-primary/10">
-                      <Plus className="h-3 w-3 mr-1" /> Adicionar
+                    <Button type="button" size="icon" variant="outline" onClick={addAgent} className="h-7 w-7 border-border text-primary hover:bg-primary/10" aria-label="Adicionar agente">
+                      <Plus className="h-3 w-3" />
                     </Button>
                   </div>
                   <div className={cn('grid gap-1 max-h-36 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
-                      <div key={i} className="flex items-center gap-2 min-w-0">
+                      <div key={i} className="flex items-center gap-1.5 min-w-0">
                          <span className="w-6 shrink-0 text-center font-mono text-[10px] text-primary tabular-nums">{pad(i + 1)}</span>
                         <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))}
                           placeholder={`Agente ${i + 1}`}
@@ -1790,7 +1788,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <div>
 
                       {/* Countdown — aberto, centralizado */}
-                      <div className="mb-3 flex flex-col items-center text-center gap-1.5">
+                      <div className="mb-2 flex flex-col items-center text-center gap-1">
                         {(() => {
                           // "view" unifica live (rodando) e preview (turno noturno, antes de Iniciar)
                           const view = live ?? preview;
@@ -1808,7 +1806,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           const activeAgentName = view && !view.done ? schedule.rows[view.index]?.name : undefined;
                           return (
                             <>
-                              <span className="font-sans text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                              <span className="font-sans text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
                                 {statusLabel}
                               </span>
 
@@ -1817,8 +1815,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   className={cn(
                                     'font-mono font-light tabular-nums tracking-tight leading-none break-all transition-all',
                                     urgent
-                                      ? 'text-3xl sm:text-4xl md:text-5xl font-black'
-                                      : 'text-2xl sm:text-3xl md:text-4xl',
+                                      ? 'text-3xl sm:text-4xl font-black'
+                                      : 'text-2xl sm:text-3xl',
                                     critical && !silentMode && 'animate-pulse',
                                   )}
                                   style={{
@@ -1846,7 +1844,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Nome grande — agente ATIVO agora (live ou preview) */}
                               {activeAgentName && (
                                 <div
-                                  className="font-sans font-black uppercase tracking-tight text-xl sm:text-2xl md:text-3xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                                  className="font-sans font-black uppercase tracking-tight text-lg sm:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                                   style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
                                 >
                                   {activeAgentName}
@@ -1999,7 +1997,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       {/* Rows — grid responsivo, se adapta a qualquer quantidade de agentes */}
                       <ul
                         className={cn(
-                          'grid gap-1 gap-x-2 max-h-56 overflow-y-auto pr-1',
+                          'grid gap-1 gap-x-2 max-h-[18rem] overflow-y-auto pr-1',
                           agents.length <= 6
                             ? 'grid-cols-1 sm:grid-cols-2'
                             : agents.length <= 16
@@ -2038,12 +2036,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         })}
                       </ul>
 
-                      <div className="mt-2 flex flex-wrap gap-2 justify-center sm:justify-end pt-2 border-t border-border/40">
-                        <Button type="button" variant="ghost" onClick={copyToClipboard} className="text-muted-foreground hover:text-primary">
-                          <Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar
+                      <div className="mt-1.5 flex flex-wrap gap-1.5 justify-center sm:justify-end pt-1.5 border-t border-border/40">
+                        <Button type="button" size="icon" variant="ghost" onClick={copyToClipboard} className="h-8 w-8 text-muted-foreground hover:text-primary" aria-label="Copiar cronograma">
+                          <Copy className="h-3.5 w-3.5" />
                         </Button>
-                        <Button type="button" variant="ghost" onClick={exportPDF} className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10">
-                          <FileDown className="h-3.5 w-3.5 mr-1.5" /> Exportar PDF
+                        <Button type="button" size="icon" variant="ghost" onClick={exportPDF} className="h-8 w-8 text-amber-500 hover:text-amber-400 hover:bg-amber-500/10" aria-label="Exportar PDF">
+                          <FileDown className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     </div>
@@ -2051,61 +2049,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   )}
                 </Section>
 
-                <Section icon={<History className="h-3.5 w-3.5 text-primary" />} title={`Histórico (${history.length})`}>
-                  <div>
-                    <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
-                      <span className="text-[11px] font-sans uppercase tracking-[0.16em] text-muted-foreground flex items-center gap-1.5">
-                        <History className="h-3 w-3" /> Registros ({history.length})
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <a
-                          href="/rounds-history"
-                          className="font-sans text-[11px] uppercase tracking-wide text-primary hover:underline"
-                        >
-                          Ver histórico completo →
-                        </a>
-                        {history.length > 0 && (
-                          <button type="button" onClick={clearHistory}
-                            className="font-sans text-[11px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
-                            Limpar
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    {history.length === 0 ? (
-                      <div className="text-[11px] text-muted-foreground font-sans uppercase tracking-wide text-center py-4">
-                        Nenhuma ronda registrada ainda.
-                      </div>
-                    ) : (
-                      <ul className="divide-y divide-border/40 max-h-72 overflow-y-auto">
-                        {history.map((h) => {
-                          const color = TEAM_PRESETS.find((t) => t.key === h.team)?.color ?? '#f59e0b';
-                          const dt = new Date(h.startedAt);
-                          const dtStr = `${pad(dt.getDate())}/${pad(dt.getMonth() + 1)} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
-                          const endStr = h.endedAt ? new Date(h.endedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
-                          return (
-                            <li key={h.id} className="grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 py-2.5">
-                              <span className="font-sans text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap"
-                                    style={{ color }}>{h.team}</span>
-                              <div className="min-w-0">
-                                <div className="font-mono text-[11px] tabular-nums text-foreground">
-                                  {dtStr} <span className="text-muted-foreground">→</span> {endStr}
-                                </div>
-                                <div className="text-[11px] text-muted-foreground break-words">
-                                  {h.agents.slice(0, 4).join(' · ')}{h.agents.length > 4 ? ` +${h.agents.length - 4}` : ''}
-                                </div>
-                              </div>
-                              <span className="col-span-2 sm:col-auto font-sans text-[11px] uppercase tracking-wide text-muted-foreground justify-self-start sm:justify-self-end whitespace-nowrap">
-                                {h.mode === 'split' ? `${h.startTime}–${h.endTime}` : `${h.intervalMin}min`}
-                              </span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </div>
-
-                </Section>
+                <div className="flex items-center justify-end gap-2 border-t border-border/40 pt-1.5">
+                  <a href="/rounds-history" className="font-sans text-[10px] uppercase tracking-wide text-primary hover:underline">
+                    Histórico ({history.length})
+                  </a>
+                  {history.length > 0 && (
+                    <button type="button" onClick={clearHistory} className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
+                      Limpar
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
             </div>
