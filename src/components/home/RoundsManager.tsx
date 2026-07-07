@@ -1480,7 +1480,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             aria-label="Abrir Gestor de Rondas"
             className={cn(
               'group relative inline-flex items-center gap-2.5 sm:gap-4 p-1 sm:p-1.5 pr-3 sm:pr-6 rounded-xl sm:rounded-2xl',
-              'bg-card/85 backdrop-blur-xl border border-border/80',
+              'bg-card/85 backdrop-blur-sm border border-border/80',
               'transition-all duration-300',
               'hover:bg-card/90 hover:border-primary/40 active:scale-[0.98]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -1546,7 +1546,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Sticky header — sempre visível */}
           <DialogHeader
             className={cn(
-              'sticky top-0 z-20 border-b bg-background/98 backdrop-blur px-2.5 sm:px-3 py-1.5 select-none touch-none',
+              'sticky top-0 z-20 border-b bg-background/98 px-2.5 sm:px-3 py-1.5 select-none touch-none',
               canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
             )}
             style={{ borderColor: `${teamColor}33` }}
