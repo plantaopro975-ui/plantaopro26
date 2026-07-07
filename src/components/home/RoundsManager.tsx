@@ -843,11 +843,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const updateAgent = (i: number, v: string) => setAgents((a) => a.map((x, idx) => (idx === i ? v : x)));
 
   const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
-  const currentView = live ?? preview;
-  const activeRoundName = currentView && !currentView.done ? schedule?.rows[currentView.index]?.name : undefined;
-  const totalRemainingSeconds = schedule
-    ? Math.max(0, schedule.totalSec - (currentView?.elapsed ?? 0))
-    : 0;
 
   /* sound settings */
   const [sound, setSound] = useState<SoundSettings>(DEFAULT_SOUND);
@@ -1069,6 +1064,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       slotSec: boundaries[idx] - prevBoundary,
     };
   }, [running, schedule, nightEffectivelyLocked, mode, tick]);
+
+  const currentView = live ?? preview;
+  const activeRoundName = currentView && !currentView.done ? schedule?.rows[currentView.index]?.name : undefined;
+  const totalRemainingSeconds = schedule
+    ? Math.max(0, schedule.totalSec - (currentView?.elapsed ?? 0))
+    : 0;
 
 
   // Trava persistida: quais postos já dispararam a notificação
