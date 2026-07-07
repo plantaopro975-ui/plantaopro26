@@ -74,6 +74,7 @@ export default function AgentPanel() {
   const { agent, isLoading: isLoadingAgent } = useAgentProfile();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('equipe');
+  const { compact, toggle: toggleCompact } = useCompactMode();
   const [hasShifts, setHasShifts] = useState(true);
   const { enabled: promosEnabled } = usePromosEnabled();
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
