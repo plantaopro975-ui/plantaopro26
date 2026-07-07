@@ -583,6 +583,9 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
                   : colors;
 
+                // Classificação da folga (24h vs 12h) — apenas quando não há plantão neste dia
+                const restInfo = !dayShift ? classifyRestDay(day, shifts) : { kind: 'none' as const };
+
                 return (
                   <Tooltip key={day.toISOString()}>
                     <TooltipTrigger asChild>
