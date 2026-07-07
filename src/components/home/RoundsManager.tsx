@@ -1590,6 +1590,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           <span data-testid="night-window">
                             Janela: <b className="font-mono">{nightWindow.startLabel}</b> → <b className="font-mono">{nightWindow.endLabel}</b>
                           </span>
+                          {schedule && mode === 'split' && (
+                            <span className="sm:col-span-2" data-testid="night-total-remaining">
+                              Restante do turno (até 06:00):&nbsp;
+                              <b className="font-mono tabular-nums text-amber-100">
+                                {fmtHMS(schedule.totalSec)}
+                              </b>
+                              <span className="ml-1 text-muted-foreground">
+                                · {agents.length} agente{agents.length === 1 ? '' : 's'} × exato{' '}
+                                <b className="text-foreground/80">{fmtHMS(schedule.rows[0]?.duration * 60 || 0)}</b>
+                              </span>
+                            </span>
+                          )}
                         </div>
                         {!overrideActive && (
                           <div className="mt-1 text-[10.5px]">
@@ -1598,6 +1610,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             proporcional — mesmo que a ronda seja criada depois das 22:00.
                           </div>
                         )}
+
 
                         {overrideActive && (
                           <div className="mt-1 text-[10.5px]">
