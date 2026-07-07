@@ -64,6 +64,7 @@ const SessionDiagnosticCard = lazy(() => import('@/components/agent-panel/Sessio
 const PasswordChangeRequest = lazy(() => import('@/components/agent-panel/PasswordChangeRequest').then(m => ({ default: m.PasswordChangeRequest })));
 const SmartAlarmClock = lazy(() => import('@/components/agent-panel/SmartAlarmClock').then(m => ({ default: m.SmartAlarmClock })));
 const RoundsHistoryCard = lazy(() => import('@/components/agent-panel/RoundsHistoryCard').then(m => ({ default: m.RoundsHistoryCard })));
+const AgentsDirectoryCard = lazy(() => import('@/components/agent-panel/AgentsDirectoryCard').then(m => ({ default: m.AgentsDirectoryCard })));
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone, Radio } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
