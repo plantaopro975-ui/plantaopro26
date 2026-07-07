@@ -153,6 +153,39 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       };
     };
 
+    // Detecta padrão de escala com base em duração + intervalo entre plantões
+    // Retorna algo como "12x12", "12x36", "24x48", "24x72", "Plantão" (fallback)
+    const detectScale = (shifts: NextShift[], durationH: number): string => {
+      if (!shifts || shifts.length < 2) {
+        // Sem histórico suficiente: usa apenas duração
+        if (durationH === 12) return '12h';
+        if (durationH === 24) return '24h';
+        return `${durationH}h`;
+      }
+      // Média de intervalos em dias entre plantões consecutivos
+      const gaps: number[] = [];
+      for (let i = 1; i < shifts.length; i++) {
+        const prev = parseISO(shifts[i - 1].shift_date);
+        const curr = parseISO(shifts[i].shift_date);
+        gaps.push(differenceInCalendarDays(curr, prev));
+      }
+      // Usa a moda (gap mais frequente) para robustez
+      const freq: Record<number, number> = {};
+      gaps.forEach((g) => { freq[g] = (freq[g] || 0) + 1; });
+      const modeGap = Number(
+        Object.entries(freq).sort((a, b) => b[1] - a[1])[0][0]
+      );
+      // Descanso em horas ≈ (gap em dias) * 24 - duração do plantão
+      const restH = Math.max(0, modeGap * 24 - durationH);
+      // Arredonda para múltiplos comuns (12, 24, 36, 48, 72)
+      const commons = [12, 24, 36, 48, 72];
+      const rest = commons.reduce((best, v) =>
+        Math.abs(v - restH) < Math.abs(best - restH) ? v : best
+      , commons[0]);
+      return `${durationH}x${rest}`;
+    };
+
+
     // Pré-computa dados do próximo plantão
     let shiftMeta: null | {
       shiftDate: Date;
