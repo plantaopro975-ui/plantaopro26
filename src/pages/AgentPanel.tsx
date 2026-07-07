@@ -561,28 +561,25 @@ export default function AgentPanel() {
                 
                 {/* Control Panel Header - Compact & Professional */}
                 <div className={cn(
-                  'relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-amber-500/20',
-                  compact ? 'p-2 md:p-2.5' : 'p-2.5 md:p-3'
+                  'relative flex items-center justify-between gap-2 border-b border-amber-500/20',
+                  compact ? 'px-2.5 py-1.5' : 'px-3 py-2'
                 )}>
-                  <div className="flex items-center gap-2 md:gap-2.5">
-                    <div className={cn(
-                      'bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 rounded-lg shadow-md shadow-amber-500/30 ring-1 ring-amber-300/30',
-                      compact ? 'p-1.5' : 'p-1.5 md:p-2'
-                    )}>
-                      <Shield className={cn('text-black', compact ? 'h-4 w-4' : 'h-4 w-4 md:h-5 md:w-5')} />
+                  <div className="flex items-center gap-2">
+                    <div className="p-1 rounded-md bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 shadow-sm shadow-amber-500/30 ring-1 ring-amber-300/30">
+                      <Shield className="h-3.5 w-3.5 text-black" />
                     </div>
-                    <div>
-                      <h2 className={cn('font-black text-amber-100 tracking-tight leading-tight', compact ? 'text-xs md:text-sm' : 'text-sm md:text-base')}>
-                        PAINEL DE CONTROLE
+                    <div className="leading-tight">
+                      <h2 className="text-[11px] md:text-xs font-black text-amber-100 tracking-wider uppercase">
+                        Painel de Controle
                       </h2>
-                      <p className={cn('text-amber-400/90 font-medium tracking-wide mt-0.5', compact ? 'text-[10px]' : 'text-[10px] md:text-[11px]')}>
+                      <p className="text-[9px] md:text-[10px] text-amber-400/80 font-medium tracking-wide">
                         Sistema Operacional Integrado
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 bg-emerald-500/20 px-2 py-1 rounded-md border border-emerald-500/40 shadow-sm shadow-emerald-500/10">
-                    <Zap className="h-3 w-3 md:h-3.5 md:w-3.5 text-emerald-400 animate-pulse" />
-                    <span className="text-[10px] md:text-[11px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
+                  <div className="flex items-center gap-1 bg-emerald-500/15 px-1.5 py-0.5 rounded border border-emerald-500/40">
+                    <Zap className="h-2.5 w-2.5 text-emerald-400 animate-pulse" />
+                    <span className="text-[9px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
                   </div>
                 </div>
                 
