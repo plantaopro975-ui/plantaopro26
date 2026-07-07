@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText, Info, Coffee } from 'lucide-react';
 import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 
 interface ShiftCalendarOverviewProps {
