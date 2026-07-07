@@ -32,7 +32,9 @@ import {
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Plus, Search, Loader2, Pencil, Trash2, ArrowRightLeft } from 'lucide-react';
+import { Users, Plus, Search, Loader2, Pencil, Trash2, ArrowRightLeft, Eye } from 'lucide-react';
+import { AgentDetailsDialog } from '@/components/agents/AgentDetailsDialog';
+
 import { TransferRequestDialog } from '@/components/agents/TransferRequestDialog';
 import { formatCPF, formatMatricula, formatPhone, formatBirthDate, validateCPF, parseBirthDate, calculateAge } from '@/lib/validators';
 
