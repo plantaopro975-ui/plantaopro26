@@ -18,6 +18,16 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -133,6 +143,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [chatType, setChatType] = useState<ChatType>('team');
   const [deletedMessageIds, setDeletedMessageIds] = useState<Set<string>>(new Set());
+  const [deleteTarget, setDeleteTarget] = useState<null | { id: string; scope: 'me' | 'all'; preview: string }>(null);
+  const [clearAllOpen, setClearAllOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const presenceChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const { playSound, isSoundEnabled } = useSoundEffects();
@@ -264,10 +277,12 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
       if (error) throw error;
 
       setDeletedMessageIds(prev => new Set([...prev, messageId]));
-      toast.success('Mensagem removida para você');
+      toast.success('Mensagem ocultada', {
+        description: 'Removida apenas do seu histórico. Os demais continuam vendo.',
+      });
     } catch (error) {
       console.error('Error deleting message for me:', error);
-      toast.error('Erro ao remover mensagem');
+      toast.error('Erro ao ocultar', { description: 'Tente novamente em instantes.' });
     }
   };
 
@@ -281,10 +296,27 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
       if (error) throw error;
 
       setMessages(prev => prev.filter(m => m.id !== messageId));
-      toast.success('Mensagem apagada para todos');
+      toast.success('Mensagem apagada', {
+        description: 'Removida da conversa para todos os participantes.',
+      });
     } catch (error) {
       console.error('Error deleting message for all:', error);
-      toast.error('Erro ao apagar mensagem');
+      toast.error('Erro ao apagar', { description: 'A mensagem não pôde ser removida.' });
+    }
+  };
+
+  const confirmDeleteMessage = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      if (deleteTarget.scope === 'me') {
+        await deleteMessageForMe(deleteTarget.id);
+      } else {
+        await deleteMessageForAll(deleteTarget.id);
+      }
+    } finally {
+      setIsDeleting(false);
+      setDeleteTarget(null);
     }
   };
 
@@ -292,10 +324,10 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
     if (!activeRoom) return;
     const visibleIds = messages.filter(m => !deletedMessageIds.has(m.id)).map(m => m.id);
     if (visibleIds.length === 0) {
-      toast.info('Nenhuma mensagem para limpar');
+      toast.info('Sem mensagens', { description: 'Não há mensagens visíveis para limpar.' });
       return;
     }
-    if (!window.confirm(`Ocultar ${visibleIds.length} mensagem(ns) desta conversa apenas para você?`)) return;
+    setIsDeleting(true);
     try {
       const rows = visibleIds.map(id => ({ message_id: id, agent_id: agentId }));
       const { error } = await (supabase as any)
@@ -303,10 +335,15 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
         .upsert(rows, { onConflict: 'message_id,agent_id' });
       if (error) throw error;
       setDeletedMessageIds(prev => new Set([...prev, ...visibleIds]));
-      toast.success('Conversa limpa para você');
+      toast.success('Conversa limpa', {
+        description: `${visibleIds.length} mensagem(ns) ocultada(s) apenas para você.`,
+      });
     } catch (error) {
       console.error('Error clearing conversation:', error);
-      toast.error('Erro ao limpar conversa');
+      toast.error('Erro ao limpar', { description: 'A operação não pôde ser concluída.' });
+    } finally {
+      setIsDeleting(false);
+      setClearAllOpen(false);
     }
   };
 
@@ -671,7 +708,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10"
-                    onClick={clearConversationForMe}
+                    onClick={() => setClearAllOpen(true)}
                     aria-label="Limpar conversa para mim"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -847,7 +884,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align={isOwn ? 'end' : 'start'} className="bg-zinc-800 border-zinc-700">
                             <DropdownMenuItem 
-                              onClick={() => deleteMessageForMe(msg.id)}
+                              onClick={() => setDeleteTarget({ id: msg.id, scope: 'me', preview: msg.content })}
                               className="text-zinc-200 hover:bg-zinc-700 cursor-pointer text-xs"
                             >
                               <Trash2 className="h-3 w-3 mr-2" />
@@ -857,7 +894,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                               <>
                                 <DropdownMenuSeparator className="bg-zinc-700" />
                                 <DropdownMenuItem 
-                                  onClick={() => deleteMessageForAll(msg.id)}
+                                  onClick={() => setDeleteTarget({ id: msg.id, scope: 'all', preview: msg.content })}
                                   className="text-rose-400 hover:bg-zinc-700 cursor-pointer text-xs"
                                 >
                                   <Trash2 className="h-3 w-3 mr-2" />
@@ -906,6 +943,112 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
           </div>
         </div>
       </CardContent>
+
+      {/* Confirmação profissional — apagar uma mensagem */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && !isDeleting && setDeleteTarget(null)}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-700 text-zinc-100 max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto mb-3 grid place-items-center h-16 w-16 rounded-full bg-gradient-to-br from-rose-500/20 to-rose-500/5 ring-1 ring-rose-500/40">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="trashGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#fda4af" />
+                    <stop offset="100%" stopColor="#e11d48" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-8 0v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7M10 11v6M14 11v6"
+                  stroke="url(#trashGrad)"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <AlertDialogTitle className="text-center text-base tracking-wide">
+              {deleteTarget?.scope === 'all' ? 'Apagar para todos?' : 'Ocultar para você?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-xs text-zinc-400 leading-relaxed">
+              {deleteTarget?.scope === 'all'
+                ? 'A mensagem será removida permanentemente da conversa para todos os participantes. Esta ação não pode ser desfeita.'
+                : 'A mensagem some apenas do seu histórico neste dispositivo. Os demais participantes continuam vendo normalmente.'}
+            </AlertDialogDescription>
+            {deleteTarget?.preview ? (
+              <div className="mt-2 mx-auto max-w-full rounded-md border border-zinc-700/70 bg-zinc-800/70 px-3 py-2 text-[11px] italic text-zinc-300 line-clamp-3">
+                "{deleteTarget.preview}"
+              </div>
+            ) : null}
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel disabled={isDeleting} className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(e) => { e.preventDefault(); confirmDeleteMessage(); }}
+              className={
+                deleteTarget?.scope === 'all'
+                  ? 'bg-rose-600 hover:bg-rose-500 text-white'
+                  : 'bg-amber-500 hover:bg-amber-400 text-black'
+              }
+            >
+              {isDeleting ? (
+                <><Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />Processando…</>
+              ) : deleteTarget?.scope === 'all' ? (
+                <><Trash2 className="h-3.5 w-3.5 mr-2" />Apagar para todos</>
+              ) : (
+                <><Trash2 className="h-3.5 w-3.5 mr-2" />Ocultar para mim</>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Confirmação profissional — limpar toda a conversa (só para mim) */}
+      <AlertDialog open={clearAllOpen} onOpenChange={(o) => !isDeleting && setClearAllOpen(o)}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-700 text-zinc-100 max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto mb-3 grid place-items-center h-16 w-16 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-500/40">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" aria-hidden="true">
+                <path
+                  d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                  stroke="#f59e0b"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path d="M12 11v6" stroke="#fbbf24" strokeWidth="1.7" strokeLinecap="round" />
+              </svg>
+            </div>
+            <AlertDialogTitle className="text-center text-base tracking-wide">
+              Limpar esta conversa?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-xs text-zinc-400 leading-relaxed">
+              Todas as mensagens visíveis serão ocultadas <strong>apenas no seu dispositivo</strong>.
+              A conversa continua íntegra para os demais agentes. Ação irreversível para você.
+            </AlertDialogDescription>
+            <div className="mt-2 mx-auto text-[11px] text-zinc-300 bg-zinc-800/70 border border-zinc-700/70 rounded-md px-3 py-1.5">
+              {messages.filter(m => !deletedMessageIds.has(m.id)).length} mensagem(ns) serão ocultadas
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel disabled={isDeleting} className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(e) => { e.preventDefault(); clearConversationForMe(); }}
+              className="bg-amber-500 hover:bg-amber-400 text-black"
+            >
+              {isDeleting ? (
+                <><Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />Limpando…</>
+              ) : (
+                <><Trash2 className="h-3.5 w-3.5 mr-2" />Limpar para mim</>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
