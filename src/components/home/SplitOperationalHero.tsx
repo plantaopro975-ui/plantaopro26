@@ -343,16 +343,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
                   draggable={false}
                 />
-                {/* Giroflex — dois pontos de luz discretos, alternando azul/vermelho */}
+                {/* Giroflex — flash discreto alternando azul/vermelho sobre a barra de luzes */}
                 <span
                   aria-hidden
                   className="beacon-light beacon-blue motion-reduce:hidden"
-                  style={{ top: '4.5%', left: '41%' }}
+                  style={{ top: '26.5%', left: '42%' }}
                 />
                 <span
                   aria-hidden
                   className="beacon-light beacon-red motion-reduce:hidden"
-                  style={{ top: '4.5%', left: '55%' }}
+                  style={{ top: '26.5%', left: '61%' }}
                 />
               </picture>
 
