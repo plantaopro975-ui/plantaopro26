@@ -49,7 +49,7 @@ async function logRoundActivity(
       agent_name: agentName,
       action,
       resource_type: 'rounds',
-      details,
+      details: details as any,
       user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 200) : null,
     });
   } catch (err) {
