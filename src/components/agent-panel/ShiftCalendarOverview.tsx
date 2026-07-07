@@ -3,11 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 // Ícones inline via SVG mantêm o visual leve e profissional
 import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText } from 'lucide-react';
 import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 
 interface ShiftCalendarOverviewProps {
