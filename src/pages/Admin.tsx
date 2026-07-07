@@ -44,7 +44,8 @@ import {
   LayoutDashboard,
   Settings2,
   Palette,
-  Sparkles
+  Sparkles,
+  CalendarClock
 } from 'lucide-react';
 
 interface AdminPermissions {
