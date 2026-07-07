@@ -78,10 +78,10 @@ function fmtHMS(seconds: number): string {
 }
 
 const TEAM_PRESETS = [
-  { key: 'ALFA',    label: 'ALFA',    color: '#f59e0b' },
-  { key: 'BRAVO',   label: 'BRAVO',   color: '#3b82f6' },
-  { key: 'CHARLIE', label: 'CHARLIE', color: '#22c55e' },
-  { key: 'DELTA',   label: 'DELTA',   color: '#ef4444' },
+  { key: 'ALFA',    label: 'ALFA',    color: '#34d399' },
+  { key: 'BRAVO',   label: 'BRAVO',   color: '#fb923c' },
+  { key: 'CHARLIE', label: 'CHARLIE', color: '#60a5fa' },
+  { key: 'DELTA',   label: 'DELTA',   color: '#fcd34d' },
 ] as const;
 
 type TeamKey = typeof TEAM_PRESETS[number]['key'];
@@ -423,6 +423,78 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
             fill={fx.url('gold')} stroke="#78350f" strokeWidth="0.6" strokeLinejoin="round" />
       <path d="M36 8 L21 32 H29" fill="none" stroke="#fef3c7" strokeOpacity="0.85" strokeWidth="0.8" strokeLinecap="round" />
       <ellipse cx="26" cy="22" rx="10" ry="5" fill={fx.url('gloss')} />
+    </svg>
+  );
+}
+
+function RoundsHeroSVG({ color, active, silent }: { color: string; active: boolean; silent: boolean }) {
+  return (
+    <svg viewBox="0 0 220 116" className="h-20 w-36 sm:h-24 sm:w-44 shrink-0" aria-hidden>
+      <defs>
+        <radialGradient id="roundsHeroGlow" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stopColor={color} stopOpacity="0.5" />
+          <stop offset="65%" stopColor={color} stopOpacity="0.12" />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+        <linearGradient id="roundsHeroRail" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity="0" />
+          <stop offset="50%" stopColor={color} stopOpacity="0.92" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <filter id="roundsHeroShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.4" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+      <rect x="6" y="10" width="208" height="96" rx="10" fill="hsl(var(--card))" fillOpacity="0.74" stroke={color} strokeOpacity="0.34" />
+      <path d="M20 28H84M136 28H200M20 88H84M136 88H200" stroke="url(#roundsHeroRail)" strokeWidth="1.2" />
+      <circle cx="110" cy="58" r="45" fill="url(#roundsHeroGlow)" />
+      <g filter="url(#roundsHeroShadow)">
+        <circle cx="110" cy="58" r="32" fill="none" stroke={color} strokeOpacity="0.42" strokeWidth="1.5" />
+        <circle cx="110" cy="58" r="22" fill="none" stroke={color} strokeOpacity="0.28" strokeWidth="1" />
+        <line x1="110" y1="24" x2="110" y2="92" stroke={color} strokeOpacity="0.32" strokeWidth="0.8" />
+        <line x1="76" y1="58" x2="144" y2="58" stroke={color} strokeOpacity="0.32" strokeWidth="0.8" />
+        <path
+          d="M110 58 L110 27 A31 31 0 0 1 138 44 Z"
+          fill={color}
+          fillOpacity="0.22"
+          style={{
+            transformOrigin: '110px 58px',
+            animation: active && !silent ? 'roundsRadarSweep 2.8s linear infinite' : undefined,
+          }}
+        />
+        <circle cx="110" cy="58" r="4" fill={color} />
+      </g>
+      {[0, 1, 2, 3].map((i) => (
+        <g key={i} opacity={active ? 1 : 0.42}>
+          <circle cx={42 + i * 44} cy="58" r="4" fill={color} opacity={i === 0 ? 0.96 : 0.45}>
+            {active && !silent && <animate attributeName="opacity" values="0.3;1;0.3" dur="1.8s" begin={`${i * 0.18}s`} repeatCount="indefinite" />}
+          </circle>
+          <path d={`M${46 + i * 44} 58 H${74 + i * 44}`} stroke={color} strokeOpacity="0.35" strokeWidth="1" />
+        </g>
+      ))}
+      <text x="110" y="102" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="7" letterSpacing="2.4" fill={color} opacity="0.78">
+        RONDA OPERACIONAL
+      </text>
+    </svg>
+  );
+}
+
+function AgentStatusSVG({ status, color, compact = false }: { status: 'active' | 'done' | 'waiting'; color: string; compact?: boolean }) {
+  const label = status === 'active' ? 'EM RONDA' : status === 'done' ? 'CUMPRIDA' : 'NA FILA';
+  const tone = status === 'done' ? 'hsl(var(--success))' : status === 'waiting' ? 'hsl(var(--muted-foreground))' : color;
+  return (
+    <svg viewBox="0 0 116 24" className={cn('shrink-0', compact ? 'h-5 w-20' : 'h-6 w-28')} aria-label={label} role="img">
+      <path d="M8 2H108L114 12L108 22H8L2 12Z" fill="hsl(var(--card))" fillOpacity="0.72" stroke={tone} strokeOpacity="0.62" />
+      <path d="M10 5H106" stroke={tone} strokeOpacity="0.34" />
+      {status === 'active' && (
+        <circle cx="15" cy="12" r="3" fill={tone}>
+          <animate attributeName="opacity" values="0.35;1;0.35" dur="1.2s" repeatCount="indefinite" />
+        </circle>
+      )}
+      {status === 'done' && <path d="M11 12.2L14.2 15.4L19.6 8.8" fill="none" stroke={tone} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />}
+      {status === 'waiting' && <path d="M12 8H18M12 12H18M12 16H18" stroke={tone} strokeWidth="1.4" strokeLinecap="round" />}
+      <text x="63" y="15" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="8" fontWeight="700" letterSpacing="1.2" fill={tone}>{label}</text>
     </svg>
   );
 }
