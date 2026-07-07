@@ -298,10 +298,21 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const startingDayOfWeek = firstDayOfMonth.getDay();
 
   // Stats for the month
-  const shiftDays = shifts.filter(s => !s.is_vacation).length;
-  const vacationDays = shifts.filter(s => s.is_vacation).length;
+  const nonVacationShifts = shifts.filter((s) => !s.is_vacation);
+  const shiftDays = nonVacationShifts.length;
+  const vacationDays = shifts.filter((s) => s.is_vacation).length;
   const leaveDays = leaves.length;
   const totalBhHours = bhEntries.reduce((acc, b) => acc + (b.operation_type === 'credit' ? b.hours : -b.hours), 0);
+
+  // Cumpridos vs Não cumpridos (para o mês exibido)
+  let doneCount = 0;
+  let missedCount = 0;
+  for (const s of nonVacationShifts) {
+    const d = parseISO(s.shift_date);
+    const st = computeShiftStatus(d, s);
+    if (st === 'done') doneCount++;
+    else if (st === 'missed') missedCount++;
+  }
 
   if (isLoading) {
     return (
