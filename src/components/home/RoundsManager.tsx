@@ -1583,9 +1583,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         </div>
                         {!overrideActive && (
                           <div className="mt-1 text-[10.5px]">
-                            Horário fixado em <b>22:00 → 06:00</b>. Alterações bloqueadas pelo servidor durante todo o período.
+                            Horário fixado em <b>22:00 → 06:00</b>. A divisão entre os agentes usa o
+                            <b> tempo real restante</b> (agora → 06:00), então cada posto é sempre
+                            proporcional — mesmo que a ronda seja criada depois das 22:00.
                           </div>
                         )}
+
                         {overrideActive && (
                           <div className="mt-1 text-[10.5px]">
                             Motivo registrado: <i>"{overrideReason.trim()}"</i>. Cada gravação será auditada em <code>night_shift_overrides</code>.
