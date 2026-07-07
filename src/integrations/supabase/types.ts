@@ -1826,6 +1826,50 @@ export type Database = {
           },
         ]
       }
+      shift_schedule_divergences: {
+        Row: {
+          agent_id: string
+          detected_at: string
+          divergence_type: string
+          expected_date: string | null
+          first_shift_date: string | null
+          id: string
+          local_today: string | null
+          notes: string | null
+          shift_date: string
+        }
+        Insert: {
+          agent_id: string
+          detected_at?: string
+          divergence_type: string
+          expected_date?: string | null
+          first_shift_date?: string | null
+          id?: string
+          local_today?: string | null
+          notes?: string | null
+          shift_date: string
+        }
+        Update: {
+          agent_id?: string
+          detected_at?: string
+          divergence_type?: string
+          expected_date?: string | null
+          first_shift_date?: string | null
+          id?: string
+          local_today?: string | null
+          notes?: string | null
+          shift_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_schedule_divergences_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_swaps: {
         Row: {
           created_at: string
@@ -2126,6 +2170,15 @@ export type Database = {
       }
       calculate_bh_balance: { Args: { p_agent_id: string }; Returns: number }
       calculate_bh_value: { Args: { p_agent_id: string }; Returns: number }
+      check_agent_shift_divergences: {
+        Args: { p_agent_id: string; p_months_ahead?: number }
+        Returns: {
+          divergence_type: string
+          expected_date: string
+          notes: string
+          shift_date: string
+        }[]
+      }
       check_rate_limit: {
         Args: {
           p_identifier: string

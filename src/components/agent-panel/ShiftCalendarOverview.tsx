@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText, Info, Coffee } from 'lucide-react';
 import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 
 interface ShiftCalendarOverviewProps {
@@ -86,6 +86,70 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
     // Passado com status 'scheduled' => considerar cumprido
     if (isPastLocalDay(day) && shift.status === 'scheduled') return 'done';
     return 'scheduled';
+  };
+
+  // Classifica a folga de um dia SEM plantão.
+  // Ciclo padrão: plantão 07:00 → 07:00 (24h) + 3 dias de descanso (72h).
+  //  - Dia logo após o plantão (D+1): a madrugada 00:00-07:00 ainda está no plantão
+  //    anterior, restando ~17h livres → chamamos "Meia folga (12h)".
+  //  - Dias D+2 e D+3: totalmente livres → "Folga integral (24h)".
+  //  - Dia antes do próximo plantão: apenas a madrugada é livre — porém esse
+  //    dia É o próprio plantão, então já foi tratado como shift day.
+  const classifyRestDay = (
+    day: Date,
+    allShifts: Shift[],
+  ): { kind: 'off_24h' | 'half_post' | 'none'; prev?: Shift; next?: Shift } => {
+    const dateStr = format(day, 'yyyy-MM-dd');
+    const nonVac = allShifts.filter((s) => !s.is_vacation);
+    const prev = [...nonVac]
+      .filter((s) => s.shift_date < dateStr)
+      .sort((a, b) => (a.shift_date < b.shift_date ? 1 : -1))[0];
+    const next = nonVac
+      .filter((s) => s.shift_date > dateStr)
+      .sort((a, b) => (a.shift_date < b.shift_date ? -1 : 1))[0];
+
+    if (!prev && !next) return { kind: 'none' };
+
+    // Diferença em dias entre o plantão anterior e este dia
+    const diffFromPrev = prev
+      ? Math.round(
+          (parseISO(dateStr).getTime() - parseISO(prev.shift_date).getTime()) /
+            (1000 * 60 * 60 * 24),
+        )
+      : Infinity;
+
+    // Se o plantão anterior foi ontem e ele terminou de madrugada (end<=start),
+    // a madrugada de hoje ainda está no plantão → meia folga (~12h/17h).
+    if (prev && diffFromPrev === 1) {
+      const pStart = prev.start_time?.slice(0, 5) ?? '07:00';
+      const pEnd = prev.end_time?.slice(0, 5) ?? '07:00';
+      if (pEnd <= pStart) return { kind: 'half_post', prev, next };
+    }
+
+    return { kind: 'off_24h', prev, next };
+  };
+
+  // Estado para divergências detectadas pelo backend
+  type Divergence = {
+    divergence_type: string;
+    shift_date: string;
+    expected_date: string | null;
+    notes: string | null;
+  };
+  const [divergences, setDivergences] = useState<Divergence[]>([]);
+
+  const checkDivergences = async () => {
+    try {
+      const { data, error } = await supabase.rpc('check_agent_shift_divergences', {
+        p_agent_id: agentId,
+        p_months_ahead: 3,
+      });
+      if (!error && Array.isArray(data)) {
+        setDivergences(data as any);
+      }
+    } catch (e) {
+      // silencioso — validação é auxiliar
+    }
   };
 
   const buildDT = (dateStr: string, time: string | null, fallback: string) => {
@@ -177,6 +241,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   useEffect(() => {
     fetchData();
   }, [agentId, currentMonth]);
+
+  // Roda a validação de divergências uma vez por agente (independente do mês)
+  useEffect(() => {
+    checkDivergences();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [agentId]);
 
   const fetchData = async () => {
     try {
@@ -357,6 +427,63 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
               <path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
             <span>Calendário</span>
+            <TooltipProvider delayDuration={100}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="text-slate-400 hover:text-amber-300 transition-colors"
+                    aria-label="Ajuda do calendário"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-[260px] bg-slate-900 border-slate-700 p-2.5 text-[11px] leading-snug">
+                  <p className="font-semibold text-amber-300 mb-1">Como ler este calendário</p>
+                  <ul className="space-y-1 text-slate-200 list-disc pl-3">
+                    <li>Colunas: <b>D S T Q Q S S</b> (Dom → Sáb).</li>
+                    <li>Se o mês começa numa <b>quarta</b>, o dia <b>01</b> aparece na 4ª coluna — coladinho ao <b>02</b>. É fácil confundir os dois; passe o mouse em cada célula para ver a data exata.</li>
+                    <li><span className="text-emerald-300 font-semibold">Verde ✓</span>: plantão cumprido. <span className="text-rose-300 font-semibold">Vermelho ✕</span>: não cumprido. <span className="text-amber-300 font-semibold">Amarelo</span>: agendado.</li>
+                    <li>Folgas: <span className="text-sky-300">24h</span> (dia integralmente livre) e <span className="text-indigo-300">12h</span> (meia folga pós-plantão, madrugada ainda no serviço).</li>
+                  </ul>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            {divergences.length > 0 && (
+              <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="ml-1 inline-flex items-center gap-1 rounded-full border border-yellow-500/40 bg-yellow-500/10 px-1.5 py-0.5 text-[9px] font-bold text-yellow-300"
+                      aria-label="Divergências detectadas"
+                    >
+                      <AlertCircle className="h-2.5 w-2.5" /> {divergences.length}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[280px] bg-slate-900 border-slate-700 p-2.5 text-[11px]">
+                    <p className="font-semibold text-yellow-300 mb-1">
+                      {divergences.length} divergência(s) detectada(s) pelo backend
+                    </p>
+                    <p className="text-slate-300 mb-1.5">Comparação: <code className="text-amber-300">first_shift_date</code> + ciclo de 4 dias × plantões cadastrados (fuso America/Rio_Branco).</p>
+                    <ul className="space-y-0.5 max-h-40 overflow-y-auto text-slate-200">
+                      {divergences.slice(0, 8).map((d, i) => (
+                        <li key={i} className="flex items-start gap-1">
+                          <span className={d.divergence_type === 'unexpected_shift' ? 'text-rose-300' : 'text-amber-300'}>
+                            {d.divergence_type === 'unexpected_shift' ? '✕' : '○'}
+                          </span>
+                          <span>
+                            <b className="tabular-nums">{d.shift_date}</b>
+                            {' — '}
+                            {d.divergence_type === 'unexpected_shift' ? 'fora do ciclo' : 'esperado no ciclo, sem cadastro'}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </CardTitle>
           <div className="flex items-center gap-0.5">
             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} aria-label="Mês anterior">
@@ -456,6 +583,9 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
                   : colors;
 
+                // Classificação da folga (24h vs 12h) — apenas quando não há plantão neste dia
+                const restInfo = !dayShift ? classifyRestDay(day, shifts) : { kind: 'none' as const };
+
                 return (
                   <Tooltip key={day.toISOString()}>
                     <TooltipTrigger asChild>
@@ -554,15 +684,29 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             <span className="leading-tight font-semibold">Folga aprovada</span>
                           </div>
                         )}
-                        {!dayShift && !dayInfo.types.includes('leave') && restUntil && (
-                          <div className="flex items-start gap-1.5 text-emerald-300">
-                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                        {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'half_post' && (
+                          <div className="flex items-start gap-1.5 text-indigo-300 bg-indigo-500/10 border border-indigo-500/30 rounded px-1.5 py-1">
+                            <Coffee className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
-                              <span className="font-semibold">Descanso</span> até {restUntil}
+                              <span className="font-bold uppercase tracking-wide">Meia folga (12h)</span>
+                              <br />
+                              <span className="text-[10px] opacity-80">
+                                Pós-plantão · madrugada 00:00–07:00 ainda no serviço
+                              </span>
                             </span>
                           </div>
                         )}
-                        {!dayShift && !dayInfo.types.includes('leave') && !restUntil && (
+                        {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'off_24h' && (
+                          <div className="flex items-start gap-1.5 text-sky-300 bg-sky-500/10 border border-sky-500/30 rounded px-1.5 py-1">
+                            <Palmtree className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">Folga integral (24h)</span>
+                              <br />
+                              <span className="text-[10px] opacity-80">Dia inteiramente livre entre plantões</span>
+                            </span>
+                          </div>
+                        )}
+                        {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'none' && (
                           <div className="flex items-start gap-1.5 text-muted-foreground">
                             <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">Sem plantão cadastrado</span>
@@ -587,8 +731,10 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
             { c: 'hsl(43 96% 56%)', label: 'Plantão' },
             { c: 'hsl(142 71% 45%)', label: 'Cumprido ✓' },
             { c: 'hsl(0 84% 60%)', label: 'Não cumprido ✕' },
+            { c: 'hsl(199 89% 60%)', label: 'Folga 24h' },
+            { c: 'hsl(239 84% 67%)', label: 'Meia folga 12h' },
             { c: 'hsl(270 91% 65%)', label: 'Férias' },
-            { c: 'hsl(217 91% 60%)', label: 'Folga' },
+            { c: 'hsl(217 91% 60%)', label: 'Folga aprovada' },
           ].map((it) => (
             <div key={it.label} className="flex items-center gap-1">
               <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill={it.c} /></svg>
