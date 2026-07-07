@@ -133,7 +133,7 @@ export function TacticalGrid({
         SYS:ONLINE
       </div>
       <div className="absolute top-4 right-14 text-[9px] font-mono text-primary/50">
-        {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+        {now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/Rio_Branco' })}
       </div>
 
       {/* Hexagonal overlay (subtle) */}
