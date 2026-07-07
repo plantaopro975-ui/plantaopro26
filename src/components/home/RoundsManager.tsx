@@ -1490,8 +1490,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 <DialogTitle className="font-sans text-sm sm:text-base font-normal tracking-tight leading-tight text-foreground break-words">
                   Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="hidden sm:block text-[11px] text-muted-foreground font-sans tracking-wide break-words">
-                  escala · cronômetro · alarme · histórico
+                <DialogDescription className="sr-only">
+                  Gestor de rondas — escala, cronômetro, alarme e histórico.
                 </DialogDescription>
               </div>
 
@@ -1625,15 +1625,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             </span>
                           )}
                         </div>
-                        {!overrideActive && (
-                          <div className="mt-1 text-[10.5px]">
-                            Janela fixa <b>22:00 → 06:00</b> dividida em partes iguais entre os
-                            <b> {agents.length || 'N'} agente(s)</b> (~<b>{schedule ? fmtHMS(schedule.rows[0]?.duration * 60 || 0) : '—'}</b> cada).
-                            Se a contagem começar depois das 22:00, o Agente 1 assume com o tempo
-                            restante do próprio slot; ao esgotar, é <b>riscado</b> e a vez passa
-                            automaticamente ao próximo, que recebe o slot completo.
-                          </div>
-                        )}
 
 
 
@@ -1929,8 +1920,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   className={cn(
                                     'font-mono font-light tabular-nums tracking-tight leading-none break-all transition-all',
                                     urgent
-                                      ? 'text-5xl sm:text-6xl md:text-7xl font-black'
-                                      : 'text-4xl sm:text-5xl md:text-6xl',
+                                      ? 'text-4xl sm:text-5xl md:text-6xl font-black'
+                                      : 'text-3xl sm:text-4xl md:text-5xl',
                                     critical && !silentMode && 'animate-pulse',
                                   )}
                                   style={{
@@ -1958,7 +1949,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Nome grande — agente ATIVO agora (live ou preview) */}
                               {activeAgentName && (
                                 <div
-                                  className="font-sans font-black uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                                  className="font-sans font-black uppercase tracking-tight text-2xl sm:text-3xl md:text-4xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                                   style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
                                 >
                                   {activeAgentName}
