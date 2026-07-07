@@ -25,7 +25,6 @@ interface Agent {
 interface AgentPanelHeaderProps {
   agent: Agent;
   isOnline: boolean;
-  onShowWelcome: () => void;
   onReactivateShiftBanner?: () => void;
   isShiftBannerDismissed?: boolean;
   compact?: boolean;
