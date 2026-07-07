@@ -697,6 +697,11 @@ export default function AgentPanel() {
                     />
                   </div>
                 </div>
+
+                {/* Diretório completo de agentes cadastrados */}
+                <Suspense fallback={null}>
+                  <AgentsDirectoryCard currentAgentId={agent.id} />
+                </Suspense>
               </TabsContent>
 
               <TabsContent value="plantoes" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
