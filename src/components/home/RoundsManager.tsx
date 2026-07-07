@@ -736,22 +736,22 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     if (endTime !== NIGHT_END) setEndTime(NIGHT_END);
   }, [nightEffectivelyLocked, startTime, endTime]);
 
-  const activateOverride = async () => {
+  const activateOverride = () => {
     const reason = overrideReason.trim();
     if (reason.length < 5) {
       toast({ title: 'Motivo obrigatório', description: 'Informe ao menos 5 caracteres.', variant: 'destructive' });
       return;
     }
-    try {
-      const { error } = await supabase.rpc('set_night_override_reason' as any, { p_reason: reason });
-      if (error) throw error;
-      setOverrideActive(true);
-      setOverridePromptOpen(false);
-      toast({ title: 'Override master ativado', description: 'Ajustes noturnos serão auditados.' });
-    } catch (e: any) {
-      toast({ title: 'Falha ao ativar override', description: e?.message ?? 'Erro desconhecido', variant: 'destructive' });
+    if (!isMaster) {
+      toast({ title: 'Apenas o master pode fazer override.', variant: 'destructive' });
+      return;
     }
+    setOverrideActive(true);
+    setOverridePromptOpen(false);
+    toast({ title: 'Override master ativado', description: 'Auditoria será registrada ao iniciar a ronda.' });
   };
+
+
 
 
 
