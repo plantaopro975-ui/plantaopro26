@@ -443,16 +443,11 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   : false;
                 const restUntil = shiftStartStr || prevShift?.end_time?.slice(0, 5);
 
-                // Plantão já cumprido: dia < hoje e existe plantão agendado/registrado
-                const startOfToday = new Date();
-                startOfToday.setHours(0, 0, 0, 0);
-                const isPastDay = day < startOfToday && !isTodayDay;
-                const effectiveShiftStatus = dayShift
-                  ? (isPastDay && dayShift.status === 'scheduled' ? 'completed' : dayShift.status)
-                  : null;
-                const isShiftDone =
-                  effectiveShiftStatus === 'completed' || effectiveShiftStatus === 'compensated';
-                const isShiftMissed = effectiveShiftStatus === 'missed';
+                // Status do plantão (usa fuso local para "hoje")
+                const shiftStatus = dayShift ? computeShiftStatus(day, dayShift) : null;
+                const isShiftDone = shiftStatus === 'done';
+                const isShiftMissed = shiftStatus === 'missed';
+                const isShiftScheduled = shiftStatus === 'scheduled';
 
                 // Cores especiais para plantão cumprido (emerald) — sobrescreve amber
                 const dayColors = isShiftDone
