@@ -314,7 +314,6 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
             </div>
           ))}
         </div>
-        </div>
       </CardContent>
     </Card>
   );
