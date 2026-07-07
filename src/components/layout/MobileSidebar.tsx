@@ -47,9 +47,10 @@ interface MobileSidebarProps {
 }
 
 export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
-  const { masterSession, user } = useAuth();
+  const { masterSession, user, isAdmin } = useAuth();
   const [restricted, setRestricted] = useState<string | null>(null);
   const isAuthed = !!user || !!masterSession;
+
 
   const handleClick =
     (label: string, isMaster = false) =>
