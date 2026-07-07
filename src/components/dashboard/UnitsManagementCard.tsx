@@ -161,26 +161,6 @@ export function UnitsManagementCard() {
                           {unit.municipality}
                         </Badge>
                       </div>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                        {unit.director_name && (
-                          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            Dir: {unit.director_name}
-                          </span>
-                        )}
-                        {unit.coordinator_name && (
-                          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                            <Users className="h-3 w-3" />
-                            Coord: {unit.coordinator_name}
-                          </span>
-                        )}
-                        {unit.security_coordinator_name && (
-                          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                            <Shield className="h-3 w-3" />
-                            Seg: {unit.security_coordinator_name}
-                          </span>
-                        )}
-                      </div>
                     </div>
                     <Button
                       variant="ghost"
