@@ -294,7 +294,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
         <path d="M0 0 L20 8 L40 0 L60 8 L80 0 L100 8 L120 0" fill="none" stroke="currentColor" strokeWidth=".5" opacity=".4" />
       </svg>
 
-      <div className="relative p-2.5 md:p-3">
+      <div className={cn('relative', compact ? 'p-2 md:p-2.5' : 'p-2.5 md:p-3')}>
         <div className="flex items-center justify-between gap-2">
           {/* ── Identity block ── */}
           <button
@@ -304,7 +304,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
           >
             {/* Avatar with SVG rank ring */}
             <div className="relative shrink-0">
-              <svg viewBox="0 0 48 48" className="absolute -inset-1 h-[52px] w-[52px] md:h-[56px] md:w-[56px] pointer-events-none">
+              <svg viewBox="0 0 48 48" className={cn('absolute -inset-1 pointer-events-none', compact ? 'h-[48px] w-[48px] md:h-[52px] md:w-[52px]' : 'h-[52px] w-[52px] md:h-[56px] md:w-[56px]')}>
                 <defs>
                   <linearGradient id="ringGold" x1="0" x2="1" y1="0" y2="1">
                     <stop offset="0%" stopColor="#f0d78c" />
@@ -313,13 +313,12 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
                 </defs>
                 <circle cx="24" cy="24" r="22" fill="none" stroke="url(#ringGold)" strokeWidth="1.5" strokeDasharray="3 3" opacity=".7" />
               </svg>
-              <Avatar className="w-10 h-10 md:w-11 md:h-11 border-2 border-amber-500/70">
+              <Avatar className={cn('border-2 border-amber-500/70', compact ? 'w-9 h-9 md:w-10 md:h-10' : 'w-10 h-10 md:w-11 md:h-11')}>
                 {agent.avatar_url && <AvatarImage src={agent.avatar_url} alt={agent.name} className="object-cover" />}
                 <AvatarFallback className="bg-gradient-to-br from-amber-400 to-orange-700 text-sm font-black text-slate-950">
                   {agent.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              {/* rank chevrons */}
               <svg viewBox="0 0 24 12" className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-2.5 w-6 text-amber-400 drop-shadow">
                 <path d="M2 8 L12 2 L22 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M4 10 L12 5 L20 10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity=".7" />
@@ -333,29 +332,21 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
                   Agente
                 </span>
               </div>
-              <h1 className="text-sm md:text-[15px] font-bold text-slate-50 truncate tracking-wide font-['Libre_Baskerville',_serif] group-hover:text-amber-200 transition-colors">
+              <h1 className={cn(
+                'font-bold text-slate-50 truncate tracking-wide font-[\'Libre_Baskerville\',_serif] group-hover:text-amber-200 transition-colors',
+                compact ? 'text-[13px] md:text-sm' : 'text-sm md:text-[15px]'
+              )}>
                 {agent.name}
               </h1>
             </div>
           </button>
 
-          {/* ── Center insignia row (desktop) ── */}
-          <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-            {agent.team && <TeamInsignia team={agent.team} />}
-            {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
-            {agent.blood_type && (
-              <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-950/70 border border-red-500/50 font-['IBM_Plex_Mono',_monospace]">
-                <IconDroplet className="h-3.5 w-3.5 text-red-400" />
-                <span className="text-[10.5px] font-black text-red-300 tracking-wider">{agent.blood_type}</span>
-              </div>
-            )}
-            <OnlinePulse isOnline={isOnline} />
-          </div>
-
           {/* ── Right actions ── */}
           <div className="flex items-center gap-1.5">
+            <OnlinePulse isOnline={isOnline} />
+
             {agent.blood_type && (
-              <div className="md:hidden flex items-center gap-1 px-1.5 h-9 rounded-md bg-slate-950/70 border border-red-500/50">
+              <div className="flex items-center gap-1 px-1.5 h-9 rounded-md bg-slate-950/70 border border-red-500/50 font-['IBM_Plex_Mono',_monospace]">
                 <IconDroplet className="h-3 w-3 text-red-400" />
                 <span className="text-[10px] font-black text-red-300">{agent.blood_type}</span>
               </div>
@@ -364,6 +355,26 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
             <AgentRoleSelector agentId={agent.id} currentRole={agent.role || 'agent'} />
             <NotificationsPanel agentId={agent.id} />
             <FontSizeControl />
+
+            {onToggleCompact && (
+              <ActionButton
+                onClick={onToggleCompact}
+                tooltip={compact ? 'Modo confortável (expandir)' : 'Modo compacto (reduzir)'}
+                tone="neutral"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  {compact ? (
+                    <>
+                      <path d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" />
+                    </>
+                  )}
+                </svg>
+              </ActionButton>
+            )}
 
             <ActionButton onClick={onShowWelcome} tooltip={`Trial: ${trial} dias restantes`} tone="amber">
               <IconGift className="h-4 w-4" />
@@ -394,7 +405,6 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
               </svg>
             </ActionButton>
 
-
             {/* Logout — premium tactile */}
             <TooltipProvider>
               <Tooltip delayDuration={200}>
@@ -424,14 +434,16 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
           </div>
         </div>
 
-        {/* Mobile insignia row */}
-        <div className="md:hidden flex items-center justify-between mt-2 pt-2 border-t border-amber-500/15">
-          <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-            {agent.team && <TeamInsignia team={agent.team} />}
-            {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
+        {/* ── Faixa de destaque: UNIDADE + EQUIPE ── */}
+        {(agent.unit_id || agent.team) && (
+          <div className={cn(
+            'flex flex-wrap items-center gap-2 border-t border-amber-500/20',
+            compact ? 'mt-2 pt-2' : 'mt-2.5 pt-2.5'
+          )}>
+            {agent.unit_id && <UnitBadge unitId={agent.unit_id} prominent />}
+            {agent.team && <TeamInsignia team={agent.team} prominent />}
           </div>
-          <OnlinePulse isOnline={isOnline} />
-        </div>
+        )}
       </div>
 
       {/* bottom gold accent */}
