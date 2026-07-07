@@ -736,6 +736,18 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             </span>
                           </div>
                         )}
+                        {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'off_12h_exceptional' && (
+                          <div className="flex items-start gap-1.5 text-fuchsia-300 bg-fuchsia-500/10 border border-fuchsia-500/30 rounded px-1.5 py-1">
+                            <Coffee className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">Folga excepcional (12h)</span>
+                              <br />
+                              <span className="text-[10px] opacity-80 tabular-nums">
+                                Janela livre {restInfo.windowLabel ?? '07:00–19:00'} · após plantão noturno 19→07
+                              </span>
+                            </span>
+                          </div>
+                        )}
                         {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'off_24h' && (
                           <div className="flex items-start gap-1.5 text-sky-300 bg-sky-500/10 border border-sky-500/30 rounded px-1.5 py-1">
                             <Palmtree className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
