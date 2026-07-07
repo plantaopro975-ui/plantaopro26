@@ -244,7 +244,7 @@ function ActionButton({
    Main header
    ──────────────────────────────────────────────────────────────── */
 
-export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed }: AgentPanelHeaderProps) {
+export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed, compact = false, onToggleCompact }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const trial = getRemainingTrialDays();
