@@ -9,6 +9,7 @@ import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel'
 import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
 import { FontSizeControl } from '@/components/FontSizeControl';
 import { cn } from '@/lib/utils';
+import { TeamEmblem } from '@/components/TeamEmblem';
 import panelHeaderBg from '@/assets/panel-header-bg.jpg';
 
 interface Agent {
@@ -27,6 +28,8 @@ interface AgentPanelHeaderProps {
   onShowWelcome: () => void;
   onReactivateShiftBanner?: () => void;
   isShiftBannerDismissed?: boolean;
+  compact?: boolean;
+  onToggleCompact?: () => void;
 }
 
 /* ────────────────────────────────────────────────────────────────
