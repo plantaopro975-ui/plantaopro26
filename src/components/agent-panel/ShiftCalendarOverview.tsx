@@ -373,6 +373,24 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
       </CardHeader>
 
       <CardContent className="space-y-2 relative px-3 pb-3">
+        {/* Resumo do mês: Cumpridos x Não cumpridos */}
+        <div className="grid grid-cols-2 gap-1.5">
+          <div className="flex items-center gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1.5">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-emerald-300 leading-none tabular-nums">{doneCount}</p>
+              <p className="text-[9px] text-emerald-200/70 uppercase tracking-wide mt-0.5">Cumpridos</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-1.5">
+            <XCircle className="h-4 w-4 text-rose-400 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-rose-300 leading-none tabular-nums">{missedCount}</p>
+              <p className="text-[9px] text-rose-200/70 uppercase tracking-wide mt-0.5">Não cumpridos</p>
+            </div>
+          </div>
+        </div>
+
         {/* Stats compactos */}
         <div className="grid grid-cols-4 gap-1">
           {[
