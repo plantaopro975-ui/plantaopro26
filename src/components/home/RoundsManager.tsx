@@ -1848,11 +1848,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Nome grande — agente ATIVO agora (live ou preview) */}
                               {activeAgentName && (
                                 <div
-                                  className="font-sans font-black uppercase tracking-tight text-lg sm:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                                  className="font-sans font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                                   style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
                                 >
                                   {activeAgentName}
                                 </div>
+
                               )}
                               {!view && (
                                 <div className="font-sans font-medium text-base text-foreground break-words max-w-full px-2">
