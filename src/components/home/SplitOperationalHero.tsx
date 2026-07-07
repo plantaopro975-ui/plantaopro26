@@ -346,7 +346,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   draggable={false}
                 />
                 {/* Giroflex — ancorado nas lentes reais da imagem 1024x1024.
-                    Coordenadas medidas na barra: azul ≈47%/24%, vermelho ≈63%/23.5%. */}
+                    Coordenadas medidas no corpo da lente: azul ≈47%/24%, vermelho ≈63%/24.6%. */}
                 <span
                   aria-hidden
                   className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
@@ -355,7 +355,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <span
                   aria-hidden
                   className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                  style={{ top: '23.35%', left: '62.7%' }}
+                  style={{ top: '24.6%', left: '62.7%' }}
                 />
               </picture>
 
