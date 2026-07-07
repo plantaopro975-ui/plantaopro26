@@ -10,7 +10,8 @@ import {
  * date with hours = (H + 5) mod 24 for the same calendar day.
  */
 const atAcre = (yyyy: number, mm: number, dd: number, h: number, m = 0) =>
-  new Date(Date.UTC(yyyy, mm - 1, dd, (h + 5) % 24, m, 0));
+  new Date(Date.UTC(yyyy, mm - 1, dd, h + 5, m, 0));
+
 
 describe('nightShift helpers (server-time aware)', () => {
   afterEach(() => vi.useRealTimers());
