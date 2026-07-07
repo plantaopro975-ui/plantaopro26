@@ -350,7 +350,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
-        <div className="relative shrink-0 px-2 sm:px-3 pt-0 pb-2 -mt-2 sm:-mt-4">
+        <div className="relative shrink-0 px-2 sm:px-3 pt-2 sm:pt-3 pb-2 mt-1 sm:mt-2">
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-200">
               Selecione sua Equipe
