@@ -345,17 +345,17 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
                   draggable={false}
                 />
-                {/* Giroflex — flash discreto alternando azul/vermelho posicionado sobre a barra de luzes.
-                    A imagem é quadrada (1024x1024) e a barra está a ~22% do topo → posição estável em qualquer viewport. */}
+                {/* Giroflex — ancorado nas lentes reais da imagem 1024x1024.
+                    Coordenadas medidas na barra: azul ≈47%/24%, vermelho ≈63%/23.5%. */}
                 <span
                   aria-hidden
-                  className="beacon-light beacon-blue motion-reduce:hidden"
-                  style={{ top: '22%', left: '42%' }}
+                  className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
+                  style={{ top: '23.95%', left: '47.1%' }}
                 />
                 <span
                   aria-hidden
-                  className="beacon-light beacon-red motion-reduce:hidden"
-                  style={{ top: '22%', left: '61%' }}
+                  className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
+                  style={{ top: '23.35%', left: '62.7%' }}
                 />
               </picture>
 
