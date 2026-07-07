@@ -55,11 +55,13 @@ export function SplashScreen() {
   return (
     <div
       className={`splash-root fixed inset-0 z-[9999] overflow-hidden bg-[#050810] transition-opacity duration-500 ${
-        fadeOut ? "opacity-0" : "opacity-100"
+        fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
+      aria-hidden={fadeOut}
       role="dialog"
       aria-label="Inicializando PlantãoPro"
     >
+
       {/* HUD grid */}
       <div className="splash-grid absolute inset-0 opacity-40" />
 
