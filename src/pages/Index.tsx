@@ -1574,7 +1574,10 @@ export default function Index() {
         subtitle="Autenticação de Agente"
         team={selectedTeam}
       >
-        <form onSubmit={handleLogin} className="space-y-5" data-login-form="true">
+        <form onSubmit={handleLogin} className="space-y-5" data-login-form="true" autoComplete="off" spellCheck={false}>
+          {/* Honeypot para desativar o prompt "salvar senha" do navegador */}
+          <input type="text" name="fakeuser" autoComplete="username" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} readOnly />
+          <input type="password" name="fakepass" autoComplete="current-password" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} readOnly />
           {foundAgent?.name ? (
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-slate-300 uppercase tracking-wider">
