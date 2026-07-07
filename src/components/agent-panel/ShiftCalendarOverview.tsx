@@ -17,6 +17,7 @@ interface Shift {
   id: string;
   shift_date: string;
   start_time: string;
+  end_time: string | null;
   status: string;
   is_vacation: boolean;
   notes: string | null;
@@ -279,15 +280,50 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
               const marker = getDayMarker(dayInfo.types);
               const isTodayDay = dayInfo.types.includes('today');
 
+              // Tooltip detalhado para HOJE: mostra descanso + plantão do dia
+              let tooltip = format(day, "EEEE, dd 'de' MMMM", { locale: ptBR });
+              if (isTodayDay) {
+                const dateStr = format(day, 'yyyy-MM-dd');
+                const todayShift = shifts.find(s => s.shift_date === dateStr && !s.is_vacation);
+                const prevShift = [...shifts]
+                  .filter(s => s.shift_date < dateStr && !s.is_vacation)
+                  .sort((a, b) => (a.shift_date < b.shift_date ? 1 : -1))[0];
+
+                const parts: string[] = ['📅 Jornada de Hoje'];
+                if (prevShift?.start_time && (prevShift as Shift & { end_time?: string }).end_time) {
+                  const pEnd = (prevShift as Shift & { end_time?: string }).end_time as string;
+                  parts.push(`☀ Descanso: até ${pEnd.slice(0, 5)}`);
+                } else if (todayShift?.start_time) {
+                  parts.push(`☀ Descanso: até ${todayShift.start_time.slice(0, 5)}`);
+                }
+                if (todayShift?.start_time) {
+                  const s = todayShift.start_time.slice(0, 5);
+                  const e = (todayShift as Shift & { end_time?: string }).end_time?.slice(0, 5) || '—';
+                  const startH = Number(s.split(':')[0]);
+                  const isNight = startH >= 18 || startH < 6;
+                  parts.push(`${isNight ? '🌙' : '☀'} Plantão: ${s}–${e} (${isNight ? 'Noturno' : 'Diurno'})`);
+                } else if (!todayShift) {
+                  parts.push('⚠ Sem plantão cadastrado — revisar cadastro do agente');
+                }
+                tooltip = parts.join('\n');
+              }
+
               return (
                 <div
                   key={day.toISOString()}
+                  title={tooltip}
                   className={`relative h-7 sm:h-8 rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all ${colors} ${
-                    isTodayDay ? 'ring-1 ring-primary ring-offset-1 ring-offset-slate-900' : ''
+                    isTodayDay ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900 shadow-lg shadow-amber-500/30' : ''
                   }`}
                 >
                   <span className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
                   {marker}
+                  {isTodayDay && (
+                    <span
+                      aria-label="Jornada de hoje"
+                      className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)] animate-pulse"
+                    />
+                  )}
                 </div>
               );
             })}

@@ -53,6 +53,7 @@ const AgentEventsCard = lazy(() => import('@/components/agent-panel/AgentEventsC
 const ChatAndAlertSettings = lazy(() => import('@/components/agent-panel/ChatAndAlertSettings').then(m => ({ default: m.ChatAndAlertSettings })));
 const ShiftPlannerCard = lazy(() => import('@/components/agent-panel/ShiftPlannerCard'));
 const ShiftCalendarOverview = lazy(() => import('@/components/agent-panel/ShiftCalendarOverview').then(m => ({ default: m.ShiftCalendarOverview })));
+const RecentShiftCyclesCard = lazy(() => import('@/components/agent-panel/RecentShiftCyclesCard').then(m => ({ default: m.RecentShiftCyclesCard })));
 const BHEvolutionChart = lazy(() => import('@/components/agent-panel/BHEvolutionChart').then(m => ({ default: m.BHEvolutionChart })));
 const BHHistoryTracker = lazy(() => import('@/components/agent-panel/BHHistoryTracker').then(m => ({ default: m.BHHistoryTracker })));
 const SessionDiagnosticCard = lazy(() => import('@/components/agent-panel/SessionDiagnosticCard').then(m => ({ default: m.SessionDiagnosticCard })));
@@ -678,7 +679,10 @@ export default function AgentPanel() {
                   <ProfessionalShiftTimer agentId={agent.id} />
                   <ShiftScheduleCard agentId={agent.id} />
                 </div>
-                <ShiftCalendarOverview agentId={agent.id} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
+                  <ShiftCalendarOverview agentId={agent.id} />
+                  <RecentShiftCyclesCard agentId={agent.id} />
+                </div>
               </TabsContent>
 
               <TabsContent value="bh" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
