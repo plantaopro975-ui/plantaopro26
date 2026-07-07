@@ -227,9 +227,11 @@
 
   /* ===== ARMED-FORCES TYPOGRAPHY ===== */
   .font-stencil {
-    font-family: 'Stardos Stencil', 'Saira Condensed', 'Impact', sans-serif;
+    /* Carregada com font-display:block em index.html — evita flash de Impact atrás do nome das equipes */
+    font-family: 'Stardos Stencil', serif;
     letter-spacing: 0.04em;
   }
+
   .font-tactical {
     font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Courier New', monospace;
     letter-spacing: 0.12em;
