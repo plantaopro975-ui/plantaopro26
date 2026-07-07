@@ -176,7 +176,7 @@ export function OperationalStatusRibbon() {
       </svg>
 
       {/* Wordmark institucional — PLANTÃO PRO */}
-      <div className="mt-3 flex items-center justify-center gap-4 px-2" aria-label="Plantão Pro">
+      <div className="mt-2 flex items-center justify-center gap-4 px-2" aria-label="Plantão Pro">
         <span aria-hidden className="h-px flex-1 max-w-[7rem] bg-gradient-to-r from-transparent to-amber-300/45" />
         <div className="flex items-baseline gap-2.5 select-none">
           <span
