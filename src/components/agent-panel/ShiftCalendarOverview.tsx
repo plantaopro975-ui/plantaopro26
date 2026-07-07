@@ -17,6 +17,7 @@ interface Shift {
   id: string;
   shift_date: string;
   start_time: string;
+  end_time: string | null;
   status: string;
   is_vacation: boolean;
   notes: string | null;
