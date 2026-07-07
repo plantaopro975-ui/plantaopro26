@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getServerDate } from '@/hooks/useServerTime';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Radar, Users, Activity, Wifi, Building2, Signal } from 'lucide-react';
@@ -25,7 +26,7 @@ interface TacticalRadarProps {
 
 export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(function TacticalRadar({ unitId, unitName, className, compact = false }, ref) {
   const [agents, setAgents] = useState<AgentBlip[]>([]);
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [lastUpdate, setLastUpdate] = useState<Date>(() => getServerDate());
 
   // Fetch agents ONLY from the same unit - each unit is independent
   useEffect(() => {
@@ -55,7 +56,7 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           lastActivity: agent.updated_at,
         }));
         setAgents(blips);
-        setLastUpdate(new Date());
+        setLastUpdate(getServerDate());
       }
     };
 
@@ -204,7 +205,7 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           </div>
           <div className="flex items-center gap-1">
             <Activity className="h-3 w-3 text-emerald-500" />
-            <span>{lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+            <span>{lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Rio_Branco' })}</span>
           </div>
         </div>
 

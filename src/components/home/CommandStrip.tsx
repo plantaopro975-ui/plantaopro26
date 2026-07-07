@@ -34,11 +34,13 @@ export function CommandStrip() {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
+    timeZone: 'America/Rio_Branco',
   });
   const time = now.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
+    timeZone: 'America/Rio_Branco',
   });
 
 

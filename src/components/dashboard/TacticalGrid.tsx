@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { useServerTime } from '@/hooks/useServerTime';
 
 interface GridNode {
   id: number;
@@ -22,6 +23,7 @@ export function TacticalGrid({
 }: TacticalGridProps) {
   const [nodes, setNodes] = useState<GridNode[]>([]);
   const [scanPosition, setScanPosition] = useState(0);
+  const now = useServerTime(1000);
 
   // Initialize grid nodes
   useEffect(() => {
@@ -131,7 +133,7 @@ export function TacticalGrid({
         SYS:ONLINE
       </div>
       <div className="absolute top-4 right-14 text-[9px] font-mono text-primary/50">
-        {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+        {now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/Rio_Branco' })}
       </div>
 
       {/* Hexagonal overlay (subtle) */}
