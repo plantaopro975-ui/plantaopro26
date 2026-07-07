@@ -82,4 +82,35 @@ export function formatAcreClock(date: Date): string {
     second: '2-digit',
     hour12: false,
   }).format(date);
+
+/**
+ * Applies the night shift lock rule to a candidate start/end pair.
+ *
+ * Returns the values that MUST be persisted:
+ * - When the server clock is inside the night window AND no master override
+ *   is active → forces `22:00 / 06:00` and marks `locked = true`.
+ * - When override is active (master only) → returns the input unchanged but
+ *   flags `auditRequired = true`.
+ * - Outside the night window → returns the input unchanged.
+ */
+export function applyNightShiftLock(input: {
+  now: Date;
+  startTime: string;
+  endTime: string;
+  masterOverride?: boolean;
+}): { startTime: string; endTime: string; locked: boolean; auditRequired: boolean } {
+  const night = isNightShift(input.now);
+  if (!night) {
+    return { startTime: input.startTime, endTime: input.endTime, locked: false, auditRequired: false };
+  }
+  if (input.masterOverride) {
+    return {
+      startTime: input.startTime,
+      endTime: input.endTime,
+      locked: false,
+      auditRequired: input.startTime !== NIGHT_START || input.endTime !== NIGHT_END,
+    };
+  }
+  return { startTime: NIGHT_START, endTime: NIGHT_END, locked: true, auditRequired: false };
 }
+
