@@ -308,6 +308,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
       console.error('Error clearing conversation:', error);
       toast.error('Erro ao limpar conversa');
     }
+  };
+
+
 
 
   const initializeChatRooms = async () => {
