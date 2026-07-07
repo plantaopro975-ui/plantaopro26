@@ -5,8 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 import { useSessionPersistence } from '@/hooks/useSessionPersistence';
-import { useLicenseCheck } from '@/hooks/useLicenseCheck';
-import { useLicenseExpiryNotification } from '@/hooks/useLicenseExpiryNotification';
+// License hooks removidos — sistema gratuito
 import { useShiftNotifications } from '@/hooks/useShiftNotifications';
 import { useBHReminder } from '@/hooks/useBHReminder';
 import { useBHReminderHour } from '@/components/agent-panel/BHReminderSettings';
@@ -21,7 +20,7 @@ import { ShiftAlertsBanner, useShiftAlertsBanner } from '@/components/agent-pane
 import { BHReminderSettings } from '@/components/agent-panel/BHReminderSettings';
 import { BirthdayCard } from '@/components/agent-panel/BirthdayCard';
 import { ProfileCompletionAlert } from '@/components/agent-panel/ProfileCompletionAlert';
-import { LicenseWarningBanner } from '@/components/LicenseWarningBanner';
+// LicenseWarningBanner removido — sistema gratuito
 const TacticalRadar = lazy(() => import('@/components/dashboard/TacticalRadar').then(m => ({ default: m.TacticalRadar })));
 import { SessionMonitorBanner } from '@/components/SessionMonitorBanner';
 const DiagnosticReportButton = lazy(() => import('@/components/DiagnosticReportButton').then(m => ({ default: m.DiagnosticReportButton })));
@@ -29,8 +28,7 @@ import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
-import { shouldShowWelcomeToday, getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
-const WelcomeTrialDialog = lazy(() => import('@/components/WelcomeTrialDialog').then(m => ({ default: m.WelcomeTrialDialog })));
+// WelcomeTrialDialog removido — sistema gratuito, sem trial
 import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
@@ -78,25 +76,11 @@ export default function AgentPanel() {
   const { compact, toggle: toggleCompact } = useCompactMode();
   const [hasShifts, setHasShifts] = useState(true);
   const { enabled: promosEnabled } = usePromosEnabled();
-  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [isVerifyingSession, setIsVerifyingSession] = useState(false);
   const [sessionMissing, setSessionMissing] = useState(false);
-  const { enabled: welcomeHintEnabled, loading: welcomeHintLoading } = useWelcomeHintEnabled();
-  
+
   // Shift alerts banner control
   const { isDismissed: isShiftBannerDismissed, setIsDismissed: setShiftBannerDismissed, forceShow: forceShowShiftBanner, reactivateBanner: reactivateShiftBanner } = useShiftAlertsBanner();
-  // Check for first access or daily welcome (gated by global toggle)
-  useEffect(() => {
-    if (!agent?.name) return;
-    if (welcomeHintLoading || !welcomeHintEnabled) return;
-    
-    if (shouldShowWelcomeToday()) {
-      const timer = setTimeout(() => {
-        setShowWelcomeDialog(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [agent?.name, welcomeHintEnabled, welcomeHintLoading]);
 
   // ESC key navigation - goes back to previous page or home
   useBackNavigation({ enabled: true, fallbackPath: '/' });
@@ -131,29 +115,8 @@ export default function AgentPanel() {
     },
   });
 
-  // License check with warning banner
-  const {
-    showWarning: showLicenseWarning,
-    secondsUntilLogout,
-    licenseStatus,
-  } = useLicenseCheck({
-    licenseStatus: agent?.license_status ?? null,
-    licenseExpiresAt: agent?.license_expires_at ?? null,
-    enabled: !!agent && !masterSession,
-    warningDurationSeconds: 15,
-    autoLogout: false,
-    skipForMaster: true,
-    isMasterSession: !!masterSession,
-  });
+  // Licenças e trial removidos — sistema gratuito
 
-  // License expiry notification - alerts 7 days before with push notifications
-  const { daysUntilExpiry, isExpiringSoon, isPushEnabled } = useLicenseExpiryNotification({
-    licenseExpiresAt: agent?.license_expires_at ?? null,
-    agentId: agent?.id ?? null,
-    agentName: agent?.name ?? null,
-    enabled: !!agent && !masterSession,
-    warningDaysBefore: 7,
-  });
 
   // Shift notifications - checks for upcoming shifts and sends reminders
   useShiftNotifications({
