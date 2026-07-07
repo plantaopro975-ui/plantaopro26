@@ -173,14 +173,51 @@ export default function Units() {
     }
   };
 
-  // Group units by municipality
-  const groupedUnits = units.reduce((acc, unit) => {
-    if (!acc[unit.municipality]) {
-      acc[unit.municipality] = [];
-    }
+  // Lista única de municípios (para o filtro)
+  const cityOptions = useMemo(() => {
+    const set = new Set(units.map((u) => u.municipality).filter(Boolean));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  }, [units]);
+
+  // Aplica busca + filtros
+  const filteredUnits = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return units.filter((u) => {
+      if (cityFilter !== 'all' && u.municipality !== cityFilter) return false;
+      const total = unitStats[u.id]?.total ?? 0;
+      if (statusFilter === 'with' && total <= 0) return false;
+      if (statusFilter === 'without' && total > 0) return false;
+      if (!term) return true;
+      const haystack = [
+        u.name,
+        u.municipality,
+        u.director_name,
+        u.coordinator_name,
+        u.address,
+        u.email,
+        u.phone,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(term);
+    });
+  }, [units, unitStats, searchTerm, cityFilter, statusFilter]);
+
+  // Group filtered units by municipality
+  const groupedUnits = filteredUnits.reduce((acc, unit) => {
+    if (!acc[unit.municipality]) acc[unit.municipality] = [];
     acc[unit.municipality].push(unit);
     return acc;
   }, {} as Record<string, Unit[]>);
+
+  const hasActiveFilters = !!searchTerm || cityFilter !== 'all' || statusFilter !== 'all';
+  const clearFilters = () => {
+    setSearchTerm('');
+    setCityFilter('all');
+    setStatusFilter('all');
+  };
+
 
   if (isLoading || isLoadingAgent) {
     return (
