@@ -791,6 +791,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   );
   const hasError = (field: string) => issues.some((i) => i.field === field);
 
+  // Estado do cronômetro (hoisted — usado no cálculo do início efetivo abaixo).
+  const [running, setRunning] = useState(false);
+  const [tick, setTick] = useState(0);
+
+
+
   /* ---------- início efetivo (turno noturno) ----------
    * Quando o modal é aberto DENTRO da janela 22:00→06:00, o campo "Início" fica
    * travado em 22:00 por regra de segurança — porém a divisão do turno entre os
