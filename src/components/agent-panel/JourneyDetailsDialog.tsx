@@ -193,7 +193,10 @@ export function JourneyDetailsDialog({
     if (!current) return;
     setBusy('pdf');
     try {
-      const canvas = await captureCanvas();
+      const [canvas, logoDataUrl] = await Promise.all([
+        captureCanvas(),
+        loadLogoDataUrl(),
+      ]);
       const { jsPDF } = await import('jspdf');
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
@@ -201,28 +204,82 @@ export function JourneyDetailsDialog({
       const pageH = pdf.internal.pageSize.getHeight();
       const margin = 32;
       const maxW = pageW - margin * 2;
-      const ratio = canvas.height / canvas.width;
-      const imgW = maxW;
-      const imgH = Math.min(imgW * ratio, pageH - margin * 2 - 48);
 
+      // ---------- Cabeçalho institucional ----------
+      const headerH = 56;
+      pdf.setFillColor(15, 23, 42); // slate-900
+      pdf.rect(0, 0, pageW, headerH, 'F');
+      pdf.setDrawColor(245, 158, 11); // amber-500
+      pdf.setLineWidth(1.5);
+      pdf.line(0, headerH, pageW, headerH);
+
+      if (logoDataUrl) {
+        try {
+          pdf.addImage(logoDataUrl, 'PNG', margin, 12, 32, 32);
+        } catch { /* logo opcional */ }
+      }
+      pdf.setTextColor(245, 158, 11);
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(14);
-      pdf.text('Relatório de Jornada', margin, margin + 4);
-      pdf.setFontSize(10);
+      pdf.text('PLANTÃO PRO', margin + (logoDataUrl ? 42 : 0), 28);
+      pdf.setTextColor(226, 232, 240); // slate-200
       pdf.setFont('helvetica', 'normal');
-      pdf.text(
-        format(current.targetDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR }),
-        margin, margin + 22
-      );
-
-      pdf.addImage(imgData, 'PNG', margin, margin + 36, imgW, imgH);
-
       pdf.setFontSize(9);
-      pdf.setTextColor(120);
-      pdf.text(
-        `Gerado em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })} • Plantão Pro`,
-        margin, pageH - margin / 2
-      );
+      pdf.text('Relatório oficial de jornada', margin + (logoDataUrl ? 42 : 0), 42);
+
+      // Data à direita
+      pdf.setTextColor(148, 163, 184); // slate-400
+      pdf.setFontSize(9);
+      const dateText = format(current.targetDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+      pdf.text(dateText, pageW - margin, 34, { align: 'right' });
+
+      // ---------- Imagem da jornada (com paginação se necessário) ----------
+      pdf.setTextColor(0, 0, 0);
+      const contentTop = headerH + 20;
+      const contentBottom = pageH - margin - 18;
+      const availableH = contentBottom - contentTop;
+      const ratio = canvas.height / canvas.width;
+      const imgW = maxW;
+      const fullImgH = imgW * ratio;
+
+      if (fullImgH <= availableH) {
+        pdf.addImage(imgData, 'PNG', margin, contentTop, imgW, fullImgH);
+      } else {
+        // Fatia a captura em páginas A4 sem cortar visualmente o conteúdo
+        const pageSliceH = (availableH * canvas.width) / imgW;
+        let renderedY = 0;
+        let firstPage = true;
+        while (renderedY < canvas.height) {
+          const sliceH = Math.min(pageSliceH, canvas.height - renderedY);
+          const sliceCanvas = document.createElement('canvas');
+          sliceCanvas.width = canvas.width;
+          sliceCanvas.height = sliceH;
+          const ctx = sliceCanvas.getContext('2d');
+          if (!ctx) break;
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+          ctx.drawImage(canvas, 0, renderedY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+          const sliceData = sliceCanvas.toDataURL('image/png');
+          const sliceRenderH = (sliceH * imgW) / canvas.width;
+          if (!firstPage) pdf.addPage();
+          pdf.addImage(sliceData, 'PNG', margin, contentTop, imgW, sliceRenderH);
+          renderedY += sliceH;
+          firstPage = false;
+        }
+      }
+
+      // ---------- Rodapé em cada página ----------
+      const pageCount = pdf.getNumberOfPages();
+      for (let p = 1; p <= pageCount; p++) {
+        pdf.setPage(p);
+        pdf.setFontSize(8);
+        pdf.setTextColor(120);
+        pdf.text(
+          `Gerado em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })} • Plantão Pro`,
+          margin, pageH - margin / 2,
+        );
+        pdf.text(`Pág. ${p}/${pageCount}`, pageW - margin, pageH - margin / 2, { align: 'right' });
+      }
 
       pdf.save(`${filenameBase}.pdf`);
       toast({ title: 'PDF gerado', description: 'Download iniciado.' });
