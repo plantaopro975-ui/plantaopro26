@@ -17,7 +17,10 @@ interface NextShift {
   id: string;
   shift_date: string;
   start_time: string;
+  end_time: string | null;
+  shift_type: string | null;
 }
+
 
 interface AgentLeave {
   id: string;
