@@ -303,6 +303,25 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       }
     }
 
+    // ---------- SEM DADOS DE PLANTÃO (fallback profissional) ----------
+    // Se não existe próximo plantão nem licença aprovada, sugere revisar cadastro.
+    if (!shiftMeta && !todayLeave) {
+      cards.push({
+        id: 'no-data',
+        type: 'shift',
+        priority: 4,
+        icon: <AlertCircle className="h-5 w-5 text-white" />,
+        title: 'JORNADA DE HOJE • SEM DADOS DE PLANTÃO',
+        value: 'Escala não cadastrada',
+        subtitle: 'Nenhum plantão futuro encontrado. Revise o cadastro do agente (data do primeiro plantão e escala) na aba Configurações.',
+        colorClass: 'text-slate-300',
+        bgClass: 'bg-gradient-to-br from-slate-600 to-slate-800',
+        borderClass: 'border-slate-500/50 bg-gradient-to-r from-slate-600/25 via-slate-700/20 to-slate-800/25 shadow-lg shadow-slate-900/30',
+      });
+    }
+
+
+
 
     // ---------- FOLGA (licença aprovada) ----------
     if (todayLeave) {
