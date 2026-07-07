@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { isNightShift, getAcreHour, getNightWindow, NIGHT_START, NIGHT_END } from '@/lib/nightShift';
+import {
+  isNightShift, getAcreHour, getNightWindow, applyNightShiftLock,
+  NIGHT_START, NIGHT_END,
+} from '@/lib/nightShift';
+
 
 /**
  * Rio Branco is UTC-5 (no DST). To hit a specific Acre hour H we build a UTC
