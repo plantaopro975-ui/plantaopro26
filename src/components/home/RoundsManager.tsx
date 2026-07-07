@@ -416,8 +416,9 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
 /* ================= SVG time field ================= */
 
 function TimeField({
-  id, value, onChange, label, invalid, accent,
-}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string }) {
+  id, value, onChange, label, invalid, accent, locked, lockedHint,
+}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string; locked?: boolean; lockedHint?: string }) {
+
   const [h, m] = value.split(':');
   const setH = (nh: string) => {
     const v = Math.max(0, Math.min(23, parseInt(nh || '0', 10) || 0));
