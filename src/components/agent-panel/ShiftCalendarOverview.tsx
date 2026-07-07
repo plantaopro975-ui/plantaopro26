@@ -581,11 +581,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
           </div>
         </div>
 
-        {/* Legenda com dots SVG */}
+        {/* Legenda com dots SVG — sempre visível */}
         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 pt-1 border-t border-slate-700/50">
           {[
             { c: 'hsl(43 96% 56%)', label: 'Plantão' },
             { c: 'hsl(142 71% 45%)', label: 'Cumprido ✓' },
+            { c: 'hsl(0 84% 60%)', label: 'Não cumprido ✕' },
             { c: 'hsl(270 91% 65%)', label: 'Férias' },
             { c: 'hsl(217 91% 60%)', label: 'Folga' },
           ].map((it) => (
@@ -603,6 +604,97 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         onRequestDate={fetchJourneyForDate}
         storageKey={`journey:last-date:${agentId}`}
       />
+
+      {/* Modal de detalhes do plantão (horário, status, observações) */}
+      <Dialog open={shiftModalOpen} onOpenChange={setShiftModalOpen}>
+        <DialogContent className="max-w-sm bg-slate-900 border-slate-700 text-slate-100">
+          {shiftModalData && (() => {
+            const { date, shift, status, startStr, endStr } = shiftModalData;
+            const statusMeta =
+              status === 'done'
+                ? { icon: CheckCircle2, label: 'PLANTÃO CUMPRIDO', color: 'emerald', bg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' }
+                : status === 'missed'
+                ? { icon: XCircle, label: 'PLANTÃO NÃO CUMPRIDO', color: 'rose', bg: 'bg-rose-500/10 border-rose-500/30 text-rose-300' }
+                : { icon: Clock, label: 'PLANTÃO AGENDADO', color: 'sky', bg: 'bg-sky-500/10 border-sky-500/30 text-sky-300' };
+            const StatusIcon = statusMeta.icon;
+            const nightShift = Number(startStr.split(':')[0]) >= 19 || Number(startStr.split(':')[0]) < 7;
+
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 capitalize text-amber-300">
+                    {nightShift ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                    {format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-400 text-xs">
+                    Detalhes do plantão registrado para este dia.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-3 pt-1">
+                  {/* Status destacado */}
+                  <div className={`flex items-center gap-2 rounded-md border px-3 py-2 ${statusMeta.bg}`}>
+                    <StatusIcon className="h-5 w-5 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm tracking-wide">{statusMeta.label}</p>
+                      <p className="text-[10px] opacity-80 tabular-nums">
+                        {format(date, "dd/MM/yyyy", { locale: ptBR })}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Horário */}
+                  <div className="rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Horário
+                    </p>
+                    <p className="text-lg font-bold tabular-nums text-slate-100 mt-0.5">
+                      {startStr} <span className="text-slate-500">→</span> {endStr}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">
+                      Turno {nightShift ? 'noturno' : 'diurno'} · {shift.shift_date}
+                    </p>
+                  </div>
+
+                  {/* Observações */}
+                  <div className="rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                      <FileText className="h-3 w-3" /> Observações
+                    </p>
+                    <p className="text-xs text-slate-200 mt-1 whitespace-pre-wrap">
+                      {shift.notes && shift.notes.trim().length > 0
+                        ? shift.notes
+                        : <span className="text-slate-500 italic">Nenhuma observação registrada.</span>}
+                    </p>
+                  </div>
+                </div>
+
+                <DialogFooter className="flex-row justify-between gap-2 sm:justify-between">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-slate-700 text-slate-200 hover:bg-slate-800"
+                    onClick={() => {
+                      setShiftModalOpen(false);
+                      setDetailData(buildJourneyFromShifts(date, shifts));
+                      setDetailOpen(true);
+                    }}
+                  >
+                    Ver jornada completa
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-amber-500 text-black hover:bg-amber-400"
+                    onClick={() => setShiftModalOpen(false)}
+                  >
+                    Fechar
+                  </Button>
+                </DialogFooter>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
