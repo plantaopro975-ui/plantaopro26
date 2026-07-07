@@ -893,13 +893,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       startMin: s,
       hasRemainder: hasSeconds,
     };
-  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents]);
+  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents, effectiveStartMin]);
 
 
   /* ---------- live timer ---------- */
-  const [running, setRunning] = useState(false);
-  const [tick, setTick] = useState(0);
   const [lockOpen, setLockOpen] = useState(false);
+
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
