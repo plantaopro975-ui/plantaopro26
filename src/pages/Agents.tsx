@@ -679,7 +679,22 @@ export default function Agents() {
         </main>
       </div>
 
+      <AgentDetailsDialog
+        agentId={detailsAgentId}
+        open={!!detailsAgentId}
+        onClose={() => setDetailsAgentId(null)}
+        canManage={isAdmin || isMaster}
+        onTransferClick={(id) => {
+          const a = agents.find((x) => x.id === id);
+          if (a) {
+            setDetailsAgentId(null);
+            handleTransferRequest(a);
+          }
+        }}
+      />
+
       {/* Transfer Request Dialog */}
+
       <TransferRequestDialog
         open={transferDialogOpen}
         onOpenChange={setTransferDialogOpen}
