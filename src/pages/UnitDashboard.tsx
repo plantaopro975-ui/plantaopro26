@@ -11,18 +11,23 @@ import { TeamEmblem } from '@/components/TeamEmblem';
 import { useWelcomeHintEnabled } from '@/hooks/useWelcomeHintEnabled';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
-import { 
-  Loader2, 
-  MapPin, 
-  Users, 
-  Shield, 
-  Sword, 
-  Target, 
+import {
+  Loader2,
+  MapPin,
+  Users,
+  Shield,
+  Sword,
+  Target,
   Calendar,
   Building2,
   User,
-  Clock
+  Clock,
+  History,
+  ArrowLeft,
 } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
 
 interface Unit {
   id: string;
