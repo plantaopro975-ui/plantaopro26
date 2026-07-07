@@ -55,6 +55,57 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const [bhEntries, setBhEntries] = useState<BHEntry[]>([]);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState<JourneyDetailsData | null>(null);
+
+  const buildDT = (dateStr: string, time: string | null, fallback: string) => {
+    const [h, m] = (time || fallback).split(':').map(Number);
+    const d = parseISO(dateStr);
+    d.setHours(h || 0, m || 0, 0, 0);
+    return d;
+  };
+
+  const buildJourneyForDay = (day: Date): JourneyDetailsData => {
+    const dateStr = format(day, 'yyyy-MM-dd');
+    const dayShift = shifts.find(s => s.shift_date === dateStr && !s.is_vacation);
+    const prevShift = [...shifts]
+      .filter(s => s.shift_date < dateStr && !s.is_vacation)
+      .sort((a, b) => (a.shift_date < b.shift_date ? 1 : -1))[0];
+
+    let shiftStart: Date | null = null;
+    let shiftEnd: Date | null = null;
+    if (dayShift) {
+      shiftStart = buildDT(dayShift.shift_date, dayShift.start_time, '07:00');
+      shiftEnd = buildDT(dayShift.shift_date, dayShift.end_time, '19:00');
+      if (shiftEnd <= shiftStart) shiftEnd.setDate(shiftEnd.getDate() + 1);
+    }
+
+    let restStart: Date | null = null;
+    let restEnd: Date | null = null;
+    if (prevShift) {
+      const pStart = buildDT(prevShift.shift_date, prevShift.start_time, '19:00');
+      const pEnd = buildDT(prevShift.shift_date, prevShift.end_time, '07:00');
+      if (pEnd <= pStart) pEnd.setDate(pEnd.getDate() + 1);
+      restStart = pEnd;
+      restEnd = shiftStart ?? day;
+    }
+
+    return {
+      targetDate: day,
+      restStart,
+      restEnd,
+      shiftStart,
+      shiftEnd,
+      emptyMessage: !dayShift && !prevShift
+        ? 'Sem plantão cadastrado para este dia. Revise o cadastro do agente na aba Configurações.'
+        : undefined,
+    };
+  };
+
+  const openDay = (day: Date) => {
+    setDetailData(buildJourneyForDay(day));
+    setDetailOpen(true);
+  };
 
   useEffect(() => {
     fetchData();
