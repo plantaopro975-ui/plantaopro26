@@ -722,8 +722,10 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                 </div>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+            </TooltipProvider>
+          </div>
         </div>
+
         
         {/* Room Buttons - Professional Modern Style */}
         <div className="mt-2 flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
