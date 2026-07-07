@@ -884,7 +884,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align={isOwn ? 'end' : 'start'} className="bg-zinc-800 border-zinc-700">
                             <DropdownMenuItem 
-                              onClick={() => deleteMessageForMe(msg.id)}
+                              onClick={() => setDeleteTarget({ id: msg.id, scope: 'me', preview: msg.content })}
                               className="text-zinc-200 hover:bg-zinc-700 cursor-pointer text-xs"
                             >
                               <Trash2 className="h-3 w-3 mr-2" />
@@ -894,7 +894,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                               <>
                                 <DropdownMenuSeparator className="bg-zinc-700" />
                                 <DropdownMenuItem 
-                                  onClick={() => deleteMessageForAll(msg.id)}
+                                  onClick={() => setDeleteTarget({ id: msg.id, scope: 'all', preview: msg.content })}
                                   className="text-rose-400 hover:bg-zinc-700 cursor-pointer text-xs"
                                 >
                                   <Trash2 className="h-3 w-3 mr-2" />
