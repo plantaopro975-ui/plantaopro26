@@ -1176,6 +1176,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
           .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
       }
+      void logRoundActivity('update', {
+        event: 'rounds_completed',
+        team,
+        mode,
+        start_time: startTime,
+        end_time: endTime,
+        interval_min: intervalMin,
+        agents_count: schedule.rows.length,
+        total_seconds: Math.round(live.elapsed),
+        completed_at: new Date().toISOString(),
+      });
     }
   }, [live, schedule, team]);
 
