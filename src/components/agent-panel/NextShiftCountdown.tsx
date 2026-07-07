@@ -243,6 +243,67 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       };
     }
 
+    // ---------- JORNADA DE HOJE (descanso diurno + plantão noturno no mesmo dia, ex.: 12x12) ----------
+    // Ex.: acabou plantão 07:00 hoje (que começou 19:00 ontem) e volta 19:00 hoje.
+    let todayTimeline: null | {
+      restStartStr: string;
+      restEndStr: string;
+      restHours: number;
+      nextIsNight: boolean;
+    } = null;
+
+    if (!todayLeave && shiftMeta && shiftMeta.isTodayShift && previousShift) {
+      const prevDate = parseISO(previousShift.shift_date);
+      const [phh, pmm] = (previousShift.start_time || '19:00').split(':').map(Number);
+      const [peh, pem] = (previousShift.end_time || '07:00').split(':').map(Number);
+      const prevStart = new Date(prevDate);
+      prevStart.setHours(phh || 19, pmm || 0, 0, 0);
+      const prevEnd = new Date(prevStart);
+      prevEnd.setHours(peh || 7, pem || 0, 0, 0);
+      if (prevEnd <= prevStart) prevEnd.setDate(prevEnd.getDate() + 1);
+
+      // O descanso de hoje começa quando o plantão anterior terminou (se foi hoje)
+      // e vai até o início do plantão de hoje.
+      const now = new Date();
+      const dayStart = startOfDay(now);
+      const restStart = prevEnd > dayStart ? prevEnd : dayStart;
+      const restEnd = shiftMeta.shiftStart;
+
+      if (restEnd > restStart && isSameDay(restEnd, now)) {
+        const restHours = Math.max(0, Math.round((restEnd.getTime() - restStart.getTime()) / 3_600_000));
+        todayTimeline = {
+          restStartStr: format(restStart, 'HH:mm'),
+          restEndStr: format(restEnd, 'HH:mm'),
+          restHours,
+          nextIsNight: shiftMeta.isNight,
+        };
+
+        const nowMs = now.getTime();
+        const inRest = nowMs >= restStart.getTime() && nowMs < restEnd.getTime();
+        const minsToShift = Math.max(0, Math.round((restEnd.getTime() - nowMs) / 60_000));
+        const shiftInLabel = minsToShift < 60
+          ? `em ${minsToShift}min`
+          : `em ${Math.round(minsToShift / 60)}h`;
+
+        cards.push({
+          id: 'today-timeline',
+          type: 'shift',
+          priority: 0, // acima de tudo
+          icon: <Sun className="h-5 w-5 text-white" />,
+          title: `JORNADA DE HOJE • ${todayTimeline.restHours}h DESCANSO → ${shiftMeta.shiftLabel.toUpperCase()}`,
+          value: inRest ? `Descanso • plantão ${shiftInLabel}` : `Plantão iniciando`,
+          subtitle: `☀ Folga ${todayTimeline.restStartStr}–${todayTimeline.restEndStr} • ${shiftMeta.isNight ? '🌙' : '☀'} Plantão ${shiftMeta.startStr}–${shiftMeta.endStr} • Escala ${shiftMeta.scaleLabel}`,
+          colorClass: 'text-amber-300',
+          bgClass: shiftMeta.isNight
+            ? 'bg-gradient-to-br from-amber-500 via-orange-600 to-indigo-700'
+            : 'bg-gradient-to-br from-amber-400 via-orange-500 to-sky-600',
+          borderClass: 'border-amber-500/60 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-indigo-500/20 shadow-lg shadow-amber-500/25',
+          animate: true,
+        });
+      }
+    }
+
+
     // ---------- FOLGA (licença aprovada) ----------
     if (todayLeave) {
       const leaveLabels: Record<string, string> = {
