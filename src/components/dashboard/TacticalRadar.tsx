@@ -237,20 +237,28 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
             >
               {[...agents]
                 .sort((a, b) => {
-                  const ta = a.lastActivity ? new Date(a.lastActivity).getTime() : 0;
-                  const tb = b.lastActivity ? new Date(b.lastActivity).getTime() : 0;
-                  return tb - ta;
+                  const ao = onlineIds.has(a.id) ? 1 : 0;
+                  const bo = onlineIds.has(b.id) ? 1 : 0;
+                  if (ao !== bo) return bo - ao;
+                  return a.name.localeCompare(b.name);
                 })
                 .map((agent) => {
                   const colors = teamColors[agent.team || 'default'] || teamColors.default;
-                  const isOnline = agent.lastActivity
-                    ? Date.now() - new Date(agent.lastActivity).getTime() < 5 * 60 * 1000
-                    : false;
+                  const isOnline = onlineIds.has(agent.id);
                   return (
                     <li
                       key={agent.id}
-                      className="flex items-center justify-between gap-2 px-2 py-1.5 hover:bg-zinc-800/40 transition-colors"
-                      title={`${agent.name}${agent.team ? ` • ${agent.team}` : ''}`}
+                      className="flex items-center justify-between gap-2 px-2 py-1.5 hover:bg-zinc-800/40 transition-colors cursor-pointer"
+                      title={`${agent.name}${agent.team ? ` • ${agent.team}` : ''} — clique para detalhes`}
+                      onClick={() => setSelectedAgentId(agent.id)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedAgentId(agent.id);
+                        }
+                      }}
                     >
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         <span className="relative flex h-2 w-2 shrink-0">
@@ -288,6 +296,13 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
             </ul>
           </div>
         )}
+
+        <AgentDetailsDialog
+          agentId={selectedAgentId}
+          open={!!selectedAgentId}
+          onClose={() => setSelectedAgentId(null)}
+        />
+
 
         {/* Team legend - Compact */}
         {!compact && (
