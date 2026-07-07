@@ -12,6 +12,7 @@ import { useAlarmNotifications } from '@/hooks/useAlarmNotifications';
 import { TeamMembersCard } from '@/components/agent-panel/TeamMembersCard';
 import { OnDutyOverlay } from '@/components/agent-panel/OnDutyOverlay';
 const ShiftOperationsCenter = lazy(() => import('@/components/agent-panel/ShiftOperationsCenter').then(m => ({ default: m.ShiftOperationsCenter })));
+const ShiftBriefingCard = lazy(() => import('@/components/agent-panel/ShiftBriefingCard').then(m => ({ default: m.ShiftBriefingCard })));
 import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel';
 import { AgentRoleSelector } from '@/components/agent-panel/AgentRoleSelector';
 import { ShiftSetupPrompt } from '@/components/agent-panel/ShiftSetupPrompt';
