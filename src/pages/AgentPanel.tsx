@@ -145,6 +145,18 @@ export default function AgentPanel() {
     alarmBeforeMinutes: 60, // 1 hour before shift
   });
 
+  // Web push: 1h antes + fim do plantão
+  useShiftLifecycleNotifications({ agentId: agent?.id, enabled: !!agent?.id });
+
+  // Publica presença do agente em tempo real
+  useTrackAgentPresence(agent?.id, {
+    unit_id: (agent as any)?.unit_id,
+    team: agent?.team,
+    name: agent?.name,
+  });
+
+
+
   useEffect(() => {
     if (agent?.id) {
       checkAgentShifts();
