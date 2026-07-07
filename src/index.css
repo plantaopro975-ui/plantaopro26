@@ -1062,7 +1062,7 @@ html.tab-hidden *::after {
   z-index: 3;
   transform: translate(-50%, -50%) rotate(-1deg);
   will-change: opacity, filter, box-shadow;
-  opacity: 0.18;
+  opacity: 0.12;
   mix-blend-mode: screen;
   overflow: visible;
 }
@@ -1074,14 +1074,14 @@ html.tab-hidden *::after {
   border-radius: inherit;
 }
 .giroflex-flash::after {
-  inset: -85% -18%;
-  filter: blur(2.5px);
-  opacity: 0.85;
+  inset: -60% -12%;
+  filter: blur(2px);
+  opacity: 0.6;
 }
 .giroflex-flash-blue {
   --giroflex-lens-width: 13.4%;
   background: rgb(147 197 253);
-  animation: giroflex-strobe-blue 1.2s steps(1, end) infinite;
+  animation: giroflex-strobe-blue 1.6s steps(1, end) infinite;
 }
 .giroflex-flash-blue::before,
 .giroflex-flash-blue::after {
@@ -1090,42 +1090,43 @@ html.tab-hidden *::after {
 .giroflex-flash-red {
   --giroflex-lens-width: 18.4%;
   background: rgb(252 165 165);
-  animation: giroflex-strobe-red 1.2s steps(1, end) infinite;
+  animation: giroflex-strobe-red 1.6s steps(1, end) infinite;
 }
 .giroflex-flash-red::before,
 .giroflex-flash-red::after {
   background: rgb(239 68 68);
 }
-/* Padrão duplo-flash tipo giroflex real: dois pulsos rápidos, depois pausa */
+/* Padrão duplo-flash discreto: pulsos curtos e suaves */
 @keyframes giroflex-strobe-blue {
-  0%, 5% {
-    opacity: 1;
-    filter: brightness(1.8);
-    box-shadow: 0 0 4px 1px rgba(59,130,246,0.95), 0 0 10px 3px rgba(59,130,246,0.45);
+  0%, 4% {
+    opacity: 0.72;
+    filter: brightness(1.25);
+    box-shadow: 0 0 2px 0.5px rgba(59,130,246,0.55), 0 0 6px 1.5px rgba(59,130,246,0.22);
   }
-  6%, 10% { opacity: 0.18; filter: none; box-shadow: none; }
-  11%, 16% {
-    opacity: 1;
-    filter: brightness(1.8);
-    box-shadow: 0 0 4px 1px rgba(59,130,246,0.95), 0 0 10px 3px rgba(59,130,246,0.45);
+  5%, 9% { opacity: 0.12; filter: none; box-shadow: none; }
+  10%, 14% {
+    opacity: 0.72;
+    filter: brightness(1.25);
+    box-shadow: 0 0 2px 0.5px rgba(59,130,246,0.55), 0 0 6px 1.5px rgba(59,130,246,0.22);
   }
-  17%, 100% { opacity: 0.18; filter: none; box-shadow: none; }
+  15%, 100% { opacity: 0.12; filter: none; box-shadow: none; }
 }
 @keyframes giroflex-strobe-red {
-  0%, 48% { opacity: 0.18; filter: none; box-shadow: none; }
-  49%, 54% {
-    opacity: 1;
-    filter: brightness(1.8);
-    box-shadow: 0 0 4px 1px rgba(239,68,68,0.95), 0 0 10px 3px rgba(239,68,68,0.45);
+  0%, 49% { opacity: 0.12; filter: none; box-shadow: none; }
+  50%, 54% {
+    opacity: 0.72;
+    filter: brightness(1.25);
+    box-shadow: 0 0 2px 0.5px rgba(239,68,68,0.55), 0 0 6px 1.5px rgba(239,68,68,0.22);
   }
-  55%, 59% { opacity: 0.18; filter: none; box-shadow: none; }
-  60%, 65% {
-    opacity: 1;
-    filter: brightness(1.8);
-    box-shadow: 0 0 4px 1px rgba(239,68,68,0.95), 0 0 10px 3px rgba(239,68,68,0.45);
+  55%, 59% { opacity: 0.12; filter: none; box-shadow: none; }
+  60%, 64% {
+    opacity: 0.72;
+    filter: brightness(1.25);
+    box-shadow: 0 0 2px 0.5px rgba(239,68,68,0.55), 0 0 6px 1.5px rgba(239,68,68,0.22);
   }
-  66%, 100% { opacity: 0.18; filter: none; box-shadow: none; }
+  65%, 100% { opacity: 0.12; filter: none; box-shadow: none; }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .giroflex-flash-blue, .giroflex-flash-red { animation: none; opacity: 0.45; }
 }
