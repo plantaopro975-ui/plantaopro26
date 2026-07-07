@@ -52,6 +52,7 @@ interface InfoCard {
 
 export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam, className }: NextShiftCountdownProps) {
   const [nextShift, setNextShift] = useState<NextShift | null>(null);
+  const [upcomingShifts, setUpcomingShifts] = useState<NextShift[]>([]);
   const [todayLeave, setTodayLeave] = useState<AgentLeave | null>(null);
   const [announcements, setAnnouncements] = useState<AdminAnnouncement[]>([]);
   const [bhBalance, setBhBalance] = useState<number>(0);
