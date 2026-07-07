@@ -1818,8 +1818,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   className={cn(
                                     'font-mono font-light tabular-nums tracking-tight leading-none break-all transition-all',
                                     urgent
-                                      ? 'text-3xl sm:text-4xl font-black'
-                                      : 'text-2xl sm:text-3xl',
+                                      ? 'text-2xl sm:text-3xl md:text-4xl font-black'
+                                      : 'text-xl sm:text-2xl md:text-3xl',
+
                                     critical && !silentMode && 'animate-pulse',
                                   )}
                                   style={{
