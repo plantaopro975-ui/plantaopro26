@@ -371,6 +371,24 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   : false;
                 const restUntil = shiftStartStr || prevShift?.end_time?.slice(0, 5);
 
+                // Plantão já cumprido: dia < hoje e existe plantão agendado/registrado
+                const startOfToday = new Date();
+                startOfToday.setHours(0, 0, 0, 0);
+                const isPastDay = day < startOfToday && !isTodayDay;
+                const effectiveShiftStatus = dayShift
+                  ? (isPastDay && dayShift.status === 'scheduled' ? 'completed' : dayShift.status)
+                  : null;
+                const isShiftDone =
+                  effectiveShiftStatus === 'completed' || effectiveShiftStatus === 'compensated';
+                const isShiftMissed = effectiveShiftStatus === 'missed';
+
+                // Cores especiais para plantão cumprido (emerald) — sobrescreve amber
+                const dayColors = isShiftDone
+                  ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
+                  : isShiftMissed
+                  ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
+                  : colors;
+
                 return (
                   <Tooltip key={day.toISOString()}>
                     <TooltipTrigger asChild>
@@ -378,17 +396,39 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                         type="button"
                         onClick={() => openDay(day)}
                         aria-label={`Abrir jornada de ${format(day, "d 'de' MMMM", { locale: ptBR })}`}
-                        className={`relative h-7 sm:h-8 w-full rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all cursor-pointer hover:brightness-125 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${colors} ${
+                        className={`relative h-7 sm:h-8 w-full rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all cursor-pointer hover:brightness-125 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${dayColors} ${
                           isTodayDay ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900 shadow-lg shadow-amber-500/30' : ''
                         }`}
                       >
-                        <span className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
-                        {marker}
+                        <span
+                          className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''} ${
+                            isShiftDone ? 'line-through decoration-emerald-400/70 decoration-[1.5px]' : ''
+                          }`}
+                        >
+                          {format(day, 'd')}
+                        </span>
+                        {isShiftDone ? (
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" aria-hidden className="mt-0.5">
+                            <path d="M5 12l5 5L20 7" stroke="hsl(142 71% 55%)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        ) : (
+                          marker
+                        )}
                         {isTodayDay && (
                           <span
                             aria-hidden
                             className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)] animate-pulse"
                           />
+                        )}
+                        {isShiftDone && !isTodayDay && (
+                          <span
+                            aria-hidden
+                            className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.9)] flex items-center justify-center"
+                          >
+                            <svg width="6" height="6" viewBox="0 0 24 24" fill="none">
+                              <path d="M5 12l5 5L20 7" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </span>
                         )}
                       </button>
                     </TooltipTrigger>
@@ -397,7 +437,27 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                         <div className="flex items-center gap-1.5 font-bold text-amber-300 pb-1 border-b border-slate-700">
                           {isTodayDay ? '📅 Jornada de Hoje' : format(day, "EEE, dd 'de' MMM", { locale: ptBR })}
                         </div>
-                        {restUntil && (
+                        {isShiftDone && dayShift && (
+                          <div className="flex items-start gap-1.5 text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-1.5 py-1">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="mt-0.5 flex-shrink-0">
+                              <path d="M5 12l5 5L20 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">Plantão cumprido</span>
+                              <br />
+                              <span className="text-[10px] text-emerald-200/80">
+                                {shiftStartStr}–{shiftEndStr || '—'} · finalizado
+                              </span>
+                            </span>
+                          </div>
+                        )}
+                        {isShiftMissed && (
+                          <div className="flex items-start gap-1.5 text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded px-1.5 py-1">
+                            <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight font-semibold uppercase">Plantão não cumprido</span>
+                          </div>
+                        )}
+                        {!isShiftDone && !isShiftMissed && restUntil && (
                           <div className="flex items-start gap-1.5 text-emerald-300">
                             <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
@@ -405,7 +465,7 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             </span>
                           </div>
                         )}
-                        {dayShift ? (
+                        {dayShift && !isShiftDone && !isShiftMissed ? (
                           <div className={`flex items-start gap-1.5 ${shiftIsNight ? 'text-indigo-300' : 'text-sky-300'}`}>
                             {shiftIsNight
                               ? <Moon className="h-3 w-3 mt-0.5 flex-shrink-0" />
@@ -415,19 +475,19 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                               {shiftStartStr}–{shiftEndStr || '—'}
                             </span>
                           </div>
-                        ) : dayInfo.types.includes('leave') ? (
+                        ) : !dayShift && dayInfo.types.includes('leave') ? (
                           <div className="flex items-start gap-1.5 text-blue-300">
                             <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight font-semibold">Folga aprovada</span>
                           </div>
-                        ) : (
+                        ) : !dayShift && !isShiftDone ? (
                           <div className="flex items-start gap-1.5 text-amber-400">
                             <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
                               {isTodayDay ? 'Revisar cadastro do agente' : 'Sem plantão cadastrado'}
                             </span>
                           </div>
-                        )}
+                        ) : null}
                         <div className="text-[9px] text-muted-foreground pt-1 border-t border-slate-700/60 italic">
                           Clique para ver a jornada completa
                         </div>
@@ -444,9 +504,9 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 pt-1 border-t border-slate-700/50">
           {[
             { c: 'hsl(43 96% 56%)', label: 'Plantão' },
+            { c: 'hsl(142 71% 45%)', label: 'Cumprido ✓' },
             { c: 'hsl(270 91% 65%)', label: 'Férias' },
             { c: 'hsl(217 91% 60%)', label: 'Folga' },
-            { c: 'hsl(142 71% 45%)', label: 'BH' },
           ].map((it) => (
             <div key={it.label} className="flex items-center gap-1">
               <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill={it.c} /></svg>
