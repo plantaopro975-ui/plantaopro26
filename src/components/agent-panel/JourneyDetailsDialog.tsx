@@ -131,12 +131,32 @@ export function JourneyDetailsDialog({
     const el = printRef.current;
     if (!el) throw new Error('conteúdo indisponível');
     const html2canvas = (await import('html2canvas')).default;
+    // Força uma largura mínima de captura para garantir legibilidade no PDF
+    // mesmo quando o diálogo é aberto em telas estreitas (mobile).
+    const targetWidth = Math.max(el.offsetWidth, 720);
     return html2canvas(el, {
       backgroundColor: '#0f172a',
       scale: 2,
       useCORS: true,
       logging: false,
+      width: targetWidth,
+      windowWidth: targetWidth,
     });
+  };
+
+  const loadLogoDataUrl = async (): Promise<string | null> => {
+    try {
+      const res = await fetch(logoAsset.url);
+      const blob = await res.blob();
+      return await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onloadend = () => resolve(String(r.result));
+        r.onerror = reject;
+        r.readAsDataURL(blob);
+      });
+    } catch {
+      return null;
+    }
   };
 
   const handleSharePng = async () => {
