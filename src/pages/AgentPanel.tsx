@@ -42,6 +42,7 @@ import { usePromosEnabled } from '@/hooks/usePromosEnabled';
 import { AgentHeroPanel } from '@/components/agent-panel/AgentHeroPanel';
 import { PanelHeroHUD } from '@/components/panel/PanelHeroHUD';
 import { AutoRoundBanner } from '@/components/rounds/AutoRoundBanner';
+import { useCompactMode } from '@/hooks/useCompactMode';
 
 // Lazy-loaded tab-specific components (code-splitting por aba interna)
 const ProfessionalShiftTimer = lazy(() => import('@/components/agent-panel/ProfessionalShiftTimer').then(m => ({ default: m.ProfessionalShiftTimer })));
