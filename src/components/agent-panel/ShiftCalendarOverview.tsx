@@ -568,6 +568,16 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                 const shiftIsNight = shiftStartStr
                   ? Number(shiftStartStr.split(':')[0]) >= 19 || Number(shiftStartStr.split(':')[0]) < 7
                   : false;
+                // Duração do plantão (24h padrão · 12h excepcional)
+                const shiftDurationH = (() => {
+                  if (!shiftStartStr || !shiftEndStr) return null;
+                  const [sh, sm] = shiftStartStr.split(':').map(Number);
+                  const [eh, em] = shiftEndStr.split(':').map(Number);
+                  let mins = (eh * 60 + em) - (sh * 60 + sm);
+                  if (mins <= 0) mins += 24 * 60;
+                  return Math.round(mins / 60);
+                })();
+                const isExceptional12h = shiftDurationH === 12;
                 const restUntil = shiftStartStr || prevShift?.end_time?.slice(0, 5);
 
                 // Status do plantão (usa fuso local para "hoje")
