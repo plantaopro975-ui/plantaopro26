@@ -277,10 +277,12 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
       if (error) throw error;
 
       setDeletedMessageIds(prev => new Set([...prev, messageId]));
-      toast.success('Mensagem removida para você');
+      toast.success('Mensagem ocultada', {
+        description: 'Removida apenas do seu histórico. Os demais continuam vendo.',
+      });
     } catch (error) {
       console.error('Error deleting message for me:', error);
-      toast.error('Erro ao remover mensagem');
+      toast.error('Erro ao ocultar', { description: 'Tente novamente em instantes.' });
     }
   };
 
@@ -294,10 +296,27 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
       if (error) throw error;
 
       setMessages(prev => prev.filter(m => m.id !== messageId));
-      toast.success('Mensagem apagada para todos');
+      toast.success('Mensagem apagada', {
+        description: 'Removida da conversa para todos os participantes.',
+      });
     } catch (error) {
       console.error('Error deleting message for all:', error);
-      toast.error('Erro ao apagar mensagem');
+      toast.error('Erro ao apagar', { description: 'A mensagem não pôde ser removida.' });
+    }
+  };
+
+  const confirmDeleteMessage = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      if (deleteTarget.scope === 'me') {
+        await deleteMessageForMe(deleteTarget.id);
+      } else {
+        await deleteMessageForAll(deleteTarget.id);
+      }
+    } finally {
+      setIsDeleting(false);
+      setDeleteTarget(null);
     }
   };
 
@@ -305,10 +324,10 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
     if (!activeRoom) return;
     const visibleIds = messages.filter(m => !deletedMessageIds.has(m.id)).map(m => m.id);
     if (visibleIds.length === 0) {
-      toast.info('Nenhuma mensagem para limpar');
+      toast.info('Sem mensagens', { description: 'Não há mensagens visíveis para limpar.' });
       return;
     }
-    if (!window.confirm(`Ocultar ${visibleIds.length} mensagem(ns) desta conversa apenas para você?`)) return;
+    setIsDeleting(true);
     try {
       const rows = visibleIds.map(id => ({ message_id: id, agent_id: agentId }));
       const { error } = await (supabase as any)
@@ -316,10 +335,15 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
         .upsert(rows, { onConflict: 'message_id,agent_id' });
       if (error) throw error;
       setDeletedMessageIds(prev => new Set([...prev, ...visibleIds]));
-      toast.success('Conversa limpa para você');
+      toast.success('Conversa limpa', {
+        description: `${visibleIds.length} mensagem(ns) ocultada(s) apenas para você.`,
+      });
     } catch (error) {
       console.error('Error clearing conversation:', error);
-      toast.error('Erro ao limpar conversa');
+      toast.error('Erro ao limpar', { description: 'A operação não pôde ser concluída.' });
+    } finally {
+      setIsDeleting(false);
+      setClearAllOpen(false);
     }
   };
 
