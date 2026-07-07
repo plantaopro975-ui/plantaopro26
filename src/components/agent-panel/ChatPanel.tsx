@@ -790,10 +790,12 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 hover:text-zinc-300"
+                              className="h-5 w-5 opacity-60 md:opacity-0 md:group-hover:opacity-100 transition-opacity text-zinc-400 hover:text-zinc-100"
+                              aria-label="Opções da mensagem"
                             >
-                              <MoreVertical className="h-2.5 w-2.5" />
+                              <MoreVertical className="h-3 w-3" />
                             </Button>
+
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align={isOwn ? 'end' : 'start'} className="bg-zinc-800 border-zinc-700">
                             <DropdownMenuItem 
