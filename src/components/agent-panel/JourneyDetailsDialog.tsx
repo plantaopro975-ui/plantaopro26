@@ -107,7 +107,7 @@ export function JourneyDetailsDialog({
   }, [onRequestDate]);
 
   const isNight = current?.shiftStart
-    ? current.shiftStart.getHours() >= 18 || current.shiftStart.getHours() < 6
+    ? current.shiftStart.getHours() >= 19 || current.shiftStart.getHours() < 7
     : false;
   const PeriodIcon = isNight ? Moon : Sun;
   const periodLabel = isNight ? 'Noturno' : 'Diurno';
@@ -452,12 +452,15 @@ export function JourneyDetailsDialog({
                   início do próximo.
                 </div>
                 <div>
-                  O plantão é classificado como{' '}
-                  <span className="font-semibold text-amber-300">Diurno</span> quando inicia entre
-                  <span className="tabular-nums"> 06h e 18h</span>, e como{' '}
-                  <span className="font-semibold text-indigo-300">Noturno</span> quando inicia
-                  entre <span className="tabular-nums">18h e 06h</span> (atravessa a madrugada).
-                  Este plantão é <span className="font-semibold">{periodLabel}</span>.
+                  O plantão de <span className="font-semibold">24 horas</span> corresponde ao ciclo
+                  contínuo de <span className="tabular-nums">07:00</span> de um dia até{' '}
+                  <span className="tabular-nums">07:00</span> do dia seguinte. É classificado como{' '}
+                  <span className="font-semibold text-amber-300">Diurno</span> quando ocorre entre{' '}
+                  <span className="tabular-nums">07:00 e 19:00</span>, e como{' '}
+                  <span className="font-semibold text-indigo-300">Noturno</span> quando inicia às{' '}
+                  <span className="tabular-nums">19:00</span> e se encerra às{' '}
+                  <span className="tabular-nums">07:00</span> do dia seguinte. Este plantão é{' '}
+                  <span className="font-semibold">{periodLabel}</span>.
                 </div>
                 {current.scaleLabel && (
                   <div>

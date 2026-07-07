@@ -82,7 +82,7 @@ export function RecentShiftCyclesCard({ agentId, className }: RecentShiftCyclesC
           const shiftEnd = buildDateTime(row.shift_date, row.end_time, '19:00');
           if (shiftEnd <= shiftStart) shiftEnd.setDate(shiftEnd.getDate() + 1);
           const durationH = Math.max(0, Math.round((shiftEnd.getTime() - shiftStart.getTime()) / 3_600_000));
-          const isNight = shiftStart.getHours() >= 18 || shiftStart.getHours() < 6;
+          const isNight = shiftStart.getHours() >= 19 || shiftStart.getHours() < 7;
 
           let restStart: Date | null = null;
           let restH: number | null = null;

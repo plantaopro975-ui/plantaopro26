@@ -530,99 +530,91 @@ export default function AgentPanel() {
                 
                 {/* Tabs Grid - Compact, readable */}
                 <div className={compact ? 'p-1.5 md:p-2' : 'p-2 md:p-2.5'}>
-                  <TooltipProvider delayDuration={300}>
-                    <TabsList className={cn(
-                      'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
-                      compact ? 'p-1 gap-1' : 'p-1.5 gap-1.5'
-                    )}>
-                      {([
-                        {
-                          value: 'equipe', label: 'Equipe', full: 'Minha Equipe', Icon: Users,
-                          trigger: 'hover:bg-amber-500/15 hover:border-amber-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-amber-500/40 data-[state=active]:border-amber-300',
-                          icon: 'text-amber-400 group-data-[state=active]:text-black',
-                          text: 'text-amber-200 group-data-[state=active]:text-black',
-                        },
-                        {
-                          value: 'plantoes', label: 'Plantões', full: 'Meus Plantões', Icon: Calendar,
-                          trigger: 'hover:bg-orange-500/15 hover:border-orange-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-orange-500/40 data-[state=active]:border-orange-300',
-                          icon: 'text-orange-400 group-data-[state=active]:text-white',
-                          text: 'text-orange-200 group-data-[state=active]:text-white',
-                        },
-                        {
-                          value: 'bh', label: 'B.Horas', full: 'Banco de Horas', Icon: Clock,
-                          trigger: 'hover:bg-emerald-500/15 hover:border-emerald-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-emerald-500/40 data-[state=active]:border-emerald-300',
-                          icon: 'text-emerald-400 group-data-[state=active]:text-black',
-                          text: 'text-emerald-200 group-data-[state=active]:text-black',
-                        },
-                        {
-                          value: 'folgas', label: 'Folgas', full: 'Folgas e Férias', Icon: CalendarOff,
-                          trigger: 'hover:bg-purple-500/15 hover:border-purple-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-purple-500/40 data-[state=active]:border-purple-300',
-                          icon: 'text-purple-400 group-data-[state=active]:text-white',
-                          text: 'text-purple-200 group-data-[state=active]:text-white',
-                        },
-                        {
-                          value: 'agenda', label: 'Agenda', full: 'Agenda Operacional', Icon: CalendarDays,
-                          trigger: 'hover:bg-cyan-500/15 hover:border-cyan-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-400 data-[state=active]:via-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-black data-[state=active]:shadow-cyan-500/40 data-[state=active]:border-cyan-300',
-                          icon: 'text-cyan-400 group-data-[state=active]:text-black',
-                          text: 'text-cyan-200 group-data-[state=active]:text-black',
-                        },
-                        {
-                          value: 'planejador', label: 'Planejar', full: 'Planejador de Escalas', Icon: Calculator,
-                          trigger: 'hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-rose-500/40 data-[state=active]:border-rose-300',
-                          icon: 'text-rose-400 group-data-[state=active]:text-white',
-                          text: 'text-rose-200 group-data-[state=active]:text-white',
-                        },
-                        {
-                          value: 'permutas', label: 'Permutas', full: 'Permutas de Plantão', Icon: ArrowRightLeft,
-                          trigger: 'hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-yellow-500/40 data-[state=active]:border-yellow-300',
-                          icon: 'text-yellow-400 group-data-[state=active]:text-black',
-                          text: 'text-yellow-200 group-data-[state=active]:text-black',
-                        },
-                        {
-                          value: 'rondas', label: 'Rondas', full: 'Histórico de Rondas', Icon: Radio,
-                          trigger: 'hover:bg-red-500/15 hover:border-red-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-400 data-[state=active]:via-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-red-500/40 data-[state=active]:border-red-300',
-                          icon: 'text-red-400 group-data-[state=active]:text-white',
-                          text: 'text-red-200 group-data-[state=active]:text-white',
-                        },
-                        {
-                          value: 'chat', label: 'Chat', full: 'Chat Interno', Icon: MessageCircle,
-                          trigger: 'hover:bg-blue-500/15 hover:border-blue-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-blue-500/40 data-[state=active]:border-blue-300',
-                          icon: 'text-blue-400 group-data-[state=active]:text-white',
-                          text: 'text-blue-200 group-data-[state=active]:text-white',
-                        },
-                        {
-                          value: 'config', label: 'Config', full: 'Configurações', Icon: Settings,
-                          trigger: 'hover:bg-slate-500/15 hover:border-slate-400/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-400 data-[state=active]:via-gray-500 data-[state=active]:to-zinc-600 data-[state=active]:text-white data-[state=active]:shadow-slate-500/40 data-[state=active]:border-slate-300',
-                          icon: 'text-slate-400 group-data-[state=active]:text-white',
-                          text: 'text-slate-200 group-data-[state=active]:text-white',
-                        },
-                      ] as const).map(({ value, label, full, Icon, trigger, icon, text }) => (
-                        <Tooltip key={value}>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger
-                              value={value}
-                              aria-label={full}
-                              className={cn(
-                                'group flex flex-col items-center justify-center gap-1 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
-                                'px-1.5 py-2 md:px-2 md:py-2.5 min-h-[52px] md:min-h-[58px]',
-                                'data-[state=active]:shadow-lg data-[state=active]:scale-[1.02]',
-                                trigger
-                              )}
-                            >
-                              <Icon className={cn('h-4 w-4 md:h-[18px] md:w-[18px] transition-colors', icon)} />
-                              <span className={cn('text-xs md:text-sm font-bold tracking-wide truncate max-w-full', text)}>
-                                {label}
-                              </span>
-                            </TabsTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom" className="bg-zinc-900 border-zinc-700 text-xs font-medium">
-                            {full}
-                          </TooltipContent>
-                        </Tooltip>
-                      ))}
-
-                    </TabsList>
-                  </TooltipProvider>
+                  <TabsList className={cn(
+                    'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
+                    compact ? 'p-1 gap-1' : 'p-1.5 gap-1.5'
+                  )}>
+                    {([
+                      {
+                        value: 'equipe', label: 'Equipe', full: 'Minha Equipe', Icon: Users,
+                        trigger: 'hover:bg-amber-500/15 hover:border-amber-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-amber-500/40 data-[state=active]:border-amber-300',
+                        icon: 'text-amber-400 group-data-[state=active]:text-black',
+                        text: 'text-amber-200 group-data-[state=active]:text-black',
+                      },
+                      {
+                        value: 'plantoes', label: 'Plantões', full: 'Meus Plantões', Icon: Calendar,
+                        trigger: 'hover:bg-orange-500/15 hover:border-orange-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-orange-500/40 data-[state=active]:border-orange-300',
+                        icon: 'text-orange-400 group-data-[state=active]:text-white',
+                        text: 'text-orange-200 group-data-[state=active]:text-white',
+                      },
+                      {
+                        value: 'bh', label: 'B.Horas', full: 'Banco de Horas', Icon: Clock,
+                        trigger: 'hover:bg-emerald-500/15 hover:border-emerald-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-emerald-500/40 data-[state=active]:border-emerald-300',
+                        icon: 'text-emerald-400 group-data-[state=active]:text-black',
+                        text: 'text-emerald-200 group-data-[state=active]:text-black',
+                      },
+                      {
+                        value: 'folgas', label: 'Folgas', full: 'Folgas e Férias', Icon: CalendarOff,
+                        trigger: 'hover:bg-purple-500/15 hover:border-purple-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-purple-500/40 data-[state=active]:border-purple-300',
+                        icon: 'text-purple-400 group-data-[state=active]:text-white',
+                        text: 'text-purple-200 group-data-[state=active]:text-white',
+                      },
+                      {
+                        value: 'agenda', label: 'Agenda', full: 'Agenda Operacional', Icon: CalendarDays,
+                        trigger: 'hover:bg-cyan-500/15 hover:border-cyan-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-400 data-[state=active]:via-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-black data-[state=active]:shadow-cyan-500/40 data-[state=active]:border-cyan-300',
+                        icon: 'text-cyan-400 group-data-[state=active]:text-black',
+                        text: 'text-cyan-200 group-data-[state=active]:text-black',
+                      },
+                      {
+                        value: 'planejador', label: 'Planejar', full: 'Planejador de Escalas', Icon: Calculator,
+                        trigger: 'hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-rose-500/40 data-[state=active]:border-rose-300',
+                        icon: 'text-rose-400 group-data-[state=active]:text-white',
+                        text: 'text-rose-200 group-data-[state=active]:text-white',
+                      },
+                      {
+                        value: 'permutas', label: 'Permutas', full: 'Permutas de Plantão', Icon: ArrowRightLeft,
+                        trigger: 'hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-yellow-500/40 data-[state=active]:border-yellow-300',
+                        icon: 'text-yellow-400 group-data-[state=active]:text-black',
+                        text: 'text-yellow-200 group-data-[state=active]:text-black',
+                      },
+                      {
+                        value: 'rondas', label: 'Rondas', full: 'Histórico de Rondas', Icon: Radio,
+                        trigger: 'hover:bg-red-500/15 hover:border-red-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-400 data-[state=active]:via-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-red-500/40 data-[state=active]:border-red-300',
+                        icon: 'text-red-400 group-data-[state=active]:text-white',
+                        text: 'text-red-200 group-data-[state=active]:text-white',
+                      },
+                      {
+                        value: 'chat', label: 'Chat', full: 'Chat Interno', Icon: MessageCircle,
+                        trigger: 'hover:bg-blue-500/15 hover:border-blue-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-blue-500/40 data-[state=active]:border-blue-300',
+                        icon: 'text-blue-400 group-data-[state=active]:text-white',
+                        text: 'text-blue-200 group-data-[state=active]:text-white',
+                      },
+                      {
+                        value: 'config', label: 'Config', full: 'Configurações', Icon: Settings,
+                        trigger: 'hover:bg-slate-500/15 hover:border-slate-400/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-400 data-[state=active]:via-gray-500 data-[state=active]:to-zinc-600 data-[state=active]:text-white data-[state=active]:shadow-slate-500/40 data-[state=active]:border-slate-300',
+                        icon: 'text-slate-400 group-data-[state=active]:text-white',
+                        text: 'text-slate-200 group-data-[state=active]:text-white',
+                      },
+                    ] as const).map(({ value, label, full, Icon, trigger, icon, text }) => (
+                      <TabsTrigger
+                        key={value}
+                        value={value}
+                        aria-label={full}
+                        title=""
+                        className={cn(
+                          'group flex flex-col items-center justify-center gap-1 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
+                          'px-1.5 py-2 md:px-2 md:py-2.5 min-h-[52px] md:min-h-[58px]',
+                          'data-[state=active]:shadow-lg data-[state=active]:scale-[1.02]',
+                          trigger
+                        )}
+                      >
+                        <Icon className={cn('h-4 w-4 md:h-[18px] md:w-[18px] transition-colors', icon)} />
+                        <span className={cn('text-xs md:text-sm font-bold tracking-wide truncate max-w-full', text)}>
+                          {label}
+                        </span>
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
                 </div>
 
               </div>

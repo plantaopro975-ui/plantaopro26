@@ -367,7 +367,7 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                 const shiftStartStr = dayShift?.start_time?.slice(0, 5);
                 const shiftEndStr = dayShift?.end_time?.slice(0, 5);
                 const shiftIsNight = shiftStartStr
-                  ? Number(shiftStartStr.split(':')[0]) >= 18 || Number(shiftStartStr.split(':')[0]) < 6
+                  ? Number(shiftStartStr.split(':')[0]) >= 19 || Number(shiftStartStr.split(':')[0]) < 7
                   : false;
                 const restUntil = shiftStartStr || prevShift?.end_time?.slice(0, 5);
 

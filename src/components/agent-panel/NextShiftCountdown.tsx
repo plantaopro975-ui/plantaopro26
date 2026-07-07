@@ -157,8 +157,9 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
 
     // ---------- Helpers ----------
     const classifyPeriod = (startH: number, durationH: number) => {
-      // Noturno: começa 18h-05h59 OU cruza a madrugada
-      const isNight = startH >= 18 || startH < 6;
+      // Diurno: 07:00→19:00. Noturno: 19:00→07:00 (cruza a madrugada).
+      // 24h: 07:00 de um dia até 07:00 do dia seguinte (classificado como Diurno pelo horário de entrada).
+      const isNight = startH >= 19 || startH < 7;
       return {
         isNight,
         periodLabel: isNight ? 'Noturno' : 'Diurno',
