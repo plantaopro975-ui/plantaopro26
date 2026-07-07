@@ -205,7 +205,7 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           </div>
           <div className="flex items-center gap-1">
             <Activity className="h-3 w-3 text-emerald-500" />
-            <span>{lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+            <span>{lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Rio_Branco' })}</span>
           </div>
         </div>
 
