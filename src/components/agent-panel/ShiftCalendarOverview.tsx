@@ -684,15 +684,29 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             <span className="leading-tight font-semibold">Folga aprovada</span>
                           </div>
                         )}
-                        {!dayShift && !dayInfo.types.includes('leave') && restUntil && (
-                          <div className="flex items-start gap-1.5 text-emerald-300">
-                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                        {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'half_post' && (
+                          <div className="flex items-start gap-1.5 text-indigo-300 bg-indigo-500/10 border border-indigo-500/30 rounded px-1.5 py-1">
+                            <Coffee className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
-                              <span className="font-semibold">Descanso</span> até {restUntil}
+                              <span className="font-bold uppercase tracking-wide">Meia folga (12h)</span>
+                              <br />
+                              <span className="text-[10px] opacity-80">
+                                Pós-plantão · madrugada 00:00–07:00 ainda no serviço
+                              </span>
                             </span>
                           </div>
                         )}
-                        {!dayShift && !dayInfo.types.includes('leave') && !restUntil && (
+                        {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'off_24h' && (
+                          <div className="flex items-start gap-1.5 text-sky-300 bg-sky-500/10 border border-sky-500/30 rounded px-1.5 py-1">
+                            <Palmtree className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">Folga integral (24h)</span>
+                              <br />
+                              <span className="text-[10px] opacity-80">Dia inteiramente livre entre plantões</span>
+                            </span>
+                          </div>
+                        )}
+                        {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'none' && (
                           <div className="flex items-start gap-1.5 text-muted-foreground">
                             <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">Sem plantão cadastrado</span>
