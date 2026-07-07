@@ -938,10 +938,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   });
 
   useEffect(() => {
-    if (!running) return;
+    // Ticka também no modo noturno em preview (sem estar rodando) para que o
+    // "quanto falta pro slot do agente atual terminar" atualize em tempo real
+    // enquanto o operador só configura a ronda.
+    const needsPreview = nightEffectivelyLocked && mode === 'split' && !!schedule;
+    if (!running && !needsPreview) return;
     const id = setInterval(() => setTick((t) => t + 1), 500);
     return () => clearInterval(id);
-  }, [running]);
+  }, [running, nightEffectivelyLocked, mode, schedule]);
 
   const live = useMemo(() => {
     if (!schedule || !running || startedAtRef.current == null) return null;
@@ -957,6 +961,40 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const remaining = boundaries[idx] - elapsedSec;
     return { done: false, index: idx, remaining, elapsed: elapsedSec, prevBoundary, slotSec: boundaries[idx] - prevBoundary };
   }, [schedule, running, tick]);
+
+  /* ---------- Preview em tempo real (turno noturno, antes de Iniciar) ----------
+   * Mesmo sem clicar em Iniciar, o painel mostra qual agente está "no ar" agora
+   * baseado no relógio de parede ancorado às 22:00, e quanto falta para o slot
+   * dele terminar. Se o slot do primeiro já venceu, mostra o segundo, e assim
+   * sucessivamente — exatamente a experiência pedida pelo operador.
+   */
+  const preview = useMemo(() => {
+    if (running) return null;
+    if (!schedule || !nightEffectivelyLocked || mode !== 'split') return null;
+    const anchorMs = getNightWindow(new Date(nowServer())).startsAt.getTime();
+    const elapsedSec = (nowServer() - anchorMs) / 1000;
+    const boundaries = schedule.rows.map((r) => (r.toAbs - schedule.startMin) * 60);
+    const totalSec = boundaries[boundaries.length - 1];
+    if (elapsedSec < 0) {
+      // Ainda não bateu 22:00 (não deve ocorrer sob nightEffectivelyLocked, mas seguro).
+      return { done: false, index: 0, remaining: boundaries[0], elapsed: 0, prevBoundary: 0, slotSec: boundaries[0] };
+    }
+    if (elapsedSec >= totalSec) {
+      return { done: true, index: schedule.rows.length - 1, remaining: 0, elapsed: elapsedSec, prevBoundary: totalSec, slotSec: 0 };
+    }
+    let idx = 0;
+    while (idx < boundaries.length && elapsedSec >= boundaries[idx]) idx++;
+    const prevBoundary = idx === 0 ? 0 : boundaries[idx - 1];
+    return {
+      done: false,
+      index: idx,
+      remaining: boundaries[idx] - elapsedSec,
+      elapsed: elapsedSec,
+      prevBoundary,
+      slotSec: boundaries[idx] - prevBoundary,
+    };
+  }, [running, schedule, nightEffectivelyLocked, mode, tick]);
+
 
   // Trava persistida: quais postos já dispararam a notificação
   const notifiedRef = useRef<Set<number>>(new Set());
