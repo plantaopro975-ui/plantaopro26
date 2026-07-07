@@ -9,6 +9,7 @@ import { NotificationsPanel } from '@/components/agent-panel/NotificationsPanel'
 import { getRemainingTrialDays } from '@/components/WelcomeTrialDialog';
 import { FontSizeControl } from '@/components/FontSizeControl';
 import { cn } from '@/lib/utils';
+import { TeamEmblem } from '@/components/TeamEmblem';
 import panelHeaderBg from '@/assets/panel-header-bg.jpg';
 
 interface Agent {
@@ -27,6 +28,8 @@ interface AgentPanelHeaderProps {
   onShowWelcome: () => void;
   onReactivateShiftBanner?: () => void;
   isShiftBannerDismissed?: boolean;
+  compact?: boolean;
+  onToggleCompact?: () => void;
 }
 
 /* ────────────────────────────────────────────────────────────────
@@ -94,15 +97,30 @@ const TEAM_CONFIG: Record<string, { hex: string; accent: string; label: string }
   DELTA:   { hex: '#f59e0b', accent: 'rgba(245,158,11,.55)', label: 'DELTA' },
 };
 
-function TeamInsignia({ team }: { team: string | null }) {
+function TeamInsignia({ team, prominent = false }: { team: string | null; prominent?: boolean }) {
   if (!team) return null;
   const cfg = TEAM_CONFIG[team.toUpperCase()] ?? { hex: '#c9a84c', accent: 'rgba(201,168,76,.55)', label: team };
+  if (prominent) {
+    return (
+      <div
+        className="flex items-center gap-2.5 pl-2 pr-3.5 py-1.5 rounded-lg bg-gradient-to-br from-slate-950/90 to-slate-900/70 border-2 shadow-[0_2px_10px_-2px_rgba(0,0,0,.6)] font-['IBM_Plex_Mono',_monospace]"
+        style={{ borderColor: cfg.accent }}
+      >
+        <TeamEmblem team={team} size="sm" />
+        <div className="leading-tight">
+          <div className="text-[8.5px] tracking-[0.25em] uppercase text-slate-400 font-semibold">Equipe</div>
+          <div className="text-[13px] font-black tracking-[0.18em] uppercase" style={{ color: cfg.hex }}>
+            {cfg.label}
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       className="relative flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-md bg-slate-950/70 border font-['IBM_Plex_Mono',_monospace]"
       style={{ borderColor: cfg.accent }}
     >
-      {/* corps shield */}
       <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none">
         <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3Z" fill={cfg.hex} fillOpacity=".18" stroke={cfg.hex} strokeWidth="1.4" />
         <path d="M8 11h8M8 14h8M10 8h4" stroke={cfg.hex} strokeWidth="1.2" strokeLinecap="round" />
@@ -144,7 +162,7 @@ function OnlinePulse({ isOnline }: { isOnline: boolean }) {
    Unit badge
    ──────────────────────────────────────────────────────────────── */
 
-function UnitBadge({ unitId }: { unitId: string }) {
+function UnitBadge({ unitId, prominent = false }: { unitId: string; prominent?: boolean }) {
   const [unitName, setUnitName] = useState('');
   useEffect(() => {
     if (!unitId) return;
@@ -153,6 +171,21 @@ function UnitBadge({ unitId }: { unitId: string }) {
     });
   }, [unitId]);
   if (!unitName) return null;
+  if (prominent) {
+    return (
+      <div className="flex items-center gap-2.5 pl-2 pr-3.5 py-1.5 rounded-lg bg-gradient-to-br from-slate-950/90 to-slate-900/70 border-2 border-amber-500/50 shadow-[0_2px_10px_-2px_rgba(0,0,0,.6)] font-['IBM_Plex_Mono',_monospace]">
+        <div className="p-1 rounded-md bg-amber-500/15 border border-amber-500/40">
+          <IconBuilding className="h-4 w-4 text-amber-300" />
+        </div>
+        <div className="leading-tight min-w-0">
+          <div className="text-[8.5px] tracking-[0.25em] uppercase text-slate-400 font-semibold">Unidade</div>
+          <div className="text-[13px] font-black text-amber-200 tracking-[0.10em] uppercase truncate max-w-[200px] md:max-w-[280px]">
+            {unitName}
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-950/70 border border-amber-500/40 font-['IBM_Plex_Mono',_monospace]">
       <IconBuilding className="h-3.5 w-3.5 text-amber-400" />
@@ -211,7 +244,7 @@ function ActionButton({
    Main header
    ──────────────────────────────────────────────────────────────── */
 
-export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed }: AgentPanelHeaderProps) {
+export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateShiftBanner, isShiftBannerDismissed, compact = false, onToggleCompact }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const trial = getRemainingTrialDays();
@@ -261,7 +294,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
         <path d="M0 0 L20 8 L40 0 L60 8 L80 0 L100 8 L120 0" fill="none" stroke="currentColor" strokeWidth=".5" opacity=".4" />
       </svg>
 
-      <div className="relative p-2.5 md:p-3">
+      <div className={cn('relative', compact ? 'p-2 md:p-2.5' : 'p-2.5 md:p-3')}>
         <div className="flex items-center justify-between gap-2">
           {/* ── Identity block ── */}
           <button
@@ -271,7 +304,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
           >
             {/* Avatar with SVG rank ring */}
             <div className="relative shrink-0">
-              <svg viewBox="0 0 48 48" className="absolute -inset-1 h-[52px] w-[52px] md:h-[56px] md:w-[56px] pointer-events-none">
+              <svg viewBox="0 0 48 48" className={cn('absolute -inset-1 pointer-events-none', compact ? 'h-[48px] w-[48px] md:h-[52px] md:w-[52px]' : 'h-[52px] w-[52px] md:h-[56px] md:w-[56px]')}>
                 <defs>
                   <linearGradient id="ringGold" x1="0" x2="1" y1="0" y2="1">
                     <stop offset="0%" stopColor="#f0d78c" />
@@ -280,13 +313,12 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
                 </defs>
                 <circle cx="24" cy="24" r="22" fill="none" stroke="url(#ringGold)" strokeWidth="1.5" strokeDasharray="3 3" opacity=".7" />
               </svg>
-              <Avatar className="w-10 h-10 md:w-11 md:h-11 border-2 border-amber-500/70">
+              <Avatar className={cn('border-2 border-amber-500/70', compact ? 'w-9 h-9 md:w-10 md:h-10' : 'w-10 h-10 md:w-11 md:h-11')}>
                 {agent.avatar_url && <AvatarImage src={agent.avatar_url} alt={agent.name} className="object-cover" />}
                 <AvatarFallback className="bg-gradient-to-br from-amber-400 to-orange-700 text-sm font-black text-slate-950">
                   {agent.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              {/* rank chevrons */}
               <svg viewBox="0 0 24 12" className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-2.5 w-6 text-amber-400 drop-shadow">
                 <path d="M2 8 L12 2 L22 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M4 10 L12 5 L20 10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity=".7" />
@@ -300,29 +332,21 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
                   Agente
                 </span>
               </div>
-              <h1 className="text-sm md:text-[15px] font-bold text-slate-50 truncate tracking-wide font-['Libre_Baskerville',_serif] group-hover:text-amber-200 transition-colors">
+              <h1 className={cn(
+                'font-bold text-slate-50 truncate tracking-wide font-[\'Libre_Baskerville\',_serif] group-hover:text-amber-200 transition-colors',
+                compact ? 'text-[13px] md:text-sm' : 'text-sm md:text-[15px]'
+              )}>
                 {agent.name}
               </h1>
             </div>
           </button>
 
-          {/* ── Center insignia row (desktop) ── */}
-          <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-            {agent.team && <TeamInsignia team={agent.team} />}
-            {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
-            {agent.blood_type && (
-              <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-950/70 border border-red-500/50 font-['IBM_Plex_Mono',_monospace]">
-                <IconDroplet className="h-3.5 w-3.5 text-red-400" />
-                <span className="text-[10.5px] font-black text-red-300 tracking-wider">{agent.blood_type}</span>
-              </div>
-            )}
-            <OnlinePulse isOnline={isOnline} />
-          </div>
-
           {/* ── Right actions ── */}
           <div className="flex items-center gap-1.5">
+            <OnlinePulse isOnline={isOnline} />
+
             {agent.blood_type && (
-              <div className="md:hidden flex items-center gap-1 px-1.5 h-9 rounded-md bg-slate-950/70 border border-red-500/50">
+              <div className="flex items-center gap-1 px-1.5 h-9 rounded-md bg-slate-950/70 border border-red-500/50 font-['IBM_Plex_Mono',_monospace]">
                 <IconDroplet className="h-3 w-3 text-red-400" />
                 <span className="text-[10px] font-black text-red-300">{agent.blood_type}</span>
               </div>
@@ -331,6 +355,26 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
             <AgentRoleSelector agentId={agent.id} currentRole={agent.role || 'agent'} />
             <NotificationsPanel agentId={agent.id} />
             <FontSizeControl />
+
+            {onToggleCompact && (
+              <ActionButton
+                onClick={onToggleCompact}
+                tooltip={compact ? 'Modo confortável (expandir)' : 'Modo compacto (reduzir)'}
+                tone="neutral"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  {compact ? (
+                    <>
+                      <path d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" />
+                    </>
+                  )}
+                </svg>
+              </ActionButton>
+            )}
 
             <ActionButton onClick={onShowWelcome} tooltip={`Trial: ${trial} dias restantes`} tone="amber">
               <IconGift className="h-4 w-4" />
@@ -361,7 +405,6 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
               </svg>
             </ActionButton>
 
-
             {/* Logout — premium tactile */}
             <TooltipProvider>
               <Tooltip delayDuration={200}>
@@ -391,14 +434,16 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
           </div>
         </div>
 
-        {/* Mobile insignia row */}
-        <div className="md:hidden flex items-center justify-between mt-2 pt-2 border-t border-amber-500/15">
-          <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-            {agent.team && <TeamInsignia team={agent.team} />}
-            {agent.unit_id && <UnitBadge unitId={agent.unit_id} />}
+        {/* ── Faixa de destaque: UNIDADE + EQUIPE ── */}
+        {(agent.unit_id || agent.team) && (
+          <div className={cn(
+            'flex flex-wrap items-center gap-2 border-t border-amber-500/20',
+            compact ? 'mt-2 pt-2' : 'mt-2.5 pt-2.5'
+          )}>
+            {agent.unit_id && <UnitBadge unitId={agent.unit_id} prominent />}
+            {agent.team && <TeamInsignia team={agent.team} prominent />}
           </div>
-          <OnlinePulse isOnline={isOnline} />
-        </div>
+        )}
       </div>
 
       {/* bottom gold accent */}
