@@ -48,9 +48,13 @@ export default function Units() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [unitStats, setUnitStats] = useState<Record<string, UnitStats>>({});
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [cityFilter, setCityFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'with' | 'without'>('all');
 
   // Check if user is admin or master (can see all units)
   const canSeeAllUnits = isAdmin || !!masterSession;
+
 
   // Redirect only after loading is complete
   useEffect(() => {
