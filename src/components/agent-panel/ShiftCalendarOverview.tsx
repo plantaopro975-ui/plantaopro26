@@ -652,9 +652,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
                               <span className="font-bold uppercase tracking-wide">Plantão cumprido</span>
+                              {isExceptional12h && (
+                                <span className="ml-1 text-[9px] font-bold px-1 py-[1px] rounded bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40 uppercase">Excep. 12h</span>
+                              )}
                               <br />
                               <span className="text-[10px] text-emerald-200/80 tabular-nums">
-                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'} ({shiftDurationH ?? '?'}h)
                               </span>
                             </span>
                           </div>
@@ -664,9 +667,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             <XCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                             <span className="leading-tight">
                               <span className="font-bold uppercase tracking-wide">Plantão não cumprido</span>
+                              {isExceptional12h && (
+                                <span className="ml-1 text-[9px] font-bold px-1 py-[1px] rounded bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40 uppercase">Excep. 12h</span>
+                              )}
                               <br />
                               <span className="text-[10px] text-rose-200/80 tabular-nums">
-                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'} ({shiftDurationH ?? '?'}h)
                               </span>
                             </span>
                           </div>
@@ -680,9 +686,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                               <span className="font-bold uppercase tracking-wide">
                                 Plantão agendado ({shiftIsNight ? 'noturno' : 'diurno'})
                               </span>
+                              {isExceptional12h && (
+                                <span className="ml-1 text-[9px] font-bold px-1 py-[1px] rounded bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40 uppercase">Excep. 12h</span>
+                              )}
                               <br />
                               <span className="text-[10px] opacity-80 tabular-nums">
-                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'}
+                                {format(day, "dd/MM/yyyy", { locale: ptBR })} · {shiftStartStr}–{shiftEndStr || '—'} ({shiftDurationH ?? '?'}h)
                               </span>
                             </span>
                           </div>
