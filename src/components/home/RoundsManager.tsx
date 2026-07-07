@@ -2035,10 +2035,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <Button
                               type="button"
                               size="sm"
-                              onClick={() => {
-                                if (live && !live.done) { setLockOpen(true); return; }
-                                pauseTimer();
-                              }}
+                              onClick={() => setLockOpen(true)}
                               aria-label="Pausa bloqueada durante a ronda"
                               title="Pausa bloqueada — clique para ver o protocolo"
                               className="h-9 px-4 border border-destructive/45 bg-destructive/10 text-destructive hover:bg-destructive/15"
