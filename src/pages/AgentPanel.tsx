@@ -59,8 +59,9 @@ const BHHistoryTracker = lazy(() => import('@/components/agent-panel/BHHistoryTr
 const SessionDiagnosticCard = lazy(() => import('@/components/agent-panel/SessionDiagnosticCard').then(m => ({ default: m.SessionDiagnosticCard })));
 const PasswordChangeRequest = lazy(() => import('@/components/agent-panel/PasswordChangeRequest').then(m => ({ default: m.PasswordChangeRequest })));
 const SmartAlarmClock = lazy(() => import('@/components/agent-panel/SmartAlarmClock').then(m => ({ default: m.SmartAlarmClock })));
+const RoundsHistoryCard = lazy(() => import('@/components/agent-panel/RoundsHistoryCard').then(m => ({ default: m.RoundsHistoryCard })));
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone } from 'lucide-react';
+import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone, Radio } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -531,7 +532,7 @@ export default function AgentPanel() {
                 <div className={compact ? 'p-1.5 md:p-2' : 'p-2 md:p-2.5'}>
                   <TooltipProvider delayDuration={300}>
                     <TabsList className={cn(
-                      'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 rounded-lg shadow-inner w-full',
+                      'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
                       compact ? 'p-1 gap-1' : 'p-1.5 gap-1.5'
                     )}>
                       {([
@@ -576,6 +577,12 @@ export default function AgentPanel() {
                           trigger: 'hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-yellow-500/40 data-[state=active]:border-yellow-300',
                           icon: 'text-yellow-400 group-data-[state=active]:text-black',
                           text: 'text-yellow-200 group-data-[state=active]:text-black',
+                        },
+                        {
+                          value: 'rondas', label: 'Rondas', full: 'Histórico de Rondas', Icon: Radio,
+                          trigger: 'hover:bg-red-500/15 hover:border-red-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-400 data-[state=active]:via-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-red-500/40 data-[state=active]:border-red-300',
+                          icon: 'text-red-400 group-data-[state=active]:text-white',
+                          text: 'text-red-200 group-data-[state=active]:text-white',
                         },
                         {
                           value: 'chat', label: 'Chat', full: 'Chat Interno', Icon: MessageCircle,
@@ -716,6 +723,12 @@ export default function AgentPanel() {
                   team={agent.team}
                 />
               </TabsContent>
+
+              <TabsContent value="rondas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+                <RoundsHistoryCard agentId={agent.id} />
+              </TabsContent>
+
+
 
               <TabsContent value="chat" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
                 <ChatPanel 

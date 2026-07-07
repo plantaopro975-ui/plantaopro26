@@ -1,0 +1,1 @@
+CREATE POLICY "Agents can view their own activity logs" ON public.activity_logs FOR SELECT USING (agent_id = public.current_agent_id());
