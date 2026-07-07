@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
@@ -7,9 +7,12 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Loader2, Users, Building2, ChevronRight, Shield, Sword, Target, Phone, Mail, MapPinned, User } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MapPin, Loader2, Users, Building2, ChevronRight, Shield, Sword, Target, Phone, Mail, MapPinned, Search, X } from 'lucide-react';
 import { PanelHeroHUD, HUDIcon3D } from '@/components/panel/PanelHeroHUD';
 import hudPageBg from '@/assets/hero-tactical-ops.jpg';
+
 
 interface Unit {
   id: string;
