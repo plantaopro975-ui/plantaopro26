@@ -510,19 +510,37 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
               </TooltipProvider>
             )}
           </CardTitle>
-          <div className="flex items-center gap-0.5">
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} aria-label="Mês anterior">
-              <ChevronLeft className="h-3 w-3" />
-            </Button>
-            <span className="text-[11px] font-medium min-w-[86px] text-center capitalize tabular-nums">
-              {format(currentMonth, "MMM yyyy", { locale: ptBR })}
-            </span>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} aria-label="Próximo mês">
-              <ChevronRight className="h-3 w-3" />
-            </Button>
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            <div className="flex items-center rounded-md border border-slate-700 bg-slate-900/60 p-0.5" role="group" aria-label="Filtrar tipos">
+              {(['all', 'shift', 'leave'] as const).map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setFilter(f)}
+                  className={`px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded transition-colors ${
+                    filter === f ? 'bg-amber-500/30 text-amber-300' : 'text-slate-400 hover:text-amber-300'
+                  }`}
+                >
+                  {f === 'all' ? 'Todos' : f === 'shift' ? 'Plantão' : 'Folga'}
+                </button>
+              ))}
+            </div>
+            <ShiftSchedulePDFExport agentId={agentId} />
+            <div className="flex items-center gap-0.5">
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} aria-label="Mês anterior">
+                <ChevronLeft className="h-3 w-3" />
+              </Button>
+              <span className="text-[11px] font-medium min-w-[86px] text-center capitalize tabular-nums">
+                {format(currentMonth, "MMM yyyy", { locale: ptBR })}
+              </span>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} aria-label="Próximo mês">
+                <ChevronRight className="h-3 w-3" />
+              </Button>
+            </div>
           </div>
         </div>
       </CardHeader>
+
 
       <CardContent className="space-y-2 relative px-3 pb-3">
         {/* Resumo do mês: Cumpridos x Não cumpridos */}
