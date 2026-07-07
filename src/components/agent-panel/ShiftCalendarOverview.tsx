@@ -607,15 +607,18 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                 const isShiftMissed = shiftStatus === 'missed';
                 const isShiftScheduled = shiftStatus === 'scheduled';
 
-                // Cores especiais para plantão cumprido (emerald) — sobrescreve amber
+                // Classificação da folga (24h · 12h pós-plantão · 12h excepcional diurna)
+                const restInfo = !dayShift ? classifyRestDay(day, shifts) : { kind: 'none' as const };
+
+                // Cores especiais para plantão cumprido (emerald) — sobrescreve amber.
+                // Folga excepcional 12h ganha tom fuchsia para bater com a legenda.
                 const dayColors = isShiftDone
                   ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
                   : isShiftMissed
                   ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
+                  : !dayShift && restInfo.kind === 'off_12h_exceptional'
+                  ? 'bg-fuchsia-500/15 border-fuchsia-500/35 text-fuchsia-300'
                   : colors;
-
-                // Classificação da folga (24h vs 12h) — apenas quando não há plantão neste dia
-                const restInfo = !dayShift ? classifyRestDay(day, shifts) : { kind: 'none' as const };
 
                 return (
                   <Tooltip key={day.toISOString()}>
