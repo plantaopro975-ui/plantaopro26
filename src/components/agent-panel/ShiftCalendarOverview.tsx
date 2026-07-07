@@ -98,7 +98,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const classifyRestDay = (
     day: Date,
     allShifts: Shift[],
-  ): { kind: 'off_24h' | 'half_post' | 'none'; prev?: Shift; next?: Shift } => {
+  ): {
+    kind: 'off_24h' | 'half_post' | 'off_12h_exceptional' | 'none';
+    prev?: Shift;
+    next?: Shift;
+    windowLabel?: string;
+  } => {
     const dateStr = format(day, 'yyyy-MM-dd');
     const nonVac = allShifts.filter((s) => !s.is_vacation);
     const prev = [...nonVac]
@@ -110,7 +115,6 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
 
     if (!prev && !next) return { kind: 'none' };
 
-    // Diferença em dias entre o plantão anterior e este dia
     const diffFromPrev = prev
       ? Math.round(
           (parseISO(dateStr).getTime() - parseISO(prev.shift_date).getTime()) /
@@ -118,16 +122,32 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         )
       : Infinity;
 
-    // Se o plantão anterior foi ontem e ele terminou de madrugada (end<=start),
-    // a madrugada de hoje ainda está no plantão → meia folga (~12h/17h).
+    const durationOf = (s?: Shift) => {
+      if (!s?.start_time || !s?.end_time) return null;
+      const [sh, sm] = s.start_time.slice(0, 5).split(':').map(Number);
+      const [eh, em] = s.end_time.slice(0, 5).split(':').map(Number);
+      let mins = (eh * 60 + em) - (sh * 60 + sm);
+      if (mins <= 0) mins += 24 * 60;
+      return Math.round(mins / 60);
+    };
+
+    // Folga excepcional 07:00–19:00 → dia sem plantão logo após um plantão
+    // noturno excepcional de 12h (19→07). O período diurno fica integralmente
+    // livre, sem madrugada no serviço.
     if (prev && diffFromPrev === 1) {
       const pStart = prev.start_time?.slice(0, 5) ?? '07:00';
       const pEnd = prev.end_time?.slice(0, 5) ?? '07:00';
+      const pDur = durationOf(prev);
+      if (pDur === 12 && pStart === '19:00' && pEnd === '07:00') {
+        return { kind: 'off_12h_exceptional', prev, next, windowLabel: '07:00–19:00' };
+      }
+      // Plantão anterior 24h (07→07 ou similar): madrugada de hoje ainda no serviço
       if (pEnd <= pStart) return { kind: 'half_post', prev, next };
     }
 
     return { kind: 'off_24h', prev, next };
   };
+
 
   // Estado para divergências detectadas pelo backend
   type Divergence = {
@@ -587,15 +607,18 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                 const isShiftMissed = shiftStatus === 'missed';
                 const isShiftScheduled = shiftStatus === 'scheduled';
 
-                // Cores especiais para plantão cumprido (emerald) — sobrescreve amber
+                // Classificação da folga (24h · 12h pós-plantão · 12h excepcional diurna)
+                const restInfo = !dayShift ? classifyRestDay(day, shifts) : { kind: 'none' as const };
+
+                // Cores especiais para plantão cumprido (emerald) — sobrescreve amber.
+                // Folga excepcional 12h ganha tom fuchsia para bater com a legenda.
                 const dayColors = isShiftDone
                   ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
                   : isShiftMissed
                   ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
+                  : !dayShift && restInfo.kind === 'off_12h_exceptional'
+                  ? 'bg-fuchsia-500/15 border-fuchsia-500/35 text-fuchsia-300'
                   : colors;
-
-                // Classificação da folga (24h vs 12h) — apenas quando não há plantão neste dia
-                const restInfo = !dayShift ? classifyRestDay(day, shifts) : { kind: 'none' as const };
 
                 return (
                   <Tooltip key={day.toISOString()}>
@@ -716,6 +739,18 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                             </span>
                           </div>
                         )}
+                        {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'off_12h_exceptional' && (
+                          <div className="flex items-start gap-1.5 text-fuchsia-300 bg-fuchsia-500/10 border border-fuchsia-500/30 rounded px-1.5 py-1">
+                            <Coffee className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              <span className="font-bold uppercase tracking-wide">Folga excepcional (12h)</span>
+                              <br />
+                              <span className="text-[10px] opacity-80 tabular-nums">
+                                Janela livre {restInfo.windowLabel ?? '07:00–19:00'} · após plantão noturno 19→07
+                              </span>
+                            </span>
+                          </div>
+                        )}
                         {!dayShift && !dayInfo.types.includes('leave') && restInfo.kind === 'off_24h' && (
                           <div className="flex items-start gap-1.5 text-sky-300 bg-sky-500/10 border border-sky-500/30 rounded px-1.5 py-1">
                             <Palmtree className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
@@ -755,7 +790,7 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
             { c: 'hsl(239 84% 67%)', label: 'Meia folga 12h' },
             { c: 'hsl(270 91% 65%)', label: 'Férias' },
             { c: 'hsl(217 91% 60%)', label: 'Folga aprovada' },
-            { c: 'hsl(292 84% 61%)', label: 'Excepcional 12h (07→19 / 19→07)' },
+            { c: 'hsl(292 84% 61%)', label: 'Excepcional 12h · plantão 19→07 · folga 07→19' },
           ].map((it) => (
             <div key={it.label} className="flex items-center gap-1">
               <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill={it.c} /></svg>
