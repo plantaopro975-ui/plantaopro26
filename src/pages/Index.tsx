@@ -948,8 +948,8 @@ export default function Index() {
       }
       
       toast({
-        title: 'Bem-vindo!',
-        description: 'Login realizado com sucesso.',
+        title: `Acesso liberado, ${(foundAgent?.name || '').split(' ')[0] || 'Agente'}`,
+        description: 'Autenticação confirmada. Boa jornada e proteja-se sempre.',
       });
       navigate('/agent-panel', { replace: true });
     }
