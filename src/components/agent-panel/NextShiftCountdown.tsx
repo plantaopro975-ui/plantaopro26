@@ -280,7 +280,7 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
 
     // ---------- PRÓXIMO PLANTÃO ----------
     if (shiftMeta) {
-      const { shiftStart, shiftDate, durationHours, isNight, periodLabel, PeriodIcon, shiftLabel, startStr, endStr, dateStr, isTodayShift } = shiftMeta;
+      const { shiftStart, shiftDate, durationHours, isNight, periodLabel, PeriodIcon, shiftLabel, scaleLabel, startStr, endStr, dateStr, isTodayShift } = shiftMeta;
       const now = new Date();
       const daysUntil = differenceInCalendarDays(shiftDate, startOfDay(now));
       const hoursUntil = differenceInHours(shiftStart, now);
