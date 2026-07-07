@@ -157,6 +157,19 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   };
 
   const openDay = (day: Date) => {
+    const dateStr = format(day, 'yyyy-MM-dd');
+    const dayShift = shifts.find((s) => s.shift_date === dateStr && !s.is_vacation);
+    if (dayShift) {
+      setShiftModalData({
+        date: day,
+        shift: dayShift,
+        status: computeShiftStatus(day, dayShift),
+        startStr: dayShift.start_time?.slice(0, 5) || '—',
+        endStr: dayShift.end_time?.slice(0, 5) || '—',
+      });
+      setShiftModalOpen(true);
+      return;
+    }
     setDetailData(buildJourneyFromShifts(day, shifts));
     setDetailOpen(true);
   };
