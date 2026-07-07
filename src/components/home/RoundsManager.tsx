@@ -1956,7 +1956,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Nome grande — agente ATIVO agora (live ou preview) */}
                               {activeAgentName && (
                                 <div
-                                  className="font-sans font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                                  className="font-display font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                                   style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
                                 >
                                   {activeAgentName}
@@ -2026,7 +2026,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
                                 setStartConfirmOpen(true);
                               }}
-                              className="h-9 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950"
+                              className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
+                              style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
                             >
                               <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
                             </Button>
