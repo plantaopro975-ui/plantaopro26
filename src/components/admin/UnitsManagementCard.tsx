@@ -295,20 +295,6 @@ export function UnitsManagementCard({ units, agents, onEditUnit, onRefresh }: Un
                           {unit.municipality}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground flex-wrap">
-                        {unit.director_name && (
-                          <span className="flex items-center gap-1">
-                            <User2 className="h-3 w-3 text-amber-500" />
-                            Dir: {unit.director_name}
-                          </span>
-                        )}
-                        {unit.coordinator_name && (
-                          <span className="flex items-center gap-1">
-                            <Shield className="h-3 w-3 text-blue-500" />
-                            Coord: {unit.coordinator_name}
-                          </span>
-                        )}
-                      </div>
                     </div>
                   </div>
                   
@@ -386,27 +372,6 @@ export function UnitsManagementCard({ units, agents, onEditUnit, onRefresh }: Un
                         </div>
                       </div>
                       
-                      {/* Director */}
-                      <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                        <h4 className="text-xs font-semibold text-amber-500 mb-2">DIRETOR</h4>
-                        <div className="flex items-center gap-2">
-                          <User2 className="h-4 w-4 text-amber-500" />
-                          <span className="text-sm font-medium">
-                            {unit.director_name || 'Não definido'}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      {/* Coordinator */}
-                      <div className="p-3 rounded-lg bg-blue-500/5 border border-blue-500/20">
-                        <h4 className="text-xs font-semibold text-blue-500 mb-2">COORDENADOR</h4>
-                        <div className="flex items-center gap-2">
-                          <Shield className="h-4 w-4 text-blue-500" />
-                          <span className="text-sm font-medium">
-                            {unit.coordinator_name || 'Não definido'}
-                          </span>
-                        </div>
-                      </div>
                       
                       {/* Stats */}
                       <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">

@@ -220,27 +220,6 @@ export default function Units() {
                     <span>{myUnit.municipality}</span>
                   </div>
 
-                  {/* Director */}
-                  {myUnit.director_name && (
-                    <div className="flex items-center gap-3 text-slate-300">
-                      <User className="h-5 w-5 text-blue-400" />
-                      <div>
-                        <span className="text-xs text-slate-500 block">Diretor(a)</span>
-                        <span>{myUnit.director_name}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Coordinator */}
-                  {myUnit.coordinator_name && (
-                    <div className="flex items-center gap-3 text-slate-300">
-                      <Shield className="h-5 w-5 text-green-400" />
-                      <div>
-                        <span className="text-xs text-slate-500 block">Coordenador(a) de Segurança</span>
-                        <span>{myUnit.coordinator_name}</span>
-                      </div>
-                    </div>
-                  )}
 
                   {/* Address */}
                   {myUnit.address && (

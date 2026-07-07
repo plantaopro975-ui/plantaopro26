@@ -56,7 +56,7 @@ export function UnitInfoCard({ unitId }: UnitInfoCardProps) {
   }
 
   // Only show if there's additional info to display
-  const hasAdditionalInfo = unit.director_name || unit.coordinator_name || unit.address || unit.email || unit.phone;
+  const hasAdditionalInfo = unit.address || unit.email || unit.phone;
   
   if (!hasAdditionalInfo) {
     return null;
@@ -71,25 +71,6 @@ export function UnitInfoCard({ unitId }: UnitInfoCardProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
-        {unit.director_name && (
-          <div className="flex items-start gap-2">
-            <User className="h-4 w-4 text-amber-400 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-muted-foreground">Diretor: </span>
-              <span className="font-medium">{unit.director_name}</span>
-            </div>
-          </div>
-        )}
-        
-        {unit.coordinator_name && (
-          <div className="flex items-start gap-2">
-            <Shield className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-muted-foreground">Coordenador de Segurança: </span>
-              <span className="font-medium">{unit.coordinator_name}</span>
-            </div>
-          </div>
-        )}
         
         {unit.address && (
           <div className="flex items-start gap-2">

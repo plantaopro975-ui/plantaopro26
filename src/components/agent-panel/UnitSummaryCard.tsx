@@ -84,50 +84,6 @@ export function UnitSummaryCard({ unitId }: UnitSummaryCardProps) {
           </div>
         </div>
 
-        {/* Leadership Grid */}
-        {hasLeadership && (
-          <div className="grid grid-cols-2 gap-2">
-            {unit.president_name && (
-              <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <User className="h-3 w-3 text-amber-400" />
-                  <span className="text-[10px] text-amber-400 font-medium">Presidente</span>
-                </div>
-                <p className="text-xs text-white truncate">{unit.president_name}</p>
-              </div>
-            )}
-
-            {unit.director_name && (
-              <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <User className="h-3 w-3 text-blue-400" />
-                  <span className="text-[10px] text-blue-400 font-medium">Diretor</span>
-                </div>
-                <p className="text-xs text-white truncate">{unit.director_name}</p>
-              </div>
-            )}
-
-            {unit.coordinator_name && (
-              <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <Users className="h-3 w-3 text-green-400" />
-                  <span className="text-[10px] text-green-400 font-medium">Coordenador</span>
-                </div>
-                <p className="text-xs text-white truncate">{unit.coordinator_name}</p>
-              </div>
-            )}
-
-            {unit.security_coordinator_name && (
-              <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <Shield className="h-3 w-3 text-red-400" />
-                  <span className="text-[10px] text-red-400 font-medium">Coord. Segurança</span>
-                </div>
-                <p className="text-xs text-white truncate">{unit.security_coordinator_name}</p>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Contact Info */}
         {(unit.phone || unit.email) && (
