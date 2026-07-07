@@ -53,6 +53,7 @@ const AgentEventsCard = lazy(() => import('@/components/agent-panel/AgentEventsC
 const ChatAndAlertSettings = lazy(() => import('@/components/agent-panel/ChatAndAlertSettings').then(m => ({ default: m.ChatAndAlertSettings })));
 const ShiftPlannerCard = lazy(() => import('@/components/agent-panel/ShiftPlannerCard'));
 const ShiftCalendarOverview = lazy(() => import('@/components/agent-panel/ShiftCalendarOverview').then(m => ({ default: m.ShiftCalendarOverview })));
+const RecentShiftCyclesCard = lazy(() => import('@/components/agent-panel/RecentShiftCyclesCard').then(m => ({ default: m.RecentShiftCyclesCard })));
 const BHEvolutionChart = lazy(() => import('@/components/agent-panel/BHEvolutionChart').then(m => ({ default: m.BHEvolutionChart })));
 const BHHistoryTracker = lazy(() => import('@/components/agent-panel/BHHistoryTracker').then(m => ({ default: m.BHHistoryTracker })));
 const SessionDiagnosticCard = lazy(() => import('@/components/agent-panel/SessionDiagnosticCard').then(m => ({ default: m.SessionDiagnosticCard })));
