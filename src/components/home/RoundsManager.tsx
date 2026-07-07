@@ -1100,9 +1100,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     await syncServerClock();
     const startMs = nowServer();
     startedAtRef.current = startMs;
+    // Congela o "início efetivo" — a partir daqui, a divisão não desliza mais.
+    frozenStartMinRef.current = effectiveStartMin ?? toMinutes(startTime) ?? 0;
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setRunning(true);
+
     try {
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
         Notification.requestPermission().catch(() => { /* ignore */ });
