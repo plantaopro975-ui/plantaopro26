@@ -445,6 +445,7 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                     <li>Se o mês começa numa <b>quarta</b>, o dia <b>01</b> aparece na 4ª coluna — coladinho ao <b>02</b>. É fácil confundir os dois; passe o mouse em cada célula para ver a data exata.</li>
                     <li><span className="text-emerald-300 font-semibold">Verde ✓</span>: plantão cumprido. <span className="text-rose-300 font-semibold">Vermelho ✕</span>: não cumprido. <span className="text-amber-300 font-semibold">Amarelo</span>: agendado.</li>
                     <li>Folgas: <span className="text-sky-300">24h</span> (dia integralmente livre) e <span className="text-indigo-300">12h</span> (meia folga pós-plantão, madrugada ainda no serviço).</li>
+                    <li><span className="text-fuchsia-300 font-semibold">Excepcional 12h</span>: plantão pode ser <b>07→19</b> (diurno) ou <b>19→07</b> (noturno), com folga espelhada no outro turno. A duração real aparece no tooltip e no modal.</li>
                   </ul>
                 </TooltipContent>
               </Tooltip>
