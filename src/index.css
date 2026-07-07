@@ -1052,44 +1052,81 @@ html.tab-hidden *::after {
   }
 }
 
-/* ===== Giroflex — flash policial discreto sobre a barra de luzes ===== */
-.beacon-light {
+/* ===== Giroflex — flash policial discreto ancorado na barra real da viatura ===== */
+.giroflex-flash {
   position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
+  width: var(--giroflex-lens-width);
+  height: clamp(3px, 2.45%, 7px);
+  border-radius: 999px;
   pointer-events: none;
-  z-index: 2;
-  transform: translate(-50%, -50%);
-  will-change: opacity, box-shadow;
-  opacity: 0.15;
+  z-index: 3;
+  transform: translate(-50%, -50%) rotate(-1deg);
+  will-change: opacity, filter, box-shadow;
+  opacity: 0.18;
+  mix-blend-mode: screen;
+  overflow: visible;
 }
-@media (min-width: 640px) {
-  .beacon-light { width: 6px; height: 6px; }
+.giroflex-flash::before,
+.giroflex-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
 }
-.beacon-blue {
-  background: rgba(191, 219, 254, 1);
-  animation: beacon-strobe-blue 1.4s steps(1, end) infinite;
+.giroflex-flash::after {
+  inset: -85% -18%;
+  filter: blur(2.5px);
+  opacity: 0.85;
 }
-.beacon-red {
-  background: rgba(254, 202, 202, 1);
-  animation: beacon-strobe-red 1.4s steps(1, end) infinite;
+.giroflex-flash-blue {
+  --giroflex-lens-width: 13.4%;
+  background: rgb(147 197 253);
+  animation: giroflex-strobe-blue 1.2s steps(1, end) infinite;
+}
+.giroflex-flash-blue::before,
+.giroflex-flash-blue::after {
+  background: rgb(59 130 246);
+}
+.giroflex-flash-red {
+  --giroflex-lens-width: 18.4%;
+  background: rgb(252 165 165);
+  animation: giroflex-strobe-red 1.2s steps(1, end) infinite;
+}
+.giroflex-flash-red::before,
+.giroflex-flash-red::after {
+  background: rgb(239 68 68);
 }
 /* Padrão duplo-flash tipo giroflex real: dois pulsos rápidos, depois pausa */
-@keyframes beacon-strobe-blue {
-  0%, 6%    { opacity: 1; box-shadow: 0 0 5px 1.5px rgba(59,130,246,0.9), 0 0 12px 3px rgba(59,130,246,0.5); }
-  7%, 12%   { opacity: 0.15; box-shadow: none; }
-  13%, 19%  { opacity: 1; box-shadow: 0 0 5px 1.5px rgba(59,130,246,0.9), 0 0 12px 3px rgba(59,130,246,0.5); }
-  20%, 100% { opacity: 0.15; box-shadow: none; }
+@keyframes giroflex-strobe-blue {
+  0%, 5% {
+    opacity: 1;
+    filter: brightness(1.8);
+    box-shadow: 0 0 4px 1px rgba(59,130,246,0.95), 0 0 10px 3px rgba(59,130,246,0.45);
+  }
+  6%, 10% { opacity: 0.18; filter: none; box-shadow: none; }
+  11%, 16% {
+    opacity: 1;
+    filter: brightness(1.8);
+    box-shadow: 0 0 4px 1px rgba(59,130,246,0.95), 0 0 10px 3px rgba(59,130,246,0.45);
+  }
+  17%, 100% { opacity: 0.18; filter: none; box-shadow: none; }
 }
-@keyframes beacon-strobe-red {
-  0%, 49%   { opacity: 0.15; box-shadow: none; }
-  50%, 56%  { opacity: 1; box-shadow: 0 0 5px 1.5px rgba(239,68,68,0.9), 0 0 12px 3px rgba(239,68,68,0.5); }
-  57%, 62%  { opacity: 0.15; box-shadow: none; }
-  63%, 69%  { opacity: 1; box-shadow: 0 0 5px 1.5px rgba(239,68,68,0.9), 0 0 12px 3px rgba(239,68,68,0.5); }
-  70%, 100% { opacity: 0.15; box-shadow: none; }
+@keyframes giroflex-strobe-red {
+  0%, 48% { opacity: 0.18; filter: none; box-shadow: none; }
+  49%, 54% {
+    opacity: 1;
+    filter: brightness(1.8);
+    box-shadow: 0 0 4px 1px rgba(239,68,68,0.95), 0 0 10px 3px rgba(239,68,68,0.45);
+  }
+  55%, 59% { opacity: 0.18; filter: none; box-shadow: none; }
+  60%, 65% {
+    opacity: 1;
+    filter: brightness(1.8);
+    box-shadow: 0 0 4px 1px rgba(239,68,68,0.95), 0 0 10px 3px rgba(239,68,68,0.45);
+  }
+  66%, 100% { opacity: 0.18; filter: none; box-shadow: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .beacon-blue, .beacon-red { animation: none; opacity: 0.4; }
+  .giroflex-flash-blue, .giroflex-flash-red { animation: none; opacity: 0.45; }
 }
 
