@@ -56,7 +56,7 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
           lastActivity: agent.updated_at,
         }));
         setAgents(blips);
-        setLastUpdate(new Date());
+        setLastUpdate(getServerDate());
       }
     };
 
