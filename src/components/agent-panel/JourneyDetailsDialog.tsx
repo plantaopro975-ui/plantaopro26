@@ -107,7 +107,7 @@ export function JourneyDetailsDialog({
   }, [onRequestDate]);
 
   const isNight = current?.shiftStart
-    ? current.shiftStart.getHours() >= 18 || current.shiftStart.getHours() < 6
+    ? current.shiftStart.getHours() >= 19 || current.shiftStart.getHours() < 7
     : false;
   const PeriodIcon = isNight ? Moon : Sun;
   const periodLabel = isNight ? 'Noturno' : 'Diurno';
