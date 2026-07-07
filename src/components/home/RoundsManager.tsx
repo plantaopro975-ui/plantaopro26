@@ -1941,6 +1941,41 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                        style={{ width: `${slotProgress * 100}%`, backgroundColor: urgent ? 'hsl(var(--destructive))' : teamColor }} />
                                 </div>
                               )}
+
+                              {/* Restante total do turno (até 06:00 no modo noturno) + próximo agente */}
+                              {schedule && (
+                                <div
+                                  className="mt-1 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] tabular-nums"
+                                  data-testid="round-card-remaining"
+                                >
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/5 px-2 py-0.5 text-amber-200">
+                                    <Timer className="h-3 w-3" />
+                                    Turno {nightEffectivelyLocked ? '(até 06:00)' : 'total'}:&nbsp;
+                                    <b className="text-amber-100">
+                                      {running && live
+                                        ? fmtHMS(Math.max(0, schedule.totalSec - live.elapsed))
+                                        : fmtHMS(schedule.totalSec)}
+                                    </b>
+                                  </span>
+                                  {(() => {
+                                    const nextIdx = running && live && !live.done
+                                      ? live.index + 1
+                                      : (!running ? 1 : -1);
+                                    if (nextIdx < 0 || nextIdx >= schedule.rows.length) return null;
+                                    const nextRow = schedule.rows[nextIdx];
+                                    const secsToNext = running && live && !live.done
+                                      ? live.remaining
+                                      : schedule.rows[0].duration * 60;
+                                    return (
+                                      <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2 py-0.5 text-primary">
+                                        Próximo: <b className="uppercase">{nextRow.name}</b> em&nbsp;
+                                        <b>{fmtHMS(secsToNext)}</b>
+                                      </span>
+                                    );
+                                  })()}
+                                </div>
+                              )}
+
                               {/* Motivational strip — cadence syncs with countdown progress */}
                               <MotivationalTicker
                                 color={teamColor}
