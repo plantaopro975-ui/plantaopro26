@@ -71,8 +71,8 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
       try {
         const today = format(new Date(), 'yyyy-MM-dd');
         
-        // Fetch next shift, leaves, BH, and announcements in parallel
-        const [shiftResult, leaveResult, bhResult, agentResult, announcementsResult] = await Promise.all([
+        // Fetch next shift, previous shift, leaves, BH, and announcements in parallel
+        const [shiftResult, prevShiftResult, leaveResult, bhResult, agentResult, announcementsResult] = await Promise.all([
           supabase
             .from('agent_shifts')
             .select('id, shift_date, start_time, end_time, shift_type')
@@ -82,6 +82,15 @@ export function NextShiftCountdown({ agentId, agentName, agentUnitId, agentTeam,
             .eq('is_vacation', false)
             .order('shift_date', { ascending: true })
             .limit(6),
+          supabase
+            .from('agent_shifts')
+            .select('id, shift_date, start_time, end_time, shift_type')
+            .eq('agent_id', agentId)
+            .lt('shift_date', today)
+            .eq('is_vacation', false)
+            .order('shift_date', { ascending: false })
+            .limit(1)
+            .maybeSingle(),
           supabase
             .from('agent_leaves')
             .select('id, leave_type, start_date, end_date')
