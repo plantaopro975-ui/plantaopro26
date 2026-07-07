@@ -431,6 +431,7 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
           ))}
         </div>
       </CardContent>
+      <JourneyDetailsDialog open={detailOpen} onOpenChange={setDetailOpen} data={detailData} />
     </Card>
   );
 }
