@@ -484,7 +484,8 @@ export default function AgentPanel() {
 
       <div className="flex-1 flex flex-col w-full min-w-0 min-h-0 no-swipe-back">
         <main 
-          className={`flex-1 w-full min-w-0 px-2 py-2 sm:p-3 md:p-4 lg:p-6 overflow-y-auto overflow-x-hidden no-swipe-back ${showLicenseWarning ? 'pt-28' : ''}`}
+          data-compact={compact ? 'true' : 'false'}
+          className={`flex-1 w-full min-w-0 overflow-y-auto overflow-x-hidden no-swipe-back ${compact ? 'px-2 py-2 sm:p-2.5 md:p-3' : 'px-2 py-2 sm:p-3 md:p-4 lg:p-5'} ${showLicenseWarning ? 'pt-28' : ''}`}
           style={{
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
@@ -499,7 +500,7 @@ export default function AgentPanel() {
             paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
           }}
         >
-          <div className="max-w-6xl w-full mx-auto space-y-3 md:space-y-4 pb-16 sm:pb-20">
+          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-5xl space-y-2.5 md:space-y-3' : 'max-w-6xl space-y-3 md:space-y-4'}`}>
             {/* Futuristic HUD Hero */}
             <PanelHeroHUD
               variant="command"
@@ -524,6 +525,8 @@ export default function AgentPanel() {
               onShowWelcome={() => setShowWelcomeDialog(true)}
               onReactivateShiftBanner={reactivateShiftBanner}
               isShiftBannerDismissed={isShiftBannerDismissed}
+              compact={compact}
+              onToggleCompact={toggleCompact}
             />
 
             {/* Shift Alerts Banner */}
