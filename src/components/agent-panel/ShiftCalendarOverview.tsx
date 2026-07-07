@@ -189,77 +189,96 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   }
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Calendar className="h-5 w-5 text-primary" />
+    <Card className="relative overflow-hidden bg-slate-800/50 border-slate-700">
+      {/* Decoração SVG discreta no fundo */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute -top-8 -right-8 h-40 w-40 opacity-[0.07]"
+        viewBox="0 0 100 100"
+        fill="none"
+      >
+        <defs>
+          <linearGradient id="cal-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--primary))" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <rect x="14" y="20" width="72" height="66" rx="8" stroke="url(#cal-grad)" strokeWidth="2" />
+        <line x1="14" y1="34" x2="86" y2="34" stroke="url(#cal-grad)" strokeWidth="2" />
+        <line x1="32" y1="12" x2="32" y2="26" stroke="url(#cal-grad)" strokeWidth="3" strokeLinecap="round" />
+        <line x1="68" y1="12" x2="68" y2="26" stroke="url(#cal-grad)" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+
+      <CardHeader className="pb-2 relative">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="flex items-center gap-2 text-sm md:text-base">
+            <Calendar className="h-4 w-4 md:h-4.5 md:w-4.5 text-primary" />
             <span>Calendário do Mês</span>
           </CardTitle>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8"
+              className="h-7 w-7"
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+              aria-label="Mês anterior"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
-            <span className="text-sm font-medium min-w-[120px] text-center capitalize">
-              {format(currentMonth, "MMMM yyyy", { locale: ptBR })}
+            <span className="text-xs font-medium min-w-[100px] text-center capitalize tabular-nums">
+              {format(currentMonth, "MMM yyyy", { locale: ptBR })}
             </span>
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8"
+              className="h-7 w-7"
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+              aria-label="Próximo mês"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
-        {/* Month Stats */}
-        <div className="grid grid-cols-4 gap-2">
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 text-center">
-            <p className="text-lg font-bold text-amber-400">{shiftDays}</p>
-            <p className="text-[10px] text-muted-foreground uppercase">Plantões</p>
+      <CardContent className="space-y-3 relative">
+        {/* Month Stats — compacto */}
+        <div className="grid grid-cols-4 gap-1.5">
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-md py-1.5 px-1 text-center">
+            <p className="text-sm md:text-base font-bold text-amber-400 leading-none tabular-nums">{shiftDays}</p>
+            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">Plantões</p>
           </div>
-          <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-2 text-center">
-            <p className="text-lg font-bold text-purple-400">{vacationDays}</p>
-            <p className="text-[10px] text-muted-foreground uppercase">Férias</p>
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-md py-1.5 px-1 text-center">
+            <p className="text-sm md:text-base font-bold text-purple-400 leading-none tabular-nums">{vacationDays}</p>
+            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">Férias</p>
           </div>
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-2 text-center">
-            <p className="text-lg font-bold text-blue-400">{leaveDays}</p>
-            <p className="text-[10px] text-muted-foreground uppercase">Folgas</p>
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-md py-1.5 px-1 text-center">
+            <p className="text-sm md:text-base font-bold text-blue-400 leading-none tabular-nums">{leaveDays}</p>
+            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">Folgas</p>
           </div>
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 text-center">
-            <p className="text-lg font-bold text-green-400">{totalBhHours > 0 ? '+' : ''}{totalBhHours}</p>
-            <p className="text-[10px] text-muted-foreground uppercase">BH (h)</p>
+          <div className="bg-green-500/10 border border-green-500/30 rounded-md py-1.5 px-1 text-center">
+            <p className="text-sm md:text-base font-bold text-green-400 leading-none tabular-nums">{totalBhHours > 0 ? '+' : ''}{totalBhHours}</p>
+            <p className="text-[9px] text-muted-foreground uppercase mt-0.5">BH (h)</p>
           </div>
         </div>
 
-        {/* Calendar Grid */}
-        <div className="bg-slate-900/50 rounded-xl p-3 border border-slate-700/50">
+        {/* Calendar Grid — contido com max-width e células pequenas fixas */}
+        <div className="bg-slate-900/50 rounded-lg p-2 md:p-2.5 border border-slate-700/50 mx-auto w-full max-w-md">
           {/* Weekday headers */}
-          <div className="grid grid-cols-7 gap-1 mb-2">
+          <div className="grid grid-cols-7 gap-1 mb-1.5">
             {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
-              <div key={i} className="text-center text-[10px] text-muted-foreground font-medium uppercase">
+              <div key={i} className="text-center text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
                 {day}
               </div>
             ))}
           </div>
           
-          {/* Days grid */}
+          {/* Days grid — altura fixa por linha para evitar cards enormes */}
           <div className="grid grid-cols-7 gap-1">
-            {/* Empty cells for days before the month starts */}
             {Array.from({ length: startingDayOfWeek }).map((_, i) => (
-              <div key={`empty-${i}`} className="aspect-square" />
+              <div key={`empty-${i}`} className="h-9 md:h-10" />
             ))}
             
-            {/* Actual days */}
             {days.map((day) => {
               const dayInfo = getDayInfo(day);
               const colors = getDayColors(dayInfo.types);
@@ -269,12 +288,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
               return (
                 <div
                   key={day.toISOString()}
-                  className={`aspect-square rounded-lg border flex flex-col items-center justify-center text-xs font-medium transition-all ${colors} ${
+                  className={`relative h-9 md:h-10 rounded-md border flex flex-col items-center justify-center text-[11px] font-medium transition-all ${colors} ${
                     isTodayDay ? 'ring-2 ring-primary ring-offset-1 ring-offset-slate-900' : ''
                   }`}
                 >
-                  <span className={isTodayDay ? 'font-bold' : ''}>{format(day, 'd')}</span>
-                  {icon && <div className="mt-0.5">{icon}</div>}
+                  <span className={`leading-none ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
+                  {icon && <div className="mt-0.5 opacity-80">{icon}</div>}
                 </div>
               );
             })}
@@ -282,21 +301,21 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-700/50">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 pt-1.5 border-t border-slate-700/50">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-amber-500/50 border border-amber-500/50" />
+            <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50 border border-amber-500/50" />
             <span className="text-[10px] text-muted-foreground">Plantão</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-purple-500/50 border border-purple-500/50" />
+            <div className="w-2.5 h-2.5 rounded-full bg-purple-500/50 border border-purple-500/50" />
             <span className="text-[10px] text-muted-foreground">Férias</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-blue-500/50 border border-blue-500/50" />
+            <div className="w-2.5 h-2.5 rounded-full bg-blue-500/50 border border-blue-500/50" />
             <span className="text-[10px] text-muted-foreground">Folga</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-green-500/50 border border-green-500/50" />
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500/50 border border-green-500/50" />
             <span className="text-[10px] text-muted-foreground">BH</span>
           </div>
         </div>
