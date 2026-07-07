@@ -501,15 +501,8 @@ export default function AgentPanel() {
             paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
           }}
         >
-          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-5xl space-y-2.5 md:space-y-3' : 'max-w-6xl space-y-3 md:space-y-4'}`}>
-            {/* Futuristic HUD Hero */}
-            <PanelHeroHUD
-              variant="command"
-              icon="shield"
-              eyebrow="Painel do Agente"
-              title={`Bem-vindo, ${agent.name?.split(' ')[0] || 'Agente'}`}
-              subtitle={`Equipe ${agent.team || '—'} • Sistema Operacional Ativo`}
-            />
+          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-4xl space-y-2 md:space-y-2.5' : 'max-w-5xl space-y-2.5 md:space-y-3'}`}>
+            {/* Hero HUD removido — redundante com o AgentPanelHeader, reduzindo altura da página */}
 
             {/* Professional Header Bar */}
             <AgentPanelHeader 
@@ -568,28 +561,25 @@ export default function AgentPanel() {
                 
                 {/* Control Panel Header - Compact & Professional */}
                 <div className={cn(
-                  'relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-amber-500/20',
-                  compact ? 'p-2 md:p-2.5' : 'p-2.5 md:p-3'
+                  'relative flex items-center justify-between gap-2 border-b border-amber-500/20',
+                  compact ? 'px-2.5 py-1.5' : 'px-3 py-2'
                 )}>
-                  <div className="flex items-center gap-2 md:gap-2.5">
-                    <div className={cn(
-                      'bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 rounded-lg shadow-md shadow-amber-500/30 ring-1 ring-amber-300/30',
-                      compact ? 'p-1.5' : 'p-1.5 md:p-2'
-                    )}>
-                      <Shield className={cn('text-black', compact ? 'h-4 w-4' : 'h-4 w-4 md:h-5 md:w-5')} />
+                  <div className="flex items-center gap-2">
+                    <div className="p-1 rounded-md bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 shadow-sm shadow-amber-500/30 ring-1 ring-amber-300/30">
+                      <Shield className="h-3.5 w-3.5 text-black" />
                     </div>
-                    <div>
-                      <h2 className={cn('font-black text-amber-100 tracking-tight leading-tight', compact ? 'text-xs md:text-sm' : 'text-sm md:text-base')}>
-                        PAINEL DE CONTROLE
+                    <div className="leading-tight">
+                      <h2 className="text-[11px] md:text-xs font-black text-amber-100 tracking-wider uppercase">
+                        Painel de Controle
                       </h2>
-                      <p className={cn('text-amber-400/90 font-medium tracking-wide mt-0.5', compact ? 'text-[10px]' : 'text-[10px] md:text-[11px]')}>
+                      <p className="text-[9px] md:text-[10px] text-amber-400/80 font-medium tracking-wide">
                         Sistema Operacional Integrado
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 bg-emerald-500/20 px-2 py-1 rounded-md border border-emerald-500/40 shadow-sm shadow-emerald-500/10">
-                    <Zap className="h-3 w-3 md:h-3.5 md:w-3.5 text-emerald-400 animate-pulse" />
-                    <span className="text-[10px] md:text-[11px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
+                  <div className="flex items-center gap-1 bg-emerald-500/15 px-1.5 py-0.5 rounded border border-emerald-500/40">
+                    <Zap className="h-2.5 w-2.5 text-emerald-400 animate-pulse" />
+                    <span className="text-[9px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
                   </div>
                 </div>
                 
@@ -602,81 +592,81 @@ export default function AgentPanel() {
                     {/* Equipe Tab */}
                     <TabsTrigger 
                       value="equipe" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-amber-500/15 hover:border-amber-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-amber-500/40 data-[state=active]:border-amber-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-amber-500/15 hover:border-amber-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-amber-500/40 data-[state=active]:border-amber-300 data-[state=active]:scale-[1.02]"
                     >
-                      <Users className="h-5 w-5 md:h-5 md:w-5 text-amber-400 group-data-[state=active]:text-black transition-colors" />
+                      <Users className="h-4 w-4 md:h-[18px] md:w-[18px] text-amber-400 group-data-[state=active]:text-black transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-amber-200 group-data-[state=active]:text-black tracking-wide">Equipe</span>
                     </TabsTrigger>
                     
                     {/* Plantões Tab */}
                     <TabsTrigger 
                       value="plantoes" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-orange-500/15 hover:border-orange-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/40 data-[state=active]:border-orange-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-orange-500/15 hover:border-orange-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/40 data-[state=active]:border-orange-300 data-[state=active]:scale-[1.02]"
                     >
-                      <Calendar className="h-5 w-5 md:h-5 md:w-5 text-orange-400 group-data-[state=active]:text-white transition-colors" />
+                      <Calendar className="h-4 w-4 md:h-[18px] md:w-[18px] text-orange-400 group-data-[state=active]:text-white transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-orange-200 group-data-[state=active]:text-white tracking-wide">Plantões</span>
                     </TabsTrigger>
                     
                     {/* B.Horas Tab */}
                     <TabsTrigger 
                       value="bh" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-emerald-500/15 hover:border-emerald-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-emerald-500/40 data-[state=active]:border-emerald-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-emerald-500/15 hover:border-emerald-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-emerald-500/40 data-[state=active]:border-emerald-300 data-[state=active]:scale-[1.02]"
                     >
-                      <Clock className="h-5 w-5 md:h-5 md:w-5 text-emerald-400 group-data-[state=active]:text-black transition-colors" />
+                      <Clock className="h-4 w-4 md:h-[18px] md:w-[18px] text-emerald-400 group-data-[state=active]:text-black transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-emerald-200 group-data-[state=active]:text-black tracking-wide">B.Horas</span>
                     </TabsTrigger>
                     
                     {/* Folgas Tab */}
                     <TabsTrigger 
                       value="folgas" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-purple-500/15 hover:border-purple-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-purple-500/40 data-[state=active]:border-purple-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-purple-500/15 hover:border-purple-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-purple-500/40 data-[state=active]:border-purple-300 data-[state=active]:scale-[1.02]"
                     >
-                      <CalendarOff className="h-5 w-5 md:h-5 md:w-5 text-purple-400 group-data-[state=active]:text-white transition-colors" />
+                      <CalendarOff className="h-4 w-4 md:h-[18px] md:w-[18px] text-purple-400 group-data-[state=active]:text-white transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-purple-200 group-data-[state=active]:text-white tracking-wide">Folgas</span>
                     </TabsTrigger>
                     
                     {/* Agenda Tab */}
                     <TabsTrigger 
                       value="agenda" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-cyan-500/15 hover:border-cyan-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-400 data-[state=active]:via-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-cyan-500/40 data-[state=active]:border-cyan-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-cyan-500/15 hover:border-cyan-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-400 data-[state=active]:via-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-cyan-500/40 data-[state=active]:border-cyan-300 data-[state=active]:scale-[1.02]"
                     >
-                      <CalendarDays className="h-5 w-5 md:h-5 md:w-5 text-cyan-400 group-data-[state=active]:text-black transition-colors" />
+                      <CalendarDays className="h-4 w-4 md:h-[18px] md:w-[18px] text-cyan-400 group-data-[state=active]:text-black transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-cyan-200 group-data-[state=active]:text-black tracking-wide">Agenda</span>
                     </TabsTrigger>
                     
                     {/* Planejar Tab */}
                     <TabsTrigger 
                       value="planejador" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-rose-500/40 data-[state=active]:border-rose-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-rose-500/40 data-[state=active]:border-rose-300 data-[state=active]:scale-[1.02]"
                     >
-                      <Calculator className="h-5 w-5 md:h-5 md:w-5 text-rose-400 group-data-[state=active]:text-white transition-colors" />
+                      <Calculator className="h-4 w-4 md:h-[18px] md:w-[18px] text-rose-400 group-data-[state=active]:text-white transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-rose-200 group-data-[state=active]:text-white tracking-wide">Planejar</span>
                     </TabsTrigger>
                     
                     {/* Permutas Tab */}
                     <TabsTrigger 
                       value="permutas" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-yellow-500/40 data-[state=active]:border-yellow-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-yellow-500/40 data-[state=active]:border-yellow-300 data-[state=active]:scale-[1.02]"
                     >
-                      <ArrowRightLeft className="h-5 w-5 md:h-5 md:w-5 text-yellow-400 group-data-[state=active]:text-black transition-colors" />
+                      <ArrowRightLeft className="h-4 w-4 md:h-[18px] md:w-[18px] text-yellow-400 group-data-[state=active]:text-black transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-yellow-200 group-data-[state=active]:text-black tracking-wide">Permutas</span>
                     </TabsTrigger>
                     
                     {/* Chat Tab */}
                     <TabsTrigger 
                       value="chat" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-blue-500/15 hover:border-blue-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-blue-500/40 data-[state=active]:border-blue-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-blue-500/15 hover:border-blue-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-blue-500/40 data-[state=active]:border-blue-300 data-[state=active]:scale-[1.02]"
                     >
-                      <MessageCircle className="h-5 w-5 md:h-5 md:w-5 text-blue-400 group-data-[state=active]:text-white transition-colors" />
+                      <MessageCircle className="h-4 w-4 md:h-[18px] md:w-[18px] text-blue-400 group-data-[state=active]:text-white transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-blue-200 group-data-[state=active]:text-white tracking-wide">Chat</span>
                     </TabsTrigger>
                     
                     {/* Config Tab */}
                     <TabsTrigger 
                       value="config" 
-                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[54px] md:min-h-[58px] border border-slate-600/50 bg-slate-800/50 hover:bg-slate-500/15 hover:border-slate-400/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-400 data-[state=active]:via-gray-500 data-[state=active]:to-zinc-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-slate-500/40 data-[state=active]:border-slate-300 data-[state=active]:scale-[1.02]"
+                      className="group flex flex-col items-center justify-center gap-1 p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold transition-all duration-300 min-h-[46px] md:min-h-[50px] border border-slate-600/50 bg-slate-800/50 hover:bg-slate-500/15 hover:border-slate-400/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-400 data-[state=active]:via-gray-500 data-[state=active]:to-zinc-600 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-slate-500/40 data-[state=active]:border-slate-300 data-[state=active]:scale-[1.02]"
                     >
-                      <Settings className="h-5 w-5 md:h-5 md:w-5 text-slate-400 group-data-[state=active]:text-white transition-colors" />
+                      <Settings className="h-4 w-4 md:h-[18px] md:w-[18px] text-slate-400 group-data-[state=active]:text-white transition-colors" />
                       <span className="text-[10px] md:text-[11px] font-bold text-slate-200 group-data-[state=active]:text-white tracking-wide">Config</span>
                     </TabsTrigger>
                   </TabsList>

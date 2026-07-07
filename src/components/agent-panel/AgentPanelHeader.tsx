@@ -376,12 +376,7 @@ export function AgentPanelHeader({ agent, isOnline, onShowWelcome, onReactivateS
               </ActionButton>
             )}
 
-            <ActionButton onClick={onShowWelcome} tooltip={`Trial: ${trial} dias restantes`} tone="amber">
-              <IconGift className="h-4 w-4" />
-              <span className="hidden sm:inline ml-1.5 text-[10.5px] font-bold tracking-wider font-['IBM_Plex_Mono',_monospace]">
-                {trial}D
-              </span>
-            </ActionButton>
+            {/* Trial button removed — sistema gratuito */}
 
             {isShiftBannerDismissed && onReactivateShiftBanner && (
               <ActionButton onClick={onReactivateShiftBanner} tooltip="Reativar lembrete de plantão" tone="orange">
