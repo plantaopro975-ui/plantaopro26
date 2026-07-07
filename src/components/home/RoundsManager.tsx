@@ -1490,8 +1490,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 <DialogTitle className="font-sans text-sm sm:text-base font-normal tracking-tight leading-tight text-foreground break-words">
                   Gestor de <span className="font-medium" style={{ color: teamColor }}>Quartos de Hora</span>
                 </DialogTitle>
-                <DialogDescription className="hidden sm:block text-[11px] text-muted-foreground font-sans tracking-wide break-words">
-                  escala · cronômetro · alarme · histórico
+                <DialogDescription className="sr-only">
+                  Gestor de rondas — escala, cronômetro, alarme e histórico.
                 </DialogDescription>
               </div>
 
