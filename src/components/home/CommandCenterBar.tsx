@@ -12,8 +12,8 @@ export function CommandCenterBar() {
   // Horário sincronizado com o servidor (não depende do relógio local)
   const now = useServerTime(1000);
 
-  const hh = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const dd = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
+  const hh = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/Rio_Branco' });
+  const dd = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', timeZone: 'America/Rio_Branco' }).replace('.', '');
 
   type Tone = 'ok' | 'primary' | 'warn' | 'neutral';
   const cells: Array<{ icon: LucideIcon; label: string; value: string; tone?: Tone; live?: boolean }> = [
