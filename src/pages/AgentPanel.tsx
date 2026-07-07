@@ -501,7 +501,7 @@ export default function AgentPanel() {
             paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
           }}
         >
-          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-5xl space-y-2.5 md:space-y-3' : 'max-w-6xl space-y-3 md:space-y-4'}`}>
+          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-4xl space-y-2 md:space-y-2.5' : 'max-w-5xl space-y-2.5 md:space-y-3'}`}>
             {/* Hero HUD removido — redundante com o AgentPanelHeader, reduzindo altura da página */}
 
             {/* Professional Header Bar */}
