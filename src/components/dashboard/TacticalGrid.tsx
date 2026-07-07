@@ -23,6 +23,7 @@ export function TacticalGrid({
 }: TacticalGridProps) {
   const [nodes, setNodes] = useState<GridNode[]>([]);
   const [scanPosition, setScanPosition] = useState(0);
+  const now = useServerTime(1000);
 
   // Initialize grid nodes
   useEffect(() => {
