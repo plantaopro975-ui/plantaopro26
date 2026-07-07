@@ -1406,9 +1406,13 @@ export default function Index() {
       <BetaNoticeFooter />
 
       {/* Footer — Noir & Gold Command Signature */}
-      <footer className="relative z-20 shrink-0 overflow-hidden border-t border-primary/20 bg-[linear-gradient(180deg,hsl(222_38%_6%/0.96)_0%,hsl(220_35%_4%/0.99)_100%)] backdrop-blur-xl">
-        {/* Gold accent line */}
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-80" />
+      <footer className="relative z-20 shrink-0 overflow-hidden border-t border-primary/30 bg-[linear-gradient(180deg,hsl(222_38%_6%/0.96)_0%,hsl(220_35%_4%/0.99)_100%)] backdrop-blur-xl shadow-[0_-8px_24px_-12px_hsl(var(--primary)/0.35)]">
+        {/* Double gold accent line — main + hairline echo */}
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-90" />
+        <span aria-hidden className="pointer-events-none absolute inset-x-8 top-[3px] h-px bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.55)_50%,transparent_100%)]" />
+        {/* Corner tick marks — bracket the footer without adding height */}
+        <span aria-hidden className="pointer-events-none absolute top-0 left-0 h-2 w-2 border-t border-l border-primary/60" />
+        <span aria-hidden className="pointer-events-none absolute top-0 right-0 h-2 w-2 border-t border-r border-primary/60" />
         {/* Micro grid */}
         <span
           aria-hidden
