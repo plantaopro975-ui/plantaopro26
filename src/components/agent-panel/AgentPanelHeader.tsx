@@ -162,7 +162,7 @@ function OnlinePulse({ isOnline }: { isOnline: boolean }) {
    Unit badge
    ──────────────────────────────────────────────────────────────── */
 
-function UnitBadge({ unitId }: { unitId: string }) {
+function UnitBadge({ unitId, prominent = false }: { unitId: string; prominent?: boolean }) {
   const [unitName, setUnitName] = useState('');
   useEffect(() => {
     if (!unitId) return;
@@ -171,6 +171,21 @@ function UnitBadge({ unitId }: { unitId: string }) {
     });
   }, [unitId]);
   if (!unitName) return null;
+  if (prominent) {
+    return (
+      <div className="flex items-center gap-2.5 pl-2 pr-3.5 py-1.5 rounded-lg bg-gradient-to-br from-slate-950/90 to-slate-900/70 border-2 border-amber-500/50 shadow-[0_2px_10px_-2px_rgba(0,0,0,.6)] font-['IBM_Plex_Mono',_monospace]">
+        <div className="p-1 rounded-md bg-amber-500/15 border border-amber-500/40">
+          <IconBuilding className="h-4 w-4 text-amber-300" />
+        </div>
+        <div className="leading-tight min-w-0">
+          <div className="text-[8.5px] tracking-[0.25em] uppercase text-slate-400 font-semibold">Unidade</div>
+          <div className="text-[13px] font-black text-amber-200 tracking-[0.10em] uppercase truncate max-w-[200px] md:max-w-[280px]">
+            {unitName}
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-950/70 border border-amber-500/40 font-['IBM_Plex_Mono',_monospace]">
       <IconBuilding className="h-3.5 w-3.5 text-amber-400" />
