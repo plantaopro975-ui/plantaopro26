@@ -430,6 +430,7 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
 function RoundsHeroSVG({ color, active, silent }: { color: string; active: boolean; silent: boolean }) {
   return (
     <svg viewBox="0 0 220 116" className="h-20 w-36 sm:h-24 sm:w-44 shrink-0" aria-hidden>
+      <style>{`@keyframes roundsRadarSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       <defs>
         <radialGradient id="roundsHeroGlow" cx="50%" cy="50%" r="60%">
           <stop offset="0%" stopColor={color} stopOpacity="0.5" />
@@ -2125,8 +2126,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           const view = live ?? preview;
                           const isCurrent = !!view && !view.done && i === view.index;
                           const isDone = !!view && (view.done ? i <= view.index : i < view.index);
-                          const isWaiting = !isCurrent && !isDone;
-                          const remainingForRow = isCurrent && !view.done ? view.remaining : Math.max(0, r.duration * 60);
+                          const remainingForRow = isCurrent && view && !view.done ? view.remaining : Math.max(0, r.duration * 60);
                           return (
                             <li key={i}
                                 className={cn(
