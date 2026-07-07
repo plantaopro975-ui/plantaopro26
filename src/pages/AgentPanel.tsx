@@ -494,7 +494,7 @@ export default function AgentPanel() {
 
             {/* Main Tabs - REDESIGNED: Modern, Legible, Mobile-First */}
             <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-amber-500" /></div>}>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-3 md:space-y-4'}>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
               {/* Control Panel Container - Modern Glass Design */}
               <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
                 {/* Decorative glow effect */}
@@ -641,7 +641,7 @@ export default function AgentPanel() {
                 {/* Unit Summary Card */}
                 <UnitSummaryCard unitId={agent.unit_id} />
                 
-                <div className="grid grid-cols-1 xl:grid-cols-4 gap-2.5 md:gap-3 lg:gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-4 gap-2.5 md:gap-3">
                   <div className="xl:col-span-3">
                     <TeamMembersCard 
                       unitId={agent.unit_id} 
@@ -651,7 +651,7 @@ export default function AgentPanel() {
                       unitName={agent.unit?.name}
                     />
                   </div>
-                  <div className="xl:col-span-1 grid grid-cols-2 xl:grid-cols-1 gap-3 md:gap-4">
+                  <div className="xl:col-span-1 grid grid-cols-2 xl:grid-cols-1 gap-2.5 md:gap-3">
                     <TacticalRadar 
                       unitId={agent.unit_id || undefined}
                       compact={true}
@@ -720,7 +720,7 @@ export default function AgentPanel() {
               </TabsContent>
 
               <TabsContent value="config" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5 md:gap-3 lg:gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5 md:gap-3">
                   <AgentSettingsCard
                     agentId={agent.id}
                     agentName={agent.name}
@@ -728,7 +728,7 @@ export default function AgentPanel() {
                     currentAvatarUrl={(agent as any).avatar_url}
                     onUpdate={() => window.location.reload()}
                   />
-                  <div className="space-y-3 md:space-y-4">
+                  <div className="space-y-2.5 md:space-y-3">
                     {/* Smart Alarm Clock - Futuristic Design */}
                     <SmartAlarmClock agentId={agent.id} />
                     

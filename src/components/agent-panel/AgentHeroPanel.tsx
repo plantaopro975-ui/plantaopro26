@@ -153,79 +153,79 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
           style={{ animation: 'scan 4s ease-in-out infinite' }} />
       </div>
 
-      <div className="relative z-10 p-4 md:p-6">
+      <div className="relative z-10 p-3 md:p-4">
         {/* Top Bar - Status & Time */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between mb-2.5 md:mb-3">
+          <div className="flex items-center gap-2.5">
             <div className="relative">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                <Shield className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                <Shield className="h-4 w-4 md:h-5 md:w-5 text-white" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-zinc-900 flex items-center justify-center">
-                <Zap className="h-2.5 w-2.5 text-white" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-zinc-900 flex items-center justify-center">
+                <Zap className="h-2 w-2 text-white" />
               </div>
             </div>
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider font-medium">Agente</p>
-              <h2 className="text-lg md:text-xl font-bold text-white">{firstName}</h2>
+              <p className="text-[9px] md:text-[10px] text-zinc-400 uppercase tracking-wider font-medium leading-tight">Agente</p>
+              <h2 className="text-sm md:text-base font-bold text-white leading-tight">{firstName}</h2>
             </div>
           </div>
           
           {/* Live Clock */}
           <div className="flex flex-col items-end">
-            <div className="flex items-center gap-2 text-zinc-400">
-              <Clock className="h-3.5 w-3.5" />
-              <span className="text-xs uppercase tracking-wider">{format(currentTime, "EEEE", { locale: ptBR })}</span>
+            <div className="flex items-center gap-1.5 text-zinc-400">
+              <Clock className="h-3 w-3" />
+              <span className="text-[9px] md:text-[10px] uppercase tracking-wider">{format(currentTime, "EEEE", { locale: ptBR })}</span>
             </div>
-            <p className="text-xl md:text-2xl font-mono font-bold text-white tabular-nums">
+            <p className="text-base md:text-lg font-mono font-bold text-white tabular-nums leading-tight">
               {format(currentTime, 'HH:mm:ss')}
             </p>
           </div>
         </div>
 
         {/* Main Hero Content - Next Shift Countdown */}
-        <div className="bg-zinc-800/60 backdrop-blur-sm rounded-xl border border-zinc-700/50 p-4 mb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Timer className={cn("h-4 w-4", shiftContext.urgent ? "animate-pulse" : "", shiftContext.color)} />
-                <span className={cn("text-sm font-bold uppercase tracking-wider", shiftContext.color)}>
+        <div className="bg-zinc-800/60 backdrop-blur-sm rounded-lg border border-zinc-700/50 p-2.5 md:p-3 mb-2.5 md:mb-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Timer className={cn("h-3.5 w-3.5", shiftContext.urgent ? "animate-pulse" : "", shiftContext.color)} />
+                <span className={cn("text-[10px] md:text-xs font-bold uppercase tracking-wider", shiftContext.color)}>
                   {shiftContext.label}
                 </span>
               </div>
               
               {nextShift ? (
-                <div className="space-y-1">
-                  <div className="flex items-baseline gap-3">
-                    <span className="text-3xl md:text-4xl font-black text-white tabular-nums">
+                <div className="space-y-0.5">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-xl md:text-2xl font-black text-white tabular-nums leading-none">
                       {timeUntil || '--:--'}
                     </span>
-                    <span className="text-xs text-zinc-500 uppercase">até o plantão</span>
+                    <span className="text-[9px] md:text-[10px] text-zinc-500 uppercase">até o plantão</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-zinc-400">
-                    <Calendar className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1.5 text-[11px] md:text-xs text-zinc-400">
+                    <Calendar className="h-3 w-3" />
                     <span>{format(parseISO(nextShift.shift_date), "dd 'de' MMMM", { locale: ptBR })}</span>
                     <span className="text-zinc-600">•</span>
                     <span className="font-mono">{nextShift.start_time?.slice(0, 5) || '07:00'}</span>
                   </div>
                 </div>
               ) : (
-                <p className="text-lg text-zinc-500">Nenhum plantão agendado</p>
+                <p className="text-sm text-zinc-500">Nenhum plantão agendado</p>
               )}
             </div>
             
             {/* Visual Indicator */}
-            <div className="hidden sm:flex relative">
+            <div className="hidden sm:flex relative shrink-0">
               <div className={cn(
-                "w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center",
+                "w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center",
                 shiftContext.urgent 
                   ? "bg-gradient-to-br from-amber-500/20 to-orange-500/20 border-2 border-amber-500/50"
                   : "bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/30"
               )}>
                 {shiftContext.urgent ? (
-                  <Flame className="h-10 w-10 text-amber-400 animate-pulse" />
+                  <Flame className="h-6 w-6 md:h-7 md:w-7 text-amber-400 animate-pulse" />
                 ) : (
-                  <Target className="h-10 w-10 text-cyan-400" />
+                  <Target className="h-6 w-6 md:h-7 md:w-7 text-cyan-400" />
                 )}
               </div>
             </div>
@@ -233,7 +233,7 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
         </div>
 
         {/* Quick Stats Grid - Compact with truncation */}
-        <div className="grid grid-cols-4 gap-1.5 md:gap-2">
+        <div className="grid grid-cols-4 gap-1.5">
           {[
             { 
               label: 'Total', 
@@ -271,17 +271,17 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
             <div
               key={stat.label}
               className={cn(
-                "relative p-2 md:p-2.5 rounded-lg border backdrop-blur-sm transition-all hover:scale-[1.02] overflow-hidden",
+                "relative p-1.5 md:p-2 rounded-md border backdrop-blur-sm transition-all hover:scale-[1.02] overflow-hidden",
                 `bg-gradient-to-br ${stat.color}`,
                 stat.borderColor
               )}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <stat.icon className={cn("h-3.5 w-3.5 md:h-4 md:w-4 mb-1", stat.iconColor)} />
-              <p className="text-base md:text-lg font-bold text-white tabular-nums leading-none truncate">
+              <stat.icon className={cn("h-3 w-3 md:h-3.5 md:w-3.5 mb-0.5", stat.iconColor)} />
+              <p className="text-sm md:text-base font-bold text-white tabular-nums leading-none truncate">
                 {stat.value}
               </p>
-              <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-wide mt-0.5 truncate">
+              <p className="text-[9px] text-zinc-500 uppercase tracking-wide mt-0.5 truncate">
                 {stat.label}
               </p>
             </div>
