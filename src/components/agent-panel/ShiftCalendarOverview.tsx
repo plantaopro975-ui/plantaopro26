@@ -52,6 +52,8 @@ interface DayInfo {
 
 export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [filter, setFilter] = useState<'all' | 'shift' | 'leave'>('all');
+
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [bhEntries, setBhEntries] = useState<BHEntry[]>([]);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
