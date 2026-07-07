@@ -152,13 +152,21 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
     return 'bg-slate-800/30 border-slate-700/30 text-muted-foreground';
   };
 
-  const getDayIcon = (types: DayType[]) => {
-    if (types.includes('shift')) return <Clock className="h-2.5 w-2.5" />;
-    if (types.includes('vacation')) return <Palmtree className="h-2.5 w-2.5" />;
-    if (types.includes('leave')) return <RefreshCw className="h-2.5 w-2.5" />;
-    if (types.includes('bh')) return <CheckCircle className="h-2.5 w-2.5" />;
-    return null;
+  const getDayMarker = (types: DayType[]) => {
+    // Compact SVG marker (dot) — visually consistent and lightweight
+    let fill: string | null = null;
+    if (types.includes('shift')) fill = 'hsl(43 96% 56%)';
+    else if (types.includes('vacation')) fill = 'hsl(270 91% 65%)';
+    else if (types.includes('leave')) fill = 'hsl(217 91% 60%)';
+    else if (types.includes('bh')) fill = 'hsl(142 71% 45%)';
+    if (!fill) return null;
+    return (
+      <svg width="6" height="6" viewBox="0 0 6 6" aria-hidden className="mt-0.5">
+        <circle cx="3" cy="3" r="3" fill={fill} />
+      </svg>
+    );
   };
+
 
   const days = eachDayOfInterval({
     start: startOfMonth(currentMonth),
@@ -190,127 +198,112 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
 
   return (
     <Card className="relative overflow-hidden bg-slate-800/50 border-slate-700">
-      {/* Decoração SVG discreta no fundo */}
-      <svg
-        aria-hidden
-        className="pointer-events-none absolute -top-8 -right-8 h-40 w-40 opacity-[0.07]"
-        viewBox="0 0 100 100"
-        fill="none"
-      >
+      {/* Fundo decorativo em SVG: grid sutil + moldura de calendário */}
+      <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="cal-grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--primary))" />
+          <pattern id="cal-grid" width="14" height="14" patternUnits="userSpaceOnUse">
+            <path d="M14 0H0V14" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5" />
+          </pattern>
+          <linearGradient id="cal-frame" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
             <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <rect x="14" y="20" width="72" height="66" rx="8" stroke="url(#cal-grad)" strokeWidth="2" />
-        <line x1="14" y1="34" x2="86" y2="34" stroke="url(#cal-grad)" strokeWidth="2" />
-        <line x1="32" y1="12" x2="32" y2="26" stroke="url(#cal-grad)" strokeWidth="3" strokeLinecap="round" />
-        <line x1="68" y1="12" x2="68" y2="26" stroke="url(#cal-grad)" strokeWidth="3" strokeLinecap="round" />
+        <rect width="100%" height="100%" fill="url(#cal-grid)" />
+      </svg>
+      <svg aria-hidden viewBox="0 0 100 100" className="pointer-events-none absolute -top-6 -right-6 h-28 w-28 opacity-20">
+        <rect x="14" y="22" width="72" height="64" rx="6" stroke="url(#cal-frame)" strokeWidth="1.5" fill="none" />
+        <line x1="14" y1="36" x2="86" y2="36" stroke="url(#cal-frame)" strokeWidth="1.5" />
+        <line x1="32" y1="14" x2="32" y2="28" stroke="url(#cal-frame)" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="68" y1="14" x2="68" y2="28" stroke="url(#cal-frame)" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
 
-      <CardHeader className="pb-2 relative">
+      <CardHeader className="pb-1.5 pt-2.5 px-3 relative">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="flex items-center gap-2 text-sm md:text-base">
-            <Calendar className="h-4 w-4 md:h-4.5 md:w-4.5 text-primary" />
-            <span>Calendário do Mês</span>
+          <CardTitle className="flex items-center gap-1.5 text-xs md:text-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden className="text-primary">
+              <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+            <span>Calendário</span>
           </CardTitle>
           <div className="flex items-center gap-0.5">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-7 w-7"
-              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-              aria-label="Mês anterior"
-            >
-              <ChevronLeft className="h-3.5 w-3.5" />
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} aria-label="Mês anterior">
+              <ChevronLeft className="h-3 w-3" />
             </Button>
-            <span className="text-xs font-medium min-w-[100px] text-center capitalize tabular-nums">
+            <span className="text-[11px] font-medium min-w-[86px] text-center capitalize tabular-nums">
               {format(currentMonth, "MMM yyyy", { locale: ptBR })}
             </span>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-7 w-7"
-              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-              aria-label="Próximo mês"
-            >
-              <ChevronRight className="h-3.5 w-3.5" />
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} aria-label="Próximo mês">
+              <ChevronRight className="h-3 w-3" />
             </Button>
           </div>
         </div>
       </CardHeader>
-      
-      <CardContent className="space-y-3 relative">
-        {/* Month Stats — 2 col em telas muito pequenas, 4 col a partir de xs */}
-        <div className="grid grid-cols-2 min-[420px]:grid-cols-4 gap-1.5">
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-md py-1.5 px-1.5 text-center">
-            <p className="text-sm md:text-base font-bold text-amber-400 leading-none tabular-nums">{shiftDays}</p>
-            <p className="text-[9px] text-muted-foreground uppercase mt-0.5 truncate">Plantões</p>
-          </div>
-          <div className="bg-purple-500/10 border border-purple-500/30 rounded-md py-1.5 px-1.5 text-center">
-            <p className="text-sm md:text-base font-bold text-purple-400 leading-none tabular-nums">{vacationDays}</p>
-            <p className="text-[9px] text-muted-foreground uppercase mt-0.5 truncate">Férias</p>
-          </div>
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-md py-1.5 px-1.5 text-center">
-            <p className="text-sm md:text-base font-bold text-blue-400 leading-none tabular-nums">{leaveDays}</p>
-            <p className="text-[9px] text-muted-foreground uppercase mt-0.5 truncate">Folgas</p>
-          </div>
-          <div className="bg-green-500/10 border border-green-500/30 rounded-md py-1.5 px-1.5 text-center">
-            <p className="text-sm md:text-base font-bold text-green-400 leading-none tabular-nums">{totalBhHours > 0 ? '+' : ''}{totalBhHours}</p>
-            <p className="text-[9px] text-muted-foreground uppercase mt-0.5 truncate">BH (h)</p>
-          </div>
+
+      <CardContent className="space-y-2 relative px-3 pb-3">
+        {/* Stats compactos */}
+        <div className="grid grid-cols-4 gap-1">
+          {[
+            { v: shiftDays, label: 'Plantões', color: 'amber' },
+            { v: vacationDays, label: 'Férias', color: 'purple' },
+            { v: leaveDays, label: 'Folgas', color: 'blue' },
+            { v: `${totalBhHours > 0 ? '+' : ''}${totalBhHours}`, label: 'BH', color: 'green' },
+          ].map((s) => (
+            <div key={s.label} className={`bg-${s.color}-500/10 border border-${s.color}-500/25 rounded py-1 px-1 text-center`}>
+              <p className={`text-xs md:text-sm font-bold text-${s.color}-400 leading-none tabular-nums`}>{s.v}</p>
+              <p className="text-[8px] text-muted-foreground uppercase mt-0.5 truncate tracking-wide">{s.label}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Calendar Grid — contido com max-width e células responsivas */}
-        <div className="bg-slate-900/50 rounded-lg p-1.5 sm:p-2 md:p-2.5 border border-slate-700/50 mx-auto w-full max-w-md">
-          {/* Weekday headers */}
-          <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-1.5">
+        {/* Grid compacto do mês */}
+        <div className="bg-slate-900/60 rounded-md p-1.5 border border-slate-700/50 mx-auto w-full max-w-[320px]">
+          <div className="grid grid-cols-7 gap-0.5 mb-1">
             {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
-              <div key={i} className="text-center text-[9px] sm:text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+              <div key={i} className="text-center text-[9px] text-muted-foreground font-semibold uppercase">
                 {day}
               </div>
             ))}
           </div>
 
-          {/* Days grid — altura fixa e hierarquia clara (data em cima, ícone abaixo) */}
-          <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
+          <div className="grid grid-cols-7 gap-0.5">
             {Array.from({ length: startingDayOfWeek }).map((_, i) => (
-              <div key={`empty-${i}`} className="h-9 sm:h-10 md:h-11" />
+              <div key={`empty-${i}`} className="h-7 sm:h-8" />
             ))}
 
             {days.map((day) => {
               const dayInfo = getDayInfo(day);
               const colors = getDayColors(dayInfo.types);
-              const icon = getDayIcon(dayInfo.types);
+              const marker = getDayMarker(dayInfo.types);
               const isTodayDay = dayInfo.types.includes('today');
 
               return (
                 <div
                   key={day.toISOString()}
-                  className={`relative h-9 sm:h-10 md:h-11 rounded-md border flex flex-col items-center justify-center gap-0.5 px-0.5 text-[10px] sm:text-[11px] font-medium transition-all ${colors} ${
-                    isTodayDay ? 'ring-2 ring-primary ring-offset-1 ring-offset-slate-900' : ''
+                  className={`relative h-7 sm:h-8 rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all ${colors} ${
+                    isTodayDay ? 'ring-1 ring-primary ring-offset-1 ring-offset-slate-900' : ''
                   }`}
                 >
                   <span className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
-                  {icon && <div className="opacity-80">{icon}</div>}
+                  {marker}
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Legend — quebra bem em telas pequenas, sem cortar textos */}
-        <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 pt-1.5 border-t border-slate-700/50">
+        {/* Legenda com dots SVG */}
+        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 pt-1 border-t border-slate-700/50">
           {[
-            { c: 'bg-amber-500/50 border-amber-500/50', label: 'Plantão' },
-            { c: 'bg-purple-500/50 border-purple-500/50', label: 'Férias' },
-            { c: 'bg-blue-500/50 border-blue-500/50', label: 'Folga' },
-            { c: 'bg-green-500/50 border-green-500/50', label: 'BH' },
+            { c: 'hsl(43 96% 56%)', label: 'Plantão' },
+            { c: 'hsl(270 91% 65%)', label: 'Férias' },
+            { c: 'hsl(217 91% 60%)', label: 'Folga' },
+            { c: 'hsl(142 71% 45%)', label: 'BH' },
           ].map((it) => (
-            <div key={it.label} className="flex items-center gap-1.5">
-              <div className={`w-2.5 h-2.5 rounded-full border ${it.c}`} />
-              <span className="text-[10px] text-muted-foreground whitespace-nowrap">{it.label}</span>
+            <div key={it.label} className="flex items-center gap-1">
+              <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill={it.c} /></svg>
+              <span className="text-[9px] text-muted-foreground whitespace-nowrap">{it.label}</span>
             </div>
           ))}
         </div>
@@ -318,3 +311,4 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
     </Card>
   );
 }
+
