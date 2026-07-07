@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 // Ícones inline via SVG mantêm o visual leve e profissional
 import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle } from 'lucide-react';
+import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 
 interface ShiftCalendarOverviewProps {
   agentId: string;
@@ -54,6 +55,57 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
   const [bhEntries, setBhEntries] = useState<BHEntry[]>([]);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState<JourneyDetailsData | null>(null);
+
+  const buildDT = (dateStr: string, time: string | null, fallback: string) => {
+    const [h, m] = (time || fallback).split(':').map(Number);
+    const d = parseISO(dateStr);
+    d.setHours(h || 0, m || 0, 0, 0);
+    return d;
+  };
+
+  const buildJourneyForDay = (day: Date): JourneyDetailsData => {
+    const dateStr = format(day, 'yyyy-MM-dd');
+    const dayShift = shifts.find(s => s.shift_date === dateStr && !s.is_vacation);
+    const prevShift = [...shifts]
+      .filter(s => s.shift_date < dateStr && !s.is_vacation)
+      .sort((a, b) => (a.shift_date < b.shift_date ? 1 : -1))[0];
+
+    let shiftStart: Date | null = null;
+    let shiftEnd: Date | null = null;
+    if (dayShift) {
+      shiftStart = buildDT(dayShift.shift_date, dayShift.start_time, '07:00');
+      shiftEnd = buildDT(dayShift.shift_date, dayShift.end_time, '19:00');
+      if (shiftEnd <= shiftStart) shiftEnd.setDate(shiftEnd.getDate() + 1);
+    }
+
+    let restStart: Date | null = null;
+    let restEnd: Date | null = null;
+    if (prevShift) {
+      const pStart = buildDT(prevShift.shift_date, prevShift.start_time, '19:00');
+      const pEnd = buildDT(prevShift.shift_date, prevShift.end_time, '07:00');
+      if (pEnd <= pStart) pEnd.setDate(pEnd.getDate() + 1);
+      restStart = pEnd;
+      restEnd = shiftStart ?? day;
+    }
+
+    return {
+      targetDate: day,
+      restStart,
+      restEnd,
+      shiftStart,
+      shiftEnd,
+      emptyMessage: !dayShift && !prevShift
+        ? 'Sem plantão cadastrado para este dia. Revise o cadastro do agente na aba Configurações.'
+        : undefined,
+    };
+  };
+
+  const openDay = (day: Date) => {
+    setDetailData(buildJourneyForDay(day));
+    setDetailOpen(true);
+  };
 
   useEffect(() => {
     fetchData();
@@ -274,59 +326,93 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
               <div key={`empty-${i}`} className="h-7 sm:h-8" />
             ))}
 
-            {days.map((day) => {
-              const dayInfo = getDayInfo(day);
-              const colors = getDayColors(dayInfo.types);
-              const marker = getDayMarker(dayInfo.types);
-              const isTodayDay = dayInfo.types.includes('today');
+            <TooltipProvider delayDuration={150}>
+              {days.map((day) => {
+                const dayInfo = getDayInfo(day);
+                const colors = getDayColors(dayInfo.types);
+                const marker = getDayMarker(dayInfo.types);
+                const isTodayDay = dayInfo.types.includes('today');
 
-              // Tooltip detalhado para HOJE: mostra descanso + plantão do dia
-              let tooltip = format(day, "EEEE, dd 'de' MMMM", { locale: ptBR });
-              if (isTodayDay) {
+                // Dados profissionais do tooltip (folga + plantão)
                 const dateStr = format(day, 'yyyy-MM-dd');
-                const todayShift = shifts.find(s => s.shift_date === dateStr && !s.is_vacation);
+                const dayShift = shifts.find(s => s.shift_date === dateStr && !s.is_vacation);
                 const prevShift = [...shifts]
                   .filter(s => s.shift_date < dateStr && !s.is_vacation)
                   .sort((a, b) => (a.shift_date < b.shift_date ? 1 : -1))[0];
 
-                const parts: string[] = ['📅 Jornada de Hoje'];
-                if (prevShift?.start_time && (prevShift as Shift & { end_time?: string }).end_time) {
-                  const pEnd = (prevShift as Shift & { end_time?: string }).end_time as string;
-                  parts.push(`☀ Descanso: até ${pEnd.slice(0, 5)}`);
-                } else if (todayShift?.start_time) {
-                  parts.push(`☀ Descanso: até ${todayShift.start_time.slice(0, 5)}`);
-                }
-                if (todayShift?.start_time) {
-                  const s = todayShift.start_time.slice(0, 5);
-                  const e = (todayShift as Shift & { end_time?: string }).end_time?.slice(0, 5) || '—';
-                  const startH = Number(s.split(':')[0]);
-                  const isNight = startH >= 18 || startH < 6;
-                  parts.push(`${isNight ? '🌙' : '☀'} Plantão: ${s}–${e} (${isNight ? 'Noturno' : 'Diurno'})`);
-                } else if (!todayShift) {
-                  parts.push('⚠ Sem plantão cadastrado — revisar cadastro do agente');
-                }
-                tooltip = parts.join('\n');
-              }
+                const shiftStartStr = dayShift?.start_time?.slice(0, 5);
+                const shiftEndStr = dayShift?.end_time?.slice(0, 5);
+                const shiftIsNight = shiftStartStr
+                  ? Number(shiftStartStr.split(':')[0]) >= 18 || Number(shiftStartStr.split(':')[0]) < 6
+                  : false;
+                const restUntil = shiftStartStr || prevShift?.end_time?.slice(0, 5);
 
-              return (
-                <div
-                  key={day.toISOString()}
-                  title={tooltip}
-                  className={`relative h-7 sm:h-8 rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all ${colors} ${
-                    isTodayDay ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900 shadow-lg shadow-amber-500/30' : ''
-                  }`}
-                >
-                  <span className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
-                  {marker}
-                  {isTodayDay && (
-                    <span
-                      aria-label="Jornada de hoje"
-                      className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)] animate-pulse"
-                    />
-                  )}
-                </div>
-              );
-            })}
+                return (
+                  <Tooltip key={day.toISOString()}>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={() => openDay(day)}
+                        aria-label={`Abrir jornada de ${format(day, "d 'de' MMMM", { locale: ptBR })}`}
+                        className={`relative h-7 sm:h-8 w-full rounded border flex flex-col items-center justify-center text-[10px] font-medium transition-all cursor-pointer hover:brightness-125 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${colors} ${
+                          isTodayDay ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900 shadow-lg shadow-amber-500/30' : ''
+                        }`}
+                      >
+                        <span className={`leading-none tabular-nums ${isTodayDay ? 'font-bold' : ''}`}>{format(day, 'd')}</span>
+                        {marker}
+                        {isTodayDay && (
+                          <span
+                            aria-hidden
+                            className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)] animate-pulse"
+                          />
+                        )}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[240px] bg-slate-900 border-slate-700 p-2.5">
+                      <div className="space-y-1.5 text-xs">
+                        <div className="flex items-center gap-1.5 font-bold text-amber-300 pb-1 border-b border-slate-700">
+                          {isTodayDay ? '📅 Jornada de Hoje' : format(day, "EEE, dd 'de' MMM", { locale: ptBR })}
+                        </div>
+                        {restUntil && (
+                          <div className="flex items-start gap-1.5 text-emerald-300">
+                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              <span className="font-semibold">Descanso</span> até {restUntil}
+                            </span>
+                          </div>
+                        )}
+                        {dayShift ? (
+                          <div className={`flex items-start gap-1.5 ${shiftIsNight ? 'text-indigo-300' : 'text-sky-300'}`}>
+                            {shiftIsNight
+                              ? <Moon className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                              : <Sun className="h-3 w-3 mt-0.5 flex-shrink-0" />}
+                            <span className="leading-tight">
+                              <span className="font-semibold">Plantão {shiftIsNight ? 'Noturno' : 'Diurno'}:</span>{' '}
+                              {shiftStartStr}–{shiftEndStr || '—'}
+                            </span>
+                          </div>
+                        ) : dayInfo.types.includes('leave') ? (
+                          <div className="flex items-start gap-1.5 text-blue-300">
+                            <Palmtree className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight font-semibold">Folga aprovada</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-start gap-1.5 text-amber-400">
+                            <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">
+                              {isTodayDay ? 'Revisar cadastro do agente' : 'Sem plantão cadastrado'}
+                            </span>
+                          </div>
+                        )}
+                        <div className="text-[9px] text-muted-foreground pt-1 border-t border-slate-700/60 italic">
+                          Clique para ver a jornada completa
+                        </div>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </TooltipProvider>
           </div>
         </div>
 
@@ -345,6 +431,7 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
           ))}
         </div>
       </CardContent>
+      <JourneyDetailsDialog open={detailOpen} onOpenChange={setDetailOpen} data={detailData} />
     </Card>
   );
 }

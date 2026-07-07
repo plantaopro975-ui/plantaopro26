@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Sun, Moon, Palmtree, History, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sun, Moon, Palmtree, History, AlertCircle, Eye } from 'lucide-react';
 import { format, parseISO, differenceInHours } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 
 interface RecentShiftCyclesCardProps {
   agentId: string;
@@ -40,6 +42,19 @@ const buildDateTime = (dateStr: string, time: string | null, fallback: string): 
 export function RecentShiftCyclesCard({ agentId, className }: RecentShiftCyclesCardProps) {
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState<JourneyDetailsData | null>(null);
+
+  const openDetails = (c: Cycle) => {
+    setDetailData({
+      targetDate: c.shiftStart,
+      restStart: c.restStart,
+      restEnd: c.restStart ? c.restEnd : null,
+      shiftStart: c.shiftStart,
+      shiftEnd: c.shiftEnd,
+    });
+    setDetailOpen(true);
+  };
 
   useEffect(() => {
     let alive = true;
@@ -168,11 +183,23 @@ export function RecentShiftCyclesCard({ agentId, className }: RecentShiftCyclesC
                     </span>
                   </div>
                 </div>
+                <div className="flex justify-end pt-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openDetails(c)}
+                    className="h-6 px-2 text-[10px] text-amber-300 hover:text-amber-200 hover:bg-amber-500/10"
+                  >
+                    <Eye className="h-3 w-3 mr-1" />
+                    Ver detalhes
+                  </Button>
+                </div>
               </div>
             );
           })
         )}
       </CardContent>
+      <JourneyDetailsDialog open={detailOpen} onOpenChange={setDetailOpen} data={detailData} />
     </Card>
   );
 }
