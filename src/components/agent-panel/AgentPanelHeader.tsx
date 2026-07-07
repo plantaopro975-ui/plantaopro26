@@ -97,15 +97,30 @@ const TEAM_CONFIG: Record<string, { hex: string; accent: string; label: string }
   DELTA:   { hex: '#f59e0b', accent: 'rgba(245,158,11,.55)', label: 'DELTA' },
 };
 
-function TeamInsignia({ team }: { team: string | null }) {
+function TeamInsignia({ team, prominent = false }: { team: string | null; prominent?: boolean }) {
   if (!team) return null;
   const cfg = TEAM_CONFIG[team.toUpperCase()] ?? { hex: '#c9a84c', accent: 'rgba(201,168,76,.55)', label: team };
+  if (prominent) {
+    return (
+      <div
+        className="flex items-center gap-2.5 pl-2 pr-3.5 py-1.5 rounded-lg bg-gradient-to-br from-slate-950/90 to-slate-900/70 border-2 shadow-[0_2px_10px_-2px_rgba(0,0,0,.6)] font-['IBM_Plex_Mono',_monospace]"
+        style={{ borderColor: cfg.accent }}
+      >
+        <TeamEmblem team={team} size="sm" />
+        <div className="leading-tight">
+          <div className="text-[8.5px] tracking-[0.25em] uppercase text-slate-400 font-semibold">Equipe</div>
+          <div className="text-[13px] font-black tracking-[0.18em] uppercase" style={{ color: cfg.hex }}>
+            {cfg.label}
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       className="relative flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-md bg-slate-950/70 border font-['IBM_Plex_Mono',_monospace]"
       style={{ borderColor: cfg.accent }}
     >
-      {/* corps shield */}
       <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none">
         <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3Z" fill={cfg.hex} fillOpacity=".18" stroke={cfg.hex} strokeWidth="1.4" />
         <path d="M8 11h8M8 14h8M10 8h4" stroke={cfg.hex} strokeWidth="1.2" strokeLinecap="round" />
