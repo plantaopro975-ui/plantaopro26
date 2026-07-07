@@ -42,6 +42,19 @@ const buildDateTime = (dateStr: string, time: string | null, fallback: string): 
 export function RecentShiftCyclesCard({ agentId, className }: RecentShiftCyclesCardProps) {
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState<JourneyDetailsData | null>(null);
+
+  const openDetails = (c: Cycle) => {
+    setDetailData({
+      targetDate: c.shiftStart,
+      restStart: c.restStart,
+      restEnd: c.restStart ? c.restEnd : null,
+      shiftStart: c.shiftStart,
+      shiftEnd: c.shiftEnd,
+    });
+    setDetailOpen(true);
+  };
 
   useEffect(() => {
     let alive = true;
