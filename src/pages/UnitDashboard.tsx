@@ -58,17 +58,30 @@ const teamConfigs: Record<string, { icon: any; color: string; bgColor: string }>
   DELTA: { icon: Users, color: 'text-violet-400', bgColor: 'bg-violet-500/20' },
 };
 
+interface UnitHistoryEntry {
+  id: string;
+  action: string;
+  agent_name: string | null;
+  details: any;
+  created_at: string;
+}
+
 export default function UnitDashboard() {
   const { unitId } = useParams<{ unitId: string }>();
-  const { user, isLoading: authLoading, masterSession } = useAuth();
+  const { user, isLoading: authLoading, masterSession, isAdmin } = useAuth();
   const { agent: currentAgent } = useAgentProfile();
   const navigate = useNavigate();
-  
+
   const [unit, setUnit] = useState<Unit | null>(null);
   const [teamStats, setTeamStats] = useState<TeamStats[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [welcomeName, setWelcomeName] = useState('');
+  const [history, setHistory] = useState<UnitHistoryEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
+  const canSeeHistory = !!masterSession || isAdmin;
+
 
   // Redirect only after loading is complete
   useEffect(() => {
