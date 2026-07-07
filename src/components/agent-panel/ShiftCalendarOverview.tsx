@@ -65,10 +65,10 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
     return d;
   };
 
-  const buildJourneyForDay = (day: Date): JourneyDetailsData => {
+  const buildJourneyFromShifts = (day: Date, localShifts: Shift[]): JourneyDetailsData => {
     const dateStr = format(day, 'yyyy-MM-dd');
-    const dayShift = shifts.find(s => s.shift_date === dateStr && !s.is_vacation);
-    const prevShift = [...shifts]
+    const dayShift = localShifts.find(s => s.shift_date === dateStr && !s.is_vacation);
+    const prevShift = [...localShifts]
       .filter(s => s.shift_date < dateStr && !s.is_vacation)
       .sort((a, b) => (a.shift_date < b.shift_date ? 1 : -1))[0];
 
@@ -102,8 +102,32 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
     };
   };
 
+  // Busca sob demanda para permitir navegação por qualquer mês dentro do diálogo
+  const fetchJourneyForDate = async (day: Date): Promise<JourneyDetailsData> => {
+    const dateStr = format(day, 'yyyy-MM-dd');
+    try {
+      const { data: dayShifts } = await supabase
+        .from('agent_shifts')
+        .select('*')
+        .eq('agent_id', agentId)
+        .eq('shift_date', dateStr);
+      const { data: prevShifts } = await supabase
+        .from('agent_shifts')
+        .select('*')
+        .eq('agent_id', agentId)
+        .lt('shift_date', dateStr)
+        .eq('is_vacation', false)
+        .order('shift_date', { ascending: false })
+        .limit(1);
+      const merged = [...((dayShifts || []) as Shift[]), ...((prevShifts || []) as Shift[])];
+      return buildJourneyFromShifts(day, merged);
+    } catch {
+      return buildJourneyFromShifts(day, shifts);
+    }
+  };
+
   const openDay = (day: Date) => {
-    setDetailData(buildJourneyForDay(day));
+    setDetailData(buildJourneyFromShifts(day, shifts));
     setDetailOpen(true);
   };
 
@@ -431,7 +455,13 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
           ))}
         </div>
       </CardContent>
-      <JourneyDetailsDialog open={detailOpen} onOpenChange={setDetailOpen} data={detailData} />
+      <JourneyDetailsDialog
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        data={detailData}
+        onRequestDate={fetchJourneyForDate}
+        storageKey={`journey:last-date:${agentId}`}
+      />
     </Card>
   );
 }
