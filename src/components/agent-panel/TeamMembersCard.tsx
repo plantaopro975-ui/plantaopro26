@@ -414,7 +414,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                   <p className="text-xs text-muted-foreground">Nenhum membro encontrado.</p>
                 </div>
               ) : (
-                <div className="w-full min-w-0 grid grid-cols-2 gap-2.5 sm:gap-3.5 lg:gap-3 overflow-visible">
+                <div className="w-full min-w-0 grid grid-cols-2 gap-3 sm:gap-3.5 lg:gap-3 overflow-visible">
                   {sortedMembers.map((member) => {
                     const isCurrentAgent = member.id === currentAgentId;
                     const hasBirthday = isBirthdayToday(member.birth_date);
@@ -423,7 +423,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                       <button
                         key={member.id}
                         onClick={() => handleMemberClick(member)}
-                          className={`relative w-full min-w-0 text-left rounded-2xl border p-3 sm:p-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
+                          className={`relative w-full min-w-0 text-left rounded-2xl border p-4 sm:p-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
                           isCurrentAgent
                             ? 'bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/50'
                             : 'bg-slate-800/60 border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700/60'
@@ -436,14 +436,14 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                           </div>
                         )}
                         
-                        <div className="flex flex-col items-center text-center sm:flex-row sm:text-left gap-2 sm:gap-3.5">
+                        <div className="flex flex-col items-center text-center sm:flex-row sm:text-left gap-2.5 sm:gap-3.5">
                           {/* Avatar */}
-                          <Avatar className={`h-16 w-16 sm:h-16 sm:w-16 border-2 shrink-0 shadow-md ${
+                          <Avatar className={`h-20 w-20 sm:h-16 sm:w-16 border-2 shrink-0 shadow-md ${
                             member.role === 'team_leader' ? 'border-amber-500' :
                             member.role === 'support' ? 'border-blue-500' : 'border-slate-500'
                           }`}>
                             {member.avatar_url && <AvatarImage src={member.avatar_url} alt={member.name} />}
-                            <AvatarFallback className="bg-slate-700 text-slate-200 text-xl sm:text-lg font-bold">
+                            <AvatarFallback className="bg-slate-700 text-slate-200 text-2xl sm:text-lg font-bold">
                               {member.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
