@@ -12,12 +12,8 @@ import loginHeroImage from '@/assets/login-hero.jpg';
 
 import agent3dAsset from '@/assets/hero/agent-ise-3d.png.asset.json';
 const agent3d = agent3dAsset.url;
-import agent3dWebpAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
-const agent3dWebp = agent3dWebpAsset.url;
 import vehicle3dAsset from '@/assets/hero/vehicle-ise-3d.png.asset.json';
 const vehicle3d = vehicle3dAsset.url;
-import vehicle3dWebpAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
-const vehicle3dWebp = vehicle3dWebpAsset.url;
 import vehicleMobileAsset from '@/assets/hero/vehicle-ise-mobile.png.asset.json';
 const vehicleMobile = vehicleMobileAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.png.asset.json';
@@ -205,7 +201,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 order-4 sm:order-none -mt-2 sm:mt-0">
+        <div className="relative grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 order-4 sm:order-none mt-0">
 
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
@@ -346,7 +342,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[132px] min-[390px]:min-h-[148px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-6 min-[390px]:-mb-8 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
+          <div className="absolute inset-x-0 bottom-[88px] min-[390px]:bottom-[94px] flex items-end justify-center sm:relative sm:inset-auto sm:justify-center min-h-[146px] min-[390px]:min-h-[162px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-[90] overflow-visible pb-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0 pointer-events-none sm:pointer-events-auto">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
@@ -371,18 +367,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
                 DESKTOP → mantém composição centralizada equilibrada */}
             <div
-              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[132px] min-[390px]:h-[148px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
+              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[146px] min-[390px]:h-[162px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
             >
 
               {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
               <picture className="relative block h-full leading-[0]">
-                <source srcSet={vehicle3dWebp} type="image/webp" />
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }}
                   className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
@@ -404,12 +398,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
 
               {/* Agente — mobile: menor, encostado à direita | desktop: mantém */}
-              <picture className="relative block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
-                <source srcSet={agent3dWebp} type="image/webp" />
+              <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
-                  onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }}
                   className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
