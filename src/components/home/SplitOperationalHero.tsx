@@ -374,16 +374,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   aria-hidden
                   className="pointer-events-none absolute inset-0 scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left -translate-y-2 sm:translate-y-0"
                 >
-                  {/* Mobile: posições calibradas para a viatura em scale-110 */}
-                  <span
-                    aria-hidden
-                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden sm:hidden"
-                    style={{ top: '23.4%', left: '47.6%' }}
-                  />
+                  {/* Mobile: luzes fixadas logo ACIMA da barra do giroflex, com cores alinhadas às respectivas lentes (vermelho à esquerda, azul à direita — padrão viatura ISE). */}
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-red motion-reduce:hidden sm:hidden"
-                    style={{ top: '24.1%', left: '63.2%' }}
+                    style={{ top: '22.4%', left: '47.6%' }}
+                  />
+                  <span
+                    aria-hidden
+                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden sm:hidden"
+                    style={{ top: '22.4%', left: '63.2%' }}
                   />
                   {/* Desktop/tablet */}
                   <span
