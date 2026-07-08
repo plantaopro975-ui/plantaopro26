@@ -30,7 +30,11 @@ export function SingleDeviceGuard() {
   const myTsRef = useRef<number>(0);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      // Sessão terminou → limpa o modal para não ficar preso na tela
+      setKicked(false);
+      return;
+    }
 
     const myTab = getTabId();
     const myTs = Date.now();
@@ -43,9 +47,8 @@ export function SingleDeviceGuard() {
 
     channel
       .on("broadcast", { event: "hello" }, (msg: any) => {
-        const { tabId, ts, deviceLabel } = msg.payload ?? {};
+        const { tabId, ts } = msg.payload ?? {};
         if (!tabId || tabId === myTabRef.current) return;
-        // New session opened AFTER us → we get kicked
         if (typeof ts === "number" && ts > myTsRef.current) {
           setKicked(true);
         }
@@ -69,6 +72,20 @@ export function SingleDeviceGuard() {
     };
   }, [user?.id]);
 
+  const performLogout = async () => {
+    try {
+      await signOut();
+    } catch {
+      /* noop */
+    } finally {
+      setKicked(false);
+      // Garante saída da tela travada mesmo se o estado global demorar
+      if (typeof window !== "undefined" && window.location.pathname !== "/") {
+        window.location.replace("/");
+      }
+    }
+  };
+
   useEffect(() => {
     if (!kicked) return;
     setCountdown(6);
@@ -76,14 +93,15 @@ export function SingleDeviceGuard() {
       setCountdown((c) => {
         if (c <= 1) {
           clearInterval(interval);
-          signOut();
+          performLogout();
           return 0;
         }
         return c - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [kicked, signOut]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kicked]);
 
   if (!kicked) return null;
 
