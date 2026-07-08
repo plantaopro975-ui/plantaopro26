@@ -385,12 +385,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
-                    style={{ top: '20.8%', left: '41.5%' }}
+                    style={{ top: '23.9%', left: '47.1%' }}
                   />
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                    style={{ top: '21%', left: '58%' }}
+                    style={{ top: '23.2%', left: '63.4%' }}
                   />
                 </span>
               </picture>
