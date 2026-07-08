@@ -634,13 +634,13 @@ export default function AgentPanel() {
                         title=""
                         className={cn(
                           'group flex flex-col items-center justify-center gap-1.5 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
-                          'px-2 py-3 md:px-2 md:py-2.5 min-h-[68px] sm:min-h-[58px] md:min-h-[58px]',
+                          'px-2 py-3.5 md:px-2 md:py-2.5 min-h-[80px] sm:min-h-[64px] md:min-h-[58px]',
                           'data-[state=active]:shadow-lg data-[state=active]:scale-[1.02]',
                           trigger
                         )}
                       >
-                        <Icon className={cn('h-5 w-5 md:h-[18px] md:w-[18px] transition-colors', icon)} />
-                        <span className={cn('text-[13px] md:text-sm font-bold tracking-wide truncate max-w-full', text)}>
+                        <Icon className={cn('h-6 w-6 md:h-[18px] md:w-[18px] transition-colors', icon)} />
+                        <span className={cn('text-sm md:text-sm font-bold tracking-wide truncate max-w-full', text)}>
                           {label}
                         </span>
                       </TabsTrigger>
