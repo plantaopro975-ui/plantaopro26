@@ -65,6 +65,7 @@ const PasswordChangeRequest = lazy(() => import('@/components/agent-panel/Passwo
 const SmartAlarmClock = lazy(() => import('@/components/agent-panel/SmartAlarmClock').then(m => ({ default: m.SmartAlarmClock })));
 const RoundsHistoryCard = lazy(() => import('@/components/agent-panel/RoundsHistoryCard').then(m => ({ default: m.RoundsHistoryCard })));
 const AgentsDirectoryCard = lazy(() => import('@/components/agent-panel/AgentsDirectoryCard').then(m => ({ default: m.AgentsDirectoryCard })));
+const RoundsManager = lazy(() => import('@/components/home/RoundsManager').then(m => ({ default: (m as any).RoundsManager ?? (m as any).default })));
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone, Radio } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -561,8 +562,8 @@ export default function AgentPanel() {
                 {/* Tabs Grid - Compact, readable */}
                 <div className={compact ? 'p-1.5 md:p-2' : 'p-2 md:p-2.5'}>
                   <TabsList className={cn(
-                    'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
-                    compact ? 'p-1 gap-1' : 'p-1.5 gap-1.5'
+                    'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
+                    compact ? 'p-1.5 gap-1.5' : 'p-2 gap-2'
                   )}>
                     {([
                       {
@@ -632,14 +633,14 @@ export default function AgentPanel() {
                         aria-label={full}
                         title=""
                         className={cn(
-                          'group flex flex-col items-center justify-center gap-1 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
-                          'px-1.5 py-2 md:px-2 md:py-2.5 min-h-[52px] md:min-h-[58px]',
+                          'group flex flex-col items-center justify-center gap-1.5 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
+                          'px-2 py-3 md:px-2 md:py-2.5 min-h-[68px] sm:min-h-[58px] md:min-h-[58px]',
                           'data-[state=active]:shadow-lg data-[state=active]:scale-[1.02]',
                           trigger
                         )}
                       >
-                        <Icon className={cn('h-4 w-4 md:h-[18px] md:w-[18px] transition-colors', icon)} />
-                        <span className={cn('text-xs md:text-sm font-bold tracking-wide truncate max-w-full', text)}>
+                        <Icon className={cn('h-5 w-5 md:h-[18px] md:w-[18px] transition-colors', icon)} />
+                        <span className={cn('text-[13px] md:text-sm font-bold tracking-wide truncate max-w-full', text)}>
                           {label}
                         </span>
                       </TabsTrigger>
@@ -686,7 +687,7 @@ export default function AgentPanel() {
                       unitName={agent.unit?.name}
                     />
                   </div>
-                  <div className="xl:col-span-1 grid grid-cols-2 xl:grid-cols-1 gap-2.5 md:gap-3">
+                  <div className="xl:col-span-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-2.5 md:gap-3">
                     <TacticalRadar 
                       unitId={agent.unit_id || undefined}
                       compact={true}
@@ -752,6 +753,9 @@ export default function AgentPanel() {
               </TabsContent>
 
               <TabsContent value="rondas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+                <Suspense fallback={<div className="flex items-center justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-amber-500" /></div>}>
+                  <RoundsManager />
+                </Suspense>
                 <RoundsHistoryCard agentId={agent.id} />
               </TabsContent>
 
