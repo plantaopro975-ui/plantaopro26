@@ -1765,33 +1765,34 @@ export default function Index() {
         subtitle="Novo Agente"
         team={selectedTeam}
       >
-        {/* Info alerts */}
-        <div className="space-y-3 mb-6">
-          <div className="p-4 bg-gradient-to-r from-amber-500/15 to-orange-500/10 rounded-xl border-2 border-amber-500/40">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/20">
-                <AlertTriangle className="h-5 w-5 text-amber-400" />
+        {/* Info alerts — compact on mobile, expanded on desktop */}
+        <div className="space-y-2 mb-4 sm:mb-6">
+          <div className="p-2.5 sm:p-4 bg-gradient-to-r from-amber-500/15 to-orange-500/10 rounded-lg sm:rounded-xl border border-amber-500/40 sm:border-2">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 rounded-md sm:rounded-lg bg-amber-500/20 shrink-0">
+                <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
               </div>
-              <p className="text-amber-300/90 text-sm font-semibold">
+              <p className="text-amber-300/90 text-xs sm:text-sm font-semibold leading-snug">
                 <strong className="text-amber-400">CPF</strong> será seu usuário de acesso
               </p>
             </div>
           </div>
-          
-          <div className="p-4 bg-gradient-to-r from-cyan-500/15 to-teal-500/10 rounded-xl border-2 border-cyan-500/40">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-cyan-500/20 shrink-0">
-                <Clock className="h-5 w-5 text-cyan-400" />
+
+          <div className="p-2.5 sm:p-4 bg-gradient-to-r from-cyan-500/15 to-teal-500/10 rounded-lg sm:rounded-xl border border-cyan-500/40 sm:border-2">
+            <div className="flex items-start gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 rounded-md sm:rounded-lg bg-cyan-500/20 shrink-0">
+                <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-cyan-400" />
               </div>
-              <div className="space-y-1">
-                <p className="text-cyan-300 text-sm font-bold">Aprovação Necessária</p>
-                <p className="text-cyan-200/70 text-sm leading-relaxed">
+              <div className="space-y-0.5 sm:space-y-1">
+                <p className="text-cyan-300 text-xs sm:text-sm font-bold">Aprovação Necessária</p>
+                <p className="text-cyan-200/70 text-[11px] sm:text-sm leading-snug sm:leading-relaxed">
                   Cadastro será analisado antes da liberação.
                 </p>
               </div>
             </div>
           </div>
         </div>
+
 
         <form onSubmit={handleSignUp} className="space-y-5">
           {/* Nome */}
