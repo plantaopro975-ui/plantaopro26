@@ -1794,7 +1794,7 @@ export default function Index() {
         </div>
 
 
-        <form onSubmit={handleSignUp} className="space-y-5">
+        <form onSubmit={handleSignUp} className="space-y-3 sm:space-y-5">
           {/* Nome */}
           <AuthInput
             label="Nome Completo *"
