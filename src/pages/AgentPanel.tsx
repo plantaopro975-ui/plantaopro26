@@ -662,7 +662,7 @@ export default function AgentPanel() {
                 onComplete={checkAgentShifts}
               />
 
-              <TabsContent value="equipe" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="equipe" className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible">
                 {/* Ad Display System temporariamente desativado a pedido do administrador */}
                 {promosEnabled && <AdDisplaySystem />}
 
@@ -677,8 +677,8 @@ export default function AgentPanel() {
                 {/* Unit Summary Card */}
                 <UnitSummaryCard unitId={agent.unit_id} />
                 
-                <div className="grid grid-cols-1 xl:grid-cols-4 gap-2.5 md:gap-3">
-                  <div className="xl:col-span-3">
+                <div className="flex w-full min-w-0 flex-col gap-4 overflow-visible xl:grid xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-3">
+                  <div className="w-full min-w-0 overflow-visible">
                     <TeamMembersCard 
                       unitId={agent.unit_id} 
                       team={agent.team} 
@@ -687,7 +687,7 @@ export default function AgentPanel() {
                       unitName={agent.unit?.name}
                     />
                   </div>
-                  <div className="xl:col-span-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-2.5 md:gap-3">
+                  <div className="grid w-full min-w-0 grid-cols-1 gap-4 overflow-visible sm:grid-cols-2 xl:grid-cols-1 xl:gap-3">
                     <TacticalRadar 
                       unitId={agent.unit_id || undefined}
                       compact={true}
@@ -752,20 +752,51 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="rondas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
-                <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-br from-slate-900/95 via-slate-950/95 to-amber-950/30 p-4 md:p-5 shadow-lg">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Radio className="h-5 w-5 text-amber-400" />
-                    <h3 className="text-base md:text-lg font-black text-amber-200 tracking-tight">
-                      Gestor de Rondas
-                    </h3>
+              <TabsContent value="rondas" className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible">
+                <div className="relative z-10 w-full min-w-0 overflow-visible rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-900/98 via-slate-950/98 to-amber-950/35 p-4 shadow-xl shadow-amber-500/10 md:p-5">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <div className="shrink-0 rounded-xl border border-amber-500/40 bg-amber-500/15 p-3">
+                        <Radio className="h-6 w-6 text-amber-400" />
+                      </div>
+                      <div className="min-w-0 space-y-1">
+                        <h3 className="text-xl font-black leading-tight text-amber-200 tracking-tight md:text-lg">
+                          Gestor de Rondas
+                        </h3>
+                        <p className="text-sm leading-relaxed text-slate-300 md:text-sm">
+                          Monte a escala, inicie o cronômetro e acompanhe as rondas em tempo real.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="shrink-0 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-300">
+                      PRONTO PARA OPERAR
+                    </div>
                   </div>
-                  <p className="text-xs md:text-sm text-slate-300 mb-3 leading-relaxed">
-                    Abra o painel tático para montar a escala, iniciar o cronômetro e acompanhar as rondas em tempo real.
-                  </p>
                   <Suspense fallback={<div className="flex items-center justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-amber-500" /></div>}>
-                    <div className="flex justify-center md:justify-start">
-                      <RoundsManager />
+                    <div className="mt-5 flex w-full min-w-0 overflow-visible">
+                      <RoundsManager
+                        customTrigger={
+                          <button
+                            type="button"
+                            className="group flex min-h-[64px] w-full items-center justify-between gap-3 rounded-xl border border-amber-500/50 bg-amber-500/15 px-4 py-3 text-left shadow-lg shadow-amber-500/10 transition-all duration-200 hover:border-amber-400/70 hover:bg-amber-500/20 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                          >
+                            <span className="flex min-w-0 items-center gap-3">
+                              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-amber-500/45 bg-slate-950/70">
+                                <Radio className="h-5 w-5 text-amber-300" />
+                              </span>
+                              <span className="min-w-0">
+                                <span className="block text-base font-black leading-tight text-amber-100">
+                                  Abrir Gestor de Rondas
+                                </span>
+                                <span className="block text-xs font-semibold text-slate-300">
+                                  Central tática de escala e acompanhamento
+                                </span>
+                              </span>
+                            </span>
+                            <Zap className="h-5 w-5 shrink-0 text-amber-300 transition-transform group-hover:scale-110" />
+                          </button>
+                        }
+                      />
                     </div>
                   </Suspense>
                 </div>
