@@ -1591,7 +1591,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             borderColor: `${teamColor}55`,
-            background: `linear-gradient(145deg, hsl(var(--background)) 0%, ${teamColor}12 48%, hsl(var(--card)) 100%)`,
+            background: `linear-gradient(145deg, hsl(var(--card)) 0%, ${teamColor}1f 55%, hsl(var(--card)) 100%)`,
             boxShadow: `0 28px 90px -32px ${teamColor}88, 0 0 0 1px ${teamColor}22`,
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
           }}
@@ -1614,12 +1614,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           >
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <div className="min-w-0 flex-1 basis-44">
-                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[10px] uppercase tracking-wider text-muted-foreground">
-                  <Shield className="h-3 w-3 shrink-0" style={{ color: teamColor, opacity: 0.85 }} />
+                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
+                  <Shield className="h-3 w-3 shrink-0" style={{ color: teamColor }} />
                   <span>Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-display text-base sm:text-lg font-bold tracking-tight leading-tight text-foreground truncate">
+                <DialogTitle className="font-display text-lg sm:text-xl font-bold tracking-tight leading-tight text-foreground truncate">
                   Gestor de Rondas
                 </DialogTitle>
                 <DialogDescription className="sr-only">
@@ -1630,7 +1630,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               <div className="flex flex-wrap items-center gap-2 ml-auto shrink-0">
 
               {running && live && !live.done && schedule && (
-                  <span className="hidden md:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}18` }}>
+                  <span className="hidden md:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}22` }}>
                   <Timer className="h-3 w-3" />
                   {fmtHMS(live.remaining)}
                 </span>
@@ -1670,17 +1670,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             >
               <div className="mx-auto mb-2.5 overflow-hidden rounded-lg border bg-card" style={{ borderColor: `${teamColor}38`, boxShadow: `inset 0 1px 0 ${teamColor}18` }}>
                 <div className="relative flex items-center gap-3 px-3 py-2.5 sm:px-4 sm:py-3">
-                  <div className="absolute inset-0 pointer-events-none opacity-70" style={{ background: `radial-gradient(circle at 80% 25%, ${teamColor}24, transparent 42%), linear-gradient(90deg, ${teamColor}0, ${teamColor}10, ${teamColor}0)` }} />
+                  <div className="absolute inset-0 pointer-events-none opacity-40" style={{ background: `radial-gradient(circle at 80% 25%, ${teamColor}24, transparent 42%), linear-gradient(90deg, ${teamColor}0, ${teamColor}10, ${teamColor}0)` }} />
                   <div className="relative flex min-w-0 flex-1 items-center gap-3">
                     <div className="hidden sm:block"><TeamHero team={team} color={teamColor} /></div>
                     <div className="min-w-0">
-                      <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em]" style={{ color: teamColor }}>
+                      <div className="font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.28em]" style={{ color: teamColor }}>
                         Central de Ronda · Equipe {team}
                       </div>
                       <h2 className="font-display text-lg sm:text-2xl leading-tight text-foreground">
                         Operação em tempo real
                       </h2>
-                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[12px] tabular-nums text-muted-foreground">
                         <span className="rounded-sm border px-1.5 py-0.5" style={{ borderColor: `${teamColor}44`, color: teamColor }}>
                           Restante {fmtHMS(totalRemainingSeconds)}
                         </span>
