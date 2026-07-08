@@ -404,13 +404,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
 
               {/* Agente — mobile: menor, encostado à direita | desktop: mantém */}
-              <picture className="relative block h-full leading-[0] flex items-end ml-auto sm:ml-0">
+              <picture className="relative block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
                 <source srcSet={agent3dWebp} type="image/webp" />
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
                   onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }}
-                  className="block max-h-full w-auto object-contain object-right-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none sm:-ml-2 scale-[0.9] sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 sm:translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom-right sm:origin-bottom"
+                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
               </picture>
