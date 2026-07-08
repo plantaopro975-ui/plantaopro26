@@ -1,6 +1,6 @@
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
-import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 
 const TEAM_ACCENT: Record<string, { h: string; s: string; l: string; label: string }> = {
   ALFA:    { h: '43',  s: '96%', l: '56%', label: 'Defensiva' },
