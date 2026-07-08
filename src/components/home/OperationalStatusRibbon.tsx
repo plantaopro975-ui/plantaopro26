@@ -262,6 +262,7 @@ export function OperationalStatusRibbon() {
           </>
         )}
       </svg>
+      </div>
 
       {/* Wordmark institucional — PLANTÃO PRO */}
       <div className="mt-2 flex items-center justify-center gap-4 px-2" aria-label="Plantão Pro">
