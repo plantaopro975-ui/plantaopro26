@@ -362,19 +362,20 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             >
               {/* Viatura — mobile usa render dedicado com giroflex vermelho/azul embutido; desktop mantém o modelo original com luzes CSS animadas. */}
               {/* MOBILE */}
-              <picture className="relative block h-full leading-[0] sm:hidden">
-                <img
-                  src={vehicleMobile}
-                  alt="Viatura tática ISE"
-                  width={1024}
-                  height={1024}
-                  className="block h-full w-auto object-contain select-none scale-110 origin-bottom-left -translate-y-2 giroflex-pulse-mobile"
-                  draggable={false}
-                />
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-110 origin-bottom-left -translate-y-2"
-                >
+              <picture className="relative block h-full aspect-square leading-[0] sm:hidden">
+                <span className="relative block h-full aspect-square origin-bottom-left -translate-y-2 scale-110">
+                  <img
+                    src={vehicleMobile}
+                    alt="Viatura tática ISE"
+                    width={1024}
+                    height={1024}
+                    className="block h-full w-full object-contain select-none giroflex-pulse-mobile"
+                    draggable={false}
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0"
+                  >
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
@@ -385,6 +386,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
                     style={{ top: '24.85%', left: '59.2%', ['--giroflex-lens-width' as any]: '17.6%' }}
                   />
+                  </span>
                 </span>
               </picture>
               {/* DESKTOP/TABLET */}
