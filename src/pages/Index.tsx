@@ -1894,7 +1894,8 @@ export default function Index() {
           </div>
 
           {/* Nascimento e Telefone */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-4">
+
             <div>
               <AuthInput
                 label="Nascimento"
