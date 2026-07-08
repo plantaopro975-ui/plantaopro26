@@ -415,8 +415,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
         </div>
 
-        {/* Mobile-only "Gestor de Rondas" — posicionado logo abaixo da viatura/agente */}
-        <div className="relative z-30 px-2 sm:hidden mt-0">
+        {/* Mobile-only "Gestor de Rondas" — abaixo da viatura no mobile */}
+        <div className="relative z-30 px-2 sm:hidden mt-1 order-4">
           <RoundsManager
             customTrigger={
               <button
@@ -436,8 +436,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           />
         </div>
 
-        {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
-        <div className="relative shrink-0 px-2 sm:px-3 pt-0.5 sm:pt-3 pb-2 mt-0 sm:mt-2">
+        {/* ============ Team Selector Grid — no mobile vai para o topo (order-2) ============ */}
+        <div className="relative shrink-0 px-2 sm:px-3 pt-0.5 sm:pt-3 pb-2 mt-0 sm:mt-2 order-2 sm:order-none">
 
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-200">
