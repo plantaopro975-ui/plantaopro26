@@ -379,7 +379,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-105 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
                 <span
