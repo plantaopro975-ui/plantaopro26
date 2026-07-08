@@ -1591,7 +1591,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             borderColor: `${teamColor}55`,
-            background: `linear-gradient(145deg, hsl(var(--background)) 0%, ${teamColor}12 48%, hsl(var(--card)) 100%)`,
+            background: `linear-gradient(145deg, hsl(var(--card)) 0%, ${teamColor}1f 55%, hsl(var(--card)) 100%)`,
             boxShadow: `0 28px 90px -32px ${teamColor}88, 0 0 0 1px ${teamColor}22`,
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
           }}
