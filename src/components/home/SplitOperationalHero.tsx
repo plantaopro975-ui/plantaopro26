@@ -376,14 +376,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
               {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
               <picture className="relative block h-full leading-[0]">
-                <source srcSet={vehicle3dWebp} type="image/webp" />
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
                   onError={(event) => {
-                    if (event.currentTarget.src !== vehicle3d) {
+                    if (!event.currentTarget.src.endsWith('/vehicle-ise-3d.png')) {
                       event.currentTarget.src = vehicle3d;
                       return;
                     }
@@ -411,12 +410,11 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
               {/* Agente — mobile: menor, encostado à direita | desktop: mantém */}
               <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
-                <source srcSet={agent3dWebp} type="image/webp" />
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
                   onError={(event) => {
-                    if (event.currentTarget.src !== agent3d) {
+                    if (!event.currentTarget.src.endsWith('/agent-ise-3d.png')) {
                       event.currentTarget.src = agent3d;
                       return;
                     }
