@@ -12,12 +12,8 @@ import loginHeroImage from '@/assets/login-hero.jpg';
 
 import agent3dAsset from '@/assets/hero/agent-ise-3d.png.asset.json';
 const agent3d = agent3dAsset.url;
-import agent3dWebpAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
-const agent3dWebp = agent3dWebpAsset.url;
 import vehicle3dAsset from '@/assets/hero/vehicle-ise-3d.png.asset.json';
 const vehicle3d = vehicle3dAsset.url;
-import vehicle3dWebpAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
-const vehicle3dWebp = vehicle3dWebpAsset.url;
 import vehicleMobileAsset from '@/assets/hero/vehicle-ise-mobile.png.asset.json';
 const vehicleMobile = vehicleMobileAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.png.asset.json';
