@@ -340,7 +340,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="absolute inset-x-0 bottom-[88px] min-[390px]:bottom-[94px] flex items-end justify-center sm:relative sm:inset-auto sm:justify-center min-h-[146px] min-[390px]:min-h-[162px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-[90] overflow-visible pb-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0 pointer-events-none sm:pointer-events-auto">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[146px] min-[390px]:min-h-[162px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] md:order-none z-[90] overflow-visible pb-0 mb-0 sm:-mb-2 pt-1 sm:pt-0 px-2 sm:px-0">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
