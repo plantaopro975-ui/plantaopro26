@@ -18,6 +18,8 @@ import vehicle3dAsset from '@/assets/hero/vehicle-ise-3d.png.asset.json';
 const vehicle3d = vehicle3dAsset.url;
 import vehicle3dWebpAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
 const vehicle3dWebp = vehicle3dWebpAsset.url;
+import vehicleMobileAsset from '@/assets/hero/vehicle-ise-mobile.png.asset.json';
+const vehicleMobile = vehicleMobileAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.png.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 import agentVehicleSceneWebpAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
