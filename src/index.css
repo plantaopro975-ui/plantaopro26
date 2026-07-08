@@ -1130,3 +1130,51 @@ html.tab-hidden *::after {
 @media (prefers-reduced-motion: reduce) {
   .giroflex-pulse-mobile { filter: drop-shadow(0 30px 40px rgba(0,0,0,0.9)); }
 }
+
+/* ==========================================================================
+   Standardized Card Touch Behavior (iOS Safari + Android)
+   - `.card-touch`: safe stabilization for ALL cards (prevents flicker)
+   - `.card-touch-interactive`: adds tactile feedback for clickable cards
+   ========================================================================== */
+@layer utilities {
+  .card-touch {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    /* Promote to its own compositor layer — kills iOS Safari flicker while
+       transforms/opacity animate under the finger. */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .card-touch-interactive {
+    /* Removes the 300ms tap delay and prevents double-tap zoom on the card. */
+    touch-action: manipulation;
+    cursor: pointer;
+    /* Apple HIG minimum touch target. */
+    min-height: 44px;
+    min-width: 44px;
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 220ms ease-out;
+    will-change: transform;
+  }
+
+  /* Tactile press feedback — instant on press, gentle on release. */
+  .card-touch-interactive:active {
+    transform: scale(0.97) translateZ(0);
+    transition-duration: 80ms;
+  }
+
+  /* Users who dislike motion get no scale — still no flicker. */
+  @media (prefers-reduced-motion: reduce) {
+    .card-touch-interactive,
+    .card-touch-interactive:active {
+      transform: translateZ(0);
+      transition: none;
+    }
+  }
+}
