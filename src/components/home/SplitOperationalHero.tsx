@@ -225,7 +225,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            <div className="flex flex-wrap items-center gap-3 text-slate-200">
+            <div className="hidden sm:flex flex-wrap items-center gap-3 text-slate-200">
               <div className="flex items-center gap-1 text-[10px] font-mono font-semibold uppercase tracking-[0.18em]">
                 <ShieldCheck className="h-3 w-3 text-amber-400" /> RLS
               </div>
