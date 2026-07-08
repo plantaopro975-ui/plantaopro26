@@ -153,7 +153,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
+        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] sm:flex-1 min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
@@ -198,14 +198,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
         {/* ============ MOBILE-ONLY TITLE — no topo ============ */}
-        <div className="sm:hidden relative z-30 px-3 pt-1.5 pb-3 mb-2 order-1">
-          <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[20px] leading-[1.02] text-center">
+        <div className="sm:hidden relative z-30 px-3 pt-1 pb-1.5 mb-1 order-1">
+          <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[18px] leading-[1] text-center">
             Comando <span className="text-amber-400">Tático</span> Socioeducativo
           </h2>
         </div>
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-2 sm:gap-4 px-0 sm:px-5 pt-1 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 order-4 sm:order-none">
+        <div className="relative grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 order-4 sm:order-none -mt-2 sm:mt-0">
 
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
@@ -346,7 +346,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[120px] min-[390px]:min-h-[130px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-hidden sm:overflow-visible pb-0 -mb-1 pt-2 sm:pt-0 sm:-mb-2 px-2 sm:px-0">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[88px] min-[390px]:min-h-[96px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-hidden sm:overflow-visible pb-0 -mb-1 pt-0 sm:pt-0 sm:-mb-2 px-2 sm:px-0">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
@@ -371,7 +371,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
                 DESKTOP → mantém composição centralizada equilibrada */}
             <div
-              className="relative inline-flex items-end justify-between sm:justify-center gap-2 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[120px] min-[390px]:h-[130px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
+              className="relative inline-flex items-end justify-between sm:justify-center gap-2 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[88px] min-[390px]:h-[96px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
             >
               {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
               <picture className="relative block h-full leading-[0]">
@@ -381,12 +381,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }}
+                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-[0.84] sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-[0.84] sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                 >
                   <span
                     aria-hidden
@@ -407,7 +408,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
-                  className="block max-h-full w-auto object-contain object-right-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 sm:translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom-right sm:origin-bottom"
+                  onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }}
+                  className="block max-h-full w-auto object-contain object-right-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none sm:-ml-2 scale-[0.9] sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 sm:translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom-right sm:origin-bottom"
                   draggable={false}
                 />
               </picture>
@@ -418,13 +420,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* Mobile-only "Gestor de Rondas" — compacto, para subir os demais elementos */}
-        <div className="relative z-30 px-3 sm:hidden mt-1 mb-1.5 order-2 sm:order-none">
+        <div className="relative z-30 px-3 sm:hidden mt-0 mb-1 order-2 sm:order-none">
           <RoundsManager
             customTrigger={
               <button
                 type="button"
                 aria-label="Abrir Gestor de Rondas"
-                className="group relative w-full inline-flex items-center justify-center gap-2 rounded-md border border-amber-400/55 bg-[linear-gradient(135deg,rgba(30,20,5,0.9)_0%,rgba(60,40,8,0.75)_50%,rgba(30,20,5,0.9)_100%)] px-3 py-1.5 shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_6px_18px_-10px_rgba(234,179,8,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] active:scale-[0.985] transition overflow-hidden"
+                className="group relative w-full inline-flex items-center justify-center gap-1.5 rounded-md border border-amber-400/55 bg-[linear-gradient(135deg,rgba(30,20,5,0.9)_0%,rgba(60,40,8,0.75)_50%,rgba(30,20,5,0.9)_100%)] px-2.5 py-1 shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_6px_18px_-10px_rgba(234,179,8,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] active:scale-[0.985] transition overflow-hidden"
               >
                 {/* corner brackets — menores */}
                 <span aria-hidden className="absolute top-0.5 left-0.5 w-1.5 h-1.5 border-t border-l border-amber-300/70" />
@@ -433,16 +435,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <span aria-hidden className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 border-b border-r border-amber-300/70" />
                 <span aria-hidden className="absolute inset-0 opacity-30 bg-[linear-gradient(90deg,transparent_0%,rgba(234,179,8,0.15)_50%,transparent_100%)] -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
 
-                <span className="relative inline-flex h-3.5 w-3.5 shrink-0">
-                  <Radar className="h-3.5 w-3.5 text-amber-300 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" strokeWidth={2.4} />
+                <span className="relative inline-flex h-3 w-3 shrink-0">
+                  <Radar className="h-3 w-3 text-amber-300 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" strokeWidth={2.4} />
                   <span className="absolute inset-0 rounded-full bg-amber-400/25 blur-[3px] animate-pulse" />
                 </span>
-                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100 drop-shadow-[0_0_6px_rgba(234,179,8,0.4)]">
+                <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-amber-100 drop-shadow-[0_0_6px_rgba(234,179,8,0.4)]">
                   Gestor de Rondas
                 </span>
                 <span aria-hidden className="ml-0.5 flex items-center gap-0.5">
                   <span className="w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)] animate-pulse" />
-                  <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.18em] text-emerald-300/90">ATIVO</span>
+                  <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.16em] text-emerald-300/90">ATIVO</span>
                 </span>
               </button>
             }
@@ -451,18 +453,18 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
         {/* ============ Team Selector Grid — no mobile vai para o topo (order-2) ============ */}
-        <div className="relative shrink-0 px-2 sm:px-3 pt-0.5 sm:pt-3 pb-2 mt-0 sm:mt-2 order-3 sm:order-none">
+        <div className="relative shrink-0 px-2 sm:px-3 pt-0 sm:pt-3 pb-1 mt-0 sm:mt-2 order-3 sm:order-none">
 
-          <div className="flex items-center justify-between px-1 pb-1.5">
-            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-200">
+          <div className="flex items-center justify-between px-1 pb-1">
+            <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.24em] text-slate-200">
               Selecione sua Equipe
             </span>
-            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-amber-300">
+            <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.24em] text-amber-300">
               4 Divisões
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2 lg:gap-3 xl:gap-4" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 lg:gap-3 xl:gap-4" style={{ perspective: '900px' }}>
 
             {TEAMS.map((t, idx) => {
               const isSelected = selectedTeam === t.key;
@@ -474,7 +476,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 aria-pressed={isSelected}
                 onClick={() => handleSelect(t.key)}
                 className={cn(
-                  'group relative flex h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+                  'group relative flex h-[clamp(86px,14.5vh,128px)] min-[390px]:h-[clamp(94px,14.5vh,136px)] sm:h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
                   'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
                   isSelected
@@ -537,7 +539,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 )}
 
                 {/* 3D Security Object — <picture> AVIF/WebP/PNG + skeleton blur-up */}
-                <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-1 pt-3 sm:p-2 sm:pt-4 [perspective:600px]">
+                <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0.5 pt-2 sm:p-2 sm:pt-4 [perspective:600px]">
                   <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
                 </div>
 
@@ -590,8 +592,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     { off: '100%', l: L.base },
                   ];
                   return (
-                    <div className="relative z-20 flex flex-col gap-1 px-2.5 pb-2">
-                      <svg viewBox="0 0 300 72" className="block w-full h-10 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
+                    <div className="relative z-20 flex flex-col gap-0.5 px-2 pb-1.5 sm:gap-1 sm:px-2.5 sm:pb-2">
+                      <svg viewBox="0 0 300 72" className="block w-full h-8 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
                         <defs>
                           <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
                             {stops.map((st) => (
@@ -630,7 +632,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       </svg>
 
                       <span
-                        className="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.28em] truncate text-slate-200"
+                        className="font-mono text-[7.5px] sm:text-[9.5px] uppercase tracking-[0.24em] sm:tracking-[0.28em] truncate text-slate-200"
                         style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
                       >
                         {t.motto}

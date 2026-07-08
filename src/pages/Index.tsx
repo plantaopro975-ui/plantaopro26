@@ -1372,10 +1372,10 @@ export default function Index() {
               grow: true,
               node: (
                 <div
-                  className="w-full max-w-7xl mx-auto h-full"
+                  className="w-full max-w-7xl mx-auto sm:h-full"
                   style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
                 >
-                  <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block h-full">
+                  <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full">
                     <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
                   </DraggableHomeCard>
                 </div>
@@ -1416,7 +1416,7 @@ export default function Index() {
                 return (
                   <div
                     key={id}
-                    className={b.grow ? 'min-h-0 flex-1 overflow-hidden' : 'shrink-0 overflow-hidden'}
+                    className={b.grow ? 'min-h-0 shrink-0 overflow-visible sm:flex-1 sm:overflow-hidden' : 'shrink-0 overflow-hidden'}
                   >
                     {b.node}
                   </div>
