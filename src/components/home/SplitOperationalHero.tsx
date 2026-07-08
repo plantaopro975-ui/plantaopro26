@@ -151,7 +151,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-y-auto overflow-x-hidden sm:overflow-hidden mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
+        className="relative overflow-hidden mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
@@ -335,7 +335,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center min-h-[140px] md:min-h-[180px] lg:min-h-[200px] xl:min-h-[220px] 2xl:min-h-[240px] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
+          <div className="relative flex items-end justify-center min-h-[clamp(90px,14vh,220px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
 
             <svg
               aria-hidden
@@ -357,7 +357,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
             <div
               className="relative inline-flex items-end justify-center gap-1 sm:gap-2 leading-[0] isolate md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%]"
-              style={{ height: 'clamp(130px, 18vw, 240px)' }}
+              style={{ height: 'clamp(90px, 14vh, 240px)' }}
             >
               {/* Viatura — permanece à esquerda, com giroflex discretamente animado */}
               <picture className="relative block h-full leading-[0]">
@@ -444,7 +444,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 aria-pressed={isSelected}
                 onClick={() => handleSelect(t.key)}
                 className={cn(
-                  'group relative flex h-[155px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
+                  'group relative flex h-[clamp(100px,17vh,170px)] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
                   'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
                   isSelected
