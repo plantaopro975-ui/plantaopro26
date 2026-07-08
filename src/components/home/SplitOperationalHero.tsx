@@ -194,7 +194,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
         {/* ============ MOBILE-ONLY — Canal Seguro ribbon no topo (substitui título) ============ */}
-        <div className="sm:hidden relative z-30 px-2 pt-1.5 pb-1 mb-1 order-1">
+        <div className="sm:hidden relative z-30 px-2 pt-0 pb-0 mb-0 -mt-0.5 order-1">
           <OperationalStatusRibbon />
         </div>
 
