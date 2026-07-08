@@ -1808,6 +1808,7 @@ export default function Index() {
           {/* CPF e Matrícula */}
           <div className="grid grid-cols-2 gap-2 sm:gap-4">
 
+
             <AuthInput
               label="CPF *"
               value={formData.cpf}
