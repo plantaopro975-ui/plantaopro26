@@ -184,7 +184,16 @@ const getThemeCardStyle = (resolvedTheme: string) => {
 export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
   const { playSound, isSoundEnabled } = useSoundEffects();
   const { theme, resolvedTheme, themeConfig } = useTheme();
-  const { ref, transform, glare, handleMouseMove, handleMouseLeave } = use3DTilt();
+  const {
+    ref,
+    transform,
+    glare,
+    handleMouseMove,
+    handleMouseLeave,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+  } = use3DTilt();
   const hasPlayedHoverRef = useRef(false);
   const isHovering = useRef(false);
   
@@ -220,6 +229,17 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
     handleMouseLeave();
   }, [handleMouseLeave]);
 
+  const handleTouchStartCard = useCallback((e: TouchEvent<HTMLDivElement>) => {
+    handleMouseEnterCard();
+    handleTouchStart(e);
+  }, [handleMouseEnterCard, handleTouchStart]);
+
+  const handleTouchEndCard = useCallback(() => {
+    isHovering.current = false;
+    hasPlayedHoverRef.current = false;
+    handleTouchEnd();
+  }, [handleTouchEnd]);
+
   const textColor = 'text-white';
   const subTextColor = 'text-white/90';
 
@@ -230,19 +250,18 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
       onMouseEnter={handleMouseEnterCard}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeaveCard}
-      onTouchStart={handleMouseEnterCard}
-      onTouchEnd={handleMouseLeaveCard}
-      onTouchCancel={handleMouseLeaveCard}
+      onTouchStart={handleTouchStartCard}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEndCard}
+      onTouchCancel={handleTouchEndCard}
       role="button"
       tabIndex={0}
       className={cn(
-        "w-full cursor-pointer transition-all duration-300 ease-out group",
-        "touch-manipulation select-none",
-        "active:scale-[0.97] active:transition-transform active:duration-75",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        "[-webkit-tap-highlight-color:transparent]"
+        "card-touch card-touch-interactive",
+        "w-full ease-out group",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       )}
-      style={{ transform, transformStyle: 'preserve-3d', WebkitTapHighlightColor: 'transparent' }}
+      style={{ transform, transformStyle: 'preserve-3d' }}
     >
       <div className="relative">
         {/* Theme-specific outer glow */}
