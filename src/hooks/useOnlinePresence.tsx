@@ -12,7 +12,7 @@ type Listener = (count: number) => void;
 
 let sharedChannel: ReturnType<typeof supabase.channel> | null = null;
 let refCount = 0;
-let lastCount = 1;
+let lastCount = 0;
 const listeners = new Set<Listener>();
 
 function ensureChannel(channelName: string) {
@@ -24,7 +24,7 @@ function ensureChannel(channelName: string) {
   channel
     .on('presence', { event: 'sync' }, () => {
       const state = channel.presenceState();
-      lastCount = Object.keys(state).length || 1;
+      lastCount = Object.keys(state).length;
       listeners.forEach((l) => l(lastCount));
     })
     .subscribe(async (status) => {
@@ -35,6 +35,7 @@ function ensureChannel(channelName: string) {
   sharedChannel = channel;
   return channel;
 }
+
 
 export function useOnlinePresence(channelName = 'online-users') {
   const [count, setCount] = useState(lastCount);
