@@ -203,7 +203,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-4 items-stretch">
             <div className="flex flex-col gap-1.5">
-              <span className="inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5">
+              <span className="invisible inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:visible">
                 <span className="h-1 w-6 bg-amber-400" />
                 Sistema Operacional
               </span>
@@ -338,6 +338,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
           {/* RIGHT — Agent 3D */}
           <div className="relative flex items-end justify-end sm:justify-center min-h-[clamp(170px,26vh,260px)] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
+            <span className="absolute left-3 top-1 z-40 inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:hidden">
+              <span className="h-1 w-6 bg-amber-400" />
+              Sistema Operacional
+            </span>
 
             <svg
               aria-hidden
@@ -369,7 +373,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     alt="Viatura tática ISE"
                     width={1024}
                     height={1024}
-                    className="block h-full w-full object-contain select-none giroflex-pulse-mobile"
+                    className="block h-full w-full object-contain select-none"
                     draggable={false}
                   />
                   <span
