@@ -105,6 +105,8 @@ const App = () => (
                 <InactivityGuard />
                 {/* Global Offline Banner */}
                 <GlobalOfflineBanner />
+                <OfflineFullScreen />
+
 
 
                 {/* Reconnecting Guard - Shows recovery screen instead of redirecting */}
