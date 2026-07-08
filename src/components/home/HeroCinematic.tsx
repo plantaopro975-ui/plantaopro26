@@ -243,7 +243,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
   const agentKey = isMobile ? 'hero_agent_t_mobile' : 'hero_agent_t_desktop';
   const vehicleKey = isMobile ? 'hero_vehicle_t_mobile' : 'hero_vehicle_t_desktop';
   const agentDefault = isMobile
-    ? { xPct: 72, yPct: 82, scale: 0.75 }
+    ? { xPct: 72, yPct: 70, scale: 0.6 }
     : { xPct: 30, yPct: 55, scale: 1 };
   const vehicleDefault = isMobile
     ? { xPct: 26, yPct: 84, scale: 0.7 }
