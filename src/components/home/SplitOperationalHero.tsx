@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
 import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
-import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 import loginHeroImage from '@/assets/login-hero.jpg';
 
 
