@@ -1614,12 +1614,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           >
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <div className="min-w-0 flex-1 basis-44">
-                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[10px] uppercase tracking-wider text-muted-foreground">
-                  <Shield className="h-3 w-3 shrink-0" style={{ color: teamColor, opacity: 0.85 }} />
+                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
+                  <Shield className="h-3 w-3 shrink-0" style={{ color: teamColor }} />
                   <span>Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
-                <DialogTitle className="font-display text-base sm:text-lg font-bold tracking-tight leading-tight text-foreground truncate">
+                <DialogTitle className="font-display text-lg sm:text-xl font-bold tracking-tight leading-tight text-foreground truncate">
                   Gestor de Rondas
                 </DialogTitle>
                 <DialogDescription className="sr-only">
