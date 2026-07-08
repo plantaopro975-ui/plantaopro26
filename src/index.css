@@ -1133,3 +1133,12 @@ html.tab-hidden *::after {
 
 
 
+
+/* CS gas drift animation */
+@keyframes cs-drift {
+  0%,100% { transform: translate3d(0,0,0) scale(1); opacity: 0.78; }
+  50%     { transform: translate3d(4px,-3px,0) scale(1.04); opacity: 0.9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[cs-drift_8s_ease-in-out_infinite\] { animation: none !important; }
+}
