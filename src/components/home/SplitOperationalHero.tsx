@@ -335,7 +335,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-end sm:justify-center min-h-[clamp(170px,26vh,260px)] sm:min-h-[clamp(90px,14vh,220px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
+          <div className="relative flex items-end justify-end sm:justify-center min-h-[clamp(170px,26vh,260px)] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
 
             <svg
               aria-hidden
