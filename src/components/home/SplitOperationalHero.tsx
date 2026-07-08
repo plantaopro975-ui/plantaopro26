@@ -205,7 +205,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 order-4 sm:order-none -mt-44 min-[390px]:-mt-48 sm:mt-0">
+        <div className="relative grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 order-4 sm:order-none mt-0">
 
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
@@ -346,7 +346,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[146px] min-[390px]:min-h-[162px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-50 overflow-visible pb-0 -mb-14 min-[390px]:-mb-16 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
+          <div className="absolute inset-x-0 bottom-[118px] min-[390px]:bottom-[124px] flex items-end justify-center sm:relative sm:inset-auto sm:justify-center min-h-[146px] min-[390px]:min-h-[162px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-[90] overflow-visible pb-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0 pointer-events-none sm:pointer-events-auto">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
