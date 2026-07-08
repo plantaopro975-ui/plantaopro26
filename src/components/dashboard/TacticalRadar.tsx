@@ -187,19 +187,33 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
             const x = centerX + Math.cos(radians) * (agent.position.distance * centerX / 100) - 3;
             const y = centerY + Math.sin(radians) * (agent.position.distance * centerY / 100) - 3;
             const colors = teamColors[agent.team || 'default'] || teamColors.default;
+            const isOnline = onlineIds.has(agent.id);
 
             return (
               <div
                 key={agent.id}
-                className={cn(
-                  "absolute w-1.5 h-1.5 rounded-full z-20 cursor-pointer transition-transform duration-200 hover:scale-[2]",
-                  colors.bg,
-                  colors.glow,
-                  "shadow-lg"
+                className="absolute z-20 cursor-pointer"
+                style={{ left: x - 2, top: y - 2 }}
+                onClick={() => setSelectedAgentId(agent.id)}
+                title={`${agent.name}${agent.team ? ` - ${agent.team}` : ''} • ${isOnline ? 'ONLINE' : 'offline'}`}
+              >
+                {isOnline && (
+                  <span
+                    className={cn(
+                      "absolute inset-0 rounded-full opacity-70 animate-ping",
+                      colors.bg
+                    )}
+                    style={{ width: 10, height: 10 }}
+                  />
                 )}
-                style={{ left: x, top: y }}
-                title={`${agent.name}${agent.team ? ` - ${agent.team}` : ''}`}
-              />
+                <span
+                  className={cn(
+                    "relative block rounded-full transition-transform duration-200 hover:scale-[2] shadow-lg",
+                    isOnline ? cn(colors.bg, colors.glow) : "bg-zinc-600/70 border border-zinc-500/50"
+                  )}
+                  style={{ width: 10, height: 10 }}
+                />
+              </div>
             );
           })}
         </div>
