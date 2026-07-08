@@ -507,7 +507,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 )}
 
                 {/* 3D Security Object — <picture> AVIF/WebP/PNG + skeleton blur-up */}
-                <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-2 pt-4 [perspective:600px]">
+                <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-1 pt-3 sm:p-2 sm:pt-4 [perspective:600px]">
                   <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
                 </div>
 
