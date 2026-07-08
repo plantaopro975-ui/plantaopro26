@@ -27,7 +27,95 @@ export function OperationalStatusRibbon() {
   const matricula = agent?.matricula ?? '——';
 
   return (
-    <div className="relative mt-2 px-1">
+    <div className="relative mt-3 px-1">
+      {/* ============ MOBILE — compact tactical strip (< sm) ============ */}
+      <div
+        className="sm:hidden relative rounded-lg border overflow-hidden"
+        style={{
+          borderColor: `${accentColor.replace(')', ' / 0.45)')}`,
+          background: 'linear-gradient(180deg, hsl(222 55% 6% / 0.98) 0%, hsl(222 45% 10% / 0.92) 100%)',
+          boxShadow: `0 0 0 1px rgba(0,0,0,0.55), 0 10px 24px -14px ${accentColor.replace(')', ' / 0.55)')}, inset 0 1px 0 rgba(255,255,255,0.05)`,
+        }}
+      >
+        {/* top accent line */}
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-px"
+          style={{ background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)` }}
+        />
+        {/* corner brackets */}
+        <span aria-hidden className="absolute top-1 left-1 w-2 h-2 border-t border-l" style={{ borderColor: accentColor }} />
+        <span aria-hidden className="absolute top-1 right-1 w-2 h-2 border-t border-r" style={{ borderColor: accentColor }} />
+        <span aria-hidden className="absolute bottom-1 left-1 w-2 h-2 border-b border-l" style={{ borderColor: accentColor }} />
+        <span aria-hidden className="absolute bottom-1 right-1 w-2 h-2 border-b border-r" style={{ borderColor: accentColor }} />
+
+        {/* Header strip */}
+        <div
+          className="flex items-center justify-between px-3 py-1.5 border-b"
+          style={{ borderColor: `${accentColor.replace(')', ' / 0.25)')}`, background: accentSoft }}
+        >
+          <span className="flex items-center gap-1.5">
+            <span className="relative inline-flex h-1.5 w-1.5">
+              <span className="absolute inset-0 rounded-full animate-ping opacity-70" style={{ background: 'hsl(142 72% 55%)' }} />
+              <span className="relative h-1.5 w-1.5 rounded-full" style={{ background: 'hsl(142 72% 55%)', boxShadow: '0 0 6px hsl(142 72% 55% / 0.9)' }} />
+            </span>
+            <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-emerald-300">
+              {isLogged ? 'OPERACIONAL' : 'CANAL SEGURO'}
+            </span>
+          </span>
+          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.24em]" style={{ color: accentColor }}>
+            {isLogged ? (teamKey || 'ISE') : 'ISE · AC'}
+          </span>
+        </div>
+
+        {/* Data grid — 2 columns on very small, 3 on ≥360px */}
+        {isLogged ? (
+          <div className="grid grid-cols-3 gap-px bg-black/40">
+            <div className="px-2.5 py-2 bg-slate-950/60">
+              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em]" style={{ color: accentColor }}>Agente</div>
+              <div className="font-mono text-[10.5px] font-bold text-amber-50 truncate mt-0.5">{agentShort || '——'}</div>
+              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5 truncate">MAT {matricula}</div>
+            </div>
+            <div className="px-2.5 py-2 bg-slate-950/60">
+              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em]" style={{ color: accentColor }}>Unidade</div>
+              <div className="font-mono text-[10.5px] font-bold text-amber-50 truncate mt-0.5">{(unitName || 'ISE').slice(0, 14)}</div>
+              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5 truncate">{(municipality || 'ACRE').toUpperCase()}</div>
+            </div>
+            <div className="px-2.5 py-2 bg-slate-950/60">
+              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em]" style={{ color: accentColor }}>Equipe</div>
+              <div className="font-mono text-[11px] font-black tracking-[0.15em] mt-0.5" style={{ color: accentColor, textShadow: `0 0 6px ${accentColor.replace(')', ' / 0.7)')}` }}>
+                {teamKey || '——'}
+              </div>
+              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5 truncate">{accent?.label ?? 'OP'}</div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-px bg-black/40">
+            <div className="px-2.5 py-2 bg-slate-950/60">
+              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-amber-300">Protocolo</div>
+              <div className="font-mono text-[10.5px] font-bold text-amber-50 mt-0.5">ISE-AC</div>
+              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5">2026</div>
+            </div>
+            <div className="px-2.5 py-2 bg-slate-950/60">
+              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-amber-300">Turno</div>
+              <div className="font-mono text-[11px] font-black text-amber-50 mt-0.5">24 / 7</div>
+              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5">Contínuo</div>
+            </div>
+            <div className="px-2.5 py-2 bg-slate-950/60">
+              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-amber-300">Cripto</div>
+              <div className="font-mono text-[10.5px] font-bold text-emerald-300 mt-0.5">AES-256</div>
+              <div className="flex items-center gap-1 mt-0.5">
+                {[0,1,2,3].map((i) => (
+                  <span key={i} className="w-[3px] rounded-sm bg-emerald-400" style={{ height: `${3 + i}px`, opacity: 0.6 + i*0.1 }} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ============ DESKTOP / TABLET — original SVG ribbon (≥ sm) ============ */}
+      <div className="hidden sm:block">
       <svg
         viewBox="0 0 800 52"
         preserveAspectRatio="none"
