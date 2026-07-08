@@ -463,7 +463,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                             {/* Role row */}
                             <div className="flex items-center gap-1.5 mt-1">
                               {getRoleIcon(member.role)}
-                              <span className="text-xs md:text-[11px] text-slate-300 font-medium">{getRoleLabel(member.role)}</span>
+                              <span className="text-sm text-slate-300 font-medium">{getRoleLabel(member.role)}</span>
                             </div>
 
                             {/* Info row */}
