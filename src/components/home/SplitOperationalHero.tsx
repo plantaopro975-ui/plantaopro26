@@ -592,8 +592,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     { off: '100%', l: L.base },
                   ];
                   return (
-                    <div className="relative z-20 flex flex-col gap-0.5 px-2 pb-1.5 sm:gap-1 sm:px-2.5 sm:pb-2">
-                      <svg viewBox="0 0 300 72" className="block w-full h-8 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
+                    <div className="relative z-20 flex flex-col gap-0.5 px-2 pb-2 sm:gap-1 sm:px-2.5 sm:pb-2">
+                      <svg viewBox="0 0 300 72" className="block w-full h-11 min-[390px]:h-12 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
                         <defs>
                           <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
                             {stops.map((st) => (
