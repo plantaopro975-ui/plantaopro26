@@ -1,10 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Radio, ShieldCheck, Activity } from 'lucide-react';
+import { Radio, ShieldCheck, Activity, Radar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
+import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 import loginHeroImage from '@/assets/login-hero.jpg';
+
 
 
 
