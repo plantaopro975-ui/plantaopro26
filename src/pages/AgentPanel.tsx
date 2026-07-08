@@ -686,7 +686,7 @@ export default function AgentPanel() {
                       unitName={agent.unit?.name}
                     />
                   </div>
-                  <div className="xl:col-span-1 grid grid-cols-2 xl:grid-cols-1 gap-2.5 md:gap-3">
+                  <div className="xl:col-span-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-2.5 md:gap-3">
                     <TacticalRadar 
                       unitId={agent.unit_id || undefined}
                       compact={true}
