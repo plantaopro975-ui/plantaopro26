@@ -1337,7 +1337,7 @@ export default function Index() {
           const blocks: Record<HomeCardId, { node: JSX.Element; grow?: boolean } | null> = {
             rounds: {
               node: wrap(
-                <div className="animate-fade-in">
+                <div className="animate-fade-in hidden sm:block">
                   <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
                     <RoundsCommandBar />
                   </DraggableHomeCard>

@@ -1,10 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Radio, ShieldCheck, Activity } from 'lucide-react';
+import { Radio, ShieldCheck, Activity, Radar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
+import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 import loginHeroImage from '@/assets/login-hero.jpg';
+
 
 
 
@@ -398,6 +400,27 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
         </div>
 
+        {/* Mobile-only "Gestor de Rondas" — posicionado logo abaixo da viatura/agente */}
+        <div className="relative z-30 px-3 sm:hidden mt-1">
+          <RoundsManager
+            customTrigger={
+              <button
+                type="button"
+                aria-label="Abrir Gestor de Rondas"
+                className="group w-full inline-flex items-center justify-center gap-2 rounded-lg border border-amber-400/50 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 px-4 py-2.5 shadow-[0_6px_18px_-8px_rgba(234,179,8,0.5)] active:scale-[0.98] transition"
+              >
+                <span className="relative inline-flex h-4 w-4">
+                  <Radar className="h-4 w-4 text-amber-300" strokeWidth={2.2} />
+                  <span className="absolute inset-0 rounded-full bg-amber-400/25 blur-[3px] animate-pulse" />
+                </span>
+                <span className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-amber-200 drop-shadow-[0_0_6px_rgba(234,179,8,0.4)]">
+                  Gestor de Rondas
+                </span>
+              </button>
+            }
+          />
+        </div>
+
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
         <div className="relative shrink-0 px-2 sm:px-3 pt-2 sm:pt-3 pb-2 mt-1 sm:mt-2">
           <div className="flex items-center justify-between px-1 pb-1.5">
@@ -409,7 +432,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </span>
           </div>
 
-          <div className="grid grid-cols-4 gap-2" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2" style={{ perspective: '900px' }}>
+
             {TEAMS.map((t, idx) => {
               const isSelected = selectedTeam === t.key;
               return (
@@ -420,7 +444,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 aria-pressed={isSelected}
                 onClick={() => handleSelect(t.key)}
                 className={cn(
-                  'group relative flex h-[140px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
+                  'group relative flex h-[210px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
                   'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
                   isSelected
