@@ -18,7 +18,7 @@ export function DraggableHomeCard({ className, children }: DraggableHomeCardProp
   return (
     <div
       draggable={false}
-      className={cn('relative rounded-lg outline-none', className)}
+      className={cn('card-touch relative rounded-lg outline-none', className)}
       style={{ userSelect: 'none', WebkitUserDrag: 'none' } as React.CSSProperties}
       onDragStart={(e) => e.preventDefault()}
     >
