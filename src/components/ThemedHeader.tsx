@@ -308,7 +308,13 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
       "header-bar bg-gradient-to-r backdrop-blur-md border-b py-2 px-3 sm:px-4 relative z-20 shrink-0 transition-all duration-500",
       style.bg, style.border, style.glow
     )}>
+      {/* Golden accent line (mirrors footer) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
+      />
       <div className="max-w-6xl mx-auto">
+
         <div className="flex items-center justify-between gap-2">
           
           {/* Left: Status Indicator */}
