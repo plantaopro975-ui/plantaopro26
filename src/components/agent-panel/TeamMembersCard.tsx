@@ -443,7 +443,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                             member.role === 'support' ? 'border-blue-500' : 'border-slate-500'
                           }`}>
                             {member.avatar_url && <AvatarImage src={member.avatar_url} alt={member.name} />}
-                            <AvatarFallback className="bg-slate-700 text-slate-200 text-xl sm:text-lg font-bold">
+                            <AvatarFallback className="bg-slate-700 text-slate-200 text-2xl sm:text-lg font-bold">
                               {member.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
