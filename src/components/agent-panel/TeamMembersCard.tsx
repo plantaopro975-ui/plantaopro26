@@ -423,7 +423,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                       <button
                         key={member.id}
                         onClick={() => handleMemberClick(member)}
-                        className={`relative w-full text-left rounded-xl border p-4 md:p-3.5 min-h-[112px] md:min-h-[84px] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
+                        className={`relative w-full text-left rounded-xl border p-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
                           isCurrentAgent
                             ? 'bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/50'
                             : 'bg-slate-800/60 border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700/60'
