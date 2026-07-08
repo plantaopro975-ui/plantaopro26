@@ -1676,16 +1676,19 @@ export default function Index() {
             savePassword={savePasswordEnabled}
           />
           
-          <div className="flex items-center justify-between pt-1">
-            <ForgotPasswordDialog />
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-800/70 mt-1">
+            <div className="pt-3">
+              <ForgotPasswordDialog />
+            </div>
             <button
               type="button"
               onClick={() => setShowClearCredsConfirm(true)}
-              className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground hover:text-destructive transition-colors font-mono"
+              className="pt-3 text-[10px] uppercase tracking-[0.16em] text-slate-500 hover:text-red-400 transition-colors font-mono"
             >
               Limpar credenciais
             </button>
           </div>
+
 
           
           <AuthButton
