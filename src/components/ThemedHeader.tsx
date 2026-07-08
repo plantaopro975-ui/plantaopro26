@@ -313,15 +313,15 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] sm:h-[2.5px] lg:h-[3px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-90 z-30"
       />
-      {/* Golden accent line — left edge (responsive) */}
+      {/* Golden accent line — left edge (responsive, safe on compact heights) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-0 top-2 bottom-2 sm:top-3 sm:bottom-3 lg:top-4 lg:bottom-4 w-[2px] sm:w-[2.5px] lg:w-[3px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90 z-30"
+        className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-[calc(100%-8px)] sm:h-[calc(100%-16px)] lg:h-[calc(100%-24px)] max-h-full w-[2px] sm:w-[2.5px] lg:w-[3px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90 z-30"
       />
-      {/* Golden accent line — right edge (responsive) */}
+      {/* Golden accent line — right edge (responsive, safe on compact heights) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute right-0 top-2 bottom-2 sm:top-3 sm:bottom-3 lg:top-4 lg:bottom-4 w-[2px] sm:w-[2.5px] lg:w-[3px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90 z-30"
+        className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-[calc(100%-8px)] sm:h-[calc(100%-16px)] lg:h-[calc(100%-24px)] max-h-full w-[2px] sm:w-[2.5px] lg:w-[3px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90 z-30"
       />
 
 
