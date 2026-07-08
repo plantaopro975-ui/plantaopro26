@@ -335,7 +335,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center min-h-[clamp(90px,14vh,220px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
+          <div className="relative flex items-end justify-end sm:justify-center min-h-[clamp(170px,26vh,260px)] sm:min-h-[clamp(90px,14vh,220px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
 
             <svg
               aria-hidden
@@ -356,8 +356,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             />
             {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
             <div
-              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 leading-[0] isolate md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%]"
-              style={{ height: 'clamp(90px, 14vh, 240px)' }}
+              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 leading-[0] isolate h-[clamp(170px,26vh,260px)] sm:h-[clamp(90px,14vh,240px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
             >
               {/* Viatura — permanece à esquerda, com giroflex discretamente animado */}
               <picture className="relative block h-full leading-[0]">
@@ -367,7 +366,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none"
+                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 sm:scale-100 origin-bottom-left"
                   draggable={false}
                 />
                 {/* Giroflex — ancorado nas lentes reais da imagem 1024x1024.
@@ -385,14 +384,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
 
               {/* Agente — à direita da viatura, levemente maior para presença sem quebrar proporção */}
-              <picture className="block" style={{ height: '100%' }}>
+              <picture className="block h-full">
                 <source srcSet={agent3dWebp} type="image/webp" />
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
-                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-1 sm:-ml-2"
+                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-1 sm:-ml-2 scale-[1.18] sm:scale-100 origin-bottom-right"
                   draggable={false}
-                  style={{ transformOrigin: 'bottom center' }}
+                  style={{ transformOrigin: 'bottom right' }}
                 />
               </picture>
             </div>
