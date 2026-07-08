@@ -704,12 +704,22 @@ export default function Master() {
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="audit" className="gap-1.5 relative">
+              <Icon3D name="shield" size={14} className="hidden sm:inline-flex" />
+              Auditoria
+            </TabsTrigger>
           </TabsList>
 
           {/* Pending Approvals Tab */}
           <TabsContent value="approvals" className="space-y-6 mt-6">
             <PendingApprovalsManager onApprovalChange={fetchData} />
           </TabsContent>
+
+          {/* Audit — Recém-cadastrados (aprovação automática) */}
+          <TabsContent value="audit" className="space-y-6 mt-6">
+            <RecentRegistrationsAudit daysWindow={30} onChange={fetchData} />
+          </TabsContent>
+
 
           {/* Overview Tab - Units */}
           <TabsContent value="overview" className="space-y-6 mt-6">
