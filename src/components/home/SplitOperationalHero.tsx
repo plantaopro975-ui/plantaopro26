@@ -151,7 +151,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-hidden mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
+        className="relative overflow-y-auto overflow-x-hidden sm:overflow-hidden mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
@@ -444,7 +444,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 aria-pressed={isSelected}
                 onClick={() => handleSelect(t.key)}
                 className={cn(
-                  'group relative flex h-[210px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
+                  'group relative flex h-[155px] sm:h-[170px] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
                   'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
                   isSelected
