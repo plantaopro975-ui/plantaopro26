@@ -146,7 +146,12 @@ export function AuthDialog({
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
           <div
-            className="relative w-full overflow-hidden bg-slate-950 aspect-[16/9] sm:aspect-[16/7] md:aspect-[16/6]"
+            className={cn(
+              "relative w-full overflow-hidden bg-slate-950 shrink-0",
+              variant === 'register'
+                ? "aspect-[16/5] sm:aspect-[16/5]"
+                : "aspect-[16/9] sm:aspect-[16/7] md:aspect-[16/6]"
+            )}
           >
             <img
               src={teamPoster}
@@ -154,6 +159,7 @@ export function AuthDialog({
               className="absolute inset-0 h-full w-full object-cover object-[center_25%] sm:object-[center_30%]"
               style={{ filter: 'contrast(1.06) saturate(0.98) brightness(0.9)' }}
             />
+
             {/* Vinheta noir + gradiente base para legibilidade */}
             <div className="absolute inset-0 pointer-events-none"
                  style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 40%, rgba(2,6,23,0.55) 100%)' }} />
