@@ -561,8 +561,8 @@ export default function AgentPanel() {
                 {/* Tabs Grid - Compact, readable */}
                 <div className={compact ? 'p-1.5 md:p-2' : 'p-2 md:p-2.5'}>
                   <TabsList className={cn(
-                    'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
-                    compact ? 'p-1 gap-1' : 'p-1.5 gap-1.5'
+                    'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
+                    compact ? 'p-1.5 gap-1.5' : 'p-2 gap-2'
                   )}>
                     {([
                       {
