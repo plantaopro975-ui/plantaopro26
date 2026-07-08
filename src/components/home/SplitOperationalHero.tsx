@@ -198,7 +198,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
         {/* ============ MOBILE-ONLY TITLE — no topo ============ */}
-        <div className="sm:hidden relative z-30 px-3 pt-1.5 pb-0.5 order-1">
+        <div className="sm:hidden relative z-30 px-3 pt-1.5 pb-3 mb-2 order-1">
           <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[20px] leading-[1.02] text-center">
             Comando <span className="text-amber-400">Tático</span> Socioeducativo
           </h2>
