@@ -204,8 +204,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
 
 
-            <div className="flex flex-col gap-1.5">
-              <span className="invisible inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:visible">
+            <div className="flex flex-col gap-1 sm:gap-1.5">
+              <span className="hidden items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
                 <span className="h-1 w-6 bg-amber-400" />
                 Sistema Operacional
               </span>
@@ -339,14 +339,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-end sm:justify-center min-h-[calc(clamp(170px,26vh,260px)+28px)] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2 pt-2 sm:pt-0">
-            <span className="absolute left-2 right-2 top-0 z-40 inline-flex items-center gap-2 py-1 px-2 rounded-sm border border-amber-400/40 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-transparent shadow-[inset_0_1px_0_rgba(234,179,8,0.25),0_4px_12px_-6px_rgba(234,179,8,0.5)] sm:hidden">
+          <div className="relative flex items-end justify-end sm:justify-center min-h-[236px] min-[390px]:min-h-[244px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-1 pt-9 sm:pt-0 sm:-mb-2">
+            <span className="absolute left-2 right-2 top-1 z-40 inline-flex h-7 items-center gap-1.5 rounded-sm border border-amber-400/45 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-transparent px-2 py-0.5 shadow-[inset_0_1px_0_rgba(234,179,8,0.25),0_4px_12px_-6px_rgba(234,179,8,0.5)] sm:hidden">
               <span className="h-2 w-1 bg-amber-400 shadow-[0_0_6px_rgba(234,179,8,0.9)]" />
               <span className="h-2 w-3 bg-amber-400/80" />
-              <span className="font-mono text-[11px] font-black uppercase tracking-[0.28em] text-amber-300 leading-none drop-shadow-[0_0_6px_rgba(234,179,8,0.5)]">
+              <span className="min-w-0 flex-1 truncate font-mono text-[9px] min-[360px]:text-[10px] font-black uppercase tracking-[0.18em] min-[360px]:tracking-[0.24em] text-amber-300 leading-none drop-shadow-[0_0_6px_rgba(234,179,8,0.5)]">
                 Sistema Operacional
               </span>
-              <span className="ml-auto font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-amber-200/80">ATIVO</span>
+              <span className="shrink-0 font-mono text-[8px] min-[360px]:text-[9px] font-semibold uppercase tracking-[0.16em] text-amber-200/80">ATIVO</span>
             </span>
 
 
@@ -369,12 +369,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             />
             {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
             <div
-              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[clamp(170px,26vh,260px)] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
+              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[182px] min-[390px]:h-[190px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
             >
               {/* Viatura — mobile usa render dedicado com giroflex vermelho/azul embutido; desktop mantém o modelo original com luzes CSS animadas. */}
               {/* MOBILE */}
               <picture className="relative block h-full aspect-square leading-[0] sm:hidden">
-                <span className="relative block h-full aspect-square origin-bottom-left -translate-y-2 scale-110">
+                <span className="relative block h-full aspect-square origin-bottom-left -translate-y-1 scale-110">
                   <img
                     src={vehicleMobile}
                     alt="Viatura tática ISE"
@@ -446,7 +446,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* Mobile-only "Gestor de Rondas" — posicionado logo abaixo da viatura/agente */}
-        <div className="relative z-30 px-2 sm:hidden mt-2">
+        <div className="relative z-30 px-2 sm:hidden mt-1">
           <RoundsManager
             customTrigger={
               <button
@@ -467,7 +467,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
-        <div className="relative shrink-0 px-2 sm:px-3 pt-1.5 sm:pt-3 pb-2 mt-1 sm:mt-2">
+        <div className="relative shrink-0 px-2 sm:px-3 pt-1 sm:pt-3 pb-2 mt-0 sm:mt-2">
 
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-200">
