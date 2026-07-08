@@ -423,7 +423,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                       <button
                         key={member.id}
                         onClick={() => handleMemberClick(member)}
-                        className={`relative w-full text-left rounded-xl border p-3.5 md:p-3 min-h-[92px] md:min-h-[76px] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
+                        className={`relative w-full text-left rounded-xl border p-4 md:p-3.5 min-h-[112px] md:min-h-[84px] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
                           isCurrentAgent
                             ? 'bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/50'
                             : 'bg-slate-800/60 border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700/60'
@@ -436,9 +436,9 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                           </div>
                         )}
                         
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3.5">
                           {/* Bigger Avatar */}
-                          <Avatar className={`h-14 w-14 md:h-12 md:w-12 border-2 shrink-0 shadow-md ${
+                          <Avatar className={`h-16 w-16 md:h-14 md:w-14 border-2 shrink-0 shadow-md ${
                             member.role === 'team_leader' ? 'border-amber-500' :
                             member.role === 'support' ? 'border-blue-500' : 'border-slate-500'
                           }`}>
