@@ -257,12 +257,12 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
 
   return (
     <>
-      <Card className="card-night-amber bg-gradient-to-br from-[hsl(222,60%,3%)] via-[hsl(222,55%,5%)] to-[hsl(38,40%,8%)] border-2 border-amber-500/40 overflow-hidden transition-all duration-300 hover:border-amber-400/60 group relative">
+      <Card className="card-night-amber w-full min-w-0 bg-gradient-to-br from-[hsl(222,60%,3%)] via-[hsl(222,55%,5%)] to-[hsl(38,40%,8%)] border-2 border-amber-500/40 overflow-visible transition-all duration-300 hover:border-amber-400/60 group relative">
         {/* Subtle Glow Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-amber-500/3 via-transparent to-amber-500/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <CardHeader className="pb-2.5 pt-4 px-4 relative">
+          <CardHeader className="pb-3 pt-4 px-3.5 sm:px-4 relative">
             <div className="flex items-center justify-between">
               <CollapsibleTrigger asChild>
                 <button className="flex items-center gap-3 text-left group/btn flex-1 min-w-0">
@@ -309,7 +309,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
           </CardHeader>
 
           <CollapsibleContent>
-            <CardContent className="pt-1 px-3 pb-3 space-y-3">
+            <CardContent className="pt-1 px-3.5 sm:px-3 pb-4 space-y-3.5 overflow-visible">
               {/* Team Leaves Today Section */}
               {(() => {
                 const today = startOfDay(new Date());
@@ -414,7 +414,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                   <p className="text-xs text-muted-foreground">Nenhum membro encontrado.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div className="w-full min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-3.5 lg:gap-3 overflow-visible">
                   {sortedMembers.map((member) => {
                     const isCurrentAgent = member.id === currentAgentId;
                     const hasBirthday = isBirthdayToday(member.birth_date);
@@ -423,7 +423,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                       <button
                         key={member.id}
                         onClick={() => handleMemberClick(member)}
-                        className={`relative w-full text-left rounded-xl border p-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
+                          className={`relative w-full min-w-0 text-left rounded-xl border p-5 sm:p-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
                           isCurrentAgent
                             ? 'bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/50'
                             : 'bg-slate-800/60 border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700/60'
