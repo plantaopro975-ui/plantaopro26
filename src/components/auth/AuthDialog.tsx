@@ -206,7 +206,8 @@ export function AuthDialog({
         ) : (
           <>
             {/* Legacy header (non-team dialogs) */}
-            <div className={cn("relative px-6 pt-8 pb-6 bg-gradient-to-b", styles.headerBg)}>
+            <div className={cn("relative px-6 pt-8 pb-6 bg-gradient-to-b shrink-0", styles.headerBg)}>
+
               <div className="absolute top-4 right-4 flex gap-1.5">
                 <div className={cn("w-1.5 h-1.5 rounded-full", styles.decorColor)} />
                 <div className={cn("w-1.5 h-1.5 rounded-full opacity-60", styles.decorColor)} />
