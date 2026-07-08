@@ -753,11 +753,25 @@ export default function AgentPanel() {
               </TabsContent>
 
               <TabsContent value="rondas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
-                <Suspense fallback={<div className="flex items-center justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-amber-500" /></div>}>
-                  <RoundsManager />
-                </Suspense>
+                <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-br from-slate-900/95 via-slate-950/95 to-amber-950/30 p-4 md:p-5 shadow-lg">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Radio className="h-5 w-5 text-amber-400" />
+                    <h3 className="text-base md:text-lg font-black text-amber-200 tracking-tight">
+                      Gestor de Rondas
+                    </h3>
+                  </div>
+                  <p className="text-xs md:text-sm text-slate-300 mb-3 leading-relaxed">
+                    Abra o painel tático para montar a escala, iniciar o cronômetro e acompanhar as rondas em tempo real.
+                  </p>
+                  <Suspense fallback={<div className="flex items-center justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-amber-500" /></div>}>
+                    <div className="flex justify-center md:justify-start">
+                      <RoundsManager />
+                    </div>
+                  </Suspense>
+                </div>
                 <RoundsHistoryCard agentId={agent.id} />
               </TabsContent>
+
 
 
 
