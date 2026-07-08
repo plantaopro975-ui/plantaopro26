@@ -20,6 +20,7 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { MissionLockDialog } from './MissionLockDialog';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
+import { TacticalClock } from './TacticalClock';
 import {
   isNightShift, getNightWindow, formatAcreClock,
   NIGHT_START, NIGHT_END, NIGHT_TZ,
