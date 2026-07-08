@@ -153,7 +153,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
+        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] sm:flex-1 min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
@@ -381,6 +381,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
+                  onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }}
                   className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-[0.84] sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
@@ -407,6 +408,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
+                  onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }}
                   className="block max-h-full w-auto object-contain object-right-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none sm:-ml-2 scale-[0.9] sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 sm:translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom-right sm:origin-bottom"
                   draggable={false}
                 />
