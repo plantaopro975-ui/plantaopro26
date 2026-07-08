@@ -18,8 +18,6 @@ import vehicleMobileAsset from '@/assets/hero/vehicle-ise-mobile.png.asset.json'
 const vehicleMobile = vehicleMobileAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.png.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
-import csGasSmokeAsset from '@/assets/cs-gas-smoke.png.asset.json';
-const csGasSmoke = csGasSmokeAsset.url;
 import agentVehicleSceneWebpAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleSceneWebp = agentVehicleSceneWebpAsset.url;
 import objAlfaAsset from '@/assets/teams/alfa-vest-pro.png.asset.json';
@@ -405,24 +403,20 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
-              </picture>
 
-              {/* CS Gas — fumaça realista no chão ao lado do agente */}
-              <div
-                aria-hidden
-                className="relative z-40 flex items-end shrink-0 -ml-4 sm:-ml-6 lg:-ml-8 pointer-events-none"
-              >
-                <img
-                  src={csGasSmoke}
-                  alt=""
-                  loading="lazy"
-                  width={1024}
-                  height={768}
-                  className="block w-auto object-contain object-bottom select-none h-[52%] min-[390px]:h-[56%] sm:h-[62%] lg:h-[58%] xl:h-[60%] max-h-[70%] opacity-80 mix-blend-screen drop-shadow-[0_10px_18px_rgba(0,0,0,0.7)] mb-2 sm:mb-0 animate-[cs-drift_8s_ease-in-out_infinite]"
-                  style={{ filter: 'contrast(1.05) brightness(1.05)' }}
-                  draggable={false}
-                />
-              </div>
+                {/* CS Gas — fumaça sutil saindo do chão, próxima ao boneco (CSS-only) */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute bottom-0 right-[-14%] sm:right-[-18%] lg:right-[-14%] w-[52%] sm:w-[46%] lg:w-[42%] h-[38%] sm:h-[42%] overflow-visible motion-reduce:hidden z-[45]"
+                >
+                  <span className="cs-puff cs-puff-1" />
+                  <span className="cs-puff cs-puff-2" />
+                  <span className="cs-puff cs-puff-3" />
+                  <span className="cs-puff cs-puff-4" />
+                  {/* base rasa no chão */}
+                  <span className="absolute inset-x-0 bottom-0 h-[10%] rounded-[50%] bg-white/10 blur-md" />
+                </span>
+              </picture>
             </div>
 
           </div>
