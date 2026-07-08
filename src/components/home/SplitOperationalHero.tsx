@@ -632,7 +632,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       </svg>
 
                       <span
-                        className="font-mono text-[7.5px] sm:text-[9.5px] uppercase tracking-[0.24em] sm:tracking-[0.28em] truncate text-slate-200"
+                        className="font-mono text-[9px] min-[390px]:text-[9.5px] sm:text-[9.5px] uppercase tracking-[0.24em] sm:tracking-[0.28em] truncate text-slate-200"
                         style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
                       >
                         {t.motto}
