@@ -360,42 +360,41 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             <div
               className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[clamp(170px,26vh,260px)] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
             >
-              {/* Viatura — permanece à esquerda, com giroflex discretamente animado */}
-              <picture className="relative block h-full leading-[0]">
+              {/* Viatura — mobile usa render dedicado com giroflex vermelho/azul embutido; desktop mantém o modelo original com luzes CSS animadas. */}
+              {/* MOBILE */}
+              <picture className="relative block h-full leading-[0] sm:hidden">
+                <img
+                  src={vehicleMobile}
+                  alt="Viatura tática ISE"
+                  width={1024}
+                  height={1024}
+                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 origin-bottom-left -translate-y-2 giroflex-pulse-mobile"
+                  draggable={false}
+                />
+              </picture>
+              {/* DESKTOP/TABLET */}
+              <picture className="relative hidden sm:block h-full leading-[0]">
                 <source srcSet={vehicle3dWebp} type="image/webp" />
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left -translate-y-2 sm:translate-y-0"
+                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
-                {/* Giroflex — wrapper replica o mesmo scale/origin/translate da viatura para manter as luzes ancoradas nas lentes em qualquer breakpoint. */}
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left -translate-y-2 sm:translate-y-0"
+                  className="pointer-events-none absolute inset-0 scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                 >
-                  {/* Mobile: luzes fixadas logo ACIMA da barra do giroflex, com cores alinhadas às respectivas lentes (vermelho à esquerda, azul à direita — padrão viatura ISE). */}
                   <span
                     aria-hidden
-                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden sm:hidden"
-                    style={{ top: '22.4%', left: '47.6%' }}
-                  />
-                  <span
-                    aria-hidden
-                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden sm:hidden"
-                    style={{ top: '22.4%', left: '63.2%' }}
-                  />
-                  {/* Desktop/tablet */}
-                  <span
-                    aria-hidden
-                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden hidden sm:block"
+                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
                     style={{ top: '23.95%', left: '47.1%' }}
                   />
                   <span
                     aria-hidden
-                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden hidden sm:block"
+                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
                     style={{ top: '24.6%', left: '62.7%' }}
                   />
                 </span>
