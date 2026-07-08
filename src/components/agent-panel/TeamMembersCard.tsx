@@ -414,7 +414,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                   <p className="text-xs text-muted-foreground">Nenhum membro encontrado.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   {sortedMembers.map((member) => {
                     const isCurrentAgent = member.id === currentAgentId;
                     const hasBirthday = isBirthdayToday(member.birth_date);
