@@ -426,7 +426,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               <button
                 type="button"
                 aria-label="Abrir Gestor de Rondas"
-                className="group relative w-full inline-flex items-center justify-center gap-1.5 rounded-md border border-amber-400/55 bg-[linear-gradient(135deg,rgba(30,20,5,0.9)_0%,rgba(60,40,8,0.75)_50%,rgba(30,20,5,0.9)_100%)] px-2.5 py-1 shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_6px_18px_-10px_rgba(234,179,8,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] active:scale-[0.985] transition overflow-hidden"
+                className="group relative w-full inline-flex items-center justify-center gap-2 rounded-lg border border-amber-400/55 bg-[linear-gradient(135deg,rgba(30,20,5,0.9)_0%,rgba(60,40,8,0.75)_50%,rgba(30,20,5,0.9)_100%)] px-3 py-2 shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_6px_18px_-10px_rgba(234,179,8,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] active:scale-[0.985] transition overflow-hidden"
               >
                 {/* corner brackets — menores */}
                 <span aria-hidden className="absolute top-0.5 left-0.5 w-1.5 h-1.5 border-t border-l border-amber-300/70" />
@@ -435,16 +435,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <span aria-hidden className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 border-b border-r border-amber-300/70" />
                 <span aria-hidden className="absolute inset-0 opacity-30 bg-[linear-gradient(90deg,transparent_0%,rgba(234,179,8,0.15)_50%,transparent_100%)] -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
 
-                <span className="relative inline-flex h-3 w-3 shrink-0">
-                  <Radar className="h-3 w-3 text-amber-300 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" strokeWidth={2.4} />
+                <span className="relative inline-flex h-4 w-4 shrink-0">
+                  <Radar className="h-4 w-4 text-amber-300 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" strokeWidth={2.4} />
                   <span className="absolute inset-0 rounded-full bg-amber-400/25 blur-[3px] animate-pulse" />
                 </span>
-                <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-amber-100 drop-shadow-[0_0_6px_rgba(234,179,8,0.4)]">
+                <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-amber-100 drop-shadow-[0_0_6px_rgba(234,179,8,0.4)]">
                   Gestor de Rondas
                 </span>
-                <span aria-hidden className="ml-0.5 flex items-center gap-0.5">
-                  <span className="w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)] animate-pulse" />
-                  <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.16em] text-emerald-300/90">ATIVO</span>
+                <span aria-hidden className="ml-1 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)] animate-pulse" />
+                  <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-emerald-300/90">ATIVO</span>
                 </span>
               </button>
             }
