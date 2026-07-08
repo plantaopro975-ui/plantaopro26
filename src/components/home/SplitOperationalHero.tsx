@@ -204,8 +204,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
 
 
-            <div className="flex flex-col gap-1.5">
-              <span className="invisible inline-flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:visible">
+            <div className="flex flex-col gap-1 sm:gap-1.5">
+              <span className="hidden items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
                 <span className="h-1 w-6 bg-amber-400" />
                 Sistema Operacional
               </span>
@@ -339,14 +339,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-end sm:justify-center min-h-[calc(clamp(170px,26vh,260px)+28px)] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2 pt-2 sm:pt-0">
-            <span className="absolute left-2 right-2 top-0 z-40 inline-flex items-center gap-2 py-1 px-2 rounded-sm border border-amber-400/40 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-transparent shadow-[inset_0_1px_0_rgba(234,179,8,0.25),0_4px_12px_-6px_rgba(234,179,8,0.5)] sm:hidden">
+          <div className="relative flex items-end justify-end sm:justify-center min-h-[236px] min-[390px]:min-h-[244px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-1 pt-9 sm:pt-0 sm:-mb-2">
+            <span className="absolute left-2 right-2 top-1 z-40 inline-flex h-7 items-center gap-1.5 rounded-sm border border-amber-400/45 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-transparent px-2 py-0.5 shadow-[inset_0_1px_0_rgba(234,179,8,0.25),0_4px_12px_-6px_rgba(234,179,8,0.5)] sm:hidden">
               <span className="h-2 w-1 bg-amber-400 shadow-[0_0_6px_rgba(234,179,8,0.9)]" />
               <span className="h-2 w-3 bg-amber-400/80" />
-              <span className="font-mono text-[11px] font-black uppercase tracking-[0.28em] text-amber-300 leading-none drop-shadow-[0_0_6px_rgba(234,179,8,0.5)]">
+              <span className="min-w-0 flex-1 truncate font-mono text-[9px] min-[360px]:text-[10px] font-black uppercase tracking-[0.18em] min-[360px]:tracking-[0.24em] text-amber-300 leading-none drop-shadow-[0_0_6px_rgba(234,179,8,0.5)]">
                 Sistema Operacional
               </span>
-              <span className="ml-auto font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-amber-200/80">ATIVO</span>
+              <span className="shrink-0 font-mono text-[8px] min-[360px]:text-[9px] font-semibold uppercase tracking-[0.16em] text-amber-200/80">ATIVO</span>
             </span>
 
 
@@ -369,20 +369,51 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             />
             {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
             <div
-              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[clamp(170px,26vh,260px)] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
+              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[182px] min-[390px]:h-[190px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
             >
-              {/* Viatura — mobile usa render dedicado com giroflex vermelho/azul embutido; desktop mantém o modelo original com luzes CSS animadas. */}
+              {/* Viatura — mobile usa composição SVG local para evitar asset quebrado e manter o strobo ancorado. */}
               {/* MOBILE */}
-              <picture className="relative block h-full aspect-square leading-[0] sm:hidden">
-                <span className="relative block h-full aspect-square origin-bottom-left -translate-y-2 scale-110">
-                  <img
-                    src={vehicleMobile}
-                    alt="Viatura tática ISE"
-                    width={1024}
-                    height={1024}
-                    className="block h-full w-full object-contain select-none"
-                    draggable={false}
-                  />
+              <div className="relative block h-full aspect-square leading-[0] sm:hidden" aria-label="Viatura tática ISE" role="img">
+                <span className="relative block h-full aspect-square origin-bottom-left -translate-y-1 scale-110">
+                  <svg viewBox="0 0 320 240" className="block h-full w-full select-none drop-shadow-[0_24px_34px_rgba(0,0,0,0.9)]" aria-hidden>
+                    <defs>
+                      <linearGradient id="mobileVehicleBody" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f8fafc" />
+                        <stop offset="48%" stopColor="#cbd5e1" />
+                        <stop offset="100%" stopColor="#475569" />
+                      </linearGradient>
+                      <linearGradient id="mobileVehicleDark" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#172033" />
+                        <stop offset="100%" stopColor="#020617" />
+                      </linearGradient>
+                      <radialGradient id="mobileVehicleGlow" cx="50%" cy="45%" r="70%">
+                        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.35" />
+                        <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                      </radialGradient>
+                    </defs>
+                    <ellipse cx="162" cy="215" rx="128" ry="18" fill="#020617" opacity="0.65" />
+                    <path d="M42 116 C58 84 91 65 138 61 L196 61 C230 63 258 84 273 119 L292 154 C297 164 292 179 281 182 L48 182 C33 181 26 166 34 153 Z" fill="url(#mobileVehicleBody)" />
+                    <path d="M93 83 C108 73 128 70 153 70 L192 70 C213 72 231 88 242 113 L215 114 C204 97 190 89 171 88 L128 88 C111 88 99 95 90 113 L62 113 C70 100 79 90 93 83 Z" fill="url(#mobileVehicleDark)" />
+                    <path d="M53 122 L117 122 L117 178 L43 178 C33 177 29 166 35 154 Z" fill="#f8fafc" />
+                    <path d="M120 121 L213 121 L220 178 L120 178 Z" fill="#0f172a" />
+                    <path d="M217 122 L273 122 L290 156 C294 166 289 177 279 178 L224 178 Z" fill="#f8fafc" />
+                    <path d="M132 132 H205 L210 169 H132 Z" fill="#111827" opacity="0.82" />
+                    <path d="M55 132 H108 V166 H43 L39 157 Z" fill="#e2e8f0" />
+                    <path d="M232 133 H275 L286 157 L282 166 H230 Z" fill="#e2e8f0" />
+                    <rect x="134" y="52" width="62" height="8" rx="4" fill="#0f172a" />
+                    <rect x="148" y="48" width="15" height="6" rx="3" fill="#e5e7eb" opacity="0.9" />
+                    <rect x="168" y="48" width="16" height="6" rx="3" fill="#e5e7eb" opacity="0.9" />
+                    <rect x="42" y="176" width="239" height="12" rx="6" fill="#111827" />
+                    <circle cx="88" cy="184" r="24" fill="#020617" />
+                    <circle cx="88" cy="184" r="11" fill="#64748b" />
+                    <circle cx="234" cy="184" r="24" fill="#020617" />
+                    <circle cx="234" cy="184" r="11" fill="#64748b" />
+                    <path d="M40 144 H90" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" opacity="0.65" />
+                    <path d="M235 144 H287" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" opacity="0.65" />
+                    <text x="159" y="158" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="18" fontWeight="800" fill="#f8fafc" letterSpacing="3">ISE</text>
+                    <text x="160" y="174" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="8" fontWeight="700" fill="#fbbf24" letterSpacing="2">ACRE</text>
+                    <circle cx="164" cy="118" r="105" fill="url(#mobileVehicleGlow)" />
+                  </svg>
                   <span
                     aria-hidden
                     className="pointer-events-none absolute inset-0"
@@ -390,16 +421,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                    style={{ top: '23.2%', left: '39.8%', ['--giroflex-lens-width' as any]: '16.2%' }}
+                    style={{ top: '22.2%', left: '49%', ['--giroflex-lens-width' as any]: '7.2%' }}
                   />
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
-                    style={{ top: '24.85%', left: '59.2%', ['--giroflex-lens-width' as any]: '17.6%' }}
+                    style={{ top: '22.2%', left: '57%', ['--giroflex-lens-width' as any]: '7.6%' }}
                   />
                   </span>
                 </span>
-              </picture>
+              </div>
               {/* DESKTOP/TABLET */}
               <picture className="relative hidden sm:block h-full leading-[0]">
                 <source srcSet={vehicle3dWebp} type="image/webp" />
@@ -429,8 +460,31 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
 
 
-              {/* Agente — à direita da viatura, levemente maior para presença sem quebrar proporção */}
-              <picture className="block h-full">
+              {/* Agente — mobile usa silhueta SVG local; desktop mantém asset 3D. */}
+              <div className="relative block h-full w-[96px] sm:hidden" aria-label="Agente Socioeducativo ISE" role="img">
+                <svg viewBox="0 0 120 240" className="block h-full w-full drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)]" aria-hidden>
+                  <defs>
+                    <linearGradient id="mobileAgentVest" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#1e293b" />
+                      <stop offset="100%" stopColor="#020617" />
+                    </linearGradient>
+                    <linearGradient id="mobileAgentPants" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#b69b62" />
+                      <stop offset="100%" stopColor="#574326" />
+                    </linearGradient>
+                  </defs>
+                  <ellipse cx="62" cy="226" rx="38" ry="10" fill="#020617" opacity="0.7" />
+                  <circle cx="61" cy="43" r="24" fill="#111827" />
+                  <path d="M37 68 C43 58 79 58 86 69 L101 125 C104 137 96 146 86 141 L80 103 L78 158 H43 L41 103 L35 142 C24 147 17 136 20 125 Z" fill="url(#mobileAgentVest)" />
+                  <path d="M43 158 H59 L56 219 H37 Z" fill="url(#mobileAgentPants)" />
+                  <path d="M63 158 H79 L87 219 H68 Z" fill="url(#mobileAgentPants)" />
+                  <path d="M44 76 H78" stroke="#f59e0b" strokeOpacity="0.55" strokeWidth="2" />
+                  <rect x="49" y="85" width="24" height="44" rx="4" fill="#020617" opacity="0.55" />
+                  <path d="M31 219 H57 V231 H24 C24 224 27 221 31 219 Z" fill="#020617" />
+                  <path d="M68 219 H94 V231 H67 C66 226 66 222 68 219 Z" fill="#020617" />
+                </svg>
+              </div>
+              <picture className="hidden sm:block h-full">
                 <source srcSet={agent3dWebp} type="image/webp" />
                 <img
                   src={agent3d}
@@ -446,7 +500,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* Mobile-only "Gestor de Rondas" — posicionado logo abaixo da viatura/agente */}
-        <div className="relative z-30 px-2 sm:hidden mt-2">
+        <div className="relative z-30 px-2 sm:hidden mt-1">
           <RoundsManager
             customTrigger={
               <button
@@ -467,7 +521,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
-        <div className="relative shrink-0 px-2 sm:px-3 pt-1.5 sm:pt-3 pb-2 mt-1 sm:mt-2">
+        <div className="relative shrink-0 px-2 sm:px-3 pt-1 sm:pt-3 pb-2 mt-0 sm:mt-2">
 
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-200">
