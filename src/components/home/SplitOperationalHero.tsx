@@ -371,6 +371,21 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   className="block h-full w-auto object-contain select-none scale-110 origin-bottom-left -translate-y-2 giroflex-pulse-mobile"
                   draggable={false}
                 />
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 scale-110 origin-bottom-left -translate-y-2"
+                >
+                  <span
+                    aria-hidden
+                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
+                    style={{ top: '24%', left: '40%', ['--giroflex-lens-width' as any]: '15%' }}
+                  />
+                  <span
+                    aria-hidden
+                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
+                    style={{ top: '24%', left: '57%', ['--giroflex-lens-width' as any]: '14%' }}
+                  />
+                </span>
               </picture>
               {/* DESKTOP/TABLET */}
               <picture className="relative hidden sm:block h-full leading-[0]">
