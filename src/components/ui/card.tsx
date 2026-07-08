@@ -2,9 +2,25 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("card-touch rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
-));
+const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, onClick, ...props }, ref) => {
+    // Any Card wired with onClick is treated as interactive and gets
+    // standardized touch feedback (tap target, active scale, no delay, no flicker).
+    const isInteractive = typeof onClick === "function";
+    return (
+      <div
+        ref={ref}
+        onClick={onClick}
+        className={cn(
+          "card-touch rounded-lg border bg-card text-card-foreground shadow-sm",
+          isInteractive && "card-touch-interactive",
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
+);
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(

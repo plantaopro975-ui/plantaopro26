@@ -1,4 +1,4 @@
-import { useState, useRef, MouseEvent, TouchEvent, useCallback } from 'react';
+import { useState, useRef, MouseEvent, TouchEvent, useCallback, useEffect } from 'react';
 import { useTheme, themes } from '@/contexts/ThemeContext';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { cn } from '@/lib/utils';
@@ -11,61 +11,119 @@ interface ThemedTeamCardProps {
   onClick: () => void;
 }
 
-// 3D Tilt Hook — mouse + touch aware (iOS Safari safe)
+/**
+ * 3D Tilt Hook — mouse + touch aware, calibrated for iOS Safari and Android 120Hz.
+ *
+ * Stability strategy:
+ * - Targets are updated on event (cheap, no state writes).
+ * - A single rAF loop lerps current → target every frame at a fixed smoothing
+ *   coefficient, so 60Hz / 90Hz / 120Hz devices all converge visually the same.
+ * - Rotation is clamped to ±MAX_ROT to prevent overshoot on fast finger swipes.
+ * - Loop halts automatically once current ≈ target (idle), saving battery.
+ */
+const MAX_ROT = 6; // degrees — clamped to prevent jitter on aggressive swipes
+const TILT_DIVISOR = 18; // larger divisor = softer tilt = less oscillation
+const LERP = 0.18; // per-frame interpolation factor (frame-rate independent enough)
+const EPSILON = 0.05; // stop threshold in degrees
+
+function clamp(v: number, min: number, max: number) {
+  return v < min ? min : v > max ? max : v;
+}
+
 function use3DTilt() {
-  const [transform, setTransform] = useState('perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0)');
+  const [transform, setTransform] = useState(
+    'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0)'
+  );
   const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
   const ref = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
 
-  // rAF-throttled to guarantee 60fps and avoid iOS Safari flicker under fast finger movement
-  const applyTilt = useCallback((clientX: number, clientY: number) => {
-    if (!ref.current) return;
-    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      const rect = ref.current!.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      // Softer tilt on touch — divide by 14 (mouse used 12) to reduce oscillation
-      const rotateX = (y - centerY) / 14;
-      const rotateY = (centerX - x) / 14;
-      setTransform(
-        `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03) translateZ(0)`
-      );
-      setGlare({
-        x: (x / rect.width) * 100,
-        y: (y / rect.height) * 100,
-        opacity: 0.15,
-      });
-    });
+  // Target vs current values — the loop bridges them smoothly.
+  const target = useRef({ rx: 0, ry: 0, scale: 1, gx: 50, gy: 50, go: 0 });
+  const current = useRef({ rx: 0, ry: 0, scale: 1, gx: 50, gy: 50, go: 0 });
+
+  const stopLoop = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
   }, []);
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    applyTilt(e.clientX, e.clientY);
+  const tick = useCallback(() => {
+    const t = target.current;
+    const c = current.current;
+    c.rx += (t.rx - c.rx) * LERP;
+    c.ry += (t.ry - c.ry) * LERP;
+    c.scale += (t.scale - c.scale) * LERP;
+    c.gx += (t.gx - c.gx) * LERP;
+    c.gy += (t.gy - c.gy) * LERP;
+    c.go += (t.go - c.go) * LERP;
+
+    setTransform(
+      `perspective(1000px) rotateX(${c.rx.toFixed(2)}deg) rotateY(${c.ry.toFixed(2)}deg) scale3d(${c.scale.toFixed(3)}, ${c.scale.toFixed(3)}, 1) translateZ(0)`
+    );
+    setGlare({ x: c.gx, y: c.gy, opacity: c.go });
+
+    const settled =
+      Math.abs(t.rx - c.rx) < EPSILON &&
+      Math.abs(t.ry - c.ry) < EPSILON &&
+      Math.abs(t.scale - c.scale) < 0.002 &&
+      Math.abs(t.go - c.go) < 0.005;
+
+    if (settled) {
+      rafRef.current = null;
+      return;
+    }
+    rafRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  const ensureLoop = useCallback(() => {
+    if (rafRef.current === null) {
+      rafRef.current = requestAnimationFrame(tick);
+    }
+  }, [tick]);
+
+  const setTarget = useCallback((clientX: number, clientY: number, hovering: boolean) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rx = clamp((y - centerY) / TILT_DIVISOR, -MAX_ROT, MAX_ROT);
+    const ry = clamp((centerX - x) / TILT_DIVISOR, -MAX_ROT, MAX_ROT);
+    target.current = {
+      rx,
+      ry,
+      scale: hovering ? 1.03 : 1,
+      gx: (x / rect.width) * 100,
+      gy: (y / rect.height) * 100,
+      go: hovering ? 0.15 : 0,
+    };
+    ensureLoop();
+  }, [ensureLoop]);
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => setTarget(e.clientX, e.clientY, true);
+
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    const t = e.touches[0];
+    if (!t) return;
+    setTarget(t.clientX, t.clientY, true);
   };
 
   const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
     const t = e.touches[0];
     if (!t) return;
-    applyTilt(t.clientX, t.clientY);
+    setTarget(t.clientX, t.clientY, true);
   };
 
-  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
-    const t = e.touches[0];
-    if (!t) return;
-    applyTilt(t.clientX, t.clientY);
-  };
+  const handleMouseLeave = useCallback(() => {
+    target.current = { rx: 0, ry: 0, scale: 1, gx: 50, gy: 50, go: 0 };
+    ensureLoop();
+  }, [ensureLoop]);
 
-  const handleMouseLeave = () => {
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-    setTransform('perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translateZ(0)');
-    setGlare({ x: 50, y: 50, opacity: 0 });
-  };
+  useEffect(() => () => stopLoop(), [stopLoop]);
 
   return {
     ref,
@@ -78,6 +136,7 @@ function use3DTilt() {
     handleTouchEnd: handleMouseLeave,
   };
 }
+
 
 
 // Theme-specific card styles - NO MORE SQUARE/RECTANGULAR CARDS
