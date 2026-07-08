@@ -71,19 +71,20 @@ export function OperationalStatusRibbon() {
               {isLogged ? 'OPERACIONAL' : 'CANAL SEGURO'}
             </span>
             <span aria-hidden className="h-2 w-px bg-white/15 mx-0.5" />
-            {/* Live agent count — always visible on mobile */}
+            {/* Protocolo institucional — substitui contador (evita redundância com célula ONLINE) */}
             <span
-              className="inline-flex items-center gap-1 font-mono text-[8px] font-bold uppercase tracking-[0.16em] rounded-sm px-1 py-[1px]"
+              className="inline-flex items-center gap-1 font-mono text-[8px] font-bold uppercase tracking-[0.18em] rounded-sm px-1 py-[1px]"
               style={{
-                color: 'hsl(142 72% 82%)',
-                background: 'hsl(142 72% 45% / 0.14)',
-                border: '1px solid hsl(142 72% 45% / 0.35)',
+                color: accentColor,
+                background: accentSoft,
+                border: `1px solid ${accentColor.replace(')', ' / 0.35)')}`,
               }}
-              aria-live="polite"
-              aria-label={`${onlineNow} agentes online agora`}
             >
-              <span className="tabular-nums font-black text-[9.5px]" style={{ textShadow: '0 0 6px hsl(142 72% 55% / 0.7)' }}>{onlineNow}</span>
-              <span className="opacity-80">online</span>
+              <svg width="7" height="7" viewBox="0 0 16 16" fill="none" aria-hidden>
+                <rect x="3" y="7" width="10" height="7" rx="1" stroke="currentColor" strokeWidth="1.8" />
+                <path d="M5 7V5a3 3 0 116 0v2" stroke="currentColor" strokeWidth="1.8" />
+              </svg>
+              <span className="tabular-nums">ISE-AC · 2026</span>
             </span>
           </span>
           <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.2em] opacity-90" style={{ color: accentColor }}>
@@ -131,6 +132,9 @@ export function OperationalStatusRibbon() {
             <div
               className="relative px-2 py-1.5 bg-slate-950/60 overflow-hidden"
               style={{ boxShadow: 'inset 0 0 0 1px hsl(142 72% 45% / 0.22)' }}
+              aria-live="polite"
+              aria-atomic="true"
+              aria-label={`${onlineNow} agentes online agora`}
             >
               <span
                 aria-hidden
@@ -138,7 +142,7 @@ export function OperationalStatusRibbon() {
                 style={{ background: 'linear-gradient(90deg, transparent, hsl(142 72% 55% / 0.7), transparent)' }}
               />
               <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-300 flex items-center gap-1">
-                <span className="relative inline-flex h-1.5 w-1.5">
+                <span className="relative inline-flex h-1.5 w-1.5" aria-hidden>
                   <span className="absolute inset-0 rounded-full animate-ping opacity-60 bg-emerald-400" />
                   <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_hsl(142_72%_55%_/_0.9)]" />
                 </span>
