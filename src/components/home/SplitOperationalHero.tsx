@@ -389,7 +389,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
-                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-1 sm:-ml-2 scale-[1.18] sm:scale-100 lg:scale-[1.15] xl:scale-[1.25] origin-bottom-right"
+                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-1 sm:-ml-2 scale-[1.18] sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] lg:translate-y-4 xl:translate-y-6 origin-bottom-right"
                   draggable={false}
                   style={{ transformOrigin: 'bottom right' }}
                 />
