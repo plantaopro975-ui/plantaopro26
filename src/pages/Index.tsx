@@ -257,6 +257,32 @@ export default function Index() {
 
   const readLastCpf = (): string | null => null;
 
+  // Purge stale saved credentials: drop any local CPF whose agent no longer exists in the backend.
+  useEffect(() => {
+    (async () => {
+      try {
+        const local = getSavedCredentials();
+        if (!local.length) return;
+        const cpfs = Array.from(new Set(local.map((c) => c.cpf).filter(Boolean)));
+        if (!cpfs.length) return;
+        const { data, error } = await supabase
+          .from('agents')
+          .select('cpf')
+          .in('cpf', cpfs);
+        if (error) return;
+        const valid = new Set((data || []).map((r: { cpf: string }) => r.cpf));
+        const stale = cpfs.filter((c) => !valid.has(c));
+        if (stale.length) {
+          stale.forEach((c) => removeCredential(c));
+          window.dispatchEvent(new CustomEvent(CREDENTIALS_CHANGED_EVENT));
+        }
+      } catch {
+        // ignore
+      }
+    })();
+  }, []);
+
+
 
   useEffect(() => {
     fetchUnits();
