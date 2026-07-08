@@ -128,10 +128,12 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
               )}
             </div>
           </div>
-          <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[9px] px-1.5 py-0 h-5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse" />
-            LIVE
-          </Badge>
+          <div className="flex items-center gap-1.5">
+            <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[9px] px-1.5 py-0 h-5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse" />
+              {agents.filter((a) => onlineIds.has(a.id)).length} ONLINE
+            </Badge>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className={cn("relative flex flex-col items-center gap-2", compact ? "p-2.5 pt-0" : "p-3 pt-1")}>
