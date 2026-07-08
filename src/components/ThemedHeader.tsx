@@ -313,16 +313,17 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
       />
-      {/* Golden accent line — left edge */}
+      {/* Golden accent line — left edge (responsive) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
+        className="pointer-events-none absolute left-0 top-1 bottom-1 sm:top-2 sm:bottom-2 lg:top-3 lg:bottom-3 w-[1.5px] sm:w-[2px] lg:w-[2.5px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-80 sm:opacity-85 lg:opacity-90"
       />
-      {/* Golden accent line — right edge */}
+      {/* Golden accent line — right edge (responsive) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 w-[2px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
+        className="pointer-events-none absolute right-0 top-1 bottom-1 sm:top-2 sm:bottom-2 lg:top-3 lg:bottom-3 w-[1.5px] sm:w-[2px] lg:w-[2.5px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-80 sm:opacity-85 lg:opacity-90"
       />
+
 
       <div className="max-w-6xl mx-auto">
 
