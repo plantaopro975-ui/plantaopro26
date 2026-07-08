@@ -1133,17 +1133,20 @@ html.tab-hidden *::after {
   .giroflex-flash-blue, .giroflex-flash-red { animation: none; opacity: 0.45; }
 }
 
-/* Pulso sutil do giroflex já embutido no render mobile da viatura */
+/* Pulso sutil e profissional do giroflex embutido no render mobile.
+   Alterna suavemente entre vermelho e azul, com brilho discreto. */
 .giroflex-pulse-mobile {
-  animation: giroflex-pulse-mobile 1.6s ease-in-out infinite;
-  filter: drop-shadow(0 35px 50px rgba(0,0,0,0.95));
+  animation: giroflex-pulse-mobile 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 30px 40px rgba(0,0,0,0.9));
+  will-change: filter;
 }
 @keyframes giroflex-pulse-mobile {
-  0%, 100% { filter: drop-shadow(0 35px 50px rgba(0,0,0,0.95)) drop-shadow(0 0 6px rgba(239,68,68,0.35)) drop-shadow(0 0 6px rgba(59,130,246,0.35)); }
-  50%      { filter: drop-shadow(0 35px 50px rgba(0,0,0,0.95)) drop-shadow(0 0 14px rgba(239,68,68,0.7))  drop-shadow(0 0 14px rgba(59,130,246,0.7)); }
+  0%, 100% { filter: drop-shadow(0 30px 40px rgba(0,0,0,0.9)) drop-shadow(0 -2px 4px rgba(239,68,68,0.35)); }
+  50%      { filter: drop-shadow(0 30px 40px rgba(0,0,0,0.9)) drop-shadow(0 -2px 4px rgba(59,130,246,0.35)); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .giroflex-pulse-mobile { animation: none; }
+  .giroflex-pulse-mobile { animation: none; filter: drop-shadow(0 30px 40px rgba(0,0,0,0.9)); }
 }
+
 
 

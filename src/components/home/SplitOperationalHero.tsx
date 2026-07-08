@@ -198,7 +198,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-3 sm:gap-4 px-3 sm:px-5 pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0">
+        <div className="relative grid gap-3 sm:gap-4 px-0 sm:px-5 pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0">
 
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-4 items-stretch">
@@ -368,7 +368,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 origin-bottom-left -translate-y-2 giroflex-pulse-mobile"
+                  className="block h-full w-auto object-contain select-none scale-110 origin-bottom-left -translate-y-2 giroflex-pulse-mobile"
                   draggable={false}
                 />
               </picture>
@@ -418,7 +418,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* Mobile-only "Gestor de Rondas" — posicionado logo abaixo da viatura/agente */}
-        <div className="relative z-30 px-3 sm:hidden mt-1">
+        <div className="relative z-30 px-2 sm:hidden mt-1">
           <RoundsManager
             customTrigger={
               <button
