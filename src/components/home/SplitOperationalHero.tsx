@@ -445,13 +445,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* Mobile-only "Gestor de Rondas" — posicionado logo abaixo da viatura/agente */}
-        <div className="relative z-30 px-2 sm:hidden mt-1">
+        <div className="relative z-30 px-2 sm:hidden mt-2">
           <RoundsManager
             customTrigger={
               <button
                 type="button"
                 aria-label="Abrir Gestor de Rondas"
-                className="group w-full inline-flex items-center justify-center gap-2 rounded-lg border border-amber-400/50 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 px-4 py-2.5 shadow-[0_6px_18px_-8px_rgba(234,179,8,0.5)] active:scale-[0.98] transition"
+                className="group w-full inline-flex items-center justify-center gap-2 rounded-lg border border-amber-400/50 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 px-4 py-2 shadow-[0_6px_18px_-8px_rgba(234,179,8,0.5)] active:scale-[0.98] transition"
               >
                 <span className="relative inline-flex h-4 w-4">
                   <Radar className="h-4 w-4 text-amber-300" strokeWidth={2.2} />
@@ -466,7 +466,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
-        <div className="relative shrink-0 px-2 sm:px-3 pt-2 sm:pt-3 pb-2 mt-1 sm:mt-2">
+        <div className="relative shrink-0 px-2 sm:px-3 pt-1.5 sm:pt-3 pb-2 mt-1 sm:mt-2">
+
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-200">
               Selecione sua Equipe
