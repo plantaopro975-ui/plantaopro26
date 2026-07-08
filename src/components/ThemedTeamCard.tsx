@@ -196,8 +196,19 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
       onMouseEnter={handleMouseEnterCard}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeaveCard}
-      className="w-full cursor-pointer transition-all duration-300 ease-out group"
-      style={{ transform, transformStyle: 'preserve-3d' }}
+      onTouchStart={handleMouseEnterCard}
+      onTouchEnd={handleMouseLeaveCard}
+      onTouchCancel={handleMouseLeaveCard}
+      role="button"
+      tabIndex={0}
+      className={cn(
+        "w-full cursor-pointer transition-all duration-300 ease-out group",
+        "touch-manipulation select-none",
+        "active:scale-[0.97] active:transition-transform active:duration-75",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "[-webkit-tap-highlight-color:transparent]"
+      )}
+      style={{ transform, transformStyle: 'preserve-3d', WebkitTapHighlightColor: 'transparent' }}
     >
       <div className="relative">
         {/* Theme-specific outer glow */}
