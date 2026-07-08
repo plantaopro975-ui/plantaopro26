@@ -753,47 +753,47 @@ export default function AgentPanel() {
               </TabsContent>
 
               <TabsContent value="rondas" className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible">
-                <div className="relative z-10 w-full min-w-0 overflow-visible rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-900/98 via-slate-950/98 to-amber-950/35 p-4 shadow-xl shadow-amber-500/10 md:p-5">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="relative z-10 w-full min-w-0 max-w-full overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-900/98 via-slate-950/98 to-amber-950/35 p-3 shadow-xl shadow-amber-500/10 sm:p-4 md:p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <div className="flex min-w-0 items-start gap-3">
-                      <div className="shrink-0 rounded-xl border border-amber-500/40 bg-amber-500/15 p-3">
-                        <Radio className="h-6 w-6 text-amber-400" />
+                      <div className="shrink-0 rounded-xl border border-amber-500/40 bg-amber-500/15 p-2.5 sm:p-3">
+                        <Radio className="h-5 w-5 text-amber-400 sm:h-6 sm:w-6" />
                       </div>
-                      <div className="min-w-0 space-y-1">
-                        <h3 className="text-xl font-black leading-tight text-amber-200 tracking-tight md:text-lg">
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <h3 className="text-lg font-black leading-tight text-amber-200 tracking-tight sm:text-xl md:text-lg break-words">
                           Gestor de Rondas
                         </h3>
-                        <p className="text-sm leading-relaxed text-slate-300 md:text-sm">
+                        <p className="text-xs leading-relaxed text-slate-300 sm:text-sm break-words">
                           Monte a escala, inicie o cronômetro e acompanhe as rondas em tempo real.
                         </p>
                       </div>
                     </div>
-                    <div className="shrink-0 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-300">
+                    <div className="self-start shrink-0 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-1 text-[10px] font-black text-emerald-300 sm:self-auto sm:px-3 sm:text-xs whitespace-nowrap">
                       PRONTO PARA OPERAR
                     </div>
                   </div>
                   <Suspense fallback={<div className="flex items-center justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-amber-500" /></div>}>
-                    <div className="mt-5 flex w-full min-w-0 overflow-visible">
+                    <div className="mt-4 flex w-full min-w-0 max-w-full sm:mt-5">
                       <RoundsManager
                         customTrigger={
                           <button
                             type="button"
-                            className="group flex min-h-[64px] w-full items-center justify-between gap-3 rounded-xl border border-amber-500/50 bg-amber-500/15 px-4 py-3 text-left shadow-lg shadow-amber-500/10 transition-all duration-200 hover:border-amber-400/70 hover:bg-amber-500/20 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                            className="group flex min-h-[64px] w-full min-w-0 max-w-full items-center justify-between gap-2 rounded-xl border border-amber-500/50 bg-amber-500/15 px-3 py-3 text-left shadow-lg shadow-amber-500/10 transition-all duration-200 hover:border-amber-400/70 hover:bg-amber-500/20 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 sm:gap-3 sm:px-4"
                           >
-                            <span className="flex min-w-0 items-center gap-3">
-                              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-amber-500/45 bg-slate-950/70">
-                                <Radio className="h-5 w-5 text-amber-300" />
+                            <span className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">
+                              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-amber-500/45 bg-slate-950/70 sm:h-11 sm:w-11">
+                                <Radio className="h-4 w-4 text-amber-300 sm:h-5 sm:w-5" />
                               </span>
-                              <span className="min-w-0">
-                                <span className="block text-base font-black leading-tight text-amber-100">
+                              <span className="min-w-0 flex-1">
+                                <span className="block text-sm font-black leading-tight text-amber-100 sm:text-base break-words">
                                   Abrir Gestor de Rondas
                                 </span>
-                                <span className="block text-xs font-semibold text-slate-300">
+                                <span className="block text-[11px] font-semibold text-slate-300 sm:text-xs break-words">
                                   Central tática de escala e acompanhamento
                                 </span>
                               </span>
                             </span>
-                            <Zap className="h-5 w-5 shrink-0 text-amber-300 transition-transform group-hover:scale-110" />
+                            <Zap className="h-4 w-4 shrink-0 text-amber-300 transition-transform group-hover:scale-110 sm:h-5 sm:w-5" />
                           </button>
                         }
                       />
