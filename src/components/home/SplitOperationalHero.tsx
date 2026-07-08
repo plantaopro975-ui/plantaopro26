@@ -411,37 +411,84 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
         </div>
 
-        {/* Mobile-only "Gestor de Rondas" — compacto, para subir os demais elementos */}
-        <div className="relative z-30 px-3 sm:hidden mt-0 mb-1 order-2 sm:order-none">
+        {/* Mobile-only "Gestor de Rondas" — professional command tile */}
+        <div className="relative z-30 px-3 sm:hidden mt-1 mb-1.5 order-2 sm:order-none">
           <RoundsManager
             customTrigger={
               <button
                 type="button"
                 aria-label="Abrir Gestor de Rondas"
-                className="group relative w-full inline-flex items-center justify-center gap-2 rounded-lg border border-amber-400/55 bg-[linear-gradient(135deg,rgba(30,20,5,0.9)_0%,rgba(60,40,8,0.75)_50%,rgba(30,20,5,0.9)_100%)] px-3 py-2 shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_6px_18px_-10px_rgba(234,179,8,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] active:scale-[0.985] transition overflow-hidden"
+                className="group relative w-full flex items-stretch rounded-[10px] overflow-hidden border border-amber-400/50 bg-[linear-gradient(135deg,rgba(20,14,4,0.96)_0%,rgba(48,32,6,0.9)_45%,rgba(20,14,4,0.96)_100%)] shadow-[0_0_0_1px_rgba(0,0,0,0.7),0_10px_22px_-14px_rgba(234,179,8,0.65),inset_0_1px_0_rgba(255,255,255,0.07)] active:scale-[0.985] transition-transform min-h-[46px]"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                {/* corner brackets — menores */}
-                <span aria-hidden className="absolute top-0.5 left-0.5 w-1.5 h-1.5 border-t border-l border-amber-300/70" />
-                <span aria-hidden className="absolute top-0.5 right-0.5 w-1.5 h-1.5 border-t border-r border-amber-300/70" />
-                <span aria-hidden className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 border-b border-l border-amber-300/70" />
-                <span aria-hidden className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 border-b border-r border-amber-300/70" />
-                <span aria-hidden className="absolute inset-0 opacity-30 bg-[linear-gradient(90deg,transparent_0%,rgba(234,179,8,0.15)_50%,transparent_100%)] -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                {/* corner brackets */}
+                <span aria-hidden className="absolute top-0.5 left-0.5 w-1.5 h-1.5 border-t border-l border-amber-300/80" />
+                <span aria-hidden className="absolute top-0.5 right-0.5 w-1.5 h-1.5 border-t border-r border-amber-300/80" />
+                <span aria-hidden className="absolute bottom-0.5 left-0.5 w-1.5 h-1.5 border-b border-l border-amber-300/80" />
+                <span aria-hidden className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 border-b border-r border-amber-300/80" />
 
-                <span className="relative inline-flex h-4 w-4 shrink-0">
-                  <Radar className="h-4 w-4 text-amber-300 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" strokeWidth={2.4} />
-                  <span className="absolute inset-0 rounded-full bg-amber-400/25 blur-[3px] animate-pulse" />
+                {/* Sheen sweep on tap/hover */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 opacity-40 bg-[linear-gradient(90deg,transparent_0%,rgba(234,179,8,0.18)_50%,transparent_100%)] -translate-x-full group-hover:translate-x-full group-active:translate-x-full transition-transform duration-[900ms]"
+                />
+
+                {/* LEFT — radar icon block */}
+                <span
+                  aria-hidden
+                  className="relative flex items-center justify-center w-11 shrink-0 border-r border-amber-400/25"
+                  style={{ background: 'linear-gradient(180deg, rgba(234,179,8,0.12) 0%, rgba(234,179,8,0.04) 100%)' }}
+                >
+                  {/* rotating sweep */}
+                  <span
+                    aria-hidden
+                    className="absolute inset-1 rounded-full opacity-70"
+                    style={{
+                      background: 'conic-gradient(from 0deg, transparent 0deg, rgba(234,179,8,0.55) 60deg, transparent 90deg)',
+                      animation: 'spin 3.6s linear infinite',
+                      maskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)',
+                    }}
+                  />
+                  <Radar className="relative h-[18px] w-[18px] text-amber-200 drop-shadow-[0_0_6px_rgba(234,179,8,0.75)]" strokeWidth={2.4} />
                 </span>
-                <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-amber-100 drop-shadow-[0_0_6px_rgba(234,179,8,0.4)]">
-                  Gestor de Rondas
+
+                {/* MIDDLE — label stack */}
+                <span className="relative flex-1 min-w-0 flex flex-col justify-center px-2.5 py-1 text-left">
+                  <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.24em] text-amber-300/85 leading-none">
+                    Comando · Ronda
+                  </span>
+                  <span className="font-sans text-[12.5px] font-black uppercase tracking-[0.06em] text-amber-50 leading-tight mt-0.5 truncate" style={{ textShadow: '0 0 8px rgba(234,179,8,0.35)' }}>
+                    Gestor de Rondas
+                  </span>
                 </span>
-                <span aria-hidden className="ml-1 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)] animate-pulse" />
-                  <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-emerald-300/90">ATIVO</span>
+
+                {/* RIGHT — status pill + chevron */}
+                <span className="relative flex items-center gap-1.5 pr-2.5 pl-1 shrink-0">
+                  <span
+                    className="inline-flex items-center gap-1 rounded-sm px-1.5 py-[2px]"
+                    style={{
+                      background: 'hsl(142 72% 45% / 0.14)',
+                      border: '1px solid hsl(142 72% 45% / 0.4)',
+                    }}
+                  >
+                    <span className="relative inline-flex h-1.5 w-1.5">
+                      <span className="absolute inset-0 rounded-full animate-ping opacity-60 bg-emerald-400" />
+                      <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+                    </span>
+                    <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-emerald-200 leading-none">
+                      Ativo
+                    </span>
+                  </span>
+                  <svg width="10" height="14" viewBox="0 0 10 14" aria-hidden className="text-amber-300/85 group-active:translate-x-0.5 transition-transform">
+                    <path d="M2 2l5 5-5 5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </span>
               </button>
             }
           />
         </div>
+
+
 
 
         {/* ============ Team Selector Grid — no mobile vai para o topo (order-2) ============ */}
