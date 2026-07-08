@@ -99,6 +99,24 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
     agent: RecentAgent | null;
   }>({ open: false, kind: null, agent: null });
 
+  // Notificação sino/push
+  const [lastSeen, setLastSeen] = useState<string>(() => {
+    try {
+      return localStorage.getItem(LAST_SEEN_KEY) || new Date().toISOString();
+    } catch {
+      return new Date().toISOString();
+    }
+  });
+  const [notifEnabled, setNotifEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(NOTIF_ENABLED_KEY) !== '0';
+    } catch {
+      return true;
+    }
+  });
+  const isFirstFetch = useRef(true);
+  const knownIds = useRef<Set<string>>(new Set());
+
   const debouncedSearch = useDebouncedValue(search, 200);
 
   const fetchAgents = async () => {
@@ -116,7 +134,43 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setAgents((data as unknown as RecentAgent[]) || []);
+      const list = (data as unknown as RecentAgent[]) || [];
+
+      // Detectar novos cadastros desde o último fetch (exceto no primeiro carregamento)
+      if (!isFirstFetch.current && notifEnabled) {
+        const brandNew = list.filter((a) => !knownIds.current.has(a.id));
+        if (brandNew.length > 0) {
+          playAlertBeep();
+          const first = brandNew[0];
+          const title = brandNew.length === 1
+            ? `🆕 Novo cadastro: ${first.name}`
+            : `🆕 ${brandNew.length} novos cadastros`;
+          const body = brandNew.length === 1
+            ? `${first.unit?.name || 'Unidade desconhecida'} · Equipe ${first.team || '—'}`
+            : brandNew.slice(0, 3).map((a) => a.name).join(', ') + (brandNew.length > 3 ? '…' : '');
+
+          toast(title, {
+            description: body,
+            icon: <BellRing className="w-5 h-5 text-cyan-400" />,
+            duration: 8000,
+          });
+
+          // Push notification (se permissão concedida)
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            try {
+              new Notification(title, {
+                body,
+                tag: 'audit-new-agent',
+                icon: '/favicon.ico',
+              });
+            } catch { /* ignore */ }
+          }
+        }
+      }
+
+      knownIds.current = new Set(list.map((a) => a.id));
+      isFirstFetch.current = false;
+      setAgents(list);
     } catch (err: any) {
       console.error('[RecentRegistrationsAudit] fetch error:', err);
       toast.error('Erro ao carregar cadastros recentes', {
@@ -132,7 +186,66 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
     const interval = setInterval(fetchAgents, 30000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daysWindow]);
+  }, [daysWindow, notifEnabled]);
+
+  // Realtime — dispara imediatamente quando um novo agente é inserido
+  useEffect(() => {
+    const channel = supabase
+      .channel('audit-new-agents')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'agents' },
+        () => {
+          fetchAgents();
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Solicita permissão de notificação uma vez ao ativar
+  const requestNotifPermission = async () => {
+    if (typeof Notification === 'undefined') {
+      toast.error('Este navegador não suporta notificações');
+      return;
+    }
+    if (Notification.permission === 'granted') return;
+    if (Notification.permission === 'denied') {
+      toast.error('Notificações bloqueadas', {
+        description: 'Habilite nas configurações do navegador.',
+      });
+      return;
+    }
+    const result = await Notification.requestPermission();
+    if (result === 'granted') {
+      toast.success('Notificações ativadas!', { icon: <BellRing className="w-5 h-5" /> });
+    }
+  };
+
+  const toggleNotifications = async () => {
+    const next = !notifEnabled;
+    setNotifEnabled(next);
+    try { localStorage.setItem(NOTIF_ENABLED_KEY, next ? '1' : '0'); } catch { /* */ }
+    if (next) {
+      await requestNotifPermission();
+    } else {
+      toast('Notificações silenciadas', { icon: <BellOff className="w-5 h-5" /> });
+    }
+  };
+
+  const markAllSeen = () => {
+    const now = new Date().toISOString();
+    setLastSeen(now);
+    try { localStorage.setItem(LAST_SEEN_KEY, now); } catch { /* */ }
+    toast.success('Marcado como visto', { icon: <Check className="w-5 h-5" /> });
+  };
+
+  const unseenCount = useMemo(
+    () => agents.filter((a) => new Date(a.created_at) > new Date(lastSeen)).length,
+    [agents, lastSeen]
+  );
+
 
   const filtered = useMemo(() => {
     const term = debouncedSearch.toLowerCase().trim();
