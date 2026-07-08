@@ -27,7 +27,7 @@ export function OperationalStatusRibbon() {
   const matricula = agent?.matricula ?? '——';
 
   return (
-    <div className="relative mt-3 px-1">
+    <div className="relative mt-2 sm:mt-3 px-1">
       {/* ============ MOBILE — compact tactical strip (< sm) ============ */}
       <div
         className="sm:hidden relative rounded-lg border overflow-hidden"
@@ -71,39 +71,39 @@ export function OperationalStatusRibbon() {
         {/* Data grid — 2 columns on very small, 3 on ≥360px */}
         {isLogged ? (
           <div className="grid grid-cols-3 gap-px bg-black/40">
-            <div className="px-2.5 py-2 bg-slate-950/60">
-              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em]" style={{ color: accentColor }}>Agente</div>
-              <div className="font-mono text-[10.5px] font-bold text-amber-50 truncate mt-0.5">{agentShort || '——'}</div>
-              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5 truncate">MAT {matricula}</div>
+            <div className="px-2 py-1.5 bg-slate-950/60">
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em]" style={{ color: accentColor }}>Agente</div>
+              <div className="font-mono text-[10px] font-bold text-amber-50 truncate mt-0.5">{agentShort || '——'}</div>
+              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5 truncate">MAT {matricula}</div>
             </div>
-            <div className="px-2.5 py-2 bg-slate-950/60">
-              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em]" style={{ color: accentColor }}>Unidade</div>
-              <div className="font-mono text-[10.5px] font-bold text-amber-50 truncate mt-0.5">{(unitName || 'ISE').slice(0, 14)}</div>
-              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5 truncate">{(municipality || 'ACRE').toUpperCase()}</div>
+            <div className="px-2 py-1.5 bg-slate-950/60">
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em]" style={{ color: accentColor }}>Unidade</div>
+              <div className="font-mono text-[10px] font-bold text-amber-50 truncate mt-0.5">{(unitName || 'ISE').slice(0, 14)}</div>
+              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5 truncate">{(municipality || 'ACRE').toUpperCase()}</div>
             </div>
-            <div className="px-2.5 py-2 bg-slate-950/60">
-              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em]" style={{ color: accentColor }}>Equipe</div>
-              <div className="font-mono text-[11px] font-black tracking-[0.15em] mt-0.5" style={{ color: accentColor, textShadow: `0 0 6px ${accentColor.replace(')', ' / 0.7)')}` }}>
+            <div className="px-2 py-1.5 bg-slate-950/60">
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em]" style={{ color: accentColor }}>Equipe</div>
+              <div className="font-mono text-[10.5px] font-black tracking-[0.14em] mt-0.5" style={{ color: accentColor, textShadow: `0 0 6px ${accentColor.replace(')', ' / 0.7)')}` }}>
                 {teamKey || '——'}
               </div>
-              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5 truncate">{accent?.label ?? 'OP'}</div>
+              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5 truncate">{accent?.label ?? 'OP'}</div>
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-px bg-black/40">
-            <div className="px-2.5 py-2 bg-slate-950/60">
-              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-amber-300">Protocolo</div>
-              <div className="font-mono text-[10.5px] font-bold text-amber-50 mt-0.5">ISE-AC</div>
-              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5">2026</div>
+            <div className="px-2 py-1.5 bg-slate-950/60">
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300">Protocolo</div>
+              <div className="font-mono text-[10px] font-bold text-amber-50 mt-0.5">ISE-AC</div>
+              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5">2026</div>
             </div>
-            <div className="px-2.5 py-2 bg-slate-950/60">
-              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-amber-300">Turno</div>
-              <div className="font-mono text-[11px] font-black text-amber-50 mt-0.5">24 / 7</div>
-              <div className="font-mono text-[8px] text-amber-200/80 mt-0.5">Contínuo</div>
+            <div className="px-2 py-1.5 bg-slate-950/60">
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300">Turno</div>
+              <div className="font-mono text-[10.5px] font-black text-amber-50 mt-0.5">24 / 7</div>
+              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5">Contínuo</div>
             </div>
-            <div className="px-2.5 py-2 bg-slate-950/60">
-              <div className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-amber-300">Cripto</div>
-              <div className="font-mono text-[10.5px] font-bold text-emerald-300 mt-0.5">AES-256</div>
+            <div className="px-2 py-1.5 bg-slate-950/60">
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300">Cripto</div>
+              <div className="font-mono text-[10px] font-bold text-emerald-300 mt-0.5">AES-256</div>
               <div className="flex items-center gap-1 mt-0.5">
                 {[0,1,2,3].map((i) => (
                   <span key={i} className="w-[3px] rounded-sm bg-emerald-400" style={{ height: `${3 + i}px`, opacity: 0.6 + i*0.1 }} />
@@ -265,18 +265,18 @@ export function OperationalStatusRibbon() {
       </div>
 
       {/* Wordmark institucional — PLANTÃO PRO */}
-      <div className="mt-2 flex items-center justify-center gap-4 px-2" aria-label="Plantão Pro">
+      <div className="mt-1.5 sm:mt-2 flex items-center justify-center gap-3 sm:gap-4 px-2" aria-label="Plantão Pro">
         <span aria-hidden className="h-px flex-1 max-w-[7rem] bg-gradient-to-r from-transparent to-amber-300/45" />
         <div className="flex items-baseline gap-2.5 select-none">
           <span
-            className="font-serif text-[18px] sm:text-[20px] font-semibold tracking-[0.08em] text-amber-50 leading-none"
+            className="font-serif text-[16px] sm:text-[20px] font-semibold tracking-[0.08em] text-amber-50 leading-none"
             style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9), 0 0 14px hsl(43 92% 58% / 0.28)' }}
           >
             Plantão
           </span>
-          <span aria-hidden className="h-3.5 w-px bg-amber-300/50" />
+          <span aria-hidden className="h-3 w-px bg-amber-300/50 sm:h-3.5" />
           <span
-            className="font-mono text-[11px] sm:text-[12px] font-bold tracking-[0.32em] uppercase text-amber-400 leading-none"
+            className="font-mono text-[9.5px] sm:text-[12px] font-bold tracking-[0.3em] sm:tracking-[0.32em] uppercase text-amber-400 leading-none"
             style={{ textShadow: '0 0 6px hsl(43 92% 58% / 0.55)' }}
           >
             PRO
