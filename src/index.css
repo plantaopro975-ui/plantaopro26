@@ -1083,7 +1083,7 @@ html.tab-hidden *::after {
 .giroflex-flash-blue {
   --giroflex-lens-width: 13.4%;
   background: rgb(191 219 254);
-  animation: giroflex-strobe-blue 1s steps(1, end) infinite;
+  animation: giroflex-strobe-blue 1.8s steps(1, end) infinite;
 }
 .giroflex-flash-blue::before,
 .giroflex-flash-blue::after {
@@ -1092,7 +1092,7 @@ html.tab-hidden *::after {
 .giroflex-flash-red {
   --giroflex-lens-width: 18.4%;
   background: rgb(254 202 202);
-  animation: giroflex-strobe-red 1s steps(1, end) infinite;
+  animation: giroflex-strobe-red 1.8s steps(1, end) infinite;
 }
 .giroflex-flash-red::before,
 .giroflex-flash-red::after {
