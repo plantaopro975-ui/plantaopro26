@@ -450,7 +450,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                           
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className={`font-semibold text-base md:text-sm truncate ${
+                              <span className={`font-bold text-lg md:text-base truncate ${
                                 isCurrentAgent ? 'text-amber-200' : 'text-slate-100'
                               }`}>
                                 {member.name.split(' ').slice(0, 2).join(' ')}
