@@ -313,6 +313,17 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
       />
+      {/* Golden accent line — left edge */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
+      />
+      {/* Golden accent line — right edge */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 w-[2px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
+      />
+
       <div className="max-w-6xl mx-auto">
 
         <div className="flex items-center justify-between gap-2">
