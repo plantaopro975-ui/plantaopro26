@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { adminClient } from '@/lib/adminClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,11 +25,45 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
+  Bell,
+  BellOff,
+  BellRing,
+  Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+
+const LAST_SEEN_KEY = 'audit_last_seen_at';
+const NOTIF_ENABLED_KEY = 'audit_notif_enabled';
+
+/** Beep tocado via Web Audio (sem asset) — 2 tons curtos estilo alerta tático. */
+function playAlertBeep() {
+  try {
+    const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext);
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    [880, 1174.66].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = now + i * 0.18;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.18, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.18);
+    });
+    setTimeout(() => ctx.close().catch(() => {}), 800);
+  } catch {
+    /* silencioso */
+  }
+}
+
 
 interface RecentAgent {
   id: string;
