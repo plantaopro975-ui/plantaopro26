@@ -1,4 +1,6 @@
 import { useAgentProfile } from '@/hooks/useAgentProfile';
+import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
+import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 const TEAM_ACCENT: Record<string, { h: string; s: string; l: string; label: string }> = {
   ALFA:    { h: '43',  s: '96%', l: '56%', label: 'Defensiva' },
@@ -7,13 +9,17 @@ const TEAM_ACCENT: Record<string, { h: string; s: string; l: string; label: stri
   DELTA:   { h: '210', s: '90%', l: '62%', label: 'Resposta Rápida' },
 };
 
+const fmt2 = (n: number) => n.toString().padStart(2, '0');
+
 /**
  * Operational status ribbon — professional SVG HUD footer.
  * When logged in, surfaces the agent's Unit + Team + role.
- * When public, shows institutional KPIs.
+ * When public, shows institutional KPIs + live agent presence counters.
  */
 export function OperationalStatusRibbon() {
   const { agent } = useAgentProfile();
+  const metrics = useOperationalMetrics();
+  const onlineAgents = useOnlinePresence('online-users');
 
   const teamKey = (agent?.team ?? '').toUpperCase();
   const isLogged = Boolean(agent?.id);
@@ -25,6 +31,8 @@ export function OperationalStatusRibbon() {
   const municipality = agent?.unit?.municipality ?? '';
   const agentShort = (agent?.name ?? '').split(' ').slice(0, 2).join(' ').toUpperCase();
   const matricula = agent?.matricula ?? '——';
+  const efetivoTotal = metrics.loading ? '——' : fmt2(metrics.agentsActive);
+  const onlineNow = fmt2(onlineAgents);
 
   return (
     <div className="relative mt-2 sm:mt-3 px-1">
