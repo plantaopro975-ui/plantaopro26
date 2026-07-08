@@ -366,22 +366,34 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left -translate-y-2 sm:translate-y-0"
                   draggable={false}
                 />
-                {/* Giroflex — wrapper replica o mesmo scale/origin da viatura para manter as luzes ancoradas nas lentes em qualquer breakpoint. */}
+                {/* Giroflex — wrapper replica o mesmo scale/origin/translate da viatura para manter as luzes ancoradas nas lentes em qualquer breakpoint. */}
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left -translate-y-2 sm:translate-y-0"
                 >
+                  {/* Mobile: posições calibradas para a viatura em scale-110 */}
                   <span
                     aria-hidden
-                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
+                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden sm:hidden"
+                    style={{ top: '23.4%', left: '47.6%' }}
+                  />
+                  <span
+                    aria-hidden
+                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden sm:hidden"
+                    style={{ top: '24.1%', left: '63.2%' }}
+                  />
+                  {/* Desktop/tablet */}
+                  <span
+                    aria-hidden
+                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden hidden sm:block"
                     style={{ top: '23.95%', left: '47.1%' }}
                   />
                   <span
                     aria-hidden
-                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
+                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden hidden sm:block"
                     style={{ top: '24.6%', left: '62.7%' }}
                   />
                 </span>
