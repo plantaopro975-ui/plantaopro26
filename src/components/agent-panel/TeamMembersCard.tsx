@@ -414,7 +414,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                   <p className="text-xs text-muted-foreground">Nenhum membro encontrado.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-1.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3">
                   {sortedMembers.map((member) => {
                     const isCurrentAgent = member.id === currentAgentId;
                     const hasBirthday = isBirthdayToday(member.birth_date);
@@ -423,60 +423,67 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                       <button
                         key={member.id}
                         onClick={() => handleMemberClick(member)}
-                        className={`relative w-full text-left rounded-lg border p-2 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] ${
+                        className={`relative w-full text-left rounded-xl border p-3.5 md:p-3 min-h-[92px] md:min-h-[76px] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
                           isCurrentAgent
-                            ? 'bg-gradient-to-r from-amber-500/15 to-transparent border-amber-500/40'
-                            : 'bg-slate-800/40 border-slate-600/40 hover:border-amber-400/40 hover:bg-slate-700/40'
-                        } ${hasBirthday ? 'ring-1 ring-pink-500/40' : ''}`}
+                            ? 'bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/50'
+                            : 'bg-slate-800/60 border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700/60'
+                        } ${hasBirthday ? 'ring-2 ring-pink-500/50' : ''}`}
                       >
                         {/* Birthday indicator */}
                         {hasBirthday && (
-                          <div className="absolute -top-1 -right-1 bg-pink-500 text-white text-[8px] px-1 py-0.5 rounded-full">
-                            <Cake className="h-2 w-2" />
+                          <div className="absolute -top-1.5 -right-1.5 bg-pink-500 text-white text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-lg">
+                            <Cake className="h-3 w-3" />
                           </div>
                         )}
                         
-                        <div className="flex items-center gap-2">
-                          {/* Compact Avatar */}
-                          <Avatar className={`h-8 w-8 border shrink-0 ${
+                        <div className="flex items-center gap-3">
+                          {/* Bigger Avatar */}
+                          <Avatar className={`h-14 w-14 md:h-12 md:w-12 border-2 shrink-0 shadow-md ${
                             member.role === 'team_leader' ? 'border-amber-500' :
-                            member.role === 'support' ? 'border-blue-500' : 'border-slate-600'
+                            member.role === 'support' ? 'border-blue-500' : 'border-slate-500'
                           }`}>
                             {member.avatar_url && <AvatarImage src={member.avatar_url} alt={member.name} />}
-                            <AvatarFallback className="bg-slate-700 text-slate-300 text-xs">
+                            <AvatarFallback className="bg-slate-700 text-slate-200 text-base font-bold">
                               {member.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1">
-                              <span className={`font-medium text-sm truncate ${
-                                isCurrentAgent ? 'text-amber-300' : 'text-slate-200'
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className={`font-semibold text-base md:text-sm truncate ${
+                                isCurrentAgent ? 'text-amber-200' : 'text-slate-100'
                               }`}>
                                 {member.name.split(' ').slice(0, 2).join(' ')}
                               </span>
                               {isCurrentAgent && (
-                                <Badge className="bg-amber-500/20 text-amber-300 border-0 text-[8px] px-1 py-0">Você</Badge>
+                                <Badge className="bg-amber-500/25 text-amber-200 border-0 text-[10px] px-1.5 py-0">Você</Badge>
                               )}
                             </div>
                             
-                            {/* Compact info row */}
-                            <div className="flex items-center gap-1.5 mt-0.5">
+                            {/* Role row */}
+                            <div className="flex items-center gap-1.5 mt-1">
                               {getRoleIcon(member.role)}
-                              <span className="text-[9px] text-slate-400">{getRoleLabel(member.role)}</span>
+                              <span className="text-xs md:text-[11px] text-slate-300 font-medium">{getRoleLabel(member.role)}</span>
+                            </div>
+
+                            {/* Info row */}
+                            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                               {member.blood_type && (
-                                <span className="flex items-center gap-0.5 text-[9px] text-red-400">
-                                  <Droplet className="h-2 w-2" />
+                                <span className="flex items-center gap-1 text-[11px] text-red-300 bg-red-500/10 px-1.5 py-0.5 rounded-md">
+                                  <Droplet className="h-3 w-3" />
                                   {member.blood_type}
                                 </span>
                               )}
                               {member.phone && (
-                                <Phone className="h-2 w-2 text-green-500" />
+                                <span className="flex items-center gap-1 text-[11px] text-green-300 bg-green-500/10 px-1.5 py-0.5 rounded-md">
+                                  <Phone className="h-3 w-3" />
+                                  Contato
+                                </span>
                               )}
                             </div>
                           </div>
                           
-                          <ChevronDown className="h-3 w-3 text-slate-500 rotate-[-90deg] shrink-0" />
+                          <ChevronDown className="h-4 w-4 text-slate-400 rotate-[-90deg] shrink-0" />
                         </div>
                       </button>
                     );
