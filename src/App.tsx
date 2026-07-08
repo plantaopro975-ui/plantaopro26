@@ -10,6 +10,7 @@ import { FontSizeProvider } from "@/contexts/FontSizeContext";
 import { useGlobalNavigation } from "@/hooks/useGlobalNavigation";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { GlobalOfflineBanner } from "@/components/OfflineIndicator";
+import { OfflineFullScreen } from "@/components/OfflineFullScreen";
 import { ReconnectingGuard } from "@/components/ReconnectingGuard";
 import Index from "./pages/Index"; // eager: LCP route
 import { AppShell } from "@/components/layout/AppShell";
