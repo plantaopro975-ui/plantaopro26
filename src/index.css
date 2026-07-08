@@ -1150,10 +1150,10 @@ html.tab-hidden *::after {
   will-change: transform, opacity;
   pointer-events: none;
 }
-.cs-puff-1 { left:  8%; width: 42%; height: 42%; animation: cs-rise 6.5s ease-out  0.0s infinite; }
-.cs-puff-2 { left: 34%; width: 34%; height: 34%; animation: cs-rise 7.8s ease-out  1.6s infinite; }
-.cs-puff-3 { left: 18%; width: 28%; height: 28%; animation: cs-rise 6.0s ease-out  3.2s infinite; }
-.cs-puff-4 { left: 48%; width: 24%; height: 24%; animation: cs-rise 8.4s ease-out  4.8s infinite; }
+.cs-puff-1 { left: 30%; width: 42%; height: 42%; animation: cs-rise 6.5s ease-out  0.0s infinite; }
+.cs-puff-2 { left: 44%; width: 34%; height: 34%; animation: cs-rise 7.8s ease-out  1.6s infinite; }
+.cs-puff-3 { left: 36%; width: 28%; height: 28%; animation: cs-rise 6.0s ease-out  3.2s infinite; }
+.cs-puff-4 { left: 52%; width: 24%; height: 24%; animation: cs-rise 8.4s ease-out  4.8s infinite; }
 @keyframes cs-rise {
   0%   { transform: translate3d(0, 6%, 0) scale(0.55); opacity: 0; }
   25%  { opacity: 0.55; }
