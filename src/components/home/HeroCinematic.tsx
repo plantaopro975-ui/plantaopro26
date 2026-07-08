@@ -251,7 +251,7 @@ export function HeroCinematic({ onTeamClick }: HeroCinematicProps) {
 
   const [agentT, setAgentT] = useState<Transform>(() => {
     try {
-      const flag = isMobile ? 'hero_agent_reset_m3' : 'hero_agent_reset_v9';
+      const flag = isMobile ? 'hero_agent_reset_m4' : 'hero_agent_reset_v9';
       if (!localStorage.getItem(flag)) {
         localStorage.removeItem(agentKey);
         localStorage.setItem(flag, '1');
