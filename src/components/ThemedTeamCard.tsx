@@ -1,4 +1,4 @@
-import { useState, useRef, MouseEvent, useCallback } from 'react';
+import { useState, useRef, MouseEvent, TouchEvent, useCallback } from 'react';
 import { useTheme, themes } from '@/contexts/ThemeContext';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { cn } from '@/lib/utils';
@@ -11,40 +11,74 @@ interface ThemedTeamCardProps {
   onClick: () => void;
 }
 
-// 3D Tilt Hook
+// 3D Tilt Hook — mouse + touch aware (iOS Safari safe)
 function use3DTilt() {
-  const [transform, setTransform] = useState('perspective(1000px) rotateX(0deg) rotateY(0deg)');
+  const [transform, setTransform] = useState('perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0)');
   const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
   const ref = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+
+  // rAF-throttled to guarantee 60fps and avoid iOS Safari flicker under fast finger movement
+  const applyTilt = useCallback((clientX: number, clientY: number) => {
+    if (!ref.current) return;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = ref.current!.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      // Softer tilt on touch — divide by 14 (mouse used 12) to reduce oscillation
+      const rotateX = (y - centerY) / 14;
+      const rotateY = (centerX - x) / 14;
+      setTransform(
+        `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03) translateZ(0)`
+      );
+      setGlare({
+        x: (x / rect.width) * 100,
+        y: (y / rect.height) * 100,
+        opacity: 0.15,
+      });
+    });
+  }, []);
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
-    
-    const rect = ref.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    const rotateX = (y - centerY) / 12;
-    const rotateY = (centerX - x) / 12;
-    
-    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`);
-    setGlare({ 
-      x: (x / rect.width) * 100, 
-      y: (y / rect.height) * 100,
-      opacity: 0.15
-    });
+    applyTilt(e.clientX, e.clientY);
+  };
+
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    const t = e.touches[0];
+    if (!t) return;
+    applyTilt(t.clientX, t.clientY);
+  };
+
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    const t = e.touches[0];
+    if (!t) return;
+    applyTilt(t.clientX, t.clientY);
   };
 
   const handleMouseLeave = () => {
-    setTransform('perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)');
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    setTransform('perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translateZ(0)');
     setGlare({ x: 50, y: 50, opacity: 0 });
   };
 
-  return { ref, transform, glare, handleMouseMove, handleMouseLeave };
+  return {
+    ref,
+    transform,
+    glare,
+    handleMouseMove,
+    handleMouseLeave,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd: handleMouseLeave,
+  };
 }
+
 
 // Theme-specific card styles - NO MORE SQUARE/RECTANGULAR CARDS
 const getThemeCardStyle = (resolvedTheme: string) => {
