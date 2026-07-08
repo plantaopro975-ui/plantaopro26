@@ -346,7 +346,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[132px] min-[390px]:min-h-[148px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-6 min-[390px]:-mb-8 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[146px] min-[390px]:min-h-[162px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-50 overflow-visible pb-0 -mb-14 min-[390px]:-mb-16 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
@@ -371,7 +371,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
                 DESKTOP → mantém composição centralizada equilibrada */}
             <div
-              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[132px] min-[390px]:h-[148px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
+              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[146px] min-[390px]:h-[162px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] translate-y-8 min-[390px]:translate-y-9 sm:translate-y-0 md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
             >
 
               {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
@@ -404,7 +404,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
 
               {/* Agente — mobile: menor, encostado à direita | desktop: mantém */}
-              <picture className="relative block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
+              <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
                 <source srcSet={agent3dWebp} type="image/webp" />
                 <img
                   src={agent3d}
