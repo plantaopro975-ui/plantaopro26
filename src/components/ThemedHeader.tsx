@@ -308,20 +308,20 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
       "header-bar bg-gradient-to-r backdrop-blur-md border-b py-2 px-3 sm:px-4 relative z-20 shrink-0 transition-all duration-500",
       style.bg, style.border, style.glow
     )}>
-      {/* Golden accent line (mirrors footer) */}
+      {/* Golden accent line — bottom (mirrors footer) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] sm:h-[2.5px] lg:h-[3px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-90 z-30"
       />
       {/* Golden accent line — left edge (responsive) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-0 top-1 bottom-1 sm:top-2 sm:bottom-2 lg:top-3 lg:bottom-3 w-[1.5px] sm:w-[2px] lg:w-[2.5px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-80 sm:opacity-85 lg:opacity-90"
+        className="pointer-events-none absolute left-0 top-2 bottom-2 sm:top-3 sm:bottom-3 lg:top-4 lg:bottom-4 w-[2px] sm:w-[2.5px] lg:w-[3px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90 z-30"
       />
       {/* Golden accent line — right edge (responsive) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute right-0 top-1 bottom-1 sm:top-2 sm:bottom-2 lg:top-3 lg:bottom-3 w-[1.5px] sm:w-[2px] lg:w-[2.5px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-80 sm:opacity-85 lg:opacity-90"
+        className="pointer-events-none absolute right-0 top-2 bottom-2 sm:top-3 sm:bottom-3 lg:top-4 lg:bottom-4 w-[2px] sm:w-[2.5px] lg:w-[3px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90 z-30"
       />
 
 
