@@ -423,7 +423,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                       <button
                         key={member.id}
                         onClick={() => handleMemberClick(member)}
-                        className={`relative w-full text-left rounded-xl border p-4 md:p-3.5 min-h-[112px] md:min-h-[84px] transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
+                        className={`relative w-full text-left rounded-xl border p-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
                           isCurrentAgent
                             ? 'bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/50'
                             : 'bg-slate-800/60 border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700/60'
@@ -438,7 +438,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                         
                         <div className="flex items-center gap-3.5">
                           {/* Bigger Avatar */}
-                          <Avatar className={`h-16 w-16 md:h-14 md:w-14 border-2 shrink-0 shadow-md ${
+                          <Avatar className={`h-16 w-16 border-2 shrink-0 shadow-md ${
                             member.role === 'team_leader' ? 'border-amber-500' :
                             member.role === 'support' ? 'border-blue-500' : 'border-slate-500'
                           }`}>
@@ -450,7 +450,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                           
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className={`font-bold text-lg md:text-base truncate ${
+                              <span className={`font-bold text-lg truncate ${
                                 isCurrentAgent ? 'text-amber-200' : 'text-slate-100'
                               }`}>
                                 {member.name.split(' ').slice(0, 2).join(' ')}
@@ -463,7 +463,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                             {/* Role row */}
                             <div className="flex items-center gap-1.5 mt-1">
                               {getRoleIcon(member.role)}
-                              <span className="text-xs md:text-[11px] text-slate-300 font-medium">{getRoleLabel(member.role)}</span>
+                              <span className="text-sm text-slate-300 font-medium">{getRoleLabel(member.role)}</span>
                             </div>
 
                             {/* Info row */}
