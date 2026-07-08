@@ -377,13 +377,6 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  onError={(event) => {
-                    if (!event.currentTarget.src.endsWith('/vehicle-ise-3d.png')) {
-                      event.currentTarget.src = vehicle3d;
-                      return;
-                    }
-                    event.currentTarget.style.visibility = 'hidden';
-                  }}
                   className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
@@ -409,13 +402,6 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
-                  onError={(event) => {
-                    if (!event.currentTarget.src.endsWith('/agent-ise-3d.png')) {
-                      event.currentTarget.src = agent3d;
-                      return;
-                    }
-                    event.currentTarget.style.visibility = 'hidden';
-                  }}
                   className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
