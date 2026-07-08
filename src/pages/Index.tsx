@@ -1863,7 +1863,7 @@ export default function Index() {
               }}
               disabled={Boolean(formData.unit_id)}
             >
-              <SelectTrigger className="h-14 text-lg bg-slate-800/80 border-2 border-slate-700/80 hover:border-slate-600 disabled:opacity-100 disabled:cursor-not-allowed">
+              <SelectTrigger className="h-11 sm:h-14 text-base sm:text-lg bg-slate-800/80 border-2 border-slate-700/80 hover:border-slate-600 disabled:opacity-100 disabled:cursor-not-allowed">
                 <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione a unidade"} />
               </SelectTrigger>
               <SelectContent
