@@ -262,26 +262,26 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
         <div className="absolute inset-0 bg-gradient-to-r from-amber-500/3 via-transparent to-amber-500/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <CardHeader className="pb-2 pt-3 px-3 relative">
+          <CardHeader className="pb-2.5 pt-4 px-4 relative">
             <div className="flex items-center justify-between">
               <CollapsibleTrigger asChild>
-                <button className="flex items-center gap-2 text-left group/btn flex-1 min-w-0">
+                <button className="flex items-center gap-3 text-left group/btn flex-1 min-w-0">
                   <div className="shrink-0">
-                    <TeamEmblem team={team} size="md" />
+                    <TeamEmblem team={team} size="lg" />
                   </div>
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <span className="font-bold text-base bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate">
+                  <div className="flex items-center gap-2 min-w-0 flex-1 flex-wrap">
+                    <span className="font-black text-lg md:text-xl bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate">
                       Equipe {team}
                     </span>
-                    <Badge className="text-[10px] bg-amber-500/15 text-amber-300 border-amber-500/30 px-1.5 py-0 shrink-0">
-                      {members.length}
+                    <Badge className="text-xs bg-amber-500/20 text-amber-200 border-amber-500/40 px-2 py-0.5 shrink-0 font-bold">
+                      {members.length} {members.length === 1 ? 'agente' : 'agentes'}
                     </Badge>
                   </div>
-                  <div className="p-1.5 rounded-lg bg-slate-800/60 border border-amber-500/20 group-hover/btn:bg-amber-500/15 transition-all duration-200 shrink-0">
+                  <div className="p-2 rounded-lg bg-slate-800/60 border border-amber-500/20 group-hover/btn:bg-amber-500/15 transition-all duration-200 shrink-0">
                     {isExpanded ? (
-                      <ChevronUp className="h-3.5 w-3.5 text-amber-400" />
+                      <ChevronUp className="h-4 w-4 text-amber-400" />
                     ) : (
-                      <ChevronDown className="h-3.5 w-3.5 text-amber-400" />
+                      <ChevronDown className="h-4 w-4 text-amber-400" />
                     )}
                   </div>
                 </button>
