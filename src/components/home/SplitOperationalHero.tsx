@@ -431,7 +431,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2 lg:gap-3 xl:gap-4" style={{ perspective: '900px' }}>
 
             {TEAMS.map((t, idx) => {
               const isSelected = selectedTeam === t.key;
