@@ -356,7 +356,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             />
             {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
             <div
-              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 leading-[0] isolate h-[clamp(170px,26vh,260px)] sm:h-[clamp(90px,14vh,240px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
+              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[clamp(170px,26vh,260px)] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
             >
               {/* Viatura — permanece à esquerda, com giroflex discretamente animado */}
               <picture className="relative block h-full leading-[0]">
