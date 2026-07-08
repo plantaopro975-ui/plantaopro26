@@ -114,7 +114,8 @@ export function AuthDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "w-[94vw] max-w-[440px] p-0 gap-0 overflow-hidden",
+          "w-[94vw] p-0 gap-0 overflow-hidden",
+          variant === 'register' ? "max-w-[480px]" : "max-w-[440px]",
           "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950",
           "border-2",
           !teamBranded && styles.border,
@@ -122,7 +123,8 @@ export function AuthDialog({
           !teamBranded && styles.glow,
           // Instant open/close — no zoom/slide/fade delays
           "!duration-0 data-[state=open]:!animate-none data-[state=closed]:!animate-none",
-          variant === 'register' && "max-h-[90vh] overflow-y-auto"
+          // Bounded height + internal flex so hero stays fixed and body scrolls
+          "flex flex-col max-h-[92dvh] sm:max-h-[88vh]"
         )}
         style={teamBranded && teamColor ? {
           borderColor: `${teamColor.primary}80`,
@@ -134,11 +136,12 @@ export function AuthDialog({
 
         {/* Top accent bar (flat) */}
         <div
-          className={cn("h-1 w-full", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
+          className={cn("h-1 w-full shrink-0", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
           style={teamBranded && teamColor ? {
             background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
           } : undefined}
         />
+
 
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
