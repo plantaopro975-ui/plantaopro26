@@ -752,6 +752,9 @@ export default function AgentPanel() {
               </TabsContent>
 
               <TabsContent value="rondas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+                <Suspense fallback={<div className="flex items-center justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-amber-500" /></div>}>
+                  <RoundsManager />
+                </Suspense>
                 <RoundsHistoryCard agentId={agent.id} />
               </TabsContent>
 
