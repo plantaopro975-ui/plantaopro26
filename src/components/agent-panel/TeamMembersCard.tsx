@@ -265,15 +265,15 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
           <CardHeader className="pb-3 pt-4 px-3.5 sm:px-4 relative">
             <div className="flex items-center justify-between">
               <CollapsibleTrigger asChild>
-                <button className="flex items-center gap-3 text-left group/btn flex-1 min-w-0">
-                  <div className="shrink-0">
+                <button className="flex items-center gap-3 sm:gap-3 text-left group/btn flex-1 min-w-0">
+                  <div className="shrink-0 scale-125 sm:scale-100 origin-left">
                     <TeamEmblem team={team} size="lg" />
                   </div>
                   <div className="flex items-center gap-2 min-w-0 flex-1 flex-wrap">
-                    <span className="font-black text-lg md:text-xl bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate">
+                    <span className="font-black text-2xl sm:text-lg md:text-xl bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate">
                       Equipe {team}
                     </span>
-                    <Badge className="text-xs bg-amber-500/20 text-amber-200 border-amber-500/40 px-2 py-0.5 shrink-0 font-bold">
+                    <Badge className="text-sm sm:text-xs bg-amber-500/20 text-amber-200 border-amber-500/40 px-2.5 py-1 sm:px-2 sm:py-0.5 shrink-0 font-bold">
                       {members.length} {members.length === 1 ? 'agente' : 'agentes'}
                     </Badge>
                   </div>
@@ -423,7 +423,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                       <button
                         key={member.id}
                         onClick={() => handleMemberClick(member)}
-                          className={`relative w-full min-w-0 text-left rounded-xl border p-5 sm:p-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
+                          className={`relative w-full min-w-0 text-left rounded-2xl border p-6 sm:p-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] shadow-md ${
                           isCurrentAgent
                             ? 'bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-transparent border-amber-500/50'
                             : 'bg-slate-800/60 border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700/60'
@@ -436,34 +436,34 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                           </div>
                         )}
                         
-                        <div className="flex items-center gap-3.5">
+                        <div className="flex items-center gap-4 sm:gap-3.5">
                           {/* Bigger Avatar */}
-                          <Avatar className={`h-16 w-16 border-2 shrink-0 shadow-md ${
+                          <Avatar className={`h-20 w-20 sm:h-16 sm:w-16 border-2 shrink-0 shadow-md ${
                             member.role === 'team_leader' ? 'border-amber-500' :
                             member.role === 'support' ? 'border-blue-500' : 'border-slate-500'
                           }`}>
                             {member.avatar_url && <AvatarImage src={member.avatar_url} alt={member.name} />}
-                            <AvatarFallback className="bg-slate-700 text-slate-200 text-lg font-bold">
+                            <AvatarFallback className="bg-slate-700 text-slate-200 text-2xl sm:text-lg font-bold">
                               {member.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className={`font-bold text-lg truncate ${
+                              <span className={`font-bold text-xl sm:text-lg truncate ${
                                 isCurrentAgent ? 'text-amber-200' : 'text-slate-100'
                               }`}>
                                 {member.name.split(' ').slice(0, 2).join(' ')}
                               </span>
                               {isCurrentAgent && (
-                                <Badge className="bg-amber-500/25 text-amber-200 border-0 text-[10px] px-1.5 py-0">Você</Badge>
+                                <Badge className="bg-amber-500/25 text-amber-200 border-0 text-[11px] sm:text-[10px] px-1.5 py-0">Você</Badge>
                               )}
                             </div>
                             
                             {/* Role row */}
-                            <div className="flex items-center gap-1.5 mt-1">
+                            <div className="flex items-center gap-1.5 mt-1.5 sm:mt-1">
                               {getRoleIcon(member.role)}
-                              <span className="text-sm text-slate-300 font-medium">{getRoleLabel(member.role)}</span>
+                              <span className="text-base sm:text-sm text-slate-300 font-medium">{getRoleLabel(member.role)}</span>
                             </div>
 
                             {/* Info row */}
