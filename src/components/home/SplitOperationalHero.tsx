@@ -416,7 +416,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* Mobile-only "Gestor de Rondas" — abaixo da viatura no mobile */}
-        <div className="relative z-30 px-2 sm:hidden mt-1 order-4">
+        <div className="relative z-30 px-2 sm:hidden mt-1 order-2 sm:order-none">
           <RoundsManager
             customTrigger={
               <button
