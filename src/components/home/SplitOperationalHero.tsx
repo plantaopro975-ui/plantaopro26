@@ -340,14 +340,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
           {/* RIGHT — Agent 3D */}
           <div className="relative flex items-end justify-end sm:justify-center min-h-[236px] min-[390px]:min-h-[244px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-1 pt-9 sm:pt-0 sm:-mb-2">
-            <span className="absolute left-2 right-2 top-1 z-40 inline-flex h-7 items-center gap-1.5 rounded-sm border border-amber-400/45 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-transparent px-2 py-0.5 shadow-[inset_0_1px_0_rgba(234,179,8,0.25),0_4px_12px_-6px_rgba(234,179,8,0.5)] sm:hidden">
-              <span className="h-2 w-1 bg-amber-400 shadow-[0_0_6px_rgba(234,179,8,0.9)]" />
-              <span className="h-2 w-3 bg-amber-400/80" />
-              <span className="min-w-0 flex-1 truncate font-mono text-[9px] min-[360px]:text-[10px] font-black uppercase tracking-[0.18em] min-[360px]:tracking-[0.24em] text-amber-300 leading-none drop-shadow-[0_0_6px_rgba(234,179,8,0.5)]">
-                Sistema Operacional
-              </span>
-              <span className="shrink-0 font-mono text-[8px] min-[360px]:text-[9px] font-semibold uppercase tracking-[0.16em] text-amber-200/80">ATIVO</span>
-            </span>
+            {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
             <svg
