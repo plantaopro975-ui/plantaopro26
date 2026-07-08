@@ -1062,7 +1062,7 @@ html.tab-hidden *::after {
   border-radius: 999px;
   pointer-events: none;
   z-index: 3;
-  transform: translate(-50%, -50%) rotate(-1deg);
+  transform: translate(-50%, -50%) rotate(-0.4deg);
   will-change: opacity, filter, box-shadow;
   opacity: 0.12;
   mix-blend-mode: screen;
