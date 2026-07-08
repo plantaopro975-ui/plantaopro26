@@ -132,6 +132,9 @@ export function OperationalStatusRibbon() {
             <div
               className="relative px-2 py-1.5 bg-slate-950/60 overflow-hidden"
               style={{ boxShadow: 'inset 0 0 0 1px hsl(142 72% 45% / 0.22)' }}
+              aria-live="polite"
+              aria-atomic="true"
+              aria-label={`${onlineNow} agentes online agora`}
             >
               <span
                 aria-hidden
@@ -139,7 +142,7 @@ export function OperationalStatusRibbon() {
                 style={{ background: 'linear-gradient(90deg, transparent, hsl(142 72% 55% / 0.7), transparent)' }}
               />
               <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-300 flex items-center gap-1">
-                <span className="relative inline-flex h-1.5 w-1.5">
+                <span className="relative inline-flex h-1.5 w-1.5" aria-hidden>
                   <span className="absolute inset-0 rounded-full animate-ping opacity-60 bg-emerald-400" />
                   <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_hsl(142_72%_55%_/_0.9)]" />
                 </span>
