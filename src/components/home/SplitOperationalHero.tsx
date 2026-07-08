@@ -18,8 +18,6 @@ import vehicleMobileAsset from '@/assets/hero/vehicle-ise-mobile.png.asset.json'
 const vehicleMobile = vehicleMobileAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.png.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
-import csGasSmokeAsset from '@/assets/cs-gas-smoke.png.asset.json';
-const csGasSmoke = csGasSmokeAsset.url;
 import agentVehicleSceneWebpAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleSceneWebp = agentVehicleSceneWebpAsset.url;
 import objAlfaAsset from '@/assets/teams/alfa-vest-pro.png.asset.json';
