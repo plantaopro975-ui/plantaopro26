@@ -1670,17 +1670,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             >
               <div className="mx-auto mb-2.5 overflow-hidden rounded-lg border bg-card" style={{ borderColor: `${teamColor}38`, boxShadow: `inset 0 1px 0 ${teamColor}18` }}>
                 <div className="relative flex items-center gap-3 px-3 py-2.5 sm:px-4 sm:py-3">
-                  <div className="absolute inset-0 pointer-events-none opacity-70" style={{ background: `radial-gradient(circle at 80% 25%, ${teamColor}24, transparent 42%), linear-gradient(90deg, ${teamColor}0, ${teamColor}10, ${teamColor}0)` }} />
+                  <div className="absolute inset-0 pointer-events-none opacity-40" style={{ background: `radial-gradient(circle at 80% 25%, ${teamColor}24, transparent 42%), linear-gradient(90deg, ${teamColor}0, ${teamColor}10, ${teamColor}0)` }} />
                   <div className="relative flex min-w-0 flex-1 items-center gap-3">
                     <div className="hidden sm:block"><TeamHero team={team} color={teamColor} /></div>
                     <div className="min-w-0">
-                      <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em]" style={{ color: teamColor }}>
+                      <div className="font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.28em]" style={{ color: teamColor }}>
                         Central de Ronda · Equipe {team}
                       </div>
                       <h2 className="font-display text-lg sm:text-2xl leading-tight text-foreground">
                         Operação em tempo real
                       </h2>
-                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[12px] tabular-nums text-muted-foreground">
                         <span className="rounded-sm border px-1.5 py-0.5" style={{ borderColor: `${teamColor}44`, color: teamColor }}>
                           Restante {fmtHMS(totalRemainingSeconds)}
                         </span>
