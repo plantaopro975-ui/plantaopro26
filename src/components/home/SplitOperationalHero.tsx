@@ -357,7 +357,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
             <div
               className="relative inline-flex items-end justify-center gap-1 sm:gap-2 leading-[0] isolate md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%]"
-              style={{ height: 'clamp(110px, 16vh, 240px)' }}
+              style={{ height: 'clamp(90px, 14vh, 240px)' }}
             >
               {/* Viatura — permanece à esquerda, com giroflex discretamente animado */}
               <picture className="relative block h-full leading-[0]">
