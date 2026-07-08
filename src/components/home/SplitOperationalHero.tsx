@@ -89,7 +89,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
           sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 200px"
           onLoad={() => setLoaded(true)}
           className={cn(
-            'block h-full w-full max-h-[95%] max-w-[92%] sm:max-h-[80%] sm:max-w-[65%] object-contain select-none animate-float3d',
+            'block h-full w-full max-h-[95%] max-w-[92%] sm:max-h-[80%] sm:max-w-[65%] lg:max-h-[82%] lg:max-w-[72%] xl:max-h-[85%] xl:max-w-[78%] object-contain select-none animate-float3d',
             'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
             'transition-[transform,opacity] duration-700 ease-out',
             'group-hover:scale-[1.12] group-hover:-translate-y-1',
@@ -335,7 +335,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-end sm:justify-center min-h-[clamp(170px,26vh,260px)] sm:min-h-[clamp(90px,14vh,220px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
+          <div className="relative flex items-end justify-end sm:justify-center min-h-[clamp(170px,26vh,260px)] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-2">
 
             <svg
               aria-hidden
@@ -356,7 +356,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             />
             {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
             <div
-              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 leading-[0] isolate h-[clamp(170px,26vh,260px)] sm:h-[clamp(90px,14vh,240px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
+              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[clamp(170px,26vh,260px)] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
             >
               {/* Viatura — permanece à esquerda, com giroflex discretamente animado */}
               <picture className="relative block h-full leading-[0]">
@@ -366,7 +366,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 sm:scale-100 origin-bottom-left"
+                  className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
                 {/* Giroflex — ancorado nas lentes reais da imagem 1024x1024.
@@ -389,7 +389,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
-                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-1 sm:-ml-2 scale-[1.18] sm:scale-100 origin-bottom-right"
+                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-1 sm:-ml-2 scale-[1.18] sm:scale-100 lg:scale-[1.15] xl:scale-[1.25] origin-bottom-right"
                   draggable={false}
                   style={{ transformOrigin: 'bottom right' }}
                 />
@@ -431,7 +431,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2 lg:gap-3 xl:gap-4" style={{ perspective: '900px' }}>
 
             {TEAMS.map((t, idx) => {
               const isSelected = selectedTeam === t.key;
@@ -443,7 +443,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 aria-pressed={isSelected}
                 onClick={() => handleSelect(t.key)}
                 className={cn(
-                  'group relative flex h-[clamp(100px,17vh,170px)] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
+                  'group relative flex h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
                   'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
                   isSelected
@@ -560,7 +560,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   ];
                   return (
                     <div className="relative z-20 flex flex-col gap-1 px-2.5 pb-2">
-                      <svg viewBox="0 0 300 72" className="block w-full h-10 sm:h-12" aria-label={t.key} role="img">
+                      <svg viewBox="0 0 300 72" className="block w-full h-10 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
                         <defs>
                           <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
                             {stops.map((st) => (
