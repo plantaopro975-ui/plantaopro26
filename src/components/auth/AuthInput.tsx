@@ -18,15 +18,15 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
     const actualType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-1.5 sm:space-y-2">
         {label && (
-          <label className="block text-sm font-semibold text-slate-300 uppercase tracking-wider">
+          <label className="block text-[11px] sm:text-sm font-semibold text-slate-300 uppercase tracking-wider">
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors duration-150">
+            <div className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors duration-150">
               {icon}
             </div>
           )}
@@ -35,20 +35,21 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             type={actualType}
             autoComplete={isPassword ? "new-password" : props.autoComplete}
             className={cn(
-              "relative w-full rounded-xl",
-              "h-14 px-4",
-              icon && "pl-12",
-              (rightIcon || isPassword) && "pr-12",
+              "relative w-full rounded-lg sm:rounded-xl",
+              "h-11 sm:h-14 px-3 sm:px-4",
+              icon && "pl-10 sm:pl-12",
+              (rightIcon || isPassword) && "pr-10 sm:pr-12",
               "bg-slate-800/80",
               "border-2 border-slate-700/80",
               "focus:border-blue-500/70 focus:ring-0 focus:outline-none focus:transition-colors focus:duration-150",
-              "text-white text-lg placeholder:text-slate-500",
-              variant === 'centered' && "text-center font-mono tracking-widest text-xl",
+              "text-white text-base sm:text-lg placeholder:text-slate-500",
+              variant === 'centered' && "text-center font-mono tracking-widest text-lg sm:text-xl",
               error && "border-red-500/50 focus:border-red-500/70",
               className
             )}
             {...props}
           />
+
 
             {isPassword && (
               <Button
