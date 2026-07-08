@@ -153,7 +153,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-hidden mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
+        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl border border-white/5 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] flex-1 min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
@@ -197,14 +197,21 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         />
 
 
+        {/* ============ MOBILE-ONLY TITLE — acima da viatura/agente ============ */}
+        <div className="sm:hidden relative z-30 px-3 pt-1.5 pb-0.5">
+          <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[20px] leading-[1.02] text-center">
+            Comando <span className="text-amber-400">Tático</span> Socioeducativo
+          </h2>
+        </div>
+
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-2 sm:gap-4 px-0 sm:px-5 pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0">
+        <div className="relative grid gap-2 sm:gap-4 px-0 sm:px-5 pt-1 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0">
 
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
 
 
-            <div className="flex flex-col gap-1 sm:gap-1.5">
+            <div className="hidden sm:flex flex-col gap-1 sm:gap-1.5">
               <span className="hidden items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
                 <span className="h-1 w-6 bg-amber-400" />
                 Sistema Operacional
@@ -218,7 +225,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            <div className="flex flex-wrap items-center gap-3 text-slate-200">
+            <div className="hidden sm:flex flex-wrap items-center gap-3 text-slate-200">
               <div className="flex items-center gap-1 text-[10px] font-mono font-semibold uppercase tracking-[0.18em]">
                 <ShieldCheck className="h-3 w-3 text-amber-400" /> RLS
               </div>
@@ -409,13 +416,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* Mobile-only "Gestor de Rondas" — posicionado logo abaixo da viatura/agente */}
-        <div className="relative z-30 px-2 sm:hidden mt-1">
+        <div className="relative z-30 px-2 sm:hidden mt-0">
           <RoundsManager
             customTrigger={
               <button
                 type="button"
                 aria-label="Abrir Gestor de Rondas"
-                className="group w-full inline-flex items-center justify-center gap-2 rounded-lg border border-amber-400/50 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 px-4 py-2 shadow-[0_6px_18px_-8px_rgba(234,179,8,0.5)] active:scale-[0.98] transition"
+                className="group w-full inline-flex items-center justify-center gap-2 rounded-lg border border-amber-400/50 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 px-4 py-1.5 shadow-[0_6px_18px_-8px_rgba(234,179,8,0.5)] active:scale-[0.98] transition"
               >
                 <span className="relative inline-flex h-4 w-4">
                   <Radar className="h-4 w-4 text-amber-300" strokeWidth={2.2} />
@@ -430,7 +437,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ BOTTOM: Team Selector Grid — Compact 3D Security Objects ============ */}
-        <div className="relative shrink-0 px-2 sm:px-3 pt-1 sm:pt-3 pb-2 mt-0 sm:mt-2">
+        <div className="relative shrink-0 px-2 sm:px-3 pt-0.5 sm:pt-3 pb-2 mt-0 sm:mt-2">
 
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-200">
