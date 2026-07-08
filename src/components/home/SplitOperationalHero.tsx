@@ -346,7 +346,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[88px] min-[390px]:min-h-[96px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-hidden sm:overflow-visible pb-0 -mb-1 pt-0 sm:pt-0 sm:-mb-2 px-2 sm:px-0">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[132px] min-[390px]:min-h-[148px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-1 pt-0 sm:pt-0 sm:-mb-2 px-2 sm:px-0">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
@@ -371,8 +371,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
                 DESKTOP → mantém composição centralizada equilibrada */}
             <div
-              className="relative inline-flex items-end justify-between sm:justify-center gap-2 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[88px] min-[390px]:h-[96px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
+              className="relative inline-flex items-end justify-between sm:justify-center gap-2 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[132px] min-[390px]:h-[148px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
             >
+
               {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
               <picture className="relative block h-full leading-[0]">
                 <source srcSet={vehicle3dWebp} type="image/webp" />
@@ -382,12 +383,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   width={1024}
                   height={1024}
                   onError={(event) => { event.currentTarget.style.visibility = 'hidden'; }}
-                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-[0.84] sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.9)] sm:drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-[0.84] sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                 >
                   <span
                     aria-hidden
