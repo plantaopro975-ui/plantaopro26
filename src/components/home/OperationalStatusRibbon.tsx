@@ -51,19 +51,19 @@ export function OperationalStatusRibbon() {
 
         {/* Header strip */}
         <div
-          className="flex items-center justify-between px-3 py-1.5 border-b"
-          style={{ borderColor: `${accentColor.replace(')', ' / 0.25)')}`, background: accentSoft }}
+          className="flex items-center justify-between px-2 py-[3px] border-b"
+          style={{ borderColor: `${accentColor.replace(')', ' / 0.2)')}`, background: accentSoft }}
         >
-          <span className="flex items-center gap-1.5">
-            <span className="relative inline-flex h-1.5 w-1.5">
-              <span className="absolute inset-0 rounded-full animate-ping opacity-70" style={{ background: 'hsl(142 72% 55%)' }} />
-              <span className="relative h-1.5 w-1.5 rounded-full" style={{ background: 'hsl(142 72% 55%)', boxShadow: '0 0 6px hsl(142 72% 55% / 0.9)' }} />
+          <span className="flex items-center gap-1">
+            <span className="relative inline-flex h-1 w-1">
+              <span className="absolute inset-0 rounded-full animate-ping opacity-60" style={{ background: 'hsl(142 72% 55%)' }} />
+              <span className="relative h-1 w-1 rounded-full" style={{ background: 'hsl(142 72% 55%)', boxShadow: '0 0 4px hsl(142 72% 55% / 0.8)' }} />
             </span>
-            <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-emerald-300">
+            <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.18em] text-emerald-300/85">
               {isLogged ? 'OPERACIONAL' : 'CANAL SEGURO'}
             </span>
           </span>
-          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.24em]" style={{ color: accentColor }}>
+          <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.2em] opacity-85" style={{ color: accentColor }}>
             {isLogged ? (teamKey || 'ISE') : 'ISE · AC'}
           </span>
         </div>
