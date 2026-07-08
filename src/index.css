@@ -1134,11 +1134,32 @@ html.tab-hidden *::after {
 
 
 
-/* CS gas drift animation */
-@keyframes cs-drift {
-  0%,100% { transform: translate3d(0,0,0) scale(1); opacity: 0.78; }
-  50%     { transform: translate3d(4px,-3px,0) scale(1.04); opacity: 0.9; }
+/* CS gas — subtle ground puffs (CSS-only, no image) */
+.cs-puff {
+  position: absolute;
+  bottom: -4%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 55%,
+    rgba(255,255,255,0.55) 0%,
+    rgba(240,235,220,0.35) 35%,
+    rgba(200,190,170,0.15) 60%,
+    rgba(0,0,0,0) 72%);
+  filter: blur(6px);
+  mix-blend-mode: screen;
+  opacity: 0;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+.cs-puff-1 { left:  8%; width: 42%; height: 42%; animation: cs-rise 6.5s ease-out  0.0s infinite; }
+.cs-puff-2 { left: 34%; width: 34%; height: 34%; animation: cs-rise 7.8s ease-out  1.6s infinite; }
+.cs-puff-3 { left: 18%; width: 28%; height: 28%; animation: cs-rise 6.0s ease-out  3.2s infinite; }
+.cs-puff-4 { left: 48%; width: 24%; height: 24%; animation: cs-rise 8.4s ease-out  4.8s infinite; }
+@keyframes cs-rise {
+  0%   { transform: translate3d(0, 6%, 0) scale(0.55); opacity: 0; }
+  25%  { opacity: 0.55; }
+  60%  { opacity: 0.35; }
+  100% { transform: translate3d(-6%, -110%, 0) scale(1.25); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .animate-\[cs-drift_8s_ease-in-out_infinite\] { animation: none !important; }
+  .cs-puff { animation: none !important; opacity: 0.25; }
 }
