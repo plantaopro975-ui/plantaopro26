@@ -76,6 +76,7 @@ const LicenseFinanceControl = lazy(() => import('@/components/admin/LicenseFinan
 const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagementCard').then(m => ({ default: m.UnitsManagementCard })));
 const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
 const PendingApprovalsManager = lazy(() => import('@/components/admin/PendingApprovalsManager').then(m => ({ default: m.PendingApprovalsManager })));
+const RecentRegistrationsAudit = lazy(() => import('@/components/admin/RecentRegistrationsAudit').then(m => ({ default: m.RecentRegistrationsAudit })));
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
