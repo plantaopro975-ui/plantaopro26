@@ -242,7 +242,7 @@ export function AuthDialog({
         )}
 
         {/* Separator */}
-        <div className="relative h-px bg-slate-800">
+        <div className="relative h-px bg-slate-800 shrink-0">
           <div
             className="absolute inset-0 opacity-60"
             style={teamBranded && teamColor ? {
@@ -262,9 +262,13 @@ export function AuthDialog({
           </div>
         </div>
 
-        {/* Content — hierarquia tipográfica consistente + tokens da equipe */}
+        {/* Scrollable content region — hero stays fixed above */}
         <div
-          className="px-6 py-6 space-y-5 [&_label]:text-[11px] [&_label]:tracking-[0.14em] [&_label]:uppercase [&_label]:font-semibold [&_label]:text-white/75 [&_input]:h-11 [&_input]:text-[14px]"
+          className={cn(
+            "flex-1 min-h-0 overflow-y-auto overscroll-contain",
+            variant === 'register' ? "px-4 py-4 sm:px-6 sm:py-5" : "px-6 py-6",
+            "[&_label]:text-[11px] [&_label]:tracking-[0.14em] [&_label]:uppercase [&_label]:font-semibold [&_label]:text-white/75 [&_input]:h-11 [&_input]:text-[14px]"
+          )}
           style={teamBranded && teamColor ? ({
             ['--team-primary' as string]: teamColor.primary,
             ['--team-secondary' as string]: teamColor.secondary,
@@ -277,14 +281,14 @@ export function AuthDialog({
           {children}
         </div>
 
-
         {/* Bottom accent */}
         <div
-          className={cn("h-1 w-full opacity-70", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
+          className={cn("h-1 w-full opacity-70 shrink-0", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
           style={teamBranded && teamColor ? {
             background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
           } : undefined}
         />
+
       </DialogContent>
     </Dialog>
   );
