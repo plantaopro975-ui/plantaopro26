@@ -174,7 +174,7 @@ export function AuthDialog({
                 <div className="h-1.5 w-1.5 rounded-full shrink-0"
                      style={{ background: teamColor!.primary }} />
                 <span className="text-[9px] sm:text-[10px] tracking-[0.24em] sm:tracking-[0.28em] font-mono font-semibold text-white/75 uppercase truncate">
-                  Secure · {teamKey}
+                  Canal Seguro
                 </span>
               </div>
               <span className="hidden sm:inline text-[9px] sm:text-[10px] tracking-[0.2em] font-mono text-white/45 shrink-0">CLASSIFIED</span>
