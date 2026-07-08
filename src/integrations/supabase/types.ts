@@ -802,6 +802,42 @@ export type Database = {
           },
         ]
       }
+      cpf_change_log: {
+        Row: {
+          agent_id: string
+          agent_name: string | null
+          changed_by: string | null
+          changed_by_email: string | null
+          created_at: string
+          id: string
+          new_cpf: string
+          old_cpf: string | null
+          operation: string
+        }
+        Insert: {
+          agent_id: string
+          agent_name?: string | null
+          changed_by?: string | null
+          changed_by_email?: string | null
+          created_at?: string
+          id?: string
+          new_cpf: string
+          old_cpf?: string | null
+          operation: string
+        }
+        Update: {
+          agent_id?: string
+          agent_name?: string | null
+          changed_by?: string | null
+          changed_by_email?: string | null
+          created_at?: string
+          id?: string
+          new_cpf?: string
+          old_cpf?: string | null
+          operation?: string
+        }
+        Relationships: []
+      }
       deleted_messages: {
         Row: {
           agent_id: string
