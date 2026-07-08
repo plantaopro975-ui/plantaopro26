@@ -346,7 +346,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-end sm:justify-center min-h-[236px] min-[390px]:min-h-[244px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-visible pb-0 -mb-1 pt-9 sm:pt-0 sm:-mb-2">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[200px] min-[390px]:min-h-[210px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] order-first md:order-none z-30 overflow-hidden sm:overflow-visible pb-0 -mb-1 pt-4 sm:pt-0 sm:-mb-2">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
@@ -369,7 +369,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             />
             {/* Cena composta: viatura à esquerda + agente à direita (escala equilibrada) */}
             <div
-              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[182px] min-[390px]:h-[190px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-1 sm:pr-0"
+              className="relative inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate h-[190px] min-[390px]:h-[200px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
             >
               {/* Viatura — imagem real em todos os breakpoints */}
               <picture className="relative block h-full leading-[0]">
@@ -379,12 +379,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-105 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-105 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-100 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                 >
                   <span
                     aria-hidden
@@ -405,7 +405,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
-                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-1 sm:-ml-2 scale-[1.18] sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] lg:translate-y-4 xl:translate-y-6 origin-bottom-right"
+                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-0 sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] lg:translate-y-4 xl:translate-y-6 origin-bottom-right"
                   draggable={false}
                   style={{ transformOrigin: 'bottom right' }}
                 />
