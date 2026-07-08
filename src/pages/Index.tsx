@@ -240,25 +240,23 @@ export default function Index() {
 
   const LAST_CPF_KEY = 'plantaopro_last_cpf';
 
-  const persistLastCpf = (cpf: string) => {
+  // SECURITY: CPFs must NEVER be persisted in the browser (localStorage/sessionStorage/cookies).
+  // Any legacy value is purged on mount, and persist/read are no-ops.
+  useEffect(() => {
     try {
-      const clean = cpf.replace(/\D/g, '');
-      if (clean.length === 11) localStorage.setItem(LAST_CPF_KEY, clean);
+      localStorage.removeItem(LAST_CPF_KEY);
+      sessionStorage.removeItem(LAST_CPF_KEY);
     } catch {
       // ignore
     }
+  }, []);
+
+  const persistLastCpf = (_cpf: string) => {
+    // Intentionally a no-op — CPFs are stored only in the backend.
   };
 
-  const readLastCpf = (): string | null => {
-    try {
-      const v = localStorage.getItem(LAST_CPF_KEY);
-      if (!v) return null;
-      const clean = v.replace(/\D/g, '');
-      return clean.length === 11 ? clean : null;
-    } catch {
-      return null;
-    }
-  };
+  const readLastCpf = (): string | null => null;
+
 
   useEffect(() => {
     fetchUnits();
