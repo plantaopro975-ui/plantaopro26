@@ -1598,7 +1598,7 @@ export default function Index() {
         subtitle="Autenticação de Agente"
         team={selectedTeam}
       >
-        <form onSubmit={handleLogin} className="space-y-5" data-login-form="true" autoComplete="off" spellCheck={false}>
+        <form onSubmit={handleLogin} className="space-y-4" data-login-form="true" autoComplete="off" spellCheck={false}>
           {/* Honeypot para desativar o prompt "salvar senha" do navegador */}
           <input type="text" name="fakeuser" autoComplete="username" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} readOnly />
           <input type="password" name="fakepass" autoComplete="current-password" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} readOnly />
@@ -1676,16 +1676,19 @@ export default function Index() {
             savePassword={savePasswordEnabled}
           />
           
-          <div className="flex items-center justify-between pt-1">
-            <ForgotPasswordDialog />
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-800/70 mt-1">
+            <div className="pt-3">
+              <ForgotPasswordDialog />
+            </div>
             <button
               type="button"
               onClick={() => setShowClearCredsConfirm(true)}
-              className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground hover:text-destructive transition-colors font-mono"
+              className="pt-3 text-[10px] uppercase tracking-[0.16em] text-slate-500 hover:text-red-400 transition-colors font-mono"
             >
               Limpar credenciais
             </button>
           </div>
+
 
           
           <AuthButton

@@ -114,7 +114,8 @@ export function AuthDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "w-[94vw] max-w-[440px] p-0 gap-0 overflow-hidden",
+          "w-[94vw] p-0 gap-0 overflow-hidden",
+          variant === 'register' ? "max-w-[480px]" : "max-w-[440px]",
           "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950",
           "border-2",
           !teamBranded && styles.border,
@@ -122,7 +123,8 @@ export function AuthDialog({
           !teamBranded && styles.glow,
           // Instant open/close — no zoom/slide/fade delays
           "!duration-0 data-[state=open]:!animate-none data-[state=closed]:!animate-none",
-          variant === 'register' && "max-h-[90vh] overflow-y-auto"
+          // Bounded height + internal flex so hero stays fixed and body scrolls
+          "flex flex-col max-h-[92dvh] sm:max-h-[88vh]"
         )}
         style={teamBranded && teamColor ? {
           borderColor: `${teamColor.primary}80`,
@@ -134,16 +136,22 @@ export function AuthDialog({
 
         {/* Top accent bar (flat) */}
         <div
-          className={cn("h-1 w-full", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
+          className={cn("h-1 w-full shrink-0", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
           style={teamBranded && teamColor ? {
             background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
           } : undefined}
         />
 
+
         {/* HERO — team-branded (compact professional) */}
         {teamBranded && teamPoster ? (
           <div
-            className="relative w-full overflow-hidden bg-slate-950 aspect-[16/9] sm:aspect-[16/7] md:aspect-[16/6]"
+            className={cn(
+              "relative w-full overflow-hidden bg-slate-950 shrink-0",
+              variant === 'register'
+                ? "aspect-[16/5] sm:aspect-[16/5]"
+                : "aspect-[16/9] sm:aspect-[16/7] md:aspect-[16/6]"
+            )}
           >
             <img
               src={teamPoster}
@@ -151,6 +159,7 @@ export function AuthDialog({
               className="absolute inset-0 h-full w-full object-cover object-[center_25%] sm:object-[center_30%]"
               style={{ filter: 'contrast(1.06) saturate(0.98) brightness(0.9)' }}
             />
+
             {/* Vinheta noir + gradiente base para legibilidade */}
             <div className="absolute inset-0 pointer-events-none"
                  style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 40%, rgba(2,6,23,0.55) 100%)' }} />
@@ -197,7 +206,8 @@ export function AuthDialog({
         ) : (
           <>
             {/* Legacy header (non-team dialogs) */}
-            <div className={cn("relative px-6 pt-8 pb-6 bg-gradient-to-b", styles.headerBg)}>
+            <div className={cn("relative px-6 pt-8 pb-6 bg-gradient-to-b shrink-0", styles.headerBg)}>
+
               <div className="absolute top-4 right-4 flex gap-1.5">
                 <div className={cn("w-1.5 h-1.5 rounded-full", styles.decorColor)} />
                 <div className={cn("w-1.5 h-1.5 rounded-full opacity-60", styles.decorColor)} />
@@ -232,7 +242,7 @@ export function AuthDialog({
         )}
 
         {/* Separator */}
-        <div className="relative h-px bg-slate-800">
+        <div className="relative h-px bg-slate-800 shrink-0">
           <div
             className="absolute inset-0 opacity-60"
             style={teamBranded && teamColor ? {
@@ -252,9 +262,13 @@ export function AuthDialog({
           </div>
         </div>
 
-        {/* Content — hierarquia tipográfica consistente + tokens da equipe */}
+        {/* Scrollable content region — hero stays fixed above */}
         <div
-          className="px-6 py-6 space-y-5 [&_label]:text-[11px] [&_label]:tracking-[0.14em] [&_label]:uppercase [&_label]:font-semibold [&_label]:text-white/75 [&_input]:h-11 [&_input]:text-[14px]"
+          className={cn(
+            "flex-1 min-h-0 overflow-y-auto overscroll-contain",
+            variant === 'register' ? "px-4 py-4 sm:px-6 sm:py-5" : "px-6 py-6",
+            "[&_label]:text-[11px] [&_label]:tracking-[0.14em] [&_label]:uppercase [&_label]:font-semibold [&_label]:text-white/75 [&_input]:h-11 [&_input]:text-[14px]"
+          )}
           style={teamBranded && teamColor ? ({
             ['--team-primary' as string]: teamColor.primary,
             ['--team-secondary' as string]: teamColor.secondary,
@@ -267,14 +281,14 @@ export function AuthDialog({
           {children}
         </div>
 
-
         {/* Bottom accent */}
         <div
-          className={cn("h-1 w-full opacity-70", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
+          className={cn("h-1 w-full opacity-70 shrink-0", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
           style={teamBranded && teamColor ? {
             background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
           } : undefined}
         />
+
       </DialogContent>
     </Dialog>
   );
