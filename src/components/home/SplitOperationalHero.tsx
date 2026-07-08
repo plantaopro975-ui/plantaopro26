@@ -460,12 +460,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 aria-pressed={isSelected}
                 onClick={() => handleSelect(t.key)}
                 className={cn(
-                  'group relative flex h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border text-left bg-transparent isolate',
+                  'group relative flex h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
                   'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
                   isSelected
-                    ? 'border-[hsl(var(--team-accent))] -translate-y-1.5 scale-[1.02] shadow-[0_0_0_1px_hsl(var(--team-accent)/0.7),0_18px_40px_-12px_hsl(var(--team-accent)/0.55),0_10px_20px_-8px_rgba(0,0,0,0.8)] ring-1 ring-[hsl(var(--team-accent)/0.35)]'
-                    : 'border-white/10 hover:border-[hsl(var(--team-accent)/0.7)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_14px_30px_-14px_hsl(var(--team-accent)/0.45),0_8px_18px_-10px_rgba(0,0,0,0.7)] active:translate-y-0 active:scale-[0.99]',
+                    ? 'border-[hsl(var(--team-accent))] -translate-y-1.5 scale-[1.02] shadow-[0_0_0_2px_hsl(var(--team-accent)/0.85),0_0_0_4px_rgba(2,6,23,0.9),0_18px_40px_-12px_hsl(var(--team-accent)/0.6),0_10px_20px_-8px_rgba(0,0,0,0.85)] ring-1 ring-[hsl(var(--team-accent)/0.45)]'
+                    : 'border-slate-300/25 shadow-[0_0_0_1px_rgba(15,23,42,0.75),inset_0_0_0_1px_rgba(255,255,255,0.06)] hover:border-[hsl(var(--team-accent)/0.85)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_hsl(var(--team-accent)/0.7),0_14px_30px_-14px_hsl(var(--team-accent)/0.5),0_8px_18px_-10px_rgba(0,0,0,0.75)] active:translate-y-0 active:scale-[0.99]',
                 )}
                 style={{ ['--team-accent' as any]: t.accent }}
               >
