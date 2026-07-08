@@ -340,7 +340,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[188px] min-[390px]:min-h-[210px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mb-0 sm:-mb-2 pt-1 sm:pt-0 px-2 sm:px-0">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[188px] min-[390px]:min-h-[210px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 -mt-12 min-[390px]:-mt-16 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
@@ -385,12 +385,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
-                    style={{ top: '22.4%', left: '48.2%' }}
+                    style={{ top: '20.8%', left: '41.5%' }}
                   />
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                    style={{ top: '23.1%', left: '64.0%' }}
+                    style={{ top: '21%', left: '58%' }}
                   />
                 </span>
               </picture>
