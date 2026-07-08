@@ -160,7 +160,7 @@ export function SingleDeviceGuard() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogAction
-            onClick={() => signOut()}
+            onClick={performLogout}
             className="w-full bg-amber-500 text-slate-950 hover:bg-amber-400"
           >
             Sair agora
