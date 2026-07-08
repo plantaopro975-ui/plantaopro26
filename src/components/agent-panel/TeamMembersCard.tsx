@@ -438,7 +438,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                         
                         <div className="flex items-center gap-3.5">
                           {/* Bigger Avatar */}
-                          <Avatar className={`h-16 w-16 md:h-14 md:w-14 border-2 shrink-0 shadow-md ${
+                          <Avatar className={`h-16 w-16 border-2 shrink-0 shadow-md ${
                             member.role === 'team_leader' ? 'border-amber-500' :
                             member.role === 'support' ? 'border-blue-500' : 'border-slate-500'
                           }`}>
