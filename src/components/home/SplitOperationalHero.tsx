@@ -400,14 +400,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
 
               {/* Agente — imagem real em todos os breakpoints */}
-              <picture className="relative block h-full leading-[0]">
+              <picture className="relative block h-full leading-[0] flex items-end">
                 <source srcSet={agent3dWebp} type="image/webp" />
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
-                  className="block h-full w-auto object-contain drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-0 sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] -translate-y-3 sm:translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom-right"
+                  className="block max-h-full w-auto object-contain object-bottom drop-shadow-[0_28px_40px_rgba(0,0,0,0.9)] select-none -ml-0 sm:-ml-2 scale-[0.88] sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 sm:translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom"
                   draggable={false}
-                  style={{ transformOrigin: 'bottom right' }}
+                  style={{ transformOrigin: 'bottom center' }}
                 />
               </picture>
             </div>
