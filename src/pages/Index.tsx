@@ -1921,7 +1921,7 @@ export default function Index() {
 
           {/* Senhas — 6 dígitos numéricos */}
           <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
               <AuthInput
                 label="Senha (6 dígitos) *"
                 value={formData.password}
