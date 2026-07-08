@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
 import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
-import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 import loginHeroImage from '@/assets/login-hero.jpg';
 
 
@@ -132,7 +132,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
       ? { dot: 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)]', text: 'text-amber-300/90', label: 'Instável' }
       : { dot: 'bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.9)]', text: 'text-rose-300/90', label: 'Offline' };
   const fmt2 = (n: number) => String(n).padStart(2, '0');
-  const onlineAgents = useOnlinePresence('agents-online');
+  const onlineAgents = useOnlineAgents().size;
   const [selectedTeam, setSelectedTeam] = useState<TeamKey | null>(null);
   const handleSelect = useCallback((k: TeamKey) => {
     setSelectedTeam(k);
@@ -385,12 +385,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
-                    style={{ top: '20.8%', left: '41.5%' }}
+                    style={{ top: '23.9%', left: '47.1%' }}
                   />
                   <span
                     aria-hidden
                     className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                    style={{ top: '21%', left: '58%' }}
+                    style={{ top: '23.2%', left: '63.4%' }}
                   />
                 </span>
               </picture>

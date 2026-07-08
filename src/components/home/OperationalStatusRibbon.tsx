@@ -1,6 +1,6 @@
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
-import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 
 const TEAM_ACCENT: Record<string, { h: string; s: string; l: string; label: string }> = {
   ALFA:    { h: '43',  s: '96%', l: '56%', label: 'Defensiva' },
@@ -19,7 +19,7 @@ const fmt2 = (n: number) => n.toString().padStart(2, '0');
 export function OperationalStatusRibbon() {
   const { agent } = useAgentProfile();
   const metrics = useOperationalMetrics();
-  const onlineAgents = useOnlinePresence('online-users');
+  const onlineAgents = useOnlineAgents().size;
 
   const teamKey = (agent?.team ?? '').toUpperCase();
   const isLogged = Boolean(agent?.id);
