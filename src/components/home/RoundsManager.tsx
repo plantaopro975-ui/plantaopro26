@@ -1631,6 +1631,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
               <div className="flex flex-wrap items-center gap-2 ml-auto shrink-0">
 
+              <TacticalClock accent={teamColor} />
+
               {running && live && !live.done && schedule && (
                   <span className="hidden md:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}22` }}>
                   <Timer className="h-3 w-3" />
