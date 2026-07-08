@@ -476,7 +476,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 aria-pressed={isSelected}
                 onClick={() => handleSelect(t.key)}
                 className={cn(
-                  'group relative flex h-[clamp(86px,14.5vh,128px)] min-[390px]:h-[clamp(94px,14.5vh,136px)] sm:h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+                  'group relative flex h-[clamp(112px,17.5vh,156px)] min-[390px]:h-[clamp(122px,18vh,168px)] sm:h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
                   'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
                   isSelected
