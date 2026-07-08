@@ -76,6 +76,7 @@ const LicenseFinanceControl = lazy(() => import('@/components/admin/LicenseFinan
 const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagementCard').then(m => ({ default: m.UnitsManagementCard })));
 const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
 const PendingApprovalsManager = lazy(() => import('@/components/admin/PendingApprovalsManager').then(m => ({ default: m.PendingApprovalsManager })));
+const RecentRegistrationsAudit = lazy(() => import('@/components/admin/RecentRegistrationsAudit').then(m => ({ default: m.RecentRegistrationsAudit })));
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
@@ -703,12 +704,22 @@ export default function Master() {
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="audit" className="gap-1.5 relative">
+              <Icon3D name="shield" size={14} className="hidden sm:inline-flex" />
+              Auditoria
+            </TabsTrigger>
           </TabsList>
 
           {/* Pending Approvals Tab */}
           <TabsContent value="approvals" className="space-y-6 mt-6">
             <PendingApprovalsManager onApprovalChange={fetchData} />
           </TabsContent>
+
+          {/* Audit — Recém-cadastrados (aprovação automática) */}
+          <TabsContent value="audit" className="space-y-6 mt-6">
+            <RecentRegistrationsAudit daysWindow={30} onChange={fetchData} />
+          </TabsContent>
+
 
           {/* Overview Tab - Units */}
           <TabsContent value="overview" className="space-y-6 mt-6">
