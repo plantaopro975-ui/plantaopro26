@@ -303,25 +303,53 @@ export function ThemedHeader({ selectedTeam }: ThemedHeaderProps) {
     );
   };
 
+  // CSS variables centralize accent line styling across all breakpoints
+  const accentVars = {
+    '--accent-thickness': '2px',
+    '--accent-opacity': '0.9',
+    '--accent-inset': '8px',
+    '--accent-color': 'hsl(var(--primary))',
+  } as React.CSSProperties;
+
   return (
-    <div className={cn(
-      "header-bar bg-gradient-to-r backdrop-blur-md border-b py-2 px-3 sm:px-4 relative z-20 shrink-0 transition-all duration-500",
-      style.bg, style.border, style.glow
-    )}>
+    <div
+      style={accentVars}
+      className={cn(
+        "header-bar bg-gradient-to-r backdrop-blur-md border-b py-2 px-3 sm:px-4 relative z-20 shrink-0 transition-all duration-500",
+        style.bg, style.border, style.glow
+      )}
+    >
       {/* Golden accent line — bottom (mirrors footer) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-90 z-30"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-30"
+        style={{
+          height: 'var(--accent-thickness)',
+          opacity: 'var(--accent-opacity)',
+          background: 'linear-gradient(90deg, transparent 0%, var(--accent-color) 25%, var(--accent-color) 75%, transparent 100%)',
+        }}
       />
       {/* Golden accent line — left edge */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-[calc(100%-8px)] max-h-full w-[2px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90 z-30"
+        className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 max-h-full z-30"
+        style={{
+          width: 'var(--accent-thickness)',
+          height: 'calc(100% - var(--accent-inset))',
+          opacity: 'var(--accent-opacity)',
+          background: 'linear-gradient(180deg, transparent 0%, var(--accent-color) 30%, var(--accent-color) 70%, transparent 100%)',
+        }}
       />
       {/* Golden accent line — right edge */}
       <div
         aria-hidden
-        className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 h-[calc(100%-8px)] max-h-full w-[2px] bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary))_30%,hsl(var(--primary))_70%,transparent_100%)] opacity-90 z-30"
+        className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 max-h-full z-30"
+        style={{
+          width: 'var(--accent-thickness)',
+          height: 'calc(100% - var(--accent-inset))',
+          opacity: 'var(--accent-opacity)',
+          background: 'linear-gradient(180deg, transparent 0%, var(--accent-color) 30%, var(--accent-color) 70%, transparent 100%)',
+        }}
       />
 
 
