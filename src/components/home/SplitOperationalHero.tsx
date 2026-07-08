@@ -86,10 +86,10 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
           fetchPriority={isAlfa ? 'high' : 'low'}
           width={512}
           height={512}
-          sizes="(max-width: 640px) 22vw, (max-width: 1024px) 18vw, 200px"
+          sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 200px"
           onLoad={() => setLoaded(true)}
           className={cn(
-            'block h-full w-full max-h-[80%] max-w-[65%] object-contain select-none animate-float3d',
+            'block h-full w-full max-h-[95%] max-w-[92%] sm:max-h-[80%] sm:max-w-[65%] object-contain select-none animate-float3d',
             'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
             'transition-[transform,opacity] duration-700 ease-out',
             'group-hover:scale-[1.12] group-hover:-translate-y-1',
