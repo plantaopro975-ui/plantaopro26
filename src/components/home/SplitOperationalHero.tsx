@@ -197,15 +197,15 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         />
 
 
-        {/* ============ MOBILE-ONLY TITLE — acima da viatura/agente ============ */}
-        <div className="sm:hidden relative z-30 px-3 pt-1.5 pb-0.5">
+        {/* ============ MOBILE-ONLY TITLE — no topo ============ */}
+        <div className="sm:hidden relative z-30 px-3 pt-1.5 pb-0.5 order-1">
           <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[20px] leading-[1.02] text-center">
             Comando <span className="text-amber-400">Tático</span> Socioeducativo
           </h2>
         </div>
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-2 sm:gap-4 px-0 sm:px-5 pt-1 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0">
+        <div className="relative grid gap-2 sm:gap-4 px-0 sm:px-5 pt-1 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 order-3 sm:order-none">
 
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
