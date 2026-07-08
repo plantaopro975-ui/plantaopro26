@@ -1,4 +1,6 @@
 import { useAgentProfile } from '@/hooks/useAgentProfile';
+import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
+import { useOnlinePresence } from '@/hooks/useOnlinePresence';
 
 const TEAM_ACCENT: Record<string, { h: string; s: string; l: string; label: string }> = {
   ALFA:    { h: '43',  s: '96%', l: '56%', label: 'Defensiva' },
@@ -7,13 +9,17 @@ const TEAM_ACCENT: Record<string, { h: string; s: string; l: string; label: stri
   DELTA:   { h: '210', s: '90%', l: '62%', label: 'Resposta Rápida' },
 };
 
+const fmt2 = (n: number) => n.toString().padStart(2, '0');
+
 /**
  * Operational status ribbon — professional SVG HUD footer.
  * When logged in, surfaces the agent's Unit + Team + role.
- * When public, shows institutional KPIs.
+ * When public, shows institutional KPIs + live agent presence counters.
  */
 export function OperationalStatusRibbon() {
   const { agent } = useAgentProfile();
+  const metrics = useOperationalMetrics();
+  const onlineAgents = useOnlinePresence('online-users');
 
   const teamKey = (agent?.team ?? '').toUpperCase();
   const isLogged = Boolean(agent?.id);
@@ -25,6 +31,8 @@ export function OperationalStatusRibbon() {
   const municipality = agent?.unit?.municipality ?? '';
   const agentShort = (agent?.name ?? '').split(' ').slice(0, 2).join(' ').toUpperCase();
   const matricula = agent?.matricula ?? '——';
+  const efetivoTotal = metrics.loading ? '——' : fmt2(metrics.agentsActive);
+  const onlineNow = fmt2(onlineAgents);
 
   return (
     <div className="relative mt-2 sm:mt-3 px-1">
@@ -49,26 +57,41 @@ export function OperationalStatusRibbon() {
         <span aria-hidden className="absolute bottom-1 left-1 w-2 h-2 border-b border-l" style={{ borderColor: accentColor }} />
         <span aria-hidden className="absolute bottom-1 right-1 w-2 h-2 border-b border-r" style={{ borderColor: accentColor }} />
 
-        {/* Header strip */}
+        {/* Header strip — protocol + LIVE presence counter */}
         <div
-          className="flex items-center justify-between px-2 py-[3px] border-b"
-          style={{ borderColor: `${accentColor.replace(')', ' / 0.2)')}`, background: accentSoft }}
+          className="flex items-center justify-between px-2 py-[4px] border-b"
+          style={{ borderColor: `${accentColor.replace(')', ' / 0.22)')}`, background: accentSoft }}
         >
-          <span className="flex items-center gap-1">
-            <span className="relative inline-flex h-1 w-1">
+          <span className="flex items-center gap-1.5">
+            <span className="relative inline-flex h-1.5 w-1.5">
               <span className="absolute inset-0 rounded-full animate-ping opacity-60" style={{ background: 'hsl(142 72% 55%)' }} />
-              <span className="relative h-1 w-1 rounded-full" style={{ background: 'hsl(142 72% 55%)', boxShadow: '0 0 4px hsl(142 72% 55% / 0.8)' }} />
+              <span className="relative h-1.5 w-1.5 rounded-full" style={{ background: 'hsl(142 72% 55%)', boxShadow: '0 0 5px hsl(142 72% 55% / 0.9)' }} />
             </span>
-            <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.18em] text-emerald-300/85">
+            <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-emerald-200">
               {isLogged ? 'OPERACIONAL' : 'CANAL SEGURO'}
             </span>
+            <span aria-hidden className="h-2 w-px bg-white/15 mx-0.5" />
+            {/* Live agent count — always visible on mobile */}
+            <span
+              className="inline-flex items-center gap-1 font-mono text-[8px] font-bold uppercase tracking-[0.16em] rounded-sm px-1 py-[1px]"
+              style={{
+                color: 'hsl(142 72% 82%)',
+                background: 'hsl(142 72% 45% / 0.14)',
+                border: '1px solid hsl(142 72% 45% / 0.35)',
+              }}
+              aria-live="polite"
+              aria-label={`${onlineNow} agentes online agora`}
+            >
+              <span className="tabular-nums font-black text-[9.5px]" style={{ textShadow: '0 0 6px hsl(142 72% 55% / 0.7)' }}>{onlineNow}</span>
+              <span className="opacity-80">online</span>
+            </span>
           </span>
-          <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.2em] opacity-85" style={{ color: accentColor }}>
+          <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.2em] opacity-90" style={{ color: accentColor }}>
             {isLogged ? (teamKey || 'ISE') : 'ISE · AC'}
           </span>
         </div>
 
-        {/* Data grid — 2 columns on very small, 3 on ≥360px */}
+        {/* Data grid — 3 columns compact, uniform gutters */}
         {isLogged ? (
           <div className="grid grid-cols-3 gap-px bg-black/40">
             <div className="px-2 py-1.5 bg-slate-950/60">
@@ -91,22 +114,55 @@ export function OperationalStatusRibbon() {
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-px bg-black/40">
+            {/* EFETIVO — total ativo */}
             <div className="px-2 py-1.5 bg-slate-950/60">
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300">Protocolo</div>
-              <div className="font-mono text-[10px] font-bold text-amber-50 mt-0.5">ISE-AC</div>
-              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5">2026</div>
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300 flex items-center gap-1">
+                <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.6" />
+                  <path d="M2 14c0-3 3-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                </svg>
+                Efetivo
+              </div>
+              <div className="font-mono text-[13px] font-black text-amber-50 mt-0.5 tabular-nums leading-none">{efetivoTotal}</div>
+              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5">Agentes ativos</div>
             </div>
-            <div className="px-2 py-1.5 bg-slate-950/60">
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300">Turno</div>
-              <div className="font-mono text-[10.5px] font-black text-amber-50 mt-0.5">24 / 7</div>
-              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5">Contínuo</div>
+
+            {/* ONLINE AGORA — presença ao vivo (destaque) */}
+            <div
+              className="relative px-2 py-1.5 bg-slate-950/60 overflow-hidden"
+              style={{ boxShadow: 'inset 0 0 0 1px hsl(142 72% 45% / 0.22)' }}
+            >
+              <span
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-px"
+                style={{ background: 'linear-gradient(90deg, transparent, hsl(142 72% 55% / 0.7), transparent)' }}
+              />
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-300 flex items-center gap-1">
+                <span className="relative inline-flex h-1.5 w-1.5">
+                  <span className="absolute inset-0 rounded-full animate-ping opacity-60 bg-emerald-400" />
+                  <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_hsl(142_72%_55%_/_0.9)]" />
+                </span>
+                Online
+              </div>
+              <div className="font-mono text-[13px] font-black text-emerald-200 mt-0.5 tabular-nums leading-none" style={{ textShadow: '0 0 6px hsl(142 72% 55% / 0.55)' }}>
+                {onlineNow}
+              </div>
+              <div className="font-mono text-[7.5px] text-emerald-300/80 mt-0.5">Presença agora</div>
             </div>
+
+            {/* CRIPTO */}
             <div className="px-2 py-1.5 bg-slate-950/60">
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300">Cripto</div>
+              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300 flex items-center gap-1">
+                <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <rect x="3" y="7" width="10" height="7" rx="1" stroke="currentColor" strokeWidth="1.6" />
+                  <path d="M5 7V5a3 3 0 116 0v2" stroke="currentColor" strokeWidth="1.6" />
+                </svg>
+                Cripto
+              </div>
               <div className="font-mono text-[10px] font-bold text-emerald-300 mt-0.5">AES-256</div>
-              <div className="flex items-center gap-1 mt-0.5">
+              <div className="flex items-center gap-[2px] mt-1" aria-hidden>
                 {[0,1,2,3].map((i) => (
-                  <span key={i} className="w-[3px] rounded-sm bg-emerald-400" style={{ height: `${3 + i}px`, opacity: 0.6 + i*0.1 }} />
+                  <span key={i} className="w-[3px] rounded-sm bg-emerald-400" style={{ height: `${3 + i}px`, opacity: 0.55 + i*0.12 }} />
                 ))}
               </div>
             </div>
