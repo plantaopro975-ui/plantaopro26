@@ -265,15 +265,15 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
           <CardHeader className="pb-3 pt-4 px-3.5 sm:px-4 relative">
             <div className="flex items-center justify-between">
               <CollapsibleTrigger asChild>
-                <button className="flex items-center gap-3 text-left group/btn flex-1 min-w-0">
-                  <div className="shrink-0">
+                <button className="flex items-center gap-3 sm:gap-3 text-left group/btn flex-1 min-w-0">
+                  <div className="shrink-0 scale-125 sm:scale-100 origin-left">
                     <TeamEmblem team={team} size="lg" />
                   </div>
                   <div className="flex items-center gap-2 min-w-0 flex-1 flex-wrap">
-                    <span className="font-black text-lg md:text-xl bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate">
+                    <span className="font-black text-2xl sm:text-lg md:text-xl bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate">
                       Equipe {team}
                     </span>
-                    <Badge className="text-xs bg-amber-500/20 text-amber-200 border-amber-500/40 px-2 py-0.5 shrink-0 font-bold">
+                    <Badge className="text-sm sm:text-xs bg-amber-500/20 text-amber-200 border-amber-500/40 px-2.5 py-1 sm:px-2 sm:py-0.5 shrink-0 font-bold">
                       {members.length} {members.length === 1 ? 'agente' : 'agentes'}
                     </Badge>
                   </div>
