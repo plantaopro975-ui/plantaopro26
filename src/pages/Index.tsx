@@ -1871,7 +1871,7 @@ export default function Index() {
                 <SelectValue placeholder={units.length === 0 ? "Carregando..." : "Selecione a unidade"} />
               </SelectTrigger>
               <SelectContent
-                className="max-h-[260px] overflow-y-auto overscroll-contain"
+                className="max-h-[280px] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
                 position="popper"
                 sideOffset={4}
                 style={{ zIndex: 9999 }}
@@ -1880,9 +1880,15 @@ export default function Index() {
                   <div className="px-3 py-2 text-slate-400 text-base">Carregando...</div>
                 ) : (
                   units.map((unit) => (
-                    <SelectItem key={unit.id} value={unit.id} className="text-base">
-                      <span className="font-medium">{unit.name}</span>
-                      <span className="text-slate-400 ml-1.5">({unit.municipality})</span>
+                    <SelectItem key={unit.id} value={unit.id} className="py-2.5 pl-3 pr-8 focus:bg-cyan-500/10">
+                      <div className="flex flex-col items-start gap-0.5 min-w-0">
+                        <span className="font-semibold text-white text-[13px] sm:text-sm leading-tight truncate max-w-full uppercase tracking-wide">
+                          {unit.name}
+                        </span>
+                        <span className="text-[11px] sm:text-xs text-cyan-300/70 leading-tight truncate max-w-full font-medium">
+                          {unit.municipality}
+                        </span>
+                      </div>
                     </SelectItem>
                   ))
                 )}

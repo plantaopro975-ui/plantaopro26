@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { adminClient } from '@/lib/adminClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,11 +25,45 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
+  Bell,
+  BellOff,
+  BellRing,
+  Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+
+const LAST_SEEN_KEY = 'audit_last_seen_at';
+const NOTIF_ENABLED_KEY = 'audit_notif_enabled';
+
+/** Beep tocado via Web Audio (sem asset) — 2 tons curtos estilo alerta tático. */
+function playAlertBeep() {
+  try {
+    const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext);
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    [880, 1174.66].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = now + i * 0.18;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.18, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.18);
+    });
+    setTimeout(() => ctx.close().catch(() => {}), 800);
+  } catch {
+    /* silencioso */
+  }
+}
+
 
 interface RecentAgent {
   id: string;
@@ -65,6 +99,24 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
     agent: RecentAgent | null;
   }>({ open: false, kind: null, agent: null });
 
+  // Notificação sino/push
+  const [lastSeen, setLastSeen] = useState<string>(() => {
+    try {
+      return localStorage.getItem(LAST_SEEN_KEY) || new Date().toISOString();
+    } catch {
+      return new Date().toISOString();
+    }
+  });
+  const [notifEnabled, setNotifEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(NOTIF_ENABLED_KEY) !== '0';
+    } catch {
+      return true;
+    }
+  });
+  const isFirstFetch = useRef(true);
+  const knownIds = useRef<Set<string>>(new Set());
+
   const debouncedSearch = useDebouncedValue(search, 200);
 
   const fetchAgents = async () => {
@@ -82,7 +134,43 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setAgents((data as unknown as RecentAgent[]) || []);
+      const list = (data as unknown as RecentAgent[]) || [];
+
+      // Detectar novos cadastros desde o último fetch (exceto no primeiro carregamento)
+      if (!isFirstFetch.current && notifEnabled) {
+        const brandNew = list.filter((a) => !knownIds.current.has(a.id));
+        if (brandNew.length > 0) {
+          playAlertBeep();
+          const first = brandNew[0];
+          const title = brandNew.length === 1
+            ? `🆕 Novo cadastro: ${first.name}`
+            : `🆕 ${brandNew.length} novos cadastros`;
+          const body = brandNew.length === 1
+            ? `${first.unit?.name || 'Unidade desconhecida'} · Equipe ${first.team || '—'}`
+            : brandNew.slice(0, 3).map((a) => a.name).join(', ') + (brandNew.length > 3 ? '…' : '');
+
+          toast(title, {
+            description: body,
+            icon: <BellRing className="w-5 h-5 text-cyan-400" />,
+            duration: 8000,
+          });
+
+          // Push notification (se permissão concedida)
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            try {
+              new Notification(title, {
+                body,
+                tag: 'audit-new-agent',
+                icon: '/favicon.ico',
+              });
+            } catch { /* ignore */ }
+          }
+        }
+      }
+
+      knownIds.current = new Set(list.map((a) => a.id));
+      isFirstFetch.current = false;
+      setAgents(list);
     } catch (err: any) {
       console.error('[RecentRegistrationsAudit] fetch error:', err);
       toast.error('Erro ao carregar cadastros recentes', {
@@ -98,7 +186,66 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
     const interval = setInterval(fetchAgents, 30000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daysWindow]);
+  }, [daysWindow, notifEnabled]);
+
+  // Realtime — dispara imediatamente quando um novo agente é inserido
+  useEffect(() => {
+    const channel = supabase
+      .channel('audit-new-agents')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'agents' },
+        () => {
+          fetchAgents();
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Solicita permissão de notificação uma vez ao ativar
+  const requestNotifPermission = async () => {
+    if (typeof Notification === 'undefined') {
+      toast.error('Este navegador não suporta notificações');
+      return;
+    }
+    if (Notification.permission === 'granted') return;
+    if (Notification.permission === 'denied') {
+      toast.error('Notificações bloqueadas', {
+        description: 'Habilite nas configurações do navegador.',
+      });
+      return;
+    }
+    const result = await Notification.requestPermission();
+    if (result === 'granted') {
+      toast.success('Notificações ativadas!', { icon: <BellRing className="w-5 h-5" /> });
+    }
+  };
+
+  const toggleNotifications = async () => {
+    const next = !notifEnabled;
+    setNotifEnabled(next);
+    try { localStorage.setItem(NOTIF_ENABLED_KEY, next ? '1' : '0'); } catch { /* */ }
+    if (next) {
+      await requestNotifPermission();
+    } else {
+      toast('Notificações silenciadas', { icon: <BellOff className="w-5 h-5" /> });
+    }
+  };
+
+  const markAllSeen = () => {
+    const now = new Date().toISOString();
+    setLastSeen(now);
+    try { localStorage.setItem(LAST_SEEN_KEY, now); } catch { /* */ }
+    toast.success('Marcado como visto', { icon: <Check className="w-5 h-5" /> });
+  };
+
+  const unseenCount = useMemo(
+    () => agents.filter((a) => new Date(a.created_at) > new Date(lastSeen)).length,
+    [agents, lastSeen]
+  );
+
 
   const filtered = useMemo(() => {
     const term = debouncedSearch.toLowerCase().trim();
@@ -165,7 +312,13 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {unseenCount > 0 && (
+              <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-500/40 px-3 py-1 animate-pulse">
+                <BellRing className="w-3.5 h-3.5 mr-1.5" />
+                {unseenCount} novo{unseenCount !== 1 ? 's' : ''}
+              </Badge>
+            )}
             <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 px-3 py-1">
               <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
               {totalActive} ativo{totalActive !== 1 ? 's' : ''}
@@ -176,6 +329,29 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
                 {totalBlocked} bloqueado{totalBlocked !== 1 ? 's' : ''}
               </Badge>
             )}
+            {unseenCount > 0 && (
+              <Button
+                variant="outline"
+                size="default"
+                onClick={markAllSeen}
+                className="border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/10 h-10"
+                title="Marcar todos como vistos"
+              >
+                <Check className="w-4 h-4 mr-1.5" /> Marcar visto
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              size="default"
+              onClick={toggleNotifications}
+              className={cn(
+                "h-10 border-slate-600 hover:bg-slate-700",
+                notifEnabled && "border-cyan-500/40 text-cyan-300"
+              )}
+              title={notifEnabled ? 'Silenciar notificações' : 'Ativar notificações'}
+            >
+              {notifEnabled ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+            </Button>
             <Button
               variant="outline"
               size="default"

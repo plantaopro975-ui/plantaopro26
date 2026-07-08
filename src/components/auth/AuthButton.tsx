@@ -16,7 +16,7 @@ const variantStyles: Record<AuthButtonVariant, string> = {
   primary:   'bg-accent text-accent-foreground hover:bg-accent/90 border-accent/40',
   master:    'bg-amber-500 text-slate-900 hover:bg-amber-400 border-amber-400/40',
   admin:     'bg-indigo-500 text-white hover:bg-indigo-400 border-indigo-400/40',
-  register:  'bg-emerald-500 text-white hover:bg-emerald-400 border-emerald-400/40',
+  register:  'bg-gradient-to-r from-cyan-600 via-teal-600 to-cyan-700 text-white hover:from-cyan-500 hover:via-teal-500 hover:to-cyan-600 border-cyan-400/40 shadow-lg shadow-cyan-900/30',
   secondary: 'bg-slate-700 text-white hover:bg-slate-600 border-slate-600/40',
 };
 

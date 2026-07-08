@@ -262,10 +262,11 @@ export function AuthDialog({
           </div>
         </div>
 
-        {/* Scrollable content region — hero stays fixed above */}
+        {/* Scrollable content region — hero stays fixed above. Scrollbar hidden but scroll works. */}
         <div
           className={cn(
             "flex-1 min-h-0 overflow-y-auto overscroll-contain",
+            "[&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]",
             variant === 'register' ? "px-4 py-4 sm:px-6 sm:py-5" : "px-6 py-6",
             "[&_label]:text-[11px] [&_label]:tracking-[0.14em] [&_label]:uppercase [&_label]:font-semibold [&_label]:text-white/75 [&_input]:h-11 [&_input]:text-[14px]"
           )}
