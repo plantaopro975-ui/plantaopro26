@@ -312,7 +312,13 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {unseenCount > 0 && (
+              <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-500/40 px-3 py-1 animate-pulse">
+                <BellRing className="w-3.5 h-3.5 mr-1.5" />
+                {unseenCount} novo{unseenCount !== 1 ? 's' : ''}
+              </Badge>
+            )}
             <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 px-3 py-1">
               <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
               {totalActive} ativo{totalActive !== 1 ? 's' : ''}
@@ -323,6 +329,29 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
                 {totalBlocked} bloqueado{totalBlocked !== 1 ? 's' : ''}
               </Badge>
             )}
+            {unseenCount > 0 && (
+              <Button
+                variant="outline"
+                size="default"
+                onClick={markAllSeen}
+                className="border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/10 h-10"
+                title="Marcar todos como vistos"
+              >
+                <Check className="w-4 h-4 mr-1.5" /> Marcar visto
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              size="default"
+              onClick={toggleNotifications}
+              className={cn(
+                "h-10 border-slate-600 hover:bg-slate-700",
+                notifEnabled && "border-cyan-500/40 text-cyan-300"
+              )}
+              title={notifEnabled ? 'Silenciar notificações' : 'Ativar notificações'}
+            >
+              {notifEnabled ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+            </Button>
             <Button
               variant="outline"
               size="default"
