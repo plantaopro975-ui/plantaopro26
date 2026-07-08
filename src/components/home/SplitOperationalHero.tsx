@@ -369,19 +369,24 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   className="block h-full w-auto object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.95)] select-none scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
                   draggable={false}
                 />
-                {/* Giroflex — ancorado nas lentes reais da imagem 1024x1024.
-                    Coordenadas medidas no corpo da lente: azul ≈47%/24%, vermelho ≈63%/24.6%. */}
+                {/* Giroflex — wrapper replica o mesmo scale/origin da viatura para manter as luzes ancoradas nas lentes em qualquer breakpoint. */}
                 <span
                   aria-hidden
-                  className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
-                  style={{ top: '23.95%', left: '47.1%' }}
-                />
-                <span
-                  aria-hidden
-                  className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                  style={{ top: '24.6%', left: '62.7%' }}
-                />
+                  className="pointer-events-none absolute inset-0 scale-110 sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                >
+                  <span
+                    aria-hidden
+                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
+                    style={{ top: '23.95%', left: '47.1%' }}
+                  />
+                  <span
+                    aria-hidden
+                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
+                    style={{ top: '24.6%', left: '62.7%' }}
+                  />
+                </span>
               </picture>
+
 
               {/* Agente — à direita da viatura, levemente maior para presença sem quebrar proporção */}
               <picture className="block h-full">
