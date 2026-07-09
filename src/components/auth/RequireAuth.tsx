@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { RestrictedArea } from "./RestrictedArea";
 
 interface RequireAuthProps {
@@ -46,6 +47,15 @@ const AuthLoader: React.FC = () => {
   );
 };
 
+/**
+ * Janela de graça (~1200 ms) para cobrir a corrida entre `signInWithPassword`
+ * (que já popula a sessão no cliente supabase) e o `onAuthStateChange` que
+ * atualiza o `user` no contexto React. Sem isso, o `<Navigate to="/">` dispara
+ * antes do estado hidratar e o usuário vê: painel abre → skeleton escuro →
+ * volta pro login.
+ */
+const GRACE_MS = 1200;
+
 export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
   mode = "redirect",
@@ -55,6 +65,46 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   const { user, isLoading, masterSession, isMaster, userRole } = useAuth();
   const location = useLocation();
 
+  const [graceElapsed, setGraceElapsed] = useState(false);
+  const [cachedSession, setCachedSession] = useState<boolean | null>(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  // Kick off a synchronous session check + start the grace timer on mount.
+  useEffect(() => {
+    if (mode !== "redirect") {
+      setGraceElapsed(true);
+      return;
+    }
+    let cancelled = false;
+    // The supabase client caches the session synchronously after
+    // signInWithPassword — check it before deciding to redirect.
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!cancelled && mountedRef.current) {
+          setCachedSession(!!data.session);
+        }
+      })
+      .catch(() => {
+        if (!cancelled && mountedRef.current) setCachedSession(false);
+      });
+
+    const t = window.setTimeout(() => {
+      if (mountedRef.current) setGraceElapsed(true);
+    }, GRACE_MS);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t);
+    };
+  }, [mode]);
+
   // Espera hidratação: se há user mas o papel ainda não foi resolvido, aguarda.
   const roleHydrating = !!user && userRole === null && !masterSession;
   if (isLoading || roleHydrating) {
@@ -62,7 +112,15 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   }
 
   const isAuthenticated = !!user || !!masterSession;
+
   if (!isAuthenticated) {
+    if (mode === "redirect") {
+      // Login race: `user` may still be null while supabase already holds a
+      // valid session. Wait through the grace window before bouncing.
+      if (!graceElapsed) return <AuthLoader />;
+      if (cachedSession === true) return <AuthLoader />;
+    }
+
     if (mode === "block") return <RestrictedArea />;
     return (
       <Navigate
@@ -86,4 +144,3 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
 };
 
 export default RequireAuth;
-
