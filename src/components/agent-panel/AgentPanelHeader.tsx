@@ -402,17 +402,19 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                   <button
                     type="button"
                     onClick={handleLogout}
+                    aria-label="Encerrar sessão"
                     className={cn(
-                      'group relative flex items-center gap-1.5 h-9 px-3 rounded-md overflow-hidden',
+                      'group relative flex items-center justify-center gap-1.5 overflow-hidden shrink-0',
+                      'min-h-[44px] min-w-[44px] h-11 px-3 sm:h-9 sm:px-3 rounded-md',
                       'bg-gradient-to-b from-red-600 to-red-800 border border-red-400/40',
-                      'text-white font-bold text-[11px] tracking-[0.15em] uppercase font-[\'IBM_Plex_Mono\',_monospace]',
+                      'text-white font-bold text-[12px] sm:text-[11px] tracking-[0.15em] uppercase font-[\'IBM_Plex_Mono\',_monospace]',
                       'shadow-[0_4px_14px_-4px_rgba(220,38,38,.6),inset_0_1px_0_rgba(255,255,255,.15)]',
                       'hover:from-red-500 hover:to-red-700 hover:-translate-y-[1px]',
                       'active:translate-y-0 transition-all duration-200'
                     )}
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                    <IconPower className="h-4 w-4 relative" />
+                    <IconPower className="h-5 w-5 sm:h-4 sm:w-4 relative" />
                     <span className="hidden sm:inline relative">Sair</span>
                   </button>
                 </TooltipTrigger>
@@ -421,6 +423,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+
           </div>
         </div>
 
