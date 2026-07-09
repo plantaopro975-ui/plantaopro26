@@ -187,7 +187,7 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
                   <SelectItem value="online">Online agora</SelectItem>
                   <SelectItem value="active">Ativos</SelectItem>
                   <SelectItem value="inactive">Inativos</SelectItem>
-                  <SelectItem value="frozen">Congelados</SelectItem>
+                  
                 </SelectContent>
               </Select>
             </div>
