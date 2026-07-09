@@ -246,10 +246,12 @@ function ActionButton({
 export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isShiftBannerDismissed, compact = false, onToggleCompact }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   // trial removido — sistema gratuito
 
   const handleLogout = async () => {
-    // Dispara signOut mas NUNCA fica preso — timeout curto + hard redirect garantido.
+    if (isLoggingOut) return; // bloqueia múltiplos cliques
+    setIsLoggingOut(true);
     try {
       await Promise.race([
         signOut(),
@@ -266,6 +268,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
       window.location.href = '/';
     }
   };
+
 
 
   return (
