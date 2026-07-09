@@ -432,12 +432,13 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
         {(agent.unit_id || agent.team) && (
           <div className={cn(
             'flex flex-wrap items-center gap-1.5 border-t border-amber-500/20',
-            compact ? 'mt-1.5 pt-1.5' : 'mt-2 pt-2'
+            compact ? 'mt-1 pt-1' : 'mt-1.5 pt-1.5'
           )}>
             {agent.unit_id && <UnitBadge unitId={agent.unit_id} prominent />}
             {agent.team && <TeamInsignia team={agent.team} prominent />}
           </div>
         )}
+
       </div>
 
       {/* bottom gold accent */}
