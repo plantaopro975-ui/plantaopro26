@@ -687,18 +687,19 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
       />
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-zinc-900/50 via-transparent to-zinc-950/80" />
       
-      <CardHeader className="pb-2 pt-3 px-3 border-b border-zinc-700/50 relative z-10">
+      <CardHeader className="pb-1.5 pt-2 px-2 md:pb-2 md:pt-3 md:px-3 border-b border-zinc-700/50 relative z-10">
         {/* Top Row: Title + Online Badge */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-emerald-500/15 border border-emerald-500/30">
-              <MessageCircle className="h-4 w-4 text-emerald-400" />
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
+            <div className="p-1 md:p-1.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 shrink-0">
+              <MessageCircle className="h-3.5 w-3.5 md:h-4 md:w-4 text-emerald-400" />
             </div>
-            <span className="text-sm font-semibold text-zinc-100">Chat</span>
-            <Badge className={`text-[10px] font-medium ${currentConfig.color} border-current/30 px-2 py-0 h-5`}>
+            <span className="text-xs md:text-sm font-semibold text-zinc-100 truncate">Chat</span>
+            <Badge className={`text-[9px] md:text-[10px] font-medium ${currentConfig.color} border-current/30 px-1.5 md:px-2 py-0 h-4 md:h-5 shrink-0`}>
               {currentConfig.label}
             </Badge>
           </div>
+
           
           <div className="flex items-center gap-1.5">
             <TooltipProvider>
