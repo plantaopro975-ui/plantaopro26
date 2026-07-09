@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText, Info, Coffee } from 'lucide-react';
 import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 import { ShiftSchedulePDFExport } from './ShiftSchedulePDFExport';
+import { ShiftEditDialog, type ShiftEditRecord } from './ShiftEditDialog';
 
 
 interface ShiftCalendarOverviewProps {
@@ -70,6 +71,8 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
     startStr: string;
     endStr: string;
   } | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editData, setEditData] = useState<{ date: Date; shift: ShiftEditRecord | null } | null>(null);
 
   // Local "today" (fuso do usuário) — usado para saber se uma data já passou
   const localToday = useMemo(() => {
@@ -256,6 +259,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
         endStr: dayShift.end_time?.slice(0, 5) || '—',
       });
       setShiftModalOpen(true);
+      return;
+    }
+    // Sem plantão: em dias futuros, abrir modal de cadastro/edição direto
+    if (!isPastLocalDay(day)) {
+      setEditData({ date: day, shift: null });
+      setEditOpen(true);
       return;
     }
     setDetailData(buildJourneyFromShifts(day, shifts));
@@ -922,7 +931,7 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   </div>
                 </div>
 
-                <DialogFooter className="flex-row justify-between gap-2 sm:justify-between">
+                <DialogFooter className="flex-row justify-between gap-2 sm:justify-between flex-wrap">
                   <Button
                     variant="outline"
                     size="sm"
@@ -935,19 +944,47 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                   >
                     Ver jornada completa
                   </Button>
-                  <Button
-                    size="sm"
-                    className="bg-amber-500 text-black hover:bg-amber-400"
-                    onClick={() => setShiftModalOpen(false)}
-                  >
-                    Fechar
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                      onClick={() => {
+                        setShiftModalOpen(false);
+                        setEditData({ date, shift: shift as ShiftEditRecord });
+                        setEditOpen(true);
+                      }}
+                    >
+                      Editar plantão
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="bg-amber-500 text-black hover:bg-amber-400"
+                      onClick={() => setShiftModalOpen(false)}
+                    >
+                      Fechar
+                    </Button>
+                  </div>
                 </DialogFooter>
               </>
             );
           })()}
         </DialogContent>
       </Dialog>
+
+      {editData && (
+        <ShiftEditDialog
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          shiftDate={editData.date}
+          shift={editData.shift}
+          agentId={agentId}
+          onSaved={() => {
+            fetchData();
+            checkDivergences();
+          }}
+        />
+      )}
     </Card>
   );
 }
