@@ -1494,33 +1494,38 @@ export default function Index() {
       {/* Mobile-only beta notice */}
       <BetaNoticeFooter />
 
-      {/* Rodapé institucional profissional */}
+      {/* Rodapé institucional profissional (Sobre/Master integrados) */}
       <footer className="relative z-30 mt-6 w-full">
-        {/* Barra de ações discreta acima do rodapé */}
-        <div className="w-full border-t border-primary/10 bg-[hsl(220_35%_5%/0.7)] backdrop-blur-sm">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-1.5">
+        <CopyrightFooter
+          compact
+          leftSlot={
             <button
               type="button"
               onClick={() => navigate('/about')}
               aria-label="Sobre o aplicativo"
-              className="inline-flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 text-[10px] font-mono tracking-[0.22em] uppercase text-muted-foreground/70 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+              className="inline-flex items-center gap-1 rounded-sm px-1 py-0.5 text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
             >
               <Info className="h-3 w-3" strokeWidth={2.2} />
               <span>Sobre</span>
             </button>
-            <button
-              type="button"
-              onClick={() => setShowMasterLogin(true)}
-              aria-label="Acesso Administrador Master"
-              className="inline-flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 text-[10px] font-mono tracking-[0.22em] uppercase text-muted-foreground/70 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
-            >
-              <Lock className="h-3 w-3" strokeWidth={2.2} />
-              <span>Master</span>
-            </button>
-          </div>
-        </div>
-        <CopyrightFooter compact />
+          }
+          rightSlot={
+            <>
+              <span className="text-muted-foreground/40">·</span>
+              <button
+                type="button"
+                onClick={() => setShowMasterLogin(true)}
+                aria-label="Acesso Administrador Master"
+                className="inline-flex items-center gap-1 rounded-sm px-1 py-0.5 text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+              >
+                <Lock className="h-3 w-3" strokeWidth={2.2} />
+                <span>Master</span>
+              </button>
+            </>
+          }
+        />
       </footer>
+
 
 
 
