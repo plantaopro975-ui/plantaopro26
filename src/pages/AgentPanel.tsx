@@ -618,14 +618,14 @@ export default function AgentPanel() {
                         aria-label={full}
                         title=""
                         className={cn(
-                          'group flex flex-col items-center justify-center gap-0.5 md:gap-1.5 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
-                          'px-1 py-1.5 md:px-2 md:py-2.5 min-h-[46px] sm:min-h-[58px] md:min-h-[58px]',
+                          'group flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
+                          'px-1.5 py-2.5 md:px-2 md:py-2.5 min-h-[62px] sm:min-h-[66px] md:min-h-[58px]',
                           'data-[state=active]:shadow-lg data-[state=active]:scale-[1.02]',
                           trigger
                         )}
                       >
-                        <Icon className={cn('h-3.5 w-3.5 md:h-[18px] md:w-[18px] transition-colors', icon)} />
-                        <span className={cn('text-[10px] leading-none md:text-sm font-bold tracking-tight md:tracking-wide truncate max-w-full', text)}>
+                        <Icon className={cn('h-5 w-5 md:h-[18px] md:w-[18px] transition-colors', icon)} />
+                        <span className={cn('text-[11px] leading-none md:text-sm font-bold tracking-tight md:tracking-wide truncate max-w-full', text)}>
                           {label}
                         </span>
                       </TabsTrigger>
