@@ -685,12 +685,11 @@ export default function Index() {
       const matriculaClean = formData.matricula ? getMatriculaNumbers(formData.matricula) : null;
       
       // Build query based on whether matricula is provided
-      let query = supabase
-        .from('agents')
-        .select('id, cpf, matricula')
-        .eq('cpf', formData.cpf.replace(/\D/g, ''));
-      
-      const { data: existingByCpf } = await query.maybeSingle();
+      const { data: existingRows } = await (supabase as any)
+        .rpc('lookup_agent_for_login', { _cpf: formData.cpf.replace(/\D/g, '') });
+      const existingByCpf = Array.isArray(existingRows) && existingRows.length ? existingRows[0] : null;
+
+
 
       if (existingByCpf) {
         // CPF já cadastrado - não permitir novo cadastro
