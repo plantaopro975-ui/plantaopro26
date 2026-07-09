@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Sun, Moon, Palmtree, AlertCircle, CheckCircle2, XCircle, Clock, FileText, Info, Coffee } from 'lucide-react';
 import { JourneyDetailsDialog, type JourneyDetailsData } from './JourneyDetailsDialog';
 import { ShiftSchedulePDFExport } from './ShiftSchedulePDFExport';
+import { ShiftEditDialog, type ShiftEditRecord } from './ShiftEditDialog';
 
 
 interface ShiftCalendarOverviewProps {
