@@ -79,11 +79,11 @@ function inferKind(s?: ShiftEditRecord | null): ShiftKind {
 const timeSchema = z.string().regex(/^\d{2}:\d{2}$/, 'Formato HH:MM');
 const formSchema = z
   .object({
-    kind: z.enum(['regular', 'night', '24h', 'half', 'vacation']),
+    kind: z.enum(['regular', 'night', '24h', 'vacation']),
     start_time: timeSchema,
     end_time: timeSchema,
   })
-  .refine((v) => v.kind === 'vacation' || v.start_time !== v.end_time || v.kind === '24h', {
+  .refine((v) => v.kind === 'vacation' || v.kind === '24h' || v.start_time !== v.end_time, {
     message: 'Início e fim não podem ser iguais',
     path: ['end_time'],
   });
