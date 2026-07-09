@@ -72,7 +72,7 @@ export function IntroVideoOverlay({ onComplete }: IntroVideoOverlayProps) {
       {/* Video */}
       <video
         ref={videoRef}
-        src="/video/intro.mp4"
+        src="/__l5e/assets-v1/733ed63b-0276-4fa5-97f6-4e28cd3a90bf/intro.mp4"
         className="w-full h-full object-contain"
         muted={isMuted}
         playsInline
