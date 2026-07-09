@@ -521,26 +521,27 @@ export default function AgentPanel() {
                 {/* Control Panel Header - Compact & Professional */}
                 <div className={cn(
                   'relative flex items-center justify-between gap-2 border-b border-amber-500/20',
-                  compact ? 'px-2.5 py-1.5' : 'px-3 py-2'
+                  compact ? 'px-2 py-1 md:px-2.5 md:py-1.5' : 'px-2 py-1 md:px-3 md:py-2'
                 )}>
-                  <div className="flex items-center gap-2">
-                    <div className="p-1 rounded-md bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 shadow-sm shadow-amber-500/30 ring-1 ring-amber-300/30">
-                      <Shield className="h-3.5 w-3.5 text-black" />
+                  <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
+                    <div className="p-0.5 md:p-1 rounded-md bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 shadow-sm shadow-amber-500/30 ring-1 ring-amber-300/30 shrink-0">
+                      <Shield className="h-3 w-3 md:h-3.5 md:w-3.5 text-black" />
                     </div>
-                    <div className="leading-tight">
-                      <h2 className="text-[11px] md:text-xs font-black text-amber-100 tracking-wider uppercase">
+                    <div className="leading-tight min-w-0">
+                      <h2 className="text-[10px] md:text-xs font-black text-amber-100 tracking-wider uppercase truncate">
                         Painel de Controle
                       </h2>
-                      <p className="text-[9px] md:text-[10px] text-amber-400/80 font-medium tracking-wide">
+                      <p className="hidden md:block text-[9px] md:text-[10px] text-amber-400/80 font-medium tracking-wide">
                         Sistema Operacional Integrado
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 bg-emerald-500/15 px-1.5 py-0.5 rounded border border-emerald-500/40">
-                    <Zap className="h-2.5 w-2.5 text-emerald-400 animate-pulse" />
-                    <span className="text-[9px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
+                  <div className="flex items-center gap-1 bg-emerald-500/15 px-1 py-0.5 md:px-1.5 rounded border border-emerald-500/40 shrink-0">
+                    <Zap className="h-2 w-2 md:h-2.5 md:w-2.5 text-emerald-400 animate-pulse" />
+                    <span className="text-[8px] md:text-[9px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
                   </div>
                 </div>
+
                 
                 {/* Tabs Grid - Compact, readable */}
                 <div className={compact ? 'p-1.5 md:p-2' : 'p-2 md:p-2.5'}>
