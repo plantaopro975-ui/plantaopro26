@@ -179,7 +179,9 @@ export function OperationalStatusRibbon() {
       <svg
         viewBox="0 0 800 52"
         preserveAspectRatio="none"
-        className="block w-full h-11 sm:h-14"
+        overflow="hidden"
+        style={{ overflow: 'hidden' }}
+        className="block w-full h-11 sm:h-14 overflow-hidden"
         role="img"
         aria-label={isLogged ? `Painel operacional — ${unitName}` : 'Status operacional em tempo real'}
       >
