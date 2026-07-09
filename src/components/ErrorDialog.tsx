@@ -10,6 +10,37 @@ interface ErrorDialogProps {
   title: string;
   message: string;
   type?: 'error' | 'warning' | 'auth' | 'password' | 'team';
+  /** Nome da unidade à qual o agente está vinculado (exibido como brasão institucional). */
+  unit?: string;
+}
+
+/* Professional SVG unit crest — institutional building emblem */
+function UnitCrestSVG({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} aria-hidden>
+      <defs>
+        <linearGradient id="ucGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#f5d97a" />
+          <stop offset="100%" stopColor="#8a6a2a" />
+        </linearGradient>
+      </defs>
+      {/* base */}
+      <rect x="6" y="36" width="36" height="3" fill="url(#ucGold)" opacity="0.85" />
+      {/* pediment */}
+      <path d="M6 20 L24 8 L42 20 Z" fill="none" stroke="url(#ucGold)" strokeWidth="1.6" strokeLinejoin="round" />
+      {/* columns */}
+      <g stroke="url(#ucGold)" strokeWidth="1.4">
+        <line x1="12" y1="22" x2="12" y2="36" />
+        <line x1="20" y1="22" x2="20" y2="36" />
+        <line x1="28" y1="22" x2="28" y2="36" />
+        <line x1="36" y1="22" x2="36" y2="36" />
+      </g>
+      {/* architrave */}
+      <line x1="8" y1="22" x2="40" y2="22" stroke="url(#ucGold)" strokeWidth="1.6" />
+      {/* star on pediment */}
+      <circle cx="24" cy="15" r="1.6" fill="url(#ucGold)" />
+    </svg>
+  );
 }
 
 const HEADERS: Record<NonNullable<ErrorDialogProps['type']>, string> = {
@@ -96,7 +127,7 @@ function CrestSVG({ className }: { className?: string }) {
   );
 }
 
-export function ErrorDialog({ open, onClose, title, message, type = 'warning' }: ErrorDialogProps) {
+export function ErrorDialog({ open, onClose, title, message, type = 'warning', unit }: ErrorDialogProps) {
   useEffect(() => {
     if (open) playChime();
   }, [open]);
@@ -149,6 +180,19 @@ export function ErrorDialog({ open, onClose, title, message, type = 'warning' }:
             {/* Gold underline */}
             <div className="mx-auto w-16 h-px bg-[#c9a24c]/70 my-4" />
 
+            {/* Unit crest chip (institutional) */}
+            {unit && (
+              <div className="mx-auto mb-4 inline-flex items-center gap-2.5 rounded-full border border-[#c9a24c]/50 bg-black/45 px-4 py-1.5 shadow-[0_2px_10px_rgba(201,162,76,0.25)]">
+                <UnitCrestSVG className="w-5 h-5 drop-shadow-[0_1px_2px_rgba(201,162,76,0.5)]" />
+                <span
+                  className="text-[10.5px] tracking-[0.32em] font-mono uppercase text-[#f0d98a]"
+                  style={{ fontFamily: '"IBM Plex Mono", ui-monospace, monospace' }}
+                >
+                  Unidade · {unit}
+                </span>
+              </div>
+            )}
+
             {/* Message */}
             <p
               className="text-[13.5px] leading-relaxed text-slate-200/90 whitespace-pre-line max-w-sm mx-auto"
@@ -156,6 +200,7 @@ export function ErrorDialog({ open, onClose, title, message, type = 'warning' }:
             >
               {message}
             </p>
+
 
             {/* Action */}
             <div className="mt-7 flex justify-center">

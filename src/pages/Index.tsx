@@ -128,7 +128,7 @@ export default function Index() {
 
   // CPF check
   const [checkCpf, setCheckCpf] = useState('');
-  const [foundAgent, setFoundAgent] = useState<{ name: string; team: string | null } | null>(null);
+  const [foundAgent, setFoundAgent] = useState<{ name: string; team: string | null; unit?: string | null } | null>(null);
   const [isSearchingAgent, setIsSearchingAgent] = useState(false);
   
   // Login form
@@ -164,6 +164,7 @@ export default function Index() {
     title: string;
     message: string;
     type: 'error' | 'warning' | 'auth' | 'password' | 'team';
+    unit?: string;
   }>({ open: false, title: '', message: '', type: 'auth' });
   
   // Lockout timer state
@@ -421,12 +422,18 @@ export default function Index() {
     if (cleanCpf.length === 11) {
       setIsSearchingAgent(true);
       try {
-        const { data } = await supabase
+        const { data: raw } = await supabase
           .from('agents')
-          .select('name, team')
+          .select('name, team, unit:units(name, municipality)')
           .eq('cpf', cleanCpf)
           .maybeSingle();
-        
+
+        const unitInfo = (raw as any)?.unit as { name?: string; municipality?: string } | null;
+        const unitLabel = unitInfo?.name
+          ? (unitInfo.municipality ? `${unitInfo.name} — ${unitInfo.municipality}` : unitInfo.name)
+          : null;
+        const data = raw ? { name: (raw as any).name, team: (raw as any).team, unit: unitLabel } : null;
+
         // Prefill silencioso com CPF de outra equipe → descarta e libera input
         if (silent && data && data.team && data.team !== selectedTeam) {
           setCheckCpf('');
@@ -459,6 +466,7 @@ export default function Index() {
             title: 'ACESSO RESTRITO',
             message: `⚠️ ATENÇÃO, AGENTE ${data.name.split(' ')[0].toUpperCase()}!\n\nVocê está cadastrado na EQUIPE ${data.team}.\n\nPor protocolo de segurança, o acesso é permitido apenas pela equipe designada.\n\nSelecione o card da EQUIPE ${data.team} para continuar.`,
             type: 'warning',
+            unit: unitLabel || undefined,
           });
         }
       } catch (error) {
@@ -496,7 +504,7 @@ export default function Index() {
       // cleanCpf validated above
       const { data: existingAgent } = await supabase
         .from('agents')
-        .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at')
+        .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at, unit:units(name, municipality)')
         .eq('cpf', cleanCpf)
         .maybeSingle();
 
@@ -562,6 +570,10 @@ export default function Index() {
         
         // 5. Verificar se pertence à equipe selecionada
         if (existingAgent.team !== selectedTeam) {
+          const unitInfo = (existingAgent as any).unit as { name?: string; municipality?: string } | null;
+          const unitLabel = unitInfo?.name
+            ? (unitInfo.municipality ? `${unitInfo.name} — ${unitInfo.municipality}` : unitInfo.name)
+            : undefined;
           playSound('access-denied');
           setShowCpfCheck(false);
           setErrorDialog({
@@ -569,6 +581,7 @@ export default function Index() {
             title: 'ACESSO RESTRITO',
             message: `Você está registrado na EQUIPE ${existingAgent.team}.\n\nRetorne à tela inicial e selecione o card correto da sua equipe para acessar o sistema.\n\nPara mudar de equipe, solicite desligamento no seu painel.`,
             type: 'team',
+            unit: unitLabel,
           });
         } else {
           // Tudo OK - mostrar login
@@ -1542,7 +1555,12 @@ export default function Index() {
                     </div>
                     <div className="min-w-0">
                       <span className="font-bold text-red-400 text-base block">EQUIPE INCORRETA</span>
-                      <span className="text-red-300/80 text-sm">Você pertence à {foundAgent.team}</span>
+                      <span className="text-red-300/80 text-sm block">Você pertence à {foundAgent.team}</span>
+                      {foundAgent.unit && (
+                        <span className="text-red-200/70 text-xs block mt-0.5 font-mono uppercase tracking-wider">
+                          Unidade · {foundAgent.unit}
+                        </span>
+                      )}
                     </div>
                   </>
                 ) : (
@@ -2057,6 +2075,7 @@ export default function Index() {
         title={errorDialog.title}
         message={errorDialog.message}
         type={errorDialog.type}
+        unit={errorDialog.unit}
       />
       
       {/* Lockout Timer Dialog */}
