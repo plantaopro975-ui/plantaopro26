@@ -18,6 +18,8 @@ export default {
         display: ['Libre Baskerville', 'Georgia', 'serif'],
         serif: ['Libre Baskerville', 'Georgia', 'serif'],
         mono: ['IBM Plex Mono', 'monospace'],
+        heading: ['"Space Grotesk"', 'IBM Plex Sans', 'system-ui', 'sans-serif'],
+        body: ['"DM Sans"', 'IBM Plex Sans', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

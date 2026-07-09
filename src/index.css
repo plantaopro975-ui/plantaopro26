@@ -1516,5 +1516,59 @@ img, svg, picture, video {
   -webkit-touch-callout: none;
 }
 
-/* Print protection: desativado temporariamente a pedido do usuário */
+
+/* =========================================================
+ * Homepage typography scope — Space Grotesk (headings) + DM Sans (body)
+ * Applied via `.home-typo` on the Index page root only. Removes white/light
+ * glow effects for a clean, modern, professional look.
+ * ========================================================= */
+.home-typo,
+.home-typo p,
+.home-typo span:not([class*="font-mono"]):not([class*="font-serif"]):not([class*="font-display"]):not([class*="font-heading"]),
+.home-typo button,
+.home-typo a,
+.home-typo li,
+.home-typo div:not([class*="font-mono"]):not([class*="font-serif"]):not([class*="font-display"]):not([class*="font-heading"]) {
+  font-family: 'DM Sans', 'IBM Plex Sans', system-ui, sans-serif;
+  font-feature-settings: 'ss01', 'cv01', 'cv11';
+}
+
+.home-typo h1,
+.home-typo h2,
+.home-typo h3,
+.home-typo h4,
+.home-typo h5,
+.home-typo h6 {
+  font-family: 'Space Grotesk', 'IBM Plex Sans', system-ui, sans-serif;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+
+/* Kill white/light drop-shadow glows on the homepage for a clean look.
+ * Preserves gold/amber/primary glows that give the tactical identity. */
+/* Zero-glow policy on the homepage — clean, editorial rendering.
+ * Strips all "drop-shadow-[0_0..." (glow-style filters) inside .home-typo. */
+.home-typo *[class*="drop-shadow-[0_0"] {
+  filter: none !important;
+}
+.home-typo *[class*="shadow-white"],
+.home-typo *[class*="shadow-[0_0"][class*="white"] {
+  box-shadow: none !important;
+}
+
+/* Neutralize generic text-shadow glows on light text inside the homepage. */
+.home-typo .text-white,
+.home-typo .text-slate-50,
+.home-typo .text-slate-100,
+.home-typo .text-slate-200,
+.home-typo .text-foreground {
+  text-shadow: none !important;
+}
+
+/* Tighten button/label rhythm with the new typeface. */
+.home-typo button,
+.home-typo .font-mono {
+  font-feature-settings: 'tnum', 'ss01';
+}
+
 

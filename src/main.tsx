@@ -2,10 +2,13 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import "./styles/panel-hud.css";
-// Fonts (Libre Baskerville + IBM Plex) are loaded from Google Fonts in
-// index.html. The @fontsource imports below were dead weight — they added
-// 8 WOFF2 files + CSS to the initial bundle and pulled zero fonts that the
-// app actually uses. Removed for mobile-perf.
+// Homepage typography — Space Grotesk (headings) + DM Sans (body)
+import "@fontsource/space-grotesk/500.css";
+import "@fontsource/space-grotesk/600.css";
+import "@fontsource/space-grotesk/700.css";
+import "@fontsource/dm-sans/400.css";
+import "@fontsource/dm-sans/500.css";
+import "@fontsource/dm-sans/600.css";
 import { pushConsoleError, pushDiagEvent } from "@/lib/diagLog";
 
 // Capture console errors for the Diagnostics report (no sensitive values).
