@@ -157,3 +157,19 @@ if ("serviceWorker" in navigator && shouldSkipServiceWorker()) {
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
+
+// Hide the native Capacitor splash screen once React has mounted.
+// No-op on the web (import resolves but call fails silently outside native).
+(async () => {
+  try {
+    const { Capacitor } = await import("@capacitor/core");
+    if (!Capacitor.isNativePlatform()) return;
+    const { SplashScreen } = await import("@capacitor/splash-screen");
+    // Give the first paint a beat so the transition is smooth.
+    setTimeout(() => {
+      SplashScreen.hide({ fadeOutDuration: 400 }).catch(() => {});
+    }, 600);
+  } catch {
+    // ignore — plugin not installed on web builds
+  }
+})();
