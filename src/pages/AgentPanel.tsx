@@ -77,6 +77,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { notify } from '@/lib/notify';
+import { SectionBoundary } from '@/components/ui/section-boundary';
+import { LoadingState } from '@/components/ui/data-states';
 
 function ModuleFallback({ compact = false }: { compact?: boolean }) {
   return (
