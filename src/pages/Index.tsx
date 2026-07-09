@@ -314,18 +314,19 @@ export default function Index() {
         
         const checkCpfExists = async () => {
           try {
-            const { data } = await supabase
-              .from('agents')
-              .select('name, team')
-              .eq('cpf', cleanCpf)
-              .maybeSingle();
-            
+            const { data: chkRows } = await (supabase as any)
+              .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+            const data = Array.isArray(chkRows) && chkRows.length
+              ? { name: chkRows[0].name, team: chkRows[0].team }
+              : null;
+
             setCpfValidation({
               isValid: true,
               isChecking: false,
               exists: !!data,
               existingAgent: data
             });
+
           } catch (error) {
             setCpfValidation({
               isValid: true,
