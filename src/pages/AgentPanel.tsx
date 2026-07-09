@@ -51,10 +51,10 @@ const NextShiftCountdown = lazy(() => import('@/components/agent-panel/NextShift
 const ChatPanel = lazy(() => import('@/components/agent-panel/ChatPanel').then(m => ({ default: m.ChatPanel })));
 const SwapRequestsCard = lazy(() => import('@/components/agent-panel/SwapRequestsCard').then(m => ({ default: m.SwapRequestsCard })));
 const LeaveRequestCard = lazy(() => import('@/components/agent-panel/LeaveRequestCard').then(m => ({ default: m.LeaveRequestCard })));
-const NotificationSettings = lazy(() => import('@/components/agent-panel/NotificationSettings').then(m => ({ default: m.NotificationSettings })));
+const NotificationsAndAlertsCard = lazy(() => import('@/components/agent-panel/NotificationsAndAlertsCard').then(m => ({ default: m.NotificationsAndAlertsCard })));
 const AgentSettingsCard = lazy(() => import('@/components/agent-panel/AgentSettingsCard').then(m => ({ default: m.AgentSettingsCard })));
 const AgentEventsCard = lazy(() => import('@/components/agent-panel/AgentEventsCard').then(m => ({ default: m.AgentEventsCard })));
-const ChatAndAlertSettings = lazy(() => import('@/components/agent-panel/ChatAndAlertSettings').then(m => ({ default: m.ChatAndAlertSettings })));
+
 const ShiftPlannerCard = lazy(() => import('@/components/agent-panel/ShiftPlannerCard'));
 const ShiftCalendarOverview = lazy(() => import('@/components/agent-panel/ShiftCalendarOverview').then(m => ({ default: m.ShiftCalendarOverview })));
 const RecentShiftCyclesCard = lazy(() => import('@/components/agent-panel/RecentShiftCyclesCard').then(m => ({ default: m.RecentShiftCyclesCard })));
@@ -67,7 +67,7 @@ const RoundsHistoryCard = lazy(() => import('@/components/agent-panel/RoundsHist
 const AgentsDirectoryCard = lazy(() => import('@/components/agent-panel/AgentsDirectoryCard').then(m => ({ default: m.AgentsDirectoryCard })));
 const RoundsManager = lazy(() => import('@/components/home/RoundsManager').then(m => ({ default: ((m as any).RoundsManager ?? (m as any).default) as React.ComponentType<{ customTrigger?: ReactNode }> })));
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, Megaphone, Radio } from 'lucide-react';
+import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, BellRing, Megaphone, Radio } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -841,41 +841,21 @@ export default function AgentPanel() {
                 />
               </TabsContent>
 
-              <TabsContent value="config" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5 md:gap-3">
-                  <AgentSettingsCard
-                    agentId={agent.id}
-                    agentName={agent.name}
-                    currentEmail={agent.email}
-                    currentAvatarUrl={(agent as any).avatar_url}
-                    onUpdate={() => window.location.reload()}
-                  />
-                  <div className="space-y-2.5 md:space-y-3">
-                    {/* Smart Alarm Clock - Futuristic Design */}
-                    <SmartAlarmClock agentId={agent.id} />
-                    
-                    <ChatAndAlertSettings agentId={agent.id} />
-                    <NotificationSettings />
-                    <BHReminderSettings agentId={agent.id} />
-
-
-                    
-                    {/* Diagnostic Tools Section - IMPROVED */}
-                    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-600/50 rounded-xl p-3 md:p-4 space-y-2 shadow-md">
-                      <h3 className="font-bold text-sm md:text-base flex items-center gap-2 text-slate-100">
-                        <Settings className="h-4 w-4 md:h-5 md:w-5 text-amber-400" />
-                        Ferramentas de Diagnóstico
-                      </h3>
-                      <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
-                        Resolva problemas de conexão ou sessão.
-                      </p>
-                      <div className="flex flex-wrap gap-2 md:gap-3">
-                        <DiagnosticReportButton />
-                        <SafeModeToggle variant="compact" />
-                      </div>
-                    </div>
-
-                    {/* Password & Security Section - IMPROVED */}
+              <TabsContent value="config" className="space-y-4 md:space-y-5 animate-fade-in mt-0">
+                {/* ══════════ SEÇÃO 1: CONTA & SEGURANÇA ══════════ */}
+                <section aria-labelledby="cfg-sec-security" className="space-y-2.5 md:space-y-3">
+                  <h2 id="cfg-sec-security" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-purple-300/90 border-b border-purple-500/20 pb-1.5">
+                    <Key className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    Conta &amp; Segurança
+                  </h2>
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5 md:gap-3">
+                    <AgentSettingsCard
+                      agentId={agent.id}
+                      agentName={agent.name}
+                      currentEmail={agent.email}
+                      currentAvatarUrl={(agent as any).avatar_url}
+                      onUpdate={() => window.location.reload()}
+                    />
                     <div className="bg-gradient-to-br from-purple-900/40 to-slate-900/90 border border-purple-500/40 rounded-xl p-3 md:p-4 space-y-2 shadow-md">
                       <h3 className="font-bold text-sm md:text-base flex items-center gap-2 text-slate-100">
                         <Key className="h-4 w-4 md:h-5 md:w-5 text-purple-400" />
@@ -885,15 +865,54 @@ export default function AgentPanel() {
                         Altere sua senha via solicitação ao administrador.
                       </p>
                       <div className="flex flex-wrap gap-2 md:gap-3">
-                        <PasswordChangeRequest 
-                          agentId={agent.id} 
-                          agentName={agent.name} 
+                        <PasswordChangeRequest
+                          agentId={agent.id}
+                          agentName={agent.name}
                         />
                       </div>
                     </div>
                   </div>
-                </div>
+                </section>
+
+                {/* ══════════ SEÇÃO 2: NOTIFICAÇÕES & ALERTAS ══════════ */}
+                <section aria-labelledby="cfg-sec-notifs" className="space-y-2.5 md:space-y-3">
+                  <h2 id="cfg-sec-notifs" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-amber-300/90 border-b border-amber-500/20 pb-1.5">
+                    <BellRing className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    Notificações &amp; Alertas
+                  </h2>
+                  <NotificationsAndAlertsCard agentId={agent.id} />
+                </section>
+
+                {/* ══════════ SEÇÃO 3: LEMBRETES INTELIGENTES ══════════ */}
+                <section aria-labelledby="cfg-sec-reminders" className="space-y-2.5 md:space-y-3">
+                  <h2 id="cfg-sec-reminders" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-cyan-300/90 border-b border-cyan-500/20 pb-1.5">
+                    <Clock className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    Lembretes Inteligentes
+                  </h2>
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5 md:gap-3">
+                    <SmartAlarmClock agentId={agent.id} />
+                    <BHReminderSettings agentId={agent.id} />
+                  </div>
+                </section>
+
+                {/* ══════════ SEÇÃO 4: DIAGNÓSTICO ══════════ */}
+                <section aria-labelledby="cfg-sec-diag" className="space-y-2.5 md:space-y-3">
+                  <h2 id="cfg-sec-diag" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-slate-300/90 border-b border-slate-500/20 pb-1.5">
+                    <Settings className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    Diagnóstico
+                  </h2>
+                  <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-600/50 rounded-xl p-3 md:p-4 space-y-2 shadow-md">
+                    <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
+                      Resolva problemas de conexão ou sessão.
+                    </p>
+                    <div className="flex flex-wrap gap-2 md:gap-3">
+                      <DiagnosticReportButton />
+                      <SafeModeToggle variant="compact" />
+                    </div>
+                  </div>
+                </section>
               </TabsContent>
+
             </Tabs>
             </Suspense>
 
