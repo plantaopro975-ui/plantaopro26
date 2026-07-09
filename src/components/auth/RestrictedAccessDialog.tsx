@@ -4,6 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, KeyRound } from 'lucide-react';
 import restrictedSceneAsset from '@/assets/restricted-access-scene.jpg.asset.json';
 const restrictedScene = restrictedSceneAsset.url;
+
+// Pré-carrega a imagem no momento em que o módulo é importado,
+// para que ao abrir o diálogo ela já esteja em cache do browser.
+if (typeof window !== 'undefined') {
+  const img = new Image();
+  img.decoding = 'async';
+  img.src = restrictedScene;
+}
 interface RestrictedAccessDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
