@@ -58,7 +58,7 @@ export function HomeVideoBackground() {
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
             isLoaded ? 'opacity-40' : 'opacity-0'
           }`}
-          src="/video/intro.mp4"
+          src="/__l5e/assets-v1/733ed63b-0276-4fa5-97f6-4e28cd3a90bf/intro.mp4"
           autoPlay
           loop
           muted
