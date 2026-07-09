@@ -475,15 +475,12 @@ export default function AgentPanel() {
               <div
                 role="region"
                 aria-label="Cabeçalho e navegação do painel"
-                style={{ backgroundColor: 'rgb(2 6 23)' }}
+                style={{ backgroundColor: 'rgb(2, 6, 23)' }}
                 className={cn(
                   'sticky top-0 z-50 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1',
-                  // Fundo 100% opaco por padrão (fallback inline garantido acima)
+                  // 100% opaco em qualquer navegador — sem translucidez que vaze conteúdo por trás
                   'bg-slate-950',
-                  // Se o navegador suportar backdrop-filter, aplica leve translucidez + blur
-                  'supports-[backdrop-filter]:bg-slate-950/95 supports-[backdrop-filter]:backdrop-blur-md',
-                  'md:supports-[backdrop-filter]:backdrop-blur-xl',
-                  'shadow-[0_6px_16px_-12px_rgba(0,0,0,0.7)]',
+                  'shadow-[0_8px_18px_-10px_rgba(0,0,0,0.9)]',
                   'focus-within:ring-1 focus-within:ring-amber-500/40',
                   compact ? 'space-y-1.5' : 'space-y-2'
                 )}
