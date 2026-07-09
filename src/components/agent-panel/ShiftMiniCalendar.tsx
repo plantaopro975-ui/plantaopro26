@@ -90,16 +90,19 @@ export function ShiftMiniCalendar({
       .slice(0, 8);
 
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn("space-y-1.5 md:space-y-2 min-w-0", className)}>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+          <span className="text-[9px] md:text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">
             Próximos Plantões
           </span>
           <div className="flex-1 h-px bg-slate-700/50" />
         </div>
-        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div
+          className="flex gap-1 md:gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1"
+          style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}
+        >
           {upcomingShifts.length === 0 ? (
-            <span className="text-xs text-slate-500">Sem plantões</span>
+            <span className="text-[11px] md:text-xs text-slate-500">Sem plantões</span>
           ) : (
             upcomingShifts.map((s) => {
               const d = new Date(s.shift_date);
@@ -110,17 +113,17 @@ export function ShiftMiniCalendar({
                   type="button"
                   onClick={() => onDayWithShiftClick?.(s.id)}
                   className={cn(
-                    "flex-shrink-0 flex flex-col items-center justify-center rounded-lg border px-2.5 py-1.5 transition-all",
+                    "flex-shrink-0 flex flex-col items-center justify-center rounded-lg border px-1.5 py-1 md:px-2.5 md:py-1.5 transition-all min-w-[38px] md:min-w-[48px] max-w-[52px] md:max-w-none",
                     today
                       ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300"
                       : "bg-amber-500/10 border-amber-500/40 text-amber-300 hover:bg-amber-500/20"
                   )}
                 >
-                  <span className="text-[9px] font-medium uppercase tracking-wider">
+                  <span className="text-[8px] md:text-[9px] font-medium uppercase tracking-wider truncate max-w-full">
                     {format(d, "EEE", { locale: ptBR })}
                   </span>
-                  <span className="text-sm font-black tabular-nums">{format(d, "dd")}</span>
-                  <span className="text-[9px] text-slate-400">{format(d, "MMM", { locale: ptBR })}</span>
+                  <span className="text-xs md:text-sm font-black tabular-nums leading-none">{format(d, "dd")}</span>
+                  <span className="text-[8px] md:text-[9px] text-slate-400 truncate max-w-full">{format(d, "MMM", { locale: ptBR })}</span>
                 </button>
               );
             })
@@ -130,22 +133,23 @@ export function ShiftMiniCalendar({
     );
   }
 
+
   // GRID variant: full month view
   return (
-    <div className={cn("rounded-lg", className)}>
+    <div className={cn("rounded-lg min-w-0", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-1.5 md:mb-2 gap-2">
         <Button
           type="button"
           variant="ghost"
           size="icon"
           onClick={handlePrev}
-          className="h-7 w-7 text-slate-400 hover:text-white"
+          className="h-6 w-6 md:h-7 md:w-7 text-slate-400 hover:text-white shrink-0"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
         </Button>
 
-        <span className="text-xs font-bold tracking-wide text-slate-200 uppercase">
+        <span className="text-[11px] md:text-xs font-bold tracking-wide text-slate-200 uppercase truncate">
           {format(month, "MMMM yyyy", { locale: ptBR })}
         </span>
 
@@ -154,63 +158,70 @@ export function ShiftMiniCalendar({
           variant="ghost"
           size="icon"
           onClick={handleNext}
-          className="h-7 w-7 text-slate-400 hover:text-white"
+          className="h-6 w-6 md:h-7 md:w-7 text-slate-400 hover:text-white shrink-0"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-3.5 w-3.5 md:h-4 md:w-4" />
         </Button>
       </div>
 
-      {/* Weekday labels */}
-      <div className="grid grid-cols-7 gap-0.5 mb-1">
-        {weekDays.map((w, i) => (
-          <div key={i} className="text-center text-[9px] font-bold text-slate-500 uppercase">
-            {w}
+      {/* Scroll wrapper: keeps the 7-column grid intact but scrolls horizontally
+          if the parent gets narrower than the min-width. */}
+      <div className="overflow-x-auto scrollbar-none -mx-1 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="min-w-[224px] md:min-w-0">
+          {/* Weekday labels */}
+          <div className="grid grid-cols-7 gap-0.5 mb-1">
+            {weekDays.map((w, i) => (
+              <div key={i} className="text-center text-[8px] md:text-[9px] font-bold text-slate-500 uppercase truncate">
+                {w}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Day cells */}
-      <div className="grid grid-cols-7 gap-0.5">
-        {days.map((d) => {
-          const key = format(d, "yyyy-MM-dd");
-          const shiftId = shiftByDate.get(key);
-          const inMonth = isSameMonth(d, monthStart);
-          const today = isToday(d);
+          {/* Day cells */}
+          <div className="grid grid-cols-7 gap-0.5">
+            {days.map((d) => {
+              const key = format(d, "yyyy-MM-dd");
+              const shiftId = shiftByDate.get(key);
+              const inMonth = isSameMonth(d, monthStart);
+              const today = isToday(d);
 
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => handleDayPress(d)}
-              className={cn(
-                "h-6 w-full rounded text-[10px] font-semibold tabular-nums transition-colors",
-                !inMonth && "opacity-30",
-                today && "ring-1 ring-amber-400/70",
-                shiftId
-                  ? "bg-amber-500/25 text-amber-200 hover:bg-amber-500/40"
-                  : "bg-slate-800/40 text-slate-400 hover:bg-slate-700/60"
-              )}
-            >
-              {format(d, "d")}
-            </button>
-          );
-        })}
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => handleDayPress(d)}
+                  className={cn(
+                    "h-5 md:h-6 w-full rounded text-[9px] md:text-[10px] font-semibold tabular-nums transition-colors",
+                    !inMonth && "opacity-30",
+                    today && "ring-1 ring-amber-400/70",
+                    shiftId
+                      ? "bg-amber-500/25 text-amber-200 hover:bg-amber-500/40"
+                      : "bg-slate-800/40 text-slate-400 hover:bg-slate-700/60"
+                  )}
+                >
+                  {format(d, "d")}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-4 mt-2 text-[9px]">
+      <div className="flex items-center justify-center gap-2 md:gap-4 mt-1.5 md:mt-2 text-[8px] md:text-[9px] flex-wrap">
         <div className="flex items-center gap-1">
-          <div className="w-2.5 h-2.5 rounded-sm bg-amber-500/25 border border-amber-500/50" />
+          <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-sm bg-amber-500/25 border border-amber-500/50" />
           <span className="text-slate-400">Plantão</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2.5 h-2.5 rounded-sm ring-1 ring-amber-400/70" />
+          <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-sm ring-1 ring-amber-400/70" />
           <span className="text-slate-400">Hoje</span>
         </div>
       </div>
     </div>
   );
 }
+
 
 // Simple date picker grid for configuration dialogs (no shift data needed)
 interface SimpleDatePickerProps {
