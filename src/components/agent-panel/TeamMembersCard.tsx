@@ -309,7 +309,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
           </CardHeader>
 
           <CollapsibleContent>
-            <CardContent className="pt-1 px-3.5 sm:px-3 pb-4 space-y-3.5 overflow-visible">
+            <CardContent className="pt-1 px-3 pb-3 space-y-2.5 overflow-visible">
               {/* Team Leaves Today Section */}
               {(() => {
                 const today = startOfDay(new Date());
