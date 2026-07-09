@@ -155,8 +155,17 @@ export default function AgentProfileEdit() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <div
+      className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8"
+      style={{
+        WebkitOverflowScrolling: 'touch',
+        touchAction: 'pan-y pinch-zoom',
+        overscrollBehavior: 'contain',
+        paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
+      }}
+    >
+      <div className="max-w-2xl mx-auto space-y-6 pb-16">
+
         {/* Header */}
         <div className="flex items-center gap-4">
           <Button
