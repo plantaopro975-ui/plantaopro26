@@ -1029,7 +1029,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
             </div>
           </DialogHeader>
 
-          <div className="max-h-[70vh] overflow-y-auto px-4 py-3 space-y-2.5">
+          <div className="max-h-[70vh] overflow-y-auto px-4 py-3 space-y-2.5" role="region" aria-live="polite" aria-atomic="false">
             {detailsDate && (() => {
               const dayLeaves = leaves.filter(l => {
                 const s = startOfDay(parseISO(l.start_date));
