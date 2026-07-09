@@ -343,25 +343,22 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
 
           {/* ── Right actions ── */}
           <div className="flex items-center gap-1 xs:gap-1.5 md:gap-2 flex-nowrap sm:flex-wrap justify-end shrink-0 min-w-0 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <OnlinePulse isOnline={isOnline} />
+            {/* Itens secundários — ocultos no mobile para priorizar Home + Sair */}
+            <div className="hidden md:inline-flex items-center gap-1 xs:gap-1.5 md:gap-2">
+              <OnlinePulse isOnline={isOnline} />
 
-            {agent.blood_type && (
-              <div className="flex items-center gap-1 px-1.5 h-9 rounded-md bg-slate-950/70 border border-red-500/50 font-['IBM_Plex_Mono',_monospace]">
-                <IconDroplet className="h-3 w-3 text-red-400" />
-                <span className="text-[10px] font-black text-red-300">{agent.blood_type}</span>
-              </div>
-            )}
+              {agent.blood_type && (
+                <div className="flex items-center gap-1 px-1.5 h-9 rounded-md bg-slate-950/70 border border-red-500/50 font-['IBM_Plex_Mono',_monospace]">
+                  <IconDroplet className="h-3 w-3 text-red-400" />
+                  <span className="text-[10px] font-black text-red-300">{agent.blood_type}</span>
+                </div>
+              )}
 
-            <AgentRoleSelector agentId={agent.id} currentRole={agent.role || 'agent'} />
-            <NotificationsPanel agentId={agent.id} />
-            {/* FontSizeControl: oculto no mobile para liberar espaço ao botão "Sair" */}
-            <div className="hidden md:inline-flex">
+              <AgentRoleSelector agentId={agent.id} currentRole={agent.role || 'agent'} />
+              <NotificationsPanel agentId={agent.id} />
               <FontSizeControl />
-            </div>
 
-            {onToggleCompact && (
-              /* Toggle compacto: oculto no mobile (painel já é compacto por padrão em telas pequenas) */
-              <div className="hidden md:inline-flex">
+              {onToggleCompact && (
                 <ActionButton
                   onClick={onToggleCompact}
                   tooltip={compact ? 'Modo confortável (expandir)' : 'Modo compacto (reduzir)'}
@@ -369,31 +366,26 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                 >
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     {compact ? (
-                      <>
-                        <path d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
-                      </>
+                      <path d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
                     ) : (
-                      <>
-                        <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" />
-                      </>
+                      <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" />
                     )}
                   </svg>
                 </ActionButton>
-              </div>
-            )}
+              )}
 
-            {/* Trial button removed — sistema gratuito */}
+              {isShiftBannerDismissed && onReactivateShiftBanner && (
+                <ActionButton onClick={onReactivateShiftBanner} tooltip="Reativar lembrete de plantão" tone="orange">
+                  <IconBell className="h-4 w-4" />
+                </ActionButton>
+              )}
 
-            {isShiftBannerDismissed && onReactivateShiftBanner && (
-              <ActionButton onClick={onReactivateShiftBanner} tooltip="Reativar lembrete de plantão" tone="orange">
-                <IconBell className="h-4 w-4" />
+              <ActionButton onClick={() => window.location.reload()} tooltip="Atualizar dados" tone="emerald">
+                <IconRefresh className="h-4 w-4" />
               </ActionButton>
-            )}
+            </div>
 
-            <ActionButton onClick={() => window.location.reload()} tooltip="Atualizar dados" tone="emerald">
-              <IconRefresh className="h-4 w-4" />
-            </ActionButton>
-
+            {/* Home — prioritário no mobile */}
             <ActionButton
               onClick={() => navigate('/?home=1')}
               tooltip="Ir para a página inicial (sem sair da conta)"
@@ -405,6 +397,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                 <path d="M10 21v-6h4v6" />
               </svg>
             </ActionButton>
+
 
             {/* Logout — sempre visível, rótulo em todas as telas */}
             <TooltipProvider>

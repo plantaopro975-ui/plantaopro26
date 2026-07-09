@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -14,6 +16,7 @@ import { TeamMemberDialog } from './TeamMemberDialog';
 import { TeamUnlinkDialog } from '@/components/agents/TeamUnlinkDialog';
 import { TransferRequestDialog } from '@/components/agents/TransferRequestDialog';
 import { TeamEmblem } from '@/components/TeamEmblem';
+
 
 interface TeamMember {
   id: string;
@@ -37,7 +40,13 @@ interface TeamLeave {
   start_date: string;
   end_date: string;
   status: string;
+  reason: string | null;
+  period: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  hours_count: number | null;
 }
+
 
 interface Agent {
   id: string;
@@ -72,6 +81,8 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
   const [showMemberDialog, setShowMemberDialog] = useState(false);
   const [showTeamManagement, setShowTeamManagement] = useState(false);
   const [showTransferDialog, setShowTransferDialog] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState<TeamLeave | null>(null);
+
 
   useEffect(() => {
     if (unitId && team) {
@@ -343,15 +354,19 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                                 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`
                                 : nameParts[0];
                               return (
-                                <div 
+                                <button
+                                  type="button"
                                   key={leave.id}
-                                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${info.color} border border-current/20`}
+                                  onClick={() => setSelectedLeave(leave)}
+                                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${info.color} border border-current/20 hover:brightness-125 active:scale-[0.98] transition`}
+                                  aria-label={`Ver detalhes da folga de ${leave.agent_name}`}
                                 >
                                   {info.icon}
                                   <span className="text-sm font-semibold">{displayName}</span>
                                   <span className="text-[10px] opacity-70">{info.label}</span>
-                                </div>
+                                </button>
                               );
+
                             })}
                           </div>
                         </div>
@@ -367,9 +382,12 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                               const info = leaveTypeInfo[leave.leave_type] || leaveTypeInfo.special;
                               const firstName = leave.agent_name.split(' ')[0];
                               return (
-                                <div 
+                                <button
+                                  type="button"
                                   key={leave.id}
-                                  className="text-xs px-2 py-1 rounded-lg bg-slate-700/60 text-slate-200 flex items-center gap-1.5 border border-slate-600/50"
+                                  onClick={() => setSelectedLeave(leave)}
+                                  className="text-xs px-2 py-1 rounded-lg bg-slate-700/60 text-slate-200 flex items-center gap-1.5 border border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700 active:scale-[0.98] transition"
+                                  aria-label={`Ver detalhes da folga programada de ${leave.agent_name}`}
                                 >
                                   {info.icon}
                                   <span className="font-medium">{firstName}</span>
@@ -377,8 +395,9 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                                   <span className="text-slate-400">
                                     {format(parseISO(leave.start_date), 'dd/MM', { locale: ptBR })}
                                   </span>
-                                </div>
+                                </button>
                               );
+
                             })}
                             {upcomingLeaves.length > 6 && (
                               <span className="text-xs text-slate-500 px-2 py-1">+{upcomingLeaves.length - 6} mais</span>
@@ -530,6 +549,117 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
           setShowTransferDialog(false);
         }}
       />
+
+      {/* Leave Details Dialog */}
+      <Dialog open={!!selectedLeave} onOpenChange={(o) => !o && setSelectedLeave(null)}>
+        <DialogContent className="bg-gradient-to-br from-slate-950 to-slate-900 border-2 border-purple-500/40 max-w-md">
+          {selectedLeave && (() => {
+            const info = leaveTypeInfo[selectedLeave.leave_type] || leaveTypeInfo.special;
+            const member = members.find(m => m.id === selectedLeave.agent_id);
+            const start = parseISO(selectedLeave.start_date);
+            const end = parseISO(selectedLeave.end_date);
+            const days = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1);
+            const statusLabel: Record<string, { text: string; cls: string }> = {
+              approved: { text: 'Aprovada', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+              pending: { text: 'Pendente', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
+              rejected: { text: 'Rejeitada', cls: 'bg-red-500/20 text-red-300 border-red-500/40' },
+            };
+            const st = statusLabel[selectedLeave.status] || { text: selectedLeave.status, cls: 'bg-slate-700 text-slate-200 border-slate-600' };
+            const periodLabel: Record<string, string> = { full_day: 'Dia inteiro', morning: 'Manhã', afternoon: 'Tarde', night: 'Noite', custom: 'Personalizado' };
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-purple-200">
+                    <span className={`inline-flex items-center justify-center h-8 w-8 rounded-lg ${info.color}`}>
+                      {info.icon}
+                    </span>
+                    Folga Programada · {info.label}
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-400">
+                    Informações detalhadas do afastamento do profissional.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-4 mt-2">
+                  {/* Profissional */}
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/60 border border-slate-700">
+                    <Avatar className="h-12 w-12 border-2 border-amber-500/60">
+                      {member?.avatar_url && <AvatarImage src={member.avatar_url} alt={selectedLeave.agent_name} />}
+                      <AvatarFallback className="bg-slate-700 text-slate-200 font-bold">
+                        {selectedLeave.agent_name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-slate-100 truncate">{selectedLeave.agent_name}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        {getRoleIcon(member?.role ?? null)}
+                        <span className="text-xs text-slate-300">{getRoleLabel(member?.role ?? null)}</span>
+                        {member?.blood_type && (
+                          <span className="ml-1 flex items-center gap-0.5 text-[10px] text-red-300 bg-red-500/10 px-1.5 py-0.5 rounded">
+                            <Droplet className="h-2.5 w-2.5" /> {member.blood_type}
+                          </span>
+                        )}
+                      </div>
+                      {member?.phone && (
+                        <div className="flex items-center gap-1 mt-1 text-[11px] text-emerald-300">
+                          <Phone className="h-3 w-3" />
+                          <span>{member.phone}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Período */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="p-2.5 rounded-lg bg-slate-800/60 border border-slate-700">
+                      <p className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Início</p>
+                      <p className="text-sm font-bold text-slate-100">{format(start, "dd/MM/yyyy", { locale: ptBR })}</p>
+                      <p className="text-[10px] text-slate-500">{format(start, "EEEE", { locale: ptBR })}</p>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-slate-800/60 border border-slate-700">
+                      <p className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Término</p>
+                      <p className="text-sm font-bold text-slate-100">{format(end, "dd/MM/yyyy", { locale: ptBR })}</p>
+                      <p className="text-[10px] text-slate-500">{format(end, "EEEE", { locale: ptBR })}</p>
+                    </div>
+                  </div>
+
+                  {/* Meta */}
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    <span className={`px-2 py-1 rounded-md border font-semibold ${st.cls}`}>{st.text}</span>
+                    <span className="px-2 py-1 rounded-md bg-slate-800/60 border border-slate-700 text-slate-200">
+                      {days} {days === 1 ? 'dia' : 'dias'}
+                    </span>
+                    {selectedLeave.period && (
+                      <span className="px-2 py-1 rounded-md bg-slate-800/60 border border-slate-700 text-slate-200">
+                        {periodLabel[selectedLeave.period] || selectedLeave.period}
+                      </span>
+                    )}
+                    {selectedLeave.start_time && selectedLeave.end_time && (
+                      <span className="px-2 py-1 rounded-md bg-slate-800/60 border border-slate-700 text-slate-200">
+                        {selectedLeave.start_time.slice(0,5)} – {selectedLeave.end_time.slice(0,5)}
+                      </span>
+                    )}
+                    {selectedLeave.hours_count != null && (
+                      <span className="px-2 py-1 rounded-md bg-slate-800/60 border border-slate-700 text-slate-200">
+                        {Number(selectedLeave.hours_count)}h
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Motivo */}
+                  {selectedLeave.reason && (
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30">
+                      <p className="text-[10px] uppercase tracking-wider text-purple-300 font-semibold mb-1">Motivo / Observação</p>
+                      <p className="text-sm text-slate-200 whitespace-pre-wrap">{selectedLeave.reason}</p>
+                    </div>
+                  )}
+                </div>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
+
     </>
   );
 }
