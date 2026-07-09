@@ -872,7 +872,7 @@ export default function AgentPanel() {
 
 
 
-              <TabsContent value="chat" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="chat" forceMount hidden={activeTab !== 'chat'} className="space-y-2.5 md:space-y-3 animate-fade-in mt-0 data-[state=inactive]:hidden">
                 <ChatPanel 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
