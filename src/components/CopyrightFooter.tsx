@@ -49,14 +49,14 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
             }}
           />
 
-          <div className="relative mx-auto max-w-6xl px-4 py-2.5 flex flex-col sm:flex-row items-center sm:justify-between gap-2 sm:gap-3 text-center sm:text-left">
+          <div className="relative mx-auto max-w-6xl px-3 sm:px-4 py-1 sm:py-2.5 flex flex-row items-center justify-between gap-2 sm:gap-3">
             {/* Left: Brand + Status + optional slot */}
-            <div className="flex items-center gap-2.5 min-w-0 font-sans">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 font-sans">
               {leftSlot}
-              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/85">
+              <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.22em] text-foreground/85">
                 PlantãoPro
               </span>
-              <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/40">
+              <span className="hidden min-[480px]:inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/40">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inset-0 rounded-full bg-success opacity-60" />
                   <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
@@ -65,24 +65,31 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
                   Operacional
                 </span>
               </span>
+              {/* Dot indicator apenas em telas pequenas */}
+              <span className="inline-flex min-[480px]:hidden relative h-1.5 w-1.5" aria-label="Operacional">
+                <span className="absolute inset-0 rounded-full bg-success opacity-60" />
+                <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
+              </span>
+
             </div>
 
 
             {/* Right: Meta + signature */}
-            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[9px] text-muted-foreground/75 tracking-[0.18em] uppercase">
+            <div className="flex items-center gap-x-1.5 sm:gap-x-2 text-[9px] text-muted-foreground/75 tracking-[0.18em] uppercase whitespace-nowrap">
               <DeveloperSignature compact className="hidden md:inline-flex" />
               <span className="hidden md:inline text-muted-foreground/30">·</span>
-              <span className="inline-flex items-center gap-1">
+              <span className="hidden sm:inline-flex items-center gap-1">
                 <Lock className="h-3 w-3 text-primary/60" />
                 <span>LGPD · TLS 1.3</span>
               </span>
-              <span className="text-muted-foreground/40">·</span>
+              <span className="hidden sm:inline text-muted-foreground/40">·</span>
               <span className="font-semibold text-foreground/80">v2.7</span>
-              <span className="text-muted-foreground/40">·</span>
-              <span>© {year}</span>
+              <span className="hidden min-[360px]:inline text-muted-foreground/40">·</span>
+              <span className="hidden min-[360px]:inline">© {year}</span>
               {rightSlot}
             </div>
           </div>
+
 
 
         </div>
