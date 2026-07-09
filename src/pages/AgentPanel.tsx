@@ -31,6 +31,7 @@ import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { PublicSecurityBackdrop } from '@/components/agent-panel/PublicSecurityBackdrop';
+import { NetworkStatusPill } from '@/components/agent-panel/NetworkStatusPill';
 import { useQueryClient } from '@tanstack/react-query';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
@@ -471,7 +472,9 @@ export default function AgentPanel() {
     <>
     <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
       <PublicSecurityBackdrop />
+      <NetworkStatusPill />
       <div className="hud-scope flex-1 flex flex-col w-full min-w-0 min-h-0">
+
 
 
 
