@@ -951,8 +951,11 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
                       className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
                       onClick={() => {
                         setShiftModalOpen(false);
-                        setEditData({ date, shift: shift as ShiftEditRecord });
-                        setEditOpen(true);
+                        document.body.style.pointerEvents = '';
+                        window.setTimeout(() => {
+                          setEditData({ date, shift: shift as ShiftEditRecord });
+                          setEditOpen(true);
+                        }, 80);
                       }}
                     >
                       Editar plantão

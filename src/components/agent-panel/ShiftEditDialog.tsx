@@ -99,6 +99,12 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    return () => {
+      document.body.style.pointerEvents = '';
+    };
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     const k = inferKind(shift);
     setKind(k);
