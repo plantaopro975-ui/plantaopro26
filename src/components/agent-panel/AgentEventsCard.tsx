@@ -196,11 +196,11 @@ export function AgentEventsCard({ agentId }: AgentEventsCardProps) {
 
   const getColorClass = (color: string) => {
     const colorMap: Record<string, string> = {
-      amber: 'bg-amber-500/30 text-amber-400 border-amber-500/30',
-      blue: 'bg-blue-500/30 text-blue-400 border-blue-500/30',
-      green: 'bg-green-500/30 text-green-400 border-green-500/30',
-      red: 'bg-red-500/30 text-red-400 border-red-500/30',
-      purple: 'bg-purple-500/30 text-purple-400 border-purple-500/30',
+      amber: 'bg-amber-500/10 text-amber-200/90 border-amber-500/25',
+      blue: 'bg-blue-500/10 text-blue-200/90 border-blue-500/25',
+      green: 'bg-green-500/10 text-green-200/90 border-green-500/25',
+      red: 'bg-red-500/10 text-red-200/90 border-red-500/25',
+      purple: 'bg-purple-500/10 text-purple-200/90 border-purple-500/25',
     };
     return colorMap[color] || colorMap.amber;
   };
