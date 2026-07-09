@@ -1501,7 +1501,7 @@ export default function Index() {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary)/0.55),transparent)]"
         />
-        <div className="mx-auto max-w-[1400px] px-3 h-7 sm:h-8 flex items-center justify-between gap-2">
+        <div className="mx-auto max-w-[1400px] px-3 h-6 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => navigate('/about')}
