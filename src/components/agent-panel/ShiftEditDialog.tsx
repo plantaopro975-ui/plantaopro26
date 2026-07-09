@@ -111,7 +111,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
     setEndTime(d.end);
   };
 
-  const nightMismatch = kind === 'night' && !(startTime === '22:00' && endTime === '06:00');
+  const nightMismatch = false;
   const dateStr = format(shiftDate, 'yyyy-MM-dd');
   const isNew = !shift?.id;
 
