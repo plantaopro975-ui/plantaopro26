@@ -111,12 +111,147 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   );
 }
 
-
-
-
+interface TeamCardProps {
+  team: (typeof TEAMS)[number];
+  idx: number;
+  isSelected: boolean;
+  onSelect: (k: TeamKey) => void;
+  className?: string;
+}
+function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardProps) {
+  return (
+    <button
+      data-team-card
+      data-team={t.key}
+      aria-pressed={isSelected}
+      onClick={() => onSelect(t.key)}
+      className={cn(
+        'group relative flex h-[clamp(112px,17.5vh,156px)] min-[390px]:h-[clamp(122px,18vh,168px)] sm:h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+        'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
+        isSelected
+          ? 'border-[hsl(var(--team-accent))] -translate-y-1.5 scale-[1.02] shadow-[0_0_0_2px_hsl(var(--team-accent)/0.85),0_0_0_4px_rgba(2,6,23,0.9),0_18px_40px_-12px_hsl(var(--team-accent)/0.6),0_10px_20px_-8px_rgba(0,0,0,0.85)] ring-1 ring-[hsl(var(--team-accent)/0.45)]'
+          : 'border-slate-300/25 shadow-[0_0_0_1px_rgba(15,23,42,0.75),inset_0_0_0_1px_rgba(255,255,255,0.06)] hover:border-[hsl(var(--team-accent)/0.85)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_hsl(var(--team-accent)/0.7),0_14px_30px_-14px_hsl(var(--team-accent)/0.5),0_8px_18px_-10px_rgba(0,0,0,0.75)] active:translate-y-0 active:scale-[0.99]',
+        className,
+      )}
+      style={{ ['--team-accent' as any]: t.accent }}
+    >
+      <img
+        src={t.bg}
+        alt=""
+        aria-hidden
+        loading="lazy"
+        decoding="async"
+        className={cn(
+          'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
+          'transition-all duration-500 ease-out',
+          isSelected
+            ? 'opacity-100 scale-105 saturate-125 contrast-110'
+            : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
+        )}
+        draggable={false}
+      />
+      <span aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,6,23,0.78)_100%)]" />
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-t from-slate-950/90 to-transparent" />
+      <span
+        aria-hidden
+        className={cn(
+          'pointer-events-none absolute inset-0 z-[2] transition-opacity duration-500 mix-blend-overlay',
+          isSelected ? 'opacity-40' : 'opacity-0 group-hover:opacity-25',
+        )}
+        style={{ background: `radial-gradient(ellipse at 50% 40%, hsl(${t.accent} / 0.6) 0%, transparent 70%)` }}
+      />
+      {isSelected && (
+        <>
+          <span aria-hidden className="absolute top-1 left-1 z-30 h-3 w-3 border-t-2 border-l-2 rounded-tl-sm" style={{ borderColor: `hsl(${t.accent})` }} />
+          <span aria-hidden className="absolute top-1 right-1 z-30 h-3 w-3 border-t-2 border-r-2 rounded-tr-sm" style={{ borderColor: `hsl(${t.accent})` }} />
+          <span aria-hidden className="absolute bottom-1 left-1 z-30 h-3 w-3 border-b-2 border-l-2 rounded-bl-sm" style={{ borderColor: `hsl(${t.accent})` }} />
+          <span aria-hidden className="absolute bottom-1 right-1 z-30 h-3 w-3 border-b-2 border-r-2 rounded-br-sm" style={{ borderColor: `hsl(${t.accent})` }} />
+        </>
+      )}
+      {t.key === 'ALFA' ? (
+        <span aria-hidden className="alfa-halo" />
+      ) : (
+        <span aria-hidden className="team-halo" />
+      )}
+      <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0.5 pt-2 sm:p-2 sm:pt-4 [perspective:600px]">
+        <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
+      </div>
+      <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
+      <span aria-hidden className="absolute top-2 left-2 z-30 flex h-2 w-2">
+        <span className="absolute inset-0 rounded-full animate-ping opacity-70" style={{ background: `hsl(${t.accent})` }} />
+        <span className="relative h-2 w-2 rounded-full" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 8px hsl(${t.accent} / 0.9)` }} />
+      </span>
+      <span
+        className="absolute top-1.5 right-1.5 z-30 font-mono text-[8.5px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded backdrop-blur-md border"
+        style={{ color: `hsl(${t.accent})`, borderColor: `hsl(${t.accent} / 0.5)`, background: `hsl(${t.accent} / 0.12)` }}
+      >
+        {t.op}
+      </span>
+      {(() => {
+        const [h, s] = t.accent.split(' ');
+        const L = { hi: 88, up: 62, mid: 32, lo: 55, base: 24, deep: 12, bevelHi: 96, bevelLo: 18, glow: 95 } as const;
+        const c = (l: number, a?: number) => a === undefined ? `hsl(${h} ${s} ${l}%)` : `hsl(${h} ${s} ${l}% / ${a})`;
+        const uid = `tn-${t.key}-${idx}`;
+        const stops: { off: string; l: number }[] = [
+          { off: '0%',   l: L.hi },
+          { off: '35%',  l: L.up },
+          { off: '52%',  l: L.mid },
+          { off: '68%',  l: L.lo },
+          { off: '100%', l: L.base },
+        ];
+        return (
+          <div className="relative z-20 flex flex-col gap-0.5 px-2 pb-2 sm:gap-1 sm:px-2.5 sm:pb-2">
+            <svg viewBox="0 0 300 72" className="block w-full h-11 min-[390px]:h-12 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
+              <defs>
+                <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
+                  {stops.map((st) => (
+                    <stop key={st.off} offset={st.off} stopColor={c(st.l)} />
+                  ))}
+                </linearGradient>
+                <linearGradient id={`${uid}-bevel`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stopColor={c(L.bevelHi, 0.95)} />
+                  <stop offset="50%"  stopColor={c(L.up, 0.25)} />
+                  <stop offset="100%" stopColor={c(L.bevelLo, 0.95)} />
+                </linearGradient>
+                <linearGradient id={`${uid}-sheen`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stopColor={c(L.glow, 0.55)} />
+                  <stop offset="100%" stopColor={c(L.glow, 0)} />
+                </linearGradient>
+                <filter id={`${uid}-shadow`} x="-20%" y="-20%" width="140%" height="160%">
+                  <feDropShadow dx="0" dy="1" stdDeviation="0.5" floodColor="#000" floodOpacity="0.95" />
+                  <feDropShadow dx="0" dy="4" stdDeviation="3"   floodColor="#000" floodOpacity="0.65" />
+                </filter>
+              </defs>
+              <g
+                filter={`url(#${uid}-shadow)`}
+                fontFamily="'Stardos Stencil','Saira Condensed','Oswald','Impact',sans-serif"
+                fontWeight={700}
+                textAnchor="middle"
+                style={{ fontStretch: 'condensed' }}
+              >
+                <text x="150" y="54" fontSize="56" fill={c(L.deep)}  transform="translate(0,3)" letterSpacing="6">{t.key}</text>
+                <text x="150" y="54" fontSize="56" fill={c(L.base)}  transform="translate(0,1.5)" letterSpacing="6">{t.key}</text>
+                <text x="150" y="54" fontSize="56" fill={`url(#${uid}-fill)`} stroke={`url(#${uid}-bevel)`} strokeWidth="1.4" paintOrder="stroke" letterSpacing="6">{t.key}</text>
+                <text x="150" y="54" fontSize="56" fill={`url(#${uid}-sheen)`} letterSpacing="6" clipPath="inset(0 0 58% 0)">{t.key}</text>
+              </g>
+            </svg>
+            <span
+              className="font-mono text-[9px] min-[390px]:text-[9.5px] sm:text-[9.5px] uppercase tracking-[0.18em] sm:tracking-[0.28em] truncate text-slate-200"
+              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
+            >
+              {t.motto}
+            </span>
+          </div>
+        );
+      })()}
+    </button>
+  );
+}
 
 export function SplitOperationalHero({ onTeamClick }: Props) {
   // Preload only the first-in-viewport 3D image (ALFA)
+
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'preload';
@@ -401,7 +536,26 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
             </div>
 
+            {/* CHARLIE card — desktop only, ao lado do agente */}
+            {(() => {
+              const charlie = TEAMS.find((x) => x.key === 'CHARLIE');
+              if (!charlie) return null;
+              const idx = TEAMS.indexOf(charlie);
+              return (
+                <div className="hidden lg:block absolute right-3 xl:right-6 bottom-2 z-[70] w-[190px] xl:w-[220px]" style={{ perspective: '900px' }}>
+                  <TeamCard
+                    team={charlie}
+                    idx={idx}
+                    isSelected={selectedTeam === 'CHARLIE'}
+                    onSelect={handleSelect}
+                    className="!h-[210px] xl:!h-[240px] w-full"
+                  />
+                </div>
+              );
+            })()}
+
           </div>
+
 
         </div>
 
@@ -493,190 +647,25 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               Selecione sua Equipe
             </span>
             <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              4 Divisões
+              <span className="lg:hidden">4 Divisões</span>
+              <span className="hidden lg:inline">3 Divisões · CHARLIE ao lado</span>
             </span>
+
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 lg:gap-3 xl:gap-4" style={{ perspective: '900px' }}>
-
-            {TEAMS.map((t, idx) => {
-              const isSelected = selectedTeam === t.key;
-              return (
-              <button
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-1.5 sm:gap-2 lg:gap-3 xl:gap-4" style={{ perspective: '900px' }}>
+            {TEAMS.map((t, idx) => (
+              <TeamCard
                 key={t.key}
-                data-team-card
-                data-team={t.key}
-                aria-pressed={isSelected}
-                onClick={() => handleSelect(t.key)}
-                className={cn(
-                  'group relative flex h-[clamp(112px,17.5vh,156px)] min-[390px]:h-[clamp(122px,18vh,168px)] sm:h-[clamp(100px,17vh,170px)] lg:h-[clamp(160px,24vh,230px)] xl:h-[clamp(190px,28vh,270px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
-                  'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
-                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
-                  isSelected
-                    ? 'border-[hsl(var(--team-accent))] -translate-y-1.5 scale-[1.02] shadow-[0_0_0_2px_hsl(var(--team-accent)/0.85),0_0_0_4px_rgba(2,6,23,0.9),0_18px_40px_-12px_hsl(var(--team-accent)/0.6),0_10px_20px_-8px_rgba(0,0,0,0.85)] ring-1 ring-[hsl(var(--team-accent)/0.45)]'
-                    : 'border-slate-300/25 shadow-[0_0_0_1px_rgba(15,23,42,0.75),inset_0_0_0_1px_rgba(255,255,255,0.06)] hover:border-[hsl(var(--team-accent)/0.85)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_hsl(var(--team-accent)/0.7),0_14px_30px_-14px_hsl(var(--team-accent)/0.5),0_8px_18px_-10px_rgba(0,0,0,0.75)] active:translate-y-0 active:scale-[0.99]',
-                )}
-                style={{ ['--team-accent' as any]: t.accent }}
-              >
-                {/* Realistic background image per team */}
-                <img
-                  src={t.bg}
-                  alt=""
-                  aria-hidden
-                  loading="lazy"
-                  decoding="async"
-                  className={cn(
-                    'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
-                    'transition-all duration-500 ease-out',
-                    isSelected
-                      ? 'opacity-100 scale-105 saturate-125 contrast-110'
-                      : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
-                  )}
-                  draggable={false}
-                />
-                {/* Vignette-only overlay — mantém cores vivas, escurece só as bordas para legibilidade */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,6,23,0.78)_100%)]"
-                />
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-t from-slate-950/90 to-transparent"
-                />
-                {/* Accent color wash on hover/selected */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    'pointer-events-none absolute inset-0 z-[2] transition-opacity duration-500 mix-blend-overlay',
-                    isSelected ? 'opacity-40' : 'opacity-0 group-hover:opacity-25',
-                  )}
-                  style={{
-                    background: `radial-gradient(ellipse at 50% 40%, hsl(${t.accent} / 0.6) 0%, transparent 70%)`,
-                  }}
-                />
-                {/* Scanline sheen removed per request */}
-                {/* SELECTED indicator: corner brackets */}
-                {isSelected && (
-                  <>
-                    <span aria-hidden className="absolute top-1 left-1 z-30 h-3 w-3 border-t-2 border-l-2 rounded-tl-sm" style={{ borderColor: `hsl(${t.accent})` }} />
-                    <span aria-hidden className="absolute top-1 right-1 z-30 h-3 w-3 border-t-2 border-r-2 rounded-tr-sm" style={{ borderColor: `hsl(${t.accent})` }} />
-                    <span aria-hidden className="absolute bottom-1 left-1 z-30 h-3 w-3 border-b-2 border-l-2 rounded-bl-sm" style={{ borderColor: `hsl(${t.accent})` }} />
-                    <span aria-hidden className="absolute bottom-1 right-1 z-30 h-3 w-3 border-b-2 border-r-2 rounded-br-sm" style={{ borderColor: `hsl(${t.accent})` }} />
-                  </>
-                )}
-                {/* Halo: ALFA usa variante exclusiva; demais compartilham .team-halo */}
-                {t.key === 'ALFA' ? (
-                  <span aria-hidden className="alfa-halo" />
-                ) : (
-                  <span aria-hidden className="team-halo" />
-                )}
-
-                {/* 3D Security Object — <picture> AVIF/WebP/PNG + skeleton blur-up */}
-                <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0.5 pt-2 sm:p-2 sm:pt-4 [perspective:600px]">
-                  <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
-                </div>
-
-
-
-
-                {/* top accent line */}
-                <span
-                  aria-hidden
-                  className="absolute top-0 left-0 h-px w-full"
-                  style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }}
-                />
-                {/* live pulse dot (reação) */}
-                <span
-                  aria-hidden
-                  className="absolute top-2 left-2 z-30 flex h-2 w-2"
-                >
-                  <span
-                    className="absolute inset-0 rounded-full animate-ping opacity-70"
-                    style={{ background: `hsl(${t.accent})` }}
-                  />
-                  <span
-                    className="relative h-2 w-2 rounded-full"
-                    style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 8px hsl(${t.accent} / 0.9)` }}
-                  />
-                </span>
-                <span
-                  className="absolute top-1.5 right-1.5 z-30 font-mono text-[8.5px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded backdrop-blur-md border"
-                  style={{
-                    color: `hsl(${t.accent})`,
-                    borderColor: `hsl(${t.accent} / 0.5)`,
-                    background: `hsl(${t.accent} / 0.12)`,
-                  }}
-                >
-                  {t.op}
-                </span>
-                {(() => {
-                  // Deriva gradiente metálico automaticamente: mantém H e S da equipe,
-                  // varia APENAS L em stops fixos (highlight → base → sombra → rebote → base escura).
-                  const [h, s] = t.accent.split(' ');
-                  const L = { hi: 88, up: 62, mid: 32, lo: 55, base: 24, deep: 12, bevelHi: 96, bevelLo: 18, glow: 95 } as const;
-                  const c = (l: number, a?: number) =>
-                    a === undefined ? `hsl(${h} ${s} ${l}%)` : `hsl(${h} ${s} ${l}% / ${a})`;
-                  const uid = `tn-${t.key}`;
-                  const stops: { off: string; l: number }[] = [
-                    { off: '0%',   l: L.hi },
-                    { off: '35%',  l: L.up },
-                    { off: '52%',  l: L.mid },
-                    { off: '68%',  l: L.lo },
-                    { off: '100%', l: L.base },
-                  ];
-                  return (
-                    <div className="relative z-20 flex flex-col gap-0.5 px-2 pb-2 sm:gap-1 sm:px-2.5 sm:pb-2">
-                      <svg viewBox="0 0 300 72" className="block w-full h-11 min-[390px]:h-12 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
-                        <defs>
-                          <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
-                            {stops.map((st) => (
-                              <stop key={st.off} offset={st.off} stopColor={c(st.l)} />
-                            ))}
-                          </linearGradient>
-                          <linearGradient id={`${uid}-bevel`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%"   stopColor={c(L.bevelHi, 0.95)} />
-                            <stop offset="50%"  stopColor={c(L.up, 0.25)} />
-                            <stop offset="100%" stopColor={c(L.bevelLo, 0.95)} />
-                          </linearGradient>
-                          <linearGradient id={`${uid}-sheen`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%"   stopColor={c(L.glow, 0.55)} />
-                            <stop offset="100%" stopColor={c(L.glow, 0)} />
-                          </linearGradient>
-                          <filter id={`${uid}-shadow`} x="-20%" y="-20%" width="140%" height="160%">
-                            <feDropShadow dx="0" dy="1" stdDeviation="0.5" floodColor="#000" floodOpacity="0.95" />
-                            <feDropShadow dx="0" dy="4" stdDeviation="3"   floodColor="#000" floodOpacity="0.65" />
-                          </filter>
-                        </defs>
-                        <g
-                          filter={`url(#${uid}-shadow)`}
-                          fontFamily="'Stardos Stencil','Saira Condensed','Oswald','Impact',sans-serif"
-                          fontWeight={700}
-                          textAnchor="middle"
-                          style={{ fontStretch: 'condensed' }}
-                        >
-                          {/* extrusão */}
-                          <text x="150" y="54" fontSize="56" fill={c(L.deep)}  transform="translate(0,3)" letterSpacing="6">{t.key}</text>
-                          <text x="150" y="54" fontSize="56" fill={c(L.base)}  transform="translate(0,1.5)" letterSpacing="6">{t.key}</text>
-                          {/* face */}
-                          <text x="150" y="54" fontSize="56" fill={`url(#${uid}-fill)`} stroke={`url(#${uid}-bevel)`} strokeWidth="1.4" paintOrder="stroke" letterSpacing="6">{t.key}</text>
-                          {/* sheen superior */}
-                          <text x="150" y="54" fontSize="56" fill={`url(#${uid}-sheen)`} letterSpacing="6" clipPath="inset(0 0 58% 0)">{t.key}</text>
-                        </g>
-                      </svg>
-
-                      <span
-                        className="font-mono text-[9px] min-[390px]:text-[9.5px] sm:text-[9.5px] uppercase tracking-[0.18em] sm:tracking-[0.28em] truncate text-slate-200"
-                        style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
-                      >
-                        {t.motto}
-                      </span>
-                    </div>
-                  );
-                })()}
-              </button>
-              );
-            })}
+                team={t}
+                idx={idx}
+                isSelected={selectedTeam === t.key}
+                onSelect={handleSelect}
+                className={t.key === 'CHARLIE' ? 'lg:hidden' : ''}
+              />
+            ))}
           </div>
+
 
           {/* ============ TACTICAL STATUS RIBBON — SVG HUD (desktop; no mobile já está no topo) ============ */}
           <div className="hidden sm:block">
