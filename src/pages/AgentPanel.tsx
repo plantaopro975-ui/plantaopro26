@@ -477,14 +477,22 @@ export default function AgentPanel() {
                 aria-label="Cabeçalho e navegação do painel"
                 style={{ backgroundColor: 'rgb(2, 6, 23)' }}
                 className={cn(
-                  'sticky top-0 z-50 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1',
-                  // 100% opaco em qualquer navegador — sem translucidez que vaze conteúdo por trás
+                  // Full-bleed: ocupa 100vw independentemente do max-w do container,
+                  // impedindo qualquer conteúdo de aparecer nas laterais ao rolar.
+                  'sticky top-0 z-50 relative left-1/2 -translate-x-1/2 w-screen',
                   'bg-slate-950',
                   'shadow-[0_8px_18px_-10px_rgba(0,0,0,0.9)]',
                   'focus-within:ring-1 focus-within:ring-amber-500/40',
-                  compact ? 'space-y-1.5' : 'space-y-2'
+                  'pt-1 pb-1'
                 )}
               >
+                <div
+                  className={cn(
+                    'mx-auto w-full',
+                    compact ? 'max-w-[880px] space-y-1.5 px-2 sm:px-3 md:px-4' : 'max-w-[1040px] space-y-2 px-2 sm:px-3 md:px-4 lg:px-5'
+                  )}
+                >
+
 
                 {/* Professional Header Bar */}
                 <AgentPanelHeader 
