@@ -115,6 +115,29 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
   const dateStr = format(shiftDate, 'yyyy-MM-dd');
   const isNew = !shift?.id;
 
+  // Cross-day: 24h sempre atravessa; noturno atravessa se fim <= início.
+  const [sh, sm] = startTime.split(':').map(Number);
+  const [eh, em] = endTime.split(':').map(Number);
+  const startMin = sh * 60 + sm;
+  const endMin = eh * 60 + em;
+  const crossesDay = kind === '24h' || (kind !== 'vacation' && endMin <= startMin);
+  const durationMin = kind === 'vacation'
+    ? 0
+    : kind === '24h'
+      ? 24 * 60
+      : crossesDay
+        ? 24 * 60 - startMin + endMin
+        : endMin - startMin;
+  const durationLabel = `${Math.floor(durationMin / 60)}h${durationMin % 60 ? String(durationMin % 60).padStart(2, '0') : ''}`;
+  const nextDay = new Date(shiftDate);
+  nextDay.setDate(nextDay.getDate() + 1);
+  const endDateLabel = crossesDay
+    ? format(nextDay, "dd/MM/yyyy", { locale: ptBR })
+    : format(shiftDate, "dd/MM/yyyy", { locale: ptBR });
+  const rangeSummary = kind === 'vacation'
+    ? 'Dia inteiro (folga/férias/licença)'
+    : `${startTime} de ${format(shiftDate, "dd/MM", { locale: ptBR })} → ${endTime} de ${format(crossesDay ? nextDay : shiftDate, "dd/MM", { locale: ptBR })}${crossesDay ? ' (dia seguinte)' : ''} · ${durationLabel}`;
+
   const performSave = async () => {
     setConfirmOpen(false);
     const parsed = formSchema.safeParse({ kind, start_time: startTime, end_time: endTime });
@@ -230,6 +253,15 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
               </p>
             )}
 
+            <div
+              className="text-[12px] leading-snug rounded border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-amber-100"
+              aria-live="polite"
+              data-testid="shift-range-summary"
+            >
+              <span className="uppercase tracking-wide text-[10px] text-amber-300/80 block mb-0.5">Resumo</span>
+              {rangeSummary}
+            </div>
+
             {nightMismatch && (
               <div className="flex items-start gap-2 text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded px-2.5 py-1.5">
                 <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
@@ -278,8 +310,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
           <AlertDialogHeader>
             <AlertDialogTitle>Deseja realmente alterar este plantão?</AlertDialogTitle>
             <AlertDialogDescription className="text-slate-400">
-              Alteração para {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })} — {KIND_LABEL[kind]}
-              {kind !== 'vacation' && ` (${startTime} → ${endTime})`}.
+              {KIND_LABEL[kind]} · {rangeSummary}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
