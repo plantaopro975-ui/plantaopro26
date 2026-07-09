@@ -6,6 +6,7 @@ export type UplinkStatus = 'online' | 'degraded' | 'offline';
 interface OperationalMetrics {
   units: number;
   agentsActive: number;
+  agentsRegistered: number;
   divisions: number;
   uplink: UplinkStatus;
   loading: boolean;
@@ -14,12 +15,15 @@ interface OperationalMetrics {
 /**
  * Central operational KPIs surfaced in the hero Briefing panel.
  * - Real counts from `units` and `agents`
+ * - `agentsRegistered` = total de agentes cadastrados (independente de status)
+ * - `agentsActive` = agentes com is_active=true (subconjunto)
  * - Uplink status: online when Realtime channel subscribes, degraded on retry,
  *   offline when navigator reports no connection.
  */
 export function useOperationalMetrics(): OperationalMetrics {
   const [units, setUnits] = useState(0);
   const [agentsActive, setAgentsActive] = useState(0);
+  const [agentsRegistered, setAgentsRegistered] = useState(0);
   const [uplink, setUplink] = useState<UplinkStatus>(
     typeof navigator !== 'undefined' && !navigator.onLine ? 'offline' : 'degraded'
   );
@@ -29,16 +33,18 @@ export function useOperationalMetrics(): OperationalMetrics {
     let cancelled = false;
     (async () => {
       try {
-        const [u, a] = await Promise.all([
+        const [u, active, total] = await Promise.all([
           supabase.from('units').select('id', { count: 'exact', head: true }),
           supabase
             .from('agents')
             .select('id', { count: 'exact', head: true })
             .eq('is_active', true),
+          supabase.from('agents').select('id', { count: 'exact', head: true }),
         ]);
         if (cancelled) return;
         setUnits(u.count ?? 0);
-        setAgentsActive(a.count ?? 0);
+        setAgentsActive(active.count ?? 0);
+        setAgentsRegistered(total.count ?? 0);
       } catch {
         // silent — hero has fallbacks
       } finally {
