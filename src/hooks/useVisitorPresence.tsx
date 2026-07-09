@@ -9,15 +9,31 @@ import { supabase } from '@/integrations/supabase/client';
  * logado ou não. É público — usa somente a anon key.
  *
  * Estratégia de identificação:
- *   - Um visitor_id estável é gerado uma vez por navegador e persistido em
- *     localStorage. Múltiplas abas do mesmo navegador contam como 1 visitante.
+ *   - Um `visitor_id` estável é gerado uma vez por navegador e persistido em
+ *     localStorage. Múltiplas abas do mesmo navegador COMPARTILHAM o mesmo id
+ *     e, no `presenceState()`, aparecem sob a MESMA chave — portanto contam
+ *     como 1 visitante único.
  *   - IP e MAC NÃO são acessíveis via JavaScript no navegador (privacidade e
  *     restrição do runtime). Presence é a fonte de verdade prática e não
  *     depende de rastreamento invasivo.
+ *
+ * Expiração / cleanup:
+ *   - O canal Realtime tem heartbeat próprio (~30s). Se o socket cair sem
+ *     aviso, a presença é removida automaticamente após o timeout do servidor.
+ *   - Para remoção IMEDIATA em cenários controlados (fechar aba, navegar para
+ *     outro site, minimizar por muito tempo) chamamos `untrack()` explicitamente
+ *     em `pagehide` / `beforeunload` / `visibilitychange=hidden` — isso propaga
+ *     um evento `leave` para os demais assinantes em <1s.
+ *   - `VISITOR_HIDDEN_TIMEOUT_MS` (padrão 60 s) controla depois de quanto tempo
+ *     em background o visitante é considerado offline. Ao voltar ao foco, o
+ *     `track()` é reemitido.
  */
 
 const CHANNEL = 'site-visitors';
 const STORAGE_KEY = 'plantaopro:visitor_id';
+
+/** Após este tempo em segundo plano, o visitante é considerado offline. */
+export const VISITOR_HIDDEN_TIMEOUT_MS = 60_000;
 
 function getVisitorId(): string {
   try {
@@ -37,7 +53,50 @@ type Listener = (count: number) => void;
 let sharedChannel: ReturnType<typeof supabase.channel> | null = null;
 let refCount = 0;
 let lastCount = 0;
+let hiddenTimer: ReturnType<typeof setTimeout> | null = null;
+let listenersInstalled = false;
 const listeners = new Set<Listener>();
+
+async function trackVisitor(channel: ReturnType<typeof supabase.channel>) {
+  await channel.track({
+    joined_at: new Date().toISOString(),
+    path: typeof window !== 'undefined' ? window.location.pathname : '/',
+  });
+}
+
+function installLifecycleListeners() {
+  if (listenersInstalled || typeof window === 'undefined') return;
+  listenersInstalled = true;
+
+  const removeNow = () => {
+    if (!sharedChannel) return;
+    try {
+      sharedChannel.untrack();
+    } catch {
+      /* noop */
+    }
+  };
+
+  // Aba fechada ou navegação para outro site → remover imediatamente.
+  window.addEventListener('pagehide', removeNow);
+  window.addEventListener('beforeunload', removeNow);
+
+  // Aba minimizada/em background: aguarda timeout e então remove.
+  // Ao voltar ao foco, reemite track para reingressar.
+  document.addEventListener('visibilitychange', () => {
+    if (!sharedChannel) return;
+    if (document.visibilityState === 'hidden') {
+      if (hiddenTimer) clearTimeout(hiddenTimer);
+      hiddenTimer = setTimeout(removeNow, VISITOR_HIDDEN_TIMEOUT_MS);
+    } else {
+      if (hiddenTimer) {
+        clearTimeout(hiddenTimer);
+        hiddenTimer = null;
+      }
+      void trackVisitor(sharedChannel);
+    }
+  });
+}
 
 function ensureChannel() {
   if (sharedChannel) return sharedChannel;
@@ -53,13 +112,11 @@ function ensureChannel() {
     })
     .subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
-        await channel.track({
-          joined_at: new Date().toISOString(),
-          path: typeof window !== 'undefined' ? window.location.pathname : '/',
-        });
+        await trackVisitor(channel);
       }
     });
   sharedChannel = channel;
+  installLifecycleListeners();
   return channel;
 }
 
@@ -76,6 +133,11 @@ export function useVisitorPresence(): number {
       listeners.delete(setCount);
       refCount -= 1;
       if (refCount <= 0 && sharedChannel) {
+        try {
+          sharedChannel.untrack();
+        } catch {
+          /* noop */
+        }
         supabase.removeChannel(sharedChannel);
         sharedChannel = null;
         refCount = 0;
