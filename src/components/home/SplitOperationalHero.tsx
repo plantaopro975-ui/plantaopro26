@@ -5,6 +5,7 @@ import { OperationalStatusRibbon } from './OperationalStatusRibbon';
 import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
+import { useVisitorPresence } from '@/hooks/useVisitorPresence';
 import loginHeroImage from '@/assets/login-hero.jpg';
 
 
