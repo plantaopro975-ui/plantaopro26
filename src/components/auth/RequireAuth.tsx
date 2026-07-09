@@ -61,7 +61,6 @@ const AuthLoader: React.FC<{ debugTag?: string }> = ({ debugTag }) => {
  * no cliente supabase) e o `onAuthStateChange` que atualiza o React.
  */
 const GRACE_INITIAL_MS = 400;
-const GRACE_INITIAL_MS = 400;
 const GRACE_MAX_MS = 2500;
 
 /**
