@@ -249,7 +249,9 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
   );
 }
 
+export function SplitOperationalHero({ onTeamClick }: Props) {
   // Preload only the first-in-viewport 3D image (ALFA)
+
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'preload';
