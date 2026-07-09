@@ -125,9 +125,10 @@ export default function AgentPanel() {
 
 
 
-  // Auto-sync on reconnect: when the device comes back online, refresh all
-  // React Query caches so stale data (shifts, leaves, team) updates and any
-  // previous error states clear. Fires a single info toast for feedback.
+  // Auto-sync on reconnect: when the device comes back online, refresh only
+  // ACTIVE React Query caches (mounted hooks) so stale data updates instantly
+  // and previous error states clear — without triggering a heavy refetch
+  // storm across every inactive query.
   const queryClient = useQueryClient();
   const wasOfflineRef = useRef(false);
   useEffect(() => {
@@ -141,10 +142,14 @@ export default function AgentPanel() {
         title: 'Sincronizando dados',
         description: 'Atualizando informações após reconexão...',
       });
-      // Invalidate everything so hooks refetch fresh data
-      queryClient.invalidateQueries();
+      // Only refetch queries currently mounted — light on CPU/network
+      queryClient.invalidateQueries({ refetchType: 'active' });
+      // Clear stale errors from mutations so buttons re-enable cleanly
+      queryClient.getMutationCache().clear();
     }
   }, [isOnline, queryClient]);
+
+
 
 
 
