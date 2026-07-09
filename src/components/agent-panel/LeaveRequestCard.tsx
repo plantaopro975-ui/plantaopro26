@@ -208,11 +208,13 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
   const handleDateClick = (date: Date | undefined) => {
     if (!date) return;
-    
+
     const alreadyRegistered = leaveDates.some(d => isSameDay(d, date));
-    
+
     if (alreadyRegistered) {
-      toast.error('Este dia já possui folga registrada');
+      // Show details dialog for existing leaves on that date
+      setDetailsDate(date);
+      setShowDetailsDialog(true);
       return;
     }
 
