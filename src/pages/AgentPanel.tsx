@@ -543,17 +543,17 @@ export default function AgentPanel() {
               <div
                 role="region"
                 aria-label="Cabeçalho e navegação do painel"
-                style={{ backgroundColor: 'rgb(2, 6, 23)' }}
                 className={cn(
-                  // Full-bleed: ocupa 100vw independentemente do max-w do container,
-                  // impedindo qualquer conteúdo de aparecer nas laterais ao rolar.
+                  // Full-bleed sticky wrapper — background REMOVIDO para que o
+                  // backdrop SVG (escudo/radar/grade) apareça atrás. Os cards
+                  // internos já têm bg escuro próprio, então legibilidade
+                  // permanece intacta.
                   'sticky top-0 z-50 relative left-1/2 -translate-x-1/2 w-screen',
-                  'bg-slate-950',
-                  'shadow-[0_8px_18px_-10px_rgba(0,0,0,0.9)]',
                   'focus-within:ring-1 focus-within:ring-amber-500/40',
                   'pt-1 pb-1'
                 )}
               >
+
                 <div
                   className={cn(
                     'mx-auto w-full',
