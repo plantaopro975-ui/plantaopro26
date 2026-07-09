@@ -316,7 +316,7 @@ export function OperationalStatusRibbon() {
               <text y="18" fontSize="8.5" letterSpacing="1.2" fill="hsl(45 92% 85%)" fontWeight="600">GOV / SEJUSP</text>
             </g>
 
-            <g transform="translate(720,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace">
+            <g transform="translate(778,26)" fontFamily="'IBM Plex Mono', ui-monospace, monospace" textAnchor="end">
               <text y="-6" fontSize="9" letterSpacing="2" fill="hsl(45 98% 80%)" fontWeight="700">CANAL</text>
               <text y="8" fontSize="9" fontWeight="700" letterSpacing="1.6" fill="hsl(48 100% 88%)">SEGURO</text>
               <text y="18" fontSize="8.5" fontWeight="700" letterSpacing="1.2" fill="hsl(142 78% 75%)">AES-256 · ONLINE</text>
