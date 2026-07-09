@@ -48,7 +48,7 @@ export function SplashScreen() {
 
   return (
     <div
-      className={`splash-root fixed inset-0 z-[9999] overflow-hidden transition-opacity duration-500 ${
+      className={`splash-root fixed inset-0 z-[10050] overflow-hidden transition-opacity duration-500 ${
         fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
       aria-hidden={fadeOut}
