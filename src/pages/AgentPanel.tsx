@@ -473,15 +473,20 @@ export default function AgentPanel() {
             <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
               {/* Sticky combined block: Professional Header + Tabs Control Panel */}
               <div
-                role="banner"
-                aria-label="Cabeçalho e navegação"
+                role="region"
+                aria-label="Cabeçalho e navegação do painel"
                 className={cn(
                   'sticky top-0 z-40 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1',
-                  'bg-slate-950/75 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/60',
-                  'md:bg-gradient-to-b md:from-slate-950/95 md:via-slate-950/90 md:to-slate-950/80 md:backdrop-blur-xl',
+                  // Mobile: leve, translúcido, sem vazar conteúdo por baixo
+                  'bg-slate-950/55 backdrop-blur-sm supports-[backdrop-filter]:bg-slate-950/40',
+                  'shadow-[0_6px_16px_-12px_rgba(0,0,0,0.7)]',
+                  // Desktop: gradiente e blur mais fortes
+                  'md:bg-gradient-to-b md:from-slate-950/95 md:via-slate-950/88 md:to-slate-950/75 md:backdrop-blur-xl md:supports-[backdrop-filter]:bg-slate-950/70',
+                  'focus-within:ring-1 focus-within:ring-amber-500/40',
                   compact ? 'space-y-1.5' : 'space-y-2'
                 )}
               >
+
                 {/* Professional Header Bar */}
                 <AgentPanelHeader 
                   agent={{
