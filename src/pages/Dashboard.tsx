@@ -127,7 +127,7 @@ export default function Dashboard() {
               )}
 
               {/* Quick Access Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-2">
                 {([
                   { icon3d: 'building' as Icon3DName, text: 'Unidades',        color: 'text-blue-400',   bg: 'from-blue-500/20 to-blue-600/10',   route: '/units' },
                   { icon3d: 'team'     as Icon3DName, text: 'Agentes',         color: 'text-green-400',  bg: 'from-green-500/20 to-green-600/10', route: '/agents' },
@@ -137,13 +137,14 @@ export default function Dashboard() {
                   <div
                     key={i}
                     onClick={() => navigate(feature.route)}
-                    className={`relative flex items-center gap-2 p-2.5 bg-gradient-to-br ${feature.bg} rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors cursor-pointer group`}
+                    className={`relative flex items-center gap-2.5 md:gap-2 px-3 py-3 md:p-2.5 min-h-[62px] sm:min-h-[66px] md:min-h-[58px] bg-gradient-to-br ${feature.bg} rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors cursor-pointer group`}
                   >
-                    <div className={`p-1.5 rounded bg-slate-800/50 ${feature.color} group-hover:scale-110 transition-transform`}>
-                      <Icon3D name={feature.icon3d} size={20} />
-
+                    <div className={`p-2 md:p-1.5 rounded bg-slate-800/50 ${feature.color} group-hover:scale-110 transition-transform shrink-0`}>
+                      <Icon3D name={feature.icon3d} size={22} />
                     </div>
-                    <span className="text-xs font-medium text-slate-300">{feature.text}</span>
+                    <span className="text-[13px] md:text-xs font-bold md:font-medium tracking-tight md:tracking-normal text-slate-200 md:text-slate-300 leading-tight truncate">
+                      {feature.text}
+                    </span>
                   </div>
                 ))}
               </div>
