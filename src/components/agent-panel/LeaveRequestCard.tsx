@@ -1142,10 +1142,12 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
           <DialogFooter className="px-4 py-2.5 border-t border-slate-800 bg-slate-950/70">
             <Button
+              autoFocus
               variant="outline"
               size="sm"
               onClick={() => setShowDetailsDialog(false)}
-              className="border-slate-700 text-slate-300 hover:bg-slate-800 h-8 text-xs"
+              className="border-slate-700 text-slate-300 hover:bg-slate-800 h-9 text-xs min-w-[80px]"
+              aria-label="Fechar detalhes da folga (ou pressione Esc)"
             >
               Fechar
             </Button>
