@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { toast } from 'sonner';
-import heroImage from '@/assets/hero-command.jpg';
+import heroImage from '@/assets/hero-command.webp';
 import heroImageWebp from '@/assets/hero-command.webp';
 import iconShieldAsset from '@/assets/icons-3d/noir-shield.png.asset.json';
 const iconShield = iconShieldAsset.url;
@@ -16,7 +16,7 @@ const agentFigure = agentFigureAsset.url;
 import agentFigureWebp from '@/assets/tactical-agent-figure.webp';
 import policeVehicle from '@/assets/police-vehicle-3d.png';
 import policeVehicleWebp from '@/assets/police-vehicle-3d.webp';
-import comandoCover from '@/assets/comando-operacional-cover.jpg';
+import comandoCover from '@/assets/comando-operacional-cover.webp';
 import comandoCoverWebp from '@/assets/comando-operacional-cover.webp';
 import { getTeamPoster, getTeamPosterWebp, getTeamColors } from '@/lib/teamAssets';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
