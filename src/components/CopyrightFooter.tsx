@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { ShieldCheck, MapPin, Cpu, Radio, Lock } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
@@ -8,6 +8,8 @@ const iseAcreBadge = iseAcreBadgeAsset.url;
 interface CopyrightFooterProps {
   className?: string;
   compact?: boolean;
+  leftSlot?: ReactNode;
+  rightSlot?: ReactNode;
 }
 
 /**
@@ -15,7 +17,8 @@ interface CopyrightFooterProps {
  * Tactical public-safety identity with steel cyan accents.
  */
 export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
-  ({ className, compact = false }, ref) => {
+  ({ className, compact = false, leftSlot, rightSlot }, ref) => {
+
     const year = new Date().getFullYear();
 
     if (compact) {
