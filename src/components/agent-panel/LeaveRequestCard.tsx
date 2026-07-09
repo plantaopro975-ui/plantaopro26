@@ -266,6 +266,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   };
 
   const handleDelete = async (leaveId: string) => {
+    setCancelingId(leaveId);
+    const toastId = toast.loading('Cancelando folga...');
     try {
       const { error } = await (supabase as any)
         .from('agent_leaves')
@@ -273,11 +275,14 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
         .eq('id', leaveId);
 
       if (error) throw error;
-      toast.success('Folga cancelada');
-      fetchLeaves();
+      toast.success('Folga cancelada com sucesso', { id: toastId });
+      setConfirmCancelId(null);
+      await fetchLeaves();
     } catch (error) {
       console.error('Error deleting leave:', error);
-      toast.error('Erro ao cancelar folga');
+      toast.error('Erro ao cancelar folga', { id: toastId });
+    } finally {
+      setCancelingId(null);
     }
   };
 
