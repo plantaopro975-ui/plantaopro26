@@ -90,16 +90,19 @@ export function ShiftMiniCalendar({
       .slice(0, 8);
 
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn("space-y-1.5 md:space-y-2 min-w-0", className)}>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+          <span className="text-[9px] md:text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">
             Próximos Plantões
           </span>
           <div className="flex-1 h-px bg-slate-700/50" />
         </div>
-        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div
+          className="flex gap-1 md:gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1"
+          style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}
+        >
           {upcomingShifts.length === 0 ? (
-            <span className="text-xs text-slate-500">Sem plantões</span>
+            <span className="text-[11px] md:text-xs text-slate-500">Sem plantões</span>
           ) : (
             upcomingShifts.map((s) => {
               const d = new Date(s.shift_date);
@@ -110,17 +113,17 @@ export function ShiftMiniCalendar({
                   type="button"
                   onClick={() => onDayWithShiftClick?.(s.id)}
                   className={cn(
-                    "flex-shrink-0 flex flex-col items-center justify-center rounded-lg border px-2.5 py-1.5 transition-all",
+                    "flex-shrink-0 flex flex-col items-center justify-center rounded-lg border px-1.5 py-1 md:px-2.5 md:py-1.5 transition-all min-w-[38px] md:min-w-[48px] max-w-[52px] md:max-w-none",
                     today
                       ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300"
                       : "bg-amber-500/10 border-amber-500/40 text-amber-300 hover:bg-amber-500/20"
                   )}
                 >
-                  <span className="text-[9px] font-medium uppercase tracking-wider">
+                  <span className="text-[8px] md:text-[9px] font-medium uppercase tracking-wider truncate max-w-full">
                     {format(d, "EEE", { locale: ptBR })}
                   </span>
-                  <span className="text-sm font-black tabular-nums">{format(d, "dd")}</span>
-                  <span className="text-[9px] text-slate-400">{format(d, "MMM", { locale: ptBR })}</span>
+                  <span className="text-xs md:text-sm font-black tabular-nums leading-none">{format(d, "dd")}</span>
+                  <span className="text-[8px] md:text-[9px] text-slate-400 truncate max-w-full">{format(d, "MMM", { locale: ptBR })}</span>
                 </button>
               );
             })
@@ -129,6 +132,7 @@ export function ShiftMiniCalendar({
       </div>
     );
   }
+
 
   // GRID variant: full month view
   return (
