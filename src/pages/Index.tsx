@@ -128,7 +128,7 @@ export default function Index() {
 
   // CPF check
   const [checkCpf, setCheckCpf] = useState('');
-  const [foundAgent, setFoundAgent] = useState<{ name: string; team: string | null } | null>(null);
+  const [foundAgent, setFoundAgent] = useState<{ name: string; team: string | null; unit?: string | null } | null>(null);
   const [isSearchingAgent, setIsSearchingAgent] = useState(false);
   
   // Login form
