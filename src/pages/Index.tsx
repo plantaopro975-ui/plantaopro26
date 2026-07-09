@@ -502,11 +502,18 @@ export default function Index() {
 
     try {
       // cleanCpf validated above
-      const { data: existingAgent } = await supabase
-        .from('agents')
-        .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at, unit:units(name, municipality)')
-        .eq('cpf', cleanCpf)
-        .maybeSingle();
+      const { data: preRows } = await (supabase as any)
+        .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+      const existingAgent = Array.isArray(preRows) && preRows.length
+        ? {
+            ...preRows[0],
+            cpf: cleanCpf,
+            unit: preRows[0].unit_name
+              ? { name: preRows[0].unit_name, municipality: preRows[0].unit_municipality }
+              : null,
+          }
+        : null;
+
 
       if (existingAgent) {
         // 1. Bloqueio por desativação manual
