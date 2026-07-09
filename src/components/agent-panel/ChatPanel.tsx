@@ -840,11 +840,11 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                     key={msg.id}
                     className={`flex gap-2 group ${isOwn ? 'flex-row-reverse' : ''}`}
                   >
-                    <Avatar className={`h-7 w-7 flex-shrink-0 border ${
+                    <Avatar className={`h-6 w-6 md:h-7 md:w-7 flex-shrink-0 border ${
                       isLeaderRole ? 'border-amber-500/50' : 'border-zinc-600/50'
                     }`}>
                       <AvatarImage src={(msg.sender as any)?.avatar_url} />
-                      <AvatarFallback className={`text-[10px] font-bold ${
+                      <AvatarFallback className={`text-[9px] md:text-[10px] font-bold ${
                         isOwn ? `${currentBubbleStyle.own} ${currentBubbleStyle.ownText}` : 
                         isLeaderRole ? 'bg-amber-600 text-white' :
                         'bg-zinc-700 text-zinc-200'
@@ -852,7 +852,8 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                         {(msg.sender?.name || 'A').charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className={`max-w-[75%] ${isOwn ? 'items-end' : 'items-start'}`}>
+                    <div className={`max-w-[82%] md:max-w-[75%] min-w-0 ${isOwn ? 'items-end' : 'items-start'}`}>
+
                       {!isOwn && (
                         <div className="mb-0.5 px-1 flex items-center gap-1">
                           {isLeaderRole && <Crown className="h-2.5 w-2.5 text-amber-500" />}
