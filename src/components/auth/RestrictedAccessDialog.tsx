@@ -31,7 +31,9 @@ export function RestrictedAccessDialog({ open, onOpenChange, targetLabel }: Rest
             alt=""
             aria-hidden
             className="absolute inset-0 h-full w-full object-cover"
-            loading="lazy"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" />
 
