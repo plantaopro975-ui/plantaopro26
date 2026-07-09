@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import heroAsset from '@/assets/master-login-hero.jpg.asset.json';
 
@@ -11,11 +11,30 @@ interface MasterLoginDialogProps {
 const GOLD = '#c9a84c';
 const GOLD_SOFT = '#f0d78c';
 
+// Pré-carrega o hero uma única vez assim que o módulo é importado,
+// para que o dialog abra instantaneamente com a imagem já em cache.
+if (typeof window !== 'undefined') {
+  const HREF = heroAsset.url;
+  if (!document.querySelector(`link[rel="preload"][href="${HREF}"]`)) {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = HREF;
+    (link as HTMLLinkElement & { fetchPriority?: string }).fetchPriority = 'high';
+    document.head.appendChild(link);
+    // dispara download imediato
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = HREF;
+  }
+}
+
 /**
  * Master Login Dialog — Command Console edition.
  * Compact 380px window, real command-center photo header, SVG ornaments,
  * monospaced + serif typography appropriate for an administrator console.
  */
+
 export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
