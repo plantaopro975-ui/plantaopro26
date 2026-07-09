@@ -26,7 +26,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CompactTimeField } from '@/components/ui/compact-time-field';
 import { AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+
 
 export type ShiftEditRecord = {
   id?: string;
@@ -161,9 +163,15 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
         : await supabase.from('agent_shifts').upsert(payload, { onConflict: 'agent_id,shift_date' });
       if (error) throw error;
       toast.success(isNew ? 'Plantão cadastrado' : 'Plantão alterado');
-      onOpenChange(false);
-      onSaved?.();
+      // Defer parent close to next tick so the nested AlertDialog fully unmounts
+      // before Radix tries to release the pointer-events lock on <body>.
+      setTimeout(() => {
+        document.body.style.pointerEvents = '';
+        onOpenChange(false);
+        onSaved?.();
+      }, 50);
     } catch (e: any) {
+
       const msg = e?.message || 'Falha ao salvar plantão';
       if (msg.includes('NIGHT_SHIFT_LOCK')) {
         toast.error('Horário noturno bloqueado: use 22:00 → 06:00 durante a janela noturna.');
@@ -224,28 +232,23 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="start-time" className="text-xs uppercase tracking-wide text-slate-400">Início</Label>
-                  <Input
+                  <CompactTimeField
                     id="start-time"
-                    type="time"
                     value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className="bg-slate-800 border-slate-700 tabular-nums min-h-11"
-                    autoComplete="off"
+                    onChange={setStartTime}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="end-time" className="text-xs uppercase tracking-wide text-slate-400">Fim</Label>
-                  <Input
+                  <CompactTimeField
                     id="end-time"
-                    type="time"
                     value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className="bg-slate-800 border-slate-700 tabular-nums min-h-11"
-                    autoComplete="off"
+                    onChange={setEndTime}
                   />
                 </div>
               </div>
             )}
+
 
             {kind === 'vacation' && (
               <p className="text-xs text-slate-400 rounded border border-slate-700 bg-slate-800/60 px-3 py-2">
