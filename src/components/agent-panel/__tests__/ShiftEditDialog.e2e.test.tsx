@@ -85,6 +85,11 @@ describe('ShiftEditDialog · E2E editar → Noturno → confirmar', () => {
     expect(summary.textContent).toMatch(/07:00/);
     expect(summary.textContent?.toLowerCase()).toContain('dia seguinte');
 
+    const nightAlert = await screen.findByTestId('night-shift-alert');
+    expect(nightAlert.textContent?.toLowerCase()).toContain('plantão noturno identificado');
+    expect(nightAlert.textContent).toMatch(/10\/07\/2026/);
+    expect(nightAlert.textContent).toMatch(/11\/07\/2026/);
+
     // 2) Clicar em "Salvar alterações" (abre confirmação inline)
     await user.click(screen.getByRole('button', { name: /salvar altera/i }));
 

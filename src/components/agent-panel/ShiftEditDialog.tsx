@@ -27,7 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CompactTimeField } from '@/components/ui/compact-time-field';
-import { AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+import { AlertTriangle, Loader2, Moon, Trash2 } from 'lucide-react';
 
 
 export type ShiftEditRecord = {
@@ -78,6 +78,34 @@ export function inferKind(s?: ShiftEditRecord | null): ShiftKind {
   return '24h';
 }
 
+const toMinutes = (value: string) => {
+  const [hours, minutes] = value.slice(0, 5).split(':').map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return 0;
+  return hours * 60 + minutes;
+};
+
+export function shiftCrossesDay(kind: ShiftKind, startTime: string, endTime: string): boolean {
+  if (kind === 'vacation') return false;
+  if (kind === '24h') return true;
+  return toMinutes(endTime) <= toMinutes(startTime);
+}
+
+export function shiftDurationMinutes(kind: ShiftKind, startTime: string, endTime: string): number {
+  if (kind === 'vacation') return 0;
+  if (kind === '24h') return 24 * 60;
+  const startMin = toMinutes(startTime);
+  const endMin = toMinutes(endTime);
+  return endMin <= startMin ? 24 * 60 - startMin + endMin : endMin - startMin;
+}
+
+export function isNightShiftSelection(kind: ShiftKind, startTime: string, endTime: string): boolean {
+  if (kind === 'vacation' || kind === '24h') return false;
+  if (kind === 'night') return true;
+  const startMin = toMinutes(startTime);
+  const endMin = toMinutes(endTime);
+  return endMin <= startMin && startMin >= 19 * 60 && endMin <= 7 * 60;
+}
+
 const timeSchema = z.string().regex(/^\d{2}:\d{2}$/, 'Formato HH:MM');
 const formSchema = z
   .object({
@@ -87,6 +115,10 @@ const formSchema = z
   })
   .refine((v) => v.kind === 'vacation' || v.kind === '24h' || v.start_time !== v.end_time, {
     message: 'Início e fim não podem ser iguais',
+    path: ['end_time'],
+  })
+  .refine((v) => v.kind !== 'night' || shiftCrossesDay(v.kind, v.start_time, v.end_time), {
+    message: 'Plantão noturno deve terminar no dia seguinte. Use 19:00 → 07:00 ou outro intervalo que atravesse a meia-noite.',
     path: ['end_time'],
   });
 
@@ -117,6 +149,11 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
     const d = KIND_DEFAULTS[next];
     setStartTime(d.start);
     setEndTime(d.end);
+    if (next === 'night') {
+      const nextDay = new Date(shiftDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      toast.info(`Plantão noturno identificado: ${d.start} de ${format(shiftDate, 'dd/MM/yyyy', { locale: ptBR })} → ${d.end} de ${format(nextDay, 'dd/MM/yyyy', { locale: ptBR })}.`);
+    }
   };
 
   const nightMismatch = false;
@@ -124,18 +161,9 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
   const isNew = !shift?.id;
 
   // Cross-day: 24h sempre atravessa; noturno atravessa se fim <= início.
-  const [sh, sm] = startTime.split(':').map(Number);
-  const [eh, em] = endTime.split(':').map(Number);
-  const startMin = sh * 60 + sm;
-  const endMin = eh * 60 + em;
-  const crossesDay = kind === '24h' || (kind !== 'vacation' && endMin <= startMin);
-  const durationMin = kind === 'vacation'
-    ? 0
-    : kind === '24h'
-      ? 24 * 60
-      : crossesDay
-        ? 24 * 60 - startMin + endMin
-        : endMin - startMin;
+  const crossesDay = shiftCrossesDay(kind, startTime, endTime);
+  const durationMin = shiftDurationMinutes(kind, startTime, endTime);
+  const isNightPlan = isNightShiftSelection(kind, startTime, endTime);
   const durationLabel = `${Math.floor(durationMin / 60)}h${durationMin % 60 ? String(durationMin % 60).padStart(2, '0') : ''}`;
   const nextDay = new Date(shiftDate);
   nextDay.setDate(nextDay.getDate() + 1);
@@ -277,6 +305,21 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
               <span className="uppercase tracking-wide text-[10px] text-amber-300/80 block mb-0.5">Resumo</span>
               {rangeSummary}
             </div>
+
+            {isNightPlan && (
+              <div
+                className="flex items-start gap-2 rounded border border-indigo-400/40 bg-indigo-500/10 px-3 py-2 text-[11px] leading-snug text-indigo-100"
+                role="status"
+                aria-live="polite"
+                data-testid="night-shift-alert"
+              >
+                <Moon className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-indigo-300" />
+                <span>
+                  <strong className="text-indigo-200">Plantão noturno identificado.</strong>{' '}
+                  Inicia em {format(shiftDate, 'dd/MM/yyyy', { locale: ptBR })} às {startTime} e encerra em {endDateLabel} às {endTime}{crossesDay ? ' (dia seguinte)' : ''}.
+                </span>
+              </div>
+            )}
 
             {nightMismatch && (
               <div className="flex items-start gap-2 text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded px-2.5 py-1.5">
