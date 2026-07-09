@@ -289,7 +289,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
       {/* gold top accent (chevron ribbon removed for less vertical space) */}
       <div className="relative h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
 
-      <div className={cn('relative', compact ? 'px-2 py-1.5 md:px-2.5 md:py-2' : 'px-2.5 py-2 md:px-3 md:py-2.5')}>
+      <div className={cn('relative', compact ? 'px-2 py-1.5 md:px-2.5 md:py-1.5' : 'px-2.5 py-1.5 md:px-3 md:py-2')}>
         <div className="flex items-center justify-between gap-2 flex-wrap">
           {/* ── Identity block ── */}
           <button
