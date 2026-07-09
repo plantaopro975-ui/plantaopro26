@@ -578,10 +578,11 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                 <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
               </div>
             ) : leaves.length === 0 ? (
-              <div className="text-center py-4">
-                <p className="text-slate-400 text-sm">Nenhuma folga programada.</p>
-                <p className="text-xs text-slate-500 mt-1">Clique em uma data no calendário para registrar.</p>
-              </div>
+              <EmptyState
+                icon={CalendarPlus}
+                title="Nenhuma folga programada"
+                description="Selecione uma data no calendário acima para registrar sua próxima folga, licença ou afastamento."
+              />
             ) : (
               <div className="space-y-3">
                 {pendingLeaves.length > 0 && (
