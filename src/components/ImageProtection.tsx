@@ -173,7 +173,7 @@ export function ImageProtection() {
       document.removeEventListener("keydown", onKeyDown, true);
       document.removeEventListener("keyup", onKeyUp, true);
       window.removeEventListener("beforeprint", onBeforePrint);
-      window.clearInterval(devInterval);
+      
     };
   }, [show]);
 
