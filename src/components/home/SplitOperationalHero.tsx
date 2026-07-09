@@ -12,23 +12,23 @@ const loginHeroImage = loginHeroAsset.url;
 
 
 
-import agent3dAsset from '@/assets/hero/agent-ise-3d.png.asset.json';
+import agent3dAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
 const agent3d = agent3dAsset.url;
-import vehicle3dAsset from '@/assets/hero/vehicle-ise-3d.png.asset.json';
+import vehicle3dAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
 const vehicle3d = vehicle3dAsset.url;
-import vehicleMobileAsset from '@/assets/hero/vehicle-ise-mobile.png.asset.json';
+import vehicleMobileAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
 const vehicleMobile = vehicleMobileAsset.url;
-import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.png.asset.json';
+import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 import agentVehicleSceneWebpAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleSceneWebp = agentVehicleSceneWebpAsset.url;
-import objAlfaAsset from '@/assets/teams/alfa-vest-pro.png.asset.json';
+import objAlfaAsset from '@/assets/teams/alfa-vest-pro.webp.asset.json';
 const objAlfa = objAlfaAsset.url;
-import objBravoAsset from '@/assets/teams/bravo-helmet-pro.png.asset.json';
+import objBravoAsset from '@/assets/teams/bravo-helmet-pro.webp.asset.json';
 const objBravo = objBravoAsset.url;
-import objCharlieAsset from '@/assets/teams/charlie-badge-pro.png.asset.json';
+import objCharlieAsset from '@/assets/teams/charlie-badge-pro.webp.asset.json';
 const objCharlie = objCharlieAsset.url;
-import objDeltaAsset from '@/assets/teams/delta-radio-pro.png.asset.json';
+import objDeltaAsset from '@/assets/teams/delta-radio-pro.webp.asset.json';
 const objDelta = objDeltaAsset.url;
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
 const bgAlfa = bgAlfaAsset.url;
@@ -120,7 +120,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     link.rel = 'preload';
     link.as = 'image';
     link.href = objAlfa;
-    link.type = 'image/png';
+    link.type = 'image/webp';
     (link as any).fetchPriority = 'high';
     document.head.appendChild(link);
     return () => { document.head.removeChild(link); };
