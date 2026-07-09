@@ -289,8 +289,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     },
                     {
                       k: 'Efetivo',
-                      v: metrics.loading ? '——' : fmt2(metrics.agentsActive),
-                      s: 'Agentes ativos',
+                      v: metrics.loading ? '——' : fmt2(metrics.agentsRegistered || metrics.agentsActive),
+                      s: 'Agentes cadastrados',
                       pulse: false,
                     },
                     {
