@@ -67,7 +67,7 @@ export function OperationalStatusRibbon() {
               <span className="absolute inset-0 rounded-full animate-ping opacity-60" style={{ background: 'hsl(142 72% 55%)' }} />
               <span className="relative h-1.5 w-1.5 rounded-full" style={{ background: 'hsl(142 72% 55%)', boxShadow: '0 0 5px hsl(142 72% 55% / 0.9)' }} />
             </span>
-            <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-emerald-200">
+            <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.2em] text-emerald-200">
               {isLogged ? 'OPERACIONAL' : 'CANAL SEGURO'}
             </span>
             <span aria-hidden className="h-2 w-px bg-white/15 mx-0.5" />
