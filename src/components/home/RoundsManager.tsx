@@ -1878,17 +1878,24 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         </p>
                       </div>
                     </div>
-                    <span
-                      className="shrink-0 text-[9.5px] font-mono uppercase tracking-[0.18em] px-1.5 py-0.5 rounded border"
-                      style={{ color: teamColor, borderColor: `${teamColor}55`, background: `${teamColor}12` }}
-                    >
-                      Auto
-                    </span>
+                    <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
+                      <SelectTrigger
+                        aria-label="Modo de distribuição"
+                        className="shrink-0 h-7 w-auto gap-1 px-2 text-[9.5px] font-mono uppercase tracking-[0.18em] rounded border bg-transparent hover:bg-card/80 focus:ring-1 focus:ring-offset-0"
+                        style={{ color: teamColor, borderColor: `${teamColor}55`, background: `${teamColor}12` }}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent align="end">
+                        <SelectItem value="distribute">Auto · recalibra no fim</SelectItem>
+                        <SelectItem value="exact">Preciso · segundos</SelectItem>
+                        <SelectItem value="floor">Manual · truncar minutos</SelectItem>
+                        <SelectItem value="ceil">Manual · arredondar acima</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 )}
-                {mode === 'split' && !nightEffectivelyLocked && schedule && nightEffectivelyLocked === false && agents.length > 1 && running === false && (
-                  <></>
-                )}
+
 
 
 
