@@ -177,10 +177,12 @@ export function useVisitorPresence(): number {
         } catch {
           /* noop */
         }
+        stopHeartbeat();
         supabase.removeChannel(sharedChannel);
         sharedChannel = null;
         refCount = 0;
       }
+
     };
   }, []);
 
