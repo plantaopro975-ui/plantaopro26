@@ -209,13 +209,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
             <div className="hidden sm:flex flex-col gap-1 sm:gap-1.5">
-              <span className="hidden items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
+              <span className="hidden items-center gap-2 font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
                 <span className="h-1 w-6 bg-amber-400" />
                 Sistema Operacional
               </span>
-              <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[20px] sm:text-[26px] lg:text-[32px] leading-[1.05]">
+              <h2 className="font-sans font-semibold uppercase tracking-[0.01em] text-white text-[20px] sm:text-[26px] lg:text-[30px] leading-[1.1]">
 
-                Comando <span className="text-amber-400">Tático</span><br />
+                Comando <span className="text-amber-400 font-bold">Tático</span><br />
                 Socioeducativo
               </h2>
             </div>
