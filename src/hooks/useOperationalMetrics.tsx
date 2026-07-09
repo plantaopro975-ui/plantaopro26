@@ -84,6 +84,7 @@ export function useOperationalMetrics(): OperationalMetrics {
   return {
     units,
     agentsActive,
+    agentsRegistered,
     divisions: 4,
     uplink,
     loading,
