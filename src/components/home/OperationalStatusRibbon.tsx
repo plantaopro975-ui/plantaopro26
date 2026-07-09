@@ -73,21 +73,21 @@ export function OperationalStatusRibbon() {
             <span aria-hidden className="h-2 w-px bg-white/15 mx-0.5" />
             {/* Protocolo institucional — substitui contador (evita redundância com célula ONLINE) */}
             <span
-              className="inline-flex items-center gap-1 font-mono text-[8px] font-bold uppercase tracking-[0.18em] rounded-sm px-1 py-[1px]"
+              className="inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-[0.18em] rounded-sm px-1 py-[1px]"
               style={{
                 color: accentColor,
                 background: accentSoft,
                 border: `1px solid ${accentColor.replace(')', ' / 0.35)')}`,
               }}
             >
-              <svg width="7" height="7" viewBox="0 0 16 16" fill="none" aria-hidden>
+              <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
                 <rect x="3" y="7" width="10" height="7" rx="1" stroke="currentColor" strokeWidth="1.8" />
                 <path d="M5 7V5a3 3 0 116 0v2" stroke="currentColor" strokeWidth="1.8" />
               </svg>
               <span className="tabular-nums">ISE-AC · 2026</span>
             </span>
           </span>
-          <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.2em] opacity-90" style={{ color: accentColor }}>
+          <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.2em] opacity-90" style={{ color: accentColor }}>
             {isLogged ? (teamKey || 'ISE') : 'ISE · AC'}
           </span>
         </div>
