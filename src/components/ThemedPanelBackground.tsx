@@ -144,78 +144,56 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
 
   return (
     <div ref={ref} className={cn("relative min-h-[100dvh] h-[100dvh] w-full flex flex-col overflow-hidden", className)}>
-      {/* Base background - DARKER and MORE VIBRANT - GPU accelerated */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0 will-change-auto"
+      {/* Base background — single flat layer, no will-change (avoids
+          promoting extra compositor layers that cost memory on mobile). */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
         style={{
-          background: `linear-gradient(160deg, 
-            hsl(222 47% 8%) 0%, 
-            hsl(222 47% 12%) 25%,
-            hsl(222 47% 10%) 50%,
-            hsl(222 47% 8%) 75%,
+          background: `linear-gradient(160deg,
+            hsl(222 47% 8%) 0%,
+            hsl(222 47% 12%) 50%,
             hsl(220 47% 6%) 100%
           )`,
         }}
       />
-      
-      {/* Team poster background - MUCH MORE VISIBLE */}
+
+      {/* Team poster — one image + one solid overlay. Removed the second
+          heavy gradient (was double-composited on every scroll frame). */}
       {mounted && showTeamImage && poster && (
-        <>
-          {/* Main poster image - larger and more visible */}
-          {/* Team image background - uses absolute positioning to not block scrolling */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-opacity duration-500 will-change-auto"
-            style={{ 
-              backgroundImage: `url(${poster})`,
-              opacity: 0.12,
-              filter: 'saturate(1.2) contrast(1.05)',
-              transform: 'translateZ(0)',
-            }}
-          />
-          {/* Team color overlay - balanced */}
-          <div 
-            className="absolute inset-0 pointer-events-none z-0 will-change-auto"
-            style={{
-              background: `linear-gradient(160deg, 
-                hsl(222 47% 8% / 0.8) 0%, 
-                ${colors?.glow || 'transparent'} 30%,
-                hsl(222 47% 10% / 0.75) 50%,
-                ${colors?.glow || 'transparent'} 70%,
-                hsl(222 47% 8% / 0.85) 100%
-              )`,
-              transform: 'translateZ(0)',
-            }}
-          />
-        </>
-      )}
-      
-      {/* Theme-specific ambient glow - MORE INTENSE */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-0 will-change-auto"
-        style={{
-          background: `
-            radial-gradient(ellipse at 5% 15%, ${themeAssets.ambientGlow.primary} 0%, transparent 45%),
-            radial-gradient(ellipse at 95% 85%, ${themeAssets.ambientGlow.secondary} 0%, transparent 45%),
-            radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 60%)
-          `,
-          transform: 'translateZ(0)',
-        }}
-      />
-      
-      {/* Theme-specific panel effects */}
-      {mounted && <ThemePanelEffects theme={resolvedTheme} />}
-      
-      {/* Team color accent line at top */}
-      {colors && (
-        <div 
-          className="absolute top-0 left-0 right-0 h-1 z-20 pointer-events-none"
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
           style={{
-            background: `linear-gradient(90deg, transparent 5%, ${colors.primary} 25%, ${colors.primary} 75%, transparent 95%)`,
-            boxShadow: `0 0 15px ${colors.primary}30`,
+            backgroundImage: `url(${poster})`,
+            opacity: 0.10,
+            filter: 'saturate(1.1)',
           }}
         />
       )}
-      
+
+      {/* Theme-specific ambient glow (kept — single radial layer). */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          background: `
+            radial-gradient(ellipse at 5% 15%, ${themeAssets.ambientGlow.primary} 0%, transparent 45%),
+            radial-gradient(ellipse at 95% 85%, ${themeAssets.ambientGlow.secondary} 0%, transparent 45%)
+          `,
+        }}
+      />
+
+      {/* Theme-specific panel effects */}
+      {mounted && <ThemePanelEffects theme={resolvedTheme} />}
+
+      {/* Team color accent line at top */}
+      {colors && (
+        <div
+          className="absolute top-0 left-0 right-0 h-1 z-20 pointer-events-none"
+          style={{
+            background: `linear-gradient(90deg, transparent 5%, ${colors.primary} 25%, ${colors.primary} 75%, transparent 95%)`,
+          }}
+        />
+      )}
+
       {/* Content - Full width, allows scrolling */}
       <div className="relative z-10 flex-1 flex flex-col w-full min-w-0 min-h-full">
         {children}
@@ -223,3 +201,4 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
     </div>
   );
 });
+
