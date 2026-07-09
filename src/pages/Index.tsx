@@ -1594,7 +1594,7 @@ export default function Index() {
         open={showLogin}
         onOpenChange={(open) => !open && closeAllDialogs()}
         variant="agent"
-        title={`Equipe ${selectedTeam}`}
+        title="Autenticação de Agente"
         subtitle="Autenticação de Agente"
         team={selectedTeam}
       >
