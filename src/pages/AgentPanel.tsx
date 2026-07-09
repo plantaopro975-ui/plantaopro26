@@ -547,8 +547,8 @@ export default function AgentPanel() {
 
   return (
     <>
-    <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
-      <PublicSecurityBackdrop />
+    <ThemedPanelBackground team={agent?.team || null} showTeamImage={false} lowEffects>
+      <PublicSecurityBackdrop minimal />
       <NetworkStatusPill />
       <div className="hud-scope flex-1 flex flex-col w-full min-w-0 min-h-0">
 
@@ -583,8 +583,7 @@ export default function AgentPanel() {
         >
           <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
             {/* Main Tabs - sticky combined block (header + tabs) */}
-            <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-amber-500" /></div>}>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
+            <Tabs value={activeTab} onValueChange={handleTabChange} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
               {/* Sticky combined block: Professional Header + Tabs Control Panel */}
               <div
                 role="region"
@@ -733,13 +732,12 @@ export default function AgentPanel() {
                         aria-label={full}
                         title=""
                         className={cn(
-                          'group flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
+                          'group flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-lg font-bold border border-slate-600/50 bg-slate-800/60',
                           'px-1.5 py-2.5 md:px-2 md:py-2.5 min-h-[62px] sm:min-h-[66px] md:min-h-[58px]',
-                          'data-[state=active]:shadow-lg data-[state=active]:scale-[1.02]',
                           trigger
                         )}
                       >
-                        <Icon className={cn('h-5 w-5 md:h-[18px] md:w-[18px] transition-colors', icon)} />
+                        <Icon className={cn('h-5 w-5 md:h-[18px] md:w-[18px]', icon)} />
                         <span className={cn('text-[11px] leading-none md:text-sm font-bold tracking-tight md:tracking-wide truncate max-w-full', text)}>
                           {label}
                         </span>
@@ -1033,7 +1031,6 @@ export default function AgentPanel() {
               </TabsContent>
 
             </Tabs>
-            </Suspense>
 
             {/* Mural de Comunicados Rápidos */}
             <AnnouncementsMural className="mt-4" />
