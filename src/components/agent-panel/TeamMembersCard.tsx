@@ -262,26 +262,26 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
         <div className="absolute inset-0 bg-gradient-to-r from-amber-500/3 via-transparent to-amber-500/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <CardHeader className="pb-3 pt-4 px-3.5 sm:px-4 relative">
+          <CardHeader className="pb-2 pt-2.5 px-3 relative">
             <div className="flex items-center justify-between">
               <CollapsibleTrigger asChild>
-                <button className="flex items-center gap-3 sm:gap-3 text-left group/btn flex-1 min-w-0">
-                  <div className="shrink-0 scale-125 sm:scale-100 origin-left">
+                <button className="flex items-center gap-2.5 text-left group/btn flex-1 min-w-0">
+                  <div className="shrink-0">
                     <TeamEmblem team={team} size="lg" />
                   </div>
                   <div className="flex items-center gap-2 min-w-0 flex-1 flex-wrap">
-                    <span className="font-black text-2xl sm:text-lg md:text-xl bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate">
+                    <span className="font-black text-lg md:text-xl bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent truncate leading-tight">
                       Equipe {team}
                     </span>
-                    <Badge className="text-sm sm:text-xs bg-amber-500/20 text-amber-200 border-amber-500/40 px-2.5 py-1 sm:px-2 sm:py-0.5 shrink-0 font-bold">
+                    <Badge className="text-[11px] bg-amber-500/20 text-amber-200 border-amber-500/40 px-2 py-0 h-5 shrink-0 font-bold">
                       {members.length} {members.length === 1 ? 'agente' : 'agentes'}
                     </Badge>
                   </div>
-                  <div className="p-2 rounded-lg bg-slate-800/60 border border-amber-500/20 group-hover/btn:bg-amber-500/15 transition-all duration-200 shrink-0">
+                  <div className="p-1.5 rounded-md bg-slate-800/60 border border-amber-500/20 group-hover/btn:bg-amber-500/15 transition-all duration-200 shrink-0">
                     {isExpanded ? (
-                      <ChevronUp className="h-4 w-4 text-amber-400" />
+                      <ChevronUp className="h-3.5 w-3.5 text-amber-400" />
                     ) : (
-                      <ChevronDown className="h-4 w-4 text-amber-400" />
+                      <ChevronDown className="h-3.5 w-3.5 text-amber-400" />
                     )}
                   </div>
                 </button>
@@ -295,7 +295,7 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowTeamManagement(true)}
-                      className="ml-2 h-7 w-7 p-0 text-slate-400 hover:text-amber-400 hover:bg-amber-500/15 shrink-0"
+                      className="ml-1.5 h-7 w-7 p-0 text-slate-400 hover:text-amber-400 hover:bg-amber-500/15 shrink-0"
                     >
                       <Settings className="h-3.5 w-3.5" />
                     </Button>
