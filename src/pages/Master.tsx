@@ -406,11 +406,38 @@ export default function Master() {
     }
   };
 
-  const handleLogout = () => {
-    setMasterToken(null);
-    setMasterSession(null);
-    navigate('/auth');
+  const [loggingOut, setLoggingOut] = useState(false);
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    const token = getMasterToken();
+    // 1) Encerrar sessão no servidor (invalida o token no banco)
+    try {
+      if (token) {
+        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/master-admin`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'x-master-token': token,
+            'authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ action: 'logout' }),
+        }).catch(() => {});
+      }
+    } finally {
+      // 2) Encerrar no cliente (sempre, mesmo se o servidor falhar)
+      setMasterToken(null);
+      setMasterSession(null);
+      try {
+        sessionStorage.removeItem('masterSession');
+        localStorage.removeItem('master_user');
+      } catch {}
+      toast({ title: 'Sessão encerrada', description: 'Você saiu do painel Master com segurança.' });
+      navigate('/', { replace: true });
+    }
   };
+
   
   // Create new agent
   const handleCreateAgent = async () => {

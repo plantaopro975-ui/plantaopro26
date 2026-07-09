@@ -56,6 +56,19 @@ serve(async (req) => {
     if (!action) return json({ success: false, error: "Ação obrigatória." }, 400);
 
     // ===== Actions =====
+    if (action === "logout") {
+      const token = req.headers.get("x-master-token") || "";
+      const { error } = await admin
+        .from("master_session_tokens")
+        .delete()
+        .eq("token", token);
+      if (error) {
+        console.error("master logout error", error);
+        return json({ success: false, error: "Falha ao encerrar sessão." }, 500);
+      }
+      return json({ success: true, data: {} });
+    }
+
     if (action === "set_role") {
       const userId = String(body?.userId ?? "");
       const role = String(body?.role ?? "user");

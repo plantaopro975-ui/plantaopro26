@@ -996,27 +996,65 @@ export default function Index() {
 
   const handleMasterLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
+    // Client-side validation — evita ida ao servidor com dados vazios
+    const u = masterUsername.trim();
+    const p = masterPassword;
+    if (!u || !p) {
+      toast({
+        title: 'Campos obrigatórios',
+        description: 'Informe usuário e senha para continuar.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       // Guarantee separation: master login cannot share a normal user session
       await supabase.auth.signOut();
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/master-login`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ username: masterUsername, password: masterPassword }),
-      });
-
-      const json = await res.json().catch(() => null);
-
-      if (!res.ok || !json?.success || !json?.data?.token) {
-        throw new Error(json?.error || 'Credenciais inválidas.');
+      let res: Response;
+      try {
+        res = await fetch(`${supabaseUrl}/functions/v1/master-login`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p }),
+        });
+      } catch {
+        toast({
+          title: 'Sem conexão',
+          description: 'Verifique sua internet e tente novamente.',
+          variant: 'destructive',
+        });
+        setIsSubmitting(false);
+        return;
       }
 
-      setMasterToken(json.data.token);
-      setMasterSession(masterUsername);
+      const payload = await res.json().catch(() => null);
+
+      if (!res.ok || !payload?.success || !payload?.data?.token) {
+        // Mensagem genérica baseada no status — nunca expõe detalhes do servidor
+        let title = 'Acesso negado';
+        let description = 'Usuário ou senha incorretos.';
+        if (res.status === 429) {
+          title = 'Muitas tentativas';
+          description = 'Aguarde alguns minutos antes de tentar novamente.';
+        } else if (res.status >= 500) {
+          title = 'Serviço indisponível';
+          description = 'Não foi possível validar suas credenciais agora. Tente novamente em instantes.';
+        }
+        // Log técnico só no console (não vaza ao usuário)
+        console.warn('[MasterLogin] status', res.status);
+        setMasterToken(null);
+        toast({ title, description, variant: 'destructive' });
+        setIsSubmitting(false);
+        return;
+      }
+
+      setMasterToken(payload.data.token);
+      setMasterSession(u);
 
       toast({
         title: 'Acesso Master',
@@ -1024,19 +1062,21 @@ export default function Index() {
       });
 
       setShowMasterLogin(false);
+      setMasterPassword('');
       navigate('/master', { replace: true });
-    } catch (error: any) {
-      console.error('Master login error:', error);
+    } catch (error) {
+      console.error('[MasterLogin] unexpected', error);
       setMasterToken(null);
       toast({
-        title: 'Erro',
-        description: error?.message || 'Não foi possível autenticar.',
+        title: 'Erro inesperado',
+        description: 'Não foi possível autenticar. Tente novamente.',
         variant: 'destructive',
       });
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
+
 
   // Handle admin login - use master-login edge function like master panel
   const handleAdminLogin = async (e: React.FormEvent) => {
