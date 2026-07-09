@@ -30,6 +30,8 @@ import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
+import { PublicSecurityBackdrop } from '@/components/agent-panel/PublicSecurityBackdrop';
+import { useQueryClient } from '@tanstack/react-query';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
 import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
