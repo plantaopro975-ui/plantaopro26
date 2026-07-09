@@ -10,9 +10,10 @@ interface AvatarUploadProps {
   agentName: string;
   currentAvatarUrl: string | null;
   onAvatarUpdated: (url: string | null) => void;
+  compact?: boolean;
 }
 
-export function AvatarUpload({ agentId, agentName, currentAvatarUrl, onAvatarUpdated }: AvatarUploadProps) {
+export function AvatarUpload({ agentId, agentName, currentAvatarUrl, onAvatarUpdated, compact = false }: AvatarUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentAvatarUrl);
