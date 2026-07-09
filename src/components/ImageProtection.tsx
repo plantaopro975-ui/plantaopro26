@@ -122,17 +122,7 @@ export function ImageProtection() {
         return;
       }
 
-      // DevTools
-      if (k === "F12") {
-        e.preventDefault();
-        show("devtools");
-        return;
-      }
-      if (mod && e.shiftKey && ["i", "j", "c"].includes(kL)) {
-        e.preventDefault();
-        show("devtools");
-        return;
-      }
+      // DevTools shortcuts: no longer blocked/warned (removed per request)
 
       // View source
       if (mod && kL === "u") {
@@ -167,21 +157,7 @@ export function ImageProtection() {
       }
     };
 
-    // Detect DevTools open (heuristic based on viewport delta)
-    let devtoolsOpen = false;
-    const devtoolsCheck = () => {
-      const threshold = 170;
-      const wDiff = window.outerWidth - window.innerWidth;
-      const hDiff = window.outerHeight - window.innerHeight;
-      const isOpen = wDiff > threshold || hDiff > threshold;
-      if (isOpen && !devtoolsOpen) {
-        devtoolsOpen = true;
-        show("devtools");
-      } else if (!isOpen) {
-        devtoolsOpen = false;
-      }
-    };
-    const devInterval = window.setInterval(devtoolsCheck, 1500);
+    // DevTools open-detection removed per request (no more warning dialog)
 
     // Block print via matchMedia (Ctrl+P fallback on some browsers)
     const onBeforePrint = (e: Event) => {
@@ -197,7 +173,7 @@ export function ImageProtection() {
       document.removeEventListener("keydown", onKeyDown, true);
       document.removeEventListener("keyup", onKeyUp, true);
       window.removeEventListener("beforeprint", onBeforePrint);
-      window.clearInterval(devInterval);
+      
     };
   }, [show]);
 
