@@ -468,70 +468,35 @@ export default function AgentPanel() {
           }}
         >
           <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
-            {/* Professional Header Bar */}
-            <AgentPanelHeader 
-              agent={{
-                id: agent.id,
-                name: agent.name,
-                team: agent.team,
-                role: (agent as any).role,
-                blood_type: (agent as any).blood_type,
-                avatar_url: (agent as any).avatar_url,
-                unit_id: (agent as any).unit_id
-              }}
-              isOnline={isOnline}
-              onReactivateShiftBanner={reactivateShiftBanner}
-              isShiftBannerDismissed={isShiftBannerDismissed}
-              compact={compact}
-              onToggleCompact={toggleCompact}
-            />
-
-            {/* Shift Alerts Banner */}
-            <ShiftAlertsBanner 
-              agentId={agent.id} 
-              onDismissedChange={setShiftBannerDismissed}
-              forceShow={forceShowShiftBanner}
-            />
-
-            {/* On Duty Overlay - Discreto e minimizável */}
-            <OnDutyOverlay agentId={agent.id} />
-
-            {/* Centro de Operações (checklist, radar, PDF, HUD 3-2-1) */}
-            <Suspense fallback={null}>
-              <ShiftOperationsCenter
-                agentId={agent.id}
-                agentName={agent.name}
-                agentTeam={agent.team}
-                unitId={agent.unit_id}
-              />
-            </Suspense>
-
-            {/* Briefing de Entrada (Chefe/Apoio) */}
-            <Suspense fallback={null}>
-              <ShiftBriefingCard
-                agentId={agent.id}
-                agentName={agent.name}
-                agentTeam={agent.team}
-                unitId={agent.unit_id}
-                agentRole={(agent as any).role}
-              />
-            </Suspense>
-
-
-
-
-            {/* HERO PANEL - Futuristic Status Dashboard */}
-            <AgentHeroPanel 
-              agentId={agent.id}
-              agentName={agent.name}
-              agentTeam={agent.team}
-            />
-
-            {/* Main Tabs - REDESIGNED: Modern, Legible, Mobile-First */}
+            {/* Main Tabs - sticky combined block (header + tabs) */}
             <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-amber-500" /></div>}>
             <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
-              {/* Control Panel Container - Modern Glass Design */}
-              <div className="sticky top-0 z-30 relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
+              {/* Sticky combined block: Professional Header + Tabs Control Panel */}
+              <div className={cn(
+                'sticky top-0 z-40 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1 bg-gradient-to-b from-slate-950/95 via-slate-950/90 to-slate-950/80 backdrop-blur-xl',
+                compact ? 'space-y-1.5' : 'space-y-2'
+              )}>
+                {/* Professional Header Bar */}
+                <AgentPanelHeader 
+                  agent={{
+                    id: agent.id,
+                    name: agent.name,
+                    team: agent.team,
+                    role: (agent as any).role,
+                    blood_type: (agent as any).blood_type,
+                    avatar_url: (agent as any).avatar_url,
+                    unit_id: (agent as any).unit_id
+                  }}
+                  isOnline={isOnline}
+                  onReactivateShiftBanner={reactivateShiftBanner}
+                  isShiftBannerDismissed={isShiftBannerDismissed}
+                  compact={compact}
+                  onToggleCompact={toggleCompact}
+                />
+
+                {/* Control Panel Container - Modern Glass Design */}
+                <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
+
                 {/* Decorative glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5 pointer-events-none" />
                 
@@ -649,6 +614,45 @@ export default function AgentPanel() {
                 </div>
 
               </div>
+              </div>
+
+              {/* Shift Alerts Banner */}
+              <ShiftAlertsBanner 
+                agentId={agent.id} 
+                onDismissedChange={setShiftBannerDismissed}
+                forceShow={forceShowShiftBanner}
+              />
+
+              {/* On Duty Overlay - Discreto e minimizável */}
+              <OnDutyOverlay agentId={agent.id} />
+
+              {/* Centro de Operações (checklist, radar, PDF, HUD 3-2-1) */}
+              <Suspense fallback={null}>
+                <ShiftOperationsCenter
+                  agentId={agent.id}
+                  agentName={agent.name}
+                  agentTeam={agent.team}
+                  unitId={agent.unit_id}
+                />
+              </Suspense>
+
+              {/* Briefing de Entrada (Chefe/Apoio) */}
+              <Suspense fallback={null}>
+                <ShiftBriefingCard
+                  agentId={agent.id}
+                  agentName={agent.name}
+                  agentTeam={agent.team}
+                  unitId={agent.unit_id}
+                  agentRole={(agent as any).role}
+                />
+              </Suspense>
+
+              {/* HERO PANEL - Futuristic Status Dashboard */}
+              <AgentHeroPanel 
+                agentId={agent.id}
+                agentName={agent.name}
+                agentTeam={agent.team}
+              />
 
               {/* Profile Completion Alert */}
               <ProfileCompletionAlert agentId={agent.id} agentName={agent.name} />
