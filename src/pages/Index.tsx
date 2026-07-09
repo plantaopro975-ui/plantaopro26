@@ -1544,7 +1544,21 @@ export default function Index() {
               <Info className="h-3.5 w-3.5" />
             </button>
 
-
+            {/* Acesso Master — atalho persistente no rodapé */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowLogin(false);
+                setShowMasterLogin(true);
+              }}
+              className="ml-1 inline-flex items-center gap-1.5 px-2 py-1 rounded border border-amber-500/40 bg-gradient-to-r from-amber-500/10 to-amber-500/5 hover:from-amber-500/25 hover:to-amber-500/15 hover:border-amber-400/70 transition-all"
+              title="Acesso Master · Administrador"
+            >
+              <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+              <span className="hidden sm:inline text-[9px] font-mono font-bold tracking-[0.22em] uppercase text-amber-300">
+                Master
+              </span>
+            </button>
 
           </div>
         </div>
