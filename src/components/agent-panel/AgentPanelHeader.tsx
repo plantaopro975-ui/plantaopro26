@@ -337,7 +337,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
           </button>
 
           {/* ── Right actions ── */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap justify-end shrink-0">
             <OnlinePulse isOnline={isOnline} />
 
             {agent.blood_type && (
