@@ -550,10 +550,11 @@ export default function AgentPanel() {
                 />
 
                 {/* Control Panel Container - Modern Glass Design */}
-                <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
+                <div className="relative tactical-strip bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl border border-amber-500/40 shadow-md overflow-hidden">
 
-                {/* Decorative glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5 pointer-events-none" />
+                {/* Decorative accent (removed the always-on gradient overlay to cut repaints during scroll) */}
+
+
                 
                 {/* Control Panel Header - Compact & Professional */}
                 <div className={cn(
