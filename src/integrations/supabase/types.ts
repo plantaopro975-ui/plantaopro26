@@ -2312,6 +2312,19 @@ export type Database = {
           shift_date: string
         }[]
       }
+      check_existing_cpfs: {
+        Args: { _cpfs: string[] }
+        Returns: {
+          cpf: string
+        }[]
+      }
+      check_matricula_exists: {
+        Args: { _matricula: string }
+        Returns: {
+          id: string
+          matricula: string
+        }[]
+      }
       check_rate_limit: {
         Args: {
           p_identifier: string
