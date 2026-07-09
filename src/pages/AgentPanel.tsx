@@ -156,6 +156,37 @@ export default function AgentPanel() {
 
 
 
+  // Start perf monitor (LCP/CLS/INP/long tasks). No-op in prod unless
+  // localStorage.perf_logs === '1'. Logs surface in the browser console.
+  useEffect(() => {
+    void import('@/lib/perfMonitor').then((m) => m.startPerfMonitor());
+  }, []);
+
+  // Idle-time prefetch: warm up the heaviest lazy chunks so switching to
+  // any tab is instant. Uses requestIdleCallback with a setTimeout fallback.
+  useEffect(() => {
+    const preloadNextTabs = () => {
+      // Fire and forget — Vite dedupes and browser cache handles re-entry.
+      void import('@/components/agent-panel/ProfessionalShiftTimer');
+      void import('@/components/agent-panel/ShiftScheduleCard');
+      void import('@/components/agent-panel/ShiftCalendarOverview');
+      void import('@/components/agent-panel/ChatPanel');
+      void import('@/components/agent-panel/LeaveRequestCard');
+      void import('@/components/agent-panel/AgentEventsCard');
+      void import('@/components/agent-panel/BHTracker');
+    };
+    const ric = (window as any).requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout: number }) => number)
+      | undefined;
+    if (ric) {
+      const id = ric(preloadNextTabs, { timeout: 2500 });
+      return () => (window as any).cancelIdleCallback?.(id);
+    }
+    const t = window.setTimeout(preloadNextTabs, 1500);
+    return () => window.clearTimeout(t);
+  }, []);
+
+
   // Shift notifications - checks for upcoming shifts and sends reminders
   useShiftNotifications({
     agentId: agent?.id || '',
