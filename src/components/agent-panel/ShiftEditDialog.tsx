@@ -99,6 +99,12 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    return () => {
+      document.body.style.pointerEvents = '';
+    };
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     const k = inferKind(shift);
     setKind(k);
@@ -202,8 +208,15 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-md bg-slate-900 border-slate-700 text-slate-100">
+      <Dialog open={open} onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          setConfirmOpen(false);
+          setDeleteOpen(false);
+          document.body.style.pointerEvents = '';
+        }
+        onOpenChange(nextOpen);
+      }}>
+        <DialogContent className="w-[calc(100vw-1rem)] max-w-md max-h-[calc(100dvh-1rem)] overflow-y-auto bg-slate-900 border-slate-700 text-slate-100 p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="text-amber-300 capitalize">
               {isNew ? 'Cadastrar plantão' : 'Editar plantão'} — {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}
@@ -220,7 +233,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
                 <SelectTrigger id="shift-kind" className="bg-slate-800 border-slate-700 min-h-11">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-slate-700">
+                <SelectContent className="z-[80] bg-slate-900 border-slate-700 max-w-[calc(100vw-1rem)]">
                   {(Object.keys(KIND_LABEL) as ShiftKind[]).map((k) => (
                     <SelectItem key={k} value={k}>{KIND_LABEL[k]}</SelectItem>
                   ))}
@@ -271,6 +284,13 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
                 <span>Durante a janela noturna (22:00–06:00) o sistema exige 22:00 → 06:00. Só o master pode sobrescrever.</span>
               </div>
             )}
+
+            {confirmOpen && (
+              <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+                <p className="font-semibold text-amber-300">Confirmar alteração do plantão?</p>
+                <p className="mt-1 text-amber-100/90">{KIND_LABEL[kind]} · {rangeSummary}</p>
+              </div>
+            )}
           </div>
 
           <DialogFooter className="flex-row justify-between gap-2 sm:justify-between">
@@ -285,45 +305,50 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
                 <Trash2 className="h-4 w-4 mr-1" /> Excluir
               </Button>
             ) : <span />}
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onOpenChange(false)}
-                disabled={saving}
-                className="border-slate-700 text-slate-200 hover:bg-slate-800 min-h-11"
-              >
-                Cancelar
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => setConfirmOpen(true)}
-                disabled={saving}
-                className="bg-amber-500 text-black hover:bg-amber-400 min-h-11"
-              >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar alterações'}
-              </Button>
-            </div>
+            {confirmOpen ? (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setConfirmOpen(false)}
+                  disabled={saving}
+                  className="border-slate-700 text-slate-200 hover:bg-slate-800 min-h-11"
+                >
+                  Voltar
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={performSave}
+                  disabled={saving}
+                  className="bg-amber-500 text-black hover:bg-amber-400 min-h-11"
+                >
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Confirmar'}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onOpenChange(false)}
+                  disabled={saving}
+                  className="border-slate-700 text-slate-200 hover:bg-slate-800 min-h-11"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setConfirmOpen(true)}
+                  disabled={saving}
+                  className="bg-amber-500 text-black hover:bg-amber-400 min-h-11"
+                >
+                  Salvar alterações
+                </Button>
+              </div>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent className="bg-slate-900 border-slate-700 text-slate-100">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Deseja realmente alterar este plantão?</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-400">
-              {KIND_LABEL[kind]} · {rangeSummary}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={performSave} className="bg-amber-500 text-black hover:bg-amber-400">
-              Confirmar alteração
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent className="bg-slate-900 border-slate-700 text-slate-100">
