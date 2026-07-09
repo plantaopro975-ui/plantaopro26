@@ -842,9 +842,11 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                       </div>
                     )
                   ) : teamLeaves.length === 0 ? (
-                    <div className="text-center py-4">
-                      <p className="text-slate-400 text-sm">Nenhuma folga programada pela equipe nos próximos 30 dias.</p>
-                    </div>
+                    <EmptyState
+                      icon={Users}
+                      title="Equipe sem folgas próximas"
+                      description="Nenhum membro da equipe possui folga programada nos próximos 30 dias."
+                    />
                   ) : (
                     <div className="space-y-2 max-h-48 overflow-y-auto">
                       {teamLeaves.map((leave) => (
