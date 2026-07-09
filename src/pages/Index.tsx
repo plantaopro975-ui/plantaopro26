@@ -1492,47 +1492,41 @@ export default function Index() {
       {/* Mobile-only beta notice */}
       <BetaNoticeFooter />
 
-      {/* Footer minimalista — uma linha, hairline dourada */}
+      {/* Footer ultra compacto — 1 linha, não empurra o hero */}
       <footer
         role="contentinfo"
-        className="relative w-full mt-4 border-t border-primary/15 bg-[hsl(217_62%_3%/0.75)] backdrop-blur-md"
+        className="relative w-full shrink-0 border-t border-primary/15 bg-[hsl(217_62%_3%/0.8)] backdrop-blur-md"
       >
         <span
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary)/0.55),transparent)]"
         />
-        <div className="mx-auto max-w-[1400px] px-4 py-2.5 flex flex-col gap-1.5 items-center">
-          {/* Linha 1: copyright · sobre · master */}
-          <div className="w-full flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={() => navigate('/about')}
-              aria-label="Sobre o aplicativo"
-              className="group inline-flex items-center gap-1.5 text-[10px] font-mono tracking-[0.22em] uppercase text-muted-foreground/45 hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-            >
-              <Info className="h-3 w-3 opacity-70 group-hover:opacity-100 transition-opacity" strokeWidth={2.2} />
-              <span className="hidden sm:inline">Sobre</span>
-            </button>
+        <div className="mx-auto max-w-[1400px] px-3 h-7 sm:h-8 flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => navigate('/about')}
+            aria-label="Sobre o aplicativo"
+            className="group inline-flex items-center gap-1 text-[9.5px] font-mono tracking-[0.2em] uppercase text-muted-foreground/50 hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+          >
+            <Info className="h-3 w-3 opacity-70 group-hover:opacity-100" strokeWidth={2.2} />
+            <span className="hidden sm:inline">Sobre</span>
+          </button>
 
-            <p className="text-[10.5px] font-mono tracking-[0.22em] uppercase text-muted-foreground/60 text-center">
-              © {new Date().getFullYear()} PlantãoPro
-            </p>
-
-            <button
-              type="button"
-              onClick={() => setShowMasterLogin(true)}
-              aria-label="Acesso Administrador Master"
-              className="group inline-flex items-center gap-1.5 text-[10px] font-mono tracking-[0.22em] uppercase text-muted-foreground/45 hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
-            >
-              <Lock className="h-3 w-3 opacity-70 group-hover:opacity-100 transition-opacity" strokeWidth={2.2} />
-              <span className="hidden sm:inline">Master</span>
-            </button>
-          </div>
-
-          {/* Linha 2: aviso de não afiliação governamental */}
-          <p className="text-[9.5px] leading-snug text-center text-muted-foreground/45 max-w-[720px] px-2">
-            Projeto independente. Não é afiliado, endossado ou patrocinado por nenhuma entidade governamental.
+          <p className="flex-1 text-center text-[9.5px] leading-none font-mono tracking-[0.18em] uppercase text-muted-foreground/55 truncate px-2">
+            <span className="text-muted-foreground/70">© {new Date().getFullYear()} PlantãoPro</span>
+            <span className="hidden md:inline text-muted-foreground/35"> · Plataforma privada de gestão operacional · Projeto independente, sem vínculo governamental</span>
+            <span className="md:hidden text-muted-foreground/40"> · Projeto independente</span>
           </p>
+
+          <button
+            type="button"
+            onClick={() => setShowMasterLogin(true)}
+            aria-label="Acesso Administrador Master"
+            className="group inline-flex items-center gap-1 text-[9.5px] font-mono tracking-[0.2em] uppercase text-muted-foreground/50 hover:text-primary transition-colors focus-visible:outline-none focus-visible:text-primary"
+          >
+            <Lock className="h-3 w-3 opacity-70 group-hover:opacity-100" strokeWidth={2.2} />
+            <span className="hidden sm:inline">Master</span>
+          </button>
         </div>
       </footer>
 
