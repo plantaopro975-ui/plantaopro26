@@ -10,9 +10,10 @@ interface AvatarUploadProps {
   agentName: string;
   currentAvatarUrl: string | null;
   onAvatarUpdated: (url: string | null) => void;
+  compact?: boolean;
 }
 
-export function AvatarUpload({ agentId, agentName, currentAvatarUrl, onAvatarUpdated }: AvatarUploadProps) {
+export function AvatarUpload({ agentId, agentName, currentAvatarUrl, onAvatarUpdated, compact = false }: AvatarUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentAvatarUrl);
@@ -145,6 +146,37 @@ export function AvatarUpload({ agentId, agentName, currentAvatarUrl, onAvatarUpd
   };
 
   const initials = agentName.charAt(0).toUpperCase();
+
+  if (compact) {
+    return (
+      <div className="relative group">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          className="relative block rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500"
+          aria-label="Alterar foto de perfil"
+        >
+          <Avatar className="w-14 h-14 md:w-16 md:h-16 border-2 border-amber-500/60 shadow-md shadow-amber-500/20">
+            {previewUrl && <AvatarImage src={previewUrl} alt={agentName} />}
+            <AvatarFallback className="bg-gradient-to-br from-amber-500 to-amber-600 text-xl font-bold text-black">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <span className="absolute -bottom-0.5 -right-0.5 flex items-center justify-center h-5 w-5 rounded-full bg-amber-500 text-black border-2 border-slate-900 shadow">
+            {isUploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-2.5 w-2.5" />}
+          </span>
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-4">
