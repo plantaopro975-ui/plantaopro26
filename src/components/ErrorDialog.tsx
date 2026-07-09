@@ -127,7 +127,7 @@ function CrestSVG({ className }: { className?: string }) {
   );
 }
 
-export function ErrorDialog({ open, onClose, title, message, type = 'warning' }: ErrorDialogProps) {
+export function ErrorDialog({ open, onClose, title, message, type = 'warning', unit }: ErrorDialogProps) {
   useEffect(() => {
     if (open) playChime();
   }, [open]);
