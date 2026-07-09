@@ -253,6 +253,15 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
               </p>
             )}
 
+            <div
+              className="text-[12px] leading-snug rounded border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-amber-100"
+              aria-live="polite"
+              data-testid="shift-range-summary"
+            >
+              <span className="uppercase tracking-wide text-[10px] text-amber-300/80 block mb-0.5">Resumo</span>
+              {rangeSummary}
+            </div>
+
             {nightMismatch && (
               <div className="flex items-start gap-2 text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded px-2.5 py-1.5">
                 <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
