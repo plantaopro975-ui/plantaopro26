@@ -1599,6 +1599,28 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const resetPosition = () => setDrag({ x: 0, y: 0 });
 
+  // Recentra a janela se a viewport encolher e a posição atual ficar fora dos limites.
+  useEffect(() => {
+    const clampToViewport = () => {
+      setDrag((prev) => {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        // Sem acesso ao tamanho real aqui — usamos margem defensiva de 40px.
+        const boundX = Math.max(0, vw / 2 - 40);
+        const boundY = Math.max(0, vh / 2 - 40);
+        const nx = Math.max(-boundX, Math.min(boundX, prev.x));
+        const ny = Math.max(-boundY, Math.min(boundY, prev.y));
+        return nx === prev.x && ny === prev.y ? prev : { x: nx, y: ny };
+      });
+    };
+    window.addEventListener('resize', clampToViewport);
+    window.addEventListener('orientationchange', clampToViewport);
+    return () => {
+      window.removeEventListener('resize', clampToViewport);
+      window.removeEventListener('orientationchange', clampToViewport);
+    };
+  }, []);
+
   /* Refs mantidos para eventual medição futura — conteúdo agora rola verticalmente */
   const fitRef = useRef<HTMLDivElement>(null);
   const fitInnerRef = useRef<HTMLDivElement>(null);
