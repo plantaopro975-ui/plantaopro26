@@ -863,11 +863,10 @@ export default function Index() {
     setIsSubmitting(true);
     
     // Verificar status completo do agente: ativo, equipe, licença, congelamento
-    const { data: agentCheck } = await supabase
-      .from('agents')
-      .select('is_active, name, team, is_frozen, license_status, license_expires_at')
-      .eq('cpf', cleanCpf)
-      .maybeSingle();
+    const { data: agentRows } = await (supabase as any)
+      .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+    const agentCheck = Array.isArray(agentRows) && agentRows.length ? agentRows[0] : null;
+
     
     // 1. Bloqueio por desativação manual (is_active = false)
     if (agentCheck?.is_active === false) {
