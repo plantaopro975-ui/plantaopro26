@@ -63,6 +63,19 @@ const AuthLoader: React.FC<{ debugTag?: string }> = ({ debugTag }) => {
 const GRACE_INITIAL_MS = 400;
 const GRACE_MAX_MS = 2500;
 
+/**
+ * Sampling de eventos `info` em produção. Em dev/preview registramos tudo.
+ * Em produção só ~10% das transições "não-interessantes" são gravadas —
+ * transições que envolvem hidratação/corrida sempre passam (ver `interesting`).
+ */
+const IS_PROD = import.meta.env.PROD;
+const SAMPLE_INFO = !IS_PROD || Math.random() < 0.1;
+
+function logInfo(name: string, data: Record<string, unknown>) {
+  if (!SAMPLE_INFO) return;
+  pushDiagEvent("info", name, data);
+}
+
 export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
   mode = "redirect",
@@ -97,7 +110,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
         if (cancelled || !mountedRef.current) return;
         const has = !!data.session;
         setCachedSession(has);
-        pushDiagEvent("info", "require_auth_getsession", {
+        logInfo("require_auth_getsession", {
           route: location.pathname,
           mode,
           cachedSession: has,
@@ -107,6 +120,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
       .catch((err) => {
         if (cancelled || !mountedRef.current) return;
         setCachedSession(false);
+        // Always keep warnings — cheap and useful.
         pushDiagEvent("warn", "require_auth_getsession_failed", {
           route: location.pathname,
           message: String((err as any)?.message ?? err),
@@ -122,11 +136,19 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
     };
   }, [location.pathname, mode]);
 
-  // Log condicional (uma linha por transição de estado) para diagnosticar corridas.
-  const stateKey = `${location.pathname}|il=${isLoading}|u=${!!user}|ms=${!!masterSession}|rh=${userRole === null && !!user && !masterSession}|cs=${cachedSession}|mg=${maxGraceElapsed}`;
-  if (lastDiagRef.current !== stateKey) {
+  // Log condicional (uma linha por transição de estado). Em produção só
+  // registramos transições "interessantes" — corridas de hidratação (cachedSession
+  // true sem user), roleHydrating, ou isLoading — para não inundar sessionStorage.
+  const roleHydratingNow = !!user && userRole === null && !masterSession;
+  const stateKey = `${location.pathname}|il=${isLoading}|u=${!!user}|ms=${!!masterSession}|rh=${roleHydratingNow}|cs=${cachedSession}|mg=${maxGraceElapsed}`;
+  const interesting =
+    isLoading ||
+    roleHydratingNow ||
+    (cachedSession === true && !user && !masterSession) ||
+    (cachedSession === null && Date.now() - startRef.current < GRACE_INITIAL_MS);
+  if (lastDiagRef.current !== stateKey && (SAMPLE_INFO || interesting)) {
     lastDiagRef.current = stateKey;
-    pushDiagEvent("info", "require_auth_state", {
+    logInfo("require_auth_state", {
       route: location.pathname,
       mode,
       isLoading,
