@@ -2070,6 +2070,7 @@ export default function Index() {
         title={errorDialog.title}
         message={errorDialog.message}
         type={errorDialog.type}
+        unit={errorDialog.unit}
       />
       
       {/* Lockout Timer Dialog */}
