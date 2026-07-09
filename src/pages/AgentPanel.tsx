@@ -580,7 +580,7 @@ export default function AgentPanel() {
             paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
           }}
         >
-          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
+          <div className={`agent-panel-inner w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
             {/* Main Tabs - sticky combined block (header + tabs) */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
               {/* Sticky combined block: Professional Header + Tabs Control Panel */}
@@ -731,13 +731,13 @@ export default function AgentPanel() {
                         aria-label={full}
                         title=""
                         className={cn(
-                          'group flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-lg font-medium border border-slate-600/50 bg-slate-800/60',
-                          'px-1.5 py-2.5 md:px-2 md:py-2.5 min-h-[62px] sm:min-h-[66px] md:min-h-[58px]',
+                          'group flex flex-col items-center justify-center gap-1.5 md:gap-1.5 rounded-lg font-medium border border-slate-600/50 bg-slate-800/60',
+                          'px-2 py-3 md:px-2 md:py-2.5 min-h-[76px] sm:min-h-[80px] md:min-h-[58px]',
                           trigger
                         )}
                       >
-                        <Icon className={cn('h-5 w-5 md:h-[18px] md:w-[18px]', icon)} strokeWidth={1.75} />
-                        <span className={cn('text-[11px] leading-none md:text-[13px] font-medium tracking-normal truncate max-w-full', text)}>
+                        <Icon className={cn('h-6 w-6 md:h-[18px] md:w-[18px]', icon)} strokeWidth={1.75} />
+                        <span className={cn('text-[13px] leading-tight md:text-[13px] font-semibold tracking-normal truncate max-w-full', text)}>
                           {label}
                         </span>
                       </TabsTrigger>

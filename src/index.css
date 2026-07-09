@@ -1263,3 +1263,16 @@ html.tab-hidden *::after {
     opacity: 1 !important;
   }
 }
+
+/* ============================================================
+   Agent Panel — mobile readability boost (≤640px)
+   Slightly upsizes very small text inside tab content only.
+   The tab pills themselves are excluded (they have their own sizing).
+   ============================================================ */
+@media (max-width: 640px) {
+  .agent-panel-inner [role="tabpanel"] .text-\[9px\]     { font-size: 10.5px !important; }
+  .agent-panel-inner [role="tabpanel"] .text-\[10px\]    { font-size: 11.5px !important; }
+  .agent-panel-inner [role="tabpanel"] .text-\[11px\]    { font-size: 12.5px !important; }
+  .agent-panel-inner [role="tabpanel"] .text-xs          { font-size: 13px !important; line-height: 1.35 !important; }
+  .agent-panel-inner [role="tabpanel"] .text-sm          { font-size: 14.5px !important; line-height: 1.4 !important; }
+}
