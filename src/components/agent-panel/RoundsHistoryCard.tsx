@@ -11,8 +11,9 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Radio, RefreshCw, Loader2, CheckCircle2, PlayCircle, ChevronLeft, ChevronRight,
-  Clock, Users, Shield, Info, Timer, ListChecks,
+  Clock, Users, Shield, Info, Timer, ListChecks, Zap,
 } from 'lucide-react';
+import { EmptyState } from '@/components/ui/data-states';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
