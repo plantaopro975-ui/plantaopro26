@@ -1195,11 +1195,10 @@ export default function Index() {
       const cpf = await authenticateBiometric();
       if (cpf) {
         // Get agent info
-        const { data: agentData, error: agentError } = await supabase
-          .from('agents')
-          .select('email')
-          .eq('cpf', cpf)
-          .maybeSingle();
+        const { data: rows, error: agentError } = await (supabase as any)
+          .rpc('lookup_agent_for_login', { _cpf: cpf });
+        const agentData = Array.isArray(rows) && rows.length ? rows[0] : null;
+
         
         if (agentError || !agentData) {
           toast({
