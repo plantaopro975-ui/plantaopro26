@@ -669,10 +669,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           </div>
 
 
-          {/* ============ TACTICAL STATUS RIBBON — SVG HUD (desktop; no mobile já está no topo) ============ */}
-          <div className="hidden sm:block">
-            <OperationalStatusRibbon />
-          </div>
+          {/* Ribbon HUD removida a pedido do usuário para dar mais espaço aos cards */}
+
 
         </div>
 
