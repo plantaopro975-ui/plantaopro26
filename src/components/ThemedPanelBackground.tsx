@@ -9,6 +9,7 @@ interface ThemedPanelBackgroundProps {
   className?: string;
   children?: React.ReactNode;
   showTeamImage?: boolean;
+  lowEffects?: boolean;
 }
 
 // Theme-specific panel effects
@@ -130,6 +131,7 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
   className,
   children,
   showTeamImage = true,
+  lowEffects = false,
 }, ref) {
   const { theme, resolvedTheme, themeConfig } = useTheme();
   const themeAssets = getThemeAssets(theme, resolvedTheme);
@@ -159,7 +161,7 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
 
       {/* Team poster — one image + one solid overlay. Removed the second
           heavy gradient (was double-composited on every scroll frame). */}
-      {mounted && showTeamImage && poster && (
+      {mounted && !lowEffects && showTeamImage && poster && (
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
           style={{
@@ -171,21 +173,23 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
       )}
 
       {/* Theme-specific ambient glow (kept — single radial layer). */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{
-          background: `
-            radial-gradient(ellipse at 5% 15%, ${themeAssets.ambientGlow.primary} 0%, transparent 45%),
-            radial-gradient(ellipse at 95% 85%, ${themeAssets.ambientGlow.secondary} 0%, transparent 45%)
-          `,
-        }}
-      />
+      {!lowEffects && (
+        <div
+          className="absolute inset-0 pointer-events-none z-0"
+          style={{
+            background: `
+              radial-gradient(ellipse at 5% 15%, ${themeAssets.ambientGlow.primary} 0%, transparent 45%),
+              radial-gradient(ellipse at 95% 85%, ${themeAssets.ambientGlow.secondary} 0%, transparent 45%)
+            `,
+          }}
+        />
+      )}
 
       {/* Theme-specific panel effects */}
-      {mounted && <ThemePanelEffects theme={resolvedTheme} />}
+      {mounted && !lowEffects && <ThemePanelEffects theme={resolvedTheme} />}
 
       {/* Team color accent line at top */}
-      {colors && (
+      {!lowEffects && colors && (
         <div
           className="absolute top-0 left-0 right-0 h-1 z-20 pointer-events-none"
           style={{

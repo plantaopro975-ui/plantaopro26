@@ -77,11 +77,30 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 
+function ModuleFallback({ compact = false }: { compact?: boolean }) {
+  return (
+    <div
+      aria-busy="true"
+      className={cn(
+        'w-full rounded-xl border border-amber-500/20 bg-slate-900/80',
+        compact ? 'min-h-[120px] p-2' : 'min-h-[160px] p-3'
+      )}
+    >
+      <div className="h-3 w-28 rounded bg-amber-500/20" />
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="h-16 rounded-lg bg-slate-800/70" />
+        <div className="h-16 rounded-lg bg-slate-800/70" />
+      </div>
+    </div>
+  );
+}
+
 export default function AgentPanel() {
   const { user, isLoading, masterSession, isAdmin } = useAuth();
   const { agent, isLoading: isLoadingAgent } = useAgentProfile();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('equipe');
+  const [mountedTabs, setMountedTabs] = useState<Set<string>>(() => new Set(['equipe']));
   const { compact, toggle: toggleCompact } = useCompactMode();
   const [hasShifts, setHasShifts] = useState(true);
   const { enabled: promosEnabled } = usePromosEnabled();
@@ -132,6 +151,16 @@ export default function AgentPanel() {
   // storm across every inactive query.
   const queryClient = useQueryClient();
   const wasOfflineRef = useRef(false);
+  const handleTabChange = useCallback((value: string) => {
+    setActiveTab(value);
+    setMountedTabs((current) => {
+      if (current.has(value)) return current;
+      const next = new Set(current);
+      next.add(value);
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (!isOnline) {
       wasOfflineRef.current = true;
@@ -168,21 +197,38 @@ export default function AgentPanel() {
     const preloadNextTabs = () => {
       // Fire and forget — Vite dedupes and browser cache handles re-entry.
       void import('@/components/agent-panel/ProfessionalShiftTimer');
+      void import('@/components/agent-panel/NextShiftCountdown');
       void import('@/components/agent-panel/ShiftScheduleCard');
       void import('@/components/agent-panel/ShiftCalendarOverview');
+      void import('@/components/agent-panel/RecentShiftCyclesCard');
       void import('@/components/agent-panel/ChatPanel');
       void import('@/components/agent-panel/LeaveRequestCard');
       void import('@/components/agent-panel/AgentEventsCard');
       void import('@/components/agent-panel/BHTracker');
+      void import('@/components/agent-panel/BHEvolutionChart');
+      void import('@/components/agent-panel/BHHistoryTracker');
+      void import('@/components/agent-panel/ShiftPlannerCard');
+      void import('@/components/agent-panel/SwapRequestsCard');
+      void import('@/components/agent-panel/NotificationsAndAlertsCard');
+      void import('@/components/agent-panel/AgentSettingsCard');
+      void import('@/components/agent-panel/PasswordChangeRequest');
+      void import('@/components/agent-panel/SmartAlarmClock');
+      void import('@/components/agent-panel/RoundsHistoryCard');
+      void import('@/components/agent-panel/AgentsDirectoryCard');
+      void import('@/components/agent-panel/ShiftOperationsCenter');
+      void import('@/components/agent-panel/ShiftBriefingCard');
+      void import('@/components/dashboard/TacticalRadar');
+      void import('@/components/DiagnosticReportButton');
+      void import('@/components/home/RoundsManager');
     };
     const ric = (window as any).requestIdleCallback as
       | ((cb: () => void, opts?: { timeout: number }) => number)
       | undefined;
     if (ric) {
-      const id = ric(preloadNextTabs, { timeout: 2500 });
+      const id = ric(preloadNextTabs, { timeout: 800 });
       return () => (window as any).cancelIdleCallback?.(id);
     }
-    const t = window.setTimeout(preloadNextTabs, 1500);
+    const t = window.setTimeout(preloadNextTabs, 250);
     return () => window.clearTimeout(t);
   }, []);
 
@@ -501,8 +547,8 @@ export default function AgentPanel() {
 
   return (
     <>
-    <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
-      <PublicSecurityBackdrop />
+    <ThemedPanelBackground team={agent?.team || null} showTeamImage={false} lowEffects>
+      <PublicSecurityBackdrop minimal />
       <NetworkStatusPill />
       <div className="hud-scope flex-1 flex flex-col w-full min-w-0 min-h-0">
 
@@ -526,8 +572,6 @@ export default function AgentPanel() {
             overscrollBehavior: 'contain',
             overscrollBehaviorX: 'none',
             scrollBehavior: 'auto',
-            transform: 'translateZ(0)',
-            willChange: 'scroll-position',
             touchAction: 'pan-y pinch-zoom',
             paddingTop: 'max(env(safe-area-inset-top, 0px), 8px)',
             paddingLeft: 'max(env(safe-area-inset-left, 0px), 8px)',
@@ -537,8 +581,7 @@ export default function AgentPanel() {
         >
           <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
             {/* Main Tabs - sticky combined block (header + tabs) */}
-            <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-amber-500" /></div>}>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
+            <Tabs value={activeTab} onValueChange={handleTabChange} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
               {/* Sticky combined block: Professional Header + Tabs Control Panel */}
               <div
                 role="region"
@@ -606,7 +649,7 @@ export default function AgentPanel() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 bg-emerald-500/15 px-1 py-0.5 md:px-1.5 rounded border border-emerald-500/40 shrink-0">
-                    <Zap className="h-2 w-2 md:h-2.5 md:w-2.5 text-emerald-400 animate-pulse" />
+                    <Zap className="h-2 w-2 md:h-2.5 md:w-2.5 text-emerald-400" />
                     <span className="text-[8px] md:text-[9px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
                   </div>
                 </div>
@@ -622,61 +665,61 @@ export default function AgentPanel() {
                     {([
                       {
                         value: 'equipe', label: 'Equipe', full: 'Minha Equipe', Icon: Users,
-                        trigger: 'hover:bg-amber-500/15 hover:border-amber-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-amber-500/40 data-[state=active]:border-amber-300',
+                        trigger: 'hover:bg-amber-500/15 hover:border-amber-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:border-amber-300',
                         icon: 'text-amber-400 group-data-[state=active]:text-black',
                         text: 'text-amber-200 group-data-[state=active]:text-black',
                       },
                       {
                         value: 'plantoes', label: 'Plantões', full: 'Meus Plantões', Icon: Calendar,
-                        trigger: 'hover:bg-orange-500/15 hover:border-orange-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-orange-500/40 data-[state=active]:border-orange-300',
+                        trigger: 'hover:bg-orange-500/15 hover:border-orange-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-400 data-[state=active]:via-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:border-orange-300',
                         icon: 'text-orange-400 group-data-[state=active]:text-white',
                         text: 'text-orange-200 group-data-[state=active]:text-white',
                       },
                       {
                         value: 'bh', label: 'B.Horas', full: 'Banco de Horas', Icon: Clock,
-                        trigger: 'hover:bg-emerald-500/15 hover:border-emerald-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:shadow-emerald-500/40 data-[state=active]:border-emerald-300',
+                        trigger: 'hover:bg-emerald-500/15 hover:border-emerald-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-400 data-[state=active]:via-green-500 data-[state=active]:to-teal-600 data-[state=active]:text-black data-[state=active]:border-emerald-300',
                         icon: 'text-emerald-400 group-data-[state=active]:text-black',
                         text: 'text-emerald-200 group-data-[state=active]:text-black',
                       },
                       {
                         value: 'folgas', label: 'Folgas', full: 'Folgas e Férias', Icon: CalendarOff,
-                        trigger: 'hover:bg-purple-500/15 hover:border-purple-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-purple-500/40 data-[state=active]:border-purple-300',
+                        trigger: 'hover:bg-purple-500/15 hover:border-purple-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-400 data-[state=active]:via-violet-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:border-purple-300',
                         icon: 'text-purple-400 group-data-[state=active]:text-white',
                         text: 'text-purple-200 group-data-[state=active]:text-white',
                       },
                       {
                         value: 'agenda', label: 'Agenda', full: 'Agenda Operacional', Icon: CalendarDays,
-                        trigger: 'hover:bg-cyan-500/15 hover:border-cyan-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-400 data-[state=active]:via-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-black data-[state=active]:shadow-cyan-500/40 data-[state=active]:border-cyan-300',
+                        trigger: 'hover:bg-cyan-500/15 hover:border-cyan-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-400 data-[state=active]:via-sky-500 data-[state=active]:to-blue-600 data-[state=active]:text-black data-[state=active]:border-cyan-300',
                         icon: 'text-cyan-400 group-data-[state=active]:text-black',
                         text: 'text-cyan-200 group-data-[state=active]:text-black',
                       },
                       {
                         value: 'planejador', label: 'Planejar', full: 'Planejador de Escalas', Icon: Calculator,
-                        trigger: 'hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-rose-500/40 data-[state=active]:border-rose-300',
+                        trigger: 'hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:border-rose-300',
                         icon: 'text-rose-400 group-data-[state=active]:text-white',
                         text: 'text-rose-200 group-data-[state=active]:text-white',
                       },
                       {
                         value: 'permutas', label: 'Permutas', full: 'Permutas de Plantão', Icon: ArrowRightLeft,
-                        trigger: 'hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:shadow-yellow-500/40 data-[state=active]:border-yellow-300',
+                        trigger: 'hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:border-yellow-300',
                         icon: 'text-yellow-400 group-data-[state=active]:text-black',
                         text: 'text-yellow-200 group-data-[state=active]:text-black',
                       },
                       {
                         value: 'rondas', label: 'Rondas', full: 'Histórico de Rondas', Icon: Radio,
-                        trigger: 'hover:bg-red-500/15 hover:border-red-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-400 data-[state=active]:via-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-red-500/40 data-[state=active]:border-red-300',
+                        trigger: 'hover:bg-red-500/15 hover:border-red-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-400 data-[state=active]:via-rose-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:border-red-300',
                         icon: 'text-red-400 group-data-[state=active]:text-white',
                         text: 'text-red-200 group-data-[state=active]:text-white',
                       },
                       {
                         value: 'chat', label: 'Chat', full: 'Chat Interno', Icon: MessageCircle,
-                        trigger: 'hover:bg-blue-500/15 hover:border-blue-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-blue-500/40 data-[state=active]:border-blue-300',
+                        trigger: 'hover:bg-blue-500/15 hover:border-blue-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-400 data-[state=active]:via-indigo-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:border-blue-300',
                         icon: 'text-blue-400 group-data-[state=active]:text-white',
                         text: 'text-blue-200 group-data-[state=active]:text-white',
                       },
                       {
                         value: 'config', label: 'Config', full: 'Configurações', Icon: Settings,
-                        trigger: 'hover:bg-slate-500/15 hover:border-slate-400/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-400 data-[state=active]:via-gray-500 data-[state=active]:to-zinc-600 data-[state=active]:text-white data-[state=active]:shadow-slate-500/40 data-[state=active]:border-slate-300',
+                        trigger: 'hover:bg-slate-500/15 hover:border-slate-400/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-400 data-[state=active]:via-gray-500 data-[state=active]:to-zinc-600 data-[state=active]:text-white data-[state=active]:border-slate-300',
                         icon: 'text-slate-400 group-data-[state=active]:text-white',
                         text: 'text-slate-200 group-data-[state=active]:text-white',
                       },
@@ -687,13 +730,12 @@ export default function AgentPanel() {
                         aria-label={full}
                         title=""
                         className={cn(
-                          'group flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-lg font-bold transition-all duration-300 border border-slate-600/50 bg-slate-800/60',
+                          'group flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-lg font-bold border border-slate-600/50 bg-slate-800/60',
                           'px-1.5 py-2.5 md:px-2 md:py-2.5 min-h-[62px] sm:min-h-[66px] md:min-h-[58px]',
-                          'data-[state=active]:shadow-lg data-[state=active]:scale-[1.02]',
                           trigger
                         )}
                       >
-                        <Icon className={cn('h-5 w-5 md:h-[18px] md:w-[18px] transition-colors', icon)} />
+                        <Icon className={cn('h-5 w-5 md:h-[18px] md:w-[18px]', icon)} />
                         <span className={cn('text-[11px] leading-none md:text-sm font-bold tracking-tight md:tracking-wide truncate max-w-full', text)}>
                           {label}
                         </span>
@@ -708,7 +750,8 @@ export default function AgentPanel() {
               </div>
 
 
-              <TabsContent value="equipe" forceMount hidden={activeTab !== 'equipe'} className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible data-[state=inactive]:hidden">
+              <TabsContent value="equipe" forceMount hidden={activeTab !== 'equipe'} className="space-y-4 md:space-y-3 mt-0 overflow-visible data-[state=inactive]:hidden">
+                {mountedTabs.has('equipe') && <>
                 {/* Shift Alerts Banner */}
                 <ShiftAlertsBanner
                   agentId={agent.id}
@@ -759,7 +802,11 @@ export default function AgentPanel() {
                 />
 
                 {/* Ad Display System temporariamente desativado a pedido do administrador */}
-                {promosEnabled && <AdDisplaySystem />}
+                {promosEnabled && (
+                  <Suspense fallback={<ModuleFallback compact={compact} />}>
+                    <AdDisplaySystem />
+                  </Suspense>
+                )}
 
 
 
@@ -785,10 +832,12 @@ export default function AgentPanel() {
                     />
                   </div>
                   <div className="grid w-full min-w-0 grid-cols-1 gap-4 overflow-visible sm:grid-cols-2 xl:grid-cols-1 xl:gap-3">
-                    <TacticalRadar 
-                      unitId={agent.unit_id || undefined}
-                      compact={true}
-                    />
+                    <Suspense fallback={<ModuleFallback compact={compact} />}>
+                      <TacticalRadar 
+                        unitId={agent.unit_id || undefined}
+                        compact={true}
+                      />
+                    </Suspense>
                     <BirthdayCard 
                       agentId={agent.id}
                       team={agent.team}
@@ -801,9 +850,11 @@ export default function AgentPanel() {
                 <Suspense fallback={null}>
                   <AgentsDirectoryCard currentAgentId={agent.id} />
                 </Suspense>
+                </>}
               </TabsContent>
 
-              <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="space-y-2.5 md:space-y-3 animate-fade-in mt-0 data-[state=inactive]:hidden">
+              <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('plantoes') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 {/* Next Shift Countdown - Top Priority */}
                 <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                 
@@ -815,41 +866,53 @@ export default function AgentPanel() {
                   <ShiftCalendarOverview agentId={agent.id} />
                   <RecentShiftCyclesCard agentId={agent.id} />
                 </div>
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="bh" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="bh" forceMount hidden={activeTab !== 'bh'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('bh') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <BHTracker agentId={agent.id} />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
                   <BHEvolutionChart agentId={agent.id} />
                   <BHHistoryTracker agentId={agent.id} />
                 </div>
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="folgas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="folgas" forceMount hidden={activeTab !== 'folgas'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('folgas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <LeaveRequestCard 
                   agentId={agent.id} 
                   agentTeam={agent.team}
                   agentUnitId={agent.unit_id}
                 />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="agenda" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="agenda" forceMount hidden={activeTab !== 'agenda'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('agenda') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <AgentEventsCard agentId={agent.id} />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="planejador" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="planejador" forceMount hidden={activeTab !== 'planejador'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('planejador') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <ShiftPlannerCard agentId={agent.id} />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="permutas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="permutas" forceMount hidden={activeTab !== 'permutas'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('permutas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <SwapRequestsCard 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
                   team={agent.team}
                 />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="rondas" className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible">
+              <TabsContent value="rondas" forceMount hidden={activeTab !== 'rondas'} className="space-y-4 md:space-y-3 mt-0 overflow-visible data-[state=inactive]:hidden">
+                {mountedTabs.has('rondas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <div className="relative z-10 w-full min-w-0 max-w-full overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-900/98 via-slate-950/98 to-amber-950/35 p-3 shadow-xl shadow-amber-500/10 sm:p-4 md:p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <div className="flex min-w-0 items-start gap-3">
@@ -898,12 +961,14 @@ export default function AgentPanel() {
                   </Suspense>
                 </div>
                 <RoundsHistoryCard agentId={agent.id} />
+                </Suspense>}
               </TabsContent>
 
 
 
 
-              <TabsContent value="chat" forceMount hidden={activeTab !== 'chat'} className="space-y-2.5 md:space-y-3 animate-fade-in mt-0 data-[state=inactive]:hidden">
+              <TabsContent value="chat" forceMount hidden={activeTab !== 'chat'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('chat') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <ChatPanel 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
@@ -912,9 +977,11 @@ export default function AgentPanel() {
                   agentRole={(agent as any).role}
                   agentAvatarUrl={(agent as any).avatar_url}
                 />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="config" className="space-y-4 md:space-y-5 animate-fade-in mt-0">
+              <TabsContent value="config" forceMount hidden={activeTab !== 'config'} className="space-y-4 md:space-y-5 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('config') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 {/* ══════════ SEÇÃO 1: CONTA & SEGURANÇA ══════════ */}
                 <section aria-labelledby="cfg-sec-security" className="space-y-2.5 md:space-y-3">
                   <h2 id="cfg-sec-security" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-purple-300/90 border-b border-purple-500/20 pb-1.5">
@@ -984,10 +1051,10 @@ export default function AgentPanel() {
                     </div>
                   </div>
                 </section>
+                </Suspense>}
               </TabsContent>
 
             </Tabs>
-            </Suspense>
 
             {/* Mural de Comunicados Rápidos */}
             <AnnouncementsMural className="mt-4" />
