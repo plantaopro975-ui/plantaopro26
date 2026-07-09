@@ -30,6 +30,8 @@ import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
+import { PublicSecurityBackdrop } from '@/components/agent-panel/PublicSecurityBackdrop';
+import { useQueryClient } from '@tanstack/react-query';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
 import { AgentPanelHeader } from '@/components/agent-panel/AgentPanelHeader';
@@ -120,6 +122,31 @@ export default function AgentPanel() {
       });
     },
   });
+
+
+
+  // Auto-sync on reconnect: when the device comes back online, refresh all
+  // React Query caches so stale data (shifts, leaves, team) updates and any
+  // previous error states clear. Fires a single info toast for feedback.
+  const queryClient = useQueryClient();
+  const wasOfflineRef = useRef(false);
+  useEffect(() => {
+    if (!isOnline) {
+      wasOfflineRef.current = true;
+      return;
+    }
+    if (wasOfflineRef.current) {
+      wasOfflineRef.current = false;
+      toast({
+        title: 'Sincronizando dados',
+        description: 'Atualizando informações após reconexão...',
+      });
+      // Invalidate everything so hooks refetch fresh data
+      queryClient.invalidateQueries();
+    }
+  }, [isOnline, queryClient]);
+
+
 
 
 
@@ -438,7 +465,9 @@ export default function AgentPanel() {
   return (
     <>
     <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
+      <PublicSecurityBackdrop />
       <div className="hud-scope flex-1 flex flex-col w-full min-w-0 min-h-0">
+
 
 
       {/* Session Monitor Banner - Visual session status */}
