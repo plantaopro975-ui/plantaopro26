@@ -15,19 +15,6 @@ import { TeamUnlinkDialog } from '@/components/agents/TeamUnlinkDialog';
 import { TransferRequestDialog } from '@/components/agents/TransferRequestDialog';
 import { TeamEmblem } from '@/components/TeamEmblem';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string | null;
-  team: string | null;
-  blood_type: string | null;
-  avatar_url: string | null;
-  is_active: boolean;
-  phone: string | null;
-  address: string | null;
-  birth_date: string | null;
-  email: string | null;
-}
 
 interface TeamMember {
   id: string;
