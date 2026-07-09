@@ -973,9 +973,21 @@ Documento gerado automaticamente pelo PlantãoPro
         <div>
           <h4 className="text-sm font-medium text-slate-300 mb-2">Minhas Solicitações</h4>
           {myRequests.length === 0 ? (
-            <p className="text-center text-slate-400 py-4 text-sm">
-              Você ainda não fez nenhuma solicitação de permuta.
-            </p>
+            <EmptyState
+              icon={ArrowRightLeft}
+              title="Nenhuma solicitação ainda"
+              description="Você ainda não pediu nenhuma permuta. Crie uma solicitação para trocar de plantão com outro agente da equipe."
+              action={
+                <button
+                  type="button"
+                  onClick={() => setShowNewRequest(true)}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-orange-500/50 bg-orange-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-orange-300 transition-all hover:bg-orange-500/20 hover:border-orange-400/70 focus-ring-primary"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Solicitar Permuta
+                </button>
+              }
+            />
           ) : (
             <div className="space-y-2 max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
               {myRequests.map((request) => (
