@@ -50,7 +50,6 @@ describe('ShiftEditDialog · E2E editar → Noturno → confirmar', () => {
 
   const existingDayShift: ShiftEditRecord = {
     id: 'shift-abc-123',
-    agent_id: 'agent-xyz',
     shift_date: '2026-07-10',
     start_time: '07:00:00',
     end_time: '19:00:00',
