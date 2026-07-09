@@ -48,21 +48,19 @@ interface ShiftEditDialogProps {
   onSaved?: () => void;
 }
 
-type ShiftKind = 'regular' | 'night' | '24h' | 'half' | 'vacation';
+type ShiftKind = 'regular' | 'night' | '24h' | 'vacation';
 
 const KIND_DEFAULTS: Record<ShiftKind, { start: string; end: string }> = {
-  regular: { start: '07:00', end: '19:00' },
-  night: { start: '22:00', end: '06:00' },
   '24h': { start: '07:00', end: '07:00' },
-  half: { start: '07:00', end: '19:00' },
+  regular: { start: '07:00', end: '19:00' },
+  night: { start: '19:00', end: '07:00' },
   vacation: { start: '00:00', end: '00:00' },
 };
 
 const KIND_LABEL: Record<ShiftKind, string> = {
-  regular: 'Diurno (07→19)',
-  night: 'Noturno (22→06)',
-  '24h': 'Plantão 24h (07→07)',
-  half: 'Meia folga (12h)',
+  '24h': 'Plantão 24h (07→07 dia seguinte)',
+  regular: 'Diurno 12h (07→19) — folga especial',
+  night: 'Noturno 12h (19→07 dia seguinte) — folga especial',
   vacation: 'Folga / Férias / Licença',
 };
 
@@ -72,20 +70,20 @@ function inferKind(s?: ShiftEditRecord | null): ShiftKind {
   const st = s.start_time?.slice(0, 5);
   const en = s.end_time?.slice(0, 5);
   if (st === '07:00' && en === '07:00') return '24h';
-  if (st === '22:00' && en === '06:00') return 'night';
   if (st === '19:00' && en === '07:00') return 'night';
+  if (st === '22:00' && en === '06:00') return 'night';
   if (st === '07:00' && en === '19:00') return 'regular';
-  return 'regular';
+  return '24h';
 }
 
 const timeSchema = z.string().regex(/^\d{2}:\d{2}$/, 'Formato HH:MM');
 const formSchema = z
   .object({
-    kind: z.enum(['regular', 'night', '24h', 'half', 'vacation']),
+    kind: z.enum(['regular', 'night', '24h', 'vacation']),
     start_time: timeSchema,
     end_time: timeSchema,
   })
-  .refine((v) => v.kind === 'vacation' || v.start_time !== v.end_time || v.kind === '24h', {
+  .refine((v) => v.kind === 'vacation' || v.kind === '24h' || v.start_time !== v.end_time, {
     message: 'Início e fim não podem ser iguais',
     path: ['end_time'],
   });
@@ -113,7 +111,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
     setEndTime(d.end);
   };
 
-  const nightMismatch = kind === 'night' && !(startTime === '22:00' && endTime === '06:00');
+  const nightMismatch = false;
   const dateStr = format(shiftDate, 'yyyy-MM-dd');
   const isNew = !shift?.id;
 
