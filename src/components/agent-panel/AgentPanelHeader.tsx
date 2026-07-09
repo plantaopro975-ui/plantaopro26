@@ -354,26 +354,32 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
 
             <AgentRoleSelector agentId={agent.id} currentRole={agent.role || 'agent'} />
             <NotificationsPanel agentId={agent.id} />
-            <FontSizeControl />
+            {/* FontSizeControl: oculto no mobile para liberar espaço ao botão "Sair" */}
+            <div className="hidden md:inline-flex">
+              <FontSizeControl />
+            </div>
 
             {onToggleCompact && (
-              <ActionButton
-                onClick={onToggleCompact}
-                tooltip={compact ? 'Modo confortável (expandir)' : 'Modo compacto (reduzir)'}
-                tone="neutral"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  {compact ? (
-                    <>
-                      <path d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
-                    </>
-                  ) : (
-                    <>
-                      <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" />
-                    </>
-                  )}
-                </svg>
-              </ActionButton>
+              /* Toggle compacto: oculto no mobile (painel já é compacto por padrão em telas pequenas) */
+              <div className="hidden md:inline-flex">
+                <ActionButton
+                  onClick={onToggleCompact}
+                  tooltip={compact ? 'Modo confortável (expandir)' : 'Modo compacto (reduzir)'}
+                  tone="neutral"
+                >
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    {compact ? (
+                      <>
+                        <path d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
+                      </>
+                    ) : (
+                      <>
+                        <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" />
+                      </>
+                    )}
+                  </svg>
+                </ActionButton>
+              </div>
             )}
 
             {/* Trial button removed — sistema gratuito */}
