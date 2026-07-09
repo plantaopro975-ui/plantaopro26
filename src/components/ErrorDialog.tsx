@@ -180,6 +180,19 @@ export function ErrorDialog({ open, onClose, title, message, type = 'warning', u
             {/* Gold underline */}
             <div className="mx-auto w-16 h-px bg-[#c9a24c]/70 my-4" />
 
+            {/* Unit crest chip (institutional) */}
+            {unit && (
+              <div className="mx-auto mb-4 inline-flex items-center gap-2.5 rounded-full border border-[#c9a24c]/50 bg-black/45 px-4 py-1.5 shadow-[0_2px_10px_rgba(201,162,76,0.25)]">
+                <UnitCrestSVG className="w-5 h-5 drop-shadow-[0_1px_2px_rgba(201,162,76,0.5)]" />
+                <span
+                  className="text-[10.5px] tracking-[0.32em] font-mono uppercase text-[#f0d98a]"
+                  style={{ fontFamily: '"IBM Plex Mono", ui-monospace, monospace' }}
+                >
+                  Unidade · {unit}
+                </span>
+              </div>
+            )}
+
             {/* Message */}
             <p
               className="text-[13.5px] leading-relaxed text-slate-200/90 whitespace-pre-line max-w-sm mx-auto"
@@ -187,6 +200,7 @@ export function ErrorDialog({ open, onClose, title, message, type = 'warning', u
             >
               {message}
             </p>
+
 
             {/* Action */}
             <div className="mt-7 flex justify-center">
