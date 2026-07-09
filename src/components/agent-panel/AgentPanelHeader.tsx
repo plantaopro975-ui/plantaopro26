@@ -246,10 +246,12 @@ function ActionButton({
 export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isShiftBannerDismissed, compact = false, onToggleCompact }: AgentPanelHeaderProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   // trial removido — sistema gratuito
 
   const handleLogout = async () => {
-    // Dispara signOut mas NUNCA fica preso — timeout curto + hard redirect garantido.
+    if (isLoggingOut) return; // bloqueia múltiplos cliques
+    setIsLoggingOut(true);
     try {
       await Promise.race([
         signOut(),
@@ -266,6 +268,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
       window.location.href = '/';
     }
   };
+
 
 
   return (
@@ -404,7 +407,10 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                   <button
                     type="button"
                     onClick={handleLogout}
-                    aria-label="Encerrar sessão"
+                    disabled={isLoggingOut}
+                    aria-busy={isLoggingOut}
+                    aria-label={isLoggingOut ? 'Encerrando sessão' : 'Encerrar sessão'}
+                    data-testid="logout-button"
                     className={cn(
                       'group relative flex items-center justify-center gap-1.5 overflow-hidden shrink-0',
                       'h-9 min-h-[40px] px-2.5 sm:px-3 rounded-md',
@@ -412,13 +418,21 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                       "text-white font-bold text-[11px] tracking-[0.18em] uppercase font-['IBM_Plex_Mono',_monospace]",
                       'shadow-[0_4px_14px_-4px_rgba(220,38,38,.65),inset_0_1px_0_rgba(255,255,255,.18)]',
                       'hover:from-red-500 hover:to-red-700 hover:-translate-y-[1px]',
-                      'active:translate-y-0 transition-all duration-200'
+                      'active:translate-y-0 transition-all duration-200',
+                      'disabled:opacity-70 disabled:cursor-wait disabled:pointer-events-none'
                     )}
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                    <IconPower className="h-4 w-4 relative" />
-                    <span className="relative">Sair</span>
+                    {isLoggingOut ? (
+                      <svg viewBox="0 0 24 24" className="h-4 w-4 relative animate-spin" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M21 12a9 9 0 1 1-3-6.7" />
+                      </svg>
+                    ) : (
+                      <IconPower className="h-4 w-4 relative" />
+                    )}
+                    <span className="relative">{isLoggingOut ? 'Saindo…' : 'Sair'}</span>
                   </button>
+
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="bg-slate-950 border-slate-700 text-slate-200 text-[11px]">
                   Encerrar sessão
