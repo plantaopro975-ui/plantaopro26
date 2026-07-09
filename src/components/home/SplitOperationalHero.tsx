@@ -192,11 +192,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
           }}
         />
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(234,179,8,0.16), transparent 70%)' }}
-        />
+        {/* removido: glow amarelo inferior sob viatura/agente (solicitação do usuário) */}
+
 
 
         {/* ============ MOBILE-ONLY — Canal Seguro ribbon no topo (substitui título) ============ */}
