@@ -208,16 +208,17 @@ export function ShiftMiniCalendar({
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-2 md:gap-4 mt-1.5 md:mt-2 text-[8px] md:text-[9px] flex-wrap">
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-sm bg-amber-500/25 border border-amber-500/50" />
+      <div className="flex items-center justify-center gap-2 md:gap-4 mt-1.5 md:mt-2 text-[8px] md:text-[9px] whitespace-nowrap overflow-x-auto scrollbar-none -mx-1 px-1">
+        <div className="flex items-center gap-1 shrink-0">
+          <div className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 rounded-sm bg-amber-500/25 border border-amber-500/50" />
           <span className="text-slate-400">Plantão</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-sm ring-1 ring-amber-400/70" />
+        <div className="flex items-center gap-1 shrink-0">
+          <div className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 rounded-sm ring-1 ring-amber-400/70" />
           <span className="text-slate-400">Hoje</span>
         </div>
       </div>
+
     </div>
   );
 }
