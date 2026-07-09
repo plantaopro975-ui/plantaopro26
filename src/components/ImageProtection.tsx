@@ -112,15 +112,8 @@ export function ImageProtection() {
       const kL = k.toLowerCase();
       const mod = e.ctrlKey || e.metaKey;
 
-      // PrintScreen (varies by OS; some browsers don't fire it)
-      if (k === "PrintScreen" || kL === "printscreen") {
-        scramble();
-        show("printscreen");
-        try {
-          navigator.clipboard?.writeText?.(" ");
-        } catch {}
-        return;
-      }
+      // PrintScreen: bloqueio temporariamente desativado a pedido do usuário
+
 
       // DevTools shortcuts: no longer blocked/warned (removed per request)
 
@@ -146,16 +139,11 @@ export function ImageProtection() {
       }
     };
 
-    // Some OS/browsers only expose PrintScreen on keyup
-    const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "PrintScreen") {
-        scramble();
-        show("printscreen");
-        try {
-          navigator.clipboard?.writeText?.(" ");
-        } catch {}
-      }
+    // PrintScreen keyup: bloqueio temporariamente desativado
+    const onKeyUp = (_e: KeyboardEvent) => {
+      /* noop */
     };
+
 
     // DevTools open-detection removed per request (no more warning dialog)
 
