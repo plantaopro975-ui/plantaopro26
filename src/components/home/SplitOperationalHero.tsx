@@ -536,23 +536,24 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </picture>
             </div>
 
-            {/* CHARLIE card — desktop only, ao lado do agente */}
+            {/* DELTA card — desktop only, ao lado do agente */}
             {(() => {
-              const charlie = TEAMS.find((x) => x.key === 'CHARLIE');
-              if (!charlie) return null;
-              const idx = TEAMS.indexOf(charlie);
+              const delta = TEAMS.find((x) => x.key === 'DELTA');
+              if (!delta) return null;
+              const idx = TEAMS.indexOf(delta);
               return (
                 <div className="hidden lg:block absolute right-3 xl:right-6 bottom-2 z-[70] w-[190px] xl:w-[220px]" style={{ perspective: '900px' }}>
                   <TeamCard
-                    team={charlie}
+                    team={delta}
                     idx={idx}
-                    isSelected={selectedTeam === 'CHARLIE'}
+                    isSelected={selectedTeam === 'DELTA'}
                     onSelect={handleSelect}
                     className="!h-[210px] xl:!h-[240px] w-full"
                   />
                 </div>
               );
             })()}
+
 
           </div>
 
