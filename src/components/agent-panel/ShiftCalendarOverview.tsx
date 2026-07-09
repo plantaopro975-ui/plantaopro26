@@ -261,6 +261,12 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
       setShiftModalOpen(true);
       return;
     }
+    // Sem plantão: em dias futuros, abrir modal de cadastro/edição direto
+    if (!isPastLocalDay(day)) {
+      setEditData({ date: day, shift: null });
+      setEditOpen(true);
+      return;
+    }
     setDetailData(buildJourneyFromShifts(day, shifts));
     setDetailOpen(true);
   };
