@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { CalendarDays, Plus, Loader2, Edit2, Trash2, Clock, FileText, Users, Bell } from 'lucide-react';
+import { EmptyState } from '@/components/ui/data-states';
 import { format, parseISO, isToday, isFuture, isPast } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
