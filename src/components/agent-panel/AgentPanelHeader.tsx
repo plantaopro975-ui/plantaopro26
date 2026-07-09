@@ -412,9 +412,9 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                     data-testid="logout-button"
                     className={cn(
                       'group relative flex items-center justify-center gap-1.5 overflow-hidden shrink-0',
-                      'h-9 min-h-[40px] px-2.5 sm:px-3 rounded-md',
+                      'h-10 min-h-[40px] px-3 sm:px-3.5 rounded-md',
                       'bg-gradient-to-b from-red-600 to-red-800 border border-red-400/50',
-                      "text-white font-bold text-[11px] tracking-[0.18em] uppercase font-['IBM_Plex_Mono',_monospace]",
+                      "text-white font-bold text-[12px] tracking-[0.18em] uppercase font-['IBM_Plex_Mono',_monospace]",
                       'shadow-[0_4px_14px_-4px_rgba(220,38,38,.65),inset_0_1px_0_rgba(255,255,255,.18)]',
                       'hover:from-red-500 hover:to-red-700 hover:-translate-y-[1px]',
                       'active:translate-y-0 transition-all duration-200',
