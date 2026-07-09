@@ -960,11 +960,10 @@ export default function Index() {
       persistLastCpf(cleanCpf);
       // Save credentials if enabled and update last login time
       if (saveCpfEnabled) {
-        const { data: agentData } = await supabase
-          .from('agents')
-          .select('name')
-          .eq('cpf', cleanCpf)
-          .single();
+        const { data: rowsA } = await (supabase as any)
+          .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+        const agentData = Array.isArray(rowsA) && rowsA.length ? rowsA[0] : null;
+
         saveCredential(cleanCpf, agentData?.name, savePasswordEnabled ? loginPassword : undefined);
       }
       // Always update last login time for quick login feature
