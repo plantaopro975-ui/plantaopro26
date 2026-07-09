@@ -1764,7 +1764,7 @@ export default function Index() {
         open={showRegistration}
         onOpenChange={(open) => !open && safeCloseRegistration()}
         variant="register"
-        title={`Cadastro - ${selectedTeam}`}
+        title="Cadastro de Novo Agente"
         subtitle="Novo Agente"
         team={selectedTeam}
       >
