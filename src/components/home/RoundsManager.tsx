@@ -1862,46 +1862,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </div>
                 )}
 
-                {mode === 'split' && !nightEffectivelyLocked && (
-                  <div className="grid gap-1.5">
-                    <Label className="text-[11px] font-sans tracking-wide text-muted-foreground">
-                      Divisão automática entre {agents.length} agente{agents.length === 1 ? '' : 's'}
-                    </Label>
-                    <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
-                      <SelectTrigger className="bg-card border-border h-9 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="distribute">Automático — minutos inteiros, recalibra no fim (recomendado)</SelectItem>
-                        <SelectItem value="exact">Preciso — divide em segundos, fecha 100% no término</SelectItem>
-                        <SelectItem value="floor">Truncar — minutos inteiros (sobra livre no fim)</SelectItem>
-                        <SelectItem value="ceil">Arredondar — minutos inteiros para cima (pode ultrapassar)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {schedule && (
-                      <div className="mt-0.5 grid gap-0.5">
-                        <p className="text-[10px] font-mono text-muted-foreground/80">
-                          {agents.length} × ~{fmtDuration(schedule.slot)} · total {fmtDuration(schedule.total)} ({schedule.rows[0]?.from ?? startTime} → {endTime})
+                {mode === 'split' && !nightEffectivelyLocked && schedule && (
+                  <div
+                    className="flex items-center justify-between gap-3 rounded-md border border-border/70 bg-card/60 px-3 py-2"
+                    style={{ borderLeft: `2px solid ${teamColor}` }}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Users className="h-3.5 w-3.5 shrink-0" style={{ color: teamColor }} />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-sans uppercase tracking-[0.14em] text-muted-foreground leading-none">
+                          Distribuição do turno
                         </p>
-                        {nightEffectivelyLocked && !running && agents.length >= 1 && (
-                          <p
-                            className="text-[10.5px] font-mono text-amber-200/90"
-                            data-testid="next-agent-countdown"
-                          >
-                            ⏱ Próximo agente inicia em&nbsp;
-                            <b className="text-amber-100 tabular-nums">
-                              {fmtHMS(schedule.rows[0].duration * 60)}
-                            </b>
-                            {agents.length > 1 && (
-                              <> · <span className="text-muted-foreground">{schedule.rows[0].name} → {schedule.rows[1]?.name}</span></>
-                            )}
-                          </p>
-                        )}
+                        <p className="text-[11px] font-mono text-foreground/90 tabular-nums leading-tight mt-0.5 truncate">
+                          {agents.length} × {fmtDuration(schedule.slot)} · {schedule.rows[0]?.from ?? startTime} → {endTime}
+                        </p>
                       </div>
-                    )}
-
+                    </div>
+                    <span
+                      className="shrink-0 text-[9.5px] font-mono uppercase tracking-[0.18em] px-1.5 py-0.5 rounded border"
+                      style={{ color: teamColor, borderColor: `${teamColor}55`, background: `${teamColor}12` }}
+                    >
+                      Auto
+                    </span>
                   </div>
                 )}
+                {mode === 'split' && !nightEffectivelyLocked && schedule && nightEffectivelyLocked === false && agents.length > 1 && running === false && (
+                  <></>
+                )}
+
+
 
 
                 {/* Agents */}
