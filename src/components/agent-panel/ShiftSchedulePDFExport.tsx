@@ -6,8 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format, startOfMonth, endOfMonth, addMonths, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// jsPDF + autoTable são carregados sob demanda (dynamic import) para não pesar no bundle inicial.
 
 interface Props {
   agentId: string;
@@ -79,7 +78,11 @@ export function ShiftSchedulePDFExport({ agentId, agentName, team, unitName }: P
 
       rows.sort((a, b) => a[0].localeCompare(b[0]));
 
-      // Build PDF
+      // Build PDF — libs carregadas sob demanda
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable'),
+      ]);
       const doc = new jsPDF({ unit: 'pt', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
 
