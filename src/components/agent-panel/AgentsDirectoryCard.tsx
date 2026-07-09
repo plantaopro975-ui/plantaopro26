@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AgentDetailsDialog } from '@/components/agents/AgentDetailsDialog';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useAgentProfile } from '@/hooks/useAgentProfile';
+import { toast } from '@/hooks/use-toast';
 import { Users, Search, Eye, Circle, Shield, Snowflake, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -36,8 +38,12 @@ const teamColors: Record<string, string> = {
 };
 
 export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: string }) {
+  const { agent: myAgent } = useAgentProfile();
+  const myUnitId = (myAgent as any)?.unit_id ?? null;
+
   const [agents, setAgents] = useState<AgentRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [teamFilter, setTeamFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -46,21 +52,52 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
   const onlineIds = useOnlineAgents();
 
   useEffect(() => {
+    // Wait for agent profile to hydrate before querying
+    if (myAgent === undefined) return;
+
+    if (!myUnitId) {
+      const msg = 'Diretório indisponível: seu cadastro não possui unidade vinculada.';
+      console.error('[AgentsDirectory] missing unit_id on caller agent', { myAgent });
+      setError(msg);
+      setLoading(false);
+      toast({ title: 'Diretório indisponível', description: msg, variant: 'destructive' });
+      return;
+    }
+
     (async () => {
       try {
-        const { data, error } = await supabase
-          .from('agents')
-          .select('id, name, team, position, role, matricula, avatar_url, is_active, is_frozen, approval_status, license_status, unit:units(name)')
-          .order('name');
-        if (error) throw error;
-        setAgents((data || []) as any);
+        setError(null);
+        setLoading(true);
+        const { data, error } = await supabase.rpc('list_agents_same_unit');
+        if (error) {
+          console.error('[AgentsDirectory] rpc list_agents_same_unit failed', error);
+          throw error;
+        }
+        const mapped: AgentRow[] = (data || []).map((r: any) => ({
+          id: r.id,
+          name: r.name,
+          team: r.team,
+          position: r.position,
+          role: r.role,
+          matricula: r.matricula,
+          avatar_url: r.avatar_url,
+          is_active: !!r.is_active,
+          is_frozen: r.is_frozen,
+          approval_status: r.approval_status,
+          license_status: r.license_status,
+          unit: r.unit_name ? { name: r.unit_name } : null,
+        }));
+        console.info('[AgentsDirectory] loaded', { count: mapped.length, unit_id: myUnitId });
+        setAgents(mapped);
       } catch (e) {
         console.error('Failed to load agents directory', e);
+        setError('Falha ao carregar diretório.');
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [myUnitId, myAgent]);
+
 
   const filtered = useMemo(() => {
     const term = debouncedSearch.trim().toLowerCase();
@@ -161,10 +198,15 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
                 <div className="h-5 w-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mr-2" />
                 Carregando agentes...
               </div>
+            ) : error ? (
+              <div className="text-center py-16 px-6 text-sm text-red-300">
+                {error}
+              </div>
             ) : filtered.length === 0 ? (
               <div className="text-center py-16 text-sm text-muted-foreground">
                 Nenhum agente encontrado com os filtros atuais.
               </div>
+
             ) : (
               <ul className="divide-y divide-slate-800/70">
                 {filtered.map((a) => {

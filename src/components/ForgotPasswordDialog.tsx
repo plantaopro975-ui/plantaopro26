@@ -39,11 +39,12 @@ export function ForgotPasswordDialog() {
 
     setLoading(true);
     try {
-      const { data: agent } = await supabase
-        .from('agents')
-        .select('id, name')
-        .eq('cpf', cleanCpf)
-        .maybeSingle();
+      const { data: fpRows } = await (supabase as any)
+        .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+      const agent = Array.isArray(fpRows) && fpRows.length
+        ? { id: fpRows[0].id, name: fpRows[0].name }
+        : null;
+
 
       if (!agent) {
         toast({

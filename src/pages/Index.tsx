@@ -266,10 +266,9 @@ export default function Index() {
         if (!local.length) return;
         const cpfs = Array.from(new Set(local.map((c) => c.cpf).filter(Boolean)));
         if (!cpfs.length) return;
-        const { data, error } = await supabase
-          .from('agents')
-          .select('cpf')
-          .in('cpf', cpfs);
+        const { data, error } = await (supabase as any)
+          .rpc('check_existing_cpfs', { _cpfs: cpfs });
+
         if (error) return;
         const valid = new Set((data || []).map((r: { cpf: string }) => r.cpf));
         const stale = cpfs.filter((c) => !valid.has(c));
@@ -314,18 +313,19 @@ export default function Index() {
         
         const checkCpfExists = async () => {
           try {
-            const { data } = await supabase
-              .from('agents')
-              .select('name, team')
-              .eq('cpf', cleanCpf)
-              .maybeSingle();
-            
+            const { data: chkRows } = await (supabase as any)
+              .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+            const data = Array.isArray(chkRows) && chkRows.length
+              ? { name: chkRows[0].name, team: chkRows[0].team }
+              : null;
+
             setCpfValidation({
               isValid: true,
               isChecking: false,
               exists: !!data,
               existingAgent: data
             });
+
           } catch (error) {
             setCpfValidation({
               isValid: true,
@@ -422,17 +422,15 @@ export default function Index() {
     if (cleanCpf.length === 11) {
       setIsSearchingAgent(true);
       try {
-        const { data: raw } = await supabase
-          .from('agents')
-          .select('name, team, unit:units(name, municipality)')
-          .eq('cpf', cleanCpf)
-          .maybeSingle();
+        const { data: searchRows } = await (supabase as any)
+          .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+        const raw = Array.isArray(searchRows) && searchRows.length ? searchRows[0] : null;
 
-        const unitInfo = (raw as any)?.unit as { name?: string; municipality?: string } | null;
-        const unitLabel = unitInfo?.name
-          ? (unitInfo.municipality ? `${unitInfo.name} — ${unitInfo.municipality}` : unitInfo.name)
+        const unitLabel = raw?.unit_name
+          ? (raw.unit_municipality ? `${raw.unit_name} — ${raw.unit_municipality}` : raw.unit_name)
           : null;
-        const data = raw ? { name: (raw as any).name, team: (raw as any).team, unit: unitLabel } : null;
+        const data = raw ? { name: raw.name, team: raw.team, unit: unitLabel } : null;
+
 
         // Prefill silencioso com CPF de outra equipe → descarta e libera input
         if (silent && data && data.team && data.team !== selectedTeam) {
@@ -502,11 +500,18 @@ export default function Index() {
 
     try {
       // cleanCpf validated above
-      const { data: existingAgent } = await supabase
-        .from('agents')
-        .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at, unit:units(name, municipality)')
-        .eq('cpf', cleanCpf)
-        .maybeSingle();
+      const { data: preRows } = await (supabase as any)
+        .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+      const existingAgent = Array.isArray(preRows) && preRows.length
+        ? {
+            ...preRows[0],
+            cpf: cleanCpf,
+            unit: preRows[0].unit_name
+              ? { name: preRows[0].unit_name, municipality: preRows[0].unit_municipality }
+              : null,
+          }
+        : null;
+
 
       if (existingAgent) {
         // 1. Bloqueio por desativação manual
@@ -685,12 +690,11 @@ export default function Index() {
       const matriculaClean = formData.matricula ? getMatriculaNumbers(formData.matricula) : null;
       
       // Build query based on whether matricula is provided
-      let query = supabase
-        .from('agents')
-        .select('id, cpf, matricula')
-        .eq('cpf', formData.cpf.replace(/\D/g, ''));
-      
-      const { data: existingByCpf } = await query.maybeSingle();
+      const { data: existingRows } = await (supabase as any)
+        .rpc('lookup_agent_for_login', { _cpf: formData.cpf.replace(/\D/g, '') });
+      const existingByCpf = Array.isArray(existingRows) && existingRows.length ? existingRows[0] : null;
+
+
 
       if (existingByCpf) {
         // CPF já cadastrado - não permitir novo cadastro
@@ -701,11 +705,10 @@ export default function Index() {
       
       // Check matricula only if provided
       if (matriculaClean) {
-        const { data: existingByMatricula } = await supabase
-          .from('agents')
-          .select('id, matricula')
-          .eq('matricula', matriculaClean)
-          .maybeSingle();
+        const { data: matRows } = await (supabase as any)
+          .rpc('check_matricula_exists', { _matricula: matriculaClean });
+        const existingByMatricula = Array.isArray(matRows) && matRows.length ? matRows[0] : null;
+
           
         if (existingByMatricula) {
           setRegErrors({ matricula: 'Matrícula já cadastrada' });
@@ -863,11 +866,10 @@ export default function Index() {
     setIsSubmitting(true);
     
     // Verificar status completo do agente: ativo, equipe, licença, congelamento
-    const { data: agentCheck } = await supabase
-      .from('agents')
-      .select('is_active, name, team, is_frozen, license_status, license_expires_at')
-      .eq('cpf', cleanCpf)
-      .maybeSingle();
+    const { data: agentRows } = await (supabase as any)
+      .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+    const agentCheck = Array.isArray(agentRows) && agentRows.length ? agentRows[0] : null;
+
     
     // 1. Bloqueio por desativação manual (is_active = false)
     if (agentCheck?.is_active === false) {
@@ -960,11 +962,10 @@ export default function Index() {
       persistLastCpf(cleanCpf);
       // Save credentials if enabled and update last login time
       if (saveCpfEnabled) {
-        const { data: agentData } = await supabase
-          .from('agents')
-          .select('name')
-          .eq('cpf', cleanCpf)
-          .single();
+        const { data: rowsA } = await (supabase as any)
+          .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+        const agentData = Array.isArray(rowsA) && rowsA.length ? rowsA[0] : null;
+
         saveCredential(cleanCpf, agentData?.name, savePasswordEnabled ? loginPassword : undefined);
       }
       // Always update last login time for quick login feature
@@ -972,11 +973,10 @@ export default function Index() {
       
       // Enroll biometric if enabled and available
       if (enableBiometric && isBiometricAvailable) {
-        const { data: agentData } = await supabase
-          .from('agents')
-          .select('name')
-          .eq('cpf', cleanCpf)
-          .single();
+        const { data: rowsB } = await (supabase as any)
+          .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+        const agentData = Array.isArray(rowsB) && rowsB.length ? rowsB[0] : null;
+
         await enrollBiometric(cleanCpf, agentData?.name);
         toast({
           title: 'Biometria Configurada',
@@ -1089,11 +1089,10 @@ export default function Index() {
       const cleanCpf = cpf.replace(/\D/g, '');
       
       // Verificar status completo do agente
-      const { data: agentCheck } = await supabase
-        .from('agents')
-        .select('is_active, team, is_frozen, license_status, license_expires_at')
-        .eq('cpf', cleanCpf)
-        .maybeSingle();
+      const { data: rows } = await (supabase as any)
+        .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+      const agentCheck = Array.isArray(rows) && rows.length ? rows[0] : null;
+
       
       // Bloqueio por desativação
       if (agentCheck?.is_active === false) {
@@ -1195,11 +1194,10 @@ export default function Index() {
       const cpf = await authenticateBiometric();
       if (cpf) {
         // Get agent info
-        const { data: agentData, error: agentError } = await supabase
-          .from('agents')
-          .select('email')
-          .eq('cpf', cpf)
-          .maybeSingle();
+        const { data: rows, error: agentError } = await (supabase as any)
+          .rpc('lookup_agent_for_login', { _cpf: cpf });
+        const agentData = Array.isArray(rows) && rows.length ? rows[0] : null;
+
         
         if (agentError || !agentData) {
           toast({

@@ -2312,6 +2312,19 @@ export type Database = {
           shift_date: string
         }[]
       }
+      check_existing_cpfs: {
+        Args: { _cpfs: string[] }
+        Returns: {
+          cpf: string
+        }[]
+      }
+      check_matricula_exists: {
+        Args: { _matricula: string }
+        Returns: {
+          id: string
+          matricula: string
+        }[]
+      }
       check_rate_limit: {
         Args: {
           p_identifier: string
@@ -2373,6 +2386,39 @@ export type Database = {
       is_night_window: { Args: { p_ts?: string }; Returns: boolean }
       is_own_agent: { Args: { check_agent_id: string }; Returns: boolean }
       is_same_unit: { Args: { shift_agent_id: string }; Returns: boolean }
+      list_agents_same_unit: {
+        Args: never
+        Returns: {
+          approval_status: string
+          avatar_url: string
+          id: string
+          is_active: boolean
+          is_frozen: boolean
+          license_status: string
+          matricula: string
+          name: string
+          position: string
+          role: string
+          team: string
+          unit_name: string
+        }[]
+      }
+      lookup_agent_for_login: {
+        Args: { _cpf: string }
+        Returns: {
+          email: string
+          id: string
+          is_active: boolean
+          is_frozen: boolean
+          license_expires_at: string
+          license_status: string
+          matricula: string
+          name: string
+          team: string
+          unit_municipality: string
+          unit_name: string
+        }[]
+      }
       record_login_attempt: {
         Args: { p_identifier: string; p_ip?: string; p_success: boolean }
         Returns: undefined
