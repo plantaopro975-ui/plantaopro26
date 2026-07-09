@@ -56,7 +56,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.22em] text-foreground/85">
                 PlantãoPro
               </span>
-              <span className="hidden min-[380px]:inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/40">
+              <span className="hidden min-[480px]:inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-sm bg-card/40 ring-1 ring-border/40">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inset-0 rounded-full bg-success opacity-60" />
                   <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
@@ -65,6 +65,12 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
                   Operacional
                 </span>
               </span>
+              {/* Dot indicator apenas em telas pequenas */}
+              <span className="inline-flex min-[480px]:hidden relative h-1.5 w-1.5" aria-label="Operacional">
+                <span className="absolute inset-0 rounded-full bg-success opacity-60" />
+                <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
+              </span>
+
             </div>
 
 
