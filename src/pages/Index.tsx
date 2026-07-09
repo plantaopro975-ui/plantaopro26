@@ -1505,7 +1505,7 @@ export default function Index() {
         open={showCpfCheck}
         onOpenChange={(open) => !open && closeAllDialogs()}
         variant="check"
-        title={`Equipe ${selectedTeam}`}
+        title="Identificação de Agente"
         subtitle="Digite seu CPF para identificação"
         team={selectedTeam}
       >
