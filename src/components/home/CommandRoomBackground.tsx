@@ -1,4 +1,4 @@
-import heroCommand from '@/assets/hero-command.jpg';
+import heroCommand from '@/assets/hero-command.webp';
 
 /**
  * Professional public-security command room backdrop.
