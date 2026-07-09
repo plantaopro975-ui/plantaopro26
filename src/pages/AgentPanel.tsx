@@ -51,7 +51,7 @@ const NextShiftCountdown = lazy(() => import('@/components/agent-panel/NextShift
 const ChatPanel = lazy(() => import('@/components/agent-panel/ChatPanel').then(m => ({ default: m.ChatPanel })));
 const SwapRequestsCard = lazy(() => import('@/components/agent-panel/SwapRequestsCard').then(m => ({ default: m.SwapRequestsCard })));
 const LeaveRequestCard = lazy(() => import('@/components/agent-panel/LeaveRequestCard').then(m => ({ default: m.LeaveRequestCard })));
-const NotificationSettings = lazy(() => import('@/components/agent-panel/NotificationSettings').then(m => ({ default: m.NotificationSettings })));
+const NotificationsAndAlertsCard = lazy(() => import('@/components/agent-panel/NotificationsAndAlertsCard').then(m => ({ default: m.NotificationsAndAlertsCard })));
 const AgentSettingsCard = lazy(() => import('@/components/agent-panel/AgentSettingsCard').then(m => ({ default: m.AgentSettingsCard })));
 const AgentEventsCard = lazy(() => import('@/components/agent-panel/AgentEventsCard').then(m => ({ default: m.AgentEventsCard })));
 const ChatAndAlertSettings = lazy(() => import('@/components/agent-panel/ChatAndAlertSettings').then(m => ({ default: m.ChatAndAlertSettings })));
