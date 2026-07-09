@@ -56,6 +56,8 @@ const MasterLoginDialog = lazy(() => import('@/components/auth/MasterLoginDialog
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
+import { CopyrightFooter } from '@/components/CopyrightFooter';
+
 import { DeveloperSignature } from '@/components/DeveloperSignature';
 import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 
@@ -1492,28 +1494,33 @@ export default function Index() {
       {/* Mobile-only beta notice */}
       <BetaNoticeFooter />
 
-      {/* Ações discretas do rodapé — ícones flutuantes que não ocupam espaço do hero */}
-      <button
-        type="button"
-        onClick={() => navigate('/about')}
-        aria-label="Sobre o aplicativo"
-        title="Sobre"
-        className="fixed bottom-1.5 left-2 z-40 group inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/40 hover:text-primary hover:bg-background/40 backdrop-blur-sm transition-colors focus-visible:outline-none focus-visible:text-primary"
-      >
-        <Info className="h-3 w-3 opacity-70 group-hover:opacity-100" strokeWidth={2.2} />
-        <span className="hidden sm:inline">Sobre</span>
-      </button>
+      {/* Rodapé institucional profissional */}
+      <div className="relative z-30 mt-6">
+        <CopyrightFooter compact />
+        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between px-3 py-1.5">
+          <button
+            type="button"
+            onClick={() => navigate('/about')}
+            aria-label="Sobre o aplicativo"
+            title="Sobre"
+            className="pointer-events-auto inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[9px] font-mono tracking-[0.22em] uppercase text-muted-foreground/60 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+          >
+            <Info className="h-3 w-3" strokeWidth={2.2} />
+            <span className="hidden sm:inline">Sobre</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowMasterLogin(true)}
+            aria-label="Acesso Administrador Master"
+            title="Master"
+            className="pointer-events-auto inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[9px] font-mono tracking-[0.22em] uppercase text-muted-foreground/60 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+          >
+            <Lock className="h-3 w-3" strokeWidth={2.2} />
+            <span className="hidden sm:inline">Master</span>
+          </button>
+        </div>
+      </div>
 
-      <button
-        type="button"
-        onClick={() => setShowMasterLogin(true)}
-        aria-label="Acesso Administrador Master"
-        title="Master"
-        className="fixed bottom-1.5 right-2 z-40 group inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/40 hover:text-primary hover:bg-background/40 backdrop-blur-sm transition-colors focus-visible:outline-none focus-visible:text-primary"
-      >
-        <Lock className="h-3 w-3 opacity-70 group-hover:opacity-100" strokeWidth={2.2} />
-        <span className="hidden sm:inline">Master</span>
-      </button>
 
 
       {/* CPF Check Dialog - Ultra Professional */}
