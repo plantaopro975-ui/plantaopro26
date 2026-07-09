@@ -3,6 +3,9 @@ import {
   KIND_DEFAULTS,
   KIND_LABEL,
   inferKind,
+  isNightShiftSelection,
+  shiftCrossesDay,
+  shiftDurationMinutes,
   type ShiftKind,
 } from '../ShiftEditDialog';
 
@@ -46,21 +49,20 @@ describe('ShiftEditDialog · Tipo de turno', () => {
   });
 
   it('cálculo de duração para Noturno cruza o dia (19→07 = 12h)', () => {
-    const start = 19 * 60; // 19:00
-    const end = 7 * 60; //  07:00 do dia seguinte
-    const crossesDay = end <= start;
-    const durationMin = crossesDay ? 24 * 60 - start + end : end - start;
-    expect(crossesDay).toBe(true);
-    expect(durationMin).toBe(12 * 60);
+    expect(shiftCrossesDay('night', '19:00', '07:00')).toBe(true);
+    expect(shiftDurationMinutes('night', '19:00', '07:00')).toBe(12 * 60);
+    expect(isNightShiftSelection('night', '19:00', '07:00')).toBe(true);
   });
 
   it('Diurno (07→19) não cruza dia e dura 12h', () => {
-    const start = 7 * 60;
-    const end = 19 * 60;
-    const crossesDay = end <= start;
-    const durationMin = crossesDay ? 24 * 60 - start + end : end - start;
-    expect(crossesDay).toBe(false);
-    expect(durationMin).toBe(12 * 60);
+    expect(shiftCrossesDay('regular', '07:00', '19:00')).toBe(false);
+    expect(shiftDurationMinutes('regular', '07:00', '19:00')).toBe(12 * 60);
+    expect(isNightShiftSelection('regular', '07:00', '19:00')).toBe(false);
+  });
+
+  it('identifica alerta noturno quando o intervalo cruza a meia-noite', () => {
+    expect(isNightShiftSelection('regular', '19:00', '07:00')).toBe(true);
+    expect(shiftCrossesDay('regular', '19:00', '07:00')).toBe(true);
   });
 
   it('todos os tipos válidos estão disponíveis no seletor', () => {
