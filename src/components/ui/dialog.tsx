@@ -36,7 +36,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-2xl",
+        "fixed left-[50%] top-[50%] z-[61] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-2xl",
         // Enhanced smooth animations
         "duration-300 ease-out",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
@@ -52,7 +52,9 @@ const DialogContent = React.forwardRef<
       {children}
       <DialogPrimitive.Close
         aria-label="Fechar"
-        className="absolute right-3 top-3 z-50 inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/40 bg-background/95 text-foreground shadow-lg ring-offset-background transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none"
+        data-testid="dialog-close"
+        style={{ paddingTop: 'env(safe-area-inset-top, 0)', paddingRight: 'env(safe-area-inset-right, 0)' }}
+        className="absolute right-2 top-2 sm:right-3 sm:top-3 z-[62] inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-full border border-primary/40 bg-background/95 text-foreground shadow-lg ring-offset-background transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none"
       >
         <X className="h-5 w-5" strokeWidth={2.5} />
         <span className="sr-only">Fechar</span>
