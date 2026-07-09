@@ -647,8 +647,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               Selecione sua Equipe
             </span>
             <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              4 Divisões
+              <span className="lg:hidden">4 Divisões</span>
+              <span className="hidden lg:inline">3 Divisões · CHARLIE ao lado</span>
             </span>
+
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 lg:gap-3 xl:gap-4" style={{ perspective: '900px' }}>
