@@ -112,6 +112,20 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
     }
   }, [agentId, agentTeam, agentUnitId]);
 
+  // Auto-refetch when device reconnects — ensures the UI reflects any
+  // change that could not be pushed while offline and clears stale state
+  // without requiring a manual reload.
+  useEffect(() => {
+    const handleOnline = () => {
+      fetchLeaves();
+      if (agentTeam && agentUnitId) fetchTeamLeaves();
+    };
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [agentId, agentTeam, agentUnitId]);
+
+
   const fetchLeaves = async () => {
     try {
       setIsLoading(true);
