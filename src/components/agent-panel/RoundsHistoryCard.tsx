@@ -111,24 +111,25 @@ export function RoundsHistoryCard({ agentId }: Props) {
   return (
     <>
       <Card className="tactical-card">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Radio className="h-5 w-5 text-amber-400" />
-                Histórico de Rondas
+        <CardHeader className="pb-2 pt-2 px-2 md:pb-3 md:px-6 md:pt-6">
+          <div className="flex items-center justify-between gap-2 md:gap-3">
+            <div className="min-w-0">
+              <CardTitle className="flex items-center gap-1.5 md:gap-2 text-sm md:text-base">
+                <Radio className="h-4 w-4 md:h-5 md:w-5 text-amber-400 shrink-0" />
+                <span className="truncate">Histórico de Rondas</span>
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-[10px] md:text-xs">
                 Sessões iniciadas e concluídas por você no Gestor de Rondas.
               </CardDescription>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => void fetchLogs()} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <Button variant="ghost" size="icon" onClick={() => void fetchLogs()} disabled={loading} className="h-7 w-7 md:h-9 md:w-9 shrink-0">
+              <RefreshCw className={`h-3.5 w-3.5 md:h-4 md:w-4 ${loading ? 'animate-spin' : ''}`} />
             </Button>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-2 md:space-y-3 px-2 pb-2 md:px-6 md:pb-6">
+
           {loading ? (
             <div className="flex justify-center py-10">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -153,75 +154,80 @@ export function RoundsHistoryCard({ agentId }: Props) {
                   <button
                     key={log.id}
                     onClick={() => setSelected(log)}
-                    className="w-full text-left flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/50 hover:border-amber-500/40 hover:bg-amber-500/5 transition-colors"
+                    className="w-full text-left flex items-start gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-muted/30 border border-border/50 hover:border-amber-500/40 hover:bg-amber-500/5 transition-colors"
                   >
-                    <div className="p-2 rounded-full bg-amber-500/10">
-                      <meta.Icon className="h-4 w-4 text-amber-400" />
+                    <div className="p-1.5 md:p-2 rounded-full bg-amber-500/10 shrink-0">
+                      <meta.Icon className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Badge className={`text-[10px] px-1.5 py-0 border ${meta.color}`}>
+                      {/* Metadata row: horizontal scroll on small screens, no wrap */}
+                      <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 whitespace-nowrap md:whitespace-normal md:flex-wrap">
+                        <Badge className={`text-[9px] md:text-[10px] px-1.5 py-0 border shrink-0 ${meta.color}`}>
                           {meta.label}
                         </Badge>
                         {team && (
-                          <span className="text-xs font-semibold text-amber-200">
+                          <span className="text-[11px] md:text-xs font-semibold text-amber-200 shrink-0">
                             EQUIPE {team}
                           </span>
                         )}
                         {mode && (
-                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                            {mode === 'split' ? 'Divisão automática' : `Intervalo ${d.interval_min || '?'}min`}
+                          <span className="text-[9px] md:text-[10px] uppercase tracking-wider text-muted-foreground shrink-0">
+                            {mode === 'split' ? 'Divisão auto.' : `Intervalo ${d.interval_min || '?'}min`}
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                        <span className="inline-flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {fmtDateTime(log.created_at)}
+                      <div className="flex items-center gap-2 md:gap-3 mt-1 text-[11px] md:text-xs text-muted-foreground overflow-hidden">
+                        <span className="inline-flex items-center gap-1 truncate">
+                          <Clock className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{fmtDateTime(log.created_at)}</span>
                         </span>
                         {typeof agents === 'number' && (
-                          <span className="inline-flex items-center gap-1">
+                          <span className="inline-flex items-center gap-1 shrink-0">
                             <Users className="h-3 w-3" />
-                            {agents} agentes
+                            {agents}
                           </span>
                         )}
                       </div>
-                      <p className="text-[10px] text-muted-foreground/70 mt-0.5">
+                      <p className="text-[10px] text-muted-foreground/70 mt-0.5 truncate">
                         {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: ptBR })}
                       </p>
                     </div>
                   </button>
                 );
               })}
+
             </div>
           )}
 
           {/* Pagination */}
           {total > PAGE_SIZE && (
-            <div className="flex items-center justify-between pt-2 border-t border-border/40">
-              <span className="text-xs text-muted-foreground">
-                Página {page + 1} de {totalPages} · {total} registros
+            <div className="flex items-center justify-between pt-2 border-t border-border/40 gap-2">
+              <span className="text-[10px] md:text-xs text-muted-foreground truncate">
+                Pág. {page + 1}/{totalPages} · {total} regs
               </span>
-              <div className="flex gap-1">
+              <div className="flex gap-1 shrink-0">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
                   disabled={page === 0 || loading}
+                  className="h-7 w-7 md:h-9 md:w-9 p-0"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                   disabled={page >= totalPages - 1 || loading}
+                  className="h-7 w-7 md:h-9 md:w-9 p-0"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 </Button>
               </div>
             </div>
           )}
+
         </CardContent>
       </Card>
 
