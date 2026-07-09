@@ -4,17 +4,13 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
-  // Alterado para '/' para evitar problemas de caminhos no seu domínio .app.br
   base: "/",
   server: {
     host: "::",
     port: 8080,
-    // Esta linha abaixo resolve o erro "Blocked Host" do CodeSandbox
     allowedHosts: [".csb.app", "ym5d62-4173.csb.app"],
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(
-    Boolean
-  ),
+  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -23,6 +19,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     target: "es2018",
     chunkSizeWarningLimit: 600,
+    modulePreload: { polyfill: false },
     rollupOptions: {
       output: {
         manualChunks: {
@@ -42,6 +39,7 @@ export default defineConfig(({ mode }) => ({
           "vendor-forms": ["react-hook-form", "zod", "@hookform/resolvers"],
           "vendor-icons": ["lucide-react"],
           "vendor-date": ["date-fns"],
+          "vendor-pdf": ["jspdf", "jspdf-autotable", "html2canvas"],
           charts: ["recharts"],
         },
       },
@@ -49,5 +47,7 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ["recharts"],
+    // three.js e afins foram removidos — não pré-otimizar libs órfãs
+    exclude: ["three", "@react-three/fiber", "@react-three/drei"],
   },
 }));
