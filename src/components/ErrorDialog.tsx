@@ -10,6 +10,37 @@ interface ErrorDialogProps {
   title: string;
   message: string;
   type?: 'error' | 'warning' | 'auth' | 'password' | 'team';
+  /** Nome da unidade à qual o agente está vinculado (exibido como brasão institucional). */
+  unit?: string;
+}
+
+/* Professional SVG unit crest — institutional building emblem */
+function UnitCrestSVG({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} aria-hidden>
+      <defs>
+        <linearGradient id="ucGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#f5d97a" />
+          <stop offset="100%" stopColor="#8a6a2a" />
+        </linearGradient>
+      </defs>
+      {/* base */}
+      <rect x="6" y="36" width="36" height="3" fill="url(#ucGold)" opacity="0.85" />
+      {/* pediment */}
+      <path d="M6 20 L24 8 L42 20 Z" fill="none" stroke="url(#ucGold)" strokeWidth="1.6" strokeLinejoin="round" />
+      {/* columns */}
+      <g stroke="url(#ucGold)" strokeWidth="1.4">
+        <line x1="12" y1="22" x2="12" y2="36" />
+        <line x1="20" y1="22" x2="20" y2="36" />
+        <line x1="28" y1="22" x2="28" y2="36" />
+        <line x1="36" y1="22" x2="36" y2="36" />
+      </g>
+      {/* architrave */}
+      <line x1="8" y1="22" x2="40" y2="22" stroke="url(#ucGold)" strokeWidth="1.6" />
+      {/* star on pediment */}
+      <circle cx="24" cy="15" r="1.6" fill="url(#ucGold)" />
+    </svg>
+  );
 }
 
 const HEADERS: Record<NonNullable<ErrorDialogProps['type']>, string> = {
