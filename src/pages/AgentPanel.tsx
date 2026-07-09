@@ -77,11 +77,30 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 
+function ModuleFallback({ compact = false }: { compact?: boolean }) {
+  return (
+    <div
+      aria-busy="true"
+      className={cn(
+        'w-full rounded-xl border border-amber-500/20 bg-slate-900/80',
+        compact ? 'min-h-[120px] p-2' : 'min-h-[160px] p-3'
+      )}
+    >
+      <div className="h-3 w-28 rounded bg-amber-500/20" />
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="h-16 rounded-lg bg-slate-800/70" />
+        <div className="h-16 rounded-lg bg-slate-800/70" />
+      </div>
+    </div>
+  );
+}
+
 export default function AgentPanel() {
   const { user, isLoading, masterSession, isAdmin } = useAuth();
   const { agent, isLoading: isLoadingAgent } = useAgentProfile();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('equipe');
+  const [mountedTabs, setMountedTabs] = useState<Set<string>>(() => new Set(['equipe']));
   const { compact, toggle: toggleCompact } = useCompactMode();
   const [hasShifts, setHasShifts] = useState(true);
   const { enabled: promosEnabled } = usePromosEnabled();
@@ -132,6 +151,16 @@ export default function AgentPanel() {
   // storm across every inactive query.
   const queryClient = useQueryClient();
   const wasOfflineRef = useRef(false);
+  const handleTabChange = useCallback((value: string) => {
+    setActiveTab(value);
+    setMountedTabs((current) => {
+      if (current.has(value)) return current;
+      const next = new Set(current);
+      next.add(value);
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (!isOnline) {
       wasOfflineRef.current = true;
@@ -168,21 +197,38 @@ export default function AgentPanel() {
     const preloadNextTabs = () => {
       // Fire and forget — Vite dedupes and browser cache handles re-entry.
       void import('@/components/agent-panel/ProfessionalShiftTimer');
+      void import('@/components/agent-panel/NextShiftCountdown');
       void import('@/components/agent-panel/ShiftScheduleCard');
       void import('@/components/agent-panel/ShiftCalendarOverview');
+      void import('@/components/agent-panel/RecentShiftCyclesCard');
       void import('@/components/agent-panel/ChatPanel');
       void import('@/components/agent-panel/LeaveRequestCard');
       void import('@/components/agent-panel/AgentEventsCard');
       void import('@/components/agent-panel/BHTracker');
+      void import('@/components/agent-panel/BHEvolutionChart');
+      void import('@/components/agent-panel/BHHistoryTracker');
+      void import('@/components/agent-panel/ShiftPlannerCard');
+      void import('@/components/agent-panel/SwapRequestsCard');
+      void import('@/components/agent-panel/NotificationsAndAlertsCard');
+      void import('@/components/agent-panel/AgentSettingsCard');
+      void import('@/components/agent-panel/PasswordChangeRequest');
+      void import('@/components/agent-panel/SmartAlarmClock');
+      void import('@/components/agent-panel/RoundsHistoryCard');
+      void import('@/components/agent-panel/AgentsDirectoryCard');
+      void import('@/components/agent-panel/ShiftOperationsCenter');
+      void import('@/components/agent-panel/ShiftBriefingCard');
+      void import('@/components/dashboard/TacticalRadar');
+      void import('@/components/DiagnosticReportButton');
+      void import('@/components/home/RoundsManager');
     };
     const ric = (window as any).requestIdleCallback as
       | ((cb: () => void, opts?: { timeout: number }) => number)
       | undefined;
     if (ric) {
-      const id = ric(preloadNextTabs, { timeout: 2500 });
+      const id = ric(preloadNextTabs, { timeout: 800 });
       return () => (window as any).cancelIdleCallback?.(id);
     }
-    const t = window.setTimeout(preloadNextTabs, 1500);
+    const t = window.setTimeout(preloadNextTabs, 250);
     return () => window.clearTimeout(t);
   }, []);
 
