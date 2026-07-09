@@ -334,7 +334,7 @@ export default function About() {
         {/* Footer */}
         <footer className="border-t border-amber-500/15 pt-2 text-center flex-shrink-0 space-y-1.5">
           <p className="text-[10.5px] leading-relaxed text-slate-400/90 max-w-3xl mx-auto px-3">
-            <strong className="text-amber-400/90 font-semibold">PlantãoPro</strong> é uma plataforma privada e independente
+            <strong className="text-amber-400/90 font-semibold">PlantãoPro</strong> é uma plataforma corporativa e independente
             de gestão operacional voltada a profissionais do sistema socioeducativo. O aplicativo é mantido de forma autônoma
             e <em className="text-slate-300 not-italic">não possui vínculo, afiliação, endosso ou patrocínio de qualquer
             entidade governamental, órgão público ou instituição oficial</em>. Todo o conteúdo aqui gerenciado é de
