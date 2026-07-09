@@ -1,5 +1,6 @@
-import { Activity, Radio, ShieldCheck, Signal, Users, Clock3, type LucideIcon } from 'lucide-react';
+import { Activity, Radio, ShieldCheck, Signal, Users, Clock3, Eye, type LucideIcon } from 'lucide-react';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import { useVisitorPresence } from '@/hooks/useVisitorPresence';
 import { useServerTime } from '@/hooks/useServerTime';
 import { cn } from '@/lib/utils';
 
