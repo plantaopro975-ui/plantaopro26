@@ -12,7 +12,8 @@ import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { toast } from '@/hooks/use-toast';
-import { Users, Search, Eye, Circle, Shield, Snowflake, Filter } from 'lucide-react';
+import { Users, Search, Eye, Circle, Shield, Snowflake, Filter, UserPlus, FilterX } from 'lucide-react';
+import { EmptyState } from '@/components/ui/data-states';
 import { cn } from '@/lib/utils';
 
 interface AgentRow {
@@ -204,10 +205,46 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
                 {error}
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-12 text-xs text-muted-foreground">
-                Nenhum agente encontrado com os filtros atuais.
-              </div>
-
+              agents.length === 0 ? (
+                <EmptyState
+                  icon={UserPlus}
+                  title="Nenhum agente cadastrado"
+                  description="Sua unidade ainda não tem agentes registrados. Convide o primeiro agente para começar."
+                  action={
+                    <a
+                      href="/"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/50 bg-amber-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-amber-300 transition-all hover:bg-amber-500/20 hover:border-amber-400/70 focus-ring-primary"
+                    >
+                      <UserPlus className="h-3.5 w-3.5" />
+                      Cadastrar primeiro agente
+                    </a>
+                  }
+                />
+              ) : (
+                <EmptyState
+                  icon={Search}
+                  title="Nenhum agente encontrado"
+                  description={
+                    debouncedSearch
+                      ? `Nenhum resultado para "${debouncedSearch}" com os filtros atuais.`
+                      : 'Ajuste os filtros para ampliar a busca.'
+                  }
+                  action={
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearch('');
+                        setTeamFilter('all');
+                        setStatusFilter('all');
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-slate-500/50 bg-slate-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-200 transition-all hover:bg-slate-500/20 focus-ring-primary"
+                    >
+                      <FilterX className="h-3.5 w-3.5" />
+                      Limpar filtros
+                    </button>
+                  }
+                />
+              )
             ) : (
               <ul className="divide-y divide-slate-800/70">
                 {filtered.map((a) => {
