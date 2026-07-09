@@ -221,10 +221,10 @@ function ActionButton({
             type="button"
             onClick={onClick}
             className={cn(
-              'relative flex items-center justify-center h-9 min-w-9 px-2 rounded-md',
+              'relative flex items-center justify-center h-10 min-w-10 px-2.5 rounded-md',
               'bg-gradient-to-b from-slate-900/90 to-slate-950/90 border',
               'shadow-[inset_0_1px_0_rgba(255,255,255,.04)] transition-all duration-200',
-              'hover:-translate-y-[1px] active:translate-y-0',
+              'hover:-translate-y-[1px] active:translate-y-0 [&>svg]:h-[18px] [&>svg]:w-[18px]',
               tones,
             )}
           >
@@ -412,9 +412,9 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                     data-testid="logout-button"
                     className={cn(
                       'group relative flex items-center justify-center gap-1.5 overflow-hidden shrink-0',
-                      'h-9 min-h-[40px] px-2.5 sm:px-3 rounded-md',
+                      'h-10 min-h-[40px] px-3 sm:px-3.5 rounded-md',
                       'bg-gradient-to-b from-red-600 to-red-800 border border-red-400/50',
-                      "text-white font-bold text-[11px] tracking-[0.18em] uppercase font-['IBM_Plex_Mono',_monospace]",
+                      "text-white font-bold text-[12px] tracking-[0.18em] uppercase font-['IBM_Plex_Mono',_monospace]",
                       'shadow-[0_4px_14px_-4px_rgba(220,38,38,.65),inset_0_1px_0_rgba(255,255,255,.18)]',
                       'hover:from-red-500 hover:to-red-700 hover:-translate-y-[1px]',
                       'active:translate-y-0 transition-all duration-200',
@@ -423,11 +423,11 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                     {isLoggingOut ? (
-                      <svg viewBox="0 0 24 24" className="h-4 w-4 relative animate-spin" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px] relative animate-spin" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                         <path d="M21 12a9 9 0 1 1-3-6.7" />
                       </svg>
                     ) : (
-                      <IconPower className="h-4 w-4 relative" />
+                      <IconPower className="h-[18px] w-[18px] relative" />
                     )}
                     <span className="relative">{isLoggingOut ? 'Saindo…' : 'Sair'}</span>
                   </button>

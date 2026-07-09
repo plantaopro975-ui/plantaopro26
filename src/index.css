@@ -1230,3 +1230,36 @@ html.tab-hidden *::after {
     transition: none !important;
   }
 }
+
+/* ============================================
+   Reduced motion — extra safety for Radix / shadcn / homepage cards.
+   The catch-all above disables durations; these rules also neutralize
+   transform/opacity animations declared via keyframes and data-state.
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  [data-state],
+  [data-side],
+  [data-radix-popper-content-wrapper] > * {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* homepage cards / hero — kill hover translations & glow pulses */
+  .card-touch-interactive,
+  .card-touch-interactive:hover,
+  .group:hover .group-hover\:scale-\[1\.12\],
+  .group:hover .group-hover\:-translate-y-1,
+  .group:hover .group-hover\:-translate-y-\[1px\],
+  .hover\:-translate-y-\[1px\]:hover {
+    transform: none !important;
+  }
+  /* homepage particle/decor layers */
+  .animate-float3d,
+  .animate-pulse,
+  .animate-spin,
+  .animate-ping,
+  .animate-bounce,
+  .animate-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}

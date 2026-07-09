@@ -67,27 +67,27 @@ export function OperationalStatusRibbon() {
               <span className="absolute inset-0 rounded-full animate-ping opacity-60" style={{ background: 'hsl(142 72% 55%)' }} />
               <span className="relative h-1.5 w-1.5 rounded-full" style={{ background: 'hsl(142 72% 55%)', boxShadow: '0 0 5px hsl(142 72% 55% / 0.9)' }} />
             </span>
-            <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-emerald-200">
+            <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.2em] text-emerald-200">
               {isLogged ? 'OPERACIONAL' : 'CANAL SEGURO'}
             </span>
             <span aria-hidden className="h-2 w-px bg-white/15 mx-0.5" />
             {/* Protocolo institucional — substitui contador (evita redundância com célula ONLINE) */}
             <span
-              className="inline-flex items-center gap-1 font-mono text-[8px] font-bold uppercase tracking-[0.18em] rounded-sm px-1 py-[1px]"
+              className="inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-[0.18em] rounded-sm px-1 py-[1px]"
               style={{
                 color: accentColor,
                 background: accentSoft,
                 border: `1px solid ${accentColor.replace(')', ' / 0.35)')}`,
               }}
             >
-              <svg width="7" height="7" viewBox="0 0 16 16" fill="none" aria-hidden>
+              <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
                 <rect x="3" y="7" width="10" height="7" rx="1" stroke="currentColor" strokeWidth="1.8" />
                 <path d="M5 7V5a3 3 0 116 0v2" stroke="currentColor" strokeWidth="1.8" />
               </svg>
               <span className="tabular-nums">ISE-AC · 2026</span>
             </span>
           </span>
-          <span className="font-mono text-[7.5px] font-semibold uppercase tracking-[0.2em] opacity-90" style={{ color: accentColor }}>
+          <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.2em] opacity-90" style={{ color: accentColor }}>
             {isLogged ? (teamKey || 'ISE') : 'ISE · AC'}
           </span>
         </div>
@@ -96,36 +96,36 @@ export function OperationalStatusRibbon() {
         {isLogged ? (
           <div className="grid grid-cols-3 gap-px bg-black/40">
             <div className="px-2 py-1.5 bg-slate-950/60">
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em]" style={{ color: accentColor }}>Agente</div>
-              <div className="font-mono text-[10px] font-bold text-amber-50 truncate mt-0.5">{agentShort || '——'}</div>
-              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5 truncate">MAT {matricula}</div>
+              <div className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em]" style={{ color: accentColor }}>Agente</div>
+              <div className="font-mono text-[11.5px] font-bold text-amber-50 truncate mt-0.5">{agentShort || '——'}</div>
+              <div className="font-mono text-[9px] text-amber-200/80 mt-0.5 truncate">MAT {matricula}</div>
             </div>
             <div className="px-2 py-1.5 bg-slate-950/60">
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em]" style={{ color: accentColor }}>Unidade</div>
-              <div className="font-mono text-[10px] font-bold text-amber-50 truncate mt-0.5">{(unitName || 'ISE').slice(0, 14)}</div>
-              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5 truncate">{(municipality || 'ACRE').toUpperCase()}</div>
+              <div className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em]" style={{ color: accentColor }}>Unidade</div>
+              <div className="font-mono text-[11.5px] font-bold text-amber-50 truncate mt-0.5">{(unitName || 'ISE').slice(0, 14)}</div>
+              <div className="font-mono text-[9px] text-amber-200/80 mt-0.5 truncate">{(municipality || 'ACRE').toUpperCase()}</div>
             </div>
             <div className="px-2 py-1.5 bg-slate-950/60">
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em]" style={{ color: accentColor }}>Equipe</div>
-              <div className="font-mono text-[10.5px] font-black tracking-[0.14em] mt-0.5" style={{ color: accentColor, textShadow: `0 0 6px ${accentColor.replace(')', ' / 0.7)')}` }}>
+              <div className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em]" style={{ color: accentColor }}>Equipe</div>
+              <div className="font-mono text-[12px] font-black tracking-[0.14em] mt-0.5" style={{ color: accentColor, textShadow: `0 0 6px ${accentColor.replace(')', ' / 0.7)')}` }}>
                 {teamKey || '——'}
               </div>
-              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5 truncate">{accent?.label ?? 'OP'}</div>
+              <div className="font-mono text-[9px] text-amber-200/80 mt-0.5 truncate">{accent?.label ?? 'OP'}</div>
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-px bg-black/40">
             {/* EFETIVO — total ativo */}
             <div className="px-2 py-1.5 bg-slate-950/60">
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300 flex items-center gap-1">
+              <div className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-amber-300 flex items-center gap-1">
                 <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
                   <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.6" />
                   <path d="M2 14c0-3 3-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
                 </svg>
                 Efetivo
               </div>
-              <div className="font-mono text-[13px] font-black text-amber-50 mt-0.5 tabular-nums leading-none">{efetivoTotal}</div>
-              <div className="font-mono text-[7.5px] text-amber-200/80 mt-0.5">Agentes ativos</div>
+              <div className="font-mono text-[14px] font-black text-amber-50 mt-0.5 tabular-nums leading-none">{efetivoTotal}</div>
+              <div className="font-mono text-[9px] text-amber-200/80 mt-0.5">Agentes ativos</div>
             </div>
 
             {/* ONLINE AGORA — presença ao vivo (destaque) */}
@@ -141,29 +141,29 @@ export function OperationalStatusRibbon() {
                 className="absolute inset-x-0 top-0 h-px"
                 style={{ background: 'linear-gradient(90deg, transparent, hsl(142 72% 55% / 0.7), transparent)' }}
               />
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-300 flex items-center gap-1">
+              <div className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-emerald-300 flex items-center gap-1">
                 <span className="relative inline-flex h-1.5 w-1.5" aria-hidden>
                   <span className="absolute inset-0 rounded-full animate-ping opacity-60 bg-emerald-400" />
                   <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_hsl(142_72%_55%_/_0.9)]" />
                 </span>
                 Online
               </div>
-              <div className="font-mono text-[13px] font-black text-emerald-200 mt-0.5 tabular-nums leading-none" style={{ textShadow: '0 0 6px hsl(142 72% 55% / 0.55)' }}>
+              <div className="font-mono text-[14px] font-black text-emerald-200 mt-0.5 tabular-nums leading-none" style={{ textShadow: '0 0 6px hsl(142 72% 55% / 0.55)' }}>
                 {onlineNow}
               </div>
-              <div className="font-mono text-[7.5px] text-emerald-300/80 mt-0.5">Presença agora</div>
+              <div className="font-mono text-[9px] text-emerald-300/80 mt-0.5">Presença agora</div>
             </div>
 
             {/* CRIPTO */}
             <div className="px-2 py-1.5 bg-slate-950/60">
-              <div className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-amber-300 flex items-center gap-1">
+              <div className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-amber-300 flex items-center gap-1">
                 <svg width="8" height="8" viewBox="0 0 16 16" fill="none" aria-hidden>
                   <rect x="3" y="7" width="10" height="7" rx="1" stroke="currentColor" strokeWidth="1.6" />
                   <path d="M5 7V5a3 3 0 116 0v2" stroke="currentColor" strokeWidth="1.6" />
                 </svg>
                 Cripto
               </div>
-              <div className="font-mono text-[10px] font-bold text-emerald-300 mt-0.5">AES-256</div>
+              <div className="font-mono text-[11.5px] font-bold text-emerald-300 mt-0.5">AES-256</div>
               <div className="flex items-center gap-[2px] mt-1" aria-hidden>
                 {[0,1,2,3].map((i) => (
                   <span key={i} className="w-[3px] rounded-sm bg-emerald-400" style={{ height: `${3 + i}px`, opacity: 0.55 + i*0.12 }} />

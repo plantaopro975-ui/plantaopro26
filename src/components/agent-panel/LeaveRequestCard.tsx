@@ -269,18 +269,40 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
     setCancelingId(leaveId);
     const toastId = toast.loading('Cancelando folga...');
     try {
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        throw new Error('OFFLINE');
+      }
       const { error } = await (supabase as any)
         .from('agent_leaves')
         .delete()
         .eq('id', leaveId);
 
       if (error) throw error;
-      toast.success('Folga cancelada com sucesso', { id: toastId });
+      toast.success('Folga cancelada com sucesso', { id: toastId, duration: 3500 });
       setConfirmCancelId(null);
       await fetchLeaves();
-    } catch (error) {
-      console.error('Error deleting leave:', error);
-      toast.error('Erro ao cancelar folga', { id: toastId });
+      // Se a data em detalhes deixou de ter folgas, fecha o diálogo
+      if (detailsDate) {
+        const stillHas = leaves.some((l) => l.id !== leaveId &&
+          startOfDay(detailsDate) >= startOfDay(parseISO(l.start_date)) &&
+          startOfDay(detailsDate) <= startOfDay(parseISO(l.end_date)));
+        if (!stillHas) setShowDetailsDialog(false);
+      }
+    } catch (err: any) {
+      const msg = err?.message || '';
+      const code = err?.code || '';
+      let userMsg = 'Não foi possível cancelar a folga. Tente novamente.';
+      if (msg === 'OFFLINE' || msg.toLowerCase().includes('network') || msg.toLowerCase().includes('failed to fetch')) {
+        userMsg = 'Sem conexão. Verifique sua internet e tente novamente.';
+      } else if (code === '42501' || msg.toLowerCase().includes('permission') || msg.toLowerCase().includes('rls')) {
+        userMsg = 'Você não tem permissão para cancelar esta folga.';
+      } else if (code === '23503' || msg.toLowerCase().includes('foreign key')) {
+        userMsg = 'Esta folga tem registros vinculados e não pode ser removida.';
+      } else if (msg) {
+        userMsg = `Falha ao cancelar: ${msg}`;
+      }
+      console.error('Error deleting leave:', err);
+      toast.error(userMsg, { id: toastId, duration: 5000 });
     } finally {
       setCancelingId(null);
     }
@@ -1007,7 +1029,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
             </div>
           </DialogHeader>
 
-          <div className="max-h-[70vh] overflow-y-auto px-4 py-3 space-y-2.5">
+          <div className="max-h-[70vh] overflow-y-auto px-4 py-3 space-y-2.5" role="region" aria-live="polite" aria-atomic="false">
             {detailsDate && (() => {
               const dayLeaves = leaves.filter(l => {
                 const s = startOfDay(parseISO(l.start_date));
@@ -1120,10 +1142,12 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
           <DialogFooter className="px-4 py-2.5 border-t border-slate-800 bg-slate-950/70">
             <Button
+              autoFocus
               variant="outline"
               size="sm"
               onClick={() => setShowDetailsDialog(false)}
-              className="border-slate-700 text-slate-300 hover:bg-slate-800 h-8 text-xs"
+              className="border-slate-700 text-slate-300 hover:bg-slate-800 h-9 text-xs min-w-[80px]"
+              aria-label="Fechar detalhes da folga (ou pressione Esc)"
             >
               Fechar
             </Button>
