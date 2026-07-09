@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { pushDiagEvent } from "@/lib/diagLog";
 import { RestrictedArea } from "./RestrictedArea";
 
 interface RequireAuthProps {
@@ -14,13 +15,14 @@ interface RequireAuthProps {
 }
 
 /**
- * Loader branded — só aparece após ~350ms para evitar flash preto
- * em transições instantâneas (login/refresh de sessão válida).
+ * Loader branded — usa o mesmo `bg-background` das rotas para evitar qualquer
+ * "flash preto" durante a transição login → painel. Só aparece após ~250ms,
+ * então transições realmente instantâneas continuam sem UI extra.
  */
-const AuthLoader: React.FC = () => {
+const AuthLoader: React.FC<{ debugTag?: string }> = ({ debugTag }) => {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    const t = window.setTimeout(() => setShow(true), 350);
+    const t = window.setTimeout(() => setShow(true), 250);
     return () => window.clearTimeout(t);
   }, []);
   if (!show) return null;
@@ -29,7 +31,8 @@ const AuthLoader: React.FC = () => {
       role="status"
       aria-live="polite"
       aria-busy="true"
-      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-[radial-gradient(ellipse_at_center,hsl(32_28%_10%)_0%,hsl(222_60%_3%)_70%)] text-amber-100/85"
+      data-auth-loader={debugTag ?? "1"}
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-background text-amber-100/85"
     >
       <div className="relative h-12 w-12">
         <span className="absolute inset-0 rounded-full border-2 border-amber-400/25" />
@@ -48,13 +51,17 @@ const AuthLoader: React.FC = () => {
 };
 
 /**
- * Janela de graça (~1200 ms) para cobrir a corrida entre `signInWithPassword`
- * (que já popula a sessão no cliente supabase) e o `onAuthStateChange` que
- * atualiza o `user` no contexto React. Sem isso, o `<Navigate to="/">` dispara
- * antes do estado hidratar e o usuário vê: painel abre → skeleton escuro →
- * volta pro login.
+ * Janela de graça adaptativa:
+ *  - Se `getSession()` confirmou sessão em cache: espera até `user` hidratar
+ *    (limite de segurança GRACE_MAX_MS).
+ *  - Se `getSession()` confirmou ausência de sessão: redireciona imediatamente
+ *    (zero espera para visitantes reais).
+ *  - Enquanto `getSession()` não retornou: espera GRACE_INITIAL_MS.
+ * Cobre a corrida entre `signInWithPassword` (popula sessão sincronicamente
+ * no cliente supabase) e o `onAuthStateChange` que atualiza o React.
  */
-const GRACE_MS = 1200;
+const GRACE_INITIAL_MS = 400;
+const GRACE_MAX_MS = 2500;
 
 export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
@@ -65,61 +72,105 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   const { user, isLoading, masterSession, isMaster, userRole } = useAuth();
   const location = useLocation();
 
-  const [graceElapsed, setGraceElapsed] = useState(false);
+  // Undecided | true | false — snapshot da sessão em cache do supabase-js.
   const [cachedSession, setCachedSession] = useState<boolean | null>(null);
+  // Limite máximo (safety net) para nunca travar a UI indefinidamente.
+  const [maxGraceElapsed, setMaxGraceElapsed] = useState(false);
   const mountedRef = useRef(true);
+  const startRef = useRef<number>(Date.now());
+  const lastDiagRef = useRef<string>("");
 
   useEffect(() => {
     mountedRef.current = true;
+    startRef.current = Date.now();
     return () => {
       mountedRef.current = false;
     };
   }, []);
 
-  // Kick off a synchronous session check + start the grace timer on mount.
+  // Consulta síncrona à sessão em cache + timer de segurança.
   useEffect(() => {
-    if (mode !== "redirect") {
-      setGraceElapsed(true);
-      return;
-    }
     let cancelled = false;
-    // The supabase client caches the session synchronously after
-    // signInWithPassword — check it before deciding to redirect.
     supabase.auth
       .getSession()
       .then(({ data }) => {
-        if (!cancelled && mountedRef.current) {
-          setCachedSession(!!data.session);
-        }
+        if (cancelled || !mountedRef.current) return;
+        const has = !!data.session;
+        setCachedSession(has);
+        pushDiagEvent("info", "require_auth_getsession", {
+          route: location.pathname,
+          mode,
+          cachedSession: has,
+          elapsedMs: Date.now() - startRef.current,
+        });
       })
-      .catch(() => {
-        if (!cancelled && mountedRef.current) setCachedSession(false);
+      .catch((err) => {
+        if (cancelled || !mountedRef.current) return;
+        setCachedSession(false);
+        pushDiagEvent("warn", "require_auth_getsession_failed", {
+          route: location.pathname,
+          message: String((err as any)?.message ?? err),
+        });
       });
 
     const t = window.setTimeout(() => {
-      if (mountedRef.current) setGraceElapsed(true);
-    }, GRACE_MS);
+      if (mountedRef.current) setMaxGraceElapsed(true);
+    }, GRACE_MAX_MS);
     return () => {
       cancelled = true;
       window.clearTimeout(t);
     };
-  }, [mode]);
+  }, [location.pathname, mode]);
 
-  // Espera hidratação: se há user mas o papel ainda não foi resolvido, aguarda.
+  // Log condicional (uma linha por transição de estado) para diagnosticar corridas.
+  const stateKey = `${location.pathname}|il=${isLoading}|u=${!!user}|ms=${!!masterSession}|rh=${userRole === null && !!user && !masterSession}|cs=${cachedSession}|mg=${maxGraceElapsed}`;
+  if (lastDiagRef.current !== stateKey) {
+    lastDiagRef.current = stateKey;
+    pushDiagEvent("info", "require_auth_state", {
+      route: location.pathname,
+      mode,
+      isLoading,
+      hasUser: !!user,
+      hasMaster: !!masterSession,
+      userRole: userRole ?? null,
+      cachedSession,
+      maxGraceElapsed,
+      elapsedMs: Date.now() - startRef.current,
+    });
+  }
+
+  // Espera hidratação de papel (RLS).
   const roleHydrating = !!user && userRole === null && !masterSession;
   if (isLoading || roleHydrating) {
-    return <AuthLoader />;
+    return <AuthLoader debugTag="loading-or-role" />;
   }
 
   const isAuthenticated = !!user || !!masterSession;
 
   if (!isAuthenticated) {
-    if (mode === "redirect") {
-      // Login race: `user` may still be null while supabase already holds a
-      // valid session. Wait through the grace window before bouncing.
-      if (!graceElapsed) return <AuthLoader />;
-      if (cachedSession === true) return <AuthLoader />;
+    // 1. Sabemos que há sessão em cache → só falta React hidratar. Aguarda
+    //    até GRACE_MAX_MS. Vale para redirect E block (evita RestrictedArea
+    //    piscar em /dashboard e /master logo após um login válido).
+    if (cachedSession === true && !maxGraceElapsed) {
+      return <AuthLoader debugTag="waiting-hydration" />;
     }
+
+    // 2. Ainda não sabemos se há sessão (getSession pendente) e ainda estamos
+    //    dentro da janela inicial curta — aguarda para evitar bounce em
+    //    conexões lentas onde `signInWithPassword` acabou de resolver.
+    const elapsed = Date.now() - startRef.current;
+    if (cachedSession === null && elapsed < GRACE_INITIAL_MS) {
+      return <AuthLoader debugTag="waiting-getsession" />;
+    }
+
+    // 3. Sem sessão real → decidir pelo modo.
+    pushDiagEvent("warn", "require_auth_unauthenticated", {
+      route: location.pathname,
+      mode,
+      cachedSession,
+      elapsedMs: elapsed,
+      redirectTo: mode === "redirect" ? redirectTo : null,
+    });
 
     if (mode === "block") return <RestrictedArea />;
     return (
