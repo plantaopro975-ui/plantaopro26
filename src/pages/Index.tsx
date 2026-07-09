@@ -701,11 +701,10 @@ export default function Index() {
       
       // Check matricula only if provided
       if (matriculaClean) {
-        const { data: existingByMatricula } = await supabase
-          .from('agents')
-          .select('id, matricula')
-          .eq('matricula', matriculaClean)
-          .maybeSingle();
+        const { data: matRows } = await (supabase as any)
+          .rpc('check_matricula_exists', { _matricula: matriculaClean });
+        const existingByMatricula = Array.isArray(matRows) && matRows.length ? matRows[0] : null;
+
           
         if (existingByMatricula) {
           setRegErrors({ matricula: 'Matrícula já cadastrada' });
