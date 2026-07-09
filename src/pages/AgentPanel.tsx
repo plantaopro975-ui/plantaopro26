@@ -156,6 +156,37 @@ export default function AgentPanel() {
 
 
 
+  // Start perf monitor (LCP/CLS/INP/long tasks). No-op in prod unless
+  // localStorage.perf_logs === '1'. Logs surface in the browser console.
+  useEffect(() => {
+    void import('@/lib/perfMonitor').then((m) => m.startPerfMonitor());
+  }, []);
+
+  // Idle-time prefetch: warm up the heaviest lazy chunks so switching to
+  // any tab is instant. Uses requestIdleCallback with a setTimeout fallback.
+  useEffect(() => {
+    const preloadNextTabs = () => {
+      // Fire and forget — Vite dedupes and browser cache handles re-entry.
+      void import('@/components/agent-panel/ProfessionalShiftTimer');
+      void import('@/components/agent-panel/ShiftScheduleCard');
+      void import('@/components/agent-panel/ShiftCalendarOverview');
+      void import('@/components/agent-panel/ChatPanel');
+      void import('@/components/agent-panel/LeaveRequestCard');
+      void import('@/components/agent-panel/AgentEventsCard');
+      void import('@/components/agent-panel/BHTracker');
+    };
+    const ric = (window as any).requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout: number }) => number)
+      | undefined;
+    if (ric) {
+      const id = ric(preloadNextTabs, { timeout: 2500 });
+      return () => (window as any).cancelIdleCallback?.(id);
+    }
+    const t = window.setTimeout(preloadNextTabs, 1500);
+    return () => window.clearTimeout(t);
+  }, []);
+
+
   // Shift notifications - checks for upcoming shifts and sends reminders
   useShiftNotifications({
     agentId: agent?.id || '',
@@ -677,7 +708,7 @@ export default function AgentPanel() {
               </div>
 
 
-              <TabsContent value="equipe" className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible">
+              <TabsContent value="equipe" forceMount hidden={activeTab !== 'equipe'} className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible data-[state=inactive]:hidden">
                 {/* Shift Alerts Banner */}
                 <ShiftAlertsBanner
                   agentId={agent.id}
@@ -772,7 +803,7 @@ export default function AgentPanel() {
                 </Suspense>
               </TabsContent>
 
-              <TabsContent value="plantoes" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="space-y-2.5 md:space-y-3 animate-fade-in mt-0 data-[state=inactive]:hidden">
                 {/* Next Shift Countdown - Top Priority */}
                 <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                 
@@ -872,7 +903,7 @@ export default function AgentPanel() {
 
 
 
-              <TabsContent value="chat" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="chat" forceMount hidden={activeTab !== 'chat'} className="space-y-2.5 md:space-y-3 animate-fade-in mt-0 data-[state=inactive]:hidden">
                 <ChatPanel 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
