@@ -309,7 +309,7 @@ export function SplashScreen() {
         <div className="space-y-2.5">
           <div className="splash-reveal overflow-hidden inline-block">
             <h1
-              className="text-[26px] sm:text-[34px] md:text-[44px] font-bold tracking-[0.24em] leading-none"
+              className="text-[26px] sm:text-[34px] md:text-[42px] font-bold tracking-[0.12em] leading-none whitespace-nowrap"
               style={{
                 fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif",
                 background: "linear-gradient(180deg, #fef3c7 0%, #f0d78c 55%, #a97b1c 100%)",
@@ -318,7 +318,7 @@ export function SplashScreen() {
                 textShadow: "0 0 24px rgba(240,215,140,0.30)",
               }}
             >
-              PLANTÃO<span className="italic font-normal">Pro</span>
+              PLANTÃO<span className="italic font-normal ml-2 tracking-[0.02em]">Pro</span>
             </h1>
           </div>
           <div className="flex items-center justify-center gap-3">
