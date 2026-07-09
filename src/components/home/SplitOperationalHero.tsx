@@ -6,7 +6,8 @@ import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 import { useVisitorPresence } from '@/hooks/useVisitorPresence';
-import loginHeroImage from '@/assets/login-hero.jpg';
+import loginHeroAsset from '@/assets/home-command-center.jpg.asset.json';
+const loginHeroImage = loginHeroAsset.url;
 
 
 
@@ -288,8 +289,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     },
                     {
                       k: 'Efetivo',
-                      v: metrics.loading ? '——' : fmt2(metrics.agentsActive),
-                      s: 'Agentes ativos',
+                      v: metrics.loading ? '——' : fmt2(metrics.agentsRegistered || metrics.agentsActive),
+                      s: 'Agentes cadastrados',
                       pulse: false,
                     },
                     {

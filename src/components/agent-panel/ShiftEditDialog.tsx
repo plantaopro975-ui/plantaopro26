@@ -48,23 +48,23 @@ interface ShiftEditDialogProps {
   onSaved?: () => void;
 }
 
-type ShiftKind = 'regular' | 'night' | '24h' | 'vacation';
+export type ShiftKind = 'regular' | 'night' | '24h' | 'vacation';
 
-const KIND_DEFAULTS: Record<ShiftKind, { start: string; end: string }> = {
+export const KIND_DEFAULTS: Record<ShiftKind, { start: string; end: string }> = {
   '24h': { start: '07:00', end: '07:00' },
   regular: { start: '07:00', end: '19:00' },
   night: { start: '19:00', end: '07:00' },
   vacation: { start: '00:00', end: '00:00' },
 };
 
-const KIND_LABEL: Record<ShiftKind, string> = {
+export const KIND_LABEL: Record<ShiftKind, string> = {
   '24h': 'Plantão 24h (07→07 dia seguinte)',
   regular: 'Diurno 12h (07→19) — folga especial',
   night: 'Noturno 12h (19→07 dia seguinte) — folga especial',
   vacation: 'Folga / Férias / Licença',
 };
 
-function inferKind(s?: ShiftEditRecord | null): ShiftKind {
+export function inferKind(s?: ShiftEditRecord | null): ShiftKind {
   if (!s) return '24h';
   if (s.is_vacation) return 'vacation';
   const st = s.start_time?.slice(0, 5);
