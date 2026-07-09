@@ -29,6 +29,20 @@ interface TeamMember {
   email: string | null;
 }
 
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string | null;
+  team: string | null;
+  blood_type: string | null;
+  avatar_url: string | null;
+  is_active: boolean;
+  phone: string | null;
+  address: string | null;
+  birth_date: string | null;
+  email: string | null;
+}
+
 interface TeamLeave {
   id: string;
   agent_id: string;
@@ -37,7 +51,13 @@ interface TeamLeave {
   start_date: string;
   end_date: string;
   status: string;
+  reason: string | null;
+  period: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  hours_count: number | null;
 }
+
 
 interface Agent {
   id: string;
