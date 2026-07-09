@@ -1467,8 +1467,7 @@ export default function Index() {
             backgroundSize: '28px 28px',
           }}
         />
-        {/* Soft gold halo */}
-        <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 h-16 w-[40%] rounded-full bg-primary/5 blur-2xl" />
+        {/* halo decorativo removido — economia de repaint/GPU */}
 
         <div className="relative mx-auto max-w-6xl px-3 sm:px-4 py-0 flex items-center justify-between gap-2 min-h-[26px]">
           {/* Left: Signature */}

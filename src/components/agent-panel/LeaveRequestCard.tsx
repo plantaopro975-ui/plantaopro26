@@ -103,6 +103,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const [showMemberDialog, setShowMemberDialog] = useState(false);
   const [detailsDate, setDetailsDate] = useState<Date | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
   useEffect(() => {
     fetchLeaves();
     if (agentTeam && agentUnitId) {
@@ -264,6 +266,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   };
 
   const handleDelete = async (leaveId: string) => {
+    setCancelingId(leaveId);
+    const toastId = toast.loading('Cancelando folga...');
     try {
       const { error } = await (supabase as any)
         .from('agent_leaves')
@@ -271,11 +275,14 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
         .eq('id', leaveId);
 
       if (error) throw error;
-      toast.success('Folga cancelada');
-      fetchLeaves();
+      toast.success('Folga cancelada com sucesso', { id: toastId });
+      setConfirmCancelId(null);
+      await fetchLeaves();
     } catch (error) {
       console.error('Error deleting leave:', error);
-      toast.error('Erro ao cancelar folga');
+      toast.error('Erro ao cancelar folga', { id: toastId });
+    } finally {
+      setCancelingId(null);
     }
   };
 
@@ -980,7 +987,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
 
       {/* Leave Details Dialog — Professional */}
-      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+      <Dialog open={showDetailsDialog} onOpenChange={(o) => { setShowDetailsDialog(o); if (!o) setConfirmCancelId(null); }}>
         <DialogContent className="max-w-md w-[calc(100vw-1rem)] bg-slate-950 border border-purple-500/30 p-0 gap-0 overflow-hidden">
           <DialogHeader className="px-4 py-3 border-b border-slate-800 bg-gradient-to-r from-purple-950/60 to-slate-950">
             <div className="flex items-center gap-2.5">
@@ -1067,17 +1074,42 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                         Registrada em {format(parseISO(leave.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                       </p>
                       {leave.status === 'pending' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            handleDelete(leave.id);
-                            setShowDetailsDialog(false);
-                          }}
-                          className="h-7 px-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 text-[11px]"
-                        >
-                          <Trash2 className="h-3.5 w-3.5 mr-1" /> Cancelar
-                        </Button>
+                        confirmCancelId === leave.id ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] text-amber-300 font-medium">Confirmar?</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setConfirmCancelId(null)}
+                              disabled={cancelingId === leave.id}
+                              className="h-7 px-2 text-slate-300 hover:bg-slate-800 text-[11px]"
+                            >
+                              Não
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleDelete(leave.id)}
+                              disabled={cancelingId === leave.id}
+                              className="h-7 px-2 bg-red-500 hover:bg-red-600 text-white text-[11px] min-w-[70px]"
+                            >
+                              {cancelingId === leave.id ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <>Sim, cancelar</>
+                              )}
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setConfirmCancelId(leave.id)}
+                            disabled={cancelingId !== null}
+                            className="h-7 px-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 text-[11px] min-h-[36px] active:scale-95 transition-transform"
+                          >
+                            <Trash2 className="h-3.5 w-3.5 mr-1" /> Cancelar folga
+                          </Button>
+                        )
                       )}
                     </div>
                   </div>
