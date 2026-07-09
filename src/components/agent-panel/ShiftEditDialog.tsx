@@ -310,8 +310,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
           <AlertDialogHeader>
             <AlertDialogTitle>Deseja realmente alterar este plantão?</AlertDialogTitle>
             <AlertDialogDescription className="text-slate-400">
-              Alteração para {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })} — {KIND_LABEL[kind]}
-              {kind !== 'vacation' && ` (${startTime} → ${endTime})`}.
+              {KIND_LABEL[kind]} · {rangeSummary}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
