@@ -11,7 +11,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
+import { notify } from '@/lib/notify';
 import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCap, CalendarPlus, Users, User, MessageCircle, FileDown } from 'lucide-react';
 import { format, parseISO, differenceInDays, isAfter, startOfDay, isSameDay, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -266,14 +266,14 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
       if (error) throw error;
 
       const typeLabel = leaveTypes.find(t => t.value === selectedType)?.label || selectedType;
-      toast.success(`${typeLabel} registrada para ${format(selectedDate, "dd/MM/yyyy", { locale: ptBR })}`);
+      notify.success(`${typeLabel} registrada para ${format(selectedDate, "dd/MM/yyyy", { locale: ptBR })}`);
       setShowConfirmDialog(false);
       setSelectedDate(undefined);
       setLeaveDescription('');
       fetchLeaves();
     } catch (error) {
       console.error('Error submitting leave:', error);
-      toast.error('Erro ao registrar folga');
+      notify.error('Erro ao registrar folga');
     } finally {
       setIsSubmitting(false);
     }
@@ -281,7 +281,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
   const handleDelete = async (leaveId: string) => {
     setCancelingId(leaveId);
-    const toastId = toast.loading('Cancelando folga...');
+    const toastId = notify.loading('Cancelando folga...');
     try {
       if (typeof navigator !== 'undefined' && navigator.onLine === false) {
         throw new Error('OFFLINE');
@@ -292,7 +292,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
         .eq('id', leaveId);
 
       if (error) throw error;
-      toast.success('Folga cancelada com sucesso', { id: toastId, duration: 3500 });
+      notify.success('Folga cancelada com sucesso', { id: toastId, duration: 3500 });
       setConfirmCancelId(null);
       await fetchLeaves();
       // Se a data em detalhes deixou de ter folgas, fecha o diálogo
@@ -316,7 +316,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
         userMsg = `Falha ao cancelar: ${msg}`;
       }
       console.error('Error deleting leave:', err);
-      toast.error(userMsg, { id: toastId, duration: 5000 });
+      notify.error(userMsg, { id: toastId, duration: 5000 });
     } finally {
       setCancelingId(null);
     }
@@ -489,10 +489,10 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
       }
 
       doc.save(`plantoes_${agent?.cpf || agentId}_${format(now, 'yyyyMMdd_HHmm')}.pdf`);
-      toast.success('PDF exportado com sucesso');
+      notify.success('PDF exportado com sucesso');
     } catch (err) {
       console.error('Export PDF error:', err);
-      toast.error('Erro ao exportar PDF');
+      notify.error('Erro ao exportar PDF');
     }
   };
 

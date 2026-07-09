@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { SignatureCanvas } from '@/components/ui/signature-canvas';
-import { toast } from 'sonner';
+import { notify } from '@/lib/notify';
 import { ArrowRightLeft, Plus, Loader2, Check, X, Clock, User, FileText, Download, ArrowLeft, CalendarDays, Sparkles, Edit2, Eye, Trash2, PenTool } from 'lucide-react';
 import { format, parseISO, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -208,7 +208,7 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
           body: 'Você recebeu uma nova solicitação de permuta de plantão',
           tag: `swap-${newRecord.id}`,
         });
-        toast.success('Nova solicitação de permuta recebida!');
+        notify.success('Nova solicitação de permuta recebida!');
       }
       fetchData();
     } else if (eventType === 'UPDATE') {
@@ -220,7 +220,7 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
             body: 'Sua solicitação de permuta foi aceita',
             tag: `swap-${newRecord.id}`,
           });
-          toast.success('Sua permuta foi aceita!');
+          notify.success('Sua permuta foi aceita!');
         } else if (newRecord.status === 'rejected') {
           playTacticalSound?.('alert');
           showNotification?.({
@@ -228,7 +228,7 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
             body: 'Sua solicitação de permuta foi recusada',
             tag: `swap-${newRecord.id}`,
           });
-          toast.error('Sua permuta foi recusada');
+          notify.error('Sua permuta foi recusada');
         }
       }
       fetchData();
@@ -247,7 +247,7 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
 
   const createSwapRequest = async () => {
     if (!selectedShift || !selectedAgent) {
-      toast.error('Selecione o plantão e o agente');
+      notify.error('Selecione o plantão e o agente');
       return;
     }
 
@@ -276,12 +276,12 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
           content: reason || 'Você recebeu uma solicitação de permuta de plantão'
         });
 
-      toast.success('Solicitação de permuta enviada!');
+      notify.success('Solicitação de permuta enviada!');
       resetForm();
       fetchData();
     } catch (error) {
       console.error('Error creating swap request:', error);
-      toast.error('Erro ao enviar solicitação');
+      notify.error('Erro ao enviar solicitação');
     } finally {
       setIsSubmitting(false);
     }
@@ -304,14 +304,14 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
 
       if (error) throw error;
 
-      toast.success('Permuta atualizada com sucesso!');
+      notify.success('Permuta atualizada com sucesso!');
       setShowEditDialog(false);
       setEditingRequest(null);
       resetForm();
       fetchData();
     } catch (error) {
       console.error('Error updating swap request:', error);
-      toast.error('Erro ao atualizar permuta');
+      notify.error('Erro ao atualizar permuta');
     } finally {
       setIsSubmitting(false);
     }
@@ -351,13 +351,13 @@ export function SwapRequestsCard({ agentId, unitId, team }: SwapRequestsCardProp
 
       if (error) throw error;
 
-      toast.success('Solicitação de permuta cancelada!');
+      notify.success('Solicitação de permuta cancelada!');
       setShowCancelConfirm(false);
       setCancelingRequestId(null);
       fetchData();
     } catch (error) {
       console.error('Error canceling swap:', error);
-      toast.error('Erro ao cancelar permuta');
+      notify.error('Erro ao cancelar permuta');
     }
   };
 
@@ -562,10 +562,10 @@ Data de geração: ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
       doc.text(`Status: ${request.status === 'accepted' ? 'ACEITA' : 'PENDENTE'} | ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`, 105, 285, { align: 'center' });
       
       doc.save(`requerimento_permuta_${request.id.slice(0, 8)}_${format(now, 'yyyy-MM-dd')}.pdf`);
-      toast.success('PDF exportado com sucesso!');
+      notify.success('PDF exportado com sucesso!');
     } catch (error) {
       console.error('Error generating PDF:', error);
-      toast.error('Erro ao gerar PDF');
+      notify.error('Erro ao gerar PDF');
     }
   };
 
@@ -582,7 +582,7 @@ Data de geração: ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    toast.success('Documento exportado!');
+    notify.success('Documento exportado!');
   };
 
   // Export formal document with format selection
@@ -619,11 +619,11 @@ Data de geração: ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
           });
       }
 
-      toast.success(status === 'accepted' ? 'Permuta aceita!' : 'Permuta recusada');
+      notify.success(status === 'accepted' ? 'Permuta aceita!' : 'Permuta recusada');
       fetchData();
     } catch (error) {
       console.error('Error responding to swap:', error);
-      toast.error('Erro ao responder solicitação');
+      notify.error('Erro ao responder solicitação');
     }
   };
 
@@ -697,11 +697,11 @@ Documento gerado automaticamente pelo PlantãoPro
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success('Documento de permutas exportado!');
+      notify.success('Documento de permutas exportado!');
       setShowExportDialog(false);
     } catch (error) {
       console.error('Error exporting swaps:', error);
-      toast.error('Erro ao exportar documento');
+      notify.error('Erro ao exportar documento');
     } finally {
       setIsExporting(false);
     }
