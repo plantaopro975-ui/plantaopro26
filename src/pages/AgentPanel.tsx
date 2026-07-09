@@ -86,15 +86,11 @@ function ModuleFallback({ compact = false }: { compact?: boolean }) {
     <div
       aria-busy="true"
       className={cn(
-        'w-full rounded-xl border border-amber-500/20 bg-slate-900/80',
-        compact ? 'min-h-[120px] p-2' : 'min-h-[160px] p-3'
+        'w-full rounded-xl border border-amber-500/20 bg-slate-900/60',
+        compact ? 'min-h-[120px]' : 'min-h-[160px]',
       )}
     >
-      <div className="h-3 w-28 rounded bg-amber-500/20" />
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        <div className="h-16 rounded-lg bg-slate-800/70" />
-        <div className="h-16 rounded-lg bg-slate-800/70" />
-      </div>
+      <LoadingState label="Carregando módulo" compact={compact} />
     </div>
   );
 }
