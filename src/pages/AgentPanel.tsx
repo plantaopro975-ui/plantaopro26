@@ -580,7 +580,7 @@ export default function AgentPanel() {
             paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
           }}
         >
-          <div className={`w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
+          <div className={`agent-panel-inner w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
             {/* Main Tabs - sticky combined block (header + tabs) */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
               {/* Sticky combined block: Professional Header + Tabs Control Panel */}
