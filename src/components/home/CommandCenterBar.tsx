@@ -1,5 +1,6 @@
-import { Activity, Radio, ShieldCheck, Signal, Users, Clock3, type LucideIcon } from 'lucide-react';
+import { Radio, ShieldCheck, Signal, Users, Clock3, Eye, type LucideIcon } from 'lucide-react';
 import { useOnlinePresence } from '@/hooks/useOnlinePresence';
+import { useVisitorPresence } from '@/hooks/useVisitorPresence';
 import { useServerTime } from '@/hooks/useServerTime';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +10,7 @@ import { cn } from '@/lib/utils';
  */
 export function CommandCenterBar() {
   const online = useOnlinePresence();
+  const visitors = useVisitorPresence();
   // Horário sincronizado com o servidor (não depende do relógio local)
   const now = useServerTime(1000);
 
@@ -17,12 +19,12 @@ export function CommandCenterBar() {
 
   type Tone = 'ok' | 'primary' | 'warn' | 'neutral';
   const cells: Array<{ icon: LucideIcon; label: string; value: string; tone?: Tone; live?: boolean }> = [
-    { icon: ShieldCheck, label: 'Status',   value: 'Operacional',        tone: 'ok',      live: true },
-    { icon: Radio,       label: 'Rede',     value: 'Online',             tone: 'primary', live: true },
-    { icon: Signal,      label: 'Enlace',   value: 'Seguro · 24/7'                                 },
-    { icon: Users,       label: 'Agentes',  value: `${online} conectados`, tone: 'primary'          },
-    { icon: Activity,    label: 'Setor',    value: 'Feijó · AC'                                    },
-    { icon: Clock3,      label: 'Hora',     value: `${hh}  ·  ${dd}`,    tone: 'neutral'           },
+    { icon: ShieldCheck, label: 'Status',     value: 'Operacional',                     tone: 'ok',      live: true },
+    { icon: Radio,       label: 'Rede',       value: 'Online',                          tone: 'primary', live: true },
+    { icon: Eye,         label: 'Visitantes', value: `${visitors} agora`,               tone: 'ok',      live: true },
+    { icon: Users,       label: 'Agentes',    value: `${online} conectados`,            tone: 'primary'             },
+    { icon: Signal,      label: 'Enlace',     value: 'Seguro · 24/7'                                                },
+    { icon: Clock3,      label: 'Hora',       value: `${hh}  ·  ${dd}`,                 tone: 'neutral'             },
   ];
 
   const toneText = (t?: Tone) =>
