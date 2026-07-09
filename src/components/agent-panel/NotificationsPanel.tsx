@@ -204,10 +204,10 @@ export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="relative text-slate-400 hover:text-white">
-          <Bell className="h-5 w-5" />
+        <Button variant="ghost" size="sm" className="relative h-9 w-9 p-0 text-slate-400 hover:text-white">
+          <Bell className="h-[18px] w-[18px]" />
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
+            <Badge className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] px-1 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold leading-none">
               {unreadCount > 9 ? '9+' : unreadCount}
             </Badge>
           )}
@@ -215,14 +215,14 @@ export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
       </PopoverTrigger>
 
       <PopoverContent className="w-80 p-0 bg-slate-800 border-slate-700" align="end" sideOffset={8}>
-        <div className="flex items-center justify-between p-3 border-b border-slate-700">
-          <h4 className="font-semibold text-white">Notificações</h4>
+        <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
+          <h4 className="text-sm font-semibold text-white">Notificações</h4>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
               size="sm"
               onClick={markAllAsRead}
-              className="text-xs text-amber-400 hover:text-amber-300"
+              className="h-7 px-2 text-[11px] text-amber-400 hover:text-amber-300"
             >
               <Check className="h-3 w-3 mr-1" />
               Marcar todas
@@ -230,35 +230,35 @@ export function NotificationsPanel({ agentId }: NotificationsPanelProps) {
           )}
         </div>
 
-        <ScrollArea className="h-[300px]">
+        <ScrollArea className="h-[260px]">
           {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
             </div>
           ) : items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 text-slate-400">
-              <Bell className="h-8 w-8 mb-2 opacity-50" />
-              <p className="text-sm">Nenhuma notificação</p>
+            <div className="flex flex-col items-center justify-center py-6 text-slate-400">
+              <Bell className="h-7 w-7 mb-1.5 opacity-50" />
+              <p className="text-xs">Nenhuma notificação</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-700">
+            <div className="divide-y divide-slate-700/70">
               {items.map((item) => (
                 <div
                   key={`${item.source}:${item.id}`}
                   onClick={() => !item.is_read && markAsRead(item)}
-                  className={`p-3 hover:bg-slate-700/50 cursor-pointer transition-colors ${!item.is_read ? 'bg-slate-700/30' : ''}`}
+                  className={`px-3 py-2 hover:bg-slate-700/50 cursor-pointer transition-colors ${!item.is_read ? 'bg-slate-700/30' : ''}`}
                 >
-                  <div className="flex gap-3">
+                  <div className="flex gap-2.5">
                     <div className="flex-shrink-0 mt-0.5">{getAlertIcon(item.type)}</div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className={`text-sm font-medium truncate ${item.is_read ? 'text-slate-300' : 'text-white'}`}>{item.title}</p>
-                        {!item.is_read && <div className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />}
+                        <p className={`text-[13px] font-medium truncate leading-tight ${item.is_read ? 'text-slate-300' : 'text-white'}`}>{item.title}</p>
+                        {!item.is_read && <div className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />}
                       </div>
                       {item.message && (
-                        <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{item.message}</p>
+                        <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2 leading-snug">{item.message}</p>
                       )}
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-[10px] text-slate-500 mt-0.5">
                         {format(new Date(item.created_at), 'dd/MM HH:mm', { locale: ptBR })}
                       </p>
                     </div>
