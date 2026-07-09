@@ -498,7 +498,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <CalendarPlus className="h-4 w-4 text-amber-500" />
-                <span className="text-sm font-medium text-slate-300">Clique na data para registrar folga</span>
+                <span className="text-sm font-medium text-slate-300">Clique na data para registrar folga ou ver detalhes</span>
               </div>
               <div className="bg-slate-700/30 rounded-lg p-2">
                 <Calendar
