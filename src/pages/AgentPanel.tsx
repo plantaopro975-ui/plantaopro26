@@ -677,7 +677,7 @@ export default function AgentPanel() {
               </div>
 
 
-              <TabsContent value="equipe" className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible">
+              <TabsContent value="equipe" forceMount hidden={activeTab !== 'equipe'} className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible data-[state=inactive]:hidden">
                 {/* Shift Alerts Banner */}
                 <ShiftAlertsBanner
                   agentId={agent.id}
