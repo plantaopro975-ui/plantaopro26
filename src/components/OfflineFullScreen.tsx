@@ -46,7 +46,7 @@ export function OfflineFullScreen() {
       role="alertdialog"
       aria-live="assertive"
       aria-label="Sem conexão — Modo tático offline do Sistema Socioeducativo"
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#04070d] backdrop-blur-sm animate-fade-in overflow-y-auto"
+      className="fixed inset-0 z-[10001] flex items-center justify-center bg-[#04070d] backdrop-blur-sm animate-fade-in overflow-y-auto"
     >
       {/* ================= Background institutional SVG scene ================= */}
       <svg
