@@ -325,27 +325,6 @@ export function OperationalStatusRibbon() {
         )}
       </svg>
       </div>
-
-      {/* Wordmark institucional — PLANTÃO PRO */}
-      <div className="mt-1.5 sm:mt-2 flex items-center justify-center gap-3 sm:gap-4 px-2" aria-label="Plantão Pro">
-        <span aria-hidden className="h-px flex-1 max-w-[7rem] bg-gradient-to-r from-transparent to-amber-300/45" />
-        <div className="flex items-baseline gap-2.5 select-none">
-          <span
-            className="font-serif text-[16px] sm:text-[20px] font-semibold tracking-[0.08em] text-amber-50 leading-none"
-            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9), 0 0 14px hsl(43 92% 58% / 0.28)' }}
-          >
-            Plantão
-          </span>
-          <span aria-hidden className="h-3 w-px bg-amber-300/50 sm:h-3.5" />
-          <span
-            className="font-mono text-[9.5px] sm:text-[12px] font-bold tracking-[0.3em] sm:tracking-[0.32em] uppercase text-amber-400 leading-none"
-            style={{ textShadow: '0 0 6px hsl(43 92% 58% / 0.55)' }}
-          >
-            PRO
-          </span>
-        </div>
-        <span aria-hidden className="h-px flex-1 max-w-[7rem] bg-gradient-to-l from-transparent to-amber-300/45" />
-      </div>
     </div>
   );
 }
