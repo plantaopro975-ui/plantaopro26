@@ -97,7 +97,7 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
         setLoading(false);
       }
     })();
-  }, [myUnitId, myAgent]);
+  }, [myUnitId, myAgent, profileLoading]);
 
 
   const filtered = useMemo(() => {
