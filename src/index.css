@@ -1546,11 +1546,13 @@ img, svg, picture, video {
 
 /* Kill white/light drop-shadow glows on the homepage for a clean look.
  * Preserves gold/amber/primary glows that give the tactical identity. */
-.home-typo *[class*="drop-shadow-[0_0"][class*="rgba(255"],
-.home-typo *[class*="drop-shadow-[0_0"][class*="/255"],
+/* Zero-glow policy on the homepage — clean, editorial rendering.
+ * Strips all "drop-shadow-[0_0..." (glow-style filters) inside .home-typo. */
+.home-typo *[class*="drop-shadow-[0_0"] {
+  filter: none !important;
+}
 .home-typo *[class*="shadow-white"],
 .home-typo *[class*="shadow-[0_0"][class*="white"] {
-  filter: none !important;
   box-shadow: none !important;
 }
 
