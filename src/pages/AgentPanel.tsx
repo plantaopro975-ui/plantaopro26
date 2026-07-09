@@ -122,23 +122,18 @@ export default function AgentPanel() {
     manualRetry 
   } = useSessionPersistence({
     onConnectionLost: () => {
-      toast({
-        title: 'Conexão perdida',
+      notify.warning('Conexão perdida', {
         description: 'Tentando reconectar automaticamente...',
-        variant: 'destructive',
       });
     },
     onConnectionRestored: () => {
-      toast({
-        title: 'Conexão restaurada',
+      notify.success('Conexão restaurada', {
         description: 'Sua sessão foi recuperada com sucesso.',
       });
     },
     onMaxRetriesReached: () => {
-      toast({
-        title: 'Falha na reconexão',
+      notify.error('Falha na reconexão', {
         description: 'Não foi possível restaurar a sessão. Por favor, faça login novamente.',
-        variant: 'destructive',
       });
     },
   });
