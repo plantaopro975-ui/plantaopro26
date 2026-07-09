@@ -80,8 +80,10 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               <span className="font-semibold text-foreground/80">v2.7</span>
               <span className="text-muted-foreground/40">·</span>
               <span>© {year}</span>
+              {rightSlot}
             </div>
           </div>
+
 
         </div>
       );
