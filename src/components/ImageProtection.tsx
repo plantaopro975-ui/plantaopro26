@@ -139,16 +139,11 @@ export function ImageProtection() {
       }
     };
 
-    // Some OS/browsers only expose PrintScreen on keyup
-    const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "PrintScreen") {
-        scramble();
-        show("printscreen");
-        try {
-          navigator.clipboard?.writeText?.(" ");
-        } catch {}
-      }
+    // PrintScreen keyup: bloqueio temporariamente desativado
+    const onKeyUp = (_e: KeyboardEvent) => {
+      /* noop */
     };
+
 
     // DevTools open-detection removed per request (no more warning dialog)
 
