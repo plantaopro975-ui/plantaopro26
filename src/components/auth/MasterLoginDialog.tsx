@@ -36,15 +36,15 @@ export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginD
             width={1280}
             height={640}
             className="absolute inset-0 h-full w-full object-cover"
-            style={{ filter: 'contrast(1.08) saturate(0.85) brightness(0.7)' }}
+            style={{ filter: 'contrast(1.05) saturate(0.95) brightness(0.95)' }}
           />
 
-          {/* Warm gold gradient wash */}
+          {/* Warm gold gradient wash — lighter so photo stays visible */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'radial-gradient(120% 90% at 85% 15%, rgba(201,168,76,0.32) 0%, transparent 55%), linear-gradient(180deg, rgba(7,8,12,0.4) 0%, rgba(7,8,12,0.85) 70%, #07080c 100%)',
+                'radial-gradient(120% 90% at 85% 15%, rgba(201,168,76,0.22) 0%, transparent 55%), linear-gradient(180deg, rgba(7,8,12,0.15) 0%, rgba(7,8,12,0.55) 65%, rgba(7,8,12,0.92) 100%)',
             }}
           />
 
