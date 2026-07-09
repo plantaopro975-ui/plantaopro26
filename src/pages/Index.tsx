@@ -1493,7 +1493,7 @@ export default function Index() {
       <BetaNoticeFooter />
 
       {/* Footer — Noir & Gold Command Signature */}
-      <footer className="relative z-20 shrink-0 overflow-visible border-t border-primary/30 bg-[linear-gradient(180deg,hsl(222_38%_6%/0.96)_0%,hsl(220_35%_4%/0.99)_100%)] backdrop-blur-xl shadow-[0_-6px_18px_-14px_hsl(var(--primary)/0.3)]">
+      <footer className="relative z-20 shrink-0 overflow-visible bg-[linear-gradient(180deg,hsl(222_38%_6%/0.96)_0%,hsl(220_35%_4%/0.99)_100%)] backdrop-blur-xl shadow-[0_-6px_18px_-14px_hsl(var(--primary)/0.3)]">
         {/* Double gold accent line — sits ABOVE the footer edge so it never covers text */}
         <span aria-hidden className="pointer-events-none absolute inset-x-0 -top-[3px] h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-90" />
         <span aria-hidden className="pointer-events-none absolute inset-x-8 -top-[6px] h-px bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.5)_50%,transparent_100%)]" />
