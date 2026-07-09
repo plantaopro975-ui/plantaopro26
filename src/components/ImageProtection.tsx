@@ -122,17 +122,7 @@ export function ImageProtection() {
         return;
       }
 
-      // DevTools
-      if (k === "F12") {
-        e.preventDefault();
-        show("devtools");
-        return;
-      }
-      if (mod && e.shiftKey && ["i", "j", "c"].includes(kL)) {
-        e.preventDefault();
-        show("devtools");
-        return;
-      }
+      // DevTools shortcuts: no longer blocked/warned (removed per request)
 
       // View source
       if (mod && kL === "u") {
