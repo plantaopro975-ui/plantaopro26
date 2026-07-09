@@ -19,8 +19,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { FileText, Loader2, Download } from 'lucide-react';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// jsPDF + autoTable são carregados sob demanda (dynamic import) para não pesar no bundle inicial.
 import { format, startOfMonth, endOfMonth, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -114,7 +113,11 @@ export function ShiftReportPDF({ units }: ShiftReportPDFProps) {
 
       if (shiftsError) throw shiftsError;
 
-      // Create PDF
+      // Create PDF — libs carregadas sob demanda
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable'),
+      ]);
       const doc = new jsPDF();
       const monthName = months.find(m => m.value === selectedMonth)?.label || '';
 
