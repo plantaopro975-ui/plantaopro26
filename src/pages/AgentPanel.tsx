@@ -163,8 +163,7 @@ export default function AgentPanel() {
     }
     if (wasOfflineRef.current) {
       wasOfflineRef.current = false;
-      toast({
-        title: 'Sincronizando dados',
+      notify.info('Sincronizando dados', {
         description: 'Atualizando informações após reconexão...',
       });
       // Only refetch queries currently mounted — light on CPU/network
