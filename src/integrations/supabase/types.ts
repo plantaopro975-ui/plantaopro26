@@ -2356,6 +2356,14 @@ export type Database = {
         }
         Returns: number
       }
+      get_public_operational_counts: {
+        Args: never
+        Returns: {
+          agents_active: number
+          agents_total: number
+          units_count: number
+        }[]
+      }
       get_server_now: { Args: never; Returns: string }
       has_admin_permission: {
         Args: { _permission: string; _user_id: string }
