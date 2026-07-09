@@ -422,12 +422,18 @@ export default function Index() {
     if (cleanCpf.length === 11) {
       setIsSearchingAgent(true);
       try {
-        const { data } = await supabase
+        const { data: raw } = await supabase
           .from('agents')
-          .select('name, team')
+          .select('name, team, unit:units(name, municipality)')
           .eq('cpf', cleanCpf)
           .maybeSingle();
-        
+
+        const unitInfo = (raw as any)?.unit as { name?: string; municipality?: string } | null;
+        const unitLabel = unitInfo?.name
+          ? (unitInfo.municipality ? `${unitInfo.name} — ${unitInfo.municipality}` : unitInfo.name)
+          : null;
+        const data = raw ? { name: (raw as any).name, team: (raw as any).team, unit: unitLabel } : null;
+
         // Prefill silencioso com CPF de outra equipe → descarta e libera input
         if (silent && data && data.team && data.team !== selectedTeam) {
           setCheckCpf('');
@@ -460,6 +466,7 @@ export default function Index() {
             title: 'ACESSO RESTRITO',
             message: `⚠️ ATENÇÃO, AGENTE ${data.name.split(' ')[0].toUpperCase()}!\n\nVocê está cadastrado na EQUIPE ${data.team}.\n\nPor protocolo de segurança, o acesso é permitido apenas pela equipe designada.\n\nSelecione o card da EQUIPE ${data.team} para continuar.`,
             type: 'warning',
+            unit: unitLabel || undefined,
           });
         }
       } catch (error) {
