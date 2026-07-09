@@ -163,9 +163,15 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
         : await supabase.from('agent_shifts').upsert(payload, { onConflict: 'agent_id,shift_date' });
       if (error) throw error;
       toast.success(isNew ? 'Plantão cadastrado' : 'Plantão alterado');
-      onOpenChange(false);
-      onSaved?.();
+      // Defer parent close to next tick so the nested AlertDialog fully unmounts
+      // before Radix tries to release the pointer-events lock on <body>.
+      setTimeout(() => {
+        document.body.style.pointerEvents = '';
+        onOpenChange(false);
+        onSaved?.();
+      }, 50);
     } catch (e: any) {
+
       const msg = e?.message || 'Falha ao salvar plantão';
       if (msg.includes('NIGHT_SHIFT_LOCK')) {
         toast.error('Horário noturno bloqueado: use 22:00 → 06:00 durante a janela noturna.');
