@@ -103,6 +103,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const [showMemberDialog, setShowMemberDialog] = useState(false);
   const [detailsDate, setDetailsDate] = useState<Date | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
   useEffect(() => {
     fetchLeaves();
     if (agentTeam && agentUnitId) {
