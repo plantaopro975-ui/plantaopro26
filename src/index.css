@@ -1482,3 +1482,22 @@ html.tab-hidden *::after {
   }
 }
 
+/* =========================================================
+ * Perf: mobile e reduced-motion desligam efeitos GPU pesados
+ * (backdrop-blur-xl e mix-blend) que causam repaint contínuo
+ * em telas mid-range Android. Desktop mantém o efeito.
+ * ========================================================= */
+@media (max-width: 640px), (prefers-reduced-motion: reduce) {
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+  }
+  .mix-blend-overlay,
+  .mix-blend-screen,
+  .mix-blend-multiply {
+    mix-blend-mode: normal !important;
+  }
+}
+

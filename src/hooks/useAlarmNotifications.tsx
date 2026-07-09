@@ -29,7 +29,7 @@ export function useAlarmNotifications({
   const playAlarmSound = useCallback(() => {
     try {
       if (!audioRef.current) {
-        audioRef.current = new Audio('/audio/plantao-pro.mp3');
+        audioRef.current = new Audio('/__l5e/assets-v1/a0d63cfc-5925-45bb-a906-96932f6f4b16/plantao-pro.mp3');
         audioRef.current.volume = 1.0;
       }
       audioRef.current.currentTime = 0;
