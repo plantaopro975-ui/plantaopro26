@@ -359,14 +359,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               <circle cx="200" cy="200" r="150" fill="none" stroke="#eab308" strokeOpacity="0.25" strokeWidth="0.6" strokeDasharray="2 6" />
               <circle cx="200" cy="200" r="110" fill="none" stroke="#eab308" strokeOpacity="0.2" strokeWidth="0.5" />
             </svg>
-            <div
-              aria-hidden
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 md:left-[28%] lg:left-[22%] xl:left-[18%] h-12 w-[70%] rounded-[50%]"
-              style={{
-                background: 'radial-gradient(ellipse at center, rgba(234,179,8,0.35) 0%, transparent 70%)',
-                filter: 'blur(20px)',
-              }}
-            />
+            {/* removido: halo amarelo ao pé da viatura/agente (solicitação do usuário) */}
             {/* Cena composta:
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
                 DESKTOP → mantém composição centralizada equilibrada */}
