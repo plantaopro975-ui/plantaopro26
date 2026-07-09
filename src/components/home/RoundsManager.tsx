@@ -1575,11 +1575,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const { startX, startY, baseX, baseY } = dragRef.current;
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
-    // Limita para não sair completamente da tela (mantém 80px visíveis nas bordas)
-    const maxX = Math.max(0, window.innerWidth / 2 - 80);
-    const maxY = Math.max(0, window.innerHeight / 2 - 60);
-    const nx = Math.max(-maxX, Math.min(maxX, baseX + dx));
-    const ny = Math.max(-maxY, Math.min(maxY, baseY + dy));
+    // Clamp baseado no tamanho REAL da janela para mantê-la sempre inteiramente
+    // dentro da viewport — impede que "suma" fora da tela sem forma de voltar.
+    const header = e.currentTarget as HTMLDivElement;
+    const dialog = (header.closest('[role="dialog"]') as HTMLElement | null) ?? header.parentElement;
+    const rect = dialog?.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const w = rect?.width ?? 0;
+    const h = rect?.height ?? 0;
+    // Se a janela for maior que a viewport (mobile), fixa no centro (bound=0).
+    const boundX = Math.max(0, (vw - w) / 2);
+    const boundY = Math.max(0, (vh - h) / 2);
+    const nx = Math.max(-boundX, Math.min(boundX, baseX + dx));
+    const ny = Math.max(-boundY, Math.min(boundY, baseY + dy));
     setDrag({ x: nx, y: ny });
   };
   const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -1589,6 +1598,28 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     }
   };
   const resetPosition = () => setDrag({ x: 0, y: 0 });
+
+  // Recentra a janela se a viewport encolher e a posição atual ficar fora dos limites.
+  useEffect(() => {
+    const clampToViewport = () => {
+      setDrag((prev) => {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        // Sem acesso ao tamanho real aqui — usamos margem defensiva de 40px.
+        const boundX = Math.max(0, vw / 2 - 40);
+        const boundY = Math.max(0, vh / 2 - 40);
+        const nx = Math.max(-boundX, Math.min(boundX, prev.x));
+        const ny = Math.max(-boundY, Math.min(boundY, prev.y));
+        return nx === prev.x && ny === prev.y ? prev : { x: nx, y: ny };
+      });
+    };
+    window.addEventListener('resize', clampToViewport);
+    window.addEventListener('orientationchange', clampToViewport);
+    return () => {
+      window.removeEventListener('resize', clampToViewport);
+      window.removeEventListener('orientationchange', clampToViewport);
+    };
+  }, []);
 
   /* Refs mantidos para eventual medição futura — conteúdo agora rola verticalmente */
   const fitRef = useRef<HTMLDivElement>(null);
