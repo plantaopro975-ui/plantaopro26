@@ -987,7 +987,7 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
 
       {/* Leave Details Dialog — Professional */}
-      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+      <Dialog open={showDetailsDialog} onOpenChange={(o) => { setShowDetailsDialog(o); if (!o) setConfirmCancelId(null); }}>
         <DialogContent className="max-w-md w-[calc(100vw-1rem)] bg-slate-950 border border-purple-500/30 p-0 gap-0 overflow-hidden">
           <DialogHeader className="px-4 py-3 border-b border-slate-800 bg-gradient-to-r from-purple-950/60 to-slate-950">
             <div className="flex items-center gap-2.5">
