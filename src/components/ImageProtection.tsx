@@ -332,4 +332,5 @@ export function ImageProtection() {
       )}
     </>
   );
+  }
 }
