@@ -102,7 +102,7 @@ export function QuickAccessPanel({ onQuickLogin, onSelectCredential, isLoading, 
         <div className="relative px-3 py-1.5 border-b border-primary/10 bg-primary/5">
           <div className="flex items-center justify-center gap-1.5">
             <Zap className="h-3 w-3 text-primary" />
-            <span className="text-[10px] font-bold text-primary/90 uppercase tracking-widest">
+            <span className="text-[10px] font-semibold text-primary/90 uppercase tracking-wider">
               Acesso Rápido
             </span>
           </div>
