@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { CalendarDays, Plus, Loader2, Edit2, Trash2, Clock, FileText, Users, Bell } from 'lucide-react';
+import { EmptyState } from '@/components/ui/data-states';
 import { format, parseISO, isToday, isFuture, isPast } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -263,8 +264,24 @@ export function AgentEventsCard({ agentId }: AgentEventsCardProps) {
               </p>
             </div>
 
-            {/* Upcoming Events */}
-            {upcomingEvents.length > 0 && (
+            {/* Upcoming Events / Empty */}
+            {events.length === 0 ? (
+              <EmptyState
+                icon={CalendarDays}
+                title="Nenhum evento na agenda"
+                description="Registre reuniões, treinamentos, prazos e lembretes pessoais. Toque numa data ou crie agora."
+                action={
+                  <button
+                    type="button"
+                    onClick={() => handleDateClick(new Date())}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-cyan-500/50 bg-cyan-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-300 transition-all hover:bg-cyan-500/20 hover:border-cyan-400/70 focus-ring-primary"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Adicionar evento
+                  </button>
+                }
+              />
+            ) : upcomingEvents.length > 0 && (
               <div>
                 <h4 className="text-sm font-medium text-slate-300 mb-2">Próximos Eventos</h4>
                 <div className="space-y-2">
