@@ -570,6 +570,10 @@ export default function Index() {
         
         // 5. Verificar se pertence à equipe selecionada
         if (existingAgent.team !== selectedTeam) {
+          const unitInfo = (existingAgent as any).unit as { name?: string; municipality?: string } | null;
+          const unitLabel = unitInfo?.name
+            ? (unitInfo.municipality ? `${unitInfo.name} — ${unitInfo.municipality}` : unitInfo.name)
+            : undefined;
           playSound('access-denied');
           setShowCpfCheck(false);
           setErrorDialog({
@@ -577,6 +581,7 @@ export default function Index() {
             title: 'ACESSO RESTRITO',
             message: `Você está registrado na EQUIPE ${existingAgent.team}.\n\nRetorne à tela inicial e selecione o card correto da sua equipe para acessar o sistema.\n\nPara mudar de equipe, solicite desligamento no seu painel.`,
             type: 'team',
+            unit: unitLabel,
           });
         } else {
           // Tudo OK - mostrar login
