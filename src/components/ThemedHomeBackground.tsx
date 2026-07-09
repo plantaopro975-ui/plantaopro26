@@ -2,7 +2,8 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useEffect, useState, useMemo } from 'react';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { teamPosters, teamPostersWebp, teamColors, homeBackground } from '@/lib/teamAssets';
-import realisticHomeBg from '@/assets/home-realistic-bg.jpg';
+import realisticHomeBgAsset from '@/assets/home-realistic-bg.jpg.asset.json';
+const realisticHomeBg = realisticHomeBgAsset.url;
 
 
 
