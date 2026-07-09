@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { notify } from '@/lib/notify';
 import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCap, CalendarPlus, Users, User, MessageCircle, FileDown } from 'lucide-react';
+import { EmptyState } from '@/components/ui/data-states';
 import { format, parseISO, differenceInDays, isAfter, startOfDay, isSameDay, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { TeamMemberDialog } from './TeamMemberDialog';
@@ -577,10 +578,11 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                 <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
               </div>
             ) : leaves.length === 0 ? (
-              <div className="text-center py-4">
-                <p className="text-slate-400 text-sm">Nenhuma folga programada.</p>
-                <p className="text-xs text-slate-500 mt-1">Clique em uma data no calendário para registrar.</p>
-              </div>
+              <EmptyState
+                icon={CalendarPlus}
+                title="Nenhuma folga programada"
+                description="Selecione uma data no calendário acima para registrar sua próxima folga, licença ou afastamento."
+              />
             ) : (
               <div className="space-y-3">
                 {pendingLeaves.length > 0 && (
@@ -840,9 +842,11 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
                       </div>
                     )
                   ) : teamLeaves.length === 0 ? (
-                    <div className="text-center py-4">
-                      <p className="text-slate-400 text-sm">Nenhuma folga programada pela equipe nos próximos 30 dias.</p>
-                    </div>
+                    <EmptyState
+                      icon={Users}
+                      title="Equipe sem folgas próximas"
+                      description="Nenhum membro da equipe possui folga programada nos próximos 30 dias."
+                    />
                   ) : (
                     <div className="space-y-2 max-h-48 overflow-y-auto">
                       {teamLeaves.map((leave) => (
