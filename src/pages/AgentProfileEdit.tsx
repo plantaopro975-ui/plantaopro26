@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,11 +10,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BirthDatePicker } from '@/components/ui/birth-date-picker';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, User, Phone, Mail, MapPin, Loader2, Droplet, Camera, Cake } from 'lucide-react';
+import { ArrowLeft, Save, User, Phone, Mail, MapPin, Loader2, Droplet, Cake, Shield, Building2 } from 'lucide-react';
 import { formatPhone } from '@/lib/validators';
 import { AvatarUpload } from '@/components/agent-panel/AvatarUpload';
 import { format, isValid, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { formatMatricula, getMatriculaNumbers } from '@/lib/validators';
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
@@ -24,7 +22,7 @@ export default function AgentProfileEdit() {
   const { user, isLoading: isAuthLoading, masterSession } = useAuth();
   const { agent, isLoading: isAgentLoading } = useAgentProfile();
   const navigate = useNavigate();
-  
+
   const [isSaving, setIsSaving] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState<Date | undefined>();
@@ -36,36 +34,26 @@ export default function AgentProfileEdit() {
     blood_type: ''
   });
 
-  // Redirect only after loading is complete
   useEffect(() => {
     if (isAuthLoading) return;
-    
-    // Don't redirect if we have any valid session
     if (user || masterSession) return;
-    
-    // Small delay to ensure state is settled
     const timer = setTimeout(() => {
       navigate('/auth', { replace: true });
     }, 200);
-    
     return () => clearTimeout(timer);
   }, [user, isAuthLoading, masterSession, navigate]);
 
   useEffect(() => {
     if (agent) {
-      // Parse birth_date from database (YYYY-MM-DD)
       let parsedBirthDate: Date | undefined = undefined;
       if (agent.birth_date) {
         try {
           const parsed = parseISO(agent.birth_date);
-          if (isValid(parsed)) {
-            parsedBirthDate = parsed;
-          }
+          if (isValid(parsed)) parsedBirthDate = parsed;
         } catch {
           parsedBirthDate = undefined;
         }
       }
-      
       setBirthDate(parsedBirthDate);
       setFormData({
         matricula: agent.matricula || '',
@@ -79,32 +67,24 @@ export default function AgentProfileEdit() {
   }, [agent]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhone(e.target.value);
-    setFormData(prev => ({ ...prev, phone: formatted }));
+    setFormData(prev => ({ ...prev, phone: formatPhone(e.target.value) }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!agent?.id) {
       toast.error('Erro ao identificar o agente');
       return;
     }
-
     setIsSaving(true);
-    
     try {
-      // Matrícula: opcional, mas quando preenchida deve ter 8 dígitos
       const matriculaNumbers = getMatriculaNumbers(formData.matricula);
       if (matriculaNumbers && matriculaNumbers.length !== 8) {
         toast.error('Matrícula deve ter 8 dígitos');
         setIsSaving(false);
         return;
       }
-
-      // Format birth_date for database (YYYY-MM-DD)
       const birthDateForDb = birthDate ? format(birthDate, 'yyyy-MM-dd') : null;
-      
       const { error } = await (supabase as any)
         .from('agents')
         .update({
@@ -116,9 +96,7 @@ export default function AgentProfileEdit() {
           birth_date: birthDateForDb
         })
         .eq('id', agent.id);
-
       if (error) throw error;
-
       toast.success('Dados atualizados com sucesso!');
       navigate('/agent-panel');
     } catch (error) {
@@ -137,17 +115,12 @@ export default function AgentProfileEdit() {
     );
   }
 
-
   if (!agent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+      <div className="flex-1 min-h-0 w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-400">Perfil não encontrado</p>
-          <Button 
-            variant="ghost" 
-            className="mt-4"
-            onClick={() => navigate('/agent-panel')}
-          >
+          <Button variant="ghost" className="mt-4" onClick={() => navigate('/agent-panel')}>
             Voltar
           </Button>
         </div>
@@ -155,136 +128,95 @@ export default function AgentProfileEdit() {
     );
   }
 
+  const inputCls = "bg-slate-900/60 border-slate-700 text-white placeholder:text-slate-500 h-9 text-sm";
+
   return (
     <div
-      className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8"
+      className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
       style={{
         WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y pinch-zoom',
         overscrollBehavior: 'contain',
-        paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
       }}
     >
-      <div className="max-w-2xl mx-auto space-y-6 pb-16">
+      <form onSubmit={handleSubmit} className="max-w-6xl mx-auto px-3 py-3 md:px-6 md:py-4 space-y-3">
+        {/* HERO */}
+        <div className="relative overflow-hidden rounded-xl border border-amber-500/20 bg-gradient-to-r from-slate-900 via-slate-800/80 to-slate-900 shadow-lg shadow-amber-500/5">
+          <div className="absolute inset-0 opacity-[0.07] bg-[radial-gradient(circle_at_20%_50%,#f59e0b_0%,transparent_50%)]" />
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
+          <div className="relative flex items-center gap-3 md:gap-5 p-3 md:p-4">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/agent-panel')}
+              className="text-slate-400 hover:text-amber-400 shrink-0 h-8 w-8"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
 
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/agent-panel')}
-            className="text-slate-400 hover:text-white"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="font-tactical text-xl font-bold tracking-[0.14em] text-white">Meu Perfil</h1>
-            <p className="text-slate-400">Edite seus dados pessoais</p>
+            <div className="shrink-0">
+              <AvatarUpload
+                agentId={agent.id}
+                agentName={agent.name}
+                currentAvatarUrl={avatarUrl}
+                onAvatarUpdated={setAvatarUrl}
+                compact
+              />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-0.5">
+                <Shield className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                <span className="font-tactical text-[10px] md:text-xs tracking-[0.2em] text-amber-500/90 uppercase">Meu Perfil</span>
+              </div>
+              <h1 className="font-tactical text-sm md:text-lg font-bold text-white truncate leading-tight">
+                {agent.name}
+              </h1>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-[11px] md:text-xs text-slate-400">
+                <span className="font-mono">{agent.cpf?.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</span>
+                {agent.matricula && <><span className="text-slate-600">•</span><span>Mat. {agent.matricula}</span></>}
+                {agent.team && <><span className="text-slate-600">•</span><span>Equipe {agent.team}</span></>}
+                {agent.unit?.name && (
+                  <><span className="text-slate-600">•</span>
+                  <span className="inline-flex items-center gap-1"><Building2 className="h-3 w-3" />{agent.unit.name}</span></>
+                )}
+              </div>
+            </div>
+
+            <div className="hidden md:flex gap-2 shrink-0">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/agent-panel')}
+                className="text-slate-400 hover:text-white h-8"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isSaving}
+                className="bg-amber-600 hover:bg-amber-700 text-white h-8 shadow-md shadow-amber-900/40"
+              >
+                {isSaving ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1.5" />}
+                Salvar
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Avatar Upload Card */}
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Camera className="h-5 w-5 text-amber-500" />
-              Foto de Perfil
-            </CardTitle>
-            <CardDescription>
-              Adicione ou altere sua foto de perfil
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <AvatarUpload
-              agentId={agent.id}
-              agentName={agent.name}
-              currentAvatarUrl={avatarUrl}
-              onAvatarUpdated={setAvatarUrl}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Profile Card - Read Only Info */}
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <User className="h-5 w-5 text-amber-500" />
-              Informações Básicas
-            </CardTitle>
-            <CardDescription>
-              Dados cadastrais (não editáveis)
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-slate-400 text-sm">Nome</Label>
-                <p className="text-white font-medium">{agent.name}</p>
-              </div>
-              <div>
-                <Label className="text-slate-400 text-sm">CPF</Label>
-                <p className="text-white font-medium">
-                  {agent.cpf?.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}
-                </p>
-              </div>
-              <div>
-                <Label className="text-slate-400 text-sm">Matrícula</Label>
-                <p className="text-white font-medium">{agent.matricula || '-'}</p>
-              </div>
-              <div>
-                <Label className="text-slate-400 text-sm">Equipe</Label>
-                <p className="text-white font-medium">{agent.team || '-'}</p>
-              </div>
-              <div>
-                <Label className="text-slate-400 text-sm">Unidade</Label>
-                <p className="text-white font-medium">{agent.unit?.name || '-'}</p>
-              </div>
-              <div>
-                <Label className="text-slate-400 text-sm">Município</Label>
-                <p className="text-white font-medium">{agent.unit?.municipality || '-'}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Editable Info */}
-        <form onSubmit={handleSubmit}>
-          <Card className="bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white">Dados de Contato</CardTitle>
-              <CardDescription>
-                Atualize suas informações de contato
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Matrícula */}
-              <div className="space-y-2">
-                <Label htmlFor="matricula" className="text-slate-300 flex items-center gap-2">
-                  <User className="h-4 w-4 text-amber-500" />
-                  Matrícula (8 dígitos)
-                </Label>
-                <Input
-                  id="matricula"
-                  inputMode="numeric"
-                  placeholder="00000000"
-                  value={formatMatricula(formData.matricula)}
-                  onChange={(e) => {
-                    const raw = e.target.value;
-                    const digits = raw.replace(/\D/g, '').slice(0, 8);
-                    setFormData(prev => ({ ...prev, matricula: digits }));
-                  }}
-                  maxLength={10}
-                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
-                />
-                <p className="text-xs text-slate-500">Opcional, deve ter exatamente 8 dígitos numéricos.</p>
-              </div>
-
-              {/* Phone */}
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-slate-300 flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-amber-500" />
-                  Telefone
-                </Label>
+        {/* CONTENT GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* Contato */}
+          <section className="rounded-xl border border-slate-700/60 bg-slate-800/40 backdrop-blur p-3 md:p-4">
+            <h2 className="font-tactical text-[11px] tracking-[0.18em] text-amber-500/90 uppercase mb-3 flex items-center gap-2">
+              <Phone className="h-3.5 w-3.5" /> Contato
+            </h2>
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <Label htmlFor="phone" className="text-slate-400 text-xs">Telefone</Label>
                 <Input
                   id="phone"
                   type="tel"
@@ -292,15 +224,12 @@ export default function AgentProfileEdit() {
                   value={formData.phone}
                   onChange={handlePhoneChange}
                   maxLength={15}
-                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
+                  className={inputCls}
                 />
               </div>
-
-              {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-300 flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-amber-500" />
-                  E-mail Pessoal
+              <div className="space-y-1">
+                <Label htmlFor="email" className="text-slate-400 text-xs flex items-center gap-1.5">
+                  <Mail className="h-3 w-3" /> E-mail pessoal
                 </Label>
                 <Input
                   id="email"
@@ -308,110 +237,99 @@ export default function AgentProfileEdit() {
                   placeholder="seu@email.com"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
+                  className={inputCls}
                 />
-                <p className="text-xs text-slate-500">
-                  Este e-mail pode ser usado para recuperação de senha
-                </p>
               </div>
+              <div className="space-y-1">
+                <Label htmlFor="matricula" className="text-slate-400 text-xs flex items-center gap-1.5">
+                  <User className="h-3 w-3" /> Matrícula
+                </Label>
+                <Input
+                  id="matricula"
+                  inputMode="numeric"
+                  placeholder="00000000"
+                  value={formatMatricula(formData.matricula)}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+                    setFormData(prev => ({ ...prev, matricula: digits }));
+                  }}
+                  maxLength={10}
+                  className={inputCls}
+                />
+              </div>
+            </div>
+          </section>
 
-              {/* Address */}
-              <div className="space-y-2">
-                <Label htmlFor="address" className="text-slate-300 flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-amber-500" />
-                  Endereço
+          {/* Pessoal */}
+          <section className="rounded-xl border border-slate-700/60 bg-slate-800/40 backdrop-blur p-3 md:p-4">
+            <h2 className="font-tactical text-[11px] tracking-[0.18em] text-amber-500/90 uppercase mb-3 flex items-center gap-2">
+              <User className="h-3.5 w-3.5" /> Pessoal
+            </h2>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-slate-400 text-xs flex items-center gap-1.5">
+                    <Cake className="h-3 w-3 text-pink-500" /> Nascimento
+                  </Label>
+                  <BirthDatePicker value={birthDate} onChange={setBirthDate} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="blood_type" className="text-slate-400 text-xs flex items-center gap-1.5">
+                    <Droplet className="h-3 w-3 text-red-500" /> Sangue
+                  </Label>
+                  <Select
+                    value={formData.blood_type}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, blood_type: value }))}
+                  >
+                    <SelectTrigger className="bg-slate-900/60 border-slate-700 text-white h-9 text-sm">
+                      <SelectValue placeholder="—" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-800 border-slate-700">
+                      {bloodTypes.map((type) => (
+                        <SelectItem key={type} value={type} className="text-white hover:bg-slate-700 focus:bg-slate-700">
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="address" className="text-slate-400 text-xs flex items-center gap-1.5">
+                  <MapPin className="h-3 w-3" /> Endereço
                 </Label>
                 <Textarea
                   id="address"
                   placeholder="Rua, número, bairro, cidade..."
                   value={formData.address}
                   onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                  className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 min-h-[80px]"
+                  className="bg-slate-900/60 border-slate-700 text-white placeholder:text-slate-500 min-h-[60px] text-sm resize-none"
                 />
               </div>
+            </div>
+          </section>
+        </div>
 
-              {/* Birth Date - Professional DatePicker */}
-              <div className="space-y-2">
-                <Label className="text-slate-300 flex items-center gap-2">
-                  <Cake className="h-4 w-4 text-pink-500" />
-                  Data de Nascimento
-                </Label>
-                <BirthDatePicker
-                  value={birthDate}
-                  onChange={setBirthDate}
-                />
-                <p className="text-xs text-slate-500">
-                  Usado para aniversários e alertas de equipe
-                </p>
-              </div>
-
-              {/* Blood Type */}
-              <div className="space-y-2">
-                <Label htmlFor="blood_type" className="text-slate-300 flex items-center gap-2">
-                  <Droplet className="h-4 w-4 text-red-500" />
-                  Tipo Sanguíneo
-                </Label>
-                <Select
-                  value={formData.blood_type}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, blood_type: value }))}
-                >
-                  <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white">
-                    <SelectValue placeholder="Selecione seu tipo sanguíneo" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700">
-                    {bloodTypes.map((type) => (
-                      <SelectItem 
-                        key={type} 
-                        value={type}
-                        className="text-white hover:bg-slate-700 focus:bg-slate-700"
-                      >
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-slate-500">
-                  Importante para emergências
-                </p>
-              </div>
-
-              {/* Submit Button */}
-              <div className="flex justify-end gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => navigate('/agent-panel')}
-                  className="text-slate-400 hover:text-white"
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSaving}
-                  className="bg-amber-600 hover:bg-amber-700 text-white"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Salvando...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Salvar Alterações
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </form>
-
-        {/* Credits */}
-        <p className="text-center text-xs text-slate-500">
-          Desenvolvido por CS FEIJÓ
-        </p>
-      </div>
+        {/* Mobile actions */}
+        <div className="md:hidden flex gap-2 pt-1 pb-4">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => navigate('/agent-panel')}
+            className="flex-1 text-slate-400 hover:text-white h-11"
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSaving}
+            className="flex-1 bg-amber-600 hover:bg-amber-700 text-white h-11 shadow-md shadow-amber-900/40"
+          >
+            {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+            Salvar
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
