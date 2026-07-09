@@ -531,7 +531,7 @@ export default function AgentPanel() {
             <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-amber-500" /></div>}>
             <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
               {/* Control Panel Container - Modern Glass Design */}
-              <div className="relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
+              <div className="sticky top-0 z-30 relative tactical-strip bg-gradient-to-br from-slate-900/98 via-slate-800/95 to-slate-900/98 rounded-xl border border-amber-500/40 shadow-lg shadow-amber-500/10 backdrop-blur-xl overflow-hidden hover-lift">
                 {/* Decorative glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5 pointer-events-none" />
                 
