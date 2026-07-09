@@ -477,11 +477,11 @@ export default function AgentPanel() {
                 aria-label="Cabeçalho e navegação do painel"
                 className={cn(
                   'sticky top-0 z-40 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1',
-                  // Mobile: leve, translúcido, sem vazar conteúdo por baixo
-                  'bg-slate-950/55 backdrop-blur-sm supports-[backdrop-filter]:bg-slate-950/40',
+                  // Fundo sólido para evitar vazamento de conteúdo por trás do sticky
+                  'bg-slate-950 supports-[backdrop-filter]:bg-slate-950/92 backdrop-blur-md',
                   'shadow-[0_6px_16px_-12px_rgba(0,0,0,0.7)]',
-                  // Desktop: gradiente e blur mais fortes
-                  'md:bg-gradient-to-b md:from-slate-950/95 md:via-slate-950/88 md:to-slate-950/75 md:backdrop-blur-xl md:supports-[backdrop-filter]:bg-slate-950/70',
+                  // Desktop: gradiente sutil mantendo solidez
+                  'md:bg-slate-950 md:supports-[backdrop-filter]:bg-gradient-to-b md:supports-[backdrop-filter]:from-slate-950/98 md:supports-[backdrop-filter]:via-slate-950/95 md:supports-[backdrop-filter]:to-slate-950/92 md:backdrop-blur-xl',
                   'focus-within:ring-1 focus-within:ring-amber-500/40',
                   compact ? 'space-y-1.5' : 'space-y-2'
                 )}
