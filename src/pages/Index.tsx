@@ -504,7 +504,7 @@ export default function Index() {
       // cleanCpf validated above
       const { data: existingAgent } = await supabase
         .from('agents')
-        .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at')
+        .select('id, cpf, team, name, is_active, is_frozen, license_status, license_expires_at, unit:units(name, municipality)')
         .eq('cpf', cleanCpf)
         .maybeSingle();
 
