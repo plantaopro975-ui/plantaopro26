@@ -136,20 +136,20 @@ export function ShiftMiniCalendar({
 
   // GRID variant: full month view
   return (
-    <div className={cn("rounded-lg", className)}>
+    <div className={cn("rounded-lg min-w-0", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-1.5 md:mb-2 gap-2">
         <Button
           type="button"
           variant="ghost"
           size="icon"
           onClick={handlePrev}
-          className="h-7 w-7 text-slate-400 hover:text-white"
+          className="h-6 w-6 md:h-7 md:w-7 text-slate-400 hover:text-white shrink-0"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
         </Button>
 
-        <span className="text-xs font-bold tracking-wide text-slate-200 uppercase">
+        <span className="text-[11px] md:text-xs font-bold tracking-wide text-slate-200 uppercase truncate">
           {format(month, "MMMM yyyy", { locale: ptBR })}
         </span>
 
@@ -158,63 +158,70 @@ export function ShiftMiniCalendar({
           variant="ghost"
           size="icon"
           onClick={handleNext}
-          className="h-7 w-7 text-slate-400 hover:text-white"
+          className="h-6 w-6 md:h-7 md:w-7 text-slate-400 hover:text-white shrink-0"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-3.5 w-3.5 md:h-4 md:w-4" />
         </Button>
       </div>
 
-      {/* Weekday labels */}
-      <div className="grid grid-cols-7 gap-0.5 mb-1">
-        {weekDays.map((w, i) => (
-          <div key={i} className="text-center text-[9px] font-bold text-slate-500 uppercase">
-            {w}
+      {/* Scroll wrapper: keeps the 7-column grid intact but scrolls horizontally
+          if the parent gets narrower than the min-width. */}
+      <div className="overflow-x-auto scrollbar-none -mx-1 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="min-w-[224px] md:min-w-0">
+          {/* Weekday labels */}
+          <div className="grid grid-cols-7 gap-0.5 mb-1">
+            {weekDays.map((w, i) => (
+              <div key={i} className="text-center text-[8px] md:text-[9px] font-bold text-slate-500 uppercase truncate">
+                {w}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Day cells */}
-      <div className="grid grid-cols-7 gap-0.5">
-        {days.map((d) => {
-          const key = format(d, "yyyy-MM-dd");
-          const shiftId = shiftByDate.get(key);
-          const inMonth = isSameMonth(d, monthStart);
-          const today = isToday(d);
+          {/* Day cells */}
+          <div className="grid grid-cols-7 gap-0.5">
+            {days.map((d) => {
+              const key = format(d, "yyyy-MM-dd");
+              const shiftId = shiftByDate.get(key);
+              const inMonth = isSameMonth(d, monthStart);
+              const today = isToday(d);
 
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => handleDayPress(d)}
-              className={cn(
-                "h-6 w-full rounded text-[10px] font-semibold tabular-nums transition-colors",
-                !inMonth && "opacity-30",
-                today && "ring-1 ring-amber-400/70",
-                shiftId
-                  ? "bg-amber-500/25 text-amber-200 hover:bg-amber-500/40"
-                  : "bg-slate-800/40 text-slate-400 hover:bg-slate-700/60"
-              )}
-            >
-              {format(d, "d")}
-            </button>
-          );
-        })}
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => handleDayPress(d)}
+                  className={cn(
+                    "h-5 md:h-6 w-full rounded text-[9px] md:text-[10px] font-semibold tabular-nums transition-colors",
+                    !inMonth && "opacity-30",
+                    today && "ring-1 ring-amber-400/70",
+                    shiftId
+                      ? "bg-amber-500/25 text-amber-200 hover:bg-amber-500/40"
+                      : "bg-slate-800/40 text-slate-400 hover:bg-slate-700/60"
+                  )}
+                >
+                  {format(d, "d")}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-4 mt-2 text-[9px]">
+      <div className="flex items-center justify-center gap-2 md:gap-4 mt-1.5 md:mt-2 text-[8px] md:text-[9px] flex-wrap">
         <div className="flex items-center gap-1">
-          <div className="w-2.5 h-2.5 rounded-sm bg-amber-500/25 border border-amber-500/50" />
+          <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-sm bg-amber-500/25 border border-amber-500/50" />
           <span className="text-slate-400">Plantão</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2.5 h-2.5 rounded-sm ring-1 ring-amber-400/70" />
+          <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-sm ring-1 ring-amber-400/70" />
           <span className="text-slate-400">Hoje</span>
         </div>
       </div>
     </div>
   );
 }
+
 
 // Simple date picker grid for configuration dialogs (no shift data needed)
 interface SimpleDatePickerProps {
