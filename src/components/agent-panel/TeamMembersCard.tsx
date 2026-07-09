@@ -354,15 +354,19 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                                 ? `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`
                                 : nameParts[0];
                               return (
-                                <div 
+                                <button
+                                  type="button"
                                   key={leave.id}
-                                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${info.color} border border-current/20`}
+                                  onClick={() => setSelectedLeave(leave)}
+                                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${info.color} border border-current/20 hover:brightness-125 active:scale-[0.98] transition`}
+                                  aria-label={`Ver detalhes da folga de ${leave.agent_name}`}
                                 >
                                   {info.icon}
                                   <span className="text-sm font-semibold">{displayName}</span>
                                   <span className="text-[10px] opacity-70">{info.label}</span>
-                                </div>
+                                </button>
                               );
+
                             })}
                           </div>
                         </div>
