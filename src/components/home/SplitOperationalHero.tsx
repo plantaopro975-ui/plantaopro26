@@ -360,6 +360,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
               {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
               <picture className="relative block h-full aspect-square leading-[0] translate-y-6 min-[390px]:translate-y-7 sm:translate-y-0">
+                <source type="image/webp" srcSet={vehicle3dWebp} />
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
@@ -387,9 +388,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
               {/* Agente — mobile: menor, encostado à direita | desktop: mantém */}
               <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
+                <source type="image/webp" srcSet={agent3dWebp} />
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
+                  width={1024}
+                  height={1024}
                   className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
