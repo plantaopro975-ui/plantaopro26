@@ -1492,7 +1492,20 @@ export default function Index() {
       {/* Mobile-only beta notice */}
       <BetaNoticeFooter />
 
-      {/* Footer removido definitivamente a pedido do usuário */}
+      {/* Footer profissional e discreto */}
+      <footer className="relative w-full border-t border-primary/10 bg-[hsl(217_62%_4%/0.85)] backdrop-blur-sm">
+        <div className="mx-auto max-w-[1400px] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10.5px] sm:text-[11px] font-mono tracking-wide text-muted-foreground/70">
+          <span className="uppercase tracking-[0.2em]">
+            © {new Date().getFullYear()} · PlantãoPro
+          </span>
+          <span className="hidden sm:inline text-muted-foreground/50">
+            Sistema Socioeducativo · ISE/AC
+          </span>
+          <span className="uppercase tracking-[0.2em] text-muted-foreground/60">
+            v2026 · Canal Seguro
+          </span>
+        </div>
+      </footer>
 
 
       {/* CPF Check Dialog - Ultra Professional */}
