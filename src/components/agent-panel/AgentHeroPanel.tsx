@@ -153,38 +153,39 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
           style={{ animation: 'scan 4s ease-in-out infinite' }} />
       </div>
 
-      <div className="relative z-10 p-3 md:p-4">
+      <div className="relative z-10 p-2 md:p-4">
         {/* Top Bar - Status & Time */}
-        <div className="flex items-center justify-between mb-2.5 md:mb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="relative">
-              <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                <Shield className="h-4 w-4 md:h-5 md:w-5 text-white" />
+        <div className="flex items-center justify-between mb-1.5 md:mb-3">
+          <div className="flex items-center gap-2 md:gap-2.5 min-w-0">
+            <div className="relative shrink-0">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                <Shield className="h-3.5 w-3.5 md:h-5 md:w-5 text-white" />
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-zinc-900 flex items-center justify-center">
                 <Zap className="h-2 w-2 text-white" />
               </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-[9px] md:text-[10px] text-zinc-400 uppercase tracking-wider font-medium leading-tight">Agente</p>
-              <h2 className="text-sm md:text-base font-bold text-white leading-tight">{firstName}</h2>
+              <h2 className="text-xs md:text-base font-bold text-white leading-tight truncate">{firstName}</h2>
             </div>
           </div>
-          
+
           {/* Live Clock */}
-          <div className="flex flex-col items-end">
-            <div className="flex items-center gap-1.5 text-zinc-400">
-              <Clock className="h-3 w-3" />
-              <span className="text-[9px] md:text-[10px] uppercase tracking-wider">{format(currentTime, "EEEE", { locale: ptBR })}</span>
+          <div className="flex flex-col items-end shrink-0">
+            <div className="flex items-center gap-1 md:gap-1.5 text-zinc-400">
+              <Clock className="h-2.5 w-2.5 md:h-3 md:w-3" />
+              <span className="text-[9px] md:text-[10px] uppercase tracking-wider truncate max-w-[70px] md:max-w-none">{format(currentTime, "EEEE", { locale: ptBR })}</span>
             </div>
-            <p className="text-base md:text-lg font-mono font-bold text-white tabular-nums leading-tight">
+            <p className="text-sm md:text-lg font-mono font-bold text-white tabular-nums leading-tight">
               {format(currentTime, 'HH:mm:ss')}
             </p>
           </div>
         </div>
 
+
         {/* Main Hero Content - Next Shift Countdown */}
-        <div className="bg-zinc-800/60 backdrop-blur-sm rounded-lg border border-zinc-700/50 p-2.5 md:p-3 mb-2.5 md:mb-3">
+        <div className="bg-zinc-800/60 backdrop-blur-sm rounded-lg border border-zinc-700/50 p-1.5 md:p-3 mb-1.5 md:mb-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 mb-1">
@@ -233,7 +234,7 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
         </div>
 
         {/* Quick Stats Grid - Compact with truncation */}
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="grid grid-cols-4 gap-1 md:gap-1.5">
           {[
             { 
               label: 'Total', 
@@ -271,20 +272,21 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
             <div
               key={stat.label}
               className={cn(
-                "relative p-1.5 md:p-2 rounded-md border backdrop-blur-sm transition-all hover:scale-[1.02] overflow-hidden",
+                "relative p-1 md:p-2 rounded-md border backdrop-blur-sm transition-all hover:scale-[1.02] overflow-hidden",
                 `bg-gradient-to-br ${stat.color}`,
                 stat.borderColor
               )}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <stat.icon className={cn("h-3 w-3 md:h-3.5 md:w-3.5 mb-0.5", stat.iconColor)} />
-              <p className="text-sm md:text-base font-bold text-white tabular-nums leading-none truncate">
+              <stat.icon className={cn("h-2.5 w-2.5 md:h-3.5 md:w-3.5 mb-0.5", stat.iconColor)} />
+              <p className="text-xs md:text-base font-bold text-white tabular-nums leading-none truncate">
                 {stat.value}
               </p>
-              <p className="text-[9px] text-zinc-500 uppercase tracking-wide mt-0.5 truncate">
+              <p className="text-[8px] md:text-[9px] text-zinc-500 uppercase tracking-wide mt-0.5 truncate">
                 {stat.label}
               </p>
             </div>
+
           ))}
         </div>
       </div>

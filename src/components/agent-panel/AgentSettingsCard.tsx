@@ -280,11 +280,11 @@ export function AgentSettingsCard({
 
   return (
     <Card className="bg-zinc-900/90 border border-zinc-700/60 shadow-xl">
-      <CardHeader className="pb-2 pt-3 px-3">
+      <CardHeader className="pb-1.5 pt-2 px-2 md:pb-2 md:pt-3 md:px-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <div className="p-1.5 rounded-md bg-amber-500/15 border border-amber-500/30">
-              <User className="h-4 w-4 text-amber-400" />
+          <CardTitle className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm">
+            <div className="p-1 md:p-1.5 rounded-md bg-amber-500/15 border border-amber-500/30">
+              <User className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
             </div>
             <span className="font-semibold text-zinc-100">Configurações</span>
           </CardTitle>
@@ -293,20 +293,20 @@ export function AgentSettingsCard({
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-7 w-7 text-zinc-400 hover:text-white hover:bg-zinc-800"
+              className="h-6 w-6 md:h-7 md:w-7 text-zinc-400 hover:text-white hover:bg-zinc-800"
             >
               <X className="h-3.5 w-3.5" />
             </Button>
           )}
         </div>
       </CardHeader>
-      <CardContent className="px-3 pb-3 space-y-3">
+      <CardContent className="px-2 pb-2 md:px-3 md:pb-3 space-y-2 md:space-y-3">
         {/* Avatar Upload - Always visible */}
-        <div className="flex items-center gap-3 p-2 bg-zinc-800/50 rounded-lg border border-zinc-700/40">
+        <div className="flex items-center gap-2 md:gap-3 p-1.5 md:p-2 bg-zinc-800/50 rounded-lg border border-zinc-700/40">
           <div className="relative shrink-0">
-            <Avatar className="h-12 w-12 border-2 border-amber-500/40">
+            <Avatar className="h-10 w-10 md:h-12 md:w-12 border-2 border-amber-500/40">
               {avatarUrl && <AvatarImage src={avatarUrl} alt={agentName} />}
-              <AvatarFallback className="bg-zinc-700 text-lg font-bold text-amber-400">
+              <AvatarFallback className="bg-zinc-700 text-base md:text-lg font-bold text-amber-400">
                 {agentName.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -330,10 +330,11 @@ export function AgentSettingsCard({
             />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-zinc-100 truncate">{agentName}</p>
-            <p className="text-[10px] text-zinc-500">JPG, PNG (máx. 2MB)</p>
+            <p className="text-xs md:text-sm font-medium text-zinc-100 truncate">{agentName}</p>
+            <p className="text-[9px] md:text-[10px] text-zinc-500">JPG, PNG (máx. 2MB)</p>
           </div>
         </div>
+
 
         {/* Contact Section - Collapsible */}
         <Collapsible open={contactOpen} onOpenChange={setContactOpen}>
