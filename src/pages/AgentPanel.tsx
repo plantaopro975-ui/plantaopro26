@@ -440,7 +440,9 @@ export default function AgentPanel() {
   return (
     <>
     <ThemedPanelBackground team={agent?.team || null} showTeamImage={true}>
+      <PublicSecurityBackdrop />
       <div className="hud-scope flex-1 flex flex-col w-full min-w-0 min-h-0">
+
 
 
       {/* Session Monitor Banner - Visual session status */}
