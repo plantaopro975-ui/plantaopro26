@@ -1717,6 +1717,26 @@ export default function Index() {
           >
             Entrar
           </AuthButton>
+
+          {/* Divisor + Atalho para Acesso Master (Administrador) */}
+          <div className="pt-3 mt-1 border-t border-amber-500/20">
+            <button
+              type="button"
+              onClick={() => {
+                setShowLogin(false);
+                setShowMasterLogin(true);
+              }}
+              className="group w-full flex items-center justify-center gap-2 py-2.5 rounded-md border border-amber-500/40 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-amber-500/10 hover:from-amber-500/20 hover:to-amber-500/20 hover:border-amber-400/70 transition-all"
+            >
+              <ShieldCheck className="h-4 w-4 text-amber-400 group-hover:text-amber-300" />
+              <span className="text-[11px] font-mono font-bold tracking-[0.24em] uppercase text-amber-300 group-hover:text-amber-200">
+                Acesso Master
+              </span>
+            </button>
+            <p className="mt-1.5 text-center text-[9px] font-mono tracking-[0.2em] uppercase text-slate-500">
+              Área do Administrador
+            </p>
+          </div>
         </form>
       </AuthDialog>
 
