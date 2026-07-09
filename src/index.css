@@ -1516,20 +1516,5 @@ img, svg, picture, video {
   -webkit-touch-callout: none;
 }
 
-/* Print protection: hide everything and show a warning if user prints */
-@media print {
-  body * { visibility: hidden !important; }
-  body::before {
-    content: "IMPRESSÃO BLOQUEADA — Conteúdo protegido pela Equipe de Segurança do Sistema Socioeducativo.";
-    visibility: visible !important;
-    display: block;
-    position: fixed;
-    inset: 0;
-    padding: 4rem 2rem;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 18px;
-    color: #000;
-    background: #fff;
-    text-align: center;
-  }
-}
+/* Print protection: desativado temporariamente a pedido do usuário */
+
