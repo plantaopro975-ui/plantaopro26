@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { SignatureCanvas } from '@/components/ui/signature-canvas';
 import { notify } from '@/lib/notify';
 import { ArrowRightLeft, Plus, Loader2, Check, X, Clock, User, FileText, Download, ArrowLeft, CalendarDays, Sparkles, Edit2, Eye, Trash2, PenTool } from 'lucide-react';
+import { EmptyState } from '@/components/ui/data-states';
 import { format, parseISO, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
