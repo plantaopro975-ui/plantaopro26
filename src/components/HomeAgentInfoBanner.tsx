@@ -439,38 +439,38 @@ export function HomeAgentInfoBanner() {
                   {countdown.days > 0 && (
                     <div className="flex flex-col items-center">
                       <div className="bg-slate-800/80 border border-primary/40 rounded-lg px-2 py-1 min-w-[36px] text-center">
-                        <span className="text-lg sm:text-xl font-bold text-primary font-mono animate-pulse">
+                        <span className="text-lg sm:text-xl font-semibold text-primary font-mono tracking-tight animate-pulse">
                           {String(countdown.days).padStart(2, '0')}
                         </span>
                       </div>
                       <span className="text-[9px] text-muted-foreground/70 uppercase mt-0.5">Dias</span>
                     </div>
                   )}
-                  {countdown.days > 0 && <span className="text-primary/60 font-bold text-lg">:</span>}
+                  {countdown.days > 0 && <span className="text-primary/60 font-medium text-lg">:</span>}
                   {/* Hours */}
                   <div className="flex flex-col items-center">
                     <div className="bg-slate-800/80 border border-primary/40 rounded-lg px-2 py-1 min-w-[36px] text-center">
-                      <span className="text-lg sm:text-xl font-bold text-primary font-mono">
+                      <span className="text-lg sm:text-xl font-semibold text-primary font-mono tracking-tight">
                         {String(countdown.hours).padStart(2, '0')}
                       </span>
                     </div>
                     <span className="text-[9px] text-muted-foreground/70 uppercase mt-0.5">Hrs</span>
                   </div>
-                  <span className="text-primary/60 font-bold text-lg animate-pulse">:</span>
+                  <span className="text-primary/60 font-medium text-lg animate-pulse">:</span>
                   {/* Minutes */}
                   <div className="flex flex-col items-center">
                     <div className="bg-slate-800/80 border border-amber-500/40 rounded-lg px-2 py-1 min-w-[36px] text-center">
-                      <span className="text-lg sm:text-xl font-bold text-amber-400 font-mono">
+                      <span className="text-lg sm:text-xl font-semibold text-amber-400 font-mono tracking-tight">
                         {String(countdown.minutes).padStart(2, '0')}
                       </span>
                     </div>
                     <span className="text-[9px] text-muted-foreground/70 uppercase mt-0.5">Min</span>
                   </div>
-                  <span className="text-primary/60 font-bold text-lg animate-pulse">:</span>
+                  <span className="text-primary/60 font-medium text-lg animate-pulse">:</span>
                   {/* Seconds */}
                   <div className="flex flex-col items-center">
                     <div className="bg-slate-800/80 border border-red-500/40 rounded-lg px-2 py-1 min-w-[36px] text-center relative overflow-hidden">
-                      <span className="text-lg sm:text-xl font-bold text-red-400 font-mono relative z-10">
+                      <span className="text-lg sm:text-xl font-semibold text-red-400 font-mono tracking-tight relative z-10">
                         {String(countdown.seconds).padStart(2, '0')}
                       </span>
                       {/* Animated pulse effect */}

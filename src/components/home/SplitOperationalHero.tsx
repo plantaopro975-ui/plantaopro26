@@ -209,13 +209,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
             <div className="hidden sm:flex flex-col gap-1 sm:gap-1.5">
-              <span className="hidden items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
+              <span className="hidden items-center gap-2 font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
                 <span className="h-1 w-6 bg-amber-400" />
                 Sistema Operacional
               </span>
-              <h2 className="font-sans font-black uppercase tracking-[0.02em] text-white text-[20px] sm:text-[26px] lg:text-[32px] leading-[1.05]">
+              <h2 className="font-sans font-semibold uppercase tracking-[0.01em] text-white text-[20px] sm:text-[26px] lg:text-[30px] leading-[1.1]">
 
-                Comando <span className="text-amber-400">Tático</span><br />
+                Comando <span className="text-amber-400 font-bold">Tático</span><br />
                 Socioeducativo
               </h2>
             </div>
@@ -255,12 +255,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 />
 
                 <div className="relative flex items-center justify-between gap-2 mb-2">
-                  <span className="font-mono text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-300 truncate">
+                  <span className="font-mono text-[10px] md:text-[11px] font-medium uppercase tracking-[0.2em] text-amber-300 truncate">
                     Briefing Operacional
                   </span>
                   <span
                     className={cn(
-                      'flex items-center gap-1 font-mono text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.24em] shrink-0',
+                      'flex items-center gap-1 font-mono text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.18em] shrink-0',
                       uplinkTone.text,
                     )}
                     aria-live="polite"
@@ -309,7 +309,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       </div>
                       <div
                         className={cn(
-                          'font-sans font-black text-[15px] md:text-[17px] lg:text-[18px] leading-none mt-0.5 tabular-nums',
+                          'font-sans font-bold text-[15px] md:text-[17px] lg:text-[18px] leading-none mt-0.5 tabular-nums tracking-tight',
                           it.pulse ? 'text-emerald-300' : 'text-white',
                         )}
                       >
@@ -442,10 +442,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
                 {/* MIDDLE — label stack */}
                 <span className="relative flex-1 min-w-0 flex flex-col justify-center px-2.5 py-1 text-left">
-                  <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.24em] text-amber-300/85 leading-none">
+                  <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-amber-300/85 leading-none">
                     Comando · Ronda
                   </span>
-                  <span className="font-sans text-[12.5px] font-black uppercase tracking-[0.06em] text-amber-50 leading-tight mt-0.5 truncate" style={{ textShadow: '0 0 8px rgba(234,179,8,0.35)' }}>
+                  <span className="font-sans text-[12.5px] font-bold uppercase tracking-[0.04em] text-amber-50 leading-tight mt-0.5 truncate" style={{ textShadow: '0 0 8px rgba(234,179,8,0.35)' }}>
                     Gestor de Rondas
                   </span>
                 </span>
@@ -483,10 +483,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         <div className="relative shrink-0 px-2 sm:px-3 pt-0 sm:pt-3 pb-1 mt-0 sm:mt-2 order-3 sm:order-none">
 
           <div className="flex items-center justify-between px-1 pb-1.5">
-            <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.24em] text-slate-200">
+            <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-200">
               Selecione sua Equipe
             </span>
-            <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.24em] text-amber-300">
+            <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-300">
               4 Divisões
             </span>
           </div>
@@ -659,7 +659,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       </svg>
 
                       <span
-                        className="font-mono text-[9px] min-[390px]:text-[9.5px] sm:text-[9.5px] uppercase tracking-[0.24em] sm:tracking-[0.28em] truncate text-slate-200"
+                        className="font-mono text-[9px] min-[390px]:text-[9.5px] sm:text-[9.5px] uppercase tracking-[0.18em] sm:tracking-[0.28em] truncate text-slate-200"
                         style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
                       >
                         {t.motto}
