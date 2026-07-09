@@ -77,21 +77,20 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { notify } from '@/lib/notify';
+import { SectionBoundary } from '@/components/ui/section-boundary';
+import { LoadingState } from '@/components/ui/data-states';
 
 function ModuleFallback({ compact = false }: { compact?: boolean }) {
   return (
     <div
       aria-busy="true"
       className={cn(
-        'w-full rounded-xl border border-amber-500/20 bg-slate-900/80',
-        compact ? 'min-h-[120px] p-2' : 'min-h-[160px] p-3'
+        'w-full rounded-xl border border-amber-500/20 bg-slate-900/60',
+        compact ? 'min-h-[120px]' : 'min-h-[160px]',
       )}
     >
-      <div className="h-3 w-28 rounded bg-amber-500/20" />
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        <div className="h-16 rounded-lg bg-slate-800/70" />
-        <div className="h-16 rounded-lg bg-slate-800/70" />
-      </div>
+      <LoadingState label="Carregando módulo" compact={compact} />
     </div>
   );
 }
@@ -123,23 +122,18 @@ export default function AgentPanel() {
     manualRetry 
   } = useSessionPersistence({
     onConnectionLost: () => {
-      toast({
-        title: 'Conexão perdida',
+      notify.warning('Conexão perdida', {
         description: 'Tentando reconectar automaticamente...',
-        variant: 'destructive',
       });
     },
     onConnectionRestored: () => {
-      toast({
-        title: 'Conexão restaurada',
+      notify.success('Conexão restaurada', {
         description: 'Sua sessão foi recuperada com sucesso.',
       });
     },
     onMaxRetriesReached: () => {
-      toast({
-        title: 'Falha na reconexão',
+      notify.error('Falha na reconexão', {
         description: 'Não foi possível restaurar a sessão. Por favor, faça login novamente.',
-        variant: 'destructive',
       });
     },
   });
@@ -169,8 +163,7 @@ export default function AgentPanel() {
     }
     if (wasOfflineRef.current) {
       wasOfflineRef.current = false;
-      toast({
-        title: 'Sincronizando dados',
+      notify.info('Sincronizando dados', {
         description: 'Atualizando informações após reconexão...',
       });
       // Only refetch queries currently mounted — light on CPU/network
@@ -855,7 +848,7 @@ export default function AgentPanel() {
               </TabsContent>
 
               <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('plantoes') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('plantoes') && <SectionBoundary label="plantoes" loadingLabel="Carregando plantões" fallback={<ModuleFallback compact={compact} />}>
                 {/* Next Shift Countdown - Top Priority */}
                 <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                 
@@ -867,53 +860,53 @@ export default function AgentPanel() {
                   <ShiftCalendarOverview agentId={agent.id} />
                   <RecentShiftCyclesCard agentId={agent.id} />
                 </div>
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
               <TabsContent value="bh" forceMount hidden={activeTab !== 'bh'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('bh') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('bh') && <SectionBoundary label="bh" loadingLabel="Carregando bh" fallback={<ModuleFallback compact={compact} />}>
                 <BHTracker agentId={agent.id} />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
                   <BHEvolutionChart agentId={agent.id} />
                   <BHHistoryTracker agentId={agent.id} />
                 </div>
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
               <TabsContent value="folgas" forceMount hidden={activeTab !== 'folgas'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('folgas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('folgas') && <SectionBoundary label="folgas" loadingLabel="Carregando folgas" fallback={<ModuleFallback compact={compact} />}>
                 <LeaveRequestCard 
                   agentId={agent.id} 
                   agentTeam={agent.team}
                   agentUnitId={agent.unit_id}
                 />
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
               <TabsContent value="agenda" forceMount hidden={activeTab !== 'agenda'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('agenda') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('agenda') && <SectionBoundary label="agenda" loadingLabel="Carregando agenda" fallback={<ModuleFallback compact={compact} />}>
                 <AgentEventsCard agentId={agent.id} />
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
               <TabsContent value="planejador" forceMount hidden={activeTab !== 'planejador'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('planejador') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('planejador') && <SectionBoundary label="planejador" loadingLabel="Carregando planejador" fallback={<ModuleFallback compact={compact} />}>
                 <ShiftPlannerCard agentId={agent.id} />
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
               <TabsContent value="permutas" forceMount hidden={activeTab !== 'permutas'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('permutas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('permutas') && <SectionBoundary label="permutas" loadingLabel="Carregando permutas" fallback={<ModuleFallback compact={compact} />}>
                 <SwapRequestsCard 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
                   team={agent.team}
                 />
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
               <TabsContent value="rondas" forceMount hidden={activeTab !== 'rondas'} className="space-y-4 md:space-y-3 mt-0 overflow-visible data-[state=inactive]:hidden">
-                {mountedTabs.has('rondas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('rondas') && <SectionBoundary label="rondas" loadingLabel="Carregando rondas" fallback={<ModuleFallback compact={compact} />}>
                 <div className="relative z-10 w-full min-w-0 max-w-full overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-900/98 via-slate-950/98 to-amber-950/35 p-3 shadow-xl shadow-amber-500/10 sm:p-4 md:p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <div className="flex min-w-0 items-start gap-3">
@@ -962,14 +955,14 @@ export default function AgentPanel() {
                   </Suspense>
                 </div>
                 <RoundsHistoryCard agentId={agent.id} />
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
 
 
 
               <TabsContent value="chat" forceMount hidden={activeTab !== 'chat'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('chat') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('chat') && <SectionBoundary label="chat" loadingLabel="Carregando chat" fallback={<ModuleFallback compact={compact} />}>
                 <ChatPanel 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
@@ -978,11 +971,11 @@ export default function AgentPanel() {
                   agentRole={(agent as any).role}
                   agentAvatarUrl={(agent as any).avatar_url}
                 />
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
               <TabsContent value="config" forceMount hidden={activeTab !== 'config'} className="space-y-1.5 md:space-y-2 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('config') && <Suspense fallback={<ModuleFallback compact={compact} />}>
+                {mountedTabs.has('config') && <SectionBoundary label="config" loadingLabel="Carregando configurações" fallback={<ModuleFallback compact={compact} />}>
                 {/* ══════════ SEÇÃO 1: CONTA & SEGURANÇA ══════════ */}
                 <Collapsible defaultOpen>
                   <CollapsibleTrigger className="group w-full flex items-center justify-between gap-2 px-2.5 py-1.5 md:px-3 md:py-2 rounded-md border border-purple-500/25 bg-purple-500/[0.06] hover:bg-purple-500/[0.10] transition-colors">
@@ -1072,7 +1065,7 @@ export default function AgentPanel() {
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
-                </Suspense>}
+                </SectionBoundary>}
               </TabsContent>
 
             </Tabs>
