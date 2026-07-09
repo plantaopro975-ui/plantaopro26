@@ -290,7 +290,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
       <div className="relative h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
 
       <div className={cn('relative', compact ? 'px-2 py-1.5 md:px-2.5 md:py-2' : 'px-2.5 py-2 md:px-3 md:py-2.5')}>
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           {/* ── Identity block ── */}
           <button
             type="button"
@@ -337,7 +337,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
           </button>
 
           {/* ── Right actions ── */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap justify-end shrink-0">
             <OnlinePulse isOnline={isOnline} />
 
             {agent.blood_type && (
