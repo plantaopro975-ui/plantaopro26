@@ -1495,7 +1495,7 @@ export default function Index() {
       {/* Footer ultra compacto — 1 linha, não empurra o hero */}
       <footer
         role="contentinfo"
-        className="absolute inset-x-0 bottom-0 z-30 w-full border-t border-primary/10 bg-gradient-to-t from-[hsl(217_62%_2%/0.92)] to-[hsl(217_62%_2%/0.4)] backdrop-blur-md"
+        className="relative w-full shrink-0 border-t border-primary/10 bg-[hsl(217_62%_2%/0.85)] backdrop-blur-md"
       >
         <span
           aria-hidden
