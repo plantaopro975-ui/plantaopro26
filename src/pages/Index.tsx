@@ -266,10 +266,9 @@ export default function Index() {
         if (!local.length) return;
         const cpfs = Array.from(new Set(local.map((c) => c.cpf).filter(Boolean)));
         if (!cpfs.length) return;
-        const { data, error } = await supabase
-          .from('agents')
-          .select('cpf')
-          .in('cpf', cpfs);
+        const { data, error } = await (supabase as any)
+          .rpc('check_existing_cpfs', { _cpfs: cpfs });
+
         if (error) return;
         const valid = new Set((data || []).map((r: { cpf: string }) => r.cpf));
         const stale = cpfs.filter((c) => !valid.has(c));
