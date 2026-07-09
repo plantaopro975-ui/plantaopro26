@@ -289,7 +289,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
       {/* gold top accent (chevron ribbon removed for less vertical space) */}
       <div className="relative h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
 
-      <div className={cn('relative', compact ? 'px-2 py-1.5 md:px-2.5 md:py-2' : 'px-2.5 py-2 md:px-3 md:py-2.5')}>
+      <div className={cn('relative', compact ? 'px-2 py-1.5 md:px-2.5 md:py-1.5' : 'px-2.5 py-1.5 md:px-3 md:py-2')}>
         <div className="flex items-center justify-between gap-2 flex-wrap">
           {/* ── Identity block ── */}
           <button
@@ -395,7 +395,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
               </svg>
             </ActionButton>
 
-            {/* Logout — premium tactile */}
+            {/* Logout — sempre visível, rótulo em todas as telas */}
             <TooltipProvider>
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>
@@ -405,17 +405,17 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                     aria-label="Encerrar sessão"
                     className={cn(
                       'group relative flex items-center justify-center gap-1.5 overflow-hidden shrink-0',
-                      'min-h-[44px] min-w-[44px] h-11 px-3 sm:h-9 sm:px-3 rounded-md',
-                      'bg-gradient-to-b from-red-600 to-red-800 border border-red-400/40',
-                      'text-white font-bold text-[12px] sm:text-[11px] tracking-[0.15em] uppercase font-[\'IBM_Plex_Mono\',_monospace]',
-                      'shadow-[0_4px_14px_-4px_rgba(220,38,38,.6),inset_0_1px_0_rgba(255,255,255,.15)]',
+                      'h-9 min-h-[40px] px-2.5 sm:px-3 rounded-md',
+                      'bg-gradient-to-b from-red-600 to-red-800 border border-red-400/50',
+                      "text-white font-bold text-[11px] tracking-[0.18em] uppercase font-['IBM_Plex_Mono',_monospace]",
+                      'shadow-[0_4px_14px_-4px_rgba(220,38,38,.65),inset_0_1px_0_rgba(255,255,255,.18)]',
                       'hover:from-red-500 hover:to-red-700 hover:-translate-y-[1px]',
                       'active:translate-y-0 transition-all duration-200'
                     )}
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                    <IconPower className="h-5 w-5 sm:h-4 sm:w-4 relative" />
-                    <span className="hidden sm:inline relative">Sair</span>
+                    <IconPower className="h-4 w-4 relative" />
+                    <span className="relative">Sair</span>
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="bg-slate-950 border-slate-700 text-slate-200 text-[11px]">
@@ -424,6 +424,7 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
               </Tooltip>
             </TooltipProvider>
 
+
           </div>
         </div>
 
@@ -431,12 +432,13 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
         {(agent.unit_id || agent.team) && (
           <div className={cn(
             'flex flex-wrap items-center gap-1.5 border-t border-amber-500/20',
-            compact ? 'mt-1.5 pt-1.5' : 'mt-2 pt-2'
+            compact ? 'mt-1 pt-1' : 'mt-1.5 pt-1.5'
           )}>
             {agent.unit_id && <UnitBadge unitId={agent.unit_id} prominent />}
             {agent.team && <TeamInsignia team={agent.team} prominent />}
           </div>
         )}
+
       </div>
 
       {/* bottom gold accent */}
