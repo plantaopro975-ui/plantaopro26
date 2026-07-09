@@ -1666,30 +1666,33 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Corpo compacto — deixa só o operacional essencial visível */}
           <div
             ref={fitRef}
-            className="max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
+            className="tactical-scrollbar max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
           >
             <div
               ref={fitInnerRef}
                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
             >
-              <div className="mx-auto mb-2.5 overflow-hidden rounded-lg border bg-card" style={{ borderColor: `${teamColor}38`, boxShadow: `inset 0 1px 0 ${teamColor}18` }}>
+              <div className="mx-auto mb-2.5 overflow-hidden rounded-lg border bg-card" style={{ borderColor: `${teamColor}30`, boxShadow: `inset 0 1px 0 ${teamColor}12` }}>
                 <div className="relative flex items-center gap-3 px-3 py-2.5 sm:px-4 sm:py-3">
-                  <div className="absolute inset-0 pointer-events-none opacity-40" style={{ background: `radial-gradient(circle at 80% 25%, ${teamColor}24, transparent 42%), linear-gradient(90deg, ${teamColor}0, ${teamColor}10, ${teamColor}0)` }} />
+                  <div className="absolute inset-0 pointer-events-none opacity-25" style={{ background: `radial-gradient(circle at 82% 22%, ${teamColor}18, transparent 44%), linear-gradient(90deg, ${teamColor}00, ${teamColor}08, ${teamColor}00)` }} />
                   <div className="relative flex min-w-0 flex-1 items-center gap-3">
                     <div className="hidden sm:block"><TeamHero team={team} color={teamColor} /></div>
                     <div className="min-w-0">
-                      <div className="font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.28em]" style={{ color: teamColor }}>
+                      <div
+                        className="font-mono text-[10.5px] sm:text-[11.5px] uppercase tracking-[0.32em] font-medium antialiased"
+                        style={{ color: `${teamColor}`, opacity: 0.82, textShadow: '0 1px 0 rgba(0,0,0,0.45)' }}
+                      >
                         Central de Ronda · Equipe {team}
                       </div>
-                      <h2 className="font-display text-lg sm:text-2xl leading-tight text-foreground">
+                      <h2 className="font-display text-[17px] sm:text-[22px] leading-[1.15] tracking-tight text-foreground/95 antialiased subpixel-antialiased">
                         Operação em tempo real
                       </h2>
-                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[12px] tabular-nums text-muted-foreground">
-                        <span className="rounded-sm border px-1.5 py-0.5" style={{ borderColor: `${teamColor}44`, color: teamColor }}>
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11.5px] tabular-nums text-muted-foreground/90">
+                        <span className="rounded-sm border px-1.5 py-0.5 text-foreground/85" style={{ borderColor: `${teamColor}33` }}>
                           Restante {fmtHMS(totalRemainingSeconds)}
                         </span>
                         <span>{schedule?.rows.length ?? agents.length} agentes</span>
-                        {activeRoundName && <span className="truncate">No ar: <b className="uppercase text-foreground">{activeRoundName}</b></span>}
+                        {activeRoundName && <span className="truncate">No ar: <b className="uppercase text-foreground/90">{activeRoundName}</b></span>}
                       </div>
                     </div>
                   </div>
@@ -1910,7 +1913,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className={cn('grid gap-1 max-h-36 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+                  <div className={cn('tactical-scrollbar grid gap-1 max-h-36 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
                       <div key={i} className="flex items-center gap-1.5 min-w-0">
                          <span className="w-6 shrink-0 text-center font-mono text-[10px] text-primary tabular-nums">{pad(i + 1)}</span>
@@ -2167,7 +2170,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       {/* Rows — grid responsivo, se adapta a qualquer quantidade de agentes */}
                       <ul
                         className={cn(
-                          'grid gap-1 gap-x-2 max-h-[13rem] sm:max-h-[18rem] overflow-y-auto pr-1',
+                          'tactical-scrollbar grid gap-1 gap-x-2 max-h-[13rem] sm:max-h-[18rem] overflow-y-auto pr-1',
                           agents.length <= 6
                             ? 'grid-cols-1 sm:grid-cols-2'
                             : agents.length <= 16
