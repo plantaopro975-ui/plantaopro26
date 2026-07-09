@@ -75,8 +75,8 @@ describe('ShiftEditDialog · E2E editar → Folga/Férias', () => {
       shift_date: '2026-07-11',
       shift_type: 'vacation',
       is_vacation: true,
-      start_time: '00:00:00',
-      end_time: '00:00:00',
+      start_time: '00:00',
+      end_time: '00:00',
       status: 'scheduled',
     });
     expect(updateEqMock).toHaveBeenCalledWith('id', 'shift-vac-1');
