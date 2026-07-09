@@ -99,6 +99,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <SplashScreen />
+          <ImageProtection />
           <AccessAcknowledgmentGate />
           <BrowserRouter>
             <AuthProvider>
