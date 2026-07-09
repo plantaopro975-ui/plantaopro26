@@ -115,6 +115,29 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
   const dateStr = format(shiftDate, 'yyyy-MM-dd');
   const isNew = !shift?.id;
 
+  // Cross-day: 24h sempre atravessa; noturno atravessa se fim <= início.
+  const [sh, sm] = startTime.split(':').map(Number);
+  const [eh, em] = endTime.split(':').map(Number);
+  const startMin = sh * 60 + sm;
+  const endMin = eh * 60 + em;
+  const crossesDay = kind === '24h' || (kind !== 'vacation' && endMin <= startMin);
+  const durationMin = kind === 'vacation'
+    ? 0
+    : kind === '24h'
+      ? 24 * 60
+      : crossesDay
+        ? 24 * 60 - startMin + endMin
+        : endMin - startMin;
+  const durationLabel = `${Math.floor(durationMin / 60)}h${durationMin % 60 ? String(durationMin % 60).padStart(2, '0') : ''}`;
+  const nextDay = new Date(shiftDate);
+  nextDay.setDate(nextDay.getDate() + 1);
+  const endDateLabel = crossesDay
+    ? format(nextDay, "dd/MM/yyyy", { locale: ptBR })
+    : format(shiftDate, "dd/MM/yyyy", { locale: ptBR });
+  const rangeSummary = kind === 'vacation'
+    ? 'Dia inteiro (folga/férias/licença)'
+    : `${startTime} de ${format(shiftDate, "dd/MM", { locale: ptBR })} → ${endTime} de ${format(crossesDay ? nextDay : shiftDate, "dd/MM", { locale: ptBR })}${crossesDay ? ' (dia seguinte)' : ''} · ${durationLabel}`;
+
   const performSave = async () => {
     setConfirmOpen(false);
     const parsed = formSchema.safeParse({ kind, start_time: startTime, end_time: endTime });
