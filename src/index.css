@@ -1501,3 +1501,17 @@ html.tab-hidden *::after {
   }
 }
 
+
+/* =========================================================
+ * Image protection: block drag/save/select on all images.
+ * Combined with <ImageProtection /> which intercepts events.
+ * ========================================================= */
+img, svg, picture, video {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
