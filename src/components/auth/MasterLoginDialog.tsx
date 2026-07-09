@@ -47,16 +47,22 @@ export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginD
         </DialogDescription>
 
         {/* ================= HEADER — command center image ================= */}
-        <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16 / 7' }}>
+        <div
+          className="relative w-full overflow-hidden bg-[#0a0b10]"
+          style={{ aspectRatio: '16 / 7' }}
+        >
           <img
             src={heroAsset.url}
             alt=""
-            loading="lazy"
+            loading="eager"
+            decoding="async"
+            {...({ fetchpriority: 'high' } as any)}
             width={1280}
             height={640}
             className="absolute inset-0 h-full w-full object-cover"
             style={{ filter: 'contrast(1.05) saturate(0.95) brightness(0.95)' }}
           />
+
 
           {/* Warm gold gradient wash — lighter so photo stays visible */}
           <div
