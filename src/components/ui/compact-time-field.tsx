@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CompactTimeFieldProps {
@@ -12,10 +11,10 @@ interface CompactTimeFieldProps {
 }
 
 /**
- * Professional compact HH:MM field.
- * - Two native <select> segments (native = perfect mobile UX, no circular wheel).
- * - Tabular mono digits, dark tactical style.
- * - Fits snugly on very small screens (< 320px).
+ * Professional SVG-based HH:MM stepper.
+ * - Segmented digits with up/down chevron controls (pure SVG).
+ * - Digits are keyboard-editable (numeric input) and tap-friendly on mobile.
+ * - No native time/clock wheel. Fits <320px screens.
  */
 export function CompactTimeField({
   id,
@@ -25,68 +24,158 @@ export function CompactTimeField({
   disabled,
   step = 5,
 }: CompactTimeFieldProps) {
-  const [h, m] = React.useMemo(() => {
-    const [hh = "00", mm = "00"] = (value || "00:00").split(":");
-    return [hh.padStart(2, "0"), mm.padStart(2, "0")];
-  }, [value]);
+  const parse = (v: string): [number, number] => {
+    const [hh = "0", mm = "0"] = (v || "00:00").split(":");
+    const h = Math.max(0, Math.min(23, parseInt(hh, 10) || 0));
+    const m = Math.max(0, Math.min(59, parseInt(mm, 10) || 0));
+    return [h, m];
+  };
+  const [h, m] = parse(value);
+  const emit = (nh: number, nm: number) => {
+    const H = ((nh % 24) + 24) % 24;
+    const M = ((nm % 60) + 60) % 60;
+    onChange(`${String(H).padStart(2, "0")}:${String(M).padStart(2, "0")}`);
+  };
 
-  const hours = React.useMemo(
-    () => Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0")),
-    []
-  );
-  const minutes = React.useMemo(() => {
-    const s = Math.max(1, Math.min(30, step));
-    return Array.from({ length: Math.ceil(60 / s) }, (_, i) =>
-      (i * s).toString().padStart(2, "0")
-    );
-  }, [step]);
-
-  // Ensure current minute is selectable even if not on step grid
-  const minuteOptions = minutes.includes(m) ? minutes : [...minutes, m].sort();
-
-  const setHour = (nh: string) => onChange(`${nh}:${m}`);
-  const setMinute = (nm: string) => onChange(`${h}:${nm}`);
-
-  const selectCls =
-    "appearance-none bg-transparent text-slate-100 font-mono tabular-nums text-base font-semibold text-center px-1.5 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400/60 rounded";
+  const st = Math.max(1, Math.min(30, step));
 
   return (
     <div
       id={id}
       className={cn(
-        "inline-flex items-center gap-1 rounded-md border border-slate-700 bg-slate-800 px-2 py-1 min-h-11 w-full",
+        "inline-flex items-center justify-center gap-1 rounded-md border border-slate-700 bg-slate-800/80 px-2 py-1 min-h-11 w-full shadow-inner shadow-black/30",
         disabled && "opacity-60 pointer-events-none",
         className
       )}
+      role="group"
+      aria-label="Seletor de hora"
     >
-      <Clock className="h-3.5 w-3.5 text-amber-400 shrink-0" aria-hidden />
-      <select
-        aria-label="Hora"
+      <Segment
+        label="Hora"
         value={h}
-        onChange={(e) => setHour(e.target.value)}
+        max={23}
+        onInc={() => emit(h + 1, m)}
+        onDec={() => emit(h - 1, m)}
+        onType={(n) => emit(n, m)}
         disabled={disabled}
-        className={selectCls}
-      >
-        {hours.map((hh) => (
-          <option key={hh} value={hh} className="bg-slate-900 text-slate-100">
-            {hh}
-          </option>
-        ))}
-      </select>
-      <span className="text-amber-400 font-mono font-bold">:</span>
-      <select
-        aria-label="Minuto"
+      />
+      <span aria-hidden className="text-amber-400 font-mono font-bold text-lg leading-none pb-0.5">
+        :
+      </span>
+      <Segment
+        label="Minuto"
         value={m}
-        onChange={(e) => setMinute(e.target.value)}
+        max={59}
+        onInc={() => emit(h, m + st)}
+        onDec={() => emit(h, m - st)}
+        onType={(n) => emit(h, n)}
         disabled={disabled}
-        className={selectCls}
+      />
+    </div>
+  );
+}
+
+function Chevron({ dir }: { dir: "up" | "down" }) {
+  return (
+    <svg
+      width="14"
+      height="10"
+      viewBox="0 0 14 10"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      className="text-amber-400"
+    >
+      <path
+        d={dir === "up" ? "M2 8 L7 3 L12 8" : "M2 2 L7 7 L12 2"}
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function Segment({
+  label,
+  value,
+  max,
+  onInc,
+  onDec,
+  onType,
+  disabled,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  onInc: () => void;
+  onDec: () => void;
+  onType: (n: number) => void;
+  disabled?: boolean;
+}) {
+  const [buf, setBuf] = React.useState<string>(String(value).padStart(2, "0"));
+  React.useEffect(() => {
+    setBuf(String(value).padStart(2, "0"));
+  }, [value]);
+
+  const commit = (raw: string) => {
+    const n = parseInt(raw.replace(/\D/g, ""), 10);
+    if (isNaN(n)) {
+      setBuf(String(value).padStart(2, "0"));
+      return;
+    }
+    const clamped = Math.max(0, Math.min(max, n));
+    onType(clamped);
+  };
+
+  const btnCls =
+    "flex items-center justify-center h-5 w-6 rounded hover:bg-amber-500/15 active:bg-amber-500/25 focus:outline-none focus:ring-1 focus:ring-amber-400/60 transition-colors";
+
+  return (
+    <div className="flex flex-col items-center select-none">
+      <button
+        type="button"
+        aria-label={`Aumentar ${label}`}
+        onClick={onInc}
+        disabled={disabled}
+        className={btnCls}
+        tabIndex={-1}
       >
-        {minuteOptions.map((mm) => (
-          <option key={mm} value={mm} className="bg-slate-900 text-slate-100">
-            {mm}
-          </option>
-        ))}
-      </select>
+        <Chevron dir="up" />
+      </button>
+      <input
+        aria-label={label}
+        inputMode="numeric"
+        pattern="[0-9]*"
+        maxLength={2}
+        value={buf}
+        onChange={(e) => setBuf(e.target.value.replace(/\D/g, "").slice(0, 2))}
+        onBlur={(e) => commit(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowUp") {
+            e.preventDefault();
+            onInc();
+          } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            onDec();
+          } else if (e.key === "Enter") {
+            (e.target as HTMLInputElement).blur();
+          }
+        }}
+        disabled={disabled}
+        className="w-9 bg-transparent text-slate-100 font-mono tabular-nums text-lg font-semibold text-center focus:outline-none focus:ring-2 focus:ring-amber-400/60 rounded"
+      />
+      <button
+        type="button"
+        aria-label={`Diminuir ${label}`}
+        onClick={onDec}
+        disabled={disabled}
+        className={btnCls}
+        tabIndex={-1}
+      >
+        <Chevron dir="down" />
+      </button>
     </div>
   );
 }
