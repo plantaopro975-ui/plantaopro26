@@ -289,18 +289,18 @@ export function AgentEventsCard({ agentId }: AgentEventsCardProps) {
                           });
                           setShowEventDialog(true);
                         }}
-                        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:opacity-80 transition-opacity border ${getColorClass(event.color)}`}
+                        className={`flex items-center gap-2 px-2 py-1.5 md:px-2.5 md:py-2 rounded-md cursor-pointer hover:opacity-80 transition-opacity border ${getColorClass(event.color)}`}
                       >
-                        <EventIcon className="h-4 w-4 shrink-0" />
+                        <EventIcon className="h-3.5 w-3.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{event.title}</p>
-                          <p className="text-xs opacity-70">
+                          <p className="text-xs md:text-sm font-medium truncate">{event.title}</p>
+                          <p className="text-[10px] md:text-[11px] opacity-70">
                             {format(eventDate, "dd/MM/yyyy", { locale: ptBR })}
                             {event.start_time && ` às ${event.start_time}`}
                           </p>
                         </div>
                         {isToday(eventDate) && (
-                          <Badge className="bg-green-500/20 text-green-400 text-xs">Hoje</Badge>
+                          <Badge className="bg-green-500/15 text-green-300 border border-green-500/25 text-[9px] px-1.5 py-0 h-4">Hoje</Badge>
                         )}
                       </div>
                     );
