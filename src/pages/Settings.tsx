@@ -2,164 +2,151 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Settings as SettingsIcon, Shield, Loader2, Palette, Sparkles, ArrowLeft, Bell, Volume2 } from 'lucide-react';
 import { ChangePasswordDialog } from '@/components/ChangePasswordDialog';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
-
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
 import { ConnectedDevicesCard } from '@/components/settings/ConnectedDevicesCard';
-import { Switch } from '@/components/ui/switch';
+
+/* ─── Inline SVG icons (uniforme, sem lucide) ─── */
+const stroke = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+
+const IconBack = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" {...stroke} {...p}><path d="M15 18l-6-6 6-6" /></svg>
+);
+const IconSettings = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" {...stroke} {...p}>
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06A2 2 0 1 1 4.13 16.9l.06-.06A1.7 1.7 0 0 0 4.53 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.65 8.85 1.7 1.7 0 0 0 4.31 7l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9c.35.61.99.99 1.7 1.04H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.56 1.04Z" />
+  </svg>
+);
+const IconPalette = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" {...stroke} {...p}>
+    <circle cx="13.5" cy="6.5" r="1.2" />
+    <circle cx="17.5" cy="10.5" r="1.2" />
+    <circle cx="8.5" cy="7.5" r="1.2" />
+    <circle cx="6.5" cy="12.5" r="1.2" />
+    <path d="M12 2a10 10 0 1 0 0 20 2.5 2.5 0 0 0 1.8-4.24A2.5 2.5 0 0 1 15.6 13.5H18a4 4 0 0 0 4-4 8 8 0 0 0-10-7.5" />
+  </svg>
+);
+const IconShield = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" {...stroke} {...p}><path d="M12 2 4 5v7c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V5l-8-3Z" /></svg>
+);
+const IconKey = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" {...stroke} {...p}>
+    <circle cx="7.5" cy="15.5" r="4.5" />
+    <path d="M10.5 12.5 21 2M17 6l3 3M15 8l2 2" />
+  </svg>
+);
+const IconLoader = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" {...stroke} className={`animate-spin ${p.className ?? ''}`}><path d="M21 12a9 9 0 1 1-3-6.7" /></svg>
+);
 
 export default function Settings() {
   const { user, isLoading, userRole, masterSession } = useAuth();
   const navigate = useNavigate();
   const { themeConfig } = useTheme();
-  
-  // Enable ESC key navigation - get goBack function
+
   const { goBack } = useBackNavigation({ enabled: true, fallbackPath: '/dashboard' });
 
-  // Redirect only after loading is complete and ONLY if not offline
   useEffect(() => {
     if (isLoading) return;
-    
-    // Don't redirect if we have any valid session
     if (user || masterSession) return;
-    
-    // Check if offline - don't redirect
     if (!navigator.onLine) return;
-    
-    // Small delay to ensure state is settled
     const timer = setTimeout(() => {
-      // Final check before redirect
       if (!navigator.onLine) return;
       navigate('/', { replace: true });
     }, 500);
-    
     return () => clearTimeout(timer);
   }, [user, isLoading, masterSession, navigate]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-dvh flex items-center justify-center">
+        <IconLoader className="h-7 w-7 text-primary" />
       </div>
     );
   }
 
   if (!user && !masterSession) return null;
 
+  const roleLabel =
+    masterSession && !userRole ? 'Master' :
+    userRole === 'master' ? 'Master' :
+    userRole === 'admin' ? 'Administrador' : 'Usuário';
+  const isPrivileged = userRole === 'master' || userRole === 'admin' || !!masterSession;
+
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-dvh flex">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
-            {/* Back Button */}
+        <main className="flex-1 p-4 sm:p-6 overflow-auto">
+          <div className="max-w-2xl mx-auto space-y-4">
+            {/* Back */}
             <Button
               variant="ghost"
               size="sm"
               onClick={goBack}
-              className="gap-2"
+              className="gap-1.5 h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
+              aria-label="Voltar"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <IconBack className="h-4 w-4" />
               Voltar
             </Button>
 
-            {/* Page Header */}
-            <div>
-              <h1 className="font-tactical text-xl font-bold tracking-[0.14em] flex items-center gap-2">
-                <SettingsIcon className="h-6 w-6 text-primary" />
-                Configurações Gerais
+            {/* Header */}
+            <header className="border-b border-border/40 pb-3">
+              <h1 className="font-tactical text-lg font-bold tracking-[0.14em] flex items-center gap-2 text-foreground">
+                <IconSettings className="h-5 w-5 text-primary" />
+                Configurações
               </h1>
-              <p className="text-muted-foreground">
-                Personalize o sistema e gerencie preferências globais
+              <p className="text-xs text-muted-foreground mt-1">
+                Preferências da conta e do sistema.
               </p>
-            </div>
+            </header>
 
-            {/* Theme Section */}
-            <Card className="glass glass-border shadow-card overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/5">
-                <CardTitle className="flex items-center gap-2">
-                  <Palette className="h-5 w-5 text-primary" />
-                  Tema Visual
+            {/* Tema */}
+            <Card className="glass glass-border">
+              <CardHeader className="py-3 px-4">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+                  <IconPalette className="h-4 w-4 text-primary" />
+                  Tema visual
                 </CardTitle>
-                <CardDescription>
-                  Personalize a aparência do sistema
-                </CardDescription>
               </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/40 border border-slate-700/50">
-                  <Sparkles className="h-5 w-5 text-primary shrink-0" />
-                  <div className="text-sm">
-                    <div className="text-muted-foreground">
-                      Tema atual: <span className="font-medium text-primary">{themeConfig.emoji} {themeConfig.name}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground/70 mt-1">
-                      A personalização do tema visual do sistema é definida pelo administrador no painel administrativo.
-                    </p>
-                  </div>
+              <CardContent className="pt-0 pb-3 px-4">
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="text-muted-foreground">Tema atual</span>
+                  <span className="font-medium text-primary tabular-nums">
+                    {themeConfig.emoji} {themeConfig.name}
+                  </span>
                 </div>
+                <p className="text-[11px] text-muted-foreground/70 mt-2 leading-snug">
+                  Definido pelo administrador no painel administrativo.
+                </p>
               </CardContent>
             </Card>
 
-            {/* Notifications Settings */}
-            <Card className="glass glass-border shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5 text-primary" />
-                  Notificações
-                </CardTitle>
-                <CardDescription>
-                  Configure alertas e avisos do sistema
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Notificações Push</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receba alertas de plantão no navegador
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Sons do Sistema</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Tocar sons para alertas importantes
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Connected Devices - Only for logged in users */}
+            {/* Dispositivos conectados */}
             {user && <ConnectedDevicesCard />}
 
-            {/* Password Section - Only for regular users, not master session */}
+            {/* Senha */}
             {user && (
-              <Card className="glass glass-border shadow-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-primary" />
-                    Segurança da Conta
+              <Card className="glass glass-border">
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+                    <IconKey className="h-4 w-4 text-primary" />
+                    Segurança da conta
                   </CardTitle>
-                  <CardDescription>
-                    Gerencie a segurança do seu acesso
-                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Alterar Senha</p>
-                      <p className="text-sm text-muted-foreground">
-                        Mantenha sua conta segura com uma senha forte
+                <CardContent className="pt-0 pb-3 px-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-foreground">Senha</p>
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        Mantenha o acesso protegido com uma senha forte.
                       </p>
                     </div>
                     <ChangePasswordDialog />
@@ -168,63 +155,41 @@ export default function Settings() {
               </Card>
             )}
 
-            {/* Role Section */}
-            <Card className="glass glass-border shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
+            {/* Permissões — compacto */}
+            <Card className="glass glass-border">
+              <CardHeader className="py-3 px-4">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+                  <IconShield className="h-4 w-4 text-primary" />
                   Permissões
                 </CardTitle>
-                <CardDescription>
-                  Seu nível de acesso no sistema
-                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-4">
-                  <Label>Função atual:</Label>
+              <CardContent className="pt-0 pb-3 px-4">
+                <div className="flex items-center justify-between gap-3">
+                  <Label className="text-xs text-muted-foreground">Função</Label>
                   <Badge
-                    variant={userRole === 'master' || userRole === 'admin' || masterSession ? 'default' : 'secondary'}
-                    className="text-sm"
+                    variant={isPrivileged ? 'default' : 'secondary'}
+                    className="text-[11px] font-mono tracking-wide"
                   >
-                    {masterSession && !userRole && 'Master'}
-                    {userRole === 'master' && 'Master'}
-                    {userRole === 'admin' && 'Administrador'}
-                    {userRole === 'user' && 'Usuário'}
-                    {!userRole && !masterSession && 'Usuário'}
+                    {roleLabel}
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground mt-4">
-                  {userRole === 'master' || userRole === 'admin' || masterSession
-                    ? 'Você tem acesso total ao sistema, incluindo gestão de agentes, escalas e banco de horas.'
-                    : 'Você tem acesso de visualização às escalas e informações do sistema.'}
+                <p className="text-[11px] text-muted-foreground mt-2 leading-snug">
+                  {isPrivileged
+                    ? 'Acesso total: gestão de agentes, escalas e banco de horas.'
+                    : 'Acesso de visualização às escalas e informações operacionais.'}
                 </p>
               </CardContent>
             </Card>
 
-            {/* App Info */}
-            <Card className="glass glass-border shadow-card">
-              <CardHeader>
-                <CardTitle>Sobre o PlantãoPro</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Versão</span>
-                  <span className="font-mono">1.0.0</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Build</span>
-                  <span className="font-mono">2024.01</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Developer Credit */}
-            <div className="text-center pt-4 border-t border-border/30">
-              <p className="text-xs text-muted-foreground">
+            {/* Rodapé */}
+            <footer className="text-center pt-3 border-t border-border/30">
+              <p className="text-[11px] text-muted-foreground">
                 Desenvolvido por <span className="text-primary font-semibold">CS FEIJÓ</span>
               </p>
-              <p className="text-[10px] text-muted-foreground/60 mt-0.5">Feijó, Acre • © {new Date().getFullYear()} PlantãoPro</p>
-            </div>
+              <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+                Feijó, Acre · © {new Date().getFullYear()} PlantãoPro
+              </p>
+            </footer>
           </div>
         </main>
       </div>
