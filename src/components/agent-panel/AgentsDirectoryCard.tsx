@@ -127,46 +127,46 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
   return (
     <>
       <Card className="tactical-cards border-amber-500/25 bg-slate-900/70 backdrop-blur-xl">
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-2 pt-3 px-3">
           <div className="flex items-start justify-between gap-2 flex-wrap">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-sm md:text-base">
-                <div className="p-1.5 rounded-md bg-gradient-to-br from-amber-500/30 to-amber-600/10 border border-amber-500/40">
-                  <Users className="h-4 w-4 text-amber-400" />
+            <div className="min-w-0">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <div className="p-1 rounded-md bg-gradient-to-br from-amber-500/30 to-amber-600/10 border border-amber-500/40">
+                  <Users className="h-3.5 w-3.5 text-amber-400" />
                 </div>
                 Diretório de Agentes
               </CardTitle>
-              <CardDescription className="text-xs mt-1">
-                Lista completa de agentes cadastrados da sua unidade
+              <CardDescription className="text-[11px] mt-0.5 leading-tight">
+                Agentes da sua unidade
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2 text-[11px]">
-              <Badge variant="outline" className="border-emerald-500/40 text-emerald-300 bg-emerald-500/10">
-                <Circle className="h-2 w-2 mr-1 fill-emerald-400 text-emerald-400" />
-                {totalOnline} online
+            <div className="flex items-center gap-1.5 text-[10px]">
+              <Badge variant="outline" className="h-5 px-1.5 border-emerald-500/40 text-emerald-300 bg-emerald-500/10">
+                <Circle className="h-1.5 w-1.5 mr-1 fill-emerald-400 text-emerald-400" />
+                {totalOnline} on
               </Badge>
-              <Badge variant="outline" className="border-amber-500/40 text-amber-200 bg-amber-500/10">
-                <Shield className="h-3 w-3 mr-1" /> {totalActive}/{agents.length} ativos
+              <Badge variant="outline" className="h-5 px-1.5 border-amber-500/40 text-amber-200 bg-amber-500/10">
+                <Shield className="h-2.5 w-2.5 mr-1" /> {totalActive}/{agents.length}
               </Badge>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex flex-col md:flex-row gap-2">
+        <CardContent className="space-y-2 px-3 pb-3">
+          <div className="flex flex-col sm:flex-row gap-1.5">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar por nome, matrícula, cargo, equipe ou unidade..."
-                className="pl-10 bg-slate-800/60 border-slate-700 h-9"
+                placeholder="Buscar nome, matrícula, cargo..."
+                className="pl-8 bg-slate-800/60 border-slate-700 h-8 text-xs"
                 autoComplete="new-password"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <Select value={teamFilter} onValueChange={setTeamFilter}>
-                <SelectTrigger className="w-[130px] h-9 bg-slate-800/60 border-slate-700">
-                  <Filter className="h-3.5 w-3.5 mr-1" />
+                <SelectTrigger className="w-[110px] h-8 text-xs bg-slate-800/60 border-slate-700">
+                  <Filter className="h-3 w-3 mr-1" />
                   <SelectValue placeholder="Equipe" />
                 </SelectTrigger>
                 <SelectContent>
@@ -178,7 +178,7 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[130px] h-9 bg-slate-800/60 border-slate-700">
+                <SelectTrigger className="w-[110px] h-8 text-xs bg-slate-800/60 border-slate-700">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -192,18 +192,18 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
             </div>
           </div>
 
-          <ScrollArea className="h-[420px] rounded-lg border border-slate-700/60 bg-slate-950/40">
+          <ScrollArea className="h-[340px] rounded-lg border border-slate-700/60 bg-slate-950/40">
             {loading ? (
-              <div className="flex items-center justify-center py-16 text-sm text-muted-foreground">
-                <div className="h-5 w-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mr-2" />
+              <div className="flex items-center justify-center py-12 text-xs text-muted-foreground">
+                <div className="h-4 w-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mr-2" />
                 Carregando agentes...
               </div>
             ) : error ? (
-              <div className="text-center py-16 px-6 text-sm text-red-300">
+              <div className="text-center py-12 px-4 text-xs text-red-300">
                 {error}
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-16 text-sm text-muted-foreground">
+              <div className="text-center py-12 text-xs text-muted-foreground">
                 Nenhum agente encontrado com os filtros atuais.
               </div>
 
@@ -217,20 +217,20 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
                     <li
                       key={a.id}
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2.5 hover:bg-amber-500/5 transition-colors',
+                        'flex items-center gap-2.5 px-2.5 py-1.5 hover:bg-amber-500/5 transition-colors',
                         isMe && 'bg-amber-500/10'
                       )}
                     >
-                      <div className="relative">
-                        <Avatar className="h-10 w-10 border border-slate-700">
+                      <div className="relative shrink-0">
+                        <Avatar className="h-8 w-8 border border-slate-700">
                           <AvatarImage src={a.avatar_url || undefined} alt={a.name} />
-                          <AvatarFallback className="bg-slate-800 text-amber-300 text-xs font-bold">
+                          <AvatarFallback className="bg-slate-800 text-amber-300 text-[10px] font-bold">
                             {initials(a.name)}
                           </AvatarFallback>
                         </Avatar>
                         <span
                           className={cn(
-                            'absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-slate-950',
+                            'absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-950',
                             isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-600'
                           )}
                           aria-label={isOnline ? 'Online' : 'Offline'}
@@ -238,49 +238,49 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="font-semibold text-sm text-zinc-100 truncate">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-semibold text-[13px] text-zinc-100 truncate leading-tight">
                             {a.name}
                             {isMe && (
-                              <span className="ml-2 text-[10px] font-bold text-amber-400 uppercase tracking-wider">
+                              <span className="ml-1.5 text-[9px] font-bold text-amber-400 uppercase tracking-wider">
                                 (você)
                               </span>
                             )}
                           </p>
                           {a.is_frozen && (
-                            <Badge variant="outline" className="h-4 px-1 text-[9px] border-cyan-500/40 text-cyan-300 bg-cyan-500/10">
-                              <Snowflake className="h-2.5 w-2.5 mr-0.5" /> Congelado
+                            <Badge variant="outline" className="h-3.5 px-1 text-[9px] border-cyan-500/40 text-cyan-300 bg-cyan-500/10">
+                              <Snowflake className="h-2 w-2 mr-0.5" /> Congelado
                             </Badge>
                           )}
                           {!isActive && !a.is_frozen && (
-                            <Badge variant="outline" className="h-4 px-1 text-[9px] border-rose-500/40 text-rose-300 bg-rose-500/10">
+                            <Badge variant="outline" className="h-3.5 px-1 text-[9px] border-rose-500/40 text-rose-300 bg-rose-500/10">
                               Inativo
                             </Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-muted-foreground flex-wrap">
+                        <div className="flex items-center gap-1.5 mt-0 text-[10px] text-muted-foreground flex-wrap leading-tight">
                           {a.matricula && <span className="font-mono">Mat. {a.matricula}</span>}
                           {a.position && <span>• {a.position}</span>}
-                          {a.unit?.name && <span>• {a.unit.name}</span>}
+                          {a.unit?.name && <span className="hidden sm:inline">• {a.unit.name}</span>}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         {a.team ? (
-                          <Badge className={cn('border text-[10px] font-bold', teamColors[a.team] || 'bg-slate-500/20 border-slate-500/40 text-slate-300')}>
+                          <Badge className={cn('border text-[9px] font-bold h-5 px-1.5', teamColors[a.team] || 'bg-slate-500/20 border-slate-500/40 text-slate-300')}>
                             {a.team}
                           </Badge>
                         ) : (
-                          <span className="text-xs text-muted-foreground">—</span>
+                          <span className="text-[10px] text-muted-foreground">—</span>
                         )}
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="h-8 w-8 hover:bg-amber-500/20 hover:text-amber-300"
+                          className="h-7 w-7 hover:bg-amber-500/20 hover:text-amber-300"
                           onClick={() => setSelectedAgent(a.id)}
                           title="Ver detalhes"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     </li>
@@ -290,7 +290,7 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
             )}
           </ScrollArea>
 
-          <div className="text-[11px] text-muted-foreground text-center">
+          <div className="text-[10px] text-muted-foreground text-center">
             Mostrando {filtered.length} de {agents.length} agentes
           </div>
         </CardContent>

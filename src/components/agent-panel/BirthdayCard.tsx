@@ -83,20 +83,20 @@ export function BirthdayCard({ agentId, team, unitId }: BirthdayCardProps) {
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <div className="bg-zinc-900/70 border border-zinc-700/50 rounded-lg overflow-hidden">
         {/* Header - Always visible */}
-        <CollapsibleTrigger className="w-full p-2.5 flex items-center justify-between hover:bg-zinc-800/30 transition-colors">
-          <div className="flex items-center gap-2">
-            <div className="p-1 rounded bg-pink-500/15 border border-pink-500/30">
+        <CollapsibleTrigger className="w-full px-2.5 py-2 flex items-center justify-between hover:bg-zinc-800/30 transition-colors min-h-[40px]">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="p-1 rounded bg-pink-500/15 border border-pink-500/30 shrink-0">
               <Cake className="h-3.5 w-3.5 text-pink-400" />
             </div>
-            <span className="text-xs font-medium text-zinc-200">Aniversários</span>
+            <span className="text-xs font-semibold text-zinc-200 truncate">Aniversários</span>
             {todayBirthdays.length > 0 && (
-              <Badge className="bg-pink-500/20 text-pink-300 border-pink-500/30 text-[9px] px-1.5 py-0 h-4 animate-pulse">
+              <Badge className="bg-pink-500/20 text-pink-300 border-pink-500/30 text-[9px] px-1.5 py-0 h-4 animate-pulse shrink-0">
                 <PartyPopper className="h-2.5 w-2.5 mr-0.5" />
                 Hoje!
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             {/* Avatar stack preview */}
             <div className="flex -space-x-1.5">
               {upcomingBirthdays.slice(0, 3).map((member) => (
@@ -122,7 +122,7 @@ export function BirthdayCard({ agentId, team, unitId }: BirthdayCardProps) {
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="px-2.5 pb-2.5 space-y-1.5">
+          <div className="px-2.5 pb-2 space-y-1">
             {/* Today's Birthdays */}
             {todayBirthdays.map((member) => (
               <div

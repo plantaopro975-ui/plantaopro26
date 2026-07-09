@@ -973,11 +973,11 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
   return (
     <Card className="bg-slate-800/60 border-slate-600/50 rounded-xl">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2 pt-3 px-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg text-slate-100">
-            <div className="p-2 bg-emerald-500/20 rounded-lg">
-              <Clock className="h-5 w-5 text-emerald-400" />
+          <CardTitle className="flex items-center gap-2 text-base text-slate-100">
+            <div className="p-1.5 bg-emerald-500/20 rounded-md">
+              <Clock className="h-4 w-4 text-emerald-400" />
             </div>
             <span>Banco de Horas</span>
           </CardTitle>
@@ -986,7 +986,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
               variant="ghost"
               size="sm"
               onClick={() => saveAlertSettings(!alertsEnabled, alertDaysBefore)}
-              className={alertsEnabled ? 'text-amber-400 hover:text-amber-300' : 'text-slate-400 hover:text-slate-300'}
+              className={`h-8 w-8 p-0 ${alertsEnabled ? 'text-amber-400 hover:text-amber-300' : 'text-slate-400 hover:text-slate-300'}`}
             >
               {alertsEnabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
             </Button>
@@ -995,7 +995,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsExpanded(false)}
-                className="text-slate-400 hover:text-white"
+                className="h-8 px-2 text-slate-400 hover:text-white"
               >
                 <X className="h-4 w-4" />
                 <span className="text-xs ml-1">Fechar</span>
@@ -1004,21 +1004,21 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 px-3 pb-3">
         {/* Alert Settings */}
         {alertsEnabled && (
-          <div className="flex items-center justify-between p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+          <div className="flex items-center justify-between p-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
             <div className="flex items-center gap-2">
-              <Bell className="h-4 w-4 text-amber-400" />
+              <Bell className="h-3.5 w-3.5 text-amber-400" />
               <div>
-                <span className="text-sm text-amber-400">Alertas de quinzena ativados</span>
+                <span className="text-xs text-amber-400">Alertas de quinzena ativados</span>
                 {pushEnabled && (
-                  <span className="text-[10px] text-slate-500 block">Push notifications ativo</span>
+                  <span className="text-[10px] text-slate-500 block leading-tight">Push notifications ativo</span>
                 )}
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400">Avisar</span>
+              <span className="text-[10px] text-slate-400">Avisar</span>
               <NumberStepper
                 value={alertDaysBefore}
                 onChange={(days) => {
@@ -1036,28 +1036,28 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
         )}
 
         {/* Fortnight Summary with Independent Bars */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="h-4 w-4 text-amber-500" />
-            <span className="text-sm font-semibold text-slate-200">Resumo por Quinzena</span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-1">
+            <Shield className="h-3.5 w-3.5 text-amber-500" />
+            <span className="text-xs font-semibold text-slate-200 uppercase tracking-wide">Resumo por Quinzena</span>
           </div>
           
           {/* First Fortnight Bar */}
           <div 
             onClick={() => setFortnightDialog(1)}
-            className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 cursor-pointer hover:bg-blue-500/20 transition-all"
+            className="p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/30 cursor-pointer hover:bg-blue-500/20 transition-all"
           >
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-blue-300">1ª Quinzena</span>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-blue-300">1ª Quinzena</span>
                 <span className="text-[10px] text-slate-500">(01-15)</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-blue-300">{firstFortnightBalance.toFixed(1)}h</span>
-                <span className="text-xs text-blue-400/70">R$ {(firstFortnightBalance * hourlyRate).toFixed(2)}</span>
+                <span className="text-sm font-bold text-blue-300 tabular-nums">{firstFortnightBalance.toFixed(1)}h</span>
+                <span className="text-[11px] text-blue-400/70 tabular-nums">R$ {(firstFortnightBalance * hourlyRate).toFixed(2)}</span>
               </div>
             </div>
-            <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-slate-700/50 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all"
                 style={{ width: `${Math.min((firstFortnightBalance / (bhLimit1st || bhLimitLegacy)) * 100, 100)}%` }}
@@ -1072,19 +1072,19 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           {/* Second Fortnight Bar */}
           <div 
             onClick={() => setFortnightDialog(2)}
-            className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 cursor-pointer hover:bg-purple-500/20 transition-all"
+            className="p-2.5 rounded-lg bg-purple-500/10 border border-purple-500/30 cursor-pointer hover:bg-purple-500/20 transition-all"
           >
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-purple-300">2ª Quinzena</span>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-bold text-purple-300">2ª Quinzena</span>
                 <span className="text-[10px] text-slate-500">(16-31)</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-purple-300">{secondFortnightBalance.toFixed(1)}h</span>
-                <span className="text-xs text-purple-400/70">R$ {(secondFortnightBalance * hourlyRate).toFixed(2)}</span>
+                <span className="text-sm font-bold text-purple-300 tabular-nums">{secondFortnightBalance.toFixed(1)}h</span>
+                <span className="text-[11px] text-purple-400/70 tabular-nums">R$ {(secondFortnightBalance * hourlyRate).toFixed(2)}</span>
               </div>
             </div>
-            <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-slate-700/50 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-purple-500 to-purple-400 rounded-full transition-all"
                 style={{ width: `${Math.min((secondFortnightBalance / (bhLimit2nd || bhLimitLegacy)) * 100, 100)}%` }}
@@ -1097,9 +1097,9 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           </div>
           
           {/* Hourly Rate Info */}
-          <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg">
-            <span className="text-xs text-slate-400">Valor por hora:</span>
-            <span className="text-sm font-medium text-amber-300">R$ {hourlyRate.toFixed(2)}</span>
+          <div className="flex items-center justify-between px-2 py-1.5 bg-slate-700/30 rounded-md">
+            <span className="text-[11px] text-slate-400">Valor por hora:</span>
+            <span className="text-xs font-medium text-amber-300 tabular-nums">R$ {hourlyRate.toFixed(2)}</span>
           </div>
           
           {/* Limit Source Indicator */}
