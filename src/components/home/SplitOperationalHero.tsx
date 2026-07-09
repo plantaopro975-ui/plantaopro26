@@ -120,7 +120,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     link.rel = 'preload';
     link.as = 'image';
     link.href = objAlfa;
-    link.type = 'image/png';
+    link.type = 'image/webp';
     (link as any).fetchPriority = 'high';
     document.head.appendChild(link);
     return () => { document.head.removeChild(link); };
