@@ -649,7 +649,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </span>
             <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-300">
               <span className="lg:hidden">4 Divisões</span>
-              <span className="hidden lg:inline">3 Divisões · CHARLIE ao lado</span>
+              <span className="hidden lg:inline">3 Divisões · DELTA ao lado</span>
             </span>
 
           </div>
@@ -662,7 +662,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 idx={idx}
                 isSelected={selectedTeam === t.key}
                 onSelect={handleSelect}
-                className={t.key === 'CHARLIE' ? 'lg:hidden' : ''}
+                className={t.key === 'DELTA' ? 'lg:hidden' : ''}
+
               />
             ))}
           </div>
