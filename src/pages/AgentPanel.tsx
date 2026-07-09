@@ -772,7 +772,7 @@ export default function AgentPanel() {
                 </Suspense>
               </TabsContent>
 
-              <TabsContent value="plantoes" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="space-y-2.5 md:space-y-3 animate-fade-in mt-0 data-[state=inactive]:hidden">
                 {/* Next Shift Countdown - Top Priority */}
                 <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                 
