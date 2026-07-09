@@ -38,7 +38,7 @@ const teamColors: Record<string, string> = {
 };
 
 export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: string }) {
-  const { agent: myAgent } = useAgentProfile();
+  const { agent: myAgent, isLoading: profileLoading } = useAgentProfile();
   const myUnitId = (myAgent as any)?.unit_id ?? null;
 
   const [agents, setAgents] = useState<AgentRow[]>([]);
@@ -52,8 +52,9 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
   const onlineIds = useOnlineAgents();
 
   useEffect(() => {
-    // Wait for agent profile to hydrate before querying
-    if (myAgent === undefined) return;
+    // Aguarda a hidratação completa do perfil antes de decidir.
+    if (profileLoading) return;
+    if (!myAgent) return;
 
     if (!myUnitId) {
       const msg = 'Diretório indisponível: seu cadastro não possui unidade vinculada.';
