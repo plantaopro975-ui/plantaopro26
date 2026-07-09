@@ -572,8 +572,6 @@ export default function AgentPanel() {
             overscrollBehavior: 'contain',
             overscrollBehaviorX: 'none',
             scrollBehavior: 'auto',
-            transform: 'translateZ(0)',
-            willChange: 'scroll-position',
             touchAction: 'pan-y pinch-zoom',
             paddingTop: 'max(env(safe-area-inset-top, 0px), 8px)',
             paddingLeft: 'max(env(safe-area-inset-left, 0px), 8px)',
@@ -651,7 +649,7 @@ export default function AgentPanel() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 bg-emerald-500/15 px-1 py-0.5 md:px-1.5 rounded border border-emerald-500/40 shrink-0">
-                    <Zap className="h-2 w-2 md:h-2.5 md:w-2.5 text-emerald-400 animate-pulse" />
+                    <Zap className="h-2 w-2 md:h-2.5 md:w-2.5 text-emerald-400" />
                     <span className="text-[8px] md:text-[9px] font-bold text-emerald-300 tracking-wider">ONLINE</span>
                   </div>
                 </div>
@@ -804,7 +802,11 @@ export default function AgentPanel() {
                 />
 
                 {/* Ad Display System temporariamente desativado a pedido do administrador */}
-                {promosEnabled && <AdDisplaySystem />}
+                {promosEnabled && (
+                  <Suspense fallback={<ModuleFallback compact={compact} />}>
+                    <AdDisplaySystem />
+                  </Suspense>
+                )}
 
 
 
