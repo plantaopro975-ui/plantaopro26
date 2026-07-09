@@ -857,9 +857,8 @@ export default function AgentPanel() {
                     <ChatAndAlertSettings agentId={agent.id} />
                     <NotificationSettings />
                     <BHReminderSettings agentId={agent.id} />
-                    
-                    {/* Session Diagnostic Card */}
-                    <SessionDiagnosticCard />
+
+
                     
                     {/* Diagnostic Tools Section - IMPROVED */}
                     <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-600/50 rounded-xl p-3 md:p-4 space-y-2 shadow-md">
@@ -894,7 +893,6 @@ export default function AgentPanel() {
                     </div>
                   </div>
                 </div>
-                <BHEvolutionChart agentId={agent.id} />
               </TabsContent>
             </Tabs>
             </Suspense>
