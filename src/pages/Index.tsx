@@ -1492,18 +1492,19 @@ export default function Index() {
       {/* Mobile-only beta notice */}
       <BetaNoticeFooter />
 
-      {/* Footer profissional e discreto */}
-      <footer className="relative w-full border-t border-primary/10 bg-[hsl(217_62%_4%/0.85)] backdrop-blur-sm">
-        <div className="mx-auto max-w-[1400px] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10.5px] sm:text-[11px] font-mono tracking-wide text-muted-foreground/70">
-          <span className="uppercase tracking-[0.2em]">
-            © {new Date().getFullYear()} · PlantãoPro
-          </span>
-          <span className="hidden sm:inline text-muted-foreground/50">
-            Sistema Socioeducativo · ISE/AC
-          </span>
-          <span className="uppercase tracking-[0.2em] text-muted-foreground/60">
-            v2026 · Canal Seguro
-          </span>
+      {/* Footer minimalista — uma linha, hairline dourada */}
+      <footer
+        role="contentinfo"
+        className="relative w-full mt-4 border-t border-primary/15 bg-[hsl(217_62%_3%/0.75)] backdrop-blur-md"
+      >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary)/0.55),transparent)]"
+        />
+        <div className="mx-auto max-w-[1400px] px-4 h-9 flex items-center justify-center">
+          <p className="text-[10.5px] font-mono tracking-[0.22em] uppercase text-muted-foreground/60">
+            © {new Date().getFullYear()} PlantãoPro
+          </p>
         </div>
       </footer>
 
