@@ -1,0 +1,314 @@
+import { useEffect, useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { z } from 'zod';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+
+export type ShiftEditRecord = {
+  id?: string;
+  shift_date: string;
+  start_time: string;
+  end_time: string;
+  shift_type: string;
+  is_vacation: boolean;
+  status?: string;
+  notes?: string | null;
+};
+
+interface ShiftEditDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  shiftDate: Date;
+  shift?: ShiftEditRecord | null;
+  agentId: string;
+  onSaved?: () => void;
+}
+
+type ShiftKind = 'regular' | 'night' | '24h' | 'half' | 'vacation';
+
+const KIND_DEFAULTS: Record<ShiftKind, { start: string; end: string }> = {
+  regular: { start: '07:00', end: '19:00' },
+  night: { start: '22:00', end: '06:00' },
+  '24h': { start: '07:00', end: '07:00' },
+  half: { start: '07:00', end: '19:00' },
+  vacation: { start: '00:00', end: '00:00' },
+};
+
+const KIND_LABEL: Record<ShiftKind, string> = {
+  regular: 'Diurno (07→19)',
+  night: 'Noturno (22→06)',
+  '24h': 'Plantão 24h (07→07)',
+  half: 'Meia folga (12h)',
+  vacation: 'Folga / Férias / Licença',
+};
+
+function inferKind(s?: ShiftEditRecord | null): ShiftKind {
+  if (!s) return '24h';
+  if (s.is_vacation) return 'vacation';
+  const st = s.start_time?.slice(0, 5);
+  const en = s.end_time?.slice(0, 5);
+  if (st === '07:00' && en === '07:00') return '24h';
+  if (st === '22:00' && en === '06:00') return 'night';
+  if (st === '19:00' && en === '07:00') return 'night';
+  if (st === '07:00' && en === '19:00') return 'regular';
+  return 'regular';
+}
+
+const timeSchema = z.string().regex(/^\d{2}:\d{2}$/, 'Formato HH:MM');
+const formSchema = z
+  .object({
+    kind: z.enum(['regular', 'night', '24h', 'half', 'vacation']),
+    start_time: timeSchema,
+    end_time: timeSchema,
+  })
+  .refine((v) => v.kind === 'vacation' || v.start_time !== v.end_time || v.kind === '24h', {
+    message: 'Início e fim não podem ser iguais',
+    path: ['end_time'],
+  });
+
+export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId, onSaved }: ShiftEditDialogProps) {
+  const [kind, setKind] = useState<ShiftKind>(inferKind(shift));
+  const [startTime, setStartTime] = useState(shift?.start_time?.slice(0, 5) || '07:00');
+  const [endTime, setEndTime] = useState(shift?.end_time?.slice(0, 5) || '07:00');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const k = inferKind(shift);
+    setKind(k);
+    setStartTime(shift?.start_time?.slice(0, 5) || KIND_DEFAULTS[k].start);
+    setEndTime(shift?.end_time?.slice(0, 5) || KIND_DEFAULTS[k].end);
+  }, [open, shift]);
+
+  const handleKindChange = (next: ShiftKind) => {
+    setKind(next);
+    const d = KIND_DEFAULTS[next];
+    setStartTime(d.start);
+    setEndTime(d.end);
+  };
+
+  const nightMismatch = kind === 'night' && !(startTime === '22:00' && endTime === '06:00');
+  const dateStr = format(shiftDate, 'yyyy-MM-dd');
+  const isNew = !shift?.id;
+
+  const performSave = async () => {
+    setConfirmOpen(false);
+    const parsed = formSchema.safeParse({ kind, start_time: startTime, end_time: endTime });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message || 'Dados inválidos');
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = {
+        agent_id: agentId,
+        shift_date: dateStr,
+        start_time: kind === 'vacation' ? '00:00' : `${startTime}:00`,
+        end_time: kind === 'vacation' ? '00:00' : `${endTime}:00`,
+        shift_type: kind === 'vacation' ? 'vacation' : kind,
+        is_vacation: kind === 'vacation',
+        status: 'scheduled',
+      };
+      const { error } = shift?.id
+        ? await supabase.from('agent_shifts').update(payload).eq('id', shift.id)
+        : await supabase.from('agent_shifts').upsert(payload, { onConflict: 'agent_id,shift_date' });
+      if (error) throw error;
+      toast.success(isNew ? 'Plantão cadastrado' : 'Plantão alterado');
+      onOpenChange(false);
+      onSaved?.();
+    } catch (e: any) {
+      const msg = e?.message || 'Falha ao salvar plantão';
+      if (msg.includes('NIGHT_SHIFT_LOCK')) {
+        toast.error('Horário noturno bloqueado: use 22:00 → 06:00 durante a janela noturna.');
+      } else {
+        toast.error(msg);
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const performDelete = async () => {
+    if (!shift?.id) return;
+    setDeleteOpen(false);
+    setSaving(true);
+    try {
+      const { error } = await supabase.from('agent_shifts').delete().eq('id', shift.id);
+      if (error) throw error;
+      toast.success('Plantão excluído');
+      onOpenChange(false);
+      onSaved?.();
+    } catch (e: any) {
+      toast.error(e?.message || 'Falha ao excluir');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-md bg-slate-900 border-slate-700 text-slate-100">
+          <DialogHeader>
+            <DialogTitle className="text-amber-300 capitalize">
+              {isNew ? 'Cadastrar plantão' : 'Editar plantão'} — {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}
+            </DialogTitle>
+            <DialogDescription className="text-slate-400 text-xs">
+              {format(shiftDate, "EEEE", { locale: ptBR })}. Ajuste tipo e horário; a alteração pede confirmação.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="shift-kind" className="text-xs uppercase tracking-wide text-slate-400">Tipo de turno</Label>
+              <Select value={kind} onValueChange={(v) => handleKindChange(v as ShiftKind)}>
+                <SelectTrigger id="shift-kind" className="bg-slate-800 border-slate-700 min-h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 border-slate-700">
+                  {(Object.keys(KIND_LABEL) as ShiftKind[]).map((k) => (
+                    <SelectItem key={k} value={k}>{KIND_LABEL[k]}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {kind !== 'vacation' && (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="start-time" className="text-xs uppercase tracking-wide text-slate-400">Início</Label>
+                  <Input
+                    id="start-time"
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="bg-slate-800 border-slate-700 tabular-nums min-h-11"
+                    autoComplete="off"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="end-time" className="text-xs uppercase tracking-wide text-slate-400">Fim</Label>
+                  <Input
+                    id="end-time"
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="bg-slate-800 border-slate-700 tabular-nums min-h-11"
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
+            )}
+
+            {kind === 'vacation' && (
+              <p className="text-xs text-slate-400 rounded border border-slate-700 bg-slate-800/60 px-3 py-2">
+                O dia será marcado como folga/férias/licença. Horário é ignorado.
+              </p>
+            )}
+
+            {nightMismatch && (
+              <div className="flex items-start gap-2 text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded px-2.5 py-1.5">
+                <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                <span>Durante a janela noturna (22:00–06:00) o sistema exige 22:00 → 06:00. Só o master pode sobrescrever.</span>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="flex-row justify-between gap-2 sm:justify-between">
+            {shift?.id ? (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setDeleteOpen(true)}
+                disabled={saving}
+                className="min-h-11"
+              >
+                <Trash2 className="h-4 w-4 mr-1" /> Excluir
+              </Button>
+            ) : <span />}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onOpenChange(false)}
+                disabled={saving}
+                className="border-slate-700 text-slate-200 hover:bg-slate-800 min-h-11"
+              >
+                Cancelar
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setConfirmOpen(true)}
+                disabled={saving}
+                className="bg-amber-500 text-black hover:bg-amber-400 min-h-11"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar alterações'}
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent className="bg-slate-900 border-slate-700 text-slate-100">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deseja realmente alterar este plantão?</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-400">
+              Alteração para {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })} — {KIND_LABEL[kind]}
+              {kind !== 'vacation' && ` (${startTime} → ${endTime})`}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={performSave} className="bg-amber-500 text-black hover:bg-amber-400">
+              Confirmar alteração
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent className="bg-slate-900 border-slate-700 text-slate-100">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir plantão de {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}?</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-400">
+              Esta ação não pode ser desfeita. O registro será removido da escala.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={performDelete} className="bg-rose-600 text-white hover:bg-rose-500">
+              Excluir plantão
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
