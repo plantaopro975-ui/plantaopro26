@@ -99,7 +99,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <SplashScreen />
-          <ImageProtection />
+          {/* <ImageProtection /> — desativado temporariamente */}
           <AccessAcknowledgmentGate />
           <BrowserRouter>
             <AuthProvider>
