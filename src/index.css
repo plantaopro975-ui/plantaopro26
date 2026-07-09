@@ -1178,3 +1178,55 @@ html.tab-hidden *::after {
     }
   }
 }
+
+/* ============================================
+   Reduced motion — hard override (accessibility + CPU/GPU savings)
+   Applies whenever the user (or a low-power device) has requested reduced motion.
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Neutralize decorative filters that repaint every frame */
+  .animate-float3d,
+  .animate-pulse,
+  .animate-spin,
+  .animate-ping,
+  .animate-bounce {
+    animation: none !important;
+  }
+}
+
+/* Calendar day tap feedback (mobile) — larger hit-area + immediate press feedback */
+.rdp-day,
+.rdp-button {
+  min-height: 40px;
+  min-width: 40px;
+  transition: transform 100ms ease-out, background-color 120ms ease-out;
+}
+.rdp-day:active,
+.rdp-button:active {
+  transform: scale(0.9);
+}
+@media (max-width: 390px) {
+  .rdp-day,
+  .rdp-button {
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 0.9rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rdp-day,
+  .rdp-button,
+  .rdp-day:active,
+  .rdp-button:active {
+    transform: none !important;
+    transition: none !important;
+  }
+}
