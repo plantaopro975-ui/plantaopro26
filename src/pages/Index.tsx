@@ -1492,76 +1492,7 @@ export default function Index() {
       {/* Mobile-only beta notice */}
       <BetaNoticeFooter />
 
-      {/* Footer — Noir & Gold Command Signature */}
-      <footer className="relative z-20 shrink-0 overflow-visible bg-[linear-gradient(180deg,hsl(222_38%_6%/0.96)_0%,hsl(220_35%_4%/0.99)_100%)] backdrop-blur-xl shadow-[0_-6px_18px_-14px_hsl(var(--primary)/0.3)]">
-        {/* Double gold accent line — sits ABOVE the footer edge so it never covers text */}
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 -top-[3px] h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-90" />
-        <span aria-hidden className="pointer-events-none absolute inset-x-8 -top-[6px] h-px bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.5)_50%,transparent_100%)]" />
-        {/* Micro grid */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
-            backgroundSize: '28px 28px',
-          }}
-        />
-        {/* halo decorativo removido — economia de repaint/GPU */}
-
-        <div className="relative mx-auto max-w-6xl px-3 sm:px-4 py-0 flex items-center justify-between gap-2 min-h-[26px]">
-          {/* Left: Signature */}
-          <div className="flex items-center gap-2 min-w-0">
-            <Shield className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />
-          </div>
-
-          {/* Center: © line (assinatura do dev removida — estava sobreposta) */}
-          <div className="flex flex-col items-center leading-tight min-w-0">
-            <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.32em] text-muted-foreground/70 font-mono">
-              © {new Date().getFullYear()} · PlantãoPro
-            </span>
-          </div>
-
-
-
-          {/* Right: Actions */}
-          <div className="flex items-center gap-1">
-            {getSavedCredentials().length > 0 && (
-              <button
-                onClick={() => setShowCredentialsManager(true)}
-                className="p-1.5 text-muted-foreground/70 hover:text-primary rounded hover:bg-primary/10 transition-all hidden sm:block"
-                title="Credenciais Salvas"
-              >
-                <KeyRound className="h-3.5 w-3.5" />
-              </button>
-            )}
-            <button
-              onClick={() => navigate('/about')}
-              className="p-1.5 text-muted-foreground/70 hover:text-primary rounded hover:bg-primary/10 transition-all hidden sm:block"
-              title="Sobre o App"
-            >
-              <Info className="h-3.5 w-3.5" />
-            </button>
-
-            {/* Acesso Master — atalho persistente no rodapé */}
-            <button
-              type="button"
-              onClick={() => {
-                setShowLogin(false);
-                setShowMasterLogin(true);
-              }}
-              className="ml-1 inline-flex items-center gap-1.5 px-2 py-1 rounded border border-amber-500/40 bg-gradient-to-r from-amber-500/10 to-amber-500/5 hover:from-amber-500/25 hover:to-amber-500/15 hover:border-amber-400/70 transition-all"
-              title="Acesso Master · Administrador"
-            >
-              <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
-              <span className="hidden sm:inline text-[9px] font-mono font-bold tracking-[0.22em] uppercase text-amber-300">
-                Master
-              </span>
-            </button>
-
-          </div>
-        </div>
-      </footer>
+      {/* Footer removido definitivamente a pedido do usuário */}
 
 
       {/* CPF Check Dialog - Ultra Professional */}
