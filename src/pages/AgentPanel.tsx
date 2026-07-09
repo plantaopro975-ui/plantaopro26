@@ -752,7 +752,8 @@ export default function AgentPanel() {
               </div>
 
 
-              <TabsContent value="equipe" forceMount hidden={activeTab !== 'equipe'} className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible data-[state=inactive]:hidden">
+              <TabsContent value="equipe" forceMount hidden={activeTab !== 'equipe'} className="space-y-4 md:space-y-3 mt-0 overflow-visible data-[state=inactive]:hidden">
+                {mountedTabs.has('equipe') && <>
                 {/* Shift Alerts Banner */}
                 <ShiftAlertsBanner
                   agentId={agent.id}
@@ -829,10 +830,12 @@ export default function AgentPanel() {
                     />
                   </div>
                   <div className="grid w-full min-w-0 grid-cols-1 gap-4 overflow-visible sm:grid-cols-2 xl:grid-cols-1 xl:gap-3">
-                    <TacticalRadar 
-                      unitId={agent.unit_id || undefined}
-                      compact={true}
-                    />
+                    <Suspense fallback={<ModuleFallback compact={compact} />}>
+                      <TacticalRadar 
+                        unitId={agent.unit_id || undefined}
+                        compact={true}
+                      />
+                    </Suspense>
                     <BirthdayCard 
                       agentId={agent.id}
                       team={agent.team}
@@ -845,9 +848,11 @@ export default function AgentPanel() {
                 <Suspense fallback={null}>
                   <AgentsDirectoryCard currentAgentId={agent.id} />
                 </Suspense>
+                </>}
               </TabsContent>
 
-              <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="space-y-2.5 md:space-y-3 animate-fade-in mt-0 data-[state=inactive]:hidden">
+              <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('plantoes') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 {/* Next Shift Countdown - Top Priority */}
                 <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                 
@@ -859,41 +864,53 @@ export default function AgentPanel() {
                   <ShiftCalendarOverview agentId={agent.id} />
                   <RecentShiftCyclesCard agentId={agent.id} />
                 </div>
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="bh" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="bh" forceMount hidden={activeTab !== 'bh'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('bh') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <BHTracker agentId={agent.id} />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
                   <BHEvolutionChart agentId={agent.id} />
                   <BHHistoryTracker agentId={agent.id} />
                 </div>
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="folgas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="folgas" forceMount hidden={activeTab !== 'folgas'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('folgas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <LeaveRequestCard 
                   agentId={agent.id} 
                   agentTeam={agent.team}
                   agentUnitId={agent.unit_id}
                 />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="agenda" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="agenda" forceMount hidden={activeTab !== 'agenda'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('agenda') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <AgentEventsCard agentId={agent.id} />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="planejador" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="planejador" forceMount hidden={activeTab !== 'planejador'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('planejador') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <ShiftPlannerCard agentId={agent.id} />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="permutas" className="space-y-2.5 md:space-y-3 animate-fade-in mt-0">
+              <TabsContent value="permutas" forceMount hidden={activeTab !== 'permutas'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('permutas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <SwapRequestsCard 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
                   team={agent.team}
                 />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="rondas" className="space-y-4 md:space-y-3 animate-fade-in mt-0 overflow-visible">
+              <TabsContent value="rondas" forceMount hidden={activeTab !== 'rondas'} className="space-y-4 md:space-y-3 mt-0 overflow-visible data-[state=inactive]:hidden">
+                {mountedTabs.has('rondas') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <div className="relative z-10 w-full min-w-0 max-w-full overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-900/98 via-slate-950/98 to-amber-950/35 p-3 shadow-xl shadow-amber-500/10 sm:p-4 md:p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <div className="flex min-w-0 items-start gap-3">
@@ -942,12 +959,14 @@ export default function AgentPanel() {
                   </Suspense>
                 </div>
                 <RoundsHistoryCard agentId={agent.id} />
+                </Suspense>}
               </TabsContent>
 
 
 
 
-              <TabsContent value="chat" forceMount hidden={activeTab !== 'chat'} className="space-y-2.5 md:space-y-3 animate-fade-in mt-0 data-[state=inactive]:hidden">
+              <TabsContent value="chat" forceMount hidden={activeTab !== 'chat'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('chat') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 <ChatPanel 
                   agentId={agent.id} 
                   unitId={agent.unit_id}
@@ -956,9 +975,11 @@ export default function AgentPanel() {
                   agentRole={(agent as any).role}
                   agentAvatarUrl={(agent as any).avatar_url}
                 />
+                </Suspense>}
               </TabsContent>
 
-              <TabsContent value="config" className="space-y-4 md:space-y-5 animate-fade-in mt-0">
+              <TabsContent value="config" forceMount hidden={activeTab !== 'config'} className="space-y-4 md:space-y-5 mt-0 data-[state=inactive]:hidden">
+                {mountedTabs.has('config') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 {/* ══════════ SEÇÃO 1: CONTA & SEGURANÇA ══════════ */}
                 <section aria-labelledby="cfg-sec-security" className="space-y-2.5 md:space-y-3">
                   <h2 id="cfg-sec-security" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-purple-300/90 border-b border-purple-500/20 pb-1.5">
@@ -1028,6 +1049,7 @@ export default function AgentPanel() {
                     </div>
                   </div>
                 </section>
+                </Suspense>}
               </TabsContent>
 
             </Tabs>
