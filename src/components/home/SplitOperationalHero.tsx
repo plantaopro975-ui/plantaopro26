@@ -12,16 +12,18 @@ const loginHeroImage = loginHeroAsset.url;
 
 
 
-import agent3dAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
-const agent3d = agent3dAsset.url;
-import vehicle3dAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
-const vehicle3d = vehicle3dAsset.url;
-import vehicleMobileAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
-const vehicleMobile = vehicleMobileAsset.url;
+import agent3dWebpAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
+import agent3dPngAsset from '@/assets/hero/agent-ise-3d.png.asset.json';
+const agent3dWebp = agent3dWebpAsset.url;
+const agent3d = agent3dPngAsset.url;
+import vehicle3dWebpAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
+import vehicle3dPngAsset from '@/assets/hero/vehicle-ise-3d.png.asset.json';
+const vehicle3dWebp = vehicle3dWebpAsset.url;
+const vehicle3d = vehicle3dPngAsset.url;
+const vehicleMobile = vehicle3dPngAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
-import agentVehicleSceneWebpAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
-const agentVehicleSceneWebp = agentVehicleSceneWebpAsset.url;
+const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
 import objAlfaAsset from '@/assets/teams/alfa-vest-pro.webp.asset.json';
 const objAlfa = objAlfaAsset.url;
 import objBravoAsset from '@/assets/teams/bravo-helmet-pro.webp.asset.json';
