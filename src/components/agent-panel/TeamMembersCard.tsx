@@ -382,9 +382,12 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                               const info = leaveTypeInfo[leave.leave_type] || leaveTypeInfo.special;
                               const firstName = leave.agent_name.split(' ')[0];
                               return (
-                                <div 
+                                <button
+                                  type="button"
                                   key={leave.id}
-                                  className="text-xs px-2 py-1 rounded-lg bg-slate-700/60 text-slate-200 flex items-center gap-1.5 border border-slate-600/50"
+                                  onClick={() => setSelectedLeave(leave)}
+                                  className="text-xs px-2 py-1 rounded-lg bg-slate-700/60 text-slate-200 flex items-center gap-1.5 border border-slate-600/50 hover:border-amber-400/50 hover:bg-slate-700 active:scale-[0.98] transition"
+                                  aria-label={`Ver detalhes da folga programada de ${leave.agent_name}`}
                                 >
                                   {info.icon}
                                   <span className="font-medium">{firstName}</span>
@@ -392,8 +395,9 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
                                   <span className="text-slate-400">
                                     {format(parseISO(leave.start_date), 'dd/MM', { locale: ptBR })}
                                   </span>
-                                </div>
+                                </button>
                               );
+
                             })}
                             {upcomingLeaves.length > 6 && (
                               <span className="text-xs text-slate-500 px-2 py-1">+{upcomingLeaves.length - 6} mais</span>
