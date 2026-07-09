@@ -71,6 +71,8 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
     startStr: string;
     endStr: string;
   } | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editData, setEditData] = useState<{ date: Date; shift: ShiftEditRecord | null } | null>(null);
 
   // Local "today" (fuso do usuário) — usado para saber se uma data já passou
   const localToday = useMemo(() => {
