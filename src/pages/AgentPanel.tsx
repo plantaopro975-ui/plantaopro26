@@ -475,13 +475,15 @@ export default function AgentPanel() {
               <div
                 role="region"
                 aria-label="Cabeçalho e navegação do painel"
+                style={{ backgroundColor: 'rgb(2 6 23)' }}
                 className={cn(
-                  'sticky top-0 z-40 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1',
-                  // Fundo sólido para evitar vazamento de conteúdo por trás do sticky
-                  'bg-slate-950 supports-[backdrop-filter]:bg-slate-950/92 backdrop-blur-md',
+                  'sticky top-0 z-50 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1',
+                  // Fundo 100% opaco por padrão (fallback inline garantido acima)
+                  'bg-slate-950',
+                  // Se o navegador suportar backdrop-filter, aplica leve translucidez + blur
+                  'supports-[backdrop-filter]:bg-slate-950/95 supports-[backdrop-filter]:backdrop-blur-md',
+                  'md:supports-[backdrop-filter]:backdrop-blur-xl',
                   'shadow-[0_6px_16px_-12px_rgba(0,0,0,0.7)]',
-                  // Desktop: gradiente sutil mantendo solidez
-                  'md:bg-slate-950 md:supports-[backdrop-filter]:bg-gradient-to-b md:supports-[backdrop-filter]:from-slate-950/98 md:supports-[backdrop-filter]:via-slate-950/95 md:supports-[backdrop-filter]:to-slate-950/92 md:backdrop-blur-xl',
                   'focus-within:ring-1 focus-within:ring-amber-500/40',
                   compact ? 'space-y-1.5' : 'space-y-2'
                 )}
