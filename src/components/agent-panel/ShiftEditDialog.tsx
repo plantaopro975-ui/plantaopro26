@@ -226,28 +226,23 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="start-time" className="text-xs uppercase tracking-wide text-slate-400">Início</Label>
-                  <Input
+                  <CompactTimeField
                     id="start-time"
-                    type="time"
                     value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className="bg-slate-800 border-slate-700 tabular-nums min-h-11"
-                    autoComplete="off"
+                    onChange={setStartTime}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="end-time" className="text-xs uppercase tracking-wide text-slate-400">Fim</Label>
-                  <Input
+                  <CompactTimeField
                     id="end-time"
-                    type="time"
                     value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className="bg-slate-800 border-slate-700 tabular-nums min-h-11"
-                    autoComplete="off"
+                    onChange={setEndTime}
                   />
                 </div>
               </div>
             )}
+
 
             {kind === 'vacation' && (
               <p className="text-xs text-slate-400 rounded border border-slate-700 bg-slate-800/60 px-3 py-2">
