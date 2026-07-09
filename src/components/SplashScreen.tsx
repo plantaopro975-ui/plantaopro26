@@ -14,10 +14,9 @@ let splashMountedThisRuntime = false;
 let splashMountCount = 0;
 
 export function SplashScreen() {
-  const alreadyShownInTab =
-    typeof window !== "undefined" &&
-    window.sessionStorage.getItem(SPLASH_SHOWN_KEY) === "1";
-  const shouldRender = !alreadyShownInTab && !splashMountedThisRuntime;
+  // Always show on every site open (fresh load). Module-level guard still
+  // prevents duplicate mounts within the same runtime (StrictMode / remounts).
+  const shouldRender = !splashMountedThisRuntime;
 
   const [visible, setVisible] = useState(shouldRender);
   const [fadeOut, setFadeOut] = useState(false);
@@ -26,7 +25,6 @@ export function SplashScreen() {
     splashMountCount += 1;
     pushDiagEvent("info", "splash_mount", {
       count: splashMountCount,
-      alreadyShownInTab,
       moduleGuard: splashMountedThisRuntime,
       willRender: shouldRender,
       referrer: typeof document !== "undefined" ? document.referrer : "",
@@ -35,11 +33,6 @@ export function SplashScreen() {
 
     if (!shouldRender) return;
     splashMountedThisRuntime = true;
-    try {
-      window.sessionStorage.setItem(SPLASH_SHOWN_KEY, "1");
-    } catch {
-      // ignore
-    }
     const t1 = window.setTimeout(() => setFadeOut(true), 2400);
     const t2 = window.setTimeout(() => setVisible(false), 3000);
     return () => {
@@ -47,7 +40,7 @@ export function SplashScreen() {
       window.clearTimeout(t2);
       pushDiagEvent("info", "splash_unmount", { count: splashMountCount });
     };
-  }, [shouldRender, alreadyShownInTab]);
+  }, [shouldRender]);
 
   if (!visible) return null;
 
