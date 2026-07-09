@@ -198,10 +198,15 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
                 <div className="h-5 w-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mr-2" />
                 Carregando agentes...
               </div>
+            ) : error ? (
+              <div className="text-center py-16 px-6 text-sm text-red-300">
+                {error}
+              </div>
             ) : filtered.length === 0 ? (
               <div className="text-center py-16 text-sm text-muted-foreground">
                 Nenhum agente encontrado com os filtros atuais.
               </div>
+
             ) : (
               <ul className="divide-y divide-slate-800/70">
                 {filtered.map((a) => {
