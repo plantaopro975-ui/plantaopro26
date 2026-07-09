@@ -1304,3 +1304,46 @@ html.tab-hidden *::after {
   background-clip: padding-box;
 }
 .tactical-scrollbar::-webkit-scrollbar-corner { background: transparent; }
+
+/* ============================================================
+   Rounds dialog — mobile tap-target boost (≤640px)
+   Enlarges the clickable area of labels, badges and links
+   without changing their visual size (uses padding + min sizes).
+   ============================================================ */
+@media (max-width: 640px) {
+  .rounds-tap-boost button,
+  .rounds-tap-boost [role="button"],
+  .rounds-tap-boost a,
+  .rounds-tap-boost label,
+  .rounds-tap-boost [role="tab"],
+  .rounds-tap-boost [role="option"],
+  .rounds-tap-boost [role="checkbox"],
+  .rounds-tap-boost [role="switch"] {
+    min-height: 40px;
+    touch-action: manipulation;
+  }
+  .rounds-tap-boost button.h-6,
+  .rounds-tap-boost button.h-7,
+  .rounds-tap-boost button.h-8 {
+    padding-block: 8px;
+  }
+  /* Small pill/badge triggers — expand hit area with negative-margin padding */
+  .rounds-tap-boost .tap-boost,
+  .rounds-tap-boost [data-tap-boost="true"] {
+    position: relative;
+  }
+  .rounds-tap-boost .tap-boost::before,
+  .rounds-tap-boost [data-tap-boost="true"]::before {
+    content: "";
+    position: absolute;
+    inset: -8px -6px;
+    border-radius: inherit;
+  }
+  /* Ensure inline links inside rows are easy to hit */
+  .rounds-tap-boost a,
+  .rounds-tap-boost label {
+    padding-block: 4px;
+    display: inline-flex;
+    align-items: center;
+  }
+}

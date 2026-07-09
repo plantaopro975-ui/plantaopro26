@@ -461,54 +461,128 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
 }
 
 function RoundsHeroSVG({ color, active, silent }: { color: string; active: boolean; silent: boolean }) {
+  const uid = `rh-${color.replace('#', '')}`;
   return (
     <svg viewBox="0 0 220 116" className="h-20 w-36 sm:h-24 sm:w-44 shrink-0" aria-hidden>
-      <style>{`@keyframes roundsRadarSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes ${uid}-sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes ${uid}-pulse { 0%,100% { opacity: 0.25; } 50% { opacity: 0.9; } }
+        @keyframes ${uid}-tick  { 0% { transform: translateX(0); } 100% { transform: translateX(-12px); } }
+      `}</style>
       <defs>
-        <radialGradient id="roundsHeroGlow" cx="50%" cy="50%" r="60%">
-          <stop offset="0%" stopColor={color} stopOpacity="0.5" />
-          <stop offset="65%" stopColor={color} stopOpacity="0.12" />
+        <linearGradient id={`${uid}-frame`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="hsl(var(--card))" stopOpacity="0.95" />
+          <stop offset="100%" stopColor="hsl(var(--background))" stopOpacity="0.9" />
+        </linearGradient>
+        <radialGradient id={`${uid}-glow`} cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stopColor={color} stopOpacity="0.42" />
+          <stop offset="60%" stopColor={color} stopOpacity="0.08" />
           <stop offset="100%" stopColor="transparent" />
         </radialGradient>
-        <linearGradient id="roundsHeroRail" x1="0" x2="1" y1="0" y2="0">
+        <linearGradient id={`${uid}-sweep-grad`} x1="0" x2="1" y1="0" y2="0">
           <stop offset="0%" stopColor={color} stopOpacity="0" />
-          <stop offset="50%" stopColor={color} stopOpacity="0.92" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.55" />
         </linearGradient>
-        <filter id="roundsHeroShadow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="2.4" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        <linearGradient id={`${uid}-bar`} x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity="0.9" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.15" />
+        </linearGradient>
+        <filter id={`${uid}-shadow`} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="1.4" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
+        <clipPath id={`${uid}-clip`}>
+          <rect x="8" y="12" width="204" height="92" rx="8" />
+        </clipPath>
       </defs>
-      <rect x="6" y="10" width="208" height="96" rx="10" fill="hsl(var(--card))" fillOpacity="0.74" stroke={color} strokeOpacity="0.34" />
-      <path d="M20 28H84M136 28H200M20 88H84M136 88H200" stroke="url(#roundsHeroRail)" strokeWidth="1.2" />
-      <circle cx="110" cy="58" r="45" fill="url(#roundsHeroGlow)" />
-      <g filter="url(#roundsHeroShadow)">
-        <circle cx="110" cy="58" r="32" fill="none" stroke={color} strokeOpacity="0.42" strokeWidth="1.5" />
-        <circle cx="110" cy="58" r="22" fill="none" stroke={color} strokeOpacity="0.28" strokeWidth="1" />
-        <line x1="110" y1="24" x2="110" y2="92" stroke={color} strokeOpacity="0.32" strokeWidth="0.8" />
-        <line x1="76" y1="58" x2="144" y2="58" stroke={color} strokeOpacity="0.32" strokeWidth="0.8" />
-        <path
-          d="M110 58 L110 27 A31 31 0 0 1 138 44 Z"
-          fill={color}
-          fillOpacity="0.22"
-          style={{
-            transformOrigin: '110px 58px',
-            animation: active && !silent ? 'roundsRadarSweep 2.8s linear infinite' : undefined,
-          }}
-        />
-        <circle cx="110" cy="58" r="4" fill={color} />
-      </g>
-      {[0, 1, 2, 3].map((i) => (
-        <g key={i} opacity={active ? 1 : 0.42}>
-          <circle cx={42 + i * 44} cy="58" r="4" fill={color} opacity={i === 0 ? 0.96 : 0.45}>
-            {active && !silent && <animate attributeName="opacity" values="0.3;1;0.3" dur="1.8s" begin={`${i * 0.18}s`} repeatCount="indefinite" />}
-          </circle>
-          <path d={`M${46 + i * 44} 58 H${74 + i * 44}`} stroke={color} strokeOpacity="0.35" strokeWidth="1" />
+
+      {/* Frame — command console */}
+      <rect x="6" y="10" width="208" height="96" rx="9" fill={`url(#${uid}-frame)`} stroke={color} strokeOpacity="0.32" />
+      <rect x="8" y="12" width="204" height="92" rx="8" fill="none" stroke="hsl(var(--border))" strokeOpacity="0.5" />
+
+      {/* Corner ticks */}
+      {[[10,14],[210,14,-1,1],[10,102,1,-1],[210,102,-1,-1]].map((c, i) => {
+        const [x, y, sx = 1, sy = 1] = c as number[];
+        return (
+          <g key={i} stroke={color} strokeOpacity="0.7" strokeWidth="1">
+            <line x1={x} y1={y} x2={x + 6 * sx} y2={y} />
+            <line x1={x} y1={y} x2={x} y2={y + 5 * sy} />
+          </g>
+        );
+      })}
+
+      <g clipPath={`url(#${uid}-clip)`}>
+        {/* Grid backdrop */}
+        <g stroke="hsl(var(--border))" strokeOpacity="0.18" strokeWidth="0.5">
+          {[24, 40, 56, 72, 88].map((y) => <line key={`h${y}`} x1="10" y1={y} x2="210" y2={y} />)}
+          {[30, 60, 90, 120, 150, 180].map((x) => <line key={`v${x}`} x1={x} y1="14" x2={x} y2="102" />)}
         </g>
-      ))}
-      <text x="110" y="102" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="7" letterSpacing="2.4" fill={color} opacity="0.78">
-        RONDA OPERACIONAL
+
+        {/* Left telemetry column */}
+        <g fontFamily="ui-monospace, monospace" fontSize="5" fill={color} opacity="0.72" letterSpacing="0.5">
+          <text x="12" y="22">SYS</text>
+          <text x="12" y="34">NET</text>
+          <text x="12" y="46">GPS</text>
+          <text x="12" y="58">PWR</text>
+        </g>
+        {[18, 30, 42, 54].map((y, i) => (
+          <g key={y}>
+            <rect x="26" y={y - 3} width="34" height="4" rx="1" fill="hsl(var(--border))" fillOpacity="0.35" />
+            <rect x="26" y={y - 3} width={[30, 24, 32, 20][i]} height="4" rx="1" fill={`url(#${uid}-bar)`} />
+          </g>
+        ))}
+
+        {/* Radar core */}
+        <g transform="translate(128 58)" filter={`url(#${uid}-shadow)`}>
+          <circle r="34" fill={`url(#${uid}-glow)`} />
+          <circle r="30" fill="none" stroke={color} strokeOpacity="0.4" strokeWidth="1" />
+          <circle r="22" fill="none" stroke={color} strokeOpacity="0.28" strokeWidth="0.8" />
+          <circle r="14" fill="none" stroke={color} strokeOpacity="0.22" strokeWidth="0.6" />
+          <circle r="6"  fill="none" stroke={color} strokeOpacity="0.35" strokeWidth="0.6" />
+          <line x1="-30" y1="0" x2="30" y2="0" stroke={color} strokeOpacity="0.22" strokeWidth="0.5" />
+          <line x1="0" y1="-30" x2="0" y2="30" stroke={color} strokeOpacity="0.22" strokeWidth="0.5" />
+          {/* Sweep wedge */}
+          <g style={{ transformOrigin: '0px 0px', animation: active && !silent ? `${uid}-sweep 3.2s linear infinite` : undefined }}>
+            <path d="M0 0 L30 0 A30 30 0 0 1 12 27 Z" fill={`url(#${uid}-sweep-grad)`} />
+          </g>
+          {/* Contacts */}
+          <circle cx="10"  cy="-8"  r="1.5" fill={color}>
+            {active && !silent && <animate attributeName="opacity" values="0.3;1;0.3" dur="1.6s" repeatCount="indefinite" />}
+          </circle>
+          <circle cx="-14" cy="6"   r="1.2" fill={color} opacity="0.75" />
+          <circle cx="18"  cy="14"  r="1.2" fill={color} opacity="0.55" />
+          {/* Center pip */}
+          <circle r="2.4" fill={color} />
+          <circle r="4.2" fill="none" stroke={color} strokeOpacity="0.6" strokeWidth="0.6">
+            {active && !silent && <animate attributeName="r" values="3;7;3" dur="2s" repeatCount="indefinite" />}
+            {active && !silent && <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite" />}
+          </circle>
+        </g>
+
+        {/* Bearing ticks (bottom) */}
+        <g stroke={color} strokeOpacity="0.5">
+          {Array.from({ length: 21 }).map((_, i) => (
+            <line key={i} x1={12 + i * 9.4} y1="96" x2={12 + i * 9.4} y2={i % 5 === 0 ? 90 : 93} strokeWidth={i % 5 === 0 ? 1 : 0.6} />
+          ))}
+        </g>
+        <text x="12"  y="102" fontFamily="ui-monospace, monospace" fontSize="5" fill={color} opacity="0.8">000</text>
+        <text x="105" y="102" fontFamily="ui-monospace, monospace" fontSize="5" fill={color} opacity="0.8">090</text>
+        <text x="198" y="102" fontFamily="ui-monospace, monospace" fontSize="5" fill={color} opacity="0.8">180</text>
+
+        {/* Status LED */}
+        <g transform="translate(200 20)">
+          <circle r="2.4" fill={active ? color : 'hsl(var(--muted-foreground))'} opacity={active ? 1 : 0.5}>
+            {active && !silent && <animate attributeName="opacity" values="0.35;1;0.35" dur="1.2s" repeatCount="indefinite" />}
+          </circle>
+        </g>
+        <text x="174" y="22" fontFamily="ui-monospace, monospace" fontSize="5" fill={color} opacity="0.85" letterSpacing="0.8">
+          {silent ? 'SILENT' : active ? 'LIVE' : 'IDLE'}
+        </text>
+      </g>
+
+      {/* Bottom title bar */}
+      <text x="110" y="112" textAnchor="middle" fontFamily="ui-monospace, monospace" fontSize="5.4" letterSpacing="2.6" fill={color} opacity="0.7">
+        C2 · RONDA OPERACIONAL
       </text>
     </svg>
   );
@@ -1666,7 +1740,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Corpo compacto — deixa só o operacional essencial visível */}
           <div
             ref={fitRef}
-            className="tactical-scrollbar max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
+            className="tactical-scrollbar rounds-tap-boost max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
           >
             <div
               ref={fitInnerRef}
