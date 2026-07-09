@@ -202,8 +202,15 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-md bg-slate-900 border-slate-700 text-slate-100">
+      <Dialog open={open} onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          setConfirmOpen(false);
+          setDeleteOpen(false);
+          document.body.style.pointerEvents = '';
+        }
+        onOpenChange(nextOpen);
+      }}>
+        <DialogContent className="w-[calc(100vw-1rem)] max-w-md max-h-[calc(100dvh-1rem)] overflow-y-auto bg-slate-900 border-slate-700 text-slate-100 p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="text-amber-300 capitalize">
               {isNew ? 'Cadastrar plantão' : 'Editar plantão'} — {format(shiftDate, "dd/MM/yyyy", { locale: ptBR })}
@@ -220,7 +227,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
                 <SelectTrigger id="shift-kind" className="bg-slate-800 border-slate-700 min-h-11">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-slate-700">
+                <SelectContent className="z-[80] bg-slate-900 border-slate-700 max-w-[calc(100vw-1rem)]">
                   {(Object.keys(KIND_LABEL) as ShiftKind[]).map((k) => (
                     <SelectItem key={k} value={k}>{KIND_LABEL[k]}</SelectItem>
                   ))}
@@ -318,7 +325,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={performSave} className="bg-amber-500 text-black hover:bg-amber-400">
+            <AlertDialogAction onClick={performSave} disabled={saving} className="bg-amber-500 text-black hover:bg-amber-400">
               Confirmar alteração
             </AlertDialogAction>
           </AlertDialogFooter>
