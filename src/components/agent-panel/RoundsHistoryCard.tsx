@@ -1,5 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +28,10 @@ interface Props {
   agentId: string;
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE_DESKTOP = 10;
+const PAGE_SIZE_MOBILE = 5;
+
+
 
 const fmtDateTime = (iso?: string | null) =>
   iso ? format(new Date(iso), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }) : '—';
@@ -65,11 +70,14 @@ const eventMeta = (log: RoundLog) => {
 };
 
 export function RoundsHistoryCard({ agentId }: Props) {
+  const isMobile = useIsMobile();
+  const PAGE_SIZE = useMemo(() => (isMobile ? PAGE_SIZE_MOBILE : PAGE_SIZE_DESKTOP), [isMobile]);
   const [logs, setLogs] = useState<RoundLog[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<RoundLog | null>(null);
+
 
   const fetchLogs = useCallback(async () => {
     if (!agentId) return;
@@ -94,7 +102,7 @@ export function RoundsHistoryCard({ agentId }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [agentId, page]);
+  }, [agentId, page, PAGE_SIZE]);
 
   useEffect(() => { void fetchLogs(); }, [fetchLogs]);
 
