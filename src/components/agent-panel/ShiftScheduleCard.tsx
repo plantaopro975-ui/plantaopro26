@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { toast } from 'sonner';
+import { notify } from '@/lib/notify';
 import { 
   Calendar as CalendarIcon, Plus, Loader2, RefreshCw, Check, X, 
   AlertTriangle, Palmtree, WifiOff, Settings2, Clock, ChevronDown, ChevronUp,
@@ -157,7 +157,7 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
 
   const generateShifts = async () => {
     if (!firstShiftDate) {
-      toast.error('Selecione a data do primeiro plantão');
+      notify.error('Selecione a data do primeiro plantão');
       return;
     }
 
@@ -173,12 +173,12 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
 
       if (error) throw error;
 
-      toast.success(`${data} plantões gerados para os próximos 3 meses!`);
+      notify.success(`${data} plantões gerados para os próximos 3 meses!`);
       setShowConfig(false);
       refetchShifts();
     } catch (error) {
       console.error('Error generating shifts:', error);
-      toast.error('Erro ao gerar plantões');
+      notify.error('Erro ao gerar plantões');
     } finally {
       setIsGenerating(false);
     }
@@ -235,12 +235,12 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
 
       if (error) throw error;
 
-      toast.success('Plantão atualizado com sucesso!');
+      notify.success('Plantão atualizado com sucesso!');
       setShowShiftDialog(false);
       refetchShifts();
     } catch (error) {
       console.error('Error updating shift:', error);
-      toast.error('Erro ao atualizar plantão');
+      notify.error('Erro ao atualizar plantão');
     } finally {
       setIsSaving(false);
     }
