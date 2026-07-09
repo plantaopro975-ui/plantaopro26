@@ -56,6 +56,8 @@ const MasterLoginDialog = lazy(() => import('@/components/auth/MasterLoginDialog
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
+import { CopyrightFooter } from '@/components/CopyrightFooter';
+
 import { DeveloperSignature } from '@/components/DeveloperSignature';
 import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 
