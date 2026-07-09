@@ -471,8 +471,8 @@ export function SplashScreen() {
           background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
         }
         .splash-meridian {
-          background: linear-gradient(180deg, transparent 0%, rgba(240,215,140,0.55) 25%, rgba(240,215,140,0.9) 50%, rgba(240,215,140,0.55) 75%, transparent 100%);
-          box-shadow: 0 0 18px rgba(240,215,140,0.35);
+          background: linear-gradient(180deg, transparent 0%, rgba(240,215,140,0.28) 15%, transparent 42%, transparent 58%, rgba(240,215,140,0.28) 85%, transparent 100%);
+          box-shadow: 0 0 12px rgba(240,215,140,0.18);
           animation: meridian 1.1s cubic-bezier(.22,1,.36,1) both;
           transform-origin: center;
         }
