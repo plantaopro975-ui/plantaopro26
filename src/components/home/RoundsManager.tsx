@@ -1740,7 +1740,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           {/* Corpo compacto — deixa só o operacional essencial visível */}
           <div
             ref={fitRef}
-            className="tactical-scrollbar max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
+            className="tactical-scrollbar rounds-tap-boost max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.75rem)] overflow-y-auto overscroll-contain"
           >
             <div
               ref={fitInnerRef}
