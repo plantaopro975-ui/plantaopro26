@@ -54,7 +54,7 @@ const LeaveRequestCard = lazy(() => import('@/components/agent-panel/LeaveReques
 const NotificationsAndAlertsCard = lazy(() => import('@/components/agent-panel/NotificationsAndAlertsCard').then(m => ({ default: m.NotificationsAndAlertsCard })));
 const AgentSettingsCard = lazy(() => import('@/components/agent-panel/AgentSettingsCard').then(m => ({ default: m.AgentSettingsCard })));
 const AgentEventsCard = lazy(() => import('@/components/agent-panel/AgentEventsCard').then(m => ({ default: m.AgentEventsCard })));
-const ChatAndAlertSettings = lazy(() => import('@/components/agent-panel/ChatAndAlertSettings').then(m => ({ default: m.ChatAndAlertSettings })));
+
 const ShiftPlannerCard = lazy(() => import('@/components/agent-panel/ShiftPlannerCard'));
 const ShiftCalendarOverview = lazy(() => import('@/components/agent-panel/ShiftCalendarOverview').then(m => ({ default: m.ShiftCalendarOverview })));
 const RecentShiftCyclesCard = lazy(() => import('@/components/agent-panel/RecentShiftCyclesCard').then(m => ({ default: m.RecentShiftCyclesCard })));
