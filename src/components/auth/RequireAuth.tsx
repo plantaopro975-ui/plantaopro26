@@ -61,7 +61,21 @@ const AuthLoader: React.FC<{ debugTag?: string }> = ({ debugTag }) => {
  * no cliente supabase) e o `onAuthStateChange` que atualiza o React.
  */
 const GRACE_INITIAL_MS = 400;
+const GRACE_INITIAL_MS = 400;
 const GRACE_MAX_MS = 2500;
+
+/**
+ * Sampling de eventos `info` em produção. Em dev/preview registramos tudo.
+ * Em produção só ~10% das transições "não-interessantes" são gravadas —
+ * transições que envolvem hidratação/corrida sempre passam (ver `interesting`).
+ */
+const IS_PROD = import.meta.env.PROD;
+const SAMPLE_INFO = !IS_PROD || Math.random() < 0.1;
+
+function logInfo(name: string, data: Record<string, unknown>) {
+  if (!SAMPLE_INFO) return;
+  pushDiagEvent("info", name, data);
+}
 
 export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
