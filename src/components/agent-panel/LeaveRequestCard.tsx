@@ -979,6 +979,126 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
 
 
 
+      {/* Leave Details Dialog — Professional */}
+      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+        <DialogContent className="max-w-md w-[calc(100vw-1rem)] bg-slate-950 border border-purple-500/30 p-0 gap-0 overflow-hidden">
+          <DialogHeader className="px-4 py-3 border-b border-slate-800 bg-gradient-to-r from-purple-950/60 to-slate-950">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-purple-500/20 border border-purple-500/40">
+                <CalendarOff className="h-4 w-4 text-purple-300" />
+              </div>
+              <div className="min-w-0">
+                <DialogTitle className="text-sm font-semibold text-white leading-tight">
+                  Detalhes da Folga
+                </DialogTitle>
+                {detailsDate && (
+                  <DialogDescription className="text-[11px] text-purple-300/80 font-mono mt-0.5">
+                    {format(detailsDate, "EEEE, dd/MM/yyyy", { locale: ptBR })}
+                  </DialogDescription>
+                )}
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="max-h-[70vh] overflow-y-auto px-4 py-3 space-y-2.5">
+            {detailsDate && (() => {
+              const dayLeaves = leaves.filter(l => {
+                const s = startOfDay(parseISO(l.start_date));
+                const e = startOfDay(parseISO(l.end_date));
+                const d = startOfDay(detailsDate);
+                return d >= s && d <= e;
+              });
+              if (dayLeaves.length === 0) {
+                return <p className="text-sm text-slate-400 text-center py-4">Nenhuma folga encontrada nesta data.</p>;
+              }
+              return dayLeaves.map((leave: any) => {
+                const typeInfo = leaveTypeLabels[leave.leave_type] || { label: leave.leave_type, icon: null, color: '' };
+                const statusInfo = statusLabels[leave.status] || { label: leave.status, color: '' };
+                const startDate = parseISO(leave.start_date);
+                const endDate = parseISO(leave.end_date);
+                const days = differenceInDays(endDate, startDate) + 1;
+                const p = leave.period ? PERIOD_MAP[leave.period] : null;
+                const startTime = leave.start_time?.slice(0, 5) || p?.start || '-';
+                const endTime = leave.end_time?.slice(0, 5) || p?.end || '-';
+                const hours = leave.hours_count ?? (p ? computeHours(p.start, p.end, days) : null);
+                return (
+                  <div key={leave.id} className="rounded-lg border border-slate-700/60 bg-slate-900/60 p-3 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className={`p-1.5 rounded-md ${typeInfo.color} shrink-0`}>{typeInfo.icon}</div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-white leading-tight">{typeInfo.label}</p>
+                          <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                            {format(startDate, 'dd/MM/yyyy', { locale: ptBR })}
+                            {days > 1 && ` → ${format(endDate, 'dd/MM/yyyy', { locale: ptBR })}`}
+                            {` · ${days} dia${days > 1 ? 's' : ''}`}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className={`text-[10px] px-1.5 py-0.5 shrink-0 ${statusInfo.color}`}>
+                        {statusInfo.label}
+                      </Badge>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 pt-1.5 border-t border-slate-800">
+                      <div className="text-center">
+                        <p className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold">Entrada</p>
+                        <p className="text-xs font-mono text-slate-200 mt-0.5">{startTime}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold">Saída</p>
+                        <p className="text-xs font-mono text-slate-200 mt-0.5">{endTime}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold">Horas</p>
+                        <p className="text-xs font-mono text-amber-300 mt-0.5">{hours != null ? `${hours}h` : '-'}</p>
+                      </div>
+                    </div>
+
+                    {leave.reason && (
+                      <div className="pt-1.5 border-t border-slate-800">
+                        <p className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Motivo</p>
+                        <p className="text-xs text-slate-300 italic leading-snug">"{leave.reason}"</p>
+                      </div>
+                    )}
+
+                    <div className="pt-1.5 border-t border-slate-800 flex items-center justify-between gap-2">
+                      <p className="text-[10px] text-slate-500 font-mono">
+                        Registrada em {format(parseISO(leave.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                      </p>
+                      {leave.status === 'pending' && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            handleDelete(leave.id);
+                            setShowDetailsDialog(false);
+                          }}
+                          className="h-7 px-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 text-[11px]"
+                        >
+                          <Trash2 className="h-3.5 w-3.5 mr-1" /> Cancelar
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+
+          <DialogFooter className="px-4 py-2.5 border-t border-slate-800 bg-slate-950/70">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDetailsDialog(false)}
+              className="border-slate-700 text-slate-300 hover:bg-slate-800 h-8 text-xs"
+            >
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Team Member Dialog */}
       <TeamMemberDialog 
         member={selectedMember}
