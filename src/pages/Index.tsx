@@ -1555,7 +1555,12 @@ export default function Index() {
                     </div>
                     <div className="min-w-0">
                       <span className="font-bold text-red-400 text-base block">EQUIPE INCORRETA</span>
-                      <span className="text-red-300/80 text-sm">Você pertence à {foundAgent.team}</span>
+                      <span className="text-red-300/80 text-sm block">Você pertence à {foundAgent.team}</span>
+                      {foundAgent.unit && (
+                        <span className="text-red-200/70 text-xs block mt-0.5 font-mono uppercase tracking-wider">
+                          Unidade · {foundAgent.unit}
+                        </span>
+                      )}
                     </div>
                   </>
                 ) : (
