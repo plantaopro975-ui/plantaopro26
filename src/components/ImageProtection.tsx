@@ -112,15 +112,8 @@ export function ImageProtection() {
       const kL = k.toLowerCase();
       const mod = e.ctrlKey || e.metaKey;
 
-      // PrintScreen (varies by OS; some browsers don't fire it)
-      if (k === "PrintScreen" || kL === "printscreen") {
-        scramble();
-        show("printscreen");
-        try {
-          navigator.clipboard?.writeText?.(" ");
-        } catch {}
-        return;
-      }
+      // PrintScreen: bloqueio temporariamente desativado a pedido do usuário
+
 
       // DevTools shortcuts: no longer blocked/warned (removed per request)
 
