@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { ShieldCheck, MapPin, Cpu, Radio, Lock } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
@@ -8,6 +8,8 @@ const iseAcreBadge = iseAcreBadgeAsset.url;
 interface CopyrightFooterProps {
   className?: string;
   compact?: boolean;
+  leftSlot?: ReactNode;
+  rightSlot?: ReactNode;
 }
 
 /**
@@ -15,7 +17,8 @@ interface CopyrightFooterProps {
  * Tactical public-safety identity with steel cyan accents.
  */
 export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
-  ({ className, compact = false }, ref) => {
+  ({ className, compact = false, leftSlot, rightSlot }, ref) => {
+
     const year = new Date().getFullYear();
 
     if (compact) {
@@ -47,8 +50,9 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
           />
 
           <div className="relative mx-auto max-w-6xl px-4 py-2.5 flex flex-col sm:flex-row items-center sm:justify-between gap-2 sm:gap-3 text-center sm:text-left">
-            {/* Left: Brand + Status */}
+            {/* Left: Brand + Status + optional slot */}
             <div className="flex items-center gap-2.5 min-w-0 font-sans">
+              {leftSlot}
               <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/85">
                 PlantãoPro
               </span>
@@ -63,6 +67,7 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               </span>
             </div>
 
+
             {/* Right: Meta + signature */}
             <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[9px] text-muted-foreground/75 tracking-[0.18em] uppercase">
               <DeveloperSignature compact className="hidden md:inline-flex" />
@@ -75,8 +80,10 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               <span className="font-semibold text-foreground/80">v2.7</span>
               <span className="text-muted-foreground/40">·</span>
               <span>© {year}</span>
+              {rightSlot}
             </div>
           </div>
+
 
         </div>
       );
