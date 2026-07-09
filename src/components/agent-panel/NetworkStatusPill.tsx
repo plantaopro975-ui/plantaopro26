@@ -47,19 +47,13 @@ export function NetworkStatusPill() {
       >
         <span
           className={cn(
-            'relative flex h-2 w-2 rounded-full',
+            'flex h-2 w-2 rounded-full',
             isOffline ? 'bg-amber-400' : 'bg-emerald-400',
           )}
-        >
-          <span
-            className={cn(
-              'absolute inline-flex h-full w-full animate-ping rounded-full opacity-70',
-              isOffline ? 'bg-amber-400' : 'bg-emerald-400',
-            )}
-          />
-        </span>
+        />
         {isOffline ? 'Sem conexão' : 'Conexão restaurada'}
       </div>
     </div>
   );
 }
+
