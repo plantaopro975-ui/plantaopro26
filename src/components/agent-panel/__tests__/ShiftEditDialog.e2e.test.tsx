@@ -5,9 +5,13 @@ import { ShiftEditDialog, type ShiftEditRecord } from '../ShiftEditDialog';
 
 // ---- Supabase mock -----------------------------------------------------
 const updateEqMock = vi.fn().mockResolvedValue({ error: null });
-const updateMock = vi.fn(() => ({ eq: updateEqMock }));
+const updateMock = vi.fn((_payload: any) => ({ eq: updateEqMock }));
 const upsertMock = vi.fn().mockResolvedValue({ error: null });
-const fromMock = vi.fn(() => ({ update: updateMock, upsert: upsertMock, delete: vi.fn(() => ({ eq: vi.fn().mockResolvedValue({ error: null }) })) }));
+const fromMock = vi.fn((_table: string) => ({
+  update: updateMock,
+  upsert: upsertMock,
+  delete: vi.fn(() => ({ eq: vi.fn().mockResolvedValue({ error: null }) })),
+}));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...args: any[]) => fromMock(...args) },
