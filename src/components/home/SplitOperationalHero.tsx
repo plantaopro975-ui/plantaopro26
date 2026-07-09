@@ -12,16 +12,18 @@ const loginHeroImage = loginHeroAsset.url;
 
 
 
-import agent3dAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
-const agent3d = agent3dAsset.url;
-import vehicle3dAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
-const vehicle3d = vehicle3dAsset.url;
-import vehicleMobileAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
-const vehicleMobile = vehicleMobileAsset.url;
+import agent3dWebpAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
+import agent3dPngAsset from '@/assets/hero/agent-ise-3d.png.asset.json';
+const agent3dWebp = agent3dWebpAsset.url;
+const agent3d = agent3dPngAsset.url;
+import vehicle3dWebpAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
+import vehicle3dPngAsset from '@/assets/hero/vehicle-ise-3d.png.asset.json';
+const vehicle3dWebp = vehicle3dWebpAsset.url;
+const vehicle3d = vehicle3dPngAsset.url;
+const vehicleMobile = vehicle3dPngAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
-import agentVehicleSceneWebpAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
-const agentVehicleSceneWebp = agentVehicleSceneWebpAsset.url;
+const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
 import objAlfaAsset from '@/assets/teams/alfa-vest-pro.webp.asset.json';
 const objAlfa = objAlfaAsset.url;
 import objBravoAsset from '@/assets/teams/bravo-helmet-pro.webp.asset.json';
@@ -358,6 +360,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
               {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
               <picture className="relative block h-full aspect-square leading-[0] translate-y-6 min-[390px]:translate-y-7 sm:translate-y-0">
+                <source type="image/webp" srcSet={vehicle3dWebp} />
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
@@ -385,9 +388,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
               {/* Agente — mobile: menor, encostado à direita | desktop: mantém */}
               <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
+                <source type="image/webp" srcSet={agent3dWebp} />
                 <img
                   src={agent3d}
                   alt="Agente Socioeducativo ISE"
+                  width={1024}
+                  height={1024}
                   className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
