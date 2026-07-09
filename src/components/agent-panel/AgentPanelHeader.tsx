@@ -221,10 +221,10 @@ function ActionButton({
             type="button"
             onClick={onClick}
             className={cn(
-              'relative flex items-center justify-center h-9 min-w-9 px-2 rounded-md',
+              'relative flex items-center justify-center h-10 min-w-10 px-2.5 rounded-md',
               'bg-gradient-to-b from-slate-900/90 to-slate-950/90 border',
               'shadow-[inset_0_1px_0_rgba(255,255,255,.04)] transition-all duration-200',
-              'hover:-translate-y-[1px] active:translate-y-0',
+              'hover:-translate-y-[1px] active:translate-y-0 [&>svg]:h-[18px] [&>svg]:w-[18px]',
               tones,
             )}
           >
