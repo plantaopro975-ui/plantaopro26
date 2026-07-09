@@ -614,6 +614,45 @@ export default function AgentPanel() {
                 </div>
 
               </div>
+              </div>
+
+              {/* Shift Alerts Banner */}
+              <ShiftAlertsBanner 
+                agentId={agent.id} 
+                onDismissedChange={setShiftBannerDismissed}
+                forceShow={forceShowShiftBanner}
+              />
+
+              {/* On Duty Overlay - Discreto e minimizável */}
+              <OnDutyOverlay agentId={agent.id} />
+
+              {/* Centro de Operações (checklist, radar, PDF, HUD 3-2-1) */}
+              <Suspense fallback={null}>
+                <ShiftOperationsCenter
+                  agentId={agent.id}
+                  agentName={agent.name}
+                  agentTeam={agent.team}
+                  unitId={agent.unit_id}
+                />
+              </Suspense>
+
+              {/* Briefing de Entrada (Chefe/Apoio) */}
+              <Suspense fallback={null}>
+                <ShiftBriefingCard
+                  agentId={agent.id}
+                  agentName={agent.name}
+                  agentTeam={agent.team}
+                  unitId={agent.unit_id}
+                  agentRole={(agent as any).role}
+                />
+              </Suspense>
+
+              {/* HERO PANEL - Futuristic Status Dashboard */}
+              <AgentHeroPanel 
+                agentId={agent.id}
+                agentName={agent.name}
+                agentTeam={agent.team}
+              />
 
               {/* Profile Completion Alert */}
               <ProfileCompletionAlert agentId={agent.id} agentName={agent.name} />
