@@ -26,7 +26,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CompactTimeField } from '@/components/ui/compact-time-field';
 import { AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+
 
 export type ShiftEditRecord = {
   id?: string;
