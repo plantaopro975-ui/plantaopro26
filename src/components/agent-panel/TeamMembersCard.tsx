@@ -79,6 +79,8 @@ export function TeamMembersCard({ unitId, team, currentAgentId, currentAgentName
   const [showMemberDialog, setShowMemberDialog] = useState(false);
   const [showTeamManagement, setShowTeamManagement] = useState(false);
   const [showTransferDialog, setShowTransferDialog] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState<TeamLeave | null>(null);
+
 
   useEffect(() => {
     if (unitId && team) {
