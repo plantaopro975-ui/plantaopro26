@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { notify } from '@/lib/notify';
 import { CalendarOff, Loader2, Trash2, Palmtree, Stethoscope, Star, GraduationCap, CalendarPlus, Users, User, MessageCircle, FileDown } from 'lucide-react';
+import { EmptyState } from '@/components/ui/data-states';
 import { format, parseISO, differenceInDays, isAfter, startOfDay, isSameDay, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { TeamMemberDialog } from './TeamMemberDialog';
