@@ -972,11 +972,10 @@ export default function Index() {
       
       // Enroll biometric if enabled and available
       if (enableBiometric && isBiometricAvailable) {
-        const { data: agentData } = await supabase
-          .from('agents')
-          .select('name')
-          .eq('cpf', cleanCpf)
-          .single();
+        const { data: rowsB } = await (supabase as any)
+          .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+        const agentData = Array.isArray(rowsB) && rowsB.length ? rowsB[0] : null;
+
         await enrollBiometric(cleanCpf, agentData?.name);
         toast({
           title: 'Biometria Configurada',
