@@ -12,7 +12,8 @@ import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { toast } from '@/hooks/use-toast';
-import { Users, Search, Eye, Circle, Shield, Snowflake, Filter } from 'lucide-react';
+import { Users, Search, Eye, Circle, Shield, Snowflake, Filter, UserPlus, FilterX } from 'lucide-react';
+import { EmptyState } from '@/components/ui/data-states';
 import { cn } from '@/lib/utils';
 
 interface AgentRow {
