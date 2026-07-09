@@ -369,7 +369,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             >
 
               {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
-              <picture className="relative block h-full leading-[0] translate-y-1.5 sm:translate-y-0">
+              <picture className="relative block h-full aspect-square leading-[0] translate-y-1.5 sm:translate-y-0">
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
