@@ -249,22 +249,24 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
   // trial removido — sistema gratuito
 
   const handleLogout = async () => {
-    // Logout suave — evita tela preta do reload total.
-    // signOut() já limpa storages, mostra toast profissional e faz soft-navigate para '/'.
+    // Dispara signOut mas NUNCA fica preso — timeout curto + hard redirect garantido.
     try {
       await Promise.race([
         signOut(),
-        new Promise((resolve) => setTimeout(resolve, 1500)),
+        new Promise((resolve) => setTimeout(resolve, 1200)),
       ]);
     } catch {
       /* ignore */
     }
+    // Hard redirect: garante que qualquer estado in-memory seja descartado
+    // e evita ficar "preso" no painel após clicar em Sair (mobile/PWA).
     try {
-      navigate('/', { replace: true });
+      window.location.replace('/');
     } catch {
-      window.location.assign('/');
+      window.location.href = '/';
     }
   };
+
 
   return (
     <div className="relative rounded-xl overflow-hidden border border-slate-700/70 shadow-[0_10px_40px_-15px_rgba(0,0,0,.8)]">
