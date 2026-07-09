@@ -119,7 +119,11 @@ export default function AgentPanel() {
         title: 'Falha na reconexão',
         description: 'Não foi possível restaurar a sessão. Por favor, faça login novamente.',
         variant: 'destructive',
+      });
+    },
   });
+
+
 
   // Auto-sync on reconnect: when the device comes back online, refresh all
   // React Query caches so stale data (shifts, leaves, team) updates and any
