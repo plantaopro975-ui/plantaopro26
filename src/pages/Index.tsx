@@ -1505,7 +1505,7 @@ export default function Index() {
         open={showCpfCheck}
         onOpenChange={(open) => !open && closeAllDialogs()}
         variant="check"
-        title={`Equipe ${selectedTeam}`}
+        title="Identificação de Agente"
         subtitle="Digite seu CPF para identificação"
         team={selectedTeam}
       >
@@ -1594,7 +1594,7 @@ export default function Index() {
         open={showLogin}
         onOpenChange={(open) => !open && closeAllDialogs()}
         variant="agent"
-        title={`Equipe ${selectedTeam}`}
+        title="Autenticação de Agente"
         subtitle="Autenticação de Agente"
         team={selectedTeam}
       >
@@ -1764,7 +1764,7 @@ export default function Index() {
         open={showRegistration}
         onOpenChange={(open) => !open && safeCloseRegistration()}
         variant="register"
-        title={`Cadastro - ${selectedTeam}`}
+        title="Cadastro de Novo Agente"
         subtitle="Novo Agente"
         team={selectedTeam}
       >
