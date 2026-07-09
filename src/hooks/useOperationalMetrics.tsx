@@ -33,24 +33,32 @@ export function useOperationalMetrics(): OperationalMetrics {
     let cancelled = false;
     (async () => {
       try {
-        const [u, active, total] = await Promise.all([
-          supabase.from('units').select('id', { count: 'exact', head: true }),
-          supabase
-            .from('agents')
-            .select('id', { count: 'exact', head: true })
-            .eq('is_active', true),
-          supabase.from('agents').select('id', { count: 'exact', head: true }),
-        ]);
+        const { data, error } = await supabase.rpc('get_public_operational_counts');
         if (cancelled) return;
-        setUnits(u.count ?? 0);
-        setAgentsActive(active.count ?? 0);
-        setAgentsRegistered(total.count ?? 0);
+        if (!error && data && data.length > 0) {
+          const row = data[0] as { units_count: number; agents_total: number; agents_active: number };
+          setUnits(row.units_count ?? 0);
+          setAgentsActive(row.agents_active ?? 0);
+          setAgentsRegistered(row.agents_total ?? 0);
+        } else {
+          // Fallback for authenticated users (respects RLS)
+          const [u, active, total] = await Promise.all([
+            supabase.from('units').select('id', { count: 'exact', head: true }),
+            supabase.from('agents').select('id', { count: 'exact', head: true }).eq('is_active', true),
+            supabase.from('agents').select('id', { count: 'exact', head: true }),
+          ]);
+          if (cancelled) return;
+          setUnits(u.count ?? 0);
+          setAgentsActive(active.count ?? 0);
+          setAgentsRegistered(total.count ?? 0);
+        }
       } catch {
         // silent — hero has fallbacks
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
+
     return () => {
       cancelled = true;
     };
