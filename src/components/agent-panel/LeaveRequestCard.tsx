@@ -101,6 +101,8 @@ export function LeaveRequestCard({ agentId, agentTeam, agentUnitId }: LeaveReque
   const [selectedTeamDate, setSelectedTeamDate] = useState<Date | undefined>();
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [showMemberDialog, setShowMemberDialog] = useState(false);
+  const [detailsDate, setDetailsDate] = useState<Date | null>(null);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   useEffect(() => {
     fetchLeaves();
     if (agentTeam && agentUnitId) {
