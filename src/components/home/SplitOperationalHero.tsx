@@ -347,15 +347,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
-            <svg
-              aria-hidden
-              viewBox="0 0 400 400"
-              className="absolute inset-x-0 top-0 h-[90%] w-full opacity-30 animate-[spin_80s_linear_infinite]"
-            >
-              <circle cx="200" cy="200" r="188" fill="none" stroke="#eab308" strokeOpacity="0.35" strokeWidth="0.7" strokeDasharray="3 9" />
-              <circle cx="200" cy="200" r="150" fill="none" stroke="#eab308" strokeOpacity="0.25" strokeWidth="0.6" strokeDasharray="2 6" />
-              <circle cx="200" cy="200" r="110" fill="none" stroke="#eab308" strokeOpacity="0.2" strokeWidth="0.5" />
-            </svg>
+            {/* removido: anéis decorativos rotativos (economia CPU/GPU) */}
             {/* removido: halo amarelo ao pé da viatura/agente (solicitação do usuário) */}
             {/* Cena composta:
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
