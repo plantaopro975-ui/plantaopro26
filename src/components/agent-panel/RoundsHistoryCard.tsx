@@ -136,13 +136,29 @@ export function RoundsHistoryCard({ agentId }: Props) {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : logs.length === 0 ? (
-            <div className="text-center py-10 text-sm text-muted-foreground space-y-2">
-              <Radio className="h-8 w-8 mx-auto text-muted-foreground/60" />
-              <p>Nenhuma ronda registrada ainda.</p>
-              <p className="text-xs">
-                Ao iniciar uma sessão no Gestor de Rondas, ela aparecerá aqui automaticamente.
-              </p>
-            </div>
+            <EmptyState
+              icon={Radio}
+              title="Nenhuma ronda registrada"
+              description="Abra o Gestor de Rondas acima, monte a escala e inicie o cronômetro. Cada sessão iniciada aparecerá aqui em tempo real."
+              action={
+                <button
+                  type="button"
+                  onClick={() => {
+                    const trigger = document.querySelector<HTMLElement>('[data-rounds-manager-trigger], button[aria-label*="Gestor de Rondas" i]');
+                    if (trigger) {
+                      trigger.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      trigger.focus({ preventScroll: true });
+                    } else {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/50 bg-amber-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-amber-300 transition-all hover:bg-amber-500/20 hover:border-amber-400/70 focus-ring-primary"
+                >
+                  <Zap className="h-3.5 w-3.5" />
+                  Iniciar primeira ronda
+                </button>
+              }
+            />
           ) : (
             <div className="space-y-2">
               {logs.map((log) => {
