@@ -119,9 +119,30 @@ export default function AgentPanel() {
         title: 'Falha na reconexão',
         description: 'Não foi possível restaurar a sessão. Por favor, faça login novamente.',
         variant: 'destructive',
-      });
-    },
   });
+
+  // Auto-sync on reconnect: when the device comes back online, refresh all
+  // React Query caches so stale data (shifts, leaves, team) updates and any
+  // previous error states clear. Fires a single info toast for feedback.
+  const queryClient = useQueryClient();
+  const wasOfflineRef = useRef(false);
+  useEffect(() => {
+    if (!isOnline) {
+      wasOfflineRef.current = true;
+      return;
+    }
+    if (wasOfflineRef.current) {
+      wasOfflineRef.current = false;
+      toast({
+        title: 'Sincronizando dados',
+        description: 'Atualizando informações após reconexão...',
+      });
+      // Invalidate everything so hooks refetch fresh data
+      queryClient.invalidateQueries();
+    }
+  }, [isOnline, queryClient]);
+
+
 
 
 
