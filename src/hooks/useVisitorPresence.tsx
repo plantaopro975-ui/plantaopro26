@@ -54,14 +54,39 @@ let sharedChannel: ReturnType<typeof supabase.channel> | null = null;
 let refCount = 0;
 let lastCount = 0;
 let hiddenTimer: ReturnType<typeof setTimeout> | null = null;
+let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
 let listenersInstalled = false;
 const listeners = new Set<Listener>();
 
+/** Heartbeat: re-emite track periodicamente para renovar a presença no servidor. */
+const HEARTBEAT_MS = 20_000;
+
 async function trackVisitor(channel: ReturnType<typeof supabase.channel>) {
-  await channel.track({
-    joined_at: new Date().toISOString(),
-    path: typeof window !== 'undefined' ? window.location.pathname : '/',
-  });
+  try {
+    await channel.track({
+      joined_at: new Date().toISOString(),
+      path: typeof window !== 'undefined' ? window.location.pathname : '/',
+      ts: Date.now(),
+    });
+  } catch {
+    /* noop */
+  }
+}
+
+function startHeartbeat() {
+  if (heartbeatTimer) return;
+  heartbeatTimer = setInterval(() => {
+    if (sharedChannel && document.visibilityState !== 'hidden') {
+      void trackVisitor(sharedChannel);
+    }
+  }, HEARTBEAT_MS);
+}
+
+function stopHeartbeat() {
+  if (heartbeatTimer) {
+    clearInterval(heartbeatTimer);
+    heartbeatTimer = null;
+  }
 }
 
 function installLifecycleListeners() {
@@ -77,12 +102,9 @@ function installLifecycleListeners() {
     }
   };
 
-  // Aba fechada ou navegação para outro site → remover imediatamente.
   window.addEventListener('pagehide', removeNow);
   window.addEventListener('beforeunload', removeNow);
 
-  // Aba minimizada/em background: aguarda timeout e então remove.
-  // Ao voltar ao foco, reemite track para reingressar.
   document.addEventListener('visibilitychange', () => {
     if (!sharedChannel) return;
     if (document.visibilityState === 'hidden') {
@@ -95,6 +117,11 @@ function installLifecycleListeners() {
       }
       void trackVisitor(sharedChannel);
     }
+  });
+
+  // Ao voltar online (Wi-Fi restaurado), força re-track.
+  window.addEventListener('online', () => {
+    if (sharedChannel) void trackVisitor(sharedChannel);
   });
 }
 
@@ -110,15 +137,27 @@ function ensureChannel() {
       lastCount = Object.keys(state).length;
       listeners.forEach((l) => l(lastCount));
     })
+    .on('presence', { event: 'join' }, () => {
+      const state = channel.presenceState();
+      lastCount = Object.keys(state).length;
+      listeners.forEach((l) => l(lastCount));
+    })
+    .on('presence', { event: 'leave' }, () => {
+      const state = channel.presenceState();
+      lastCount = Object.keys(state).length;
+      listeners.forEach((l) => l(lastCount));
+    })
     .subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
         await trackVisitor(channel);
+        startHeartbeat();
       }
     });
   sharedChannel = channel;
   installLifecycleListeners();
   return channel;
 }
+
 
 export function useVisitorPresence(): number {
   const [count, setCount] = useState(lastCount);
