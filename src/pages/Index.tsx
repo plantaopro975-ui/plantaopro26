@@ -422,17 +422,15 @@ export default function Index() {
     if (cleanCpf.length === 11) {
       setIsSearchingAgent(true);
       try {
-        const { data: raw } = await supabase
-          .from('agents')
-          .select('name, team, unit:units(name, municipality)')
-          .eq('cpf', cleanCpf)
-          .maybeSingle();
+        const { data: searchRows } = await (supabase as any)
+          .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+        const raw = Array.isArray(searchRows) && searchRows.length ? searchRows[0] : null;
 
-        const unitInfo = (raw as any)?.unit as { name?: string; municipality?: string } | null;
-        const unitLabel = unitInfo?.name
-          ? (unitInfo.municipality ? `${unitInfo.name} — ${unitInfo.municipality}` : unitInfo.name)
+        const unitLabel = raw?.unit_name
+          ? (raw.unit_municipality ? `${raw.unit_name} — ${raw.unit_municipality}` : raw.unit_name)
           : null;
-        const data = raw ? { name: (raw as any).name, team: (raw as any).team, unit: unitLabel } : null;
+        const data = raw ? { name: raw.name, team: raw.team, unit: unitLabel } : null;
+
 
         // Prefill silencioso com CPF de outra equipe → descarta e libera input
         if (silent && data && data.team && data.team !== selectedTeam) {
