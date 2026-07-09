@@ -5,6 +5,7 @@ import { OperationalStatusRibbon } from './OperationalStatusRibbon';
 import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
+import { useVisitorPresence } from '@/hooks/useVisitorPresence';
 import loginHeroImage from '@/assets/login-hero.jpg';
 
 
@@ -132,7 +133,11 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
       ? { dot: 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)]', text: 'text-amber-300/90', label: 'Instável' }
       : { dot: 'bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.9)]', text: 'text-rose-300/90', label: 'Offline' };
   const fmt2 = (n: number) => String(n).padStart(2, '0');
-  const onlineAgents = useOnlineAgents().size;
+  const trackedAgents = useOnlineAgents().size;
+  const visitorsNow = useVisitorPresence();
+  // "Online agora" = todo mundo com o site aberto (agentes rastreados + visitantes anônimos únicos).
+  // Garante que o próprio usuário navegando aqui já apareça na contagem, mesmo antes de logar.
+  const onlineAgents = Math.max(trackedAgents, visitorsNow);
   const [selectedTeam, setSelectedTeam] = useState<TeamKey | null>(null);
   const handleSelect = useCallback((k: TeamKey) => {
     setSelectedTeam(k);
