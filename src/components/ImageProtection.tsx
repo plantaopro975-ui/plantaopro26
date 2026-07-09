@@ -157,21 +157,7 @@ export function ImageProtection() {
       }
     };
 
-    // Detect DevTools open (heuristic based on viewport delta)
-    let devtoolsOpen = false;
-    const devtoolsCheck = () => {
-      const threshold = 170;
-      const wDiff = window.outerWidth - window.innerWidth;
-      const hDiff = window.outerHeight - window.innerHeight;
-      const isOpen = wDiff > threshold || hDiff > threshold;
-      if (isOpen && !devtoolsOpen) {
-        devtoolsOpen = true;
-        show("devtools");
-      } else if (!isOpen) {
-        devtoolsOpen = false;
-      }
-    };
-    const devInterval = window.setInterval(devtoolsCheck, 1500);
+    // DevTools open-detection removed per request (no more warning dialog)
 
     // Block print via matchMedia (Ctrl+P fallback on some browsers)
     const onBeforePrint = (e: Event) => {
