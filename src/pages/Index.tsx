@@ -1089,11 +1089,10 @@ export default function Index() {
       const cleanCpf = cpf.replace(/\D/g, '');
       
       // Verificar status completo do agente
-      const { data: agentCheck } = await supabase
-        .from('agents')
-        .select('is_active, team, is_frozen, license_status, license_expires_at')
-        .eq('cpf', cleanCpf)
-        .maybeSingle();
+      const { data: rows } = await (supabase as any)
+        .rpc('lookup_agent_for_login', { _cpf: cleanCpf });
+      const agentCheck = Array.isArray(rows) && rows.length ? rows[0] : null;
+
       
       // Bloqueio por desativação
       if (agentCheck?.is_active === false) {
