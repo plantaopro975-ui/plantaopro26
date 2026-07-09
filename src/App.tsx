@@ -81,6 +81,9 @@ function RoutePrefetcher() {
       import("./pages/AgentPanel");
       import("./pages/Dashboard");
       import("./pages/Admin");
+      import("./pages/Master");
+      import("./pages/Agents");
+      import("./pages/Agenda");
     });
     return () => cancel(handle);
   }, []);
