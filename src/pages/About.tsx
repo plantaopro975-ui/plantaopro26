@@ -122,8 +122,8 @@ export default function About() {
               width={1920}
               height={1088}
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#050810]/92 via-[#0a1428]/78 to-[#0d1b3a]/88" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(217,168,63,0.2),transparent_60%)]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#03060d]/95 via-[#050a18]/85 to-[#050a18]/70" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(217,168,63,0.18),transparent_55%)]" />
           </div>
 
           <div className="relative flex items-center gap-4 px-5 py-3 md:gap-6 md:px-8 md:py-4">
