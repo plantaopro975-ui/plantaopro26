@@ -56,6 +56,10 @@ const REASON_COPY: Record<Reason, { title: string; body: string }> = {
  * Deterrent-only; determined users can still capture via external tools.
  */
 export function ImageProtection() {
+  // Proteção de captura/cópia temporariamente desativada a pedido do usuário.
+  return null;
+  // eslint-disable-next-line no-unreachable
+  function _disabled() {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<Reason>("context");
   const [scrambled, setScrambled] = useState(false);
@@ -328,4 +332,5 @@ export function ImageProtection() {
       )}
     </>
   );
+  }
 }
