@@ -472,10 +472,16 @@ export default function AgentPanel() {
             <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-amber-500" /></div>}>
             <Tabs value={activeTab} onValueChange={setActiveTab} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
               {/* Sticky combined block: Professional Header + Tabs Control Panel */}
-              <div className={cn(
-                'sticky top-0 z-40 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1 bg-gradient-to-b from-slate-950/95 via-slate-950/90 to-slate-950/80 backdrop-blur-xl',
-                compact ? 'space-y-1.5' : 'space-y-2'
-              )}>
+              <div
+                role="banner"
+                aria-label="Cabeçalho e navegação"
+                className={cn(
+                  'sticky top-0 z-40 -mx-2 sm:-mx-3 md:-mx-4 lg:-mx-5 px-2 sm:px-3 md:px-4 lg:px-5 pt-1 pb-1',
+                  'bg-slate-950/75 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/60',
+                  'md:bg-gradient-to-b md:from-slate-950/95 md:via-slate-950/90 md:to-slate-950/80 md:backdrop-blur-xl',
+                  compact ? 'space-y-1.5' : 'space-y-2'
+                )}
+              >
                 {/* Professional Header Bar */}
                 <AgentPanelHeader 
                   agent={{
