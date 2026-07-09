@@ -633,6 +633,8 @@ export default function AgentPanel() {
 
               </div>
               </div>
+              </div>
+
 
               {/* Shift Alerts Banner */}
               <ShiftAlertsBanner 
