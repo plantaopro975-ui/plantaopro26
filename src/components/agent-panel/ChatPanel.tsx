@@ -818,8 +818,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
 
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative z-10">
         {/* Messages Area */}
-        <ScrollArea className="flex-1 px-3 py-2">
-          <div className="space-y-2">
+        <ScrollArea className="flex-1 px-2 py-1.5 md:px-3 md:py-2">
+          <div className="space-y-1.5 md:space-y-2">
+
             {messages.length === 0 ? (
               <div className="text-center py-8 text-zinc-500">
                 <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -859,9 +860,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                           </span>
                         </div>
                       )}
-                      <div className="flex items-start gap-1">
+                      <div className="flex items-start gap-0.5 md:gap-1">
                         <div
-                          className={`px-2.5 py-1.5 rounded-lg text-xs ${
+                          className={`px-2 py-1 md:px-2.5 md:py-1.5 rounded-lg text-[11px] md:text-xs min-w-0 ${
                             isOwn
                               ? `${currentBubbleStyle.own} ${currentBubbleStyle.ownText} rounded-br-sm`
                               : `bg-zinc-800 text-zinc-100 rounded-bl-sm`
@@ -869,6 +870,7 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
                         >
                           <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                         </div>
+
                         
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -918,8 +920,9 @@ export function ChatPanel({ agentId, unitId, team, agentName, agentRole, agentAv
         </ScrollArea>
 
         {/* Message Input - Compact */}
-        <div className="p-2 border-t border-zinc-700/50 bg-zinc-900/90">
-          <div className="flex gap-2">
+        <div className="p-1.5 md:p-2 border-t border-zinc-700/50 bg-zinc-900/90">
+          <div className="flex gap-1.5 md:gap-2">
+
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
