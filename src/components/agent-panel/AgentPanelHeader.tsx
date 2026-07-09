@@ -423,11 +423,11 @@ export function AgentPanelHeader({ agent, isOnline, onReactivateShiftBanner, isS
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                     {isLoggingOut ? (
-                      <svg viewBox="0 0 24 24" className="h-4 w-4 relative animate-spin" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px] relative animate-spin" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                         <path d="M21 12a9 9 0 1 1-3-6.7" />
                       </svg>
                     ) : (
-                      <IconPower className="h-4 w-4 relative" />
+                      <IconPower className="h-[18px] w-[18px] relative" />
                     )}
                     <span className="relative">{isLoggingOut ? 'Saindo…' : 'Sair'}</span>
                   </button>
