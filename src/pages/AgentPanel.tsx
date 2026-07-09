@@ -70,7 +70,8 @@ const RoundsHistoryCard = lazy(() => import('@/components/agent-panel/RoundsHist
 const AgentsDirectoryCard = lazy(() => import('@/components/agent-panel/AgentsDirectoryCard').then(m => ({ default: m.AgentsDirectoryCard })));
 const RoundsManager = lazy(() => import('@/components/home/RoundsManager').then(m => ({ default: ((m as any).RoundsManager ?? (m as any).default) as React.ComponentType<{ customTrigger?: ReactNode }> })));
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, BellRing, Megaphone, Radio } from 'lucide-react';
+import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, BellRing, Megaphone, Radio, ChevronDown } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -980,77 +981,97 @@ export default function AgentPanel() {
                 </Suspense>}
               </TabsContent>
 
-              <TabsContent value="config" forceMount hidden={activeTab !== 'config'} className="space-y-4 md:space-y-5 mt-0 data-[state=inactive]:hidden">
+              <TabsContent value="config" forceMount hidden={activeTab !== 'config'} className="space-y-1.5 md:space-y-2 mt-0 data-[state=inactive]:hidden">
                 {mountedTabs.has('config') && <Suspense fallback={<ModuleFallback compact={compact} />}>
                 {/* ══════════ SEÇÃO 1: CONTA & SEGURANÇA ══════════ */}
-                <section aria-labelledby="cfg-sec-security" className="space-y-2.5 md:space-y-3">
-                  <h2 id="cfg-sec-security" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-purple-300/90 border-b border-purple-500/20 pb-1.5">
-                    <Key className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                    Conta &amp; Segurança
-                  </h2>
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5 md:gap-3">
-                    <AgentSettingsCard
-                      agentId={agent.id}
-                      agentName={agent.name}
-                      currentEmail={agent.email}
-                      currentAvatarUrl={(agent as any).avatar_url}
-                      onUpdate={() => window.location.reload()}
-                    />
-                    <div className="bg-gradient-to-br from-purple-900/40 to-slate-900/90 border border-purple-500/40 rounded-xl p-3 md:p-4 space-y-2 shadow-md">
-                      <h3 className="font-bold text-sm md:text-base flex items-center gap-2 text-slate-100">
-                        <Key className="h-4 w-4 md:h-5 md:w-5 text-purple-400" />
-                        Segurança da Conta
-                      </h3>
-                      <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
-                        Altere sua senha via solicitação ao administrador.
-                      </p>
-                      <div className="flex flex-wrap gap-2 md:gap-3">
-                        <PasswordChangeRequest
-                          agentId={agent.id}
-                          agentName={agent.name}
-                        />
+                <Collapsible defaultOpen>
+                  <CollapsibleTrigger className="group w-full flex items-center justify-between gap-2 px-2.5 py-1.5 md:px-3 md:py-2 rounded-md border border-purple-500/25 bg-purple-500/[0.06] hover:bg-purple-500/[0.10] transition-colors">
+                    <span className="flex items-center gap-2 text-[11px] md:text-xs font-bold uppercase tracking-wider text-purple-300/90">
+                      <Key className="h-3.5 w-3.5" />
+                      Conta &amp; Segurança
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 text-purple-300/70 transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-1.5 md:pt-2">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
+                      <AgentSettingsCard
+                        agentId={agent.id}
+                        agentName={agent.name}
+                        currentEmail={agent.email}
+                        currentAvatarUrl={(agent as any).avatar_url}
+                        onUpdate={() => window.location.reload()}
+                      />
+                      <div className="bg-gradient-to-br from-purple-900/40 to-slate-900/90 border border-purple-500/40 rounded-lg p-2.5 md:p-3 space-y-1.5 shadow-md">
+                        <h3 className="font-semibold text-xs md:text-sm flex items-center gap-1.5 text-slate-100">
+                          <Key className="h-3.5 w-3.5 text-purple-400" />
+                          Segurança da Conta
+                        </h3>
+                        <p className="text-[11px] md:text-xs text-slate-400 leading-snug">
+                          Altere sua senha via solicitação ao administrador.
+                        </p>
+                        <div className="flex flex-wrap gap-1.5 md:gap-2">
+                          <PasswordChangeRequest
+                            agentId={agent.id}
+                            agentName={agent.name}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </section>
+                  </CollapsibleContent>
+                </Collapsible>
 
                 {/* ══════════ SEÇÃO 2: NOTIFICAÇÕES & ALERTAS ══════════ */}
-                <section aria-labelledby="cfg-sec-notifs" className="space-y-2.5 md:space-y-3">
-                  <h2 id="cfg-sec-notifs" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-amber-300/90 border-b border-amber-500/20 pb-1.5">
-                    <BellRing className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                    Notificações &amp; Alertas
-                  </h2>
-                  <NotificationsAndAlertsCard agentId={agent.id} />
-                </section>
+                <Collapsible>
+                  <CollapsibleTrigger className="group w-full flex items-center justify-between gap-2 px-2.5 py-1.5 md:px-3 md:py-2 rounded-md border border-amber-500/25 bg-amber-500/[0.06] hover:bg-amber-500/[0.10] transition-colors">
+                    <span className="flex items-center gap-2 text-[11px] md:text-xs font-bold uppercase tracking-wider text-amber-300/90">
+                      <BellRing className="h-3.5 w-3.5" />
+                      Notificações &amp; Alertas
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 text-amber-300/70 transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-1.5 md:pt-2">
+                    <NotificationsAndAlertsCard agentId={agent.id} />
+                  </CollapsibleContent>
+                </Collapsible>
 
                 {/* ══════════ SEÇÃO 3: LEMBRETES INTELIGENTES ══════════ */}
-                <section aria-labelledby="cfg-sec-reminders" className="space-y-2.5 md:space-y-3">
-                  <h2 id="cfg-sec-reminders" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-cyan-300/90 border-b border-cyan-500/20 pb-1.5">
-                    <Clock className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                    Lembretes Inteligentes
-                  </h2>
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-2.5 md:gap-3">
-                    <SmartAlarmClock agentId={agent.id} />
-                    <BHReminderSettings agentId={agent.id} />
-                  </div>
-                </section>
+                <Collapsible>
+                  <CollapsibleTrigger className="group w-full flex items-center justify-between gap-2 px-2.5 py-1.5 md:px-3 md:py-2 rounded-md border border-cyan-500/25 bg-cyan-500/[0.06] hover:bg-cyan-500/[0.10] transition-colors">
+                    <span className="flex items-center gap-2 text-[11px] md:text-xs font-bold uppercase tracking-wider text-cyan-300/90">
+                      <Clock className="h-3.5 w-3.5" />
+                      Lembretes Inteligentes
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 text-cyan-300/70 transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-1.5 md:pt-2">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
+                      <SmartAlarmClock agentId={agent.id} />
+                      <BHReminderSettings agentId={agent.id} />
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
 
                 {/* ══════════ SEÇÃO 4: DIAGNÓSTICO ══════════ */}
-                <section aria-labelledby="cfg-sec-diag" className="space-y-2.5 md:space-y-3">
-                  <h2 id="cfg-sec-diag" className="flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-slate-300/90 border-b border-slate-500/20 pb-1.5">
-                    <Settings className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                    Diagnóstico
-                  </h2>
-                  <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-600/50 rounded-xl p-3 md:p-4 space-y-2 shadow-md">
-                    <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
-                      Resolva problemas de conexão ou sessão.
-                    </p>
-                    <div className="flex flex-wrap gap-2 md:gap-3">
-                      <DiagnosticReportButton />
-                      <SafeModeToggle variant="compact" />
+                <Collapsible>
+                  <CollapsibleTrigger className="group w-full flex items-center justify-between gap-2 px-2.5 py-1.5 md:px-3 md:py-2 rounded-md border border-slate-500/25 bg-slate-500/[0.06] hover:bg-slate-500/[0.10] transition-colors">
+                    <span className="flex items-center gap-2 text-[11px] md:text-xs font-bold uppercase tracking-wider text-slate-300/90">
+                      <Settings className="h-3.5 w-3.5" />
+                      Diagnóstico
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 text-slate-300/70 transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-1.5 md:pt-2">
+                    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-600/50 rounded-lg p-2.5 md:p-3 space-y-1.5 shadow-md">
+                      <p className="text-[11px] md:text-xs text-slate-400 leading-snug">
+                        Resolva problemas de conexão ou sessão.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 md:gap-2">
+                        <DiagnosticReportButton />
+                        <SafeModeToggle variant="compact" />
+                      </div>
                     </div>
-                  </div>
-                </section>
+                  </CollapsibleContent>
+                </Collapsible>
                 </Suspense>}
               </TabsContent>
 

@@ -196,11 +196,11 @@ export function AgentEventsCard({ agentId }: AgentEventsCardProps) {
 
   const getColorClass = (color: string) => {
     const colorMap: Record<string, string> = {
-      amber: 'bg-amber-500/30 text-amber-400 border-amber-500/30',
-      blue: 'bg-blue-500/30 text-blue-400 border-blue-500/30',
-      green: 'bg-green-500/30 text-green-400 border-green-500/30',
-      red: 'bg-red-500/30 text-red-400 border-red-500/30',
-      purple: 'bg-purple-500/30 text-purple-400 border-purple-500/30',
+      amber: 'bg-amber-500/10 text-amber-200/90 border-amber-500/25',
+      blue: 'bg-blue-500/10 text-blue-200/90 border-blue-500/25',
+      green: 'bg-green-500/10 text-green-200/90 border-green-500/25',
+      red: 'bg-red-500/10 text-red-200/90 border-red-500/25',
+      purple: 'bg-purple-500/10 text-purple-200/90 border-purple-500/25',
     };
     return colorMap[color] || colorMap.amber;
   };
@@ -214,22 +214,22 @@ export function AgentEventsCard({ agentId }: AgentEventsCardProps) {
       {/* Glow Effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
-      <CardHeader className="pb-4 relative">
-        <CardTitle className="flex items-center justify-between text-xl md:text-2xl">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/30 to-blue-500/20 border border-cyan-500/40">
-              <CalendarDays className="h-6 w-6 md:h-7 md:w-7 text-cyan-400" />
+      <CardHeader className="pb-2 pt-2.5 px-2.5 md:pb-3 md:pt-3 md:px-3 relative">
+        <CardTitle className="flex items-center justify-between text-sm md:text-base">
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <div className="p-1 md:p-1.5 rounded-md bg-cyan-500/15 border border-cyan-500/30">
+              <CalendarDays className="h-3.5 w-3.5 md:h-4 md:w-4 text-cyan-300" />
             </div>
-            <span className="font-bold bg-gradient-to-r from-cyan-200 to-blue-300 bg-clip-text text-transparent">
+            <span className="font-semibold text-cyan-100">
               Agenda Pessoal
             </span>
           </div>
-          <Badge className="text-sm bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border-cyan-500/40 px-3 py-1">
-            {events.length} eventos
+          <Badge className="text-[10px] md:text-xs bg-cyan-500/10 text-cyan-200/90 border border-cyan-500/25 px-1.5 py-0 h-5 font-medium">
+            {events.length}
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-5 relative">
+      <CardContent className="space-y-3 md:space-y-4 relative px-2.5 pb-2.5 md:px-3 md:pb-3">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-cyan-500" />
@@ -289,18 +289,18 @@ export function AgentEventsCard({ agentId }: AgentEventsCardProps) {
                           });
                           setShowEventDialog(true);
                         }}
-                        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:opacity-80 transition-opacity border ${getColorClass(event.color)}`}
+                        className={`flex items-center gap-2 px-2 py-1.5 md:px-2.5 md:py-2 rounded-md cursor-pointer hover:opacity-80 transition-opacity border ${getColorClass(event.color)}`}
                       >
-                        <EventIcon className="h-4 w-4 shrink-0" />
+                        <EventIcon className="h-3.5 w-3.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{event.title}</p>
-                          <p className="text-xs opacity-70">
+                          <p className="text-xs md:text-sm font-medium truncate">{event.title}</p>
+                          <p className="text-[10px] md:text-[11px] opacity-70">
                             {format(eventDate, "dd/MM/yyyy", { locale: ptBR })}
                             {event.start_time && ` às ${event.start_time}`}
                           </p>
                         </div>
                         {isToday(eventDate) && (
-                          <Badge className="bg-green-500/20 text-green-400 text-xs">Hoje</Badge>
+                          <Badge className="bg-green-500/15 text-green-300 border border-green-500/25 text-[9px] px-1.5 py-0 h-4">Hoje</Badge>
                         )}
                       </div>
                     );
