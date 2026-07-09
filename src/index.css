@@ -1347,3 +1347,138 @@ html.tab-hidden *::after {
     align-items: center;
   }
 }
+
+/* ============================================================
+   UI/UX REFRESH v2 — utilitários globais (aditivos)
+   ============================================================
+   Objetivo: elevar consistência visual sem alterar componentes
+   existentes. Cada classe é opt-in — código antigo continua igual.
+   ============================================================ */
+
+@layer utilities {
+  /* Motion tokens — easings/durations padronizados */
+  :root {
+    --motion-fast: 150ms;
+    --motion-base: 220ms;
+    --motion-slow: 380ms;
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Tap target — garante 44x44 em touch sem afetar desktop */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  @media (pointer: coarse) {
+    button:not([data-tap-exempt]),
+    a[role="button"]:not([data-tap-exempt]),
+    [role="button"]:not([data-tap-exempt]) {
+      min-height: 40px;
+    }
+  }
+
+  /* Card hover-lift sutil — 1 linha para elevar qualquer card interativo */
+  .card-hover-lift {
+    transition:
+      transform var(--motion-base) var(--ease-out-quart),
+      box-shadow var(--motion-base) var(--ease-in-out-soft),
+      border-color var(--motion-base) var(--ease-in-out-soft);
+    will-change: transform;
+  }
+  .card-hover-lift:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow:
+      0 12px 28px -14px hsl(var(--primary) / 0.28),
+      0 4px 10px -6px hsl(0 0% 0% / 0.4);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card-hover-lift { transition: none; }
+    .card-hover-lift:hover { transform: none; }
+  }
+
+  /* Focus-ring refinado — mais visível, menos intrusivo */
+  .focus-ring-primary:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--primary) / 0.65);
+    border-radius: inherit;
+  }
+
+  /* Section header — hierarquia consistente para títulos de seção */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
+    margin-bottom: 1rem;
+  }
+  .section-header::before {
+    content: "";
+    width: 3px;
+    height: 1rem;
+    background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.3) 100%);
+    border-radius: 2px;
+  }
+
+  /* Divisor tático horizontal moderno */
+  .divider-soft {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--border) / 0.6) 20%,
+      hsl(var(--border) / 0.6) 80%,
+      transparent 100%
+    );
+  }
+
+  /* Content padding responsivo padronizado — usar em containers principais */
+  .content-padded {
+    padding-inline: 1rem;
+    padding-block: 1rem;
+  }
+  @media (min-width: 640px) {
+    .content-padded { padding-inline: 1.5rem; padding-block: 1.25rem; }
+  }
+  @media (min-width: 1024px) {
+    .content-padded { padding-inline: 2rem; padding-block: 1.5rem; }
+  }
+
+  /* Densidade reduzida — respiro extra em cards pesados */
+  .stack-loose > * + * { margin-top: 1.25rem; }
+  .stack-normal > * + * { margin-top: 0.875rem; }
+  .stack-tight > * + * { margin-top: 0.5rem; }
+
+  /* Interactive shimmer sutil para skeletons */
+  @keyframes skeleton-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted) / 0.4) 0%,
+      hsl(var(--muted) / 0.7) 50%,
+      hsl(var(--muted) / 0.4) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* Scrollbar sutil e tática (webkit) */
+  .scrollbar-tactical::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar-tactical::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-tactical::-webkit-scrollbar-thumb {
+    background: hsl(var(--border) / 0.6);
+    border-radius: 4px;
+  }
+  .scrollbar-tactical::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
+}
+
