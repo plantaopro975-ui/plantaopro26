@@ -164,6 +164,7 @@ export default function Index() {
     title: string;
     message: string;
     type: 'error' | 'warning' | 'auth' | 'password' | 'team';
+    unit?: string;
   }>({ open: false, title: '', message: '', type: 'auth' });
   
   // Lockout timer state
