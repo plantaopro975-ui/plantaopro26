@@ -749,117 +749,8 @@ function nextPhrases(team: TeamKey, count = 4): string[] {
  * Ciclo profissional: 60s exibindo doutrina → 180s em pausa (só efeitos) → repete.
  * A cada retomada, novas frases são sorteadas sem repetir a última sequência.
  */
-/* ================= Painel de programação (armed) ==================
- * Exibido quando o operador programa a ronda ANTES do horário do 1º
- * agente. Mostra cadeado + countdown profissional até o disparo. */
-function ArmedLockPanel({
-  targetMs, nowMs, color, team, firstAgent, startLabel, onCancel, onStartNow,
-}: {
-  targetMs: number;
-  nowMs: number;
-  color: string;
-  team: TeamKey;
-  firstAgent?: string;
-  startLabel: string;
-  onCancel: () => void;
-  onStartNow: () => void;
-}) {
-  const remainingMs = Math.max(0, targetMs - nowMs);
-  const totalSec = Math.floor(remainingMs / 1000);
-  const hh = String(Math.floor(totalSec / 3600)).padStart(2, '0');
-  const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
-  const ss = String(totalSec % 60).padStart(2, '0');
-  const targetDate = new Date(targetMs);
-  const targetLabel = targetDate.toLocaleString('pt-BR', {
-    weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
-  });
-  const isImminent = totalSec <= 60;
+/* Painel de programação removido — a ronda agora só inicia manualmente. */
 
-  return (
-    <div
-      className="relative mb-1.5 overflow-hidden rounded-md border px-2 py-1"
-      style={{
-        borderColor: `${color}55`,
-        background: `linear-gradient(135deg, ${color}12 0%, transparent 60%), hsl(var(--card))`,
-        boxShadow: `0 8px 24px -18px ${color}, inset 0 1px 0 ${color}22`,
-      }}
-      role="status"
-      aria-live="polite"
-      title={`Disparo automático em ${targetLabel} · Equipe ${team}${firstAgent ? ` · ${firstAgent}` : ''}`}
-    >
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px"
-        style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
-      />
-      <div className="flex items-center gap-1.5 min-w-0 flex-nowrap whitespace-nowrap">
-        <div className="relative shrink-0">
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: `radial-gradient(circle, ${color}55, transparent 70%)`,
-              animation: 'armPulse 2.2s ease-in-out infinite',
-            }}
-          />
-          <div
-            className="relative flex h-6 w-6 items-center justify-center rounded-full border"
-            style={{ borderColor: `${color}88`, background: `${color}18` }}
-          >
-            <Lock className="h-3 w-3" style={{ color }} strokeWidth={2.3} />
-          </div>
-        </div>
-
-        <span
-          className="font-mono text-[13px] sm:text-sm font-bold tabular-nums leading-none shrink-0"
-          style={{
-            color,
-            textShadow: `0 0 10px ${color}55`,
-            animation: isImminent ? 'armTick 1s ease-in-out infinite' : undefined,
-          }}
-        >
-          {hh}:{mm}:{ss}
-        </span>
-
-        <span className="shrink-0 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          → <span className="text-foreground/90">{targetLabel}</span>
-        </span>
-
-        <span className="min-w-0 flex-1 truncate text-[10px] text-muted-foreground">
-          · {team}{firstAgent ? ` · ${firstAgent}` : ''}
-        </span>
-
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          onClick={onStartNow}
-          className="h-6 px-1.5 text-[10px] font-semibold shrink-0"
-          style={{ color }}
-          title="Iniciar imediatamente"
-        >
-          <Play className="h-3 w-3" />
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          onClick={onCancel}
-          className="h-6 px-1.5 text-[10px] text-muted-foreground hover:text-destructive shrink-0"
-          title="Cancelar programação"
-          aria-label="Cancelar programação"
-        >
-          <XCircle className="h-3 w-3" />
-        </Button>
-      </div>
-
-      <style>{`
-        @keyframes armPulse { 0%,100% { opacity: 0.35; transform: scale(0.95); } 50% { opacity: 0.85; transform: scale(1.08); } }
-        @keyframes armDot   { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
-        @keyframes armTick  { 0%,100% { text-shadow: 0 0 0 currentColor; } 50% { text-shadow: 0 0 12px currentColor; } }
-      `}</style>
-    </div>
-  );
-}
 
 
 
@@ -1608,25 +1499,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
 
-  const armedRef = useRef(false);
   const addAgent = () => {
-    if (armedRef.current) {
-      toast({ title: 'Programação ativa', description: 'Cancele a programação para adicionar agentes.', variant: 'destructive' });
-      return;
-    }
     setAgents((a) => [...a, `Agente ${a.length + 1}`]);
   };
   const removeAgent = (i: number) => {
-    if (armedRef.current) {
-      toast({ title: 'Programação ativa', description: 'Cancele a programação para remover agentes.', variant: 'destructive' });
-      return;
-    }
     setAgents((a) => a.filter((_, idx) => idx !== i));
   };
   const updateAgent = (i: number, v: string) => {
-    if (armedRef.current) return;
     setAgents((a) => a.map((x, idx) => (idx === i ? v : x)));
   };
+
 
   const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
 
@@ -1651,54 +1533,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
 
-  // ─── Programação antecipada (armar ronda) ─────────────────────────────
-  // O agente pode configurar tudo e "Programar" a ronda antes do horário
-  // do primeiro slot. Enquanto armada, o painel exibe um cadeado e um
-  // timer profissional até o momento de iniciar automaticamente.
-  const ARMED_KEY = `plantaopro_armed_${team}`;
-  const [armedForMs, setArmedForMs] = useState<number | null>(() => {
-    try {
-      const raw = localStorage.getItem(`plantaopro_armed_${team}`);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw) as { targetMs: number };
-      if (typeof parsed?.targetMs === 'number' && parsed.targetMs > Date.now()) return parsed.targetMs;
-      localStorage.removeItem(`plantaopro_armed_${team}`);
-      return null;
-    } catch { return null; }
-  });
-  const armed = armedForMs != null && !running;
-  useEffect(() => { armedRef.current = armed; }, [armed]);
-  const configLocked = armed;
-  const autoFiredRef = useRef<number | null>(null);
-  const [cancelArmConfirmOpen, setCancelArmConfirmOpen] = useState(false);
-
-  // Persistência: sobrevive a reload/aba fechada até o horário do disparo
+  // Programação antecipada foi removida — a ronda só inicia manualmente.
+  // Também limpamos qualquer chave legada de programação armazenada em
+  // localStorage para não travar a UI de nenhum usuário que atualize o app.
   useEffect(() => {
     try {
-      if (armedForMs && armedForMs > Date.now()) {
-        localStorage.setItem(ARMED_KEY, JSON.stringify({ targetMs: armedForMs, team, startTime }));
-      } else {
-        localStorage.removeItem(ARMED_KEY);
-      }
+      (['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const).forEach((k) => {
+        localStorage.removeItem(`plantaopro_armed_${k}`);
+      });
     } catch { /* ignore */ }
-  }, [armedForMs, ARMED_KEY, team, startTime]);
+  }, []);
+  const armed = false;
+  const configLocked = false;
 
-  // Ao trocar de equipe, tenta restaurar programação salva desta equipe
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(ARMED_KEY);
-      if (!raw) { setArmedForMs(null); return; }
-      const parsed = JSON.parse(raw) as { targetMs: number; startTime?: string };
-      if (typeof parsed?.targetMs === 'number' && parsed.targetMs > Date.now()) {
-        setArmedForMs(parsed.targetMs);
-        if (parsed.startTime) setStartTime(parsed.startTime);
-      } else {
-        localStorage.removeItem(ARMED_KEY);
-        setArmedForMs(null);
-      }
-    } catch { /* ignore */ }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [team]);
 
 
 
@@ -2189,71 +2036,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const pauseTimer = () => setRunning(false);
 
-  /* ---------- Programar (arm) ronda antes do horário do 1º agente ----------
-   * Calcula o timestamp-alvo baseado em `startTime` (HH:MM). Se o horário já
-   * passou hoje, agenda para amanhã. Enquanto armada, o painel exibe cadeado
-   * + timer profissional e dispara startTimer() automaticamente ao zerar.
-   */
-  const armRoundForStart = () => {
-    if (!schedule) {
-      toast({ title: 'Corrija os erros antes de programar.', variant: 'destructive' });
-      return;
-    }
-    const target = toMinutes(startTime);
-    if (target == null) {
-      toast({ title: 'Horário inválido', description: 'Informe um horário de início válido (HH:MM).', variant: 'destructive' });
-      return;
-    }
-    const now = new Date(nowServer());
-    const t = new Date(now);
-    t.setHours(Math.floor(target / 60), target % 60, 0, 0);
-    const diff = t.getTime() - nowServer();
-    if (diff <= 0) {
-      toast({
-        title: 'Horário no passado',
-        description: `Não é possível programar para ${startTime} — este horário já passou hoje. Ajuste o campo "Início" para um horário futuro.`,
-        variant: 'destructive',
-      });
-      return;
-    }
-    if (diff < 30_000) {
-      toast({
-        title: 'Muito próximo',
-        description: 'Programe para pelo menos 30 segundos no futuro ou clique em "Iniciar" para começar agora.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    setArmedForMs(t.getTime());
-    autoFiredRef.current = null;
-    toast({
-      title: 'Ronda programada',
-      description: `Início automático em ${t.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}. Painel travado até lá.`,
-    });
-  };
-  const disarmRound = () => {
-    setArmedForMs(null);
-    autoFiredRef.current = null;
-    setCancelArmConfirmOpen(false);
-    toast({ title: 'Programação cancelada' });
-  };
-  // Auto-início ao zerar o countdown — protegido por ref para disparar
-  // exatamente 1x por programação, imune a re-renders/StrictMode.
-  // A âncora é fixada no `armedForMs` alvo (não em Date.now no tick) para
-  // GARANTIR que o cronômetro comece no slot do Agente 1 mesmo que o tick
-  // do React chegue algumas dezenas/centenas de ms após o horário-alvo.
-  useEffect(() => {
-    if (!armed || armedForMs == null) return;
-    if (autoFiredRef.current === armedForMs) return; // já disparou p/ este alvo
-    const remaining = armedForMs - nowServer();
-    if (remaining <= 0) {
-      const target = armedForMs;
-      autoFiredRef.current = target;
-      setArmedForMs(null);
-      startTimer({ anchorOverrideMs: target });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [armed, armedForMs, tick]);
+  /* Programação antecipada removida — sem armRoundForStart / disarmRound. */
+
 
 
 
@@ -2984,48 +2768,21 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         })()}
 
 
-                        {/* Painel travado quando a ronda está PROGRAMADA — cadeado + countdown profissional */}
-                        {armed && armedForMs != null && (
-                          <ArmedLockPanel
-                            targetMs={armedForMs}
-                            nowMs={nowServer()}
-                            color={teamColor}
-                            team={team}
-                            firstAgent={schedule?.rows[0]?.name}
-                            startLabel={startTime}
-                            onCancel={() => setCancelArmConfirmOpen(true)}
-                            onStartNow={() => { setArmedForMs(null); setStartConfirmOpen(true); }}
-                          />
-                        )}
-
                         <div className="flex items-center gap-2 pt-1">
-                          {!running && !armed ? (
-                            <>
-                              <Button
-                                type="button"
-                                size="sm"
-                                onClick={() => {
-                                  if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
-                                  setStartConfirmOpen(true);
-                                }}
-                                className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
-                                style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
-                              >
-                                <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
-                              </Button>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={armRoundForStart}
-                                title={`Programar início automático às ${startTime}`}
-                                className="h-9 px-3 border-dashed font-semibold"
-                                style={{ borderColor: `${teamColor}80`, color: teamColor }}
-                              >
-                                <CalendarClock className="h-3.5 w-3.5 mr-1.5" /> Programar
-                              </Button>
-                            </>
-                          ) : running ? (
+                          {!running ? (
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => {
+                                if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
+                                setStartConfirmOpen(true);
+                              }}
+                              className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
+                              style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
+                            >
+                              <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
+                            </Button>
+                          ) : (
                             <Button
                               type="button"
                               size="sm"
@@ -3035,16 +2792,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               className="h-9 px-4 border border-destructive/45 bg-destructive/10 text-destructive hover:bg-destructive/15"
                             >
                               <Pause className="h-3.5 w-3.5 mr-1.5" /> Bloqueado
-                            </Button>
-                          ) : (
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => setCancelArmConfirmOpen(true)}
-                              variant="outline"
-                              className="h-9 px-4 border-destructive/45 text-destructive hover:bg-destructive/10"
-                            >
-                              <XCircle className="h-3.5 w-3.5 mr-1.5" /> Cancelar programação
                             </Button>
                           )}
                           <Button
@@ -3243,25 +2990,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         onSecondary={confirmAndClose}
       />
 
-      {/* Confirmação para destravar a ronda programada — evita perda acidental de escala */}
-      <ConfirmDialog
-        open={cancelArmConfirmOpen}
-        onOpenChange={setCancelArmConfirmOpen}
-        variant="warning"
-        kicker="CANCELAR PROGRAMAÇÃO"
-        title="Destravar a ronda programada?"
-        description={
-          <span>
-            A escala configurada para <b>{startTime}</b> será cancelada e o cadeado removido.{' '}
-            Você precisará programar novamente para agendar o início automático.
-          </span>
-        }
-        accent={teamColor}
-        primaryLabel="Manter programação"
-        onPrimary={() => setCancelArmConfirmOpen(false)}
-        secondaryLabel="Sim, cancelar"
-        onSecondary={disarmRound}
-      />
+
+
 
 
     </>
