@@ -2231,7 +2231,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   className="relative border-t px-3 py-1.5 sm:px-4"
                   style={{ borderColor: `${teamColor}22`, background: `linear-gradient(180deg, ${teamColor}08, transparent)` }}
                 >
-                  <TeamOperationsStripe team={team} color={teamColor} active={!!currentView && !currentView.done} />
+                  <TeamOperationsStripe
+                    team={team}
+                    color={teamColor}
+                    active={!!currentView && !currentView.done}
+                    alertLevel={securityAlert.level}
+                    alertLabel={securityAlert.label}
+                  />
+                  {isAdminUser && <SecurityDoctrineCard color={teamColor} />}
                 </div>
               </div>
 
