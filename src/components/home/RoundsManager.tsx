@@ -2946,7 +2946,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <Button
                               type="button"
                               size="sm"
-                              onClick={disarmRound}
+                              onClick={() => setCancelArmConfirmOpen(true)}
                               variant="outline"
                               className="h-9 px-4 border-destructive/45 text-destructive hover:bg-destructive/10"
                             >
