@@ -92,9 +92,21 @@ interface TeamObjectProps {
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   // Envelope QUADRADO IDÊNTICO para todas as equipes.
-  // Tamanho fixo por breakpoint garante que ALFA/BRAVO/CHARLIE/DELTA
-  // ocupem o mesmo bounding box. `object-contain` respeita a proporção
-  // nativa de cada asset dentro desse quadrado.
+  // Cada asset foi exportado com padding transparente diferente, então
+  // aplicamos um `scale` de compensação por equipe para equilibrar a
+  // presença visual (medida via bbox do conteúdo dentro do canvas 640×640):
+  //   ALFA escudo   → 60% de preenchimento
+  //   BRAVO espada  → 78% (referência, precisa reduzir)
+  //   CHARLIE binóc → 62% mas achatado (precisa aumentar)
+  //   DELTA rádio   → 32% estreito (precisa aumentar)
+  const OBJECT_SCALE: Record<TeamKey, number> = {
+    ALFA: 1.02,
+    BRAVO: 0.92,
+    CHARLIE: 1.18,
+    DELTA: 1.10,
+  };
+  const scale = OBJECT_SCALE[team.key] ?? 1;
+
   const imgClass = cn(
     'block h-full w-full object-contain object-center select-none animate-float3d',
     'drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]',
@@ -107,7 +119,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
     <div className="relative flex h-full w-full items-center justify-center">
       {/* Quadrado fixo — mesma "moldura" para todos os 3D */}
       <div className="relative aspect-square w-[118px] min-[390px]:w-[126px] sm:w-[128px] lg:w-[140px] xl:w-[152px] max-h-full flex items-center justify-center">
-        <picture className="flex h-full w-full items-center justify-center">
+        <picture className="flex h-full w-full items-center justify-center" style={{ transform: `scale(${scale})`, transformOrigin: '50% 50%' }}>
           <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 126px, (max-width: 1024px) 128px, 152px" />
           <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 126px, (max-width: 1024px) 128px, 152px" />
           <img
