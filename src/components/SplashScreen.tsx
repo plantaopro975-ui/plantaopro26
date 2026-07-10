@@ -130,6 +130,18 @@ export function SplashScreen() {
       </div>
 
       <style>{`
+        /* Default (desktop / landscape): preenche toda a viewport */
+        .sp-splash-img {
+          object-fit: cover;
+          object-position: center center;
+        }
+        /* Mobile portrait: exibe a arte inteira sem cortes/esmagamento */
+        @media (max-width: 767px) and (orientation: portrait) {
+          .sp-splash-img {
+            object-fit: contain;
+            object-position: center center;
+          }
+        }
         @keyframes spSplashIn {
           from { opacity: 0; transform: scale(1.04); filter: blur(4px); }
           to   { opacity: 1; transform: scale(1); filter: blur(0); }
@@ -149,6 +161,7 @@ export function SplashScreen() {
           }
         }
       `}</style>
+
     </div>
   );
 }
