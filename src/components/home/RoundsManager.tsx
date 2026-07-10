@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
   Play, Pause, RotateCcw, Radio, ChevronRight, AlertTriangle,
-  CheckCircle2, Volume2, VolumeX,
+  CheckCircle2, Volume2, VolumeX, Lock, CalendarClock, XCircle,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
@@ -749,6 +749,145 @@ function nextPhrases(team: TeamKey, count = 4): string[] {
  * Ciclo profissional: 60s exibindo doutrina → 180s em pausa (só efeitos) → repete.
  * A cada retomada, novas frases são sorteadas sem repetir a última sequência.
  */
+/* ================= Painel de programação (armed) ==================
+ * Exibido quando o operador programa a ronda ANTES do horário do 1º
+ * agente. Mostra cadeado + countdown profissional até o disparo. */
+function ArmedLockPanel({
+  targetMs, nowMs, color, team, firstAgent, startLabel, onCancel, onStartNow,
+}: {
+  targetMs: number;
+  nowMs: number;
+  color: string;
+  team: TeamKey;
+  firstAgent?: string;
+  startLabel: string;
+  onCancel: () => void;
+  onStartNow: () => void;
+}) {
+  const remainingMs = Math.max(0, targetMs - nowMs);
+  const totalSec = Math.floor(remainingMs / 1000);
+  const hh = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+  const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+  const ss = String(totalSec % 60).padStart(2, '0');
+  const targetDate = new Date(targetMs);
+  const targetLabel = targetDate.toLocaleString('pt-BR', {
+    weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
+  });
+  const isImminent = totalSec <= 60;
+
+  return (
+    <div
+      className="relative mb-2 overflow-hidden rounded-lg border p-3 sm:p-4"
+      style={{
+        borderColor: `${color}55`,
+        background: `linear-gradient(135deg, ${color}12 0%, transparent 60%), hsl(var(--card))`,
+        boxShadow: `0 16px 38px -22px ${color}, inset 0 1px 0 ${color}22`,
+      }}
+      role="status"
+      aria-live="polite"
+    >
+      {/* faixa scanline */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
+      />
+      <div className="flex items-start gap-3 sm:gap-4">
+        {/* Cadeado com halo pulsante */}
+        <div className="relative shrink-0">
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: `radial-gradient(circle, ${color}55, transparent 70%)`,
+              animation: 'armPulse 2.2s ease-in-out infinite',
+            }}
+          />
+          <div
+            className="relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full border"
+            style={{ borderColor: `${color}88`, background: `${color}18` }}
+          >
+            <Lock className="h-6 w-6 sm:h-7 sm:w-7" style={{ color }} strokeWidth={2.2} />
+          </div>
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full"
+              style={{ backgroundColor: color, animation: 'armDot 1.2s ease-in-out infinite' }}
+            />
+            Ronda programada · painel travado
+          </div>
+          <div className="mt-0.5 text-[13px] sm:text-sm font-semibold text-foreground/95 leading-snug">
+            Equipe <span style={{ color }}>{team}</span>
+            {firstAgent && <> · início por <span className="text-foreground">{firstAgent}</span></>} às <span className="text-foreground">{startLabel}</span>
+          </div>
+
+          {/* Countdown profissional */}
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <TimeCell value={hh} label="h" color={color} />
+            <span className="text-lg sm:text-xl font-bold opacity-40" style={{ color }}>:</span>
+            <TimeCell value={mm} label="min" color={color} />
+            <span className="text-lg sm:text-xl font-bold opacity-40" style={{ color }}>:</span>
+            <TimeCell value={ss} label="s" color={color} pulse={isImminent} />
+          </div>
+
+          <div className="mt-1.5 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+            Disparo automático em {targetLabel}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5 shrink-0">
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={onStartNow}
+            className="h-8 px-2 text-[11px] font-semibold"
+            style={{ color }}
+            title="Iniciar imediatamente sem esperar o horário programado"
+          >
+            <Play className="h-3 w-3 mr-1" /> Iniciar agora
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={onCancel}
+            className="h-8 px-2 text-[11px] text-muted-foreground hover:text-destructive"
+          >
+            <XCircle className="h-3 w-3 mr-1" /> Cancelar
+          </Button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes armPulse { 0%,100% { opacity: 0.35; transform: scale(0.95); } 50% { opacity: 0.85; transform: scale(1.08); } }
+        @keyframes armDot   { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+        @keyframes armTick  { 0%,100% { text-shadow: 0 0 0 currentColor; } 50% { text-shadow: 0 0 12px currentColor; } }
+      `}</style>
+    </div>
+  );
+}
+
+function TimeCell({ value, label, color, pulse }: { value: string; label: string; color: string; pulse?: boolean }) {
+  return (
+    <div className="flex flex-col items-center">
+      <span
+        className="font-mono text-2xl sm:text-3xl font-bold tabular-nums leading-none"
+        style={{
+          color,
+          textShadow: `0 0 14px ${color}66`,
+          animation: pulse ? 'armTick 1s ease-in-out infinite' : undefined,
+        }}
+      >
+        {value}
+      </span>
+      <span className="mt-0.5 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">{label}</span>
+    </div>
+  );
+}
+
 function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
   const [visible, setVisible] = useState(true);
   const [phrases, setPhrases] = useState<string[]>(() => nextPhrases(team, 4));
@@ -1492,6 +1631,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
 
+  // ─── Programação antecipada (armar ronda) ─────────────────────────────
+  // O agente pode configurar tudo e "Programar" a ronda antes do horário
+  // do primeiro slot. Enquanto armada, o painel exibe um cadeado e um
+  // timer profissional até o momento de iniciar automaticamente.
+  const [armedForMs, setArmedForMs] = useState<number | null>(null);
+  const armed = armedForMs != null && !running;
+
 
 
   /* ---------- início efetivo (turno noturno) ----------
@@ -1639,10 +1785,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     // "quanto falta pro slot do agente atual terminar" atualize em tempo real
     // enquanto o operador só configura a ronda.
     const needsPreview = nightEffectivelyLocked && mode === 'split' && !!schedule;
-    if (!running && !needsPreview) return;
+    if (!running && !needsPreview && !armed) return;
     const id = setInterval(() => setTick((t) => t + 1), 500);
     return () => clearInterval(id);
-  }, [running, nightEffectivelyLocked, mode, schedule]);
+  }, [running, nightEffectivelyLocked, mode, schedule, armed]);
 
   const live = useMemo(() => {
     if (!schedule || !running || startedAtRef.current == null) return null;
@@ -1966,6 +2112,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
 
   const pauseTimer = () => setRunning(false);
+
+  /* ---------- Programar (arm) ronda antes do horário do 1º agente ----------
+   * Calcula o timestamp-alvo baseado em `startTime` (HH:MM). Se o horário já
+   * passou hoje, agenda para amanhã. Enquanto armada, o painel exibe cadeado
+   * + timer profissional e dispara startTimer() automaticamente ao zerar.
+   */
+  const armRoundForStart = () => {
+    if (!schedule) {
+      toast({ title: 'Corrija os erros antes de programar.', variant: 'destructive' });
+      return;
+    }
+    const target = toMinutes(startTime);
+    if (target == null) return;
+    const now = new Date(nowServer());
+    const t = new Date(now);
+    t.setHours(Math.floor(target / 60), target % 60, 0, 0);
+    if (t.getTime() <= nowServer() + 5_000) {
+      // Já passou (ou vai passar em <5s): agenda para amanhã
+      t.setDate(t.getDate() + 1);
+    }
+    setArmedForMs(t.getTime());
+    toast({
+      title: 'Ronda programada',
+      description: `Início automático às ${startTime}. Painel travado até lá.`,
+    });
+  };
+  const disarmRound = () => {
+    setArmedForMs(null);
+    toast({ title: 'Programação cancelada' });
+  };
+  // Auto-início ao zerar o countdown
+  useEffect(() => {
+    if (!armed || armedForMs == null) return;
+    const remaining = armedForMs - nowServer();
+    if (remaining <= 0) {
+      setArmedForMs(null);
+      startTimer();
+    }
+    // dependemos de `tick` (500ms) para reavaliar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [armed, armedForMs, tick]);
+
+
   const resetTimer = () => {
     setRunning(false);
     startedAtRef.current = null;
@@ -2691,21 +2880,48 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         })()}
 
 
+                        {/* Painel travado quando a ronda está PROGRAMADA — cadeado + countdown profissional */}
+                        {armed && armedForMs != null && (
+                          <ArmedLockPanel
+                            targetMs={armedForMs}
+                            nowMs={nowServer()}
+                            color={teamColor}
+                            team={team}
+                            firstAgent={schedule?.rows[0]?.name}
+                            startLabel={startTime}
+                            onCancel={disarmRound}
+                            onStartNow={() => { setArmedForMs(null); setStartConfirmOpen(true); }}
+                          />
+                        )}
+
                         <div className="flex items-center gap-2 pt-1">
-                          {!running ? (
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => {
-                                if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
-                                setStartConfirmOpen(true);
-                              }}
-                              className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
-                              style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
-                            >
-                              <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
-                            </Button>
-                          ) : (
+                          {!running && !armed ? (
+                            <>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() => {
+                                  if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
+                                  setStartConfirmOpen(true);
+                                }}
+                                className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
+                                style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
+                              >
+                                <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={armRoundForStart}
+                                title={`Programar início automático às ${startTime}`}
+                                className="h-9 px-3 border-dashed font-semibold"
+                                style={{ borderColor: `${teamColor}80`, color: teamColor }}
+                              >
+                                <CalendarClock className="h-3.5 w-3.5 mr-1.5" /> Programar
+                              </Button>
+                            </>
+                          ) : running ? (
                             <Button
                               type="button"
                               size="sm"
@@ -2715,6 +2931,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               className="h-9 px-4 border border-destructive/45 bg-destructive/10 text-destructive hover:bg-destructive/15"
                             >
                               <Pause className="h-3.5 w-3.5 mr-1.5" /> Bloqueado
+                            </Button>
+                          ) : (
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={disarmRound}
+                              variant="outline"
+                              className="h-9 px-4 border-destructive/45 text-destructive hover:bg-destructive/10"
+                            >
+                              <XCircle className="h-3.5 w-3.5 mr-1.5" /> Cancelar programação
                             </Button>
                           )}
                           <Button
