@@ -284,17 +284,18 @@ export default function About() {
                   {specs.map((s) => (
                     <div
                       key={s.label}
-                      className="rounded-md border border-amber-500/10 bg-[#050810]/60 px-2 py-1.5"
+                      className="rounded-md border border-amber-500/10 bg-[#050810]/60 px-2 py-1.5 min-w-0"
                     >
                       <div
-                        className="text-[9px] uppercase tracking-wider text-slate-500"
+                        className="text-[9px] uppercase tracking-wider text-slate-500 truncate"
                         style={{ fontFamily: MONO }}
                       >
                         {s.label}
                       </div>
                       <div
-                        className="text-[13px] font-semibold text-slate-100 leading-tight"
+                        className="text-[12px] sm:text-[13px] font-semibold text-slate-100 leading-tight truncate"
                         style={{ fontFamily: SERIF }}
+                        title={s.value}
                       >
                         {s.value}
                       </div>
