@@ -2411,6 +2411,19 @@ export type Database = {
           unit_name: string
         }[]
       }
+      list_units_basic: {
+        Args: never
+        Returns: {
+          address: string
+          coordinator_name: string
+          director_name: string
+          email: string
+          id: string
+          municipality: string
+          name: string
+          phone: string
+        }[]
+      }
       lookup_agent_for_login: {
         Args: { _cpf: string }
         Returns: {

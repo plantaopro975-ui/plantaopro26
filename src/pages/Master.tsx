@@ -86,6 +86,7 @@ import { Bell } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
 const iseAcreBadge = iseAcreBadgeAsset.url;
 import { PanelNav } from '@/components/ui/panel-nav';
+import { formatUnitName } from '@/lib/unitNames';
 
 interface UserWithRole {
   id: string;
@@ -165,6 +166,7 @@ export default function Master() {
     pendingApprovals: 0,
   });
   const [loadingData, setLoadingData] = useState(true);
+  const [unitsError, setUnitsError] = useState<string | null>(null);
   const [agentSearchTerm, setAgentSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   
@@ -323,12 +325,28 @@ export default function Master() {
 
       setUsers(usersWithRoles);
 
-      // Fetch units
-      const { data: unitsData } = await supabase
-        .from('units')
-        .select('*')
-        .order('municipality, name');
-      
+      // Fetch units — usa RPC pública (SECURITY DEFINER) para funcionar com sessão master (sem auth.uid())
+      setUnitsError(null);
+      let unitsData: Unit[] | null = null;
+      const rpcRes = await (supabase as any).rpc('list_units_basic');
+      if (rpcRes.error) {
+        console.error('[Master] list_units_basic RPC falhou:', rpcRes.error);
+        // Fallback: tenta leitura direta (funciona se houver sessão authenticated)
+        const fallback = await supabase.from('units').select('*').order('name');
+        if (fallback.error) {
+          console.error('[Master] fallback units select falhou:', fallback.error);
+          setUnitsError(rpcRes.error.message || fallback.error.message || 'Falha ao carregar unidades');
+        } else {
+          unitsData = (fallback.data as Unit[]) || [];
+        }
+      } else {
+        unitsData = (rpcRes.data as Unit[]) || [];
+      }
+
+      if (unitsData && unitsData.length === 0) {
+        setUnitsError('Nenhuma unidade retornada pela consulta. Verifique permissões (RLS) ou o cadastro.');
+        console.warn('[Master] Consulta de unidades retornou vazio.');
+      }
       setUnits(unitsData || []);
 
       // Fetch agents with license info
@@ -382,7 +400,7 @@ export default function Master() {
       setStats({
         totalUsers: usersWithRoles.length,
         totalAgents: agentsRes.count || 0,
-        totalUnits: unitsRes.count || 0,
+        totalUnits: unitsRes.count ?? unitsData?.length ?? 0,
         pendingTransfers: transfersRes.count || 0,
         activeAgents: activeCount,
         expiredLicenses: expiredCount,
@@ -750,8 +768,20 @@ export default function Master() {
 
           {/* Overview Tab - Units */}
           <TabsContent value="overview" className="space-y-6 mt-6">
+            {unitsError && (
+              <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+                <strong>Aviso — Unidades:</strong> {unitsError}
+                <button
+                  type="button"
+                  onClick={fetchData}
+                  className="ml-3 underline underline-offset-2 hover:text-amber-100"
+                >
+                  Tentar novamente
+                </button>
+              </div>
+            )}
             <UnitsManagementCard 
-              units={units}
+              units={units.map(u => ({ ...u, name: formatUnitName(u.name) }))}
               agents={agents.map(a => ({
                 id: a.id,
                 name: a.name,
@@ -862,9 +892,14 @@ export default function Master() {
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
                           <SelectContent className="bg-popover border-border">
+                            {units.length === 0 && (
+                              <div className="px-3 py-2 text-sm text-amber-500">
+                                Nenhuma unidade disponível. {unitsError ? `(${unitsError})` : ''}
+                              </div>
+                            )}
                             {units.map((unit) => (
                               <SelectItem key={unit.id} value={unit.id}>
-                                {unit.name} - {unit.municipality}
+                                {formatUnitName(unit.name)} — {unit.municipality}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -957,7 +992,7 @@ export default function Master() {
                           <TableCell>
                             {agent.unit ? (
                               <div>
-                                <div className="font-medium text-sm">{agent.unit.name}</div>
+                                <div className="font-medium text-sm">{formatUnitName(agent.unit.name)}</div>
                                 <div className="text-xs text-muted-foreground">{agent.unit.municipality}</div>
                               </div>
                             ) : '-'}
@@ -1271,7 +1306,7 @@ export default function Master() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Unidade</p>
-                  <p>{selectedAgent.unit?.name || '-'}</p>
+                  <p>{formatUnitName(selectedAgent.unit?.name) || '-'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Equipe</p>
