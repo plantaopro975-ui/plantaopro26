@@ -7,6 +7,7 @@ import iseAcreBadgeWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
 import { DeveloperSignature } from './DeveloperSignature';
 
 const iseAcreBadge = iseAcreBadgeAsset.url;
+const iseAcreBadgeWebp = iseAcreBadgeWebpAsset.url;
 interface CopyrightFooterProps {
   className?: string;
   compact?: boolean;
