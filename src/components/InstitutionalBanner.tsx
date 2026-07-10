@@ -1,10 +1,9 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Shield, Zap, Radio } from 'lucide-react';
-import logoShieldAsset from '@/assets/ise-acre-badge.png.asset.json';
-import logoShieldWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
-const logoShield = logoShieldAsset.url;
-const logoShieldWebp = logoShieldWebpAsset.url;
+import logoOfficialAsset from '@/assets/logo-plantao-pro-official.png.asset.json';
+const logoShield = logoOfficialAsset.url;
+const logoShieldWebp = logoOfficialAsset.url;
 import bannerBg from '@/assets/institutional-banner-bg.jpg';
 
 interface InstitutionalBannerProps {
@@ -168,8 +167,8 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
           {/* Left: Logo + ISE/ACRE badge */}
           <div className="flex items-center gap-2 sm:gap-3">
             <div
-              className="relative flex-shrink-0 aspect-square h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 flex items-center justify-center cursor-pointer"
-              title="ISE / ACRE"
+              className="relative flex-shrink-0 aspect-square h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 flex items-center justify-center cursor-pointer"
+              title="PlantãoPro — Brasão oficial"
               onClick={() => {
                 const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
                 w.__logoClicks = (w.__logoClicks || 0) + 1;
@@ -181,20 +180,17 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
                 }
               }}
             >
-              <picture>
-                <source type="image/webp" srcSet={logoShieldWebp} />
-                <img
-                  src={logoShield}
-                  alt="Instituto Socioeducativo do Acre"
-                  width={128}
-                  height={128}
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                  className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] select-none"
-                  draggable={false}
-                />
-              </picture>
+              <img
+                src={logoShield}
+                alt="PlantãoPro — Brasão oficial"
+                width={128}
+                height={128}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_6px_18px_rgba(201,168,76,0.45)] select-none"
+                draggable={false}
+              />
             </div>
             <div className="hidden sm:flex flex-col">
               <span className={cn(
