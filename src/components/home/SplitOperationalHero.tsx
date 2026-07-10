@@ -92,7 +92,7 @@ interface TeamObjectProps {
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   const imgClass = cn(
-    'block h-full w-full max-h-[68%] max-w-[62%] sm:max-h-[64%] sm:max-w-[58%] lg:max-h-[70%] lg:max-w-[62%] object-contain object-center select-none animate-float3d',
+    'block h-full w-full max-h-[52%] max-w-[46%] sm:max-h-[50%] sm:max-w-[44%] lg:max-h-[54%] lg:max-w-[48%] object-contain object-center select-none animate-float3d',
     'drop-shadow-[0_14px_22px_rgba(0,0,0,0.75)]',
     'transition-[transform,opacity] duration-700 ease-out',
     'group-hover:scale-[1.06] group-hover:-translate-y-1',
