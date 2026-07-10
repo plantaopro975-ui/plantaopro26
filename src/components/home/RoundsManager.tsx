@@ -2150,6 +2150,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       }
     } catch (e: any) {
       const msg = String(e?.message ?? '');
+      const code = (e as { code?: string })?.code ?? '';
       if (msg.includes('NIGHT_SHIFT_LOCK')) {
         toast({
           title: 'Bloqueio de turno noturno',
@@ -2157,6 +2158,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           variant: 'destructive',
         });
         setRunning(false);
+        return;
+      }
+      // Idempotência de servidor: se já existe uma sessão ativa para este
+      // user_id + server_started_at, o índice único bloqueia o duplicado.
+      // Silenciamos o erro e mantemos a sessão anterior — nada é duplicado.
+      if (code === '23505' || msg.includes('round_sessions_user_started_active_unique') || msg.toLowerCase().includes('duplicate key')) {
+        console.info('[rounds] insert duplicado ignorado (trava idempotente)');
         return;
       }
       /* ignore other errors — offline: sessão só local */
@@ -2174,6 +2182,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       night_locked: nightEffectivelyLocked,
       started_at: new Date(anchorMs).toISOString(),
     });
+    } finally {
+      startingRef.current = false;
+    }
   };
 
   const pauseTimer = () => setRunning(false);
