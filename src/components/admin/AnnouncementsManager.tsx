@@ -243,12 +243,15 @@ export function AnnouncementsManager() {
 
   const handleDelete = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('admin_announcements')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      if (hasMasterSession()) {
+        await callMasterAdmin('announcement_delete', { id });
+      } else {
+        const { error } = await supabase
+          .from('admin_announcements')
+          .delete()
+          .eq('id', id);
+        if (error) throw error;
+      }
       toast.success('Aviso excluído com sucesso');
       setDeleteDialogOpen(false);
       setDeletingId(null);
@@ -261,12 +264,18 @@ export function AnnouncementsManager() {
 
   const toggleActive = async (announcement: Announcement) => {
     try {
-      const { error } = await supabase
-        .from('admin_announcements')
-        .update({ is_active: !announcement.is_active })
-        .eq('id', announcement.id);
-
-      if (error) throw error;
+      if (hasMasterSession()) {
+        await callMasterAdmin('announcement_toggle', {
+          id: announcement.id,
+          is_active: !announcement.is_active,
+        });
+      } else {
+        const { error } = await supabase
+          .from('admin_announcements')
+          .update({ is_active: !announcement.is_active })
+          .eq('id', announcement.id);
+        if (error) throw error;
+      }
       toast.success(`Aviso ${!announcement.is_active ? 'ativado' : 'desativado'}`);
       fetchData();
     } catch (error) {
