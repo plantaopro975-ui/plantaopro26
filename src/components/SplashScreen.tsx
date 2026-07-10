@@ -253,25 +253,38 @@ export function SplashScreen() {
               />
             ))}
 
-            {/* Espadas cruzadas — símbolo de guarda / segurança pública */}
+            {/* Balança da Justiça — símbolo institucional socioeducativo */}
             <g
               style={{
                 opacity: 0,
                 transformOrigin: "90px 158px",
                 animation: "splashStar 700ms 1250ms cubic-bezier(.22,1,.36,1) forwards",
               }}
+              stroke="url(#spGold)"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
             >
-              {/* Espada 1 (diagonal \) */}
-              <line x1="66" y1="140" x2="114" y2="176" stroke="url(#spGold)" strokeWidth="2.4" strokeLinecap="round" />
-              <line x1="63" y1="137" x2="70" y2="144" stroke="url(#spSteel)" strokeWidth="3.2" strokeLinecap="round" />
-              <circle cx="61" cy="135" r="2.2" fill="url(#spGold)" />
-              {/* Espada 2 (diagonal /) */}
-              <line x1="114" y1="140" x2="66" y2="176" stroke="url(#spGold)" strokeWidth="2.4" strokeLinecap="round" />
-              <line x1="117" y1="137" x2="110" y2="144" stroke="url(#spSteel)" strokeWidth="3.2" strokeLinecap="round" />
-              <circle cx="119" cy="135" r="2.2" fill="url(#spGold)" />
-              {/* Núcleo central */}
-              <circle cx="90" cy="158" r="3" fill="url(#spGold)" />
+              {/* Coluna vertical */}
+              <line x1="90" y1="138" x2="90" y2="176" strokeWidth="2.2" />
+              {/* Base */}
+              <line x1="80" y1="178" x2="100" y2="178" strokeWidth="3" />
+              <line x1="84" y1="176" x2="96" y2="176" strokeWidth="1.6" />
+              {/* Travessão superior */}
+              <line x1="66" y1="140" x2="114" y2="140" strokeWidth="2.2" />
+              {/* Finial */}
+              <circle cx="90" cy="136" r="2.4" fill="url(#spGold)" stroke="none" />
+              {/* Correntes */}
+              <line x1="68" y1="142" x2="68" y2="150" strokeWidth="1.2" opacity="0.85" />
+              <line x1="112" y1="142" x2="112" y2="150" strokeWidth="1.2" opacity="0.85" />
+              {/* Prato esquerdo */}
+              <path d="M60 150 Q68 162 76 150" strokeWidth="2" />
+              <line x1="60" y1="150" x2="76" y2="150" strokeWidth="1.3" opacity="0.8" />
+              {/* Prato direito */}
+              <path d="M104 150 Q112 162 120 150" strokeWidth="2" />
+              <line x1="104" y1="150" x2="120" y2="150" strokeWidth="1.3" opacity="0.8" />
             </g>
+
 
 
             {/* Louros — arcos laterais */}
