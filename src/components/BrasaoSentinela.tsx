@@ -1,5 +1,4 @@
 import { CSSProperties } from "react";
-import brasaoSvg from "@/assets/brand/brasao-sentinela.svg?url";
 import brasaoAsset from "@/assets/brand/brasao-sentinela-hd.png.asset.json";
 
 interface BrasaoSentinelaProps {
@@ -8,19 +7,13 @@ interface BrasaoSentinelaProps {
   style?: CSSProperties;
   animated?: boolean;
   title?: string;
-  /**
-   * Força o uso da versão raster (PNG HD) em vez do SVG vetorial.
-   * Útil para exportações, OG images e casos onde queremos o render fotorrealista.
-   */
-  raster?: boolean;
 }
 
 /**
  * Brasão Sentinela — logomarca oficial do PlantãoPro.
- *
- * Por padrão renderiza a versão SVG vetorial (nitidez em qualquer tamanho,
- * ideal para UI, favicons e Retina). Passe `raster` para usar o PNG HD 3D.
- * Fonte única de verdade da marca em todo o app.
+ * Escudo dourado com águia e galões (arte 3D). Fonte única de verdade da
+ * marca: qualquer lugar que use `BrasaoSentinela` passa a exibir o brasão
+ * oficial automaticamente (splash, RotatingLogo, painéis, favicons, etc.).
  */
 export function BrasaoSentinela({
   size = 96,
@@ -28,13 +21,13 @@ export function BrasaoSentinela({
   style,
   animated = false,
   title = "PlantãoPro — Brasão oficial",
-  raster = false,
 }: BrasaoSentinelaProps) {
   const dim = typeof size === "number" ? `${size}px` : size;
 
   const composedStyle: CSSProperties = {
     width: dim,
     height: dim,
+    // Sombra dourada suave para dar peso institucional sobre qualquer fundo.
     filter:
       "drop-shadow(0 6px 18px rgba(201,168,76,0.28)) drop-shadow(0 2px 4px rgba(0,0,0,0.35))",
     ...(animated
@@ -46,17 +39,15 @@ export function BrasaoSentinela({
     ...style,
   };
 
-  const src = raster ? brasaoAsset.url : brasaoSvg;
-
   return (
     <>
       <img
-        src={src}
+        src={brasaoAsset.url}
         alt={title}
         title={title}
         role="img"
-        width={raster ? 1536 : 512}
-        height={raster ? 1536 : 512}
+        width={1536}
+        height={1536}
         draggable={false}
         loading="eager"
         decoding="async"
@@ -81,4 +72,3 @@ export function BrasaoSentinela({
 }
 
 export default BrasaoSentinela;
-

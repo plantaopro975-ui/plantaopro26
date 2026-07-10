@@ -2,7 +2,7 @@
 // IMPORTANT: bump APP_VERSION on every UI/theme/header/footer release so that
 // installed clients evict the previous cached shell and apply changes without
 // reload loops.
-const APP_VERSION = 'v9-2026-07-10-brasao-svg';
+const APP_VERSION = 'v8-2026-07-09-mobile-fix';
 const STATIC_CACHE = `plantao-pro-static-${APP_VERSION}`;
 const DYNAMIC_CACHE = `plantao-pro-dynamic-${APP_VERSION}`;
 const VALID_CACHES = new Set([STATIC_CACHE, DYNAMIC_CACHE]);
@@ -11,7 +11,6 @@ const VALID_CACHES = new Set([STATIC_CACHE, DYNAMIC_CACHE]);
 // precached/cached so theme + layout changes always reach the user.
 const STATIC_ASSETS = [
   '/manifest.json',
-  '/brasao-sentinela.svg',
   '/icon-192.png',
   '/icon-512.png',
   '/favicon.png',
