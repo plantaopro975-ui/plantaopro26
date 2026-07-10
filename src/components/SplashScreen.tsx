@@ -30,8 +30,8 @@ export function SplashScreen() {
     pushDiagEvent("info", "splash_mount", { willRender: visible });
     if (!visible) return;
     splashMountedThisRuntime = true;
-    const t1 = window.setTimeout(() => setFadeOut(true), 2600);
-    const t2 = window.setTimeout(() => setVisible(false), 3250);
+    const t1 = window.setTimeout(() => setFadeOut(true), 900);
+    const t2 = window.setTimeout(() => setVisible(false), 1400);
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
