@@ -51,11 +51,8 @@ export const CommandRoomBackground = memo(function CommandRoomBackground() {
         <HeraldicComposition />
       </div>
 
-      {/* 8 · Corner brackets */}
-      <CornerMark position="tl" label="SEC · 01" sub="ACRE · BR" />
-      <CornerMark position="tr" label="CH · 04" sub="AES · 256" />
-      <CornerMark position="bl" label="M · 01" sub="LAT −9.97" />
-      <CornerMark position="br" label="ISE · SEC" sub="LON −67.81" />
+      {/* 8 · Corner brackets removidos a pedido — mantém só as hairlines */}
+
 
       {/* 9 · Hairlines âmbar */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
