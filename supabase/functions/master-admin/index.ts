@@ -251,6 +251,26 @@ serve(async (req) => {
       return json({ success: true, data });
     }
 
+    if (action === "agents_list_all") {
+      const { data, error } = await admin
+        .from("agents")
+        .select("id, name, team, matricula, unit_id, is_active, is_frozen, approval_status, unit:units(name)")
+        .order("name");
+      if (error) return json({ success: false, error: error.message }, 400);
+      return json({ success: true, data });
+    }
+
+    if (action === "access_logs_list") {
+      const limit = Math.min(Number(body?.limit ?? 5000), 20000);
+      const { data, error } = await admin
+        .from("access_logs")
+        .select("agent_id, action, created_at, ip_address, user_agent")
+        .order("created_at", { ascending: false })
+        .limit(limit);
+      if (error) return json({ success: false, error: error.message }, 400);
+      return json({ success: true, data });
+    }
+
     return json({ success: false, error: "Ação desconhecida." }, 400);
   } catch (err) {
     console.error("master-admin error", err);

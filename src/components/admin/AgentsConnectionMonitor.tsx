@@ -1,6 +1,28 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMasterToken } from '@/lib/masterSession';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
+
+async function callMasterAdmin<T = any>(action: string, payload: Record<string, unknown> = {}): Promise<T> {
+  const token = getMasterToken();
+  if (!token) throw new Error('Sessão master ausente.');
+  const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/master-admin`;
+  const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-master-token': token,
+      authorization: `Bearer ${anon}`,
+      apikey: anon,
+    },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok || !j?.success) throw new Error(j?.error || `Falha (${res.status}) na ação ${action}`);
+  return j.data as T;
+}
+const hasMasterSession = () => !!getMasterToken();
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -82,17 +104,30 @@ export function AgentsConnectionMonitor() {
   const load = async () => {
     setLoading(true);
     try {
-      const [{ data: agentsData }, { data: logsData }] = await Promise.all([
-        supabase
-          .from('agents')
-          .select('id, name, team, matricula, unit_id, is_active, is_frozen, approval_status, unit:units(name)')
-          .order('name'),
-        supabase
-          .from('access_logs')
-          .select('agent_id, action, created_at')
-          .order('created_at', { ascending: false })
-          .limit(5000),
-      ]);
+      let agentsData: any[] | null = null;
+      let logsData: any[] | null = null;
+      if (hasMasterSession()) {
+        const [a, l] = await Promise.all([
+          callMasterAdmin<any[]>('agents_list_all'),
+          callMasterAdmin<any[]>('access_logs_list', { limit: 5000 }),
+        ]);
+        agentsData = a;
+        logsData = l;
+      } else {
+        const [aRes, lRes] = await Promise.all([
+          supabase
+            .from('agents')
+            .select('id, name, team, matricula, unit_id, is_active, is_frozen, approval_status, unit:units(name)')
+            .order('name'),
+          supabase
+            .from('access_logs')
+            .select('agent_id, action, created_at')
+            .order('created_at', { ascending: false })
+            .limit(5000),
+        ]);
+        agentsData = aRes.data as any[] | null;
+        logsData = lRes.data as any[] | null;
+      }
       const list: AgentRow[] = (agentsData || []).map((a: any) => ({
         id: a.id,
         name: a.name,
@@ -116,7 +151,7 @@ export function AgentsConnectionMonitor() {
 
   useEffect(() => { load(); }, []);
   useEffect(() => {
-    const i = setInterval(() => setTick((t) => t + 1), 30_000);
+    const i = setInterval(() => { setTick((t) => t + 1); load(); }, 20_000);
     return () => clearInterval(i);
   }, []);
 
