@@ -9,12 +9,13 @@ import { FirstLoginPasswordHint } from '@/components/onboarding/FirstLoginPasswo
  */
 export function AppShell() {
   return (
-    <div className="h-[100dvh] flex flex-col bg-background overflow-x-hidden">
-      <main className="flex-1 min-h-0 min-w-0 overflow-x-hidden">
+    <div className="min-h-[100dvh] sm:h-auto max-sm:h-[100dvh] flex flex-col bg-background overflow-x-hidden">
+      <main className="flex-1 min-h-0 min-w-0 overflow-x-hidden max-sm:overflow-y-auto">
         <Outlet />
       </main>
       <FirstLoginPasswordHint />
     </div>
   );
 }
+
 
