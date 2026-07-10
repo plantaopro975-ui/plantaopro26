@@ -303,115 +303,44 @@ export default function Master() {
   const fetchData = async () => {
     try {
       setLoadingData(true);
-
-      // Fetch profiles with roles
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('user_id, full_name, created_at');
-
-      const { data: roles } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
-
-      const usersWithRoles: UserWithRole[] = (profiles || []).map((profile) => {
-        const userRole = roles?.find((r) => r.user_id === profile.user_id);
-        return {
-          id: profile.user_id,
-          email: profile.full_name || 'Usuário',
-          created_at: profile.created_at,
-          role: userRole?.role || 'user',
-        };
-      });
-
-      setUsers(usersWithRoles);
-
-      // Fetch units — usa RPC pública (SECURITY DEFINER) para funcionar com sessão master (sem auth.uid())
       setUnitsError(null);
-      let unitsData: Unit[] | null = null;
-      const rpcRes = await (supabase as any).rpc('list_units_basic');
-      if (rpcRes.error) {
-        console.error('[Master] list_units_basic RPC falhou:', rpcRes.error);
-        // Fallback: tenta leitura direta (funciona se houver sessão authenticated)
-        const fallback = await supabase.from('units').select('*').order('name');
-        if (fallback.error) {
-          console.error('[Master] fallback units select falhou:', fallback.error);
-          setUnitsError(rpcRes.error.message || fallback.error.message || 'Falha ao carregar unidades');
-        } else {
-          unitsData = (fallback.data as Unit[]) || [];
-        }
-      } else {
-        unitsData = (rpcRes.data as Unit[]) || [];
-      }
 
-      if (unitsData && unitsData.length === 0) {
-        setUnitsError('Nenhuma unidade retornada pela consulta. Verifique permissões (RLS) ou o cadastro.');
-        console.warn('[Master] Consulta de unidades retornou vazio.');
-      }
-      setUnits(unitsData || []);
-
-      // Fetch agents with license info
-      const { data: agentsData } = await (supabase as any)
-        .from('agents')
-        .select(`
-          id, name, cpf, matricula, email, phone, address, team, is_active, unit_id,
-          license_status, license_expires_at, license_notes, created_at,
-          unit:units(name, municipality)
-        `)
-        .order('name');
-
-      setAgents((agentsData as unknown as Agent[]) || []);
-      
-      // Fetch access logs
-      const { data: logsData } = await (supabase as any)
-        .from('access_logs')
-        .select(`
-          id, agent_id, action, created_at, ip_address, user_agent,
-          agent:agents(name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(100);
-      
-      setAccessLogs((logsData as unknown as AccessLog[]) || []);
-
-      // Fetch system stats
-      const [agentsRes, unitsRes, transfersRes, pendingApprovalsRes] = await Promise.all([
-        supabase.from('agents').select('*', { count: 'exact', head: true }),
-        supabase.from('units').select('*', { count: 'exact', head: true }),
-        supabase.from('transfer_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-        supabase.from('agents').select('*', { count: 'exact', head: true }).eq('approval_status', 'pending'),
-      ]);
-      
-      // Count expired licenses
-      const expiredCount = (agentsData || []).filter((a: any) => {
-        if (!a.license_expires_at) return false;
-        return new Date(a.license_expires_at) < new Date();
-      }).length;
-      
-      // CRÍTICO: Apenas conta como "ativo" agentes que estão is_active=true E approval_status='approved'
-      const activeCount = (agentsData || []).filter((a: any) => 
-        a.is_active && a.approval_status === 'approved'
-      ).length;
-      
-      // Conta pendentes: approval_status='pending' OU approval_status é null (registros legados)
-      const pendingCount = (agentsData || []).filter((a: any) => 
-        a.approval_status === 'pending' || a.approval_status === null
-      ).length;
-
-      setStats({
-        totalUsers: usersWithRoles.length,
-        totalAgents: agentsRes.count || 0,
-        totalUnits: unitsRes.count ?? unitsData?.length ?? 0,
-        pendingTransfers: transfersRes.count || 0,
-        activeAgents: activeCount,
-        expiredLicenses: expiredCount,
-        pendingApprovals: pendingCount,
+      // Chamada consolidada via edge function (service_role) — funciona com sessão master (token)
+      // e com sessão admin (JWT). Bypassa RLS que exigia auth.uid().
+      const t0 = performance.now();
+      const dash = await adminClient.listDashboardData();
+      console.info('[Master] dashboard carregado em', Math.round(performance.now() - t0), 'ms', {
+        units: dash.units.length,
+        agents: dash.agents.length,
+        users: dash.users.length,
       });
-    } catch (error) {
-      console.error('Error fetching admin data:', error);
+
+      setUnits((dash.units as Unit[]) || []);
+      setAgents((dash.agents as unknown as Agent[]) || []);
+      setUsers((dash.users as UserWithRole[]) || []);
+      setAccessLogs((dash.accessLogs as unknown as AccessLog[]) || []);
+      setStats(dash.stats);
+
+      if (!dash.units?.length) {
+        setUnitsError('Nenhuma unidade retornada. Verifique o cadastro no backend.');
+        console.warn('[Master] Lista de unidades vazia.');
+      }
+      if (!dash.agents?.length) {
+        console.warn('[Master] Lista de agentes vazia.');
+      }
+    } catch (error: any) {
+      console.error('[Master] Falha ao carregar dashboard:', error);
+      setUnitsError(error?.message || 'Falha ao carregar dados do painel.');
+      toast({
+        title: 'Falha ao carregar dados',
+        description: error?.message || 'Tente novamente em instantes.',
+        variant: 'destructive',
+      });
     } finally {
       setLoadingData(false);
     }
   };
+
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
