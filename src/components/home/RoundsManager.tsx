@@ -460,6 +460,215 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
   );
 }
 
+/* ================= Team-varying animated stripe =================
+ * Ocupa a área ociosa do cabeçalho "Operação em tempo real" com
+ * uma assinatura visual profissional que MUDA conforme a equipe.
+ *  - ALFA    → onda senoidal contínua (escudo/defesa fluida)
+ *  - BRAVO   → pulsos radar/heartbeat (ataque cadenciado)
+ *  - CHARLIE → mira/varredura de precisão (retículo deslizante)
+ *  - DELTA   → sinal de rádio / barras de transmissão
+ */
+function TeamOperationsStripe({ team, color, active }: { team: TeamKey; color: string; active: boolean }) {
+  const uid = `tos-${team}`;
+  const dur = active ? '3.6s' : '9s';
+  return (
+    <svg viewBox="0 0 320 46" preserveAspectRatio="none" className="h-8 w-full sm:h-10" aria-hidden>
+      <defs>
+        <linearGradient id={`${uid}-fade`} x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity="0" />
+          <stop offset="18%" stopColor={color} stopOpacity="0.85" />
+          <stop offset="82%" stopColor={color} stopOpacity="0.85" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${uid}-fill`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.35" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <filter id={`${uid}-glow`} x="-10%" y="-40%" width="120%" height="180%">
+          <feGaussianBlur stdDeviation="0.9" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <clipPath id={`${uid}-clip`}><rect x="0" y="0" width="320" height="46" /></clipPath>
+      </defs>
+
+      {/* baseline grid ticks — comum a todas as equipes */}
+      <g stroke={color} strokeOpacity="0.14" strokeWidth="0.5">
+        {Array.from({ length: 33 }).map((_, i) => (
+          <line key={i} x1={i * 10} y1="34" x2={i * 10} y2={i % 5 === 0 ? 40 : 37} />
+        ))}
+        <line x1="0" y1="34" x2="320" y2="34" strokeOpacity="0.25" />
+      </g>
+
+      <g clipPath={`url(#${uid}-clip)`}>
+        {team === 'ALFA' && (
+          <g filter={`url(#${uid}-glow)`}>
+            {/* Onda senoidal deslizante — 2 caminhos idênticos deslocando para dar loop */}
+            <g>
+              <path
+                d="M-320 22 Q -280 6 -240 22 T -160 22 T -80 22 T 0 22 T 80 22 T 160 22 T 240 22 T 320 22 T 400 22"
+                fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.6" strokeLinecap="round"
+              >
+                <animateTransform attributeName="transform" type="translate" from="0 0" to="320 0" dur={dur} repeatCount="indefinite" />
+              </path>
+              <path
+                d="M-320 22 Q -280 6 -240 22 T -160 22 T -80 22 T 0 22 T 80 22 T 160 22 T 240 22 T 320 22 T 400 22 L 400 46 L -320 46 Z"
+                fill={`url(#${uid}-fill)`} opacity="0.75"
+              >
+                <animateTransform attributeName="transform" type="translate" from="0 0" to="320 0" dur={dur} repeatCount="indefinite" />
+              </path>
+            </g>
+          </g>
+        )}
+
+        {team === 'BRAVO' && (
+          <g filter={`url(#${uid}-glow)`}>
+            {/* Heartbeat / pulso tático */}
+            <path
+              d="M0 24 L60 24 L72 24 L80 10 L88 38 L96 24 L120 24 L180 24 L192 24 L200 12 L208 36 L216 24 L260 24 L320 24"
+              fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round"
+            />
+            {/* Ponto varredor */}
+            <circle r="2.4" fill={color}>
+              <animateMotion dur={dur} repeatCount="indefinite"
+                path="M0 24 L60 24 L72 24 L80 10 L88 38 L96 24 L120 24 L180 24 L192 24 L200 12 L208 36 L216 24 L260 24 L320 24" />
+              <animate attributeName="opacity" values="1;0.5;1" dur="0.9s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        )}
+
+        {team === 'CHARLIE' && (
+          <g filter={`url(#${uid}-glow)`}>
+            {/* Trilha discreta */}
+            <line x1="0" y1="24" x2="320" y2="24" stroke={`url(#${uid}-fade)`} strokeWidth="1" strokeDasharray="2 4" />
+            {/* Retículo/mira deslizando */}
+            <g>
+              <animateTransform attributeName="transform" type="translate" from="-30 0" to="330 0" dur={dur} repeatCount="indefinite" />
+              <circle cx="0" cy="24" r="9" fill="none" stroke={color} strokeOpacity="0.9" strokeWidth="1.1" />
+              <circle cx="0" cy="24" r="4" fill="none" stroke={color} strokeOpacity="0.7" strokeWidth="0.8" />
+              <line x1="-14" y1="24" x2="-5" y2="24" stroke={color} strokeWidth="1" />
+              <line x1="5" y1="24" x2="14" y2="24" stroke={color} strokeWidth="1" />
+              <line x1="0" y1="10" x2="0" y2="19" stroke={color} strokeWidth="1" />
+              <line x1="0" y1="29" x2="0" y2="38" stroke={color} strokeWidth="1" />
+              <circle cx="0" cy="24" r="1.4" fill={color} />
+            </g>
+          </g>
+        )}
+
+        {team === 'DELTA' && (
+          <g filter={`url(#${uid}-glow)`}>
+            {/* Barras de sinal (equalizer de transmissão) */}
+            {Array.from({ length: 32 }).map((_, i) => {
+              const x = 6 + i * 10;
+              const seed = (i * 37) % 100;
+              return (
+                <rect key={i} x={x} y="20" width="4" height="8" rx="1" fill={color} opacity="0.85">
+                  <animate
+                    attributeName="height"
+                    values={`${4 + (seed % 8)};${10 + (seed % 14)};${5 + (seed % 6)};${12 + (seed % 10)};${4 + (seed % 8)}`}
+                    dur={`${1.1 + (i % 5) * 0.15}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="y"
+                    values={`${30 - (4 + (seed % 8))};${30 - (10 + (seed % 14))};${30 - (5 + (seed % 6))};${30 - (12 + (seed % 10))};${30 - (4 + (seed % 8))}`}
+                    dur={`${1.1 + (i % 5) * 0.15}s`}
+                    repeatCount="indefinite"
+                  />
+                </rect>
+              );
+            })}
+            {/* Máscara de fade lateral */}
+            <rect x="0" y="0" width="320" height="46" fill={`url(#${uid}-fade)`} opacity="0.0" />
+          </g>
+        )}
+      </g>
+
+      {/* Rótulo canto direito — assinatura da equipe */}
+      <g fontFamily="ui-monospace, monospace" fontSize="6" letterSpacing="1.4" fill={color} opacity="0.75">
+        <text x="316" y="10" textAnchor="end">CH-{team.slice(0, 3)}</text>
+      </g>
+    </svg>
+  );
+}
+
+/* ================= Ready-to-start professional banner ================= */
+function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; color: string; count: number; ready: boolean }) {
+  const uid = `rts-${team}`;
+  return (
+    <div
+      className="relative mb-2 overflow-hidden rounded-lg border"
+      style={{
+        borderColor: `${color}55`,
+        background: `linear-gradient(90deg, ${color}18 0%, transparent 40%, transparent 60%, ${color}18 100%), hsl(var(--card))`,
+        boxShadow: `inset 0 1px 0 ${color}22, 0 0 24px -12px ${color}88`,
+      }}
+    >
+      <svg viewBox="0 0 400 44" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-70" aria-hidden>
+        <defs>
+          <linearGradient id={`${uid}-scan`} x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor={color} stopOpacity="0" />
+            <stop offset="50%" stopColor={color} stopOpacity="0.7" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {/* Linhas paralelas discretas (blueprint) */}
+        <g stroke={color} strokeOpacity="0.10" strokeWidth="0.5">
+          {[8, 16, 24, 32].map((y) => <line key={y} x1="0" y1={y} x2="400" y2={y} />)}
+        </g>
+        {/* Scanner passando */}
+        {ready && (
+          <rect x="0" y="0" width="120" height="44" fill={`url(#${uid}-scan)`}>
+            <animate attributeName="x" from="-120" to="400" dur="2.4s" repeatCount="indefinite" />
+          </rect>
+        )}
+      </svg>
+
+      <div className="relative flex items-center gap-3 px-3 py-2">
+        {/* Ícone de status — check pulsante quando pronto */}
+        <svg viewBox="0 0 32 32" className="h-8 w-8 shrink-0" aria-hidden>
+          <circle cx="16" cy="16" r="14" fill="none" stroke={color} strokeOpacity="0.6" strokeWidth="1.4" />
+          <circle cx="16" cy="16" r="11" fill={color} fillOpacity="0.15" />
+          {ready ? (
+            <>
+              <path d="M10 16.5 L14.5 21 L23 12" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="16" cy="16" r="14" fill="none" stroke={color} strokeOpacity="0.85" strokeWidth="1.2">
+                <animate attributeName="r" values="14;16;14" dur="2s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.85;0;0.85" dur="2s" repeatCount="indefinite" />
+              </circle>
+            </>
+          ) : (
+            <path d="M16 8 V17 L22 20" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
+          )}
+        </svg>
+
+        <div className="min-w-0 flex-1">
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em]" style={{ color: `${color}dd` }}>
+            {ready ? 'Cronograma pronto' : 'Aguardando configuração'}
+          </div>
+          <div className="font-display text-[13px] sm:text-[14px] font-semibold text-foreground/95 leading-tight">
+            {ready
+              ? <>Equipe <span style={{ color }}>{team}</span> · {count} agente{count === 1 ? '' : 's'} em posição</>
+              : <>Defina intervalo e agentes para gerar o cronograma</>}
+          </div>
+        </div>
+
+        {ready && (
+          <div className="hidden sm:flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest"
+               style={{ borderColor: `${color}66`, color }}>
+            <span className="relative inline-flex h-1.5 w-1.5">
+              <span className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: color, opacity: 0.6 }} />
+              <span className="relative inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
+            </span>
+            Prontos para iniciar
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+
 function RoundsHeroSVG({ color, active, silent }: { color: string; active: boolean; silent: boolean }) {
   const uid = `rh-${color.replace('#', '')}`;
   return (
