@@ -2188,19 +2188,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       return;
     }
     const target = toMinutes(startTime);
-    if (target == null) return;
+    if (target == null) {
+      toast({ title: 'Horário inválido', description: 'Informe um horário de início válido (HH:MM).', variant: 'destructive' });
+      return;
+    }
     const now = new Date(nowServer());
     const t = new Date(now);
     t.setHours(Math.floor(target / 60), target % 60, 0, 0);
-    if (t.getTime() <= nowServer() + 5_000) {
-      // Já passou (ou vai passar em <5s): agenda para amanhã
-      t.setDate(t.getDate() + 1);
+    const diff = t.getTime() - nowServer();
+    if (diff <= 0) {
+      toast({
+        title: 'Horário no passado',
+        description: `Não é possível programar para ${startTime} — este horário já passou hoje. Ajuste o campo "Início" para um horário futuro.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (diff < 30_000) {
+      toast({
+        title: 'Muito próximo',
+        description: 'Programe para pelo menos 30 segundos no futuro ou clique em "Iniciar" para começar agora.',
+        variant: 'destructive',
+      });
+      return;
     }
     setArmedForMs(t.getTime());
-    autoFiredRef.current = null; // libera guard para esta nova programação
+    autoFiredRef.current = null;
     toast({
       title: 'Ronda programada',
-      description: `Início automático às ${startTime}. Painel travado até lá.`,
+      description: `Início automático em ${t.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}. Painel travado até lá.`,
     });
   };
   const disarmRound = () => {
