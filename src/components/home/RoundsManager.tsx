@@ -568,11 +568,77 @@ function TeamOperationsStripe({ team, color, active }: { team: TeamKey; color: s
         )}
       </g>
 
+      {/* Ticker de doutrina — frases profissionais de segurança pública socioeducativa */}
+      <TeamDoctrineTicker team={team} color={color} uid={uid} />
+
       {/* Rótulo canto direito — discreto */}
       <g fontFamily="ui-monospace, monospace" fontSize="6" letterSpacing="1.4" fill={color} opacity="0.5">
         <text x="316" y="10" textAnchor="end">CH-{team.slice(0, 3)}</text>
       </g>
     </svg>
+  );
+}
+
+/* ================= Doutrina institucional por equipe ================= */
+const TEAM_DOCTRINE: Record<TeamKey, string[]> = {
+  ALFA: [
+    'ESCUDO ATIVO · PROTEÇÃO INTEGRAL DO SOCIOEDUCANDO',
+    'PRESENÇA CONSTANTE · DISCIPLINA E LEGALIDADE',
+    'DEFESA DA VIDA · PRIMADO DOS DIREITOS HUMANOS',
+  ],
+  BRAVO: [
+    'PRONTIDÃO OPERACIONAL · RESPOSTA IMEDIATA',
+    'AÇÃO CADENCIADA · CONTENÇÃO PROPORCIONAL',
+    'INTERVENÇÃO SEGURA · TÉCNICA E LEGITIMIDADE',
+  ],
+  CHARLIE: [
+    'VIGILÂNCIA PRECISA · MONITORAMENTO PERMANENTE',
+    'ANÁLISE DE RISCO · ANTECIPAÇÃO DE INCIDENTES',
+    'INTELIGÊNCIA TÁTICA · ROTAS E PERÍMETROS SOB CONTROLE',
+  ],
+  DELTA: [
+    'COMUNICAÇÃO INTEGRADA · CANAL SEMPRE ABERTO',
+    'REDE SEGURA · COORDENAÇÃO INTERUNIDADES',
+    'TRANSMISSÃO CONFIÁVEL · RESPOSTA COORDENADA',
+  ],
+};
+
+function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
+  const phrases = TEAM_DOCTRINE[team];
+  // Repete a sequência duas vezes para varredura contínua sem "salto".
+  const line = phrases.join('   ◆   ') + '   ◆   ';
+  return (
+    <g>
+      <defs>
+        <linearGradient id={`${uid}-tfade`} x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity="0" />
+          <stop offset="8%" stopColor={color} stopOpacity="0.85" />
+          <stop offset="92%" stopColor={color} stopOpacity="0.85" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <mask id={`${uid}-tmask`}>
+          <rect x="0" y="0" width="320" height="46" fill={`url(#${uid}-tfade)`} />
+        </mask>
+      </defs>
+      <g mask={`url(#${uid}-tmask)`}>
+        <g fontFamily='"JetBrains Mono", ui-monospace, monospace' fontSize="5.4" letterSpacing="1.2" fill={color} opacity="0.78">
+          <text y="7">
+            <textPath href={`#${uid}-tpath`} startOffset="0">{line + line}</textPath>
+          </text>
+        </g>
+        {/* trilha invisível para textPath */}
+        <path id={`${uid}-tpath`} d="M0 7 H2000" fill="none" stroke="none" />
+        <g transform="translate(0 0)">
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 0; -640 0"
+            dur="42s"
+            repeatCount="indefinite"
+          />
+        </g>
+      </g>
+    </g>
   );
 }
 
