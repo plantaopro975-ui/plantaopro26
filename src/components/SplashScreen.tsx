@@ -252,20 +252,22 @@ export function SplashScreen() {
               />
             ))}
 
-            {/* "P" institucional — opticamente centralizado no escudo */}
-            <path
-              d="M68 136 L68 180 M68 136 L92 136 C104 136 110 142 110 149 C110 156 104 162 92 162 L68 162"
-              stroke="url(#spGold)"
-              strokeWidth="3.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
+            {/* "P" institucional — tipografia serifada real, centralizado */}
+            <text
+              x="90"
+              y="176"
+              textAnchor="middle"
+              fontFamily="'Cormorant Garamond', 'Playfair Display', Georgia, serif"
+              fontWeight="600"
+              fontSize="58"
+              fill="url(#spGold)"
               style={{
-                strokeDasharray: 140,
-                strokeDashoffset: 140,
-                animation: "splashDraw 800ms 1300ms cubic-bezier(.22,1,.36,1) forwards",
+                opacity: 0,
+                animation: "splashFade 700ms 1250ms cubic-bezier(.22,1,.36,1) forwards",
               }}
-            />
+            >
+              P
+            </text>
 
             {/* Louros — arcos laterais */}
             <path
