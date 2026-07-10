@@ -707,7 +707,10 @@ export default function Master() {
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="announcements">Anúncios</TabsTrigger>
+            <TabsTrigger value="announcements" className="gap-1.5">
+              <MessageSquare className="h-3.5 w-3.5 hidden sm:inline-flex" />
+              Comunicações
+            </TabsTrigger>
             <TabsTrigger value="swaps">Permutas</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
