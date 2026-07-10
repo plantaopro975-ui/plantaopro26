@@ -46,6 +46,8 @@ if (typeof window !== 'undefined') {
  */
 
 export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginDialogProps) {
+  const [heroLoaded, setHeroLoaded] = useState(false);
+
   // Reforça o preload do chunk /master no instante que o dialog abre —
   // caso o prefetch idle ainda não tenha rodado.
   useEffect(() => {
