@@ -13,37 +13,14 @@ import {
   Building2,
   Award,
   CheckCircle2,
-  Download,
   ShieldCheck,
   Zap,
   Lock,
 } from 'lucide-react';
 import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
 import aboutHero from '@/assets/about-hero.jpg';
-import { toast } from 'sonner';
 
-async function downloadLogo(url: string, filename: string) {
-  try {
-    const res = await fetch(url, { credentials: 'omit', cache: 'force-cache' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filename;
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-    toast.success('Download iniciado', { description: filename });
-  } catch (err) {
-    console.error('[downloadLogo] falhou:', err);
-    toast.error('Não foi possível baixar a logo', {
-      description: 'Tente novamente ou use o botão direito › Salvar imagem como…',
-    });
-  }
-}
+
 
 const features = [
   { icon: Calendar, title: 'Plantões', description: 'Visualização e alertas.' },
@@ -224,30 +201,13 @@ export default function About() {
                     Origem do Projeto
                   </h2>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <div className="flex-shrink-0 flex flex-col items-center gap-1">
-                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-amber-500/10 to-transparent ring-1 ring-amber-400/25 p-1 flex items-center justify-center md:h-12 md:w-12">
-                      <img
-                        src={logoPlantaoPro}
-                        alt="Logo PlantãoPro"
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => downloadLogo(logoPlantaoPro, 'logo-plantao-pro.png')}
-                      className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[8.5px] font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors md:text-[9px]"
-                    >
-                      <Download className="h-2.5 w-2.5" />
-                      Baixar
-                    </button>
-                  </div>
-                  <p className="text-[10.5px] leading-snug text-slate-300 flex-1 md:text-[11.5px]">
-                    Idealizado por um <strong className="text-amber-300">Agente Socioeducativo</strong> de{' '}
-                    <strong className="text-amber-300">Feijó/AC</strong>, para trazer praticidade a
-                    quem atua na linha de frente.
-                  </p>
-                </div>
+                <p className="text-[11px] leading-relaxed text-slate-300 md:text-[12px]">
+                  Concebido por um <strong className="text-amber-300">Agente Socioeducativo</strong> em atuação na unidade de{' '}
+                  <strong className="text-amber-300">Feijó/AC</strong>, o PlantãoPro nasceu da vivência diária no sistema
+                  socioeducativo do Acre. A plataforma foi desenhada para dar suporte técnico à gestão de escalas,
+                  banco de horas e comunicação operacional das equipes, unindo o rigor da rotina de segurança à
+                  praticidade que o serviço exige.
+                </p>
                 <div className="flex flex-wrap gap-1.5 pt-0.5">
                   <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-300">
                     <Award className="h-2.5 w-2.5" />
