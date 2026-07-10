@@ -77,6 +77,7 @@ const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessCont
 const PendingApprovalsManager = lazy(() => import('@/components/admin/PendingApprovalsManager').then(m => ({ default: m.PendingApprovalsManager })));
 const RecentRegistrationsAudit = lazy(() => import('@/components/admin/RecentRegistrationsAudit').then(m => ({ default: m.RecentRegistrationsAudit })));
 const AccessAuditPanel = lazy(() => import('@/components/admin/AccessAuditPanel').then(m => ({ default: m.AccessAuditPanel })));
+const AgentsConnectionMonitor = lazy(() => import('@/components/admin/AgentsConnectionMonitor').then(m => ({ default: m.AgentsConnectionMonitor })));
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
