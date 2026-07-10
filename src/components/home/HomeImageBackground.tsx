@@ -69,17 +69,7 @@ export const HomeImageBackground = memo(function HomeImageBackground() {
         }}
       />
 
-      {/* 4 · Grid HUD sutil */}
-      <div
-        className="absolute inset-0 opacity-25"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(244,201,116,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(244,201,116,0.06) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-          maskImage:
-            "radial-gradient(ellipse at center, black 40%, transparent 90%)",
-        }}
-      />
+      {/* 4 · Grid HUD removido a pedido — deixava o fundo "quadriculado" */}
 
       {/* 5 · Vignette radial */}
       <div
