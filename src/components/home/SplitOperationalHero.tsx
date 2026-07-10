@@ -24,10 +24,10 @@ const vehicleMobile = vehicle3dPngAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
-import objAlfa from '@/assets/teams/alfa-totem.png';
-import objBravo from '@/assets/teams/bravo-totem.png';
-import objCharlie from '@/assets/teams/charlie-totem.png';
-import objDelta from '@/assets/teams/delta-totem.png';
+import objAlfa from '@/assets/teams/alfa-object3d.png';
+import objBravo from '@/assets/teams/bravo-object3d.png';
+import objCharlie from '@/assets/teams/charlie-object3d.png';
+import objDelta from '@/assets/teams/delta-object3d.png';
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
 const bgAlfa = bgAlfaAsset.url;
 import bgBravoAsset from '@/assets/teams/bg-bravo.jpg.asset.json';
@@ -51,11 +51,12 @@ const TEAMS: {
   obj: string;
   bg: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Leão · Guarda',       op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa },
-  { key: 'BRAVO',   motto: 'Águia · Investida',   op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo },
-  { key: 'CHARLIE', motto: 'Coruja · Vigília',    op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie },
-  { key: 'DELTA',   motto: 'Pantera · Rapidez',   op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   bg: bgDelta },
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa },
+  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   bg: bgDelta },
 ];
+
 
 interface TeamObjectProps {
   team: { key: TeamKey; obj: string };
