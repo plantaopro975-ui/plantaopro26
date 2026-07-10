@@ -1382,7 +1382,7 @@ export default function Index() {
 
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-hidden">
+      <header className="relative z-20 flex min-h-0 flex-1 flex-col sm:overflow-hidden">
         {user && (
           <div
             className="w-full max-w-6xl mx-auto pt-2"
