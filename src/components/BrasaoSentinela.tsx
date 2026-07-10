@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import brasaoAsset from "@/assets/logo-plantao-pro-official.png.asset.json";
+import brasaoAsset from "@/assets/brand/brasao-sentinela-hd.png.asset.json";
 
 interface BrasaoSentinelaProps {
   size?: number | string;
