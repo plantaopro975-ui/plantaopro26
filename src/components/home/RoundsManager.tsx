@@ -749,6 +749,145 @@ function nextPhrases(team: TeamKey, count = 4): string[] {
  * Ciclo profissional: 60s exibindo doutrina → 180s em pausa (só efeitos) → repete.
  * A cada retomada, novas frases são sorteadas sem repetir a última sequência.
  */
+/* ================= Painel de programação (armed) ==================
+ * Exibido quando o operador programa a ronda ANTES do horário do 1º
+ * agente. Mostra cadeado + countdown profissional até o disparo. */
+function ArmedLockPanel({
+  targetMs, nowMs, color, team, firstAgent, startLabel, onCancel, onStartNow,
+}: {
+  targetMs: number;
+  nowMs: number;
+  color: string;
+  team: TeamKey;
+  firstAgent?: string;
+  startLabel: string;
+  onCancel: () => void;
+  onStartNow: () => void;
+}) {
+  const remainingMs = Math.max(0, targetMs - nowMs);
+  const totalSec = Math.floor(remainingMs / 1000);
+  const hh = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+  const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+  const ss = String(totalSec % 60).padStart(2, '0');
+  const targetDate = new Date(targetMs);
+  const targetLabel = targetDate.toLocaleString('pt-BR', {
+    weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
+  });
+  const isImminent = totalSec <= 60;
+
+  return (
+    <div
+      className="relative mb-2 overflow-hidden rounded-lg border p-3 sm:p-4"
+      style={{
+        borderColor: `${color}55`,
+        background: `linear-gradient(135deg, ${color}12 0%, transparent 60%), hsl(var(--card))`,
+        boxShadow: `0 16px 38px -22px ${color}, inset 0 1px 0 ${color}22`,
+      }}
+      role="status"
+      aria-live="polite"
+    >
+      {/* faixa scanline */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
+      />
+      <div className="flex items-start gap-3 sm:gap-4">
+        {/* Cadeado com halo pulsante */}
+        <div className="relative shrink-0">
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: `radial-gradient(circle, ${color}55, transparent 70%)`,
+              animation: 'armPulse 2.2s ease-in-out infinite',
+            }}
+          />
+          <div
+            className="relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full border"
+            style={{ borderColor: `${color}88`, background: `${color}18` }}
+          >
+            <Lock className="h-6 w-6 sm:h-7 sm:w-7" style={{ color }} strokeWidth={2.2} />
+          </div>
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full"
+              style={{ backgroundColor: color, animation: 'armDot 1.2s ease-in-out infinite' }}
+            />
+            Ronda programada · painel travado
+          </div>
+          <div className="mt-0.5 text-[13px] sm:text-sm font-semibold text-foreground/95 leading-snug">
+            Equipe <span style={{ color }}>{team}</span>
+            {firstAgent && <> · início por <span className="text-foreground">{firstAgent}</span></>} às <span className="text-foreground">{startLabel}</span>
+          </div>
+
+          {/* Countdown profissional */}
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <TimeCell value={hh} label="h" color={color} />
+            <span className="text-lg sm:text-xl font-bold opacity-40" style={{ color }}>:</span>
+            <TimeCell value={mm} label="min" color={color} />
+            <span className="text-lg sm:text-xl font-bold opacity-40" style={{ color }}>:</span>
+            <TimeCell value={ss} label="s" color={color} pulse={isImminent} />
+          </div>
+
+          <div className="mt-1.5 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+            Disparo automático em {targetLabel}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5 shrink-0">
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={onStartNow}
+            className="h-8 px-2 text-[11px] font-semibold"
+            style={{ color }}
+            title="Iniciar imediatamente sem esperar o horário programado"
+          >
+            <Play className="h-3 w-3 mr-1" /> Iniciar agora
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={onCancel}
+            className="h-8 px-2 text-[11px] text-muted-foreground hover:text-destructive"
+          >
+            <XCircle className="h-3 w-3 mr-1" /> Cancelar
+          </Button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes armPulse { 0%,100% { opacity: 0.35; transform: scale(0.95); } 50% { opacity: 0.85; transform: scale(1.08); } }
+        @keyframes armDot   { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+        @keyframes armTick  { 0%,100% { text-shadow: 0 0 0 currentColor; } 50% { text-shadow: 0 0 12px currentColor; } }
+      `}</style>
+    </div>
+  );
+}
+
+function TimeCell({ value, label, color, pulse }: { value: string; label: string; color: string; pulse?: boolean }) {
+  return (
+    <div className="flex flex-col items-center">
+      <span
+        className="font-mono text-2xl sm:text-3xl font-bold tabular-nums leading-none"
+        style={{
+          color,
+          textShadow: `0 0 14px ${color}66`,
+          animation: pulse ? 'armTick 1s ease-in-out infinite' : undefined,
+        }}
+      >
+        {value}
+      </span>
+      <span className="mt-0.5 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">{label}</span>
+    </div>
+  );
+}
+
 function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
   const [visible, setVisible] = useState(true);
   const [phrases, setPhrases] = useState<string[]>(() => nextPhrases(team, 4));
