@@ -1495,23 +1495,28 @@ export default function Index() {
         <BetaNoticeFooter />
       </div>
 
-      {/* Rodapé institucional profissional (Sobre/Master integrados) — oculto no mobile */}
+      {/* Rodapé institucional profissional — oculto no mobile */}
       <footer className="relative z-30 mt-6 w-full hidden sm:block">
         <CopyrightFooter
           compact
           leftSlot={
-            <button
-              type="button"
-              onClick={() => navigate('/about')}
-              aria-label="Sobre o aplicativo"
-              className="inline-flex items-center gap-1 rounded-sm px-1 py-0.5 text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
-            >
-              <Info className="h-3 w-3" strokeWidth={2.2} />
-              <span>Sobre</span>
-            </button>
+            <span className="inline-flex items-center gap-1.5 text-[9px] font-mono tracking-[0.24em] uppercase text-muted-foreground/70">
+              <ShieldCheck className="h-3 w-3 text-amber-500/80" strokeWidth={2.2} />
+              <span>ISE · Acre</span>
+              <span className="text-muted-foreground/30">/</span>
+              <span>Sistema Operacional</span>
+            </span>
           }
           rightSlot={
             <>
+              <span className="text-muted-foreground/40">·</span>
+              <span className="inline-flex items-center gap-1 text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                </span>
+                <span>Online</span>
+              </span>
               <span className="text-muted-foreground/40">·</span>
               <button
                 type="button"
@@ -1528,29 +1533,29 @@ export default function Index() {
       </footer>
 
       {/* Mobile-only ultra-thin footer strip (fixo, não empurra viatura/boneco) */}
-      <div className="sm:hidden fixed bottom-0 inset-x-0 z-20 h-7 flex items-center justify-center gap-2 bg-background/80 backdrop-blur-sm border-t border-border/40 pointer-events-auto">
-        <button
-          type="button"
-          onClick={() => navigate('/about')}
-          aria-label="Sobre o aplicativo"
-          className="inline-flex items-center gap-1 text-[10.5px] font-mono tracking-[0.18em] uppercase text-muted-foreground/80 hover:text-primary transition-colors"
-        >
-          <Info className="h-3 w-3" strokeWidth={2.2} />
-          <span>Sobre</span>
-        </button>
+      <div className="sm:hidden fixed bottom-0 inset-x-0 z-20 h-8 flex items-center justify-center gap-2.5 bg-gradient-to-r from-background/85 via-background/95 to-background/85 backdrop-blur-md border-t border-amber-500/20 pointer-events-auto shadow-[0_-4px_16px_-8px_rgba(0,0,0,0.4)]">
+        <ShieldCheck className="h-3 w-3 text-amber-500/90" strokeWidth={2.4} />
+        <span className="text-[10.5px] font-mono tracking-[0.22em] uppercase text-amber-400/95 font-bold">PlantãoPro</span>
         <span className="text-muted-foreground/40 text-[10.5px]">·</span>
-        <span className="text-[10.5px] font-mono tracking-[0.18em] uppercase text-amber-400/90 font-semibold">PlantãoPro</span>
+        <span className="inline-flex items-center gap-1 text-[9.5px] font-mono tracking-[0.18em] uppercase text-muted-foreground/80">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          </span>
+          <span>Online</span>
+        </span>
         <span className="text-muted-foreground/40 text-[10.5px]">·</span>
         <button
           type="button"
           onClick={() => setShowMasterLogin(true)}
           aria-label="Acesso Administrador Master"
-          className="inline-flex items-center gap-1 text-[10.5px] font-mono tracking-[0.18em] uppercase text-muted-foreground/80 hover:text-primary transition-colors"
+          className="inline-flex items-center gap-1 text-[10px] font-mono tracking-[0.18em] uppercase text-muted-foreground/80 hover:text-amber-400 transition-colors"
         >
           <Lock className="h-3 w-3" strokeWidth={2.2} />
           <span>Master</span>
         </button>
       </div>
+
 
 
 
