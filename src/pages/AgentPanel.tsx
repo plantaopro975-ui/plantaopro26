@@ -23,7 +23,7 @@ import { ShiftAlertsBanner, useShiftAlertsBanner } from '@/components/agent-pane
 import { BHReminderSettings } from '@/components/agent-panel/BHReminderSettings';
 import { BirthdayCard } from '@/components/agent-panel/BirthdayCard';
 import { ProfileCompletionAlert } from '@/components/agent-panel/ProfileCompletionAlert';
-const TacticalRadar = lazy(() => import('@/components/dashboard/TacticalRadar').then(m => ({ default: m.TacticalRadar })));
+// TacticalRadar removido do painel: agora vive apenas em /dashboard e /diretorio para eliminar duplicidade com TeamMembersCard.
 import { SessionMonitorBanner } from '@/components/SessionMonitorBanner';
 const DiagnosticReportButton = lazy(() => import('@/components/DiagnosticReportButton').then(m => ({ default: m.DiagnosticReportButton })));
 import { SafeModeToggle } from '@/components/SafeModeToggle';
