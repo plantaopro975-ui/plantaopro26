@@ -41,6 +41,7 @@ const About = lazy(() => import("./pages/About"));
 const Agenda = lazy(() => import("./pages/Agenda"));
 const RoundsHistory = lazy(() => import("./pages/RoundsHistory"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Diretorio = lazy(() => import("./pages/Diretorio"));
 const DebugAuth = lazy(() => import("./pages/DebugAuth"));
 
 const queryClient = new QueryClient({
@@ -196,6 +197,14 @@ const App = () => (
                       <Route path="/install" element={<Install />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/agenda" element={<Agenda />} />
+                      <Route
+                        path="/diretorio"
+                        element={
+                          <RequireAuth mode="redirect" redirectTo="/">
+                            <Diretorio />
+                          </RequireAuth>
+                        }
+                      />
                       <Route
                         path="/rounds-history"
                         element={

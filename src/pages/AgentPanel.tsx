@@ -23,7 +23,7 @@ import { ShiftAlertsBanner, useShiftAlertsBanner } from '@/components/agent-pane
 import { BHReminderSettings } from '@/components/agent-panel/BHReminderSettings';
 import { BirthdayCard } from '@/components/agent-panel/BirthdayCard';
 import { ProfileCompletionAlert } from '@/components/agent-panel/ProfileCompletionAlert';
-const TacticalRadar = lazy(() => import('@/components/dashboard/TacticalRadar').then(m => ({ default: m.TacticalRadar })));
+// TacticalRadar removido do painel: agora vive apenas em /dashboard e /diretorio para eliminar duplicidade com TeamMembersCard.
 import { SessionMonitorBanner } from '@/components/SessionMonitorBanner';
 const DiagnosticReportButton = lazy(() => import('@/components/DiagnosticReportButton').then(m => ({ default: m.DiagnosticReportButton })));
 import { SafeModeToggle } from '@/components/SafeModeToggle';
@@ -67,7 +67,7 @@ const BHHistoryTracker = lazy(() => import('@/components/agent-panel/BHHistoryTr
 const PasswordChangeRequest = lazy(() => import('@/components/agent-panel/PasswordChangeRequest').then(m => ({ default: m.PasswordChangeRequest })));
 const SmartAlarmClock = lazy(() => import('@/components/agent-panel/SmartAlarmClock').then(m => ({ default: m.SmartAlarmClock })));
 const RoundsHistoryCard = lazy(() => import('@/components/agent-panel/RoundsHistoryCard').then(m => ({ default: m.RoundsHistoryCard })));
-const AgentsDirectoryCard = lazy(() => import('@/components/agent-panel/AgentsDirectoryCard').then(m => ({ default: m.AgentsDirectoryCard })));
+// AgentsDirectoryCard agora vive somente na rota /diretorio (abas Equipe/Unidade/Sistema).
 const RoundsManager = lazy(() => import('@/components/home/RoundsManager').then(m => ({ default: ((m as any).RoundsManager ?? (m as any).default) as React.ComponentType<{ customTrigger?: ReactNode }> })));
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, BellRing, Megaphone, Radio, ChevronDown } from 'lucide-react';
@@ -208,10 +208,8 @@ export default function AgentPanel() {
       void import('@/components/agent-panel/PasswordChangeRequest');
       void import('@/components/agent-panel/SmartAlarmClock');
       void import('@/components/agent-panel/RoundsHistoryCard');
-      void import('@/components/agent-panel/AgentsDirectoryCard');
       void import('@/components/agent-panel/ShiftOperationsCenter');
       void import('@/components/agent-panel/ShiftBriefingCard');
-      void import('@/components/dashboard/TacticalRadar');
       void import('@/components/DiagnosticReportButton');
       void import('@/components/home/RoundsManager');
     };
@@ -826,24 +824,28 @@ export default function AgentPanel() {
                     />
                   </div>
                   <div className="grid w-full min-w-0 grid-cols-1 gap-4 overflow-visible sm:grid-cols-2 xl:grid-cols-1 xl:gap-3">
-                    <Suspense fallback={<ModuleFallback compact={compact} />}>
-                      <TacticalRadar 
-                        unitId={agent.unit_id || undefined}
-                        compact={true}
-                      />
-                    </Suspense>
                     <BirthdayCard 
                       agentId={agent.id}
                       team={agent.team}
                       unitId={agent.unit_id}
                     />
+                    {/* Atalho para o diretório agregado (equipe/unidade/sistema).
+                        Radar tático e diretório completo foram movidos para a página
+                        /diretorio para eliminar duplicidade dentro do painel. */}
+                    <a
+                      href="/diretorio"
+                      className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/25 bg-slate-900/70 backdrop-blur-xl px-3 py-2.5 text-xs hover:border-amber-400/50 hover:bg-slate-900/85 transition-colors"
+                    >
+                      <div>
+                        <div className="font-semibold text-amber-300 text-[12.5px]">Diretório Agregado</div>
+                        <div className="text-[10.5px] text-muted-foreground leading-tight">
+                          Equipe · Unidade · Sistema
+                        </div>
+                      </div>
+                      <span className="text-amber-400">→</span>
+                    </a>
                   </div>
                 </div>
-
-                {/* Diretório completo de agentes cadastrados */}
-                <Suspense fallback={null}>
-                  <AgentsDirectoryCard currentAgentId={agent.id} />
-                </Suspense>
                 </>}
               </TabsContent>
 
