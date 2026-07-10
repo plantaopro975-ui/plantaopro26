@@ -109,7 +109,7 @@ export default function About() {
         </div>
       </header>
 
-      <main className="container relative max-w-6xl px-3 py-2 space-y-2 flex-1 sm:overflow-hidden flex flex-col min-h-0">
+      <main className="container relative max-w-6xl px-3 py-2 space-y-2 flex-1 sm:overflow-hidden sm:flex sm:flex-col sm:min-h-0">
         {/* HERO */}
         <section className="relative overflow-hidden rounded-2xl border border-amber-500/25 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] flex-shrink-0">
           <div className="absolute inset-0">
@@ -164,9 +164,9 @@ export default function About() {
         </section>
 
         {/* Main Grid */}
-        <div className="grid gap-2 flex-1 min-h-0 lg:grid-cols-3">
+        <div className="grid gap-2 sm:flex-1 sm:min-h-0 lg:grid-cols-3">
           {/* Features */}
-          <section className="lg:col-span-2 flex flex-col min-h-0">
+          <section className="lg:col-span-2 sm:flex sm:flex-col sm:min-h-0">
             <div className="mb-1.5 flex items-center justify-between">
               <h2
                 className="text-sm font-normal tracking-wide text-slate-100"
@@ -181,7 +181,7 @@ export default function About() {
                 06 módulos
               </span>
             </div>
-            <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 auto-rows-fr flex-1 min-h-0">
+            <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 auto-rows-fr sm:flex-1 sm:min-h-0">
               {features.map((f) => (
                 <Card
                   key={f.title}
@@ -209,7 +209,7 @@ export default function About() {
           </section>
 
           {/* Sidebar — Origem + Specs + Contato */}
-          <section className="flex flex-col gap-2 min-h-0">
+          <section className="flex flex-col gap-2 sm:min-h-0">
             {/* Origem */}
             <Card className="border-amber-500/15 bg-gradient-to-br from-[#0a1428]/85 via-[#0f1e3a]/75 to-[#0a1428]/85 backdrop-blur-md">
               <CardContent className="p-3 space-y-2">
@@ -261,10 +261,10 @@ export default function About() {
               </CardContent>
             </Card>
 
-            {/* Specs — fills remaining space */}
-            <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md flex-1 min-h-0">
-              <CardContent className="p-3 h-full flex flex-col">
-                <div className="flex items-center justify-between mb-2">
+            {/* Specs */}
+            <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md flex-none overflow-hidden lg:flex-1 lg:min-h-0">
+              <CardContent className="p-3 flex flex-col gap-2 lg:h-full">
+                <div className="flex items-center justify-between">
                   <h3
                     className="text-[11px] uppercase tracking-[0.22em] text-amber-400/80"
                     style={{ fontFamily: MONO }}
@@ -278,7 +278,7 @@ export default function About() {
                     build.ac
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5 flex-1 content-start">
+                <div className="grid grid-cols-2 gap-1.5 lg:flex-1 lg:content-start">
                   {specs.map((s) => (
                     <div
                       key={s.label}
