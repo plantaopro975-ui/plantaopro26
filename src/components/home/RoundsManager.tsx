@@ -1169,6 +1169,55 @@ function Section({
 export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
 
   const [open, setOpen] = useState(false);
+  const { isAdmin, masterSession } = useAuth();
+  const isAdminUser = isAdmin || !!masterSession;
+
+  // Microalertas — assina falhas recentes de autenticação e reflete na faixa "Operação em tempo real"
+  const [securityAlert, setSecurityAlert] = useState<{ level: 'ok' | 'warn' | 'danger'; label?: string }>({ level: 'ok' });
+  const alertTimerRef = useRef<number | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const clearLater = (ms: number) => {
+      if (alertTimerRef.current) window.clearTimeout(alertTimerRef.current);
+      alertTimerRef.current = window.setTimeout(() => {
+        if (!cancelled) setSecurityAlert({ level: 'ok' });
+      }, ms);
+    };
+    // Verificação inicial: janela de 2 min
+    (async () => {
+      try {
+        const since = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+        const { data } = await supabase
+          .from('login_attempts')
+          .select('id, success, attempt_time')
+          .eq('success', false)
+          .gte('attempt_time', since)
+          .limit(5);
+        if (!cancelled && (data?.length || 0) >= 3) {
+          setSecurityAlert({ level: 'danger', label: `${data!.length} falhas recentes` });
+          clearLater(12000);
+        }
+      } catch { /* ignore */ }
+    })();
+
+    const ch = supabase
+      .channel('rounds-security-alerts')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'login_attempts' }, (payload) => {
+        const rec = payload.new as { success?: boolean } | null;
+        if (rec && rec.success === false) {
+          setSecurityAlert({ level: 'danger', label: 'Falha de autenticação' });
+          clearLater(8000);
+        }
+      })
+      .subscribe();
+    return () => {
+      cancelled = true;
+      if (alertTimerRef.current) window.clearTimeout(alertTimerRef.current);
+      supabase.removeChannel(ch);
+    };
+  }, []);
+
+
   const [team, setTeam] = useState<TeamKey>('ALFA');
   const [mode, setMode] = useState<Mode>('split');
   const [startTime, setStartTime] = useState('07:00');
