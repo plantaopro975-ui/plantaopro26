@@ -11,8 +11,10 @@ interface MasterLoginDialogProps {
 const GOLD = '#c9a84c';
 const GOLD_SOFT = '#f0d78c';
 
-// Pré-carrega o hero uma única vez assim que o módulo é importado,
-// para que o dialog abra instantaneamente com a imagem já em cache.
+// Pré-carrega o hero E o chunk da página /master assim que o módulo é importado.
+// Assim, quando o usuário aciona o Master (triple-click no brasão), o dialog
+// abre instantaneamente com a imagem já em cache, e o navigate('/master')
+// posterior não passa pelo fallback preto do Suspense.
 if (typeof window !== 'undefined') {
   const HREF = heroAsset.url;
   if (!document.querySelector(`link[rel="preload"][href="${HREF}"]`)) {
@@ -27,6 +29,14 @@ if (typeof window !== 'undefined') {
     img.decoding = 'async';
     img.src = HREF;
   }
+  // Prefetch do chunk /master em background — sem bloquear o first paint.
+  const kickoff = () => {
+    import('@/pages/Master').catch(() => {});
+  };
+  const idle = (window as unknown as { requestIdleCallback?: (cb: () => void) => void })
+    .requestIdleCallback;
+  if (idle) idle(kickoff);
+  else setTimeout(kickoff, 400);
 }
 
 /**
@@ -36,8 +46,8 @@ if (typeof window !== 'undefined') {
  */
 
 export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginDialogProps) {
-  // Pré-carrega o chunk da página /master assim que o dialog abre,
-  // para que o navigate('/master') após o login seja instantâneo (sem PanelSkeleton).
+  // Reforça o preload do chunk /master no instante que o dialog abre —
+  // caso o prefetch idle ainda não tenha rodado.
   useEffect(() => {
     if (!open) return;
     import('@/pages/Master').catch(() => {});
