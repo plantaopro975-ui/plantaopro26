@@ -12,13 +12,12 @@ import { pushDiagEvent } from "@/lib/diagLog";
 let splashMountedThisRuntime = false;
 
 export function SplashScreen() {
-  const shouldRender = !splashMountedThisRuntime;
-  const [visible, setVisible] = useState(shouldRender);
+  const [visible, setVisible] = useState(() => !splashMountedThisRuntime);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    pushDiagEvent("info", "splash_mount", { willRender: shouldRender });
-    if (!shouldRender) return;
+    pushDiagEvent("info", "splash_mount", { willRender: visible });
+    if (!visible) return;
     splashMountedThisRuntime = true;
     const t1 = window.setTimeout(() => setFadeOut(true), 2200);
     const t2 = window.setTimeout(() => setVisible(false), 2900);
@@ -26,7 +25,9 @@ export function SplashScreen() {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
-  }, [shouldRender]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   if (!visible) return null;
 
