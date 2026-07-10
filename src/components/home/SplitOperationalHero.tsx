@@ -521,7 +521,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
                 DESKTOP → mantém composição centralizada equilibrada */}
             <div
-              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[160px] min-[390px]:h-[176px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(200px,27vh,290px)] xl:h-[clamp(220px,30vh,340px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[20%] xl:-translate-x-[22%] pr-0 sm:pr-0 max-w-full"
+              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(200px,27vh,290px)] xl:h-[clamp(220px,30vh,340px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[20%] xl:-translate-x-[22%] pr-0 sm:pr-0 max-w-full"
             >
 
               {/* Viatura — mobile: proporcional ao agente | desktop: um pouco mais baixa */}
