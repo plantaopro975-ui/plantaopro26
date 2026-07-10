@@ -38,26 +38,47 @@ const teamColors: Record<string, string> = {
   DELTA: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
 };
 
-export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: string }) {
+export type DirectoryScope = 'team' | 'unit' | 'system';
+
+export function AgentsDirectoryCard({
+  currentAgentId,
+  scope = 'team',
+  title,
+  description,
+}: {
+  currentAgentId?: string;
+  scope?: DirectoryScope;
+  title?: string;
+  description?: string;
+}) {
   const { agent: myAgent, isLoading: profileLoading } = useAgentProfile();
   const myUnitId = (myAgent as any)?.unit_id ?? null;
+  const myTeam = (myAgent as any)?.team ?? null;
 
   const [agents, setAgents] = useState<AgentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [teamFilter, setTeamFilter] = useState<string>('all');
+  // Em escopo 'team' o filtro fica travado na equipe do agente e o select some.
+  // Em 'unit' começa em "todas equipes" mas o usuário pode filtrar.
+  // Em 'system' começa em "todas equipes" (mostra todas as unidades também).
+  const [teamFilter, setTeamFilter] = useState<string>(scope === 'team' && myTeam ? myTeam : 'all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const debouncedSearch = useDebouncedValue(search, 200);
   const onlineIds = useOnlineAgents();
+
+  // Sincroniza o filtro travado quando a equipe do agente aparece após hidratação
+  useEffect(() => {
+    if (scope === 'team' && myTeam) setTeamFilter(myTeam);
+  }, [scope, myTeam]);
 
   useEffect(() => {
     // Aguarda a hidratação completa do perfil antes de decidir.
     if (profileLoading) return;
     if (!myAgent) return;
 
-    if (!myUnitId) {
+    if (scope !== 'system' && !myUnitId) {
       const msg = 'Diretório indisponível: seu cadastro não possui unidade vinculada.';
       console.error('[AgentsDirectory] missing unit_id on caller agent', { myAgent });
       setError(msg);
@@ -70,9 +91,10 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
       try {
         setError(null);
         setLoading(true);
-        const { data, error } = await supabase.rpc('list_agents_same_unit');
+        const rpcName = scope === 'system' ? 'list_agents_system' : 'list_agents_same_unit';
+        const { data, error } = await supabase.rpc(rpcName as any);
         if (error) {
-          console.error('[AgentsDirectory] rpc list_agents_same_unit failed', error);
+          console.error(`[AgentsDirectory] rpc ${rpcName} failed`, error);
           throw error;
         }
         const mapped: AgentRow[] = (data || []).map((r: any) => ({
@@ -80,7 +102,7 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
           name: r.name,
           team: r.team,
           position: r.position,
-          role: r.role,
+          role: r.role ?? null,
           matricula: r.matricula,
           avatar_url: r.avatar_url,
           is_active: !!r.is_active,
@@ -89,7 +111,7 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
           license_status: r.license_status,
           unit: r.unit_name ? { name: r.unit_name } : null,
         }));
-        console.info('[AgentsDirectory] loaded', { count: mapped.length, unit_id: myUnitId });
+        console.info('[AgentsDirectory] loaded', { scope, count: mapped.length, unit_id: myUnitId });
         setAgents(mapped);
       } catch (e) {
         console.error('Failed to load agents directory', e);
@@ -98,7 +120,7 @@ export function AgentsDirectoryCard({ currentAgentId }: { currentAgentId?: strin
         setLoading(false);
       }
     })();
-  }, [myUnitId, myAgent, profileLoading]);
+  }, [myUnitId, myAgent, profileLoading, scope]);
 
 
   const filtered = useMemo(() => {
