@@ -17,7 +17,7 @@ import {
   Zap,
   Lock,
 } from 'lucide-react';
-import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
+import { BrasaoSentinela } from '@/components/BrasaoSentinela';
 import aboutHero from '@/assets/about-hero.jpg';
 
 
