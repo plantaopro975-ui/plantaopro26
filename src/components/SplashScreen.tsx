@@ -38,19 +38,26 @@ export function SplashScreen() {
     if (!visible) return;
     splashMountedThisRuntime = true;
 
-    // Trava scroll enquanto splash está visível
+    // Trava scroll somente enquanto o splash está visível. Antes, o cleanup
+    // só rodava no unmount do componente; como ele permanece montado e retorna
+    // null após o fade, o body ficava preso em overflow:hidden na homepage.
     const prevOverflow = document.body.style.overflow;
+    const releaseScroll = () => {
+      document.body.style.overflow = prevOverflow;
+    };
+
     document.body.style.overflow = "hidden";
 
     const t1 = window.setTimeout(() => setFadeOut(true), HOLD_MS);
-    const t2 = window.setTimeout(
-      () => setVisible(false),
-      HOLD_MS + FADE_MS + 30,
-    );
+    const t2 = window.setTimeout(() => {
+      releaseScroll();
+      setVisible(false);
+    }, HOLD_MS + FADE_MS + 30);
 
     // Safety net: força desmontar em 5s caso algo trave
     const safety = window.setTimeout(() => {
       setFadeOut(true);
+      releaseScroll();
       setVisible(false);
     }, 5000);
 
@@ -58,10 +65,9 @@ export function SplashScreen() {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
       window.clearTimeout(safety);
-      document.body.style.overflow = prevOverflow;
+      releaseScroll();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [visible]);
 
   if (!visible) return null;
 
