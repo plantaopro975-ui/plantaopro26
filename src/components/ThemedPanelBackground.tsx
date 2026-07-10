@@ -3,7 +3,7 @@ import { useEffect, useState, forwardRef } from 'react';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { teamPosters, teamColors } from '@/lib/teamAssets';
 import { cn } from '@/lib/utils';
-import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
+import { HomeImageBackground } from '@/components/home/HomeImageBackground';
 
 interface ThemedPanelBackgroundProps {
   team?: string | null;
@@ -160,10 +160,10 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
         }}
       />
 
-      {/* Command Room SVG background — shared across all layout pages */}
+      {/* Hero image background — shared across Home, Dashboard e Admin */}
       {!lowEffects && (
-        <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
-          <CommandRoomBackground />
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <HomeImageBackground />
         </div>
       )}
 
