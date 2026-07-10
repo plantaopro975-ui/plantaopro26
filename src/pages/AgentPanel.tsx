@@ -826,24 +826,28 @@ export default function AgentPanel() {
                     />
                   </div>
                   <div className="grid w-full min-w-0 grid-cols-1 gap-4 overflow-visible sm:grid-cols-2 xl:grid-cols-1 xl:gap-3">
-                    <Suspense fallback={<ModuleFallback compact={compact} />}>
-                      <TacticalRadar 
-                        unitId={agent.unit_id || undefined}
-                        compact={true}
-                      />
-                    </Suspense>
                     <BirthdayCard 
                       agentId={agent.id}
                       team={agent.team}
                       unitId={agent.unit_id}
                     />
+                    {/* Atalho para o diretório agregado (equipe/unidade/sistema).
+                        Radar tático e diretório completo foram movidos para a página
+                        /diretorio para eliminar duplicidade dentro do painel. */}
+                    <a
+                      href="/diretorio"
+                      className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/25 bg-slate-900/70 backdrop-blur-xl px-3 py-2.5 text-xs hover:border-amber-400/50 hover:bg-slate-900/85 transition-colors"
+                    >
+                      <div>
+                        <div className="font-semibold text-amber-300 text-[12.5px]">Diretório Agregado</div>
+                        <div className="text-[10.5px] text-muted-foreground leading-tight">
+                          Equipe · Unidade · Sistema
+                        </div>
+                      </div>
+                      <span className="text-amber-400">→</span>
+                    </a>
                   </div>
                 </div>
-
-                {/* Diretório completo de agentes cadastrados */}
-                <Suspense fallback={null}>
-                  <AgentsDirectoryCard currentAgentId={agent.id} />
-                </Suspense>
                 </>}
               </TabsContent>
 
