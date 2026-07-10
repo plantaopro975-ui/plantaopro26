@@ -261,10 +261,10 @@ export default function About() {
               </CardContent>
             </Card>
 
-            {/* Specs — fills remaining space */}
-            <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md flex-1 min-h-0">
-              <CardContent className="p-3 h-full flex flex-col">
-                <div className="flex items-center justify-between mb-2">
+            {/* Specs */}
+            <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md flex-none overflow-hidden lg:flex-1 lg:min-h-0">
+              <CardContent className="p-3 flex flex-col gap-2 lg:h-full">
+                <div className="flex items-center justify-between">
                   <h3
                     className="text-[11px] uppercase tracking-[0.22em] text-amber-400/80"
                     style={{ fontFamily: MONO }}
@@ -278,7 +278,7 @@ export default function About() {
                     build.ac
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5 flex-1 content-start">
+                <div className="grid grid-cols-2 gap-1.5 lg:flex-1 lg:content-start">
                   {specs.map((s) => (
                     <div
                       key={s.label}
