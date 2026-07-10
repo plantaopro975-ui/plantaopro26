@@ -24,14 +24,15 @@ const vehicleMobile = vehicle3dPngAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
-import objAlfaAsset from '@/assets/teams/alfa-object3d.webp.asset.json';
-import objBravoAsset from '@/assets/teams/bravo-object3d.webp.asset.json';
-import objCharlieAsset from '@/assets/teams/charlie-object3d.webp.asset.json';
-import objDeltaAsset from '@/assets/teams/delta-object3d.webp.asset.json';
+import objAlfaAsset from '@/assets/teams/alfa-object3d-v3.webp.asset.json';
+import objBravoAsset from '@/assets/teams/bravo-object3d-v3.webp.asset.json';
+import objCharlieAsset from '@/assets/teams/charlie-object3d-v3.webp.asset.json';
+import objDeltaAsset from '@/assets/teams/delta-object3d-v3.webp.asset.json';
 const objAlfa = objAlfaAsset.url;
 const objBravo = objBravoAsset.url;
 const objCharlie = objCharlieAsset.url;
 const objDelta = objDeltaAsset.url;
+
 
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
 const bgAlfa = bgAlfaAsset.url;
@@ -83,14 +84,15 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
 
         draggable={false}
         className={cn(
-          'block h-full w-full max-h-[82%] max-w-[80%] sm:max-h-[78%] sm:max-w-[74%] lg:max-h-[82%] lg:max-w-[76%] object-contain object-center select-none animate-float3d',
-          'drop-shadow-[0_20px_32px_rgba(0,0,0,0.9)]',
+          'block h-full w-full max-h-[98%] max-w-[96%] sm:max-h-[96%] sm:max-w-[92%] lg:max-h-[98%] lg:max-w-[94%] object-contain object-center select-none animate-float3d',
+          'drop-shadow-[0_24px_36px_rgba(0,0,0,0.92)]',
           'transition-[transform,opacity] duration-700 ease-out',
-          'group-hover:scale-[1.06] group-hover:-translate-y-0.5',
+          'group-hover:scale-[1.08] group-hover:-translate-y-1',
           'group-active:scale-[1.02]',
         )}
         style={{
           transformOrigin: '50% 55%',
+
           animationDelay: `${idx * 0.6}s`,
           contentVisibility: 'auto',
         }}
@@ -162,7 +164,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       ) : (
         <span aria-hidden className="team-halo" />
       )}
-      <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0.5 pt-2 sm:p-2 sm:pt-4 [perspective:600px]">
+      <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0 pt-1 sm:p-0.5 sm:pt-2 [perspective:600px]">
         <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
       </div>
       <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
