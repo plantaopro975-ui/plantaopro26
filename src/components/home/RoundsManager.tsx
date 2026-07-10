@@ -517,44 +517,53 @@ function TeamOperationsStripe({ team, color, active }: { team: TeamKey; color: s
 
         {team === 'CHARLIE' && (
           <g>
-            {/* Trilha pontilhada + retículo minimalista deslizando */}
-            <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.22" strokeWidth="0.6" strokeDasharray="2 5" />
-            <g opacity="0.85">
-              <animateTransform attributeName="transform" type="translate" from="-24 0" to="330 0" dur={dur} repeatCount="indefinite" />
-              <circle cx="0" cy="24" r="6" fill="none" stroke={color} strokeOpacity="0.7" strokeWidth="0.9" />
-              <line x1="-10" y1="24" x2="-4" y2="24" stroke={color} strokeOpacity="0.7" strokeWidth="0.8" />
-              <line x1="4" y1="24" x2="10" y2="24" stroke={color} strokeOpacity="0.7" strokeWidth="0.8" />
-              <line x1="0" y1="14" x2="0" y2="20" stroke={color} strokeOpacity="0.7" strokeWidth="0.8" />
-              <line x1="0" y1="28" x2="0" y2="34" stroke={color} strokeOpacity="0.7" strokeWidth="0.8" />
-            </g>
+            {/* Triangulação de precisão — três marcadores fixos com linha de varredura vertical */}
+            <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.14" strokeWidth="0.5" />
+            {[64, 160, 256].map((cx, i) => (
+              <g key={i} opacity="0.7">
+                <circle cx={cx} cy="24" r="3.5" fill="none" stroke={color} strokeOpacity="0.55" strokeWidth="0.7" />
+                <circle cx={cx} cy="24" r="1" fill={color} opacity="0.7" />
+                <circle cx={cx} cy="24" r="3.5" fill="none" stroke={color} strokeWidth="0.6">
+                  <animate attributeName="r" values="3.5;9;3.5" dur="4s" begin={`${i * 0.9}s`} repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.6;0;0.6" dur="4s" begin={`${i * 0.9}s`} repeatCount="indefinite" />
+                </circle>
+              </g>
+            ))}
+            {/* Linha de varredura vertical, contínua */}
+            <line x1="0" y1="6" x2="0" y2="40" stroke={`url(#${uid}-fade)`} strokeWidth="0.9">
+              <animate attributeName="x1" values="-4;324" dur={dur} repeatCount="indefinite" />
+              <animate attributeName="x2" values="-4;324" dur={dur} repeatCount="indefinite" />
+            </line>
           </g>
         )}
 
         {team === 'DELTA' && (
           <g>
-            {/* Barras verticais sóbrias, amplitude contida */}
-            {Array.from({ length: 32 }).map((_, i) => {
-              const x = 6 + i * 10;
-              const seed = (i * 37) % 100;
-              const a = 4 + (seed % 6);
-              const b = 8 + (seed % 8);
-              return (
-                <rect key={i} x={x} y={26 - a / 2} width="3" height={a} rx="0.6" fill={color} opacity="0.55">
-                  <animate
-                    attributeName="height"
-                    values={`${a};${b};${a}`}
-                    dur={`${2 + (i % 5) * 0.25}s`}
-                    repeatCount="indefinite"
-                  />
-                  <animate
-                    attributeName="y"
-                    values={`${26 - a / 2};${26 - b / 2};${26 - a / 2}`}
-                    dur={`${2 + (i % 5) * 0.25}s`}
-                    repeatCount="indefinite"
-                  />
-                </rect>
-              );
-            })}
+            {/* Ondas de rádio concêntricas emitindo de uma antena central */}
+            <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.12" strokeWidth="0.5" />
+            {/* Antena */}
+            <g stroke={color} strokeOpacity="0.75" strokeWidth="0.9" strokeLinecap="round" fill="none">
+              <line x1="160" y1="34" x2="160" y2="16" />
+              <line x1="156" y1="34" x2="164" y2="34" />
+              <circle cx="160" cy="14" r="1.2" fill={color} />
+            </g>
+            {/* Arcos de emissão — esquerda e direita, expandindo suavemente */}
+            {[0, 1, 2].map((i) => (
+              <g key={i} fill="none" stroke={color} strokeWidth="0.8" strokeLinecap="round">
+                <path d="M148 22 A 14 14 0 0 0 148 26" opacity="0">
+                  <animate attributeName="d"
+                    values="M158 22 A 3 3 0 0 0 158 26;M140 20 A 22 22 0 0 0 140 28;M120 18 A 42 42 0 0 0 120 30"
+                    dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0;0.55;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
+                </path>
+                <path d="M172 22 A 14 14 0 0 1 172 26" opacity="0">
+                  <animate attributeName="d"
+                    values="M162 22 A 3 3 0 0 1 162 26;M180 20 A 22 22 0 0 1 180 28;M200 18 A 42 42 0 0 1 200 30"
+                    dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0;0.55;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
+                </path>
+              </g>
+            ))}
           </g>
         )}
       </g>
