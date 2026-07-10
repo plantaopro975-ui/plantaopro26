@@ -2052,7 +2052,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </div>
                   <RoundsHeroSVG color={teamColor} active={!!currentView && !currentView.done} silent={silentMode} />
                 </div>
+                {/* Assinatura visual da equipe — ocupa a área ociosa do cabeçalho e muda por equipe */}
+                <div
+                  className="relative border-t px-3 py-1.5 sm:px-4"
+                  style={{ borderColor: `${teamColor}22`, background: `linear-gradient(180deg, ${teamColor}08, transparent)` }}
+                >
+                  <TeamOperationsStripe team={team} color={teamColor} active={!!currentView && !currentView.done} />
+                </div>
               </div>
+
 
               <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[0.7fr_1.3fr] gap-x-4 gap-y-2 items-start lg:divide-x lg:divide-border/40">
 
