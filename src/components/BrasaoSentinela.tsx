@@ -97,16 +97,23 @@ export function BrasaoSentinela({
         />
       ))}
 
-      {/* Espadas cruzadas — símbolo institucional de guarda */}
+      {/* Monograma "P" institucional — mesmo do SplashScreen */}
       <g>
-        <line x1="66" y1="140" x2="114" y2="176" stroke="url(#brasaoGold)" strokeWidth="2.6" strokeLinecap="round" />
-        <line x1="63" y1="137" x2="70" y2="144" stroke="url(#brasaoSteel)" strokeWidth="3.4" strokeLinecap="round" />
-        <circle cx="61" cy="135" r="2.2" fill="url(#brasaoGold)" />
-        <line x1="114" y1="140" x2="66" y2="176" stroke="url(#brasaoGold)" strokeWidth="2.6" strokeLinecap="round" />
-        <line x1="117" y1="137" x2="110" y2="144" stroke="url(#brasaoSteel)" strokeWidth="3.4" strokeLinecap="round" />
-        <circle cx="119" cy="135" r="2.2" fill="url(#brasaoGold)" />
-        <circle cx="90" cy="158" r="3" fill="url(#brasaoGold)" />
+        <path
+          d="M74 138 L74 178 M74 138 L98 138 C110 138 116 144 116 152 C116 160 110 166 98 166 L74 166 M68 178 L86 178 M68 138 L86 138"
+          stroke="url(#brasaoGold)"
+          strokeWidth="3.2"
+          strokeLinecap="square"
+          strokeLinejoin="miter"
+          fill="none"
+        />
+        <path
+          d="M82 146 L98 146 C104 146 107 149 107 152 C107 155 104 158 98 158 L82 158 Z"
+          fill="url(#brasaoGold)"
+          opacity="0.18"
+        />
       </g>
+
 
 
       {/* Louros laterais */}
