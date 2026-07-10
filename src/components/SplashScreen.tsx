@@ -1,26 +1,33 @@
 import { useEffect, useState } from "react";
 import { pushDiagEvent } from "@/lib/diagLog";
+import splashAsset from "@/assets/brand/plantaopro-splash.jpg.asset.json";
 
 /**
- * Splash — "Boot Tático" v9.
- * Direção institucional cotando o HUD do site (amber-on-navy, grid, brackets,
- * telemetria monospace, wordmark serifa + estêncil ISE). Duração ~2.6s.
+ * Splash — v10 "Institucional Cinematográfico".
+ * Exibe a arte oficial PlantãoPro (agente + viatura + wordmark) em fullscreen
+ * antes do login/PlantaoHome. Uma vez por runtime. Preload eager + fallback
+ * gradiente garante que nunca há flash em branco em qualquer navegador.
  * Respeita prefers-reduced-motion.
  */
 
+const SPLASH_URL = splashAsset.url;
+
+// Cache global — não remonta ao navegar entre rotas
 let splashMountedThisRuntime = false;
 
-const GOLD = "#f4c974";
-const GOLD_DEEP = "#c9922b";
-const INK = "#e9edf3";
-const NAVY_0 = "#050505";
+// Preload assíncrono no módulo load (roda antes do primeiro render)
+if (typeof window !== "undefined") {
+  try {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = SPLASH_URL;
+  } catch {
+    /* noop */
+  }
+}
 
-const BOOT_LINES: { t: string; msg: string; hot?: boolean }[] = [
-  { t: "0.12", msg: "Iniciando módulos ISE..." },
-  { t: "0.45", msg: "Verificando credenciais..." },
-  { t: "1.12", msg: "Sincronizando escalas..." },
-  { t: "2.04", msg: "Sistema pronto. Acessando...", hot: true },
-];
+const HOLD_MS = 1600;
+const FADE_MS = 550;
 
 export function SplashScreen() {
   const [visible, setVisible] = useState(() => !splashMountedThisRuntime);
@@ -30,11 +37,28 @@ export function SplashScreen() {
     pushDiagEvent("info", "splash_mount", { willRender: visible });
     if (!visible) return;
     splashMountedThisRuntime = true;
-    const t1 = window.setTimeout(() => setFadeOut(true), 900);
-    const t2 = window.setTimeout(() => setVisible(false), 1400);
+
+    // Trava scroll enquanto splash está visível
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const t1 = window.setTimeout(() => setFadeOut(true), HOLD_MS);
+    const t2 = window.setTimeout(
+      () => setVisible(false),
+      HOLD_MS + FADE_MS + 30,
+    );
+
+    // Safety net: força desmontar em 5s caso algo trave
+    const safety = window.setTimeout(() => {
+      setFadeOut(true);
+      setVisible(false);
+    }, 5000);
+
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
+      window.clearTimeout(safety);
+      document.body.style.overflow = prevOverflow;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -44,262 +68,76 @@ export function SplashScreen() {
   return (
     <div
       role="status"
-      aria-label="Carregando Plantão Pro"
+      aria-label="Carregando PlantãoPro"
       className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
       style={{
+        // Fallback gradiente idêntico à paleta da arte — se a imagem demorar,
+        // o usuário já vê a tonalidade correta, sem flash branco.
         background:
-          "radial-gradient(ellipse 90% 60% at 50% 45%, #0A1128 0%, #060912 60%, #050505 100%)",
-        color: GOLD,
-        fontFamily: "'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace",
+          "radial-gradient(ellipse 90% 60% at 60% 45%, #1a1408 0%, #0a0c12 55%, #050505 100%)",
         opacity: fadeOut ? 0 : 1,
-        transition: "opacity 650ms cubic-bezier(0.22, 1, 0.36, 1)",
+        transition: `opacity ${FADE_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`,
+        willChange: "opacity",
       }}
     >
-      {/* HUD grid layer */}
+      {/* Imagem institucional — object-cover para preencher qualquer viewport
+          sem barras. object-position centraliza o agente em telas estreitas. */}
+      <img
+        src={SPLASH_URL}
+        alt="PlantãoPro — Controle de Plantão, Escala e Banco de Horas"
+        draggable={false}
+        decoding="async"
+        // @ts-expect-error fetchpriority is a valid HTML attribute
+        fetchpriority="high"
+        className="absolute inset-0 w-full h-full select-none pointer-events-none"
+        style={{
+          objectFit: "cover",
+          objectPosition: "center center",
+          animation: "spSplashIn 700ms cubic-bezier(0.22, 1, 0.36, 1) both",
+        }}
+      />
+
+      {/* Vinheta sutil para dar profundidade e integrar bordas em telas ultra-wide */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(244,201,116,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(244,201,116,0.06) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-          maskImage:
-            "radial-gradient(ellipse at center, black 40%, transparent 85%)",
+          background:
+            "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%)",
         }}
       />
 
-      {/* Scanline */}
-      <div aria-hidden className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Barra de progresso institucional na base */}
+      <div
+        aria-hidden
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[220px] h-[2px] overflow-hidden rounded-full"
+        style={{
+          background: "rgba(244, 201, 116, 0.15)",
+          animation: "spSplashFade 400ms 200ms both",
+        }}
+      >
         <div
-          className="absolute left-0 right-0 h-[2px]"
+          className="h-full"
           style={{
-            top: 0,
-            background: `linear-gradient(90deg, transparent, ${GOLD}22, transparent)`,
-            animation: "spScan 3.6s linear infinite",
+            width: "0%",
+            background:
+              "linear-gradient(90deg, #c9922b 0%, #f4c974 55%, #f4c974 100%)",
+            boxShadow: "0 0 10px rgba(244, 201, 116, 0.7)",
+            animation: `spSplashFill ${HOLD_MS}ms cubic-bezier(0.65, 0.05, 0.36, 1) 100ms forwards`,
           }}
         />
-      </div>
-
-      {/* Frame brackets */}
-      {[
-        "top-6 left-6 border-t-2 border-l-2",
-        "top-6 right-6 border-t-2 border-r-2",
-        "bottom-6 left-6 border-b-2 border-l-2",
-        "bottom-6 right-6 border-b-2 border-r-2",
-      ].map((cls, i) => (
-        <span
-          key={i}
-          aria-hidden
-          className={`absolute w-9 h-9 ${cls}`}
-          style={{
-            borderColor: `${GOLD}66`,
-            animation: `spFade 500ms ${120 + i * 80}ms both`,
-          }}
-        />
-      ))}
-
-      {/* Top telemetry */}
-      <div
-        className="absolute top-8 left-8 right-8 flex items-start justify-between text-[10px] uppercase tracking-[0.22em]"
-        style={{ color: `${INK}99`, animation: "spFade 600ms 200ms both" }}
-      >
-        <div className="flex flex-col gap-1">
-          <span className="flex items-center gap-2">
-            <span
-              className="inline-block w-1.5 h-1.5 rounded-full"
-              style={{
-                background: GOLD,
-                boxShadow: `0 0 6px ${GOLD}`,
-                animation: "spPulse 1.4s ease-in-out infinite",
-              }}
-            />
-            <span style={{ color: GOLD }}>Secure link established</span>
-          </span>
-          <span>ID: ISE-ACRE // OPS-ALPHA</span>
-        </div>
-        <div className="text-right leading-relaxed">
-          <div>LAT: 9.9748° S</div>
-          <div>LON: 67.8111° W</div>
-        </div>
-      </div>
-
-      {/* Central composition */}
-      <div className="relative z-10 flex flex-col items-center px-8">
-        {/* Emblema — hexágono ISE em ouro */}
-        <div
-          className="relative mb-8"
-          style={{ animation: "spRise 900ms cubic-bezier(.22,1,.36,1) both" }}
-        >
-          <div
-            aria-hidden
-            className="absolute inset-0 rounded-full"
-            style={{
-              border: `1px solid ${GOLD}33`,
-              animation: "spSpin 14s linear infinite",
-              inset: "-14px",
-            }}
-          />
-          <svg width="86" height="86" viewBox="0 0 100 100" aria-hidden>
-            <defs>
-              <linearGradient id="spGold" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#f4c974" />
-                <stop offset="55%" stopColor="#c9922b" />
-                <stop offset="100%" stopColor="#7a5312" />
-              </linearGradient>
-            </defs>
-            <polygon
-              points="50,6 88,28 88,72 50,94 12,72 12,28"
-              fill="none"
-              stroke="url(#spGold)"
-              strokeWidth="2.2"
-              strokeLinejoin="miter"
-            />
-            <polygon
-              points="50,18 78,34 78,66 50,82 22,66 22,34"
-              fill="none"
-              stroke={`${GOLD}66`}
-              strokeWidth="0.8"
-            />
-            {/* Monograma P */}
-            <g stroke="url(#spGold)" strokeWidth="3.2" strokeLinecap="square" fill="none">
-              <path d="M40 30 L40 70" />
-              <path d="M40 30 L56 30 C64 30 68 36 68 42 C68 48 64 54 56 54 L40 54" />
-            </g>
-            <path
-              d="M44 34 L56 34 C60 34 62 38 62 42 C62 46 60 50 56 50 L44 50 Z"
-              fill="url(#spGold)"
-              opacity="0.18"
-            />
-          </svg>
-        </div>
-
-        {/* Wordmark */}
-        <div
-          className="flex flex-col items-center"
-          style={{ animation: "spFade 700ms 500ms both" }}
-        >
-          <h1
-            className="text-[44px] md:text-[54px] leading-none tracking-tight relative"
-            style={{
-              fontFamily:
-                "'Libre Baskerville', 'Playfair Display', Georgia, serif",
-              fontWeight: 700,
-              color: INK,
-            }}
-          >
-            PLANTÃO{" "}
-            <span
-              style={{
-                background: `linear-gradient(180deg, ${GOLD}, ${GOLD_DEEP})`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              PRO
-            </span>
-            <span
-              aria-hidden
-              className="absolute -bottom-2 left-0 right-0 h-px"
-              style={{
-                background: `linear-gradient(90deg, transparent, ${GOLD}88, transparent)`,
-              }}
-            />
-          </h1>
-
-          <p
-            className="mt-5 text-[11px] uppercase"
-            style={{
-              color: `${GOLD}cc`,
-              letterSpacing: "0.4em",
-              animation: "spFade 700ms 750ms both",
-            }}
-          >
-            Sistema Profissional · Escala · Banco de Horas
-          </p>
-        </div>
-
-        {/* Console boot log */}
-        <div
-          className="mt-10 w-[280px] text-[9px] uppercase tracking-[0.18em] flex flex-col gap-1.5"
-          style={{ color: `${GOLD}99` }}
-        >
-          {BOOT_LINES.map((line, i) => (
-            <div key={i} className="flex gap-2">
-              <span style={{ opacity: 0.45 }}>[{line.t}]</span>
-              <span
-                className="sp-boot-line overflow-hidden whitespace-nowrap"
-                style={{
-                  animation: `spType 380ms steps(22) ${400 * (i + 1)}ms forwards`,
-                  color: line.hot ? GOLD : undefined,
-                  fontWeight: line.hot ? 600 : 400,
-                  borderRight:
-                    i === BOOT_LINES.length - 1 ? "none" : `2px solid ${GOLD}`,
-                  width: 0,
-                }}
-              >
-                {line.msg}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Progress rail */}
-        <div
-          className="mt-10 w-[280px] h-[3px] relative overflow-hidden"
-          style={{
-            background: `${GOLD}18`,
-            animation: "spFade 500ms 900ms both",
-          }}
-        >
-          <div
-            className="absolute inset-y-0 left-0"
-            style={{
-              width: "0%",
-              background: `linear-gradient(90deg, ${GOLD_DEEP}, ${GOLD})`,
-              boxShadow: `0 0 10px ${GOLD}`,
-              animation: "spFill 2.2s cubic-bezier(.65,.05,.36,1) 300ms forwards",
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Bottom telemetry */}
-      <div
-        className="absolute bottom-8 left-8 right-8 flex items-center justify-between text-[9px] uppercase tracking-[0.28em]"
-        style={{ color: `${INK}66`, animation: "spFade 700ms 1000ms both" }}
-      >
-        <span>M-01 · SIGILO · AES-256</span>
-        <span>ISE / ACRE · v2.7</span>
       </div>
 
       <style>{`
-        @keyframes spFade {
-          from { opacity: 0; transform: translateY(4px); }
-          to   { opacity: 1; transform: translateY(0); }
+        @keyframes spSplashIn {
+          from { opacity: 0; transform: scale(1.04); filter: blur(4px); }
+          to   { opacity: 1; transform: scale(1); filter: blur(0); }
         }
-        @keyframes spRise {
-          from { opacity: 0; transform: translateY(14px) scale(0.94); filter: blur(6px); }
-          to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        @keyframes spSplashFade {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
-        @keyframes spScan {
-          0%   { top: -2%; opacity: 0; }
-          10%  { opacity: 1; }
-          90%  { opacity: 1; }
-          100% { top: 102%; opacity: 0; }
-        }
-        @keyframes spPulse {
-          0%,100% { opacity: 1; }
-          50%     { opacity: 0.4; }
-        }
-        @keyframes spSpin {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @keyframes spType {
-          from { width: 0; }
-          to   { width: 100%; }
-        }
-        @keyframes spFill {
+        @keyframes spSplashFill {
           from { width: 0%; }
           to   { width: 100%; }
         }
