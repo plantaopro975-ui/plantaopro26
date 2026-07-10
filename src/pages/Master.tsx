@@ -731,6 +731,9 @@ export default function Master() {
           {/* Audit — Recém-cadastrados + Auditoria de Acessos */}
           <TabsContent value="audit" className="space-y-6 mt-6">
             <Suspense fallback={<PanelSkeleton rows={4} />}>
+              <AgentsConnectionMonitor />
+            </Suspense>
+            <Suspense fallback={<PanelSkeleton rows={4} />}>
               <AccessAuditPanel />
             </Suspense>
             <Suspense fallback={<PanelSkeleton rows={4} />}>
