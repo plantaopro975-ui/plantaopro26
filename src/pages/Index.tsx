@@ -63,12 +63,11 @@ import { DeveloperSignature } from '@/components/DeveloperSignature';
 import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
-import { CinematicBrandHero } from '@/components/home/CinematicBrandHero';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
 import { useHomeCardOrder, type HomeCardId } from '@/hooks/useHomeCardOrder';
 
-import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
+import { HomeImageBackground } from '@/components/home/HomeImageBackground';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
@@ -1345,7 +1344,7 @@ export default function Index() {
     <Suspense fallback={null}>
     <>
       <div
-        className="home-typo min-h-full flex flex-col bg-background relative overflow-x-hidden overflow-y-auto overscroll-none home-compact no-scrollbar"
+        className="home-typo h-full flex flex-col relative overflow-hidden overscroll-none home-compact no-scrollbar"
         style={{
           fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
           ['--home-gap' as any]: 'clamp(2px, 0.35vh, 8px)',
@@ -1354,8 +1353,8 @@ export default function Index() {
 
         }}
       >
-        {/* Sober command-room background — SVG only, no posters */}
-        <CommandRoomBackground />
+        {/* Background da home — imagem oficial do agente/viatura + overlays táticos */}
+        <HomeImageBackground />
 
         {/* Return-to-panel shortcut for logged-in agents browsing the homepage */}
         {user && (
@@ -1478,14 +1477,8 @@ export default function Index() {
 
 
 
-      {/* Seção institucional cinematográfica — abaixo dos cards operacionais.
-          Usa a arte oficial (agente + viatura) como background fullscreen. */}
-      <CinematicBrandHero
-        onScrollToLogin={() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onMasterClick={() => setShowMasterLogin(true)}
-      />
+      {/* CinematicBrandHero removido — a imagem agora é o próprio background
+          da home (HomeImageBackground), tornando essa seção redundante. */}
 
 
 
