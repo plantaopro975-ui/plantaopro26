@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
   Play, Pause, RotateCcw, Radio, ChevronRight, AlertTriangle,
-  CheckCircle2, Volume2, VolumeX,
+  CheckCircle2, Volume2, VolumeX, Lock, CalendarClock, XCircle,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
