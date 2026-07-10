@@ -158,10 +158,10 @@ export function AgentsDirectoryCard({
                 <div className="p-1 rounded-md bg-gradient-to-br from-amber-500/30 to-amber-600/10 border border-amber-500/40">
                   <Users className="h-3.5 w-3.5 text-amber-400" />
                 </div>
-                Diretório de Agentes
+                {title ?? (scope === 'team' ? `Equipe ${myTeam ?? '—'}` : scope === 'system' ? 'Diretório do Sistema' : 'Diretório de Agentes')}
               </CardTitle>
               <CardDescription className="text-[11px] mt-0.5 leading-tight">
-                Agentes da sua unidade
+                {description ?? (scope === 'team' ? 'Somente agentes da sua equipe' : scope === 'system' ? 'Agentes ativos de todas as unidades' : 'Agentes da sua unidade')}
               </CardDescription>
             </div>
             <div className="flex items-center gap-1.5 text-[10px]">
