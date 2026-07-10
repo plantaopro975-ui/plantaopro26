@@ -891,6 +891,29 @@ function TimeCell({ value, label, color, pulse }: { value: string; label: string
 function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
   const [visible, setVisible] = useState(true);
   const [phrases, setPhrases] = useState<string[]>(() => nextPhrases(team, 4));
+  // Só revela o ticker depois que a IBM Plex Sans estiver realmente pronta —
+  // elimina o FOUT (flash com fallback) em qualquer navegador com FontFace API.
+  // Navegadores sem `document.fonts` (muito antigos) revelam imediatamente.
+  const [fontReady, setFontReady] = useState<boolean>(() => {
+    if (typeof document === 'undefined') return true;
+    const fs = (document as Document & { fonts?: FontFaceSet }).fonts;
+    return !fs;
+  });
+
+  useEffect(() => {
+    if (fontReady) return;
+    const fs = (document as Document & { fonts?: FontFaceSet }).fonts;
+    if (!fs) { setFontReady(true); return; }
+    let cancelled = false;
+    // Pré-carrega os dois pesos usados (600 corpo, 700 caso apareça)
+    Promise.all([
+      fs.load('600 12.5px "IBM Plex Sans"').catch(() => null),
+      fs.load('700 12.5px "IBM Plex Sans"').catch(() => null),
+    ]).then(() => { if (!cancelled) setFontReady(true); });
+    // Fallback duro após 2s para nunca deixar o ticker invisível
+    const t = window.setTimeout(() => { if (!cancelled) setFontReady(true); }, 2000);
+    return () => { cancelled = true; window.clearTimeout(t); };
+  }, [fontReady]);
 
   useEffect(() => {
     setPhrases(nextPhrases(team, 4));
@@ -910,7 +933,8 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
     return () => clearTimeout(t);
   }, [visible, team]);
 
-  if (!visible) return null;
+  if (!visible || !fontReady) return null;
+
 
   const sep = ' \u2022 ';
   const line = phrases.join(sep);
