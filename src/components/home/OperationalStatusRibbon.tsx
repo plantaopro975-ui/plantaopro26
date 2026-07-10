@@ -20,7 +20,7 @@ const fmt2 = (n: number) => n.toString().padStart(2, '0');
 export function OperationalStatusRibbon() {
   const { agent } = useAgentProfile();
   const metrics = useOperationalMetrics();
-  const onlineAgents = useOnlineAgents().size;
+  const onlineAgents = Math.max(useOnlineAgents().size, useVisitorPresence());
 
   const teamKey = (agent?.team ?? '').toUpperCase();
   const isLogged = Boolean(agent?.id);
