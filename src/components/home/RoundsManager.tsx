@@ -2074,11 +2074,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' });
       return;
     }
+    if (startingRef.current || running) return; // idempotência local (evita corrida)
+    startingRef.current = true;
+    try {
     await syncServerClock();
     const nowMs = nowServer();
-    // Prioridade de âncora:
-    // 1) Override explícito (auto-disparo de programação) — ancora exatamente
-    //    no `armedForMs` alvo para GARANTIR que o Agente 1 comece no seu slot,
     //    imune a atraso do tick (fire pode ocorrer alguns ms após o alvo).
     // 2) Turno noturno em split — ancora em 22:00 (regra de negócio).
     // 3) Caso geral — âncora = agora.
