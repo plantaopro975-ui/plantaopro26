@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { pushDiagEvent } from "@/lib/diagLog";
 
 /**
- * Splash — "Sentinela" v6.
- * Direção: arte institucional de segurança pública. Tela cheia, preto
- * carvão, chevrons táticos, brasão sentinela em SVG, faixas de patente,
- * grid de coordenadas ISE/Acre e wordmark serifado em ouro escovado.
- * Duração ~2.2s. Respeita prefers-reduced-motion.
+ * Splash — "Radar de Comando" v7.
+ * Direção nova: sala de comando institucional. Fundo azul-noite profundo,
+ * anéis de radar pulsando, feixe rotativo em ciano, rosa dos ventos em
+ * âmbar, hex grid sutil, monograma "P" institucional dentro de hexágono
+ * técnico. Duração ~2.4s. Respeita prefers-reduced-motion.
  */
 
 let splashMountedThisRuntime = false;
@@ -19,8 +19,8 @@ export function SplashScreen() {
     pushDiagEvent("info", "splash_mount", { willRender: visible });
     if (!visible) return;
     splashMountedThisRuntime = true;
-    const t1 = window.setTimeout(() => setFadeOut(true), 2200);
-    const t2 = window.setTimeout(() => setVisible(false), 2900);
+    const t1 = window.setTimeout(() => setFadeOut(true), 2400);
+    const t2 = window.setTimeout(() => setVisible(false), 3050);
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
@@ -28,8 +28,11 @@ export function SplashScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   if (!visible) return null;
+
+  const CYAN = "#22d3ee";
+  const AMBER = "#f5b842";
+  const IVORY = "#e6edf3";
 
   return (
     <div
@@ -38,340 +41,264 @@ export function SplashScreen() {
       className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 35%, #14140f 0%, #0a0a08 45%, #030302 100%)",
+          "radial-gradient(ellipse at 50% 40%, #0d223d 0%, #06111f 55%, #020610 100%)",
         opacity: fadeOut ? 0 : 1,
-        transition: "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+        transition: "opacity 650ms cubic-bezier(0.22, 1, 0.36, 1)",
       }}
     >
-      {/* Grid tático de coordenadas — tela inteira */}
+      {/* Hex grid de fundo */}
       <svg
         aria-hidden
-        className="absolute inset-0 h-full w-full opacity-[0.09]"
+        className="absolute inset-0 h-full w-full opacity-[0.10]"
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="none"
       >
         <defs>
-          <pattern id="splashGrid" width="48" height="48" patternUnits="userSpaceOnUse">
-            <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#c9a24a" strokeWidth="0.5" />
-          </pattern>
-          <pattern id="splashGridMinor" width="12" height="12" patternUnits="userSpaceOnUse">
-            <path d="M 12 0 L 0 0 0 12" fill="none" stroke="#c9a24a" strokeWidth="0.2" />
+          <pattern id="splashHex" width="56" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(0.9)">
+            <path
+              d="M28 0 L56 16.16 L56 48.5 L28 64.66 L0 48.5 L0 16.16 Z"
+              fill="none"
+              stroke={CYAN}
+              strokeWidth="0.6"
+            />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#splashGridMinor)" />
-        <rect width="100%" height="100%" fill="url(#splashGrid)" />
+        <rect width="100%" height="100%" fill="url(#splashHex)" />
       </svg>
 
-      {/* Grão sutil */}
+      {/* Scanlines suaves */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-overlay"
+        className="pointer-events-none absolute inset-0 opacity-[0.08]"
         style={{
           backgroundImage:
-            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.7'/></svg>\")",
+            "repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(255,255,255,0.35) 3px, rgba(255,255,255,0.35) 4px)",
+          mixBlendMode: "overlay",
         }}
       />
 
-      {/* Vinheta forte */}
+      {/* Vinheta */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.85) 100%)",
+            "radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.85) 100%)",
         }}
       />
 
-      {/* Cantos táticos — corner brackets */}
-      {[
-        { top: 24, left: 24, rot: 0 },
-        { top: 24, right: 24, rot: 90 },
-        { bottom: 24, right: 24, rot: 180 },
-        { bottom: 24, left: 24, rot: 270 },
-      ].map((c, i) => (
-        <div
-          key={i}
-          aria-hidden
-          className="absolute"
-          style={{
-            top: c.top,
-            bottom: c.bottom,
-            left: c.left,
-            right: c.right,
-            width: 42,
-            height: 42,
-            borderTop: "1px solid rgba(201,162,74,0.7)",
-            borderLeft: "1px solid rgba(201,162,74,0.7)",
-            transform: `rotate(${c.rot}deg)`,
-            animation: `splashFade 500ms ${100 + i * 60}ms cubic-bezier(.22,1,.36,1) both`,
-          }}
-        />
-      ))}
-
-      {/* Labels de canto — coordenadas ISE */}
+      {/* Labels de canto */}
       <div
         aria-hidden
-        className="absolute left-6 top-6 flex flex-col gap-1 text-[9px] uppercase tracking-[0.35em]"
-        style={{ color: "rgba(234,226,207,0.55)", fontFamily: "'JetBrains Mono', ui-monospace, monospace", animation: "splashFade 500ms 200ms both" }}
+        className="absolute left-6 top-6 flex flex-col gap-1 text-[9px] uppercase tracking-[0.42em]"
+        style={{ color: `${IVORY}99`, fontFamily: "'JetBrains Mono', ui-monospace, monospace", animation: "rdrFade 500ms 220ms both" }}
       >
-        <span>ISE · ACRE</span>
-        <span style={{ color: "rgba(201,162,74,0.9)" }}>09°58′S 67°48′W</span>
+        <span style={{ color: `${CYAN}cc` }}>◉ RADAR · ATIVO</span>
+        <span>09°58′S · 67°48′W</span>
       </div>
       <div
         aria-hidden
-        className="absolute right-6 top-6 flex flex-col items-end gap-1 text-[9px] uppercase tracking-[0.35em]"
-        style={{ color: "rgba(234,226,207,0.55)", fontFamily: "'JetBrains Mono', ui-monospace, monospace", animation: "splashFade 500ms 260ms both" }}
+        className="absolute right-6 top-6 flex flex-col items-end gap-1 text-[9px] uppercase tracking-[0.42em]"
+        style={{ color: `${IVORY}99`, fontFamily: "'JetBrains Mono', ui-monospace, monospace", animation: "rdrFade 500ms 280ms both" }}
       >
-        <span>SEC · CLR-A</span>
-        <span style={{ color: "rgba(201,162,74,0.9)" }}>NÍVEL OPERACIONAL</span>
+        <span style={{ color: `${AMBER}dd` }}>CH-01 · 2.4 GHz</span>
+        <span>PING · 12 ms</span>
       </div>
       <div
         aria-hidden
-        className="absolute bottom-6 left-6 text-[9px] uppercase tracking-[0.35em]"
-        style={{ color: "rgba(234,226,207,0.4)", fontFamily: "'JetBrains Mono', ui-monospace, monospace", animation: "splashFade 500ms 320ms both" }}
+        className="absolute bottom-6 left-6 text-[9px] uppercase tracking-[0.42em]"
+        style={{ color: `${IVORY}80`, fontFamily: "'JetBrains Mono', ui-monospace, monospace", animation: "rdrFade 500ms 340ms both" }}
       >
-        UNIDADE · FEIJÓ / AC
+        NÓ · FEIJÓ / AC · 220v
       </div>
       <div
         aria-hidden
-        className="absolute bottom-6 right-6 text-[9px] uppercase tracking-[0.35em]"
-        style={{ color: "rgba(234,226,207,0.4)", fontFamily: "'JetBrains Mono', ui-monospace, monospace", animation: "splashFade 500ms 380ms both" }}
+        className="absolute bottom-6 right-6 text-[9px] uppercase tracking-[0.42em]"
+        style={{ color: `${IVORY}80`, fontFamily: "'JetBrains Mono', ui-monospace, monospace", animation: "rdrFade 500ms 400ms both" }}
       >
-        HANDSHAKE · AES-256
+        UPLINK · TLS-1.3
       </div>
 
-      {/* Chevrons táticos — barras de patente laterais */}
-      <div
-        aria-hidden
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ width: "min(720px, 92vw)", height: 4 }}
-      >
-        <div
-          className="absolute left-0 top-1/2 h-px -translate-y-1/2"
-          style={{
-            width: "calc(50% - 200px)",
-            background: "linear-gradient(90deg, transparent, rgba(201,162,74,0.55))",
-            animation: "splashLineL 900ms 250ms cubic-bezier(.22,1,.36,1) both",
-          }}
-        />
-        <div
-          className="absolute right-0 top-1/2 h-px -translate-y-1/2"
-          style={{
-            width: "calc(50% - 200px)",
-            background: "linear-gradient(270deg, transparent, rgba(201,162,74,0.55))",
-            animation: "splashLineR 900ms 250ms cubic-bezier(.22,1,.36,1) both",
-          }}
-        />
-      </div>
-
-      {/* Conteúdo central */}
+      {/* Radar central + monograma */}
       <div className="relative flex flex-col items-center px-6">
-        {/* Brasão Sentinela */}
-        <div
-          className="relative"
-          style={{ animation: "splashMark 1200ms cubic-bezier(.22,1,.36,1) both" }}
-        >
+        <div className="relative" style={{ animation: "rdrFadeUp 900ms cubic-bezier(.22,1,.36,1) both" }}>
           <svg
-            width="180"
-            height="200"
-            viewBox="0 0 180 200"
-            fill="none"
+            width="240"
+            height="240"
+            viewBox="0 0 240 240"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden
           >
             <defs>
-              <linearGradient id="spGold" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f6d97a" />
-                <stop offset="50%" stopColor="#c9a24a" />
-                <stop offset="100%" stopColor="#7a5a1c" />
+              <linearGradient id="rdrCyan" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#7ff2ff" />
+                <stop offset="100%" stopColor="#0aa3c7" />
               </linearGradient>
-              <linearGradient id="spSteel" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#dcdce0" />
-                <stop offset="100%" stopColor="#6a6a70" />
+              <linearGradient id="rdrAmber" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ffd48a" />
+                <stop offset="100%" stopColor="#c07f18" />
               </linearGradient>
-              <radialGradient id="spCore" cx="0.5" cy="0.5" r="0.6">
-                <stop offset="0%" stopColor="rgba(246,217,122,0.35)" />
+              <radialGradient id="rdrGlow" cx="0.5" cy="0.5" r="0.6">
+                <stop offset="0%" stopColor="rgba(34,211,238,0.35)" />
                 <stop offset="100%" stopColor="transparent" />
               </radialGradient>
+              {/* Sweep — cone que gira */}
+              <linearGradient id="rdrSweep" x1="0.5" y1="0" x2="1" y2="0.5">
+                <stop offset="0%" stopColor="rgba(34,211,238,0.55)" />
+                <stop offset="100%" stopColor="rgba(34,211,238,0)" />
+              </linearGradient>
+              <clipPath id="rdrClip">
+                <circle cx="120" cy="120" r="108" />
+              </clipPath>
             </defs>
 
-            {/* Halo do brasão */}
-            <circle cx="90" cy="100" r="80" fill="url(#spCore)" />
+            {/* Glow central */}
+            <circle cx="120" cy="120" r="112" fill="url(#rdrGlow)" />
 
-            {/* Escudo externo */}
-            <path
-              d="M90 8 L160 32 L160 108 C160 148 128 178 90 192 C52 178 20 148 20 108 L20 32 Z"
-              stroke="url(#spSteel)"
-              strokeWidth="1.2"
-              fill="rgba(20,20,15,0.35)"
-              style={{
-                strokeDasharray: 520,
-                strokeDashoffset: 520,
-                animation: "splashDraw 1300ms 150ms cubic-bezier(.22,1,.36,1) forwards",
-              }}
-            />
-
-            {/* Escudo interno ouro */}
-            <path
-              d="M90 20 L148 40 L148 106 C148 140 122 166 90 178 C58 166 32 140 32 106 L32 40 Z"
-              stroke="url(#spGold)"
-              strokeWidth="1.5"
-              fill="none"
-              style={{
-                strokeDasharray: 440,
-                strokeDashoffset: 440,
-                animation: "splashDraw 1300ms 320ms cubic-bezier(.22,1,.36,1) forwards",
-              }}
-            />
-
-            {/* Estrela superior — 5 pontas */}
-            <path
-              d="M90 40 L94 52 L107 52 L96 60 L100 72 L90 64 L80 72 L84 60 L73 52 L86 52 Z"
-              fill="url(#spGold)"
-              style={{
-                opacity: 0,
-                transformOrigin: "90px 56px",
-                animation: "splashStar 600ms 900ms cubic-bezier(.22,1,.36,1) forwards",
-              }}
-            />
-
-            {/* Chevrons — 3 galões */}
-            {[0, 1, 2].map((i) => (
-              <path
-                key={i}
-                d={`M60 ${100 + i * 12} L90 ${92 + i * 12} L120 ${100 + i * 12}`}
-                stroke="url(#spGold)"
-                strokeWidth="2.5"
-                strokeLinecap="square"
-                strokeLinejoin="miter"
+            {/* Anéis radar */}
+            {[108, 84, 60, 36].map((r, i) => (
+              <circle
+                key={r}
+                cx="120"
+                cy="120"
+                r={r}
                 fill="none"
-                style={{
-                  strokeDasharray: 90,
-                  strokeDashoffset: 90,
-                  animation: `splashDraw 500ms ${1050 + i * 120}ms cubic-bezier(.22,1,.36,1) forwards`,
-                }}
+                stroke={CYAN}
+                strokeWidth={i === 0 ? 1.1 : 0.7}
+                opacity={0.55 - i * 0.08}
+                style={{ animation: `rdrPulse 2400ms ${i * 260}ms ease-out infinite` }}
               />
             ))}
 
-            {/* Monograma "P" — letra institucional serifada */}
-            <g
-              style={{
-                opacity: 0,
-                transformOrigin: "90px 158px",
-                animation: "splashStar 700ms 1250ms cubic-bezier(.22,1,.36,1) forwards",
-              }}
-            >
-              {/* P serifado desenhado como path (haste + bojo + serifas) */}
-              <path
-                d="M74 138 L74 178 M74 138 L98 138 C110 138 116 144 116 152 C116 160 110 166 98 166 L74 166 M68 178 L86 178 M68 138 L86 138"
-                stroke="url(#spGold)"
-                strokeWidth="3.2"
-                strokeLinecap="square"
-                strokeLinejoin="miter"
-                fill="none"
-              />
-              {/* Reforço interno do bojo */}
-              <path
-                d="M82 146 L98 146 C104 146 107 149 107 152 C107 155 104 158 98 158 L82 158 Z"
-                fill="url(#spGold)"
-                opacity="0.18"
-                stroke="none"
-              />
+            {/* Cruz cardinal */}
+            <g stroke={CYAN} strokeWidth="0.6" opacity="0.55">
+              <line x1="12" y1="120" x2="228" y2="120" />
+              <line x1="120" y1="12" x2="120" y2="228" />
+              <line x1="35" y1="35" x2="205" y2="205" opacity="0.35" />
+              <line x1="205" y1="35" x2="35" y2="205" opacity="0.35" />
             </g>
 
-
-
-
-            {/* Louros — arcos laterais */}
-            <path
-              d="M28 110 Q10 130 32 168"
-              stroke="url(#spGold)"
-              strokeWidth="1"
-              fill="none"
-              opacity="0.75"
-              style={{
-                strokeDasharray: 90,
-                strokeDashoffset: 90,
-                animation: "splashDraw 900ms 800ms cubic-bezier(.22,1,.36,1) forwards",
-              }}
-            />
-            <path
-              d="M152 110 Q170 130 148 168"
-              stroke="url(#spGold)"
-              strokeWidth="1"
-              fill="none"
-              opacity="0.75"
-              style={{
-                strokeDasharray: 90,
-                strokeDashoffset: 90,
-                animation: "splashDraw 900ms 800ms cubic-bezier(.22,1,.36,1) forwards",
-              }}
-            />
-
-            {/* Rebites cardeais */}
+            {/* Marcadores de bússola N E S W */}
             {[
-              { cx: 90, cy: 8 },
-              { cx: 90, cy: 192 },
-              { cx: 20, cy: 70 },
-              { cx: 160, cy: 70 },
-            ].map((p, i) => (
+              { x: 120, y: 8,  t: "N" },
+              { x: 232, y: 124, t: "L" },
+              { x: 120, y: 236, t: "S" },
+              { x: 8,   y: 124, t: "O" },
+            ].map((m) => (
+              <text
+                key={m.t}
+                x={m.x}
+                y={m.y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontFamily="'JetBrains Mono', ui-monospace, monospace"
+                fontSize="9"
+                fill={AMBER}
+                opacity="0.9"
+              >
+                {m.t}
+              </text>
+            ))}
+
+            {/* Sweep rotativo dentro do radar */}
+            <g clipPath="url(#rdrClip)">
+              <g style={{ transformOrigin: "120px 120px", animation: "rdrSweep 3.6s linear infinite" }}>
+                <path d="M120 120 L120 12 A108 108 0 0 1 228 120 Z" fill="url(#rdrSweep)" />
+              </g>
+            </g>
+
+            {/* Blips */}
+            {[
+              { x: 78,  y: 96,  d: 400 },
+              { x: 168, y: 82,  d: 900 },
+              { x: 156, y: 172, d: 1400 },
+              { x: 84,  y: 158, d: 1900 },
+            ].map((b) => (
               <circle
-                key={i}
-                cx={p.cx}
-                cy={p.cy}
-                r="2"
-                fill="url(#spGold)"
-                style={{
-                  opacity: 0,
-                  animation: `splashDot 400ms ${1500 + i * 80}ms cubic-bezier(.22,1,.36,1) forwards`,
-                }}
+                key={`${b.x}-${b.y}`}
+                cx={b.x}
+                cy={b.y}
+                r="2.6"
+                fill={AMBER}
+                style={{ opacity: 0, animation: `rdrBlip 1400ms ${b.d}ms ease-out infinite` }}
               />
             ))}
+
+            {/* Hexágono central com monograma "P" */}
+            <g style={{ animation: "rdrFadeUp 700ms 500ms cubic-bezier(.22,1,.36,1) both" }}>
+              <polygon
+                points="120,72 162,96 162,144 120,168 78,144 78,96"
+                fill="rgba(6,17,31,0.85)"
+                stroke="url(#rdrCyan)"
+                strokeWidth="1.6"
+              />
+              <polygon
+                points="120,80 154,100 154,140 120,160 86,140 86,100"
+                fill="none"
+                stroke="url(#rdrAmber)"
+                strokeWidth="0.8"
+                opacity="0.7"
+              />
+              {/* Monograma "P" institucional (mesmo do brasão) */}
+              <g transform="translate(60,42) scale(1.05)">
+                <path
+                  d="M74 138 L74 178 M74 138 L98 138 C110 138 116 144 116 152 C116 160 110 166 98 166 L74 166 M68 178 L86 178 M68 138 L86 138"
+                  stroke="url(#rdrAmber)"
+                  strokeWidth="3.2"
+                  strokeLinecap="square"
+                  strokeLinejoin="miter"
+                  fill="none"
+                />
+                <path
+                  d="M82 146 L98 146 C104 146 107 149 107 152 C107 155 104 158 98 158 L82 158 Z"
+                  fill="url(#rdrAmber)"
+                  opacity="0.22"
+                />
+              </g>
+            </g>
+
+            {/* Ponto central + halo */}
+            <circle cx="120" cy="120" r="3" fill={CYAN} />
+            <circle cx="120" cy="120" r="7" fill="none" stroke={CYAN} strokeWidth="0.6" opacity="0.6" />
           </svg>
         </div>
 
-        {/* Faixa de patente sob o brasão */}
+        {/* Faixa institucional */}
         <div
-          className="mt-6 flex items-center gap-3"
-          style={{ animation: "splashFade 700ms 1400ms cubic-bezier(.22,1,.36,1) both" }}
+          className="mt-5 flex items-center gap-3"
+          style={{ animation: "rdrFade 700ms 900ms both" }}
         >
-          <span
-            className="h-px w-10"
-            style={{ background: "linear-gradient(90deg, transparent, rgba(201,162,74,0.9))" }}
-          />
+          <span className="h-px w-10" style={{ background: `linear-gradient(90deg, transparent, ${CYAN}cc)` }} />
           <span
             className="text-[9px] uppercase tracking-[0.55em]"
-            style={{ color: "rgba(201,162,74,0.95)", fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
+            style={{ color: `${CYAN}dd`, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
           >
-            SEGURANÇA · SOCIOEDUCATIVA
+            COMANDO · SOCIOEDUCATIVO
           </span>
-          <span
-            className="h-px w-10"
-            style={{ background: "linear-gradient(270deg, transparent, rgba(201,162,74,0.9))" }}
-          />
+          <span className="h-px w-10" style={{ background: `linear-gradient(270deg, transparent, ${CYAN}cc)` }} />
         </div>
 
         {/* Wordmark */}
         <div
-          className="mt-6 flex flex-col items-center"
-          style={{ animation: "splashFade 700ms 1600ms cubic-bezier(.22,1,.36,1) both" }}
+          className="mt-5 flex flex-col items-center"
+          style={{ animation: "rdrFade 700ms 1100ms both" }}
         >
           <div
-            className="text-[30px] leading-none tracking-[0.32em] font-light"
+            className="text-[30px] leading-none tracking-[0.28em]"
             style={{
-              fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif",
-              color: "#eae2cf",
+              fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
+              color: IVORY,
+              fontWeight: 300,
             }}
           >
             PLANTÃO
             <span
               style={{
-                background: "linear-gradient(180deg,#f6d97a,#c9a24a)",
+                background: `linear-gradient(180deg, ${AMBER}, #b57312)`,
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 marginLeft: "0.32em",
-                fontStyle: "italic",
-                fontWeight: 500,
+                fontWeight: 600,
               }}
             >
               Pro
@@ -379,22 +306,22 @@ export function SplashScreen() {
           </div>
           <div
             className="mt-3 text-[10px] uppercase tracking-[0.5em]"
-            style={{ color: "rgba(234,226,207,0.5)" }}
+            style={{ color: `${IVORY}88` }}
           >
-            Comando · Escala · Vigilância
+            Radar · Escala · Comando
           </div>
         </div>
 
         {/* Régua de progresso */}
         <div
-          className="mt-10 flex items-center gap-3"
-          style={{ animation: "splashFade 500ms 1700ms both" }}
+          className="mt-9 flex items-center gap-3"
+          style={{ animation: "rdrFade 500ms 1250ms both" }}
         >
           <span
             className="text-[8px] uppercase tracking-[0.4em]"
-            style={{ color: "rgba(234,226,207,0.4)", fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
+            style={{ color: `${IVORY}55`, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
           >
-            SYS
+            SYNC
           </span>
           <div
             className="h-[2px] w-[240px] overflow-hidden rounded-full"
@@ -403,49 +330,46 @@ export function SplashScreen() {
             <div
               className="h-full"
               style={{
-                background:
-                  "linear-gradient(90deg, transparent 0%, #c9a24a 30%, #f6d97a 55%, #c9a24a 80%, transparent 100%)",
+                background: `linear-gradient(90deg, transparent 0%, ${CYAN} 30%, ${AMBER} 60%, ${CYAN} 85%, transparent 100%)`,
                 transform: "translateX(-100%)",
-                animation: "splashProgress 1800ms 500ms cubic-bezier(.65,.05,.36,1) forwards",
+                animation: "rdrProgress 1900ms 400ms cubic-bezier(.65,.05,.36,1) forwards",
               }}
             />
           </div>
           <span
             className="text-[8px] uppercase tracking-[0.4em]"
-            style={{ color: "rgba(201,162,74,0.75)", fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
+            style={{ color: `${AMBER}bb`, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
           >
-            OK
+            LINK
           </span>
         </div>
       </div>
 
       <style>{`
-        @keyframes splashDraw { to { stroke-dashoffset: 0; } }
-        @keyframes splashDot {
-          from { opacity: 0; transform: scale(0.4); }
-          to   { opacity: 1; transform: scale(1); }
-        }
-        @keyframes splashStar {
-          from { opacity: 0; transform: scale(0.6) rotate(-8deg); }
-          to   { opacity: 1; transform: scale(1) rotate(0); }
-        }
-        @keyframes splashMark {
-          from { opacity: 0; transform: translateY(10px) scale(0.97); filter: blur(3px); }
-          to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-        }
-        @keyframes splashFade {
+        @keyframes rdrFade {
           from { opacity: 0; transform: translateY(4px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes splashLineL {
-          from { opacity: 0; transform: translateX(-24px) translateY(-50%); }
-          to   { opacity: 1; transform: translateX(0) translateY(-50%); }
+        @keyframes rdrFadeUp {
+          from { opacity: 0; transform: translateY(14px) scale(0.96); filter: blur(4px); }
+          to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
-        @keyframes splashLineR {
-          from { opacity: 0; transform: translateX(24px) translateY(-50%); }
-          to   { opacity: 1; transform: translateX(0) translateY(-50%); }
+        @keyframes rdrSweep {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
         }
-        @keyframes splashProgress {
+        @keyframes rdrPulse {
+          0%   { stroke-opacity: 0.05; transform: scale(0.85); transform-origin: 120px 120px; }
+          40%  { stroke-opacity: 0.75; }
+          100% { stroke-opacity: 0;    transform: scale(1.08); transform-origin: 120px 120px; }
+        }
+        @keyframes rdrBlip {
+          0%   { opacity: 0; transform: scale(0.4); }
+          20%  { opacity: 1; transform: scale(1); }
+          60%  { opacity: 0.6; }
+          100% { opacity: 0; transform: scale(1.6); }
+        }
+        @keyframes rdrProgress {
           from { transform: translateX(-100%); }
           to   { transform: translateX(100%); }
         }
