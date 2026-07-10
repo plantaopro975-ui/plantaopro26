@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,6 +17,12 @@ export function AccessAcknowledgmentGate() {
   const [open, setOpen] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [rejected, setRejected] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+
+  const closeGate = () => {
+    setOpen(false);
+  };
 
   const handleBackdropWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
     const target = event.target as HTMLElement | null;
@@ -62,6 +68,59 @@ export function AccessAcknowledgmentGate() {
     setOpen(false);
   };
 
+  // Focus management + keyboard trap + Escape close.
+  useEffect(() => {
+    if (!open) return;
+
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+
+    const panel = panelRef.current;
+    const getFocusable = () =>
+      Array.from(
+        panel?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      ).filter((el) => !el.hasAttribute("aria-hidden"));
+
+    // Initial focus on the first interactive element.
+    const focusables = getFocusable();
+    focusables[0]?.focus();
+
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        closeGate();
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const items = getFocusable();
+      if (items.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKey, true);
+    return () => {
+      document.removeEventListener("keydown", handleKey, true);
+      // Restore focus to whatever had it before the gate opened.
+      previouslyFocusedRef.current?.focus?.();
+    };
+  }, [open]);
+
   if (!open || isExemptRoute) return null;
 
   return (
@@ -73,7 +132,8 @@ export function AccessAcknowledgmentGate() {
       onWheel={handleBackdropWheel}
       className="fixed inset-0 z-[10000] flex items-center justify-center overflow-y-auto bg-[radial-gradient(ellipse_at_center,hsl(32_20%_8%)_0%,hsl(222_50%_3%)_80%)] px-4 py-6"
     >
-      <div data-access-gate-panel className="relative w-full max-w-sm">
+      <div ref={panelRef} data-access-gate-panel className="relative w-full max-w-sm">
+
         <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-b from-[#0b0d14]/95 to-[#05070d]/95 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.3)] backdrop-blur">
           {/* Imagem hero cinematográfica — proporção 4:3 mostrada por inteiro */}
           <div className="relative w-full overflow-hidden bg-[#05070d]" style={{ aspectRatio: '4 / 3' }}>
