@@ -17,7 +17,7 @@
   <path d="M60 100 L90 92 L120 100" stroke="url(#g)" stroke-width="3" fill="none"/>
   <path d="M60 112 L90 104 L120 112" stroke="url(#g)" stroke-width="3" fill="none"/>
   <path d="M60 124 L90 116 L120 124" stroke="url(#g)" stroke-width="3" fill="none"/>
-  <path d="M68 136 L68 180 M68 136 L92 136 C104 136 110 142 110 149 C110 156 104 162 92 162 L68 162" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <text x="90" y="176" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="60" fill="url(#g)">P</text>
   <path d="M28 110 Q10 130 32 168" stroke="url(#g)" stroke-width="1.2" fill="none" opacity="0.8"/>
   <path d="M152 110 Q170 130 148 168" stroke="url(#g)" stroke-width="1.2" fill="none" opacity="0.8"/>
   <circle cx="90" cy="8" r="3" fill="url(#g)"/>
