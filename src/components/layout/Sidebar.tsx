@@ -68,8 +68,8 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
         {/* Brand */}
         <div className="px-5 pt-6 pb-4 border-b border-sidebar-border/60">
           <Link to="/dashboard" className="flex items-center gap-3">
-            <div className="relative w-11 h-11 shrink-0 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/30 flex items-center justify-center shadow-glow">
-              <Shield className="h-6 w-6 text-primary" strokeWidth={2.2} />
+            <div className="relative w-11 h-11 shrink-0 flex items-center justify-center">
+              <BrasaoSentinela size="100%" />
             </div>
 
             <div className="min-w-0">
