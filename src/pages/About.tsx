@@ -55,8 +55,6 @@ const features = [
 ];
 
 const specs = [
-  { label: 'Versão', value: '2.0' },
-  { label: 'Região', value: 'Acre' },
   { label: 'Unidades', value: '09' },
   { label: 'Uso', value: 'Institucional' },
 ];
