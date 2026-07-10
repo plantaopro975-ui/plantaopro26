@@ -13,7 +13,6 @@ import {
   Building2,
   Award,
   CheckCircle2,
-  Download,
   ShieldCheck,
   Zap,
   Lock,
