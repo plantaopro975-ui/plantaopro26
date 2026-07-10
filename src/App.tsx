@@ -198,6 +198,14 @@ const App = () => (
                       <Route path="/about" element={<About />} />
                       <Route path="/agenda" element={<Agenda />} />
                       <Route
+                        path="/diretorio"
+                        element={
+                          <RequireAuth mode="redirect" redirectTo="/">
+                            <Diretorio />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
                         path="/rounds-history"
                         element={
                           <RequireAuth mode="block">
