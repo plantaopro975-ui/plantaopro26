@@ -2281,12 +2281,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               <div className="grid gap-3 min-w-0 lg:pl-4">
 
                 <Section icon={<Timer className="h-3.5 w-3.5 text-primary" />} title="Cronograma" defaultOpen={!!schedule}>
+                  <ReadyToStartBanner
+                    team={team}
+                    color={teamColor}
+                    count={schedule?.rows.length ?? agents.filter((a) => a.trim()).length}
+                    ready={!!schedule && !running}
+                  />
                   {!schedule ? (
                     <div className="rounded-lg border border-dashed border-border bg-card/95 p-6 text-center text-[13.5px] text-muted-foreground font-sans">
                       Preencha a configuração para gerar o cronograma.
                     </div>
                   ) : (
                     <div>
+
 
                       {/* Countdown — aberto, centralizado */}
                       <div className="mb-2 flex flex-col items-center text-center gap-1">
