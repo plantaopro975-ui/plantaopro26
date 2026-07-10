@@ -1,5 +1,31 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMasterToken } from '@/lib/masterSession';
+
+// Chama uma ação privilegiada no edge function `master-admin` (bypass de RLS via service_role).
+async function callMasterAdmin<T = any>(action: string, payload: Record<string, unknown> = {}): Promise<T> {
+  const token = getMasterToken();
+  if (!token) throw new Error('Sessão master ausente.');
+  const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/master-admin`;
+  const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-master-token': token,
+      'authorization': `Bearer ${anon}`,
+      'apikey': anon,
+    },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok || !j?.success) {
+    throw new Error(j?.error || `Falha (${res.status}) na ação ${action}`);
+  }
+  return j.data as T;
+}
+
+const hasMasterSession = () => !!getMasterToken();
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
