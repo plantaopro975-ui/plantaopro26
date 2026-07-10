@@ -173,7 +173,7 @@ export function AgentsDirectoryCard({
                 {totalOnline} on
               </Badge>
               <Badge variant="outline" className="h-5 px-1.5 border-amber-500/40 text-amber-200 bg-amber-500/10">
-                <Shield className="h-2.5 w-2.5 mr-1" /> {totalActive}/{agents.length}
+                <Shield className="h-2.5 w-2.5 mr-1" /> {totalActive}/{filtered.length}
               </Badge>
             </div>
           </div>
