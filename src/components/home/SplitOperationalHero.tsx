@@ -28,10 +28,19 @@ import objAlfaAsset from '@/assets/teams/alfa-object3d-v3.webp.asset.json';
 import objBravoAsset from '@/assets/teams/bravo-object3d-v3.webp.asset.json';
 import objCharlieAsset from '@/assets/teams/charlie-object3d-v3.webp.asset.json';
 import objDeltaAsset from '@/assets/teams/delta-object3d-v3.webp.asset.json';
+import objAlfaAvifAsset from '@/assets/teams/alfa-object3d-v3.avif.asset.json';
+import objBravoAvifAsset from '@/assets/teams/bravo-object3d-v3.avif.asset.json';
+import objCharlieAvifAsset from '@/assets/teams/charlie-object3d-v3.avif.asset.json';
+import objDeltaAvifAsset from '@/assets/teams/delta-object3d-v3.avif.asset.json';
 const objAlfa = objAlfaAsset.url;
 const objBravo = objBravoAsset.url;
 const objCharlie = objCharlieAsset.url;
 const objDelta = objDeltaAsset.url;
+const objAlfaAvif = objAlfaAvifAsset.url;
+const objBravoAvif = objBravoAvifAsset.url;
+const objCharlieAvif = objCharlieAvifAsset.url;
+const objDeltaAvif = objDeltaAvifAsset.url;
+
 
 
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
@@ -55,51 +64,56 @@ const TEAMS: {
   role: string;
   accent: string;
   obj: string;
+  objAvif: string;
   bg: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa },
-  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo },
-  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   bg: bgDelta },
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    objAvif: objAlfaAvif,    bg: bgAlfa },
+  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   objAvif: objBravoAvif,   bg: bgBravo },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, objAvif: objCharlieAvif, bg: bgCharlie },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   objAvif: objDeltaAvif,   bg: bgDelta },
 ];
 
 
 interface TeamObjectProps {
-  team: { key: TeamKey; obj: string };
+  team: { key: TeamKey; obj: string; objAvif: string };
   isAlfa: boolean;
   idx: number;
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
+  const imgClass = cn(
+    'block h-full w-full max-h-[98%] max-w-[96%] sm:max-h-[96%] sm:max-w-[92%] lg:max-h-[98%] lg:max-w-[94%] object-contain object-center select-none animate-float3d',
+    'drop-shadow-[0_24px_36px_rgba(0,0,0,0.92)]',
+    'transition-[transform,opacity] duration-700 ease-out',
+    'group-hover:scale-[1.08] group-hover:-translate-y-1',
+    'group-active:scale-[1.02]',
+  );
   return (
     <div className="relative flex h-full w-full items-center justify-center">
-      <img
-        src={team.obj}
-        alt={`Equipe ${team.key} — equipamento tático`}
-        loading={isAlfa ? 'eager' : 'lazy'}
-        decoding="async"
-        fetchPriority={isAlfa ? 'high' : 'low'}
-        width={512}
-        height={512}
-        sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 220px"
-
-        draggable={false}
-        className={cn(
-          'block h-full w-full max-h-[98%] max-w-[96%] sm:max-h-[96%] sm:max-w-[92%] lg:max-h-[98%] lg:max-w-[94%] object-contain object-center select-none animate-float3d',
-          'drop-shadow-[0_24px_36px_rgba(0,0,0,0.92)]',
-          'transition-[transform,opacity] duration-700 ease-out',
-          'group-hover:scale-[1.08] group-hover:-translate-y-1',
-          'group-active:scale-[1.02]',
-        )}
-        style={{
-          transformOrigin: '50% 55%',
-
-          animationDelay: `${idx * 0.6}s`,
-          contentVisibility: 'auto',
-        }}
-      />
+      <picture>
+        <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 220px" />
+        <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 220px" />
+        <img
+          src={team.obj}
+          alt={`Equipe ${team.key} — equipamento tático`}
+          loading={isAlfa ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={isAlfa ? 'high' : 'low'}
+          width={512}
+          height={512}
+          sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 220px"
+          draggable={false}
+          className={imgClass}
+          style={{
+            transformOrigin: '50% 55%',
+            animationDelay: `${idx * 0.6}s`,
+            contentVisibility: 'auto',
+          }}
+        />
+      </picture>
     </div>
   );
 }
+
 
 interface TeamCardProps {
   team: (typeof TEAMS)[number];
