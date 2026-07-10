@@ -1,27 +1,36 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import heroImage from "@/assets/access-gate-hero.jpg";
 
 const ACK_KEY = "plantaopro_access_acknowledged_v1";
+const GATE_EXEMPT_ROUTES = new Set(["/about", "/install"]);
 
 /**
  * Portal compacto de aceite — ferramenta operacional para agentes
  * socioeducativos. Aparece uma única vez por dispositivo.
  */
 export function AccessAcknowledgmentGate() {
+  const { pathname } = useLocation();
+  const isExemptRoute = GATE_EXEMPT_ROUTES.has(pathname);
   const [open, setOpen] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [rejected, setRejected] = useState(false);
 
   useEffect(() => {
+    if (isExemptRoute) {
+      setOpen(false);
+      return;
+    }
+
     try {
       const done = localStorage.getItem(ACK_KEY);
       if (!done) setOpen(true);
     } catch {
       setOpen(true);
     }
-  }, []);
+  }, [isExemptRoute]);
 
   const handleAccept = () => {
     if (!accepted) return;
@@ -36,7 +45,7 @@ export function AccessAcknowledgmentGate() {
     setOpen(false);
   };
 
-  if (!open) return null;
+  if (!open || isExemptRoute) return null;
 
   return (
     <div

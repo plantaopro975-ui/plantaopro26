@@ -101,8 +101,8 @@ const App = () => (
           <Sonner />
           <SplashScreen />
           {/* <ImageProtection /> — desativado temporariamente */}
-          <AccessAcknowledgmentGate />
           <BrowserRouter>
+            <AccessAcknowledgmentGate />
             <AuthProvider>
               <ConfirmProvider>
               <GlobalNavigationHandler>
