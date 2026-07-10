@@ -485,19 +485,21 @@ export function ImageProtection() {
                 {msg.title}
               </h2>
               <div className="text-[10px] uppercase tracking-[0.28em] text-amber-500/70 mb-4 font-mono">
-                Sistema Socioeducativo · ISE Acre
+                Dedicado aos agentes · Segurança Socioeducativa
               </div>
 
               <p className="text-zinc-200 text-sm leading-relaxed mb-3">
                 {msg.body}
               </p>
               <p className="text-zinc-400 text-xs leading-relaxed">
-                Este conteúdo pertence à{" "}
+                O <span className="text-zinc-200 font-medium">PlantãoPro</span>{" "}
+                é um espaço independente criado para apoiar{" "}
                 <span className="text-zinc-200 font-medium">
-                  Equipe de Segurança do Sistema Socioeducativo
+                  agentes de segurança pública do sistema socioeducativo
                 </span>
-                . Cópias, capturas e fotografias são registradas e podem
-                acarretar sanções institucionais.
+                . Não é um site institucional ou oficial — todo o conteúdo é
+                autoral e protegido. Cópias, capturas ou fotografias não são
+                autorizadas.
               </p>
 
               <button
