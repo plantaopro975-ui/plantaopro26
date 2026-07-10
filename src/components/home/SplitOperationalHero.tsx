@@ -19,9 +19,13 @@ import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
 import objAlfa from '@/assets/teams/alfa-shield-v2.png';
+import objAlfaWebp from '@/assets/teams/alfa-shield-v2.webp';
 import objBravo from '@/assets/teams/bravo-helmet-v2.png';
+import objBravoWebp from '@/assets/teams/bravo-helmet-v2.webp';
 import objCharlie from '@/assets/teams/charlie-optics-v2.png';
+import objCharlieWebp from '@/assets/teams/charlie-optics-v2.webp';
 import objDelta from '@/assets/teams/delta-radio-v2.png';
+import objDeltaWebp from '@/assets/teams/delta-radio-v2.webp';
 
 
 
