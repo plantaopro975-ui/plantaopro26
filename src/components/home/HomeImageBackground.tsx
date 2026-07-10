@@ -2,7 +2,9 @@ import { memo } from "react";
 
 // Servida diretamente de public/ para funcionar tanto em dev quanto em produção
 // (a URL /__l5e/... do CDN só resolve no ambiente publicado).
-const HERO_IMG_URL = "/plantaopro-hero.jpg";
+const HERO_AVIF = "/plantaopro-hero.avif"; // ~39KB
+const HERO_WEBP = "/plantaopro-hero.webp"; // ~62KB
+const HERO_JPG  = "/plantaopro-hero.jpg";  // ~111KB (fallback)
 
 /**
  * HomeImageBackground — substituiu a antiga SVG CommandRoomBackground.
@@ -10,13 +12,8 @@ const HERO_IMG_URL = "/plantaopro-hero.jpg";
  * fixo da home, com overlays cuidadosamente calibrados para preservar
  * a legibilidade dos cards operacionais em qualquer resolução.
  *
- * Camadas (fundo → topo):
- *  1. Imagem oficial em cover, position center-right (destaca agente/viatura)
- *  2. Wash escuro à esquerda (onde ficam os títulos/cards)
- *  3. Wash escuro no topo e base (transição com header/rodapé)
- *  4. Grid HUD sutil âmbar (mantém identidade tática)
- *  5. Vignette radial (foca o centro, escurece bordas)
- *  6. Hairlines âmbar topo/base
+ * <picture> negocia o melhor formato: AVIF → WebP → JPG.
+ * Preload em index.html usa imagesrcset para o browser também escolher.
  */
 export const HomeImageBackground = memo(function HomeImageBackground() {
   return (
@@ -25,20 +22,24 @@ export const HomeImageBackground = memo(function HomeImageBackground() {
       aria-hidden
     >
       {/* 1 · Imagem oficial — carregamento prioritário para não travar o boot */}
-      <img
-        src={HERO_IMG_URL}
-        alt=""
-        draggable={false}
-        decoding="sync"
-        loading="eager"
-        // @ts-expect-error fetchpriority é atributo HTML válido
-        fetchpriority="high"
-        className="absolute inset-0 w-full h-full select-none"
-        style={{
-          objectFit: "cover",
-          objectPosition: "center right",
-        }}
-      />
+      <picture>
+        <source srcSet={HERO_AVIF} type="image/avif" />
+        <source srcSet={HERO_WEBP} type="image/webp" />
+        <img
+          src={HERO_JPG}
+          alt=""
+          draggable={false}
+          decoding="sync"
+          loading="eager"
+          // @ts-expect-error fetchpriority é atributo HTML válido
+          fetchpriority="high"
+          className="absolute inset-0 w-full h-full select-none"
+          style={{
+            objectFit: "cover",
+            objectPosition: "center right",
+          }}
+        />
+      </picture>
 
       {/* 2 · Wash escuro concentrado à esquerda — libera o lado direito
              (agente/viatura/wordmark) para o usuário ver mais da arte. */}
