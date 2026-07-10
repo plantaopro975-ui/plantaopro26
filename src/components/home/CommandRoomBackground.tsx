@@ -14,7 +14,9 @@
  *
  * Totalmente responsivo — não corta em mobile, tablet, desktop ou ultrawide.
  */
-export function CommandRoomBackground() {
+import { memo } from 'react';
+
+export const CommandRoomBackground = memo(function CommandRoomBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
       {/* 1 · Wash tonal */}
