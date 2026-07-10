@@ -59,13 +59,14 @@ const TEAMS: {
   role: string;
   accent: string;
   obj: string;
+  objWebp: string;
   bg: string;
   bgAvif: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa,    bgAvif: bgAlfaAvif },
-  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo,   bgAvif: bgBravoAvif },
-  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie, bgAvif: bgCharlieAvif },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   bg: bgDelta,   bgAvif: bgDeltaAvif },
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfaAvif },
+  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravoAvif },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlieAvif },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDeltaAvif },
 
 ];
 
