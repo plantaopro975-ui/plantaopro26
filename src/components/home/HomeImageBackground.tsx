@@ -37,12 +37,13 @@ export const HomeImageBackground = memo(function HomeImageBackground() {
         }}
       />
 
-      {/* 2 · Wash escuro à esquerda (legibilidade dos cards e títulos) */}
+      {/* 2 · Wash escuro concentrado à esquerda — libera o lado direito
+             (agente/viatura/wordmark) para o usuário ver mais da arte. */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(90deg, rgba(3,5,10,0.90) 0%, rgba(3,5,10,0.78) 30%, rgba(3,5,10,0.55) 55%, rgba(3,5,10,0.30) 78%, rgba(3,5,10,0.20) 100%)",
+            "linear-gradient(90deg, rgba(3,5,10,0.92) 0%, rgba(3,5,10,0.82) 22%, rgba(3,5,10,0.55) 42%, rgba(3,5,10,0.20) 62%, rgba(3,5,10,0.06) 80%, rgba(3,5,10,0.00) 100%)",
         }}
       />
 
