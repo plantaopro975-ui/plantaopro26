@@ -1345,7 +1345,7 @@ export default function Index() {
     <Suspense fallback={null}>
     <>
       <div
-        className="home-typo min-h-full flex flex-col bg-background relative overflow-x-hidden overscroll-contain home-compact max-sm:overflow-y-auto"
+        className="home-typo min-h-full flex flex-col bg-background relative overflow-x-clip max-sm:overflow-x-hidden overscroll-contain home-compact max-sm:overflow-y-auto"
         style={{
           fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
           ['--home-gap' as any]: 'clamp(2px, 0.35vh, 8px)',
