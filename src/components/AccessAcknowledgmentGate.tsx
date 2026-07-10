@@ -56,12 +56,12 @@ export function AccessAcknowledgmentGate() {
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
-          className="fixed inset-0 z-[9999] overflow-y-auto bg-[radial-gradient(ellipse_at_center,hsl(32_20%_8%)_0%,hsl(222_50%_3%)_80%)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
+          className="fixed inset-0 z-[9999] bg-[radial-gradient(ellipse_at_center,hsl(32_20%_8%)_0%,hsl(222_50%_3%)_80%)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
         />
         <DialogPrimitive.Content
           aria-labelledby="ack-title"
           aria-describedby="ack-desc"
-          className="fixed left-1/2 top-1/2 z-[10000] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95"
+          className="fixed left-1/2 top-1/2 z-[10000] max-h-[calc(100dvh-1rem)] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain focus:outline-none [scrollbar-width:thin] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95"
         >
           <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-b from-[#0b0d14]/95 to-[#05070d]/95 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.3)] backdrop-blur">
             {/* Imagem hero cinematográfica — proporção 4:3 mostrada por inteiro */}

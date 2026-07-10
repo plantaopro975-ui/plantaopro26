@@ -311,7 +311,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
   return (
-    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0 overflow-x-hidden">
+    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0 overflow-x-clip">
 
 
 
