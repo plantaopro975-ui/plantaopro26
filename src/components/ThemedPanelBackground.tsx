@@ -163,8 +163,10 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
         }}
       />
 
-      {/* Brand splash background — arte oficial PlantãoPro (baixa opacidade
-          para permanecer legível sob os cards operacionais). */}
+      {/* Brand splash background — arte oficial PlantãoPro como BG padrão
+          do painel do agente (opacidade elevada para destacar o agente
+          socioeducativo + viatura). Removido o CommandRoom grid escuro
+          conforme solicitação do usuário. */}
       {!lowEffects && (
         <div
           aria-hidden
@@ -172,8 +174,7 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
           style={{
             backgroundImage: `url(${PANEL_BRAND_BG})`,
             backgroundPosition: 'center right',
-            opacity: 0.14,
-            mixBlendMode: 'screen',
+            opacity: 0.28,
             filter: 'saturate(1.15) contrast(1.05)',
           }}
         />
@@ -186,16 +187,9 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
           className="fixed inset-0 pointer-events-none z-0"
           style={{
             background:
-              'radial-gradient(ellipse at center, transparent 0%, rgba(3,5,10,0.55) 70%, rgba(3,5,10,0.85) 100%)',
+              'radial-gradient(ellipse at center, transparent 0%, rgba(3,5,10,0.55) 70%, rgba(3,5,10,0.9) 100%)',
           }}
         />
-      )}
-
-      {/* Command Room SVG background — shared across all layout pages */}
-      {!lowEffects && (
-        <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
-          <CommandRoomBackground />
-        </div>
       )}
 
       {/* Team poster — one image + one solid overlay. Removed the second
