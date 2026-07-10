@@ -65,8 +65,14 @@ export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginD
 
         {/* ================= HEADER — command center image ================= */}
         <div
-          className="relative w-full overflow-hidden bg-[#0a0b10]"
-          style={{ aspectRatio: '16 / 7' }}
+          className="relative w-full overflow-hidden"
+          style={{
+            aspectRatio: '16 / 7',
+            // Gradiente âmbar/preto como placeholder — evita "flash preto" se
+            // a imagem ainda estiver decodificando.
+            background:
+              'radial-gradient(120% 90% at 85% 15%, rgba(201,168,76,0.28) 0%, transparent 55%), linear-gradient(180deg, #14100a 0%, #0a0b10 100%)',
+          }}
         >
           <img
             src={heroAsset.url}
