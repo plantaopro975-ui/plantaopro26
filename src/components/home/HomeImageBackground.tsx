@@ -41,44 +41,9 @@ export const HomeImageBackground = memo(function HomeImageBackground() {
         />
       </picture>
 
-      {/* 2 · Wash escuro concentrado à esquerda — libera o lado direito
-             (agente/viatura/wordmark) para o usuário ver mais da arte. */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(3,5,10,0.92) 0%, rgba(3,5,10,0.82) 22%, rgba(3,5,10,0.55) 42%, rgba(3,5,10,0.20) 62%, rgba(3,5,10,0.06) 80%, rgba(3,5,10,0.00) 100%)",
-        }}
-      />
-
-      {/* 3 · Wash topo (para não competir com o header) */}
-      <div
-        className="absolute inset-x-0 top-0 h-40"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(3,5,10,0.85) 0%, transparent 100%)",
-        }}
-      />
-
-      {/* 3b · Wash base (para o rodapé) */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-32"
-        style={{
-          background:
-            "linear-gradient(0deg, rgba(3,5,10,0.85) 0%, transparent 100%)",
-        }}
-      />
-
-      {/* 4 · Grid HUD removido a pedido — deixava o fundo "quadriculado" */}
-
-      {/* 5 · Vignette radial */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%)",
-        }}
-      />
+      {/* Overlays removidos a pedido — a imagem aparece pura, sem washes
+             ou vinheta. Legibilidade dos cards vem do backdrop-blur próprio
+             deles (definido em .home-typo em src/index.css). */}
 
       {/* 6 · Hairline âmbar topo */}
       <div
