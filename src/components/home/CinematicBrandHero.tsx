@@ -207,17 +207,7 @@ export function CinematicBrandHero({
               Conhecer o Sistema
             </button>
 
-            {onMasterClick && (
-              <button
-                type="button"
-                onClick={onMasterClick}
-                className="inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-3 text-[11px] font-mono uppercase tracking-[0.24em] text-white/50 transition-colors hover:text-amber-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-400/40"
-                aria-label="Acesso Administrador Master"
-              >
-                <Lock className="h-3 w-3" strokeWidth={2.2} />
-                <span>Master</span>
-              </button>
-            )}
+
           </div>
 
           {/* Rodapé da seção — assinatura discreta */}
