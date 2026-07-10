@@ -44,13 +44,22 @@ const objDeltaAvif = objDeltaAvifAsset.url;
 
 
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
+import bgAlfaAvifAsset from '@/assets/teams/bg-alfa.avif.asset.json';
 const bgAlfa = bgAlfaAsset.url;
+const bgAlfaAvif = bgAlfaAvifAsset.url;
 import bgBravoAsset from '@/assets/teams/bg-bravo.jpg.asset.json';
+import bgBravoAvifAsset from '@/assets/teams/bg-bravo.avif.asset.json';
 const bgBravo = bgBravoAsset.url;
+const bgBravoAvif = bgBravoAvifAsset.url;
 import bgCharlieAsset from '@/assets/teams/bg-charlie.jpg.asset.json';
+import bgCharlieAvifAsset from '@/assets/teams/bg-charlie.avif.asset.json';
 const bgCharlie = bgCharlieAsset.url;
+const bgCharlieAvif = bgCharlieAvifAsset.url;
 import bgDeltaAsset from '@/assets/teams/bg-delta.jpg.asset.json';
+import bgDeltaAvifAsset from '@/assets/teams/bg-delta.avif.asset.json';
 const bgDelta = bgDeltaAsset.url;
+const bgDeltaAvif = bgDeltaAvifAsset.url;
+
 interface Props {
   onTeamClick: (team: string) => void;
 }
