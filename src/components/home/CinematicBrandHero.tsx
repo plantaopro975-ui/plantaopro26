@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Lock } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import splashAsset from "@/assets/brand/plantaopro-splash.jpg.asset.json";
+import { useAuth } from "@/contexts/AuthContext";
 
 const IMG_URL = splashAsset.url;
 
@@ -18,17 +19,27 @@ interface CinematicBrandHeroProps {
  */
 export function CinematicBrandHero({
   onScrollToLogin,
-  onMasterClick,
 }: CinematicBrandHeroProps) {
   const navigate = useNavigate();
+  const { user, masterSession } = useAuth();
+  const isAuthenticated = !!user || !!masterSession;
 
-  const handlePrimary = () => {
+  const scrollToTeams = () => {
     if (onScrollToLogin) {
       onScrollToLogin();
-    } else {
-      // fallback: rola para o topo onde estão os cards de login
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePrimary = () => {
+    if (isAuthenticated) {
+      // Usuário logado → painel do agente
+      navigate("/agent-panel");
+      return;
+    }
+    // Não logado → rola até os cards das equipes (topo da home)
+    scrollToTeams();
   };
 
   return (
