@@ -1201,7 +1201,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     })();
 
     const ch = supabase
-      .channel('rounds-security-alerts')
+      .channel(`rounds-security-alerts-${Math.random().toString(36).slice(2)}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'login_attempts' }, (payload) => {
         const rec = payload.new as { success?: boolean } | null;
         if (rec && rec.success === false) {
