@@ -2065,21 +2065,24 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   }, [open]);
 
 
-  const startTimer = async () => {
+  const startTimer = async (opts?: { anchorOverrideMs?: number }) => {
     if (!schedule) {
       toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' });
       return;
     }
     await syncServerClock();
     const nowMs = nowServer();
-    // No turno noturno em modo split, ANCORAMOS o cronômetro no relógio de
-    // parede às 22:00 (mesmo que o operador aperte Iniciar depois). Isso faz o
-    // "elapsed" refletir o tempo desde 22:00, então o live timer pula agentes
-    // cujos slots já expiraram e entrega ao agente atual apenas o tempo que
-    // sobra na janela dele — exatamente a regra de negócio pedida.
-    const anchorMs = (nightEffectivelyLocked && mode === 'split')
-      ? getNightWindow(new Date(nowMs)).startsAt.getTime()
-      : nowMs;
+    // Prioridade de âncora:
+    // 1) Override explícito (auto-disparo de programação) — ancora exatamente
+    //    no `armedForMs` alvo para GARANTIR que o Agente 1 comece no seu slot,
+    //    imune a atraso do tick (fire pode ocorrer alguns ms após o alvo).
+    // 2) Turno noturno em split — ancora em 22:00 (regra de negócio).
+    // 3) Caso geral — âncora = agora.
+    const anchorMs = opts?.anchorOverrideMs != null
+      ? opts.anchorOverrideMs
+      : (nightEffectivelyLocked && mode === 'split')
+        ? getNightWindow(new Date(nowMs)).startsAt.getTime()
+        : nowMs;
     startedAtRef.current = anchorMs;
     // Congela o "início efetivo" — a partir daqui, a divisão não desliza mais.
     frozenStartMinRef.current = effectiveStartMin ?? toMinutes(startTime) ?? 0;
@@ -2221,14 +2224,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   // Auto-início ao zerar o countdown — protegido por ref para disparar
   // exatamente 1x por programação, imune a re-renders/StrictMode.
+  // A âncora é fixada no `armedForMs` alvo (não em Date.now no tick) para
+  // GARANTIR que o cronômetro comece no slot do Agente 1 mesmo que o tick
+  // do React chegue algumas dezenas/centenas de ms após o horário-alvo.
   useEffect(() => {
     if (!armed || armedForMs == null) return;
     if (autoFiredRef.current === armedForMs) return; // já disparou p/ este alvo
     const remaining = armedForMs - nowServer();
     if (remaining <= 0) {
-      autoFiredRef.current = armedForMs;
+      const target = armedForMs;
+      autoFiredRef.current = target;
       setArmedForMs(null);
-      startTimer();
+      startTimer({ anchorOverrideMs: target });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [armed, armedForMs, tick]);
