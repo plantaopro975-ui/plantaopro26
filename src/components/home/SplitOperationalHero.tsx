@@ -6,8 +6,7 @@ import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 import { useVisitorPresence } from '@/hooks/useVisitorPresence';
-import loginHeroAsset from '@/assets/home-command-center.jpg.asset.json';
-const loginHeroImage = loginHeroAsset.url;
+// Fundo do hero agora é 100% SVG vetorial (ver <svg> no <article>) — sem raster.
 
 
 
