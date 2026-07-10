@@ -1970,39 +1970,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </div>
                 )}
 
-                {mode === 'split' && !nightEffectivelyLocked && schedule && (
-                  <div
-                    className="flex items-center justify-between gap-3 rounded-md border border-border/70 bg-card/60 px-3 py-2"
-                    style={{ borderLeft: `2px solid ${teamColor}` }}
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Users className="h-3.5 w-3.5 shrink-0" style={{ color: teamColor }} />
-                      <div className="min-w-0">
-                        <p className="text-[11.5px] font-sans uppercase tracking-[0.14em] text-muted-foreground leading-none">
-                          Distribuição do turno
-                        </p>
-                        <p className="text-[12.5px] font-mono text-foreground/90 tabular-nums leading-tight mt-0.5 truncate">
-                          {agents.length} × {fmtDuration(schedule.slot)} · {schedule.rows[0]?.from ?? startTime} → {endTime}
-                        </p>
-                      </div>
-                    </div>
-                    <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
-                      <SelectTrigger
-                        aria-label="Modo de distribuição"
-                        className="shrink-0 h-7 w-auto gap-1 px-2 text-[11px] font-mono uppercase tracking-[0.18em] rounded border bg-transparent hover:bg-card/80 focus:ring-1 focus:ring-offset-0"
-                        style={{ color: teamColor, borderColor: `${teamColor}55`, background: `${teamColor}12` }}
-                      >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent align="end">
-                        <SelectItem value="distribute">Auto · recalibra no fim</SelectItem>
-                        <SelectItem value="exact">Preciso · segundos</SelectItem>
-                        <SelectItem value="floor">Manual · truncar minutos</SelectItem>
-                        <SelectItem value="ceil">Manual · arredondar acima</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+
+
 
 
 
