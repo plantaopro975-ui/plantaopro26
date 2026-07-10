@@ -777,7 +777,7 @@ function ArmedLockPanel({
 
   return (
     <div
-      className="relative mb-1.5 overflow-hidden rounded-md border px-2 py-1.5"
+      className="relative mb-1.5 overflow-hidden rounded-md border px-2 py-1"
       style={{
         borderColor: `${color}55`,
         background: `linear-gradient(135deg, ${color}12 0%, transparent 60%), hsl(var(--card))`,
@@ -785,13 +785,14 @@ function ArmedLockPanel({
       }}
       role="status"
       aria-live="polite"
+      title={`Disparo automático em ${targetLabel} · Equipe ${team}${firstAgent ? ` · ${firstAgent}` : ''}`}
     >
       <span
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px"
         style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
       />
-      <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-center gap-1.5 min-w-0 flex-nowrap whitespace-nowrap">
         <div className="relative shrink-0">
           <div
             className="absolute inset-0 rounded-full"
@@ -801,61 +802,54 @@ function ArmedLockPanel({
             }}
           />
           <div
-            className="relative flex h-7 w-7 items-center justify-center rounded-full border"
+            className="relative flex h-6 w-6 items-center justify-center rounded-full border"
             style={{ borderColor: `${color}88`, background: `${color}18` }}
           >
-            <Lock className="h-3.5 w-3.5" style={{ color }} strokeWidth={2.3} />
+            <Lock className="h-3 w-3" style={{ color }} strokeWidth={2.3} />
           </div>
         </div>
 
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] text-muted-foreground leading-none">
-            <span
-              className="inline-block h-1 w-1 rounded-full"
-              style={{ backgroundColor: color, animation: 'armDot 1.2s ease-in-out infinite' }}
-            />
-            Programada · dispara às <span className="text-foreground/90 font-semibold">{startLabel}</span>
-          </div>
-          <div className="mt-0.5 flex items-baseline gap-2 flex-wrap">
-            <span
-              className="font-mono text-base sm:text-lg font-bold tabular-nums leading-none"
-              style={{
-                color,
-                textShadow: `0 0 10px ${color}55`,
-                animation: isImminent ? 'armTick 1s ease-in-out infinite' : undefined,
-              }}
-            >
-              {hh}:{mm}:{ss}
-            </span>
-            <span className="text-[10px] text-muted-foreground truncate">
-              {team}{firstAgent ? ` · ${firstAgent}` : ''}
-            </span>
-          </div>
-        </div>
+        <span
+          className="font-mono text-[13px] sm:text-sm font-bold tabular-nums leading-none shrink-0"
+          style={{
+            color,
+            textShadow: `0 0 10px ${color}55`,
+            animation: isImminent ? 'armTick 1s ease-in-out infinite' : undefined,
+          }}
+        >
+          {hh}:{mm}:{ss}
+        </span>
 
-        <div className="flex items-center gap-1 shrink-0">
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            onClick={onStartNow}
-            className="h-7 px-1.5 text-[10.5px] font-semibold"
-            style={{ color }}
-            title="Iniciar imediatamente"
-          >
-            <Play className="h-3 w-3 mr-1" /> Agora
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            onClick={onCancel}
-            className="h-7 px-1.5 text-[10.5px] text-muted-foreground hover:text-destructive"
-            title="Cancelar programação"
-          >
-            <XCircle className="h-3 w-3" />
-          </Button>
-        </div>
+        <span className="shrink-0 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          → <span className="text-foreground/90">{targetLabel}</span>
+        </span>
+
+        <span className="min-w-0 flex-1 truncate text-[10px] text-muted-foreground">
+          · {team}{firstAgent ? ` · ${firstAgent}` : ''}
+        </span>
+
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          onClick={onStartNow}
+          className="h-6 px-1.5 text-[10px] font-semibold shrink-0"
+          style={{ color }}
+          title="Iniciar imediatamente"
+        >
+          <Play className="h-3 w-3" />
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          onClick={onCancel}
+          className="h-6 px-1.5 text-[10px] text-muted-foreground hover:text-destructive shrink-0"
+          title="Cancelar programação"
+          aria-label="Cancelar programação"
+        >
+          <XCircle className="h-3 w-3" />
+        </Button>
       </div>
 
       <style>{`
@@ -1657,14 +1651,50 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   // O agente pode configurar tudo e "Programar" a ronda antes do horário
   // do primeiro slot. Enquanto armada, o painel exibe um cadeado e um
   // timer profissional até o momento de iniciar automaticamente.
-  const [armedForMs, setArmedForMs] = useState<number | null>(null);
+  const ARMED_KEY = `plantaopro_armed_${team}`;
+  const [armedForMs, setArmedForMs] = useState<number | null>(() => {
+    try {
+      const raw = localStorage.getItem(`plantaopro_armed_${team}`);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as { targetMs: number };
+      if (typeof parsed?.targetMs === 'number' && parsed.targetMs > Date.now()) return parsed.targetMs;
+      localStorage.removeItem(`plantaopro_armed_${team}`);
+      return null;
+    } catch { return null; }
+  });
   const armed = armedForMs != null && !running;
   useEffect(() => { armedRef.current = armed; }, [armed]);
   const configLocked = armed;
-  // Guard: garante que o auto-início dispare UMA ÚNICA vez por programação,
-  // mesmo se React re-renderizar ou o efeito reavaliar múltiplas vezes.
   const autoFiredRef = useRef<number | null>(null);
   const [cancelArmConfirmOpen, setCancelArmConfirmOpen] = useState(false);
+
+  // Persistência: sobrevive a reload/aba fechada até o horário do disparo
+  useEffect(() => {
+    try {
+      if (armedForMs && armedForMs > Date.now()) {
+        localStorage.setItem(ARMED_KEY, JSON.stringify({ targetMs: armedForMs, team, startTime }));
+      } else {
+        localStorage.removeItem(ARMED_KEY);
+      }
+    } catch { /* ignore */ }
+  }, [armedForMs, ARMED_KEY, team, startTime]);
+
+  // Ao trocar de equipe, tenta restaurar programação salva desta equipe
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(ARMED_KEY);
+      if (!raw) { setArmedForMs(null); return; }
+      const parsed = JSON.parse(raw) as { targetMs: number; startTime?: string };
+      if (typeof parsed?.targetMs === 'number' && parsed.targetMs > Date.now()) {
+        setArmedForMs(parsed.targetMs);
+        if (parsed.startTime) setStartTime(parsed.startTime);
+      } else {
+        localStorage.removeItem(ARMED_KEY);
+        setArmedForMs(null);
+      }
+    } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [team]);
 
 
 
@@ -2152,19 +2182,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       return;
     }
     const target = toMinutes(startTime);
-    if (target == null) return;
+    if (target == null) {
+      toast({ title: 'Horário inválido', description: 'Informe um horário de início válido (HH:MM).', variant: 'destructive' });
+      return;
+    }
     const now = new Date(nowServer());
     const t = new Date(now);
     t.setHours(Math.floor(target / 60), target % 60, 0, 0);
-    if (t.getTime() <= nowServer() + 5_000) {
-      // Já passou (ou vai passar em <5s): agenda para amanhã
-      t.setDate(t.getDate() + 1);
+    const diff = t.getTime() - nowServer();
+    if (diff <= 0) {
+      toast({
+        title: 'Horário no passado',
+        description: `Não é possível programar para ${startTime} — este horário já passou hoje. Ajuste o campo "Início" para um horário futuro.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (diff < 30_000) {
+      toast({
+        title: 'Muito próximo',
+        description: 'Programe para pelo menos 30 segundos no futuro ou clique em "Iniciar" para começar agora.',
+        variant: 'destructive',
+      });
+      return;
     }
     setArmedForMs(t.getTime());
-    autoFiredRef.current = null; // libera guard para esta nova programação
+    autoFiredRef.current = null;
     toast({
       title: 'Ronda programada',
-      description: `Início automático às ${startTime}. Painel travado até lá.`,
+      description: `Início automático em ${t.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}. Painel travado até lá.`,
     });
   };
   const disarmRound = () => {
