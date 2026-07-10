@@ -2990,25 +2990,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         onSecondary={confirmAndClose}
       />
 
-      {/* Confirmação para destravar a ronda programada — evita perda acidental de escala */}
-      <ConfirmDialog
-        open={cancelArmConfirmOpen}
-        onOpenChange={setCancelArmConfirmOpen}
-        variant="warning"
-        kicker="CANCELAR PROGRAMAÇÃO"
-        title="Destravar a ronda programada?"
-        description={
-          <span>
-            A escala configurada para <b>{startTime}</b> será cancelada e o cadeado removido.{' '}
-            Você precisará programar novamente para agendar o início automático.
-          </span>
-        }
-        accent={teamColor}
-        primaryLabel="Manter programação"
-        onPrimary={() => setCancelArmConfirmOpen(false)}
-        secondaryLabel="Sim, cancelar"
-        onSecondary={disarmRound}
-      />
+
+
 
 
     </>
