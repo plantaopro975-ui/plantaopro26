@@ -2036,71 +2036,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const pauseTimer = () => setRunning(false);
 
-  /* ---------- Programar (arm) ronda antes do horário do 1º agente ----------
-   * Calcula o timestamp-alvo baseado em `startTime` (HH:MM). Se o horário já
-   * passou hoje, agenda para amanhã. Enquanto armada, o painel exibe cadeado
-   * + timer profissional e dispara startTimer() automaticamente ao zerar.
-   */
-  const armRoundForStart = () => {
-    if (!schedule) {
-      toast({ title: 'Corrija os erros antes de programar.', variant: 'destructive' });
-      return;
-    }
-    const target = toMinutes(startTime);
-    if (target == null) {
-      toast({ title: 'Horário inválido', description: 'Informe um horário de início válido (HH:MM).', variant: 'destructive' });
-      return;
-    }
-    const now = new Date(nowServer());
-    const t = new Date(now);
-    t.setHours(Math.floor(target / 60), target % 60, 0, 0);
-    const diff = t.getTime() - nowServer();
-    if (diff <= 0) {
-      toast({
-        title: 'Horário no passado',
-        description: `Não é possível programar para ${startTime} — este horário já passou hoje. Ajuste o campo "Início" para um horário futuro.`,
-        variant: 'destructive',
-      });
-      return;
-    }
-    if (diff < 30_000) {
-      toast({
-        title: 'Muito próximo',
-        description: 'Programe para pelo menos 30 segundos no futuro ou clique em "Iniciar" para começar agora.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    setArmedForMs(t.getTime());
-    autoFiredRef.current = null;
-    toast({
-      title: 'Ronda programada',
-      description: `Início automático em ${t.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}. Painel travado até lá.`,
-    });
-  };
-  const disarmRound = () => {
-    setArmedForMs(null);
-    autoFiredRef.current = null;
-    setCancelArmConfirmOpen(false);
-    toast({ title: 'Programação cancelada' });
-  };
-  // Auto-início ao zerar o countdown — protegido por ref para disparar
-  // exatamente 1x por programação, imune a re-renders/StrictMode.
-  // A âncora é fixada no `armedForMs` alvo (não em Date.now no tick) para
-  // GARANTIR que o cronômetro comece no slot do Agente 1 mesmo que o tick
-  // do React chegue algumas dezenas/centenas de ms após o horário-alvo.
-  useEffect(() => {
-    if (!armed || armedForMs == null) return;
-    if (autoFiredRef.current === armedForMs) return; // já disparou p/ este alvo
-    const remaining = armedForMs - nowServer();
-    if (remaining <= 0) {
-      const target = armedForMs;
-      autoFiredRef.current = target;
-      setArmedForMs(null);
-      startTimer({ anchorOverrideMs: target });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [armed, armedForMs, tick]);
+  /* Programação antecipada removida — sem armRoundForStart / disarmRound. */
+
 
 
 
