@@ -152,21 +152,26 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       )}
       style={{ ['--team-accent' as any]: t.accent }}
     >
-      <img
-        src={t.bg}
-        alt=""
-        aria-hidden
-        loading="lazy"
-        decoding="async"
-        className={cn(
-          'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
-          'transition-all duration-500 ease-out',
-          isSelected
-            ? 'opacity-100 scale-105 saturate-125 contrast-110'
-            : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
-        )}
-        draggable={false}
-      />
+      <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
+        <source type="image/avif" srcSet={t.bgAvif} />
+        <source type="image/webp" srcSet={t.bg} />
+        <img
+          src={t.bg}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          decoding="async"
+          className={cn(
+            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
+            'transition-all duration-500 ease-out',
+            isSelected
+              ? 'opacity-100 scale-105 saturate-125 contrast-110'
+              : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
+          )}
+          draggable={false}
+        />
+      </picture>
+
       <span aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,6,23,0.78)_100%)]" />
       <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-t from-slate-950/90 to-transparent" />
       <span
