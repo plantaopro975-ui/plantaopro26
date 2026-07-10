@@ -160,6 +160,13 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
         }}
       />
 
+      {/* Command Room SVG background — shared across all layout pages */}
+      {!lowEffects && (
+        <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
+          <CommandRoomBackground />
+        </div>
+      )}
+
       {/* Team poster — one image + one solid overlay. Removed the second
           heavy gradient (was double-composited on every scroll frame). */}
       {mounted && !lowEffects && showTeamImage && poster && (
