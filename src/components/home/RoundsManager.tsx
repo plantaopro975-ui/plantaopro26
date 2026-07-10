@@ -2899,7 +2899,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             team={team}
                             firstAgent={schedule?.rows[0]?.name}
                             startLabel={startTime}
-                            onCancel={disarmRound}
+                            onCancel={() => setCancelArmConfirmOpen(true)}
                             onStartNow={() => { setArmedForMs(null); setStartConfirmOpen(true); }}
                           />
                         )}
