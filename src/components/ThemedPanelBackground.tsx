@@ -175,7 +175,7 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
           aria-hidden
           className="fixed inset-0 pointer-events-none z-0 bg-cover bg-no-repeat"
           style={{
-            backgroundImage: `url(${PANEL_BRAND_BG})`,
+            backgroundImage: `${PANEL_BRAND_BG_IMAGE_SET}, url(${PANEL_BRAND_BG})`,
             backgroundPosition: 'center right',
             opacity: 0.28,
             filter: 'saturate(1.15) contrast(1.05)',
