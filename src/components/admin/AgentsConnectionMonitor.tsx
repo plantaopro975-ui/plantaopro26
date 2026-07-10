@@ -1,6 +1,28 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMasterToken } from '@/lib/masterSession';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
+
+async function callMasterAdmin<T = any>(action: string, payload: Record<string, unknown> = {}): Promise<T> {
+  const token = getMasterToken();
+  if (!token) throw new Error('Sessão master ausente.');
+  const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/master-admin`;
+  const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-master-token': token,
+      authorization: `Bearer ${anon}`,
+      apikey: anon,
+    },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok || !j?.success) throw new Error(j?.error || `Falha (${res.status}) na ação ${action}`);
+  return j.data as T;
+}
+const hasMasterSession = () => !!getMasterToken();
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
