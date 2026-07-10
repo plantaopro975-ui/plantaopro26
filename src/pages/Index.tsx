@@ -47,6 +47,7 @@ import {
   calculateAge,
   formatPhone 
 } from '@/lib/validators';
+import { fetchUnits as fetchUnitsShared } from '@/lib/units';
 const UnsavedChangesDialog = lazy(() => import('@/components/UnsavedChangesDialog').then(m => ({ default: m.UnsavedChangesDialog })));
 const ForgotPasswordDialog = lazy(() => import('@/components/ForgotPasswordDialog').then(m => ({ default: m.ForgotPasswordDialog })));
 import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, canQuickLogin, removeCredential, CREDENTIALS_CHANGED_EVENT } from '@/components/auth/SavedCredentials';
@@ -391,21 +392,8 @@ export default function Index() {
   }, [showLogin]);
 
   const fetchUnits = async () => {
-    try {
-      // RPC pública (SECURITY DEFINER) — funciona sem sessão autenticada,
-      // driblando RLS que exigia auth.uid() nas policies de `units`.
-      const rpc = await (supabase as any).rpc('list_units_basic');
-      if (rpc.error) {
-        console.error('[Index] list_units_basic falhou, fallback direto:', rpc.error);
-        const fb = await supabase.from('units').select('*').order('municipality').order('name');
-        if (fb.error) throw fb.error;
-        setUnits(fb.data || []);
-        return;
-      }
-      setUnits(rpc.data || []);
-    } catch (error) {
-      console.error('Error fetching units:', error);
-    }
+    const rows = await fetchUnitsShared({ scope: 'Index' });
+    setUnits(rows as any);
   };
 
 
