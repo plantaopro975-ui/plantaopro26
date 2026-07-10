@@ -1508,6 +1508,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* server clock offset (server_ms - local_ms) */
   const clockOffsetRef = useRef<number>(0);
   const sessionIdRef = useRef<string | null>(null);
+  // Guard de concorrência: bloqueia reentrada do startTimer enquanto uma
+  // execução ainda está em vôo (fetch + insert), evitando corrida entre o
+  // auto-disparo da programação e cliques manuais.
+  const startingRef = useRef(false);
   const syncServerClock = async () => {
     try {
       const t0 = Date.now();
