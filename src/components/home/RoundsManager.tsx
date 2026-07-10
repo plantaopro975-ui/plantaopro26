@@ -628,13 +628,13 @@ function TimeField({
   };
   return (
     <div className="grid gap-1.5">
-      <label htmlFor={`${id}-h`} className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+      <label htmlFor={`${id}-h`} className="text-[12.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
         {label}
         {locked && (
           <span
             title={lockedHint || 'Bloqueado — janela 22:00 → 06:00 (America/Rio_Branco)'}
             data-testid="night-lock-badge"
-            className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-mono uppercase text-amber-300"
+            className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10.5px] font-mono uppercase text-amber-300"
           >
             <svg viewBox="0 0 16 16" className="h-2.5 w-2.5"><path d="M4 7V5a4 4 0 118 0v2h1v7H3V7h1zm2 0h4V5a2 2 0 10-4 0v2z" fill="currentColor"/></svg>
             22:00→06:00
@@ -780,12 +780,12 @@ function Section({
     >
       <summary className="lg:hidden flex items-center gap-2 cursor-pointer py-2 select-none list-none [&::-webkit-details-marker]:hidden border-b border-border">
         {icon}
-        <span className="font-sans text-[12px] uppercase tracking-[0.14em] text-muted-foreground">{title}</span>
+        <span className="font-sans text-[13.5px] uppercase tracking-[0.14em] text-muted-foreground">{title}</span>
         <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
       </summary>
       <div className="hidden lg:flex items-center gap-2 pb-1.5 mb-2 border-b border-border/40">
         {icon}
-        <span className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{title}</span>
+        <span className="font-sans text-[12.5px] uppercase tracking-[0.18em] text-muted-foreground">{title}</span>
       </div>
       <div className="grid gap-2 pt-2 lg:pt-0">{children}</div>
     </details>
@@ -1665,7 +1665,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
             {/* Content */}
             <span className="flex flex-col items-start leading-none">
-              <span className="hidden sm:flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-primary">
+              <span className="hidden sm:flex items-center gap-1.5 font-mono text-[11.5px] font-bold uppercase tracking-[0.15em] text-primary">
                 <span aria-hidden className="h-1 w-1 rounded-full bg-primary animate-pulse" />
                 Ferramenta Tática
               </span>
@@ -1675,7 +1675,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </span>
 
             {running && live && !live.done && schedule && (
-              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}18` }}>
+              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12.5px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}18` }}>
                 <Timer className="h-3 w-3" />
                 {fmtHMS(live.remaining)}
               </span>
@@ -1721,7 +1721,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           >
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <div className="min-w-0 flex-1 basis-44">
-                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[11px] uppercase tracking-wider text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[12.5px] uppercase tracking-wider text-muted-foreground">
                   <Shield className="h-3 w-3 shrink-0" style={{ color: teamColor }} />
                   <span>Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
@@ -1739,7 +1739,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               <TacticalClock accent={teamColor} />
 
               {running && live && !live.done && schedule && (
-                  <span className="hidden md:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}22` }}>
+                  <span className="hidden md:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[13.5px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}22` }}>
                   <Timer className="h-3 w-3" />
                   {fmtHMS(live.remaining)}
                 </span>
@@ -1784,7 +1784,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <div className="hidden sm:block"><TeamHero team={team} color={teamColor} /></div>
                     <div className="min-w-0">
                       <div
-                        className="font-mono text-[10.5px] sm:text-[11.5px] uppercase tracking-[0.32em] font-medium antialiased"
+                        className="font-mono text-[12px] sm:text-[13px] uppercase tracking-[0.32em] font-medium antialiased"
                         style={{ color: `${teamColor}`, opacity: 0.82, textShadow: '0 1px 0 rgba(0,0,0,0.45)' }}
                       >
                         Central de Ronda · Equipe {team}
@@ -1792,7 +1792,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <h2 className="font-display text-[17px] sm:text-[22px] leading-[1.15] tracking-tight text-foreground/95 antialiased subpixel-antialiased">
                         Operação em tempo real
                       </h2>
-                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11.5px] tabular-nums text-muted-foreground/90">
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[13px] tabular-nums text-muted-foreground/90">
                         <span className="rounded-sm border px-1.5 py-0.5 text-foreground/85" style={{ borderColor: `${teamColor}33` }}>
                           Restante {fmtHMS(totalRemainingSeconds)}
                         </span>
@@ -1814,7 +1814,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               <Section icon={<Radio className="h-3.5 w-3.5 text-primary" />} title="Configuração" defaultOpen>
                 {/* Team pills */}
                 <div className="grid gap-2">
-                  <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
+                  <Label className="text-[12.5px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
                     <Radio className="h-3 w-3" /> Equipe
                   </Label>
                   <div className="grid grid-cols-4 gap-1.5">
@@ -1823,7 +1823,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       return (
                         <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                           className={cn(
-                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[10px] transition-all',
+                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[11.5px] transition-all',
                             active ? 'border-transparent shadow-sm' : 'border-border bg-card text-foreground hover:border-border',
                           )}
                           style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))', boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
@@ -1843,7 +1843,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     {(['split', 'interval'] as Mode[]).map((m) => (
                       <button key={m} type="button" onClick={() => setMode(m)}
                         className={cn(
-                          'rounded-md border px-3 py-2 text-[11px] font-mono uppercase tracking-wide transition-all',
+                          'rounded-md border px-3 py-2 text-[12.5px] font-mono uppercase tracking-wide transition-all',
                           mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground',
                         )}>
                         {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
@@ -1857,7 +1857,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <div
                     data-testid="night-shift-banner"
                     className={cn(
-                      'rounded-md border px-2.5 py-1.5 text-[10.5px] transition-colors',
+                      'rounded-md border px-2.5 py-1.5 text-[12px] transition-colors',
                       overrideActive
                         ? 'border-red-500/40 bg-red-500/5 text-red-200/90'
                         : 'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
@@ -1888,7 +1888,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
                         {overrideActive && (
-                          <div className="mt-1 text-[10.5px]">
+                          <div className="mt-1 text-[12px]">
                             Motivo registrado: <i>"{overrideReason.trim()}"</i>. Cada gravação será auditada em <code>night_shift_overrides</code>.
                           </div>
                         )}
@@ -1897,7 +1897,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         <button
                           type="button"
                           onClick={() => setOverridePromptOpen(true)}
-                          className="shrink-0 rounded border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-[10px] font-mono uppercase tracking-wide text-amber-200 hover:bg-amber-500/20"
+                          className="shrink-0 rounded border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-[11.5px] font-mono uppercase tracking-wide text-amber-200 hover:bg-amber-500/20"
                           data-testid="night-override-btn"
                         >
                           Override master
@@ -1907,7 +1907,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         <button
                           type="button"
                           onClick={() => { setOverrideActive(false); setOverrideReason(''); toast({ title: 'Override desativado' }); }}
-                          className="shrink-0 rounded border border-red-500/50 bg-red-500/10 px-2 py-1 text-[10px] font-mono uppercase tracking-wide text-red-200 hover:bg-red-500/20"
+                          className="shrink-0 rounded border border-red-500/50 bg-red-500/10 px-2 py-1 text-[11.5px] font-mono uppercase tracking-wide text-red-200 hover:bg-red-500/20"
                         >
                           Encerrar override
                         </button>
@@ -1934,11 +1934,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 {nightEffectivelyLocked ? (
                   <div className="grid grid-cols-2 gap-2">
                     <div className="rounded-md border border-border/90 bg-card px-2 py-1.5">
-                      <div className="text-[9px] uppercase tracking-wide text-muted-foreground">Início</div>
+                      <div className="text-[10.5px] uppercase tracking-wide text-muted-foreground">Início</div>
                       <div className="font-mono text-sm text-foreground">22:00</div>
                     </div>
                     <div className="rounded-md border border-border/90 bg-card px-2 py-1.5">
-                      <div className="text-[9px] uppercase tracking-wide text-muted-foreground">Final</div>
+                      <div className="text-[10.5px] uppercase tracking-wide text-muted-foreground">Final</div>
                       <div className="font-mono text-sm text-foreground">06:00</div>
                     </div>
                   </div>
@@ -1959,7 +1959,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
                     <div className="grid gap-1.5">
-                      <label htmlFor="rm-int" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+                      <label htmlFor="rm-int" className="text-[12.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
                         <Timer className="h-3 w-3" /> Intervalo (min)
                       </label>
                       <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
@@ -1978,10 +1978,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <div className="flex items-center gap-2 min-w-0">
                       <Users className="h-3.5 w-3.5 shrink-0" style={{ color: teamColor }} />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-sans uppercase tracking-[0.14em] text-muted-foreground leading-none">
+                        <p className="text-[11.5px] font-sans uppercase tracking-[0.14em] text-muted-foreground leading-none">
                           Distribuição do turno
                         </p>
-                        <p className="text-[11px] font-mono text-foreground/90 tabular-nums leading-tight mt-0.5 truncate">
+                        <p className="text-[12.5px] font-mono text-foreground/90 tabular-nums leading-tight mt-0.5 truncate">
                           {agents.length} × {fmtDuration(schedule.slot)} · {schedule.rows[0]?.from ?? startTime} → {endTime}
                         </p>
                       </div>
@@ -1989,7 +1989,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <Select value={rounding} onValueChange={(v: Rounding) => setRounding(v)}>
                       <SelectTrigger
                         aria-label="Modo de distribuição"
-                        className="shrink-0 h-7 w-auto gap-1 px-2 text-[9.5px] font-mono uppercase tracking-[0.18em] rounded border bg-transparent hover:bg-card/80 focus:ring-1 focus:ring-offset-0"
+                        className="shrink-0 h-7 w-auto gap-1 px-2 text-[11px] font-mono uppercase tracking-[0.18em] rounded border bg-transparent hover:bg-card/80 focus:ring-1 focus:ring-offset-0"
                         style={{ color: teamColor, borderColor: `${teamColor}55`, background: `${teamColor}12` }}
                       >
                         <SelectValue />
@@ -2011,7 +2011,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 {/* Agents */}
                 <div className="grid gap-1">
                   <div className="flex items-center justify-between gap-2">
-                    <Label className="text-[11px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
+                    <Label className="text-[12.5px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
                       <Users className="h-3 w-3" /> Agentes ({agents.length})
                     </Label>
                     <Button type="button" size="icon" variant="outline" onClick={addAgent} className="h-7 w-7 border-border text-primary hover:bg-primary/10" aria-label="Adicionar agente">
@@ -2021,7 +2021,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <div className={cn('tactical-scrollbar grid gap-1 max-h-36 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
                       <div key={i} className="flex items-center gap-1.5 min-w-0">
-                         <span className="w-6 shrink-0 text-center font-mono text-[10px] text-primary tabular-nums">{pad(i + 1)}</span>
+                         <span className="w-6 shrink-0 text-center font-mono text-[11.5px] text-primary tabular-nums">{pad(i + 1)}</span>
                         <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))}
                           placeholder={`Agente ${i + 1}`}
                            className={cn('bg-card border-border h-7 text-xs min-w-0 flex-1', !a.trim() && 'border-destructive/60')}
@@ -2039,7 +2039,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 {/* Validation panel */}
                 {issues.length > 0 && (
                   <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
-                    <div className="flex items-center gap-2 font-sans text-[11px] uppercase tracking-wider text-destructive mb-1">
+                    <div className="flex items-center gap-2 font-sans text-[12.5px] uppercase tracking-wider text-destructive mb-1">
                       <AlertTriangle className="h-3.5 w-3.5" /> Corrija os itens abaixo
                     </div>
                     <ul className="grid gap-1 text-xs text-destructive/90 list-disc pl-4 break-words">
@@ -2056,7 +2056,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 <Section icon={<Timer className="h-3.5 w-3.5 text-primary" />} title="Cronograma" defaultOpen={!!schedule}>
                   {!schedule ? (
-                    <div className="rounded-lg border border-dashed border-border bg-card/95 p-6 text-center text-[12px] text-muted-foreground font-sans">
+                    <div className="rounded-lg border border-dashed border-border bg-card/95 p-6 text-center text-[13.5px] text-muted-foreground font-sans">
                       Preencha a configuração para gerar o cronograma.
                     </div>
                   ) : (
@@ -2081,7 +2081,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           const activeAgentName = view && !view.done ? schedule.rows[view.index]?.name : undefined;
                           return (
                             <>
-                              <span className="font-sans text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+                              <span className="font-sans text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground">
                                 {statusLabel}
                               </span>
 
@@ -2111,7 +2111,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               </div>
 
                               {urgent && view && (
-                                <div className="font-mono text-[11px] uppercase tracking-[0.35em] font-bold text-destructive animate-fade-in">
+                                <div className="font-mono text-[12.5px] uppercase tracking-[0.35em] font-bold text-destructive animate-fade-in">
                                   ⚠ {critical ? 'ALERTA FINAL · ' : 'Contagem final · '}
                                   {String(Math.max(0, Math.ceil(view.remaining))).padStart(2, '0')} segundos
                                 </div>
@@ -2149,7 +2149,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Restante total do turno + próximo agente */}
                               {schedule && (
                                 <div
-                                  className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[10px] tabular-nums"
+                                  className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[11.5px] tabular-nums"
                                   data-testid="round-card-remaining"
                                 >
                                   <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/5 px-2 py-0.5 text-amber-200">
@@ -2303,16 +2303,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {isCurrent && !silentMode && (
                                 <span className="pointer-events-none absolute inset-y-0 left-0 w-1/2 opacity-20 animate-shimmer" style={{ background: `linear-gradient(90deg, transparent, ${teamColor}, transparent)` }} />
                               )}
-                              <span className="font-mono text-[9px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
+                              <span className="font-mono text-[10.5px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
                               <span className="min-w-0">
                                 <span className={cn(
-                                  'font-sans font-semibold text-[11.5px] leading-tight truncate min-w-0 flex items-center gap-1.5',
+                                  'font-sans font-semibold text-[13px] leading-tight truncate min-w-0 flex items-center gap-1.5',
                                   isDone && 'line-through text-muted-foreground decoration-success/70',
                                 )}>
                                   {r.name}
                                   {isDone && <CheckCircle2 className="h-3 w-3 text-success no-underline shrink-0" />}
                                 </span>
-                                <span className="mt-0.5 block truncate font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+                                <span className="mt-0.5 block truncate font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">
                                   {isCurrent
                                     ? `Em ronda · faltam ${fmtHMS(remainingForRow)}`
                                     : isDone
@@ -2322,7 +2322,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               </span>
                               <span className="flex flex-col items-end gap-0.5">
                                 <AgentStatusSVG status={isCurrent ? 'active' : isDone ? 'done' : 'waiting'} color={teamColor} compact />
-                                <span className="font-mono text-[10px] tabular-nums flex items-center gap-x-1 text-muted-foreground whitespace-nowrap">
+                                <span className="font-mono text-[11.5px] tabular-nums flex items-center gap-x-1 text-muted-foreground whitespace-nowrap">
                                   <span className="text-foreground">{r.from}</span>
                                   <span style={{ color: teamColor }}>→</span>
                                   <span className="text-foreground">{r.to}</span>
@@ -2347,11 +2347,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </Section>
 
                 <div className="flex items-center justify-end gap-2 border-t border-border/40 pt-1.5">
-                  <a href="/rounds-history" className="font-sans text-[10px] uppercase tracking-wide text-primary hover:underline">
+                  <a href="/rounds-history" className="font-sans text-[11.5px] uppercase tracking-wide text-primary hover:underline">
                     Histórico ({history.length})
                   </a>
                   {history.length > 0 && (
-                    <button type="button" onClick={clearHistory} className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
+                    <button type="button" onClick={clearHistory} className="font-sans text-[11.5px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
                       Limpar
                     </button>
                   )}
