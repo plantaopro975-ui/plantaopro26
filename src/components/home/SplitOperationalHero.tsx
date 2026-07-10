@@ -81,12 +81,13 @@ interface TeamObjectProps {
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   const imgClass = cn(
-    'block h-full w-full max-h-[98%] max-w-[96%] sm:max-h-[96%] sm:max-w-[92%] lg:max-h-[98%] lg:max-w-[94%] object-contain object-center select-none animate-float3d',
-    'drop-shadow-[0_24px_36px_rgba(0,0,0,0.92)]',
+    'block h-full w-full max-h-[68%] max-w-[62%] sm:max-h-[64%] sm:max-w-[58%] lg:max-h-[70%] lg:max-w-[62%] object-contain object-center select-none animate-float3d',
+    'drop-shadow-[0_14px_22px_rgba(0,0,0,0.75)]',
     'transition-[transform,opacity] duration-700 ease-out',
-    'group-hover:scale-[1.08] group-hover:-translate-y-1',
+    'group-hover:scale-[1.06] group-hover:-translate-y-1',
     'group-active:scale-[1.02]',
   );
+
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       <picture>
