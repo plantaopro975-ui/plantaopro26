@@ -109,11 +109,9 @@
   body {
     @apply text-foreground antialiased;
     font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    /* Splash "Boot Tático" background — usado globalmente no site */
     background:
-      radial-gradient(ellipse 70% 50% at 50% 0%, hsl(42 78% 40% / 0.14) 0%, transparent 65%),
-      radial-gradient(ellipse 60% 45% at 100% 100%, hsl(210 78% 40% / 0.10) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 40% at 0% 100%, hsl(220 60% 20% / 0.35) 0%, transparent 70%),
-      var(--gradient-dark);
+      radial-gradient(ellipse 90% 60% at 50% 45%, #0A1128 0%, #060912 60%, #050505 100%);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
@@ -125,8 +123,25 @@
     letter-spacing: -0.003em;
   }
 
+  /* HUD grid overlay global (herdado do splash). Fica atrás de todo conteúdo. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(to right, rgba(244,201,116,0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(244,201,116,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 85%);
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 85%);
+  }
+
   #root {
     background: transparent;
+    position: relative;
+    z-index: 1;
   }
 
   h1, h2, h3, h4, h5, h6 {
