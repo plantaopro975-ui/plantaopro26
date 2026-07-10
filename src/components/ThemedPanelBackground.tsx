@@ -163,6 +163,34 @@ export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackg
         }}
       />
 
+      {/* Brand splash background — arte oficial PlantãoPro (baixa opacidade
+          para permanecer legível sob os cards operacionais). */}
+      {!lowEffects && (
+        <div
+          aria-hidden
+          className="fixed inset-0 pointer-events-none z-0 bg-cover bg-no-repeat"
+          style={{
+            backgroundImage: `url(${PANEL_BRAND_BG})`,
+            backgroundPosition: 'center right',
+            opacity: 0.14,
+            mixBlendMode: 'screen',
+            filter: 'saturate(1.15) contrast(1.05)',
+          }}
+        />
+      )}
+
+      {/* Vignette to reinforce card legibility on top of the splash */}
+      {!lowEffects && (
+        <div
+          aria-hidden
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            background:
+              'radial-gradient(ellipse at center, transparent 0%, rgba(3,5,10,0.55) 70%, rgba(3,5,10,0.85) 100%)',
+          }}
+        />
+      )}
+
       {/* Command Room SVG background — shared across all layout pages */}
       {!lowEffects && (
         <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
