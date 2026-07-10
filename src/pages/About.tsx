@@ -74,7 +74,7 @@ export default function About() {
 
   return (
     <div
-      className="min-h-screen sm:h-screen sm:overflow-hidden relative bg-[#050810] flex flex-col"
+      className="h-[100dvh] overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch] sm:h-screen sm:overflow-hidden relative bg-[#050810] flex flex-col"
       style={{ fontFamily: SANS }}
     >
       {/* Fixed realistic background */}
@@ -109,7 +109,7 @@ export default function About() {
         </div>
       </header>
 
-      <main className="container relative max-w-6xl px-3 py-2 space-y-2 flex-1 sm:overflow-hidden sm:flex sm:flex-col sm:min-h-0">
+      <main className="container relative max-w-6xl px-3 py-2 pb-3 space-y-2 flex-1 sm:overflow-hidden sm:flex sm:flex-col sm:min-h-0">
         {/* HERO */}
         <section className="relative overflow-hidden rounded-2xl border border-amber-500/25 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] flex-shrink-0">
           <div className="absolute inset-0">
@@ -124,26 +124,26 @@ export default function About() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(217,168,63,0.18),transparent_55%)]" />
           </div>
 
-          <div className="relative flex items-center gap-4 px-5 py-3 md:gap-6 md:px-8 md:py-4">
+          <div className="relative flex items-center gap-3 px-4 py-2.5 md:gap-6 md:px-8 md:py-4">
             <img
               src={logoPlantaoPro}
               alt="PlantãoPro"
-              className="h-14 w-14 md:h-16 md:w-16 flex-shrink-0 object-contain drop-shadow-[0_0_20px_rgba(217,168,63,0.5)]"
+              className="h-12 w-12 md:h-16 md:w-16 flex-shrink-0 object-contain drop-shadow-[0_0_20px_rgba(217,168,63,0.5)]"
             />
             <div className="flex-1 min-w-0 space-y-1">
               <p
-                className="inline-block rounded-full bg-amber-400/15 px-2.5 py-0.5 text-[9px] uppercase tracking-[0.3em] text-amber-200 ring-1 ring-amber-400/40"
+                className="inline-block rounded-full bg-amber-400/15 px-2 py-0.5 text-[8px] uppercase tracking-[0.22em] text-amber-200 ring-1 ring-amber-400/40 md:px-2.5 md:text-[9px] md:tracking-[0.3em]"
                 style={{ fontFamily: MONO }}
               >
                 Segurança Pública · Acre
               </p>
               <h1
-                className="text-2xl font-normal tracking-tight text-slate-50 md:text-3xl leading-none"
+                className="text-xl font-normal tracking-tight text-slate-50 md:text-3xl leading-none"
                 style={{ fontFamily: SERIF }}
               >
                 Plantão<span className="text-amber-400">Pro</span>
               </h1>
-              <p className="text-xs leading-snug text-slate-300 md:text-[13px] max-w-2xl">
+              <p className="text-[11px] leading-snug text-slate-300 md:text-[13px] max-w-2xl">
                 Ferramenta operacional para agentes da segurança pública organizarem plantões,
                 escalas e rotina com precisão tática.
               </p>
@@ -187,18 +187,18 @@ export default function About() {
                   key={f.title}
                   className="group border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md transition-all hover:border-amber-400/50 hover:bg-[#0f1e3a]/80"
                 >
-                  <CardContent className="flex items-center gap-2.5 p-2.5 h-full">
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30">
+                  <CardContent className="flex items-center gap-2 p-2 h-full md:gap-2.5 md:p-2.5">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30 md:h-9 md:w-9">
                       <f.icon className="h-4 w-4 text-amber-400" />
                     </div>
                     <div className="min-w-0">
                       <h3
-                        className="text-[13px] font-semibold leading-tight text-slate-100"
+                        className="text-[12px] font-semibold leading-tight text-slate-100 md:text-[13px]"
                         style={{ fontFamily: SANS }}
                       >
                         {f.title}
                       </h3>
-                      <p className="text-[10.5px] leading-snug text-slate-400 truncate">
+                      <p className="text-[10px] leading-snug text-slate-400 truncate md:text-[10.5px]">
                         {f.description}
                       </p>
                     </div>
@@ -212,13 +212,13 @@ export default function About() {
           <section className="flex flex-col gap-2 sm:min-h-0">
             {/* Origem */}
             <Card className="border-amber-500/15 bg-gradient-to-br from-[#0a1428]/85 via-[#0f1e3a]/75 to-[#0a1428]/85 backdrop-blur-md">
-              <CardContent className="p-3 space-y-2">
+                <CardContent className="p-2.5 space-y-1.5 md:p-3 md:space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30">
                     <Building2 className="h-3.5 w-3.5 text-amber-400" />
                   </div>
-                  <h2
-                    className="text-sm font-normal tracking-wide text-slate-100"
+                    <h2
+                    className="text-[13px] font-normal tracking-wide text-slate-100 md:text-sm"
                     style={{ fontFamily: SERIF }}
                   >
                     Origem do Projeto
@@ -226,7 +226,7 @@ export default function About() {
                 </div>
                 <div className="flex items-start gap-2.5">
                   <div className="flex-shrink-0 flex flex-col items-center gap-1">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-amber-500/10 to-transparent ring-1 ring-amber-400/25 p-1 flex items-center justify-center">
+                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-amber-500/10 to-transparent ring-1 ring-amber-400/25 p-1 flex items-center justify-center md:h-12 md:w-12">
                       <img
                         src={logoPlantaoPro}
                         alt="Logo PlantãoPro"
@@ -236,13 +236,13 @@ export default function About() {
                     <button
                       type="button"
                       onClick={() => downloadLogo(logoPlantaoPro, 'logo-plantao-pro.png')}
-                      className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors"
+                      className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[8.5px] font-semibold text-amber-300 hover:bg-amber-500/20 transition-colors md:text-[9px]"
                     >
                       <Download className="h-2.5 w-2.5" />
                       Baixar
                     </button>
                   </div>
-                  <p className="text-[11.5px] leading-snug text-slate-300 flex-1">
+                  <p className="text-[10.5px] leading-snug text-slate-300 flex-1 md:text-[11.5px]">
                     Idealizado por um <strong className="text-amber-300">Agente Socioeducativo</strong> de{' '}
                     <strong className="text-amber-300">Feijó/AC</strong>, para trazer praticidade a
                     quem atua na linha de frente.
@@ -263,7 +263,7 @@ export default function About() {
 
             {/* Specs */}
             <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md flex-none overflow-hidden lg:flex-1 lg:min-h-0">
-              <CardContent className="p-3 flex flex-col gap-2 lg:h-full">
+              <CardContent className="p-2.5 flex flex-col gap-1.5 md:p-3 md:gap-2 lg:h-full">
                 <div className="flex items-center justify-between">
                   <h3
                     className="text-[11px] uppercase tracking-[0.22em] text-amber-400/80"
@@ -305,7 +305,7 @@ export default function About() {
 
             {/* Contato */}
             <Card className="border-amber-500/15 bg-[#0a1428]/70 backdrop-blur-md">
-              <CardContent className="flex items-center justify-between gap-2 p-2.5">
+              <CardContent className="flex items-center justify-between gap-2 p-2 md:p-2.5">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-amber-500/20 to-amber-500/5 ring-1 ring-amber-400/30">
                     <Mail className="h-3.5 w-3.5 text-amber-400" />
@@ -332,7 +332,7 @@ export default function About() {
 
         {/* Footer */}
         <footer className="border-t border-amber-500/15 pt-2 text-center flex-shrink-0 space-y-1.5">
-          <p className="text-[10.5px] leading-relaxed text-slate-400/90 max-w-3xl mx-auto px-3">
+          <p className="hidden text-[10.5px] leading-relaxed text-slate-400/90 max-w-3xl mx-auto px-3 sm:block">
             <strong className="text-amber-400/90 font-semibold">PlantãoPro</strong> é uma plataforma corporativa e independente
             de gestão operacional voltada a profissionais do sistema socioeducativo. O aplicativo é mantido de forma autônoma
             e <em className="text-slate-300 not-italic">não possui vínculo, afiliação, endosso ou patrocínio de qualquer
