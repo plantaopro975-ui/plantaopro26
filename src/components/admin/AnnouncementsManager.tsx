@@ -214,29 +214,47 @@ export function AnnouncementsManager() {
         expires_at: formData.expires_at ? new Date(formData.expires_at).toISOString() : null,
       };
 
+      let saved: Announcement | null = null;
+
       if (hasMasterSession()) {
-        await callMasterAdmin('announcement_upsert', {
+        saved = await callMasterAdmin<Announcement>('announcement_upsert', {
           id: editingAnnouncement?.id ?? null,
           payload,
         });
-        toast.success(editingAnnouncement ? 'Aviso atualizado com sucesso' : 'Aviso criado com sucesso');
       } else if (editingAnnouncement) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('admin_announcements')
           .update(payload)
-          .eq('id', editingAnnouncement.id);
+          .eq('id', editingAnnouncement.id)
+          .select()
+          .maybeSingle();
         if (error) throw error;
-        toast.success('Aviso atualizado com sucesso');
+        saved = data as Announcement | null;
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('admin_announcements')
-          .insert(payload);
+          .insert(payload)
+          .select()
+          .maybeSingle();
         if (error) throw error;
-        toast.success('Aviso criado com sucesso');
+        saved = data as Announcement | null;
       }
+
+      // Optimistic UI: reflete a mudança imediatamente, sem esperar o refetch.
+      if (saved) {
+        setAnnouncements((prev) => {
+          const others = prev.filter((a) => a.id !== saved!.id);
+          return [saved!, ...others].sort(
+            (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+          );
+        });
+      }
+
+      toast.success(editingAnnouncement ? 'Aviso atualizado com sucesso' : 'Aviso publicado com sucesso');
 
       setDialogOpen(false);
       resetForm();
+      // Refetch em background para sincronizar com o banco.
       fetchData();
     } catch (error) {
       console.error('Error saving announcement:', error);
@@ -247,6 +265,8 @@ export function AnnouncementsManager() {
   };
 
   const handleDelete = async (id: string) => {
+    // Optimistic remove
+    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
     try {
       if (hasMasterSession()) {
         await callMasterAdmin('announcement_delete', { id });
@@ -260,14 +280,18 @@ export function AnnouncementsManager() {
       toast.success('Aviso excluído com sucesso');
       setDeleteDialogOpen(false);
       setDeletingId(null);
-      fetchData();
     } catch (error) {
       console.error('Error deleting announcement:', error);
       toast.error('Erro ao excluir aviso');
+      fetchData(); // reverte estado em caso de erro
     }
   };
 
   const toggleActive = async (announcement: Announcement) => {
+    // Optimistic toggle
+    setAnnouncements((prev) =>
+      prev.map((a) => (a.id === announcement.id ? { ...a, is_active: !a.is_active } : a)),
+    );
     try {
       if (hasMasterSession()) {
         await callMasterAdmin('announcement_toggle', {
@@ -282,10 +306,10 @@ export function AnnouncementsManager() {
         if (error) throw error;
       }
       toast.success(`Aviso ${!announcement.is_active ? 'ativado' : 'desativado'}`);
-      fetchData();
     } catch (error) {
       console.error('Error toggling announcement:', error);
       toast.error('Erro ao alterar status');
+      fetchData(); // reverte em caso de erro
     }
   };
 

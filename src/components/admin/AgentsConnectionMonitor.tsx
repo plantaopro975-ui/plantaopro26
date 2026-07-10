@@ -100,6 +100,8 @@ export function AgentsConnectionMonitor() {
   const [statusFilter, setStatusFilter] = useState<'all' | RegStatus | 'online' | 'offline'>('all');
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'agents' | 'timeline'>('agents');
 
   const load = async () => {
     setLoading(true);
@@ -151,8 +153,14 @@ export function AgentsConnectionMonitor() {
 
   useEffect(() => { load(); }, []);
   useEffect(() => {
-    const i = setInterval(() => { setTick((t) => t + 1); load(); }, 20_000);
+    // Poll rápido para sincronizar login/logout mesmo quando Realtime está bloqueado por RLS.
+    const i = setInterval(() => { setTick((t) => t + 1); load(); }, 10_000);
     return () => clearInterval(i);
+  }, []);
+  // Force re-render do relógio de "sessão ativa" a cada 30s (durações relativas).
+  useEffect(() => {
+    const t = setInterval(() => setTick((x) => x + 1), 30_000);
+    return () => clearInterval(t);
   }, []);
 
   const agentIndex = useMemo(() => {
@@ -275,12 +283,19 @@ export function AgentsConnectionMonitor() {
   const filteredTimeline = useMemo(() => {
     const visibleIds = new Set(filteredAgents.map((a) => a.id));
     return timeline.filter((ev) => {
+      if (selectedAgentId && ev.agent_id !== selectedAgentId) return false;
       if (!visibleIds.has(ev.agent_id)) return false;
       if (dateFrom && new Date(ev.at).getTime() < new Date(dateFrom + 'T00:00:00').getTime()) return false;
       if (dateTo && new Date(ev.at).getTime() > new Date(dateTo + 'T23:59:59').getTime()) return false;
       return true;
     }).slice(0, 500);
-  }, [timeline, filteredAgents, dateFrom, dateTo]);
+  }, [timeline, filteredAgents, dateFrom, dateTo, selectedAgentId]);
+
+  const selectedAgent = selectedAgentId ? agentIndex.get(selectedAgentId) : null;
+  const selectedAgentSessions = useMemo(() => {
+    if (!selectedAgentId) return [];
+    return timeline.filter((e) => e.agent_id === selectedAgentId).slice(0, 100);
+  }, [timeline, selectedAgentId]);
 
   const onlineCount = filteredAgents.filter((a) => a.isOnline).length;
   const statusCounts = useMemo(() => {
@@ -500,10 +515,34 @@ export function AgentsConnectionMonitor() {
           </div>
         </div>
 
-        <Tabs defaultValue="agents">
+        {selectedAgent && (
+          <div className="flex items-center justify-between gap-3 flex-wrap p-3 rounded-md border border-primary/40 bg-primary/5">
+            <div className="flex items-center gap-2 flex-wrap text-sm">
+              <PresenceDot on={online.has(selectedAgent.id)} />
+              <span className="font-semibold">{selectedAgent.name}</span>
+              {selectedAgent.matricula && (
+                <span className="text-xs text-muted-foreground font-mono">Mat. {selectedAgent.matricula}</span>
+              )}
+              <Badge variant="outline" className="text-[10px]">
+                {selectedAgentSessions.filter((s) => s.type === 'login').length} logins registrados
+              </Badge>
+              <Badge variant="outline" className="text-[10px]">
+                {selectedAgentSessions.filter((s) => s.type === 'logout').length} logouts
+              </Badge>
+            </div>
+            <Button size="sm" variant="ghost" onClick={() => setSelectedAgentId(null)}>
+              Limpar seleção
+            </Button>
+          </div>
+        )}
+
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
           <TabsList>
             <TabsTrigger value="agents"><Users className="h-3.5 w-3.5 mr-1.5" />Agentes</TabsTrigger>
-            <TabsTrigger value="timeline"><Clock className="h-3.5 w-3.5 mr-1.5" />Linha do tempo</TabsTrigger>
+            <TabsTrigger value="timeline">
+              <Clock className="h-3.5 w-3.5 mr-1.5" />
+              Linha do tempo{selectedAgent ? ` — ${selectedAgent.name}` : ''}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="agents" className="mt-3">
@@ -531,8 +570,21 @@ export function AgentsConnectionMonitor() {
                     const sessionInfo = r.isOnline
                       ? r.loginAt ? `há ${formatDistanceToNow(new Date(r.loginAt), { locale: ptBR })}` : 'sessão ativa'
                       : r.loginAt ? fmtAbs(r.loginAt) : '—';
+                    const isSelected = selectedAgentId === r.id;
                     return (
-                      <TableRow key={r.id} className={r.isOnline ? 'bg-emerald-500/5' : undefined}>
+                      <TableRow
+                        key={r.id}
+                        onClick={() => {
+                          setSelectedAgentId(isSelected ? null : r.id);
+                          if (!isSelected) setActiveTab('timeline');
+                        }}
+                        className={cn(
+                          'cursor-pointer transition-colors',
+                          r.isOnline && 'bg-emerald-500/5',
+                          isSelected && 'bg-primary/10 ring-1 ring-primary/40',
+                        )}
+                        title="Clique para ver a linha do tempo deste agente"
+                      >
                         <TableCell><PresenceDot on={r.isOnline} /></TableCell>
                         <TableCell>
                           <div className="font-medium">{r.name}</div>
