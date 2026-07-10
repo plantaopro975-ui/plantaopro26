@@ -54,9 +54,8 @@ export const CommandRoomBackground = memo(function CommandRoomBackground() {
       {/* 8 · Corner brackets removidos a pedido — mantém só as hairlines */}
 
 
-      {/* 9 · Hairlines âmbar */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      {/* 9 · Hairlines âmbar removidas a pedido */}
+
     </div>
   );
 });
