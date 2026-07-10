@@ -2741,21 +2741,48 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         })()}
 
 
+                        {/* Painel travado quando a ronda está PROGRAMADA — cadeado + countdown profissional */}
+                        {armed && armedForMs != null && (
+                          <ArmedLockPanel
+                            targetMs={armedForMs}
+                            nowMs={nowServer()}
+                            color={teamColor}
+                            team={team}
+                            firstAgent={schedule?.rows[0]?.name}
+                            startLabel={startTime}
+                            onCancel={disarmRound}
+                            onStartNow={() => { setArmedForMs(null); setStartConfirmOpen(true); }}
+                          />
+                        )}
+
                         <div className="flex items-center gap-2 pt-1">
-                          {!running ? (
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => {
-                                if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
-                                setStartConfirmOpen(true);
-                              }}
-                              className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
-                              style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
-                            >
-                              <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
-                            </Button>
-                          ) : (
+                          {!running && !armed ? (
+                            <>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() => {
+                                  if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
+                                  setStartConfirmOpen(true);
+                                }}
+                                className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
+                                style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
+                              >
+                                <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={armRoundForStart}
+                                title={`Programar início automático às ${startTime}`}
+                                className="h-9 px-3 border-dashed font-semibold"
+                                style={{ borderColor: `${teamColor}80`, color: teamColor }}
+                              >
+                                <CalendarClock className="h-3.5 w-3.5 mr-1.5" /> Programar
+                              </Button>
+                            </>
+                          ) : running ? (
                             <Button
                               type="button"
                               size="sm"
@@ -2765,6 +2792,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               className="h-9 px-4 border border-destructive/45 bg-destructive/10 text-destructive hover:bg-destructive/15"
                             >
                               <Pause className="h-3.5 w-3.5 mr-1.5" /> Bloqueado
+                            </Button>
+                          ) : (
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={disarmRound}
+                              variant="outline"
+                              className="h-9 px-4 border-destructive/45 text-destructive hover:bg-destructive/10"
+                            >
+                              <XCircle className="h-3.5 w-3.5 mr-1.5" /> Cancelar programação
                             </Button>
                           )}
                           <Button
