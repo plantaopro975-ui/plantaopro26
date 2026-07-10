@@ -935,9 +935,9 @@ div[style*="bottom: 0"][style*="right: 0"][style*="fixed"] {
 
 /* ===== 3D Idle Motion for team emblems ===== */
 @keyframes float3d {
-  0%   { transform: perspective(600px) translateY(0) rotateY(-8deg) rotateX(2deg); }
-  50%  { transform: perspective(600px) translateY(-6px) rotateY(8deg) rotateX(-2deg); }
-  100% { transform: perspective(600px) translateY(0) rotateY(-8deg) rotateX(2deg); }
+  0%   { transform: perspective(700px) translateY(0) rotateY(-3deg) rotateX(1deg); }
+  50%  { transform: perspective(700px) translateY(-4px) rotateY(3deg) rotateX(-1deg); }
+  100% { transform: perspective(700px) translateY(0) rotateY(-3deg) rotateX(1deg); }
 }
 .animate-float3d {
   animation: float3d 5s ease-in-out infinite;
