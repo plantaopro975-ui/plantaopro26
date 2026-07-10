@@ -67,7 +67,7 @@ const BHHistoryTracker = lazy(() => import('@/components/agent-panel/BHHistoryTr
 const PasswordChangeRequest = lazy(() => import('@/components/agent-panel/PasswordChangeRequest').then(m => ({ default: m.PasswordChangeRequest })));
 const SmartAlarmClock = lazy(() => import('@/components/agent-panel/SmartAlarmClock').then(m => ({ default: m.SmartAlarmClock })));
 const RoundsHistoryCard = lazy(() => import('@/components/agent-panel/RoundsHistoryCard').then(m => ({ default: m.RoundsHistoryCard })));
-const AgentsDirectoryCard = lazy(() => import('@/components/agent-panel/AgentsDirectoryCard').then(m => ({ default: m.AgentsDirectoryCard })));
+// AgentsDirectoryCard agora vive somente na rota /diretorio (abas Equipe/Unidade/Sistema).
 const RoundsManager = lazy(() => import('@/components/home/RoundsManager').then(m => ({ default: ((m as any).RoundsManager ?? (m as any).default) as React.ComponentType<{ customTrigger?: ReactNode }> })));
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, BellRing, Megaphone, Radio, ChevronDown } from 'lucide-react';
