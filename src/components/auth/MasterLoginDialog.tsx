@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import heroAsset from '@/assets/master-login-hero.jpg.asset.json';
 
@@ -46,6 +46,8 @@ if (typeof window !== 'undefined') {
  */
 
 export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginDialogProps) {
+  const [heroLoaded, setHeroLoaded] = useState(false);
+
   // Reforça o preload do chunk /master no instante que o dialog abre —
   // caso o prefetch idle ainda não tenha rodado.
   useEffect(() => {
@@ -82,9 +84,26 @@ export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginD
             {...({ fetchpriority: 'high' } as any)}
             width={1280}
             height={640}
-            className="absolute inset-0 h-full w-full object-cover"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
             style={{ filter: 'contrast(1.05) saturate(0.95) brightness(0.95)' }}
+            onLoad={() => setHeroLoaded(true)}
           />
+
+          {/* Skeleton shimmer — visível apenas enquanto a imagem do hero carrega */}
+          {!heroLoaded && (
+            <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(110deg, rgba(201,168,76,0.06) 20%, rgba(240,215,140,0.18) 45%, rgba(201,168,76,0.06) 70%)',
+                  backgroundSize: '200% 100%',
+                  animation: 'mld-shimmer 1.4s linear infinite',
+                }}
+              />
+              <style>{`@keyframes mld-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+            </div>
+          )}
 
 
           {/* Warm gold gradient wash — lighter so photo stays visible */}
