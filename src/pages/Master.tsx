@@ -77,6 +77,7 @@ const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagemen
 const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
 const PendingApprovalsManager = lazy(() => import('@/components/admin/PendingApprovalsManager').then(m => ({ default: m.PendingApprovalsManager })));
 const RecentRegistrationsAudit = lazy(() => import('@/components/admin/RecentRegistrationsAudit').then(m => ({ default: m.RecentRegistrationsAudit })));
+const AccessAuditPanel = lazy(() => import('@/components/admin/AccessAuditPanel').then(m => ({ default: m.AccessAuditPanel })));
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
@@ -706,7 +707,10 @@ export default function Master() {
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="announcements">Anúncios</TabsTrigger>
+            <TabsTrigger value="announcements" className="gap-1.5">
+              <MessageSquare className="h-3.5 w-3.5 hidden sm:inline-flex" />
+              Comunicações
+            </TabsTrigger>
             <TabsTrigger value="swaps">Permutas</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
@@ -722,9 +726,14 @@ export default function Master() {
             <PendingApprovalsManager onApprovalChange={fetchData} />
           </TabsContent>
 
-          {/* Audit — Recém-cadastrados (aprovação automática) */}
+          {/* Audit — Recém-cadastrados + Auditoria de Acessos */}
           <TabsContent value="audit" className="space-y-6 mt-6">
-            <RecentRegistrationsAudit daysWindow={30} onChange={fetchData} />
+            <Suspense fallback={<PanelSkeleton rows={4} />}>
+              <AccessAuditPanel />
+            </Suspense>
+            <Suspense fallback={<PanelSkeleton rows={4} />}>
+              <RecentRegistrationsAudit daysWindow={30} onChange={fetchData} />
+            </Suspense>
           </TabsContent>
 
 
@@ -1200,11 +1209,22 @@ export default function Master() {
             </Card>
           </TabsContent>
 
-          {/* Announcements Tab */}
+          {/* Comunicações Internas Tab */}
           <TabsContent value="announcements" className="space-y-6 mt-6">
-            <PromosToggleCard />
-            <WelcomeHintToggleCard />
-            <AnnouncementsManager />
+            <div className="rounded-lg border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-orange-600/5 p-4">
+              <div className="flex items-center gap-3">
+                <MessageSquare className="h-5 w-5 text-amber-400" />
+                <div>
+                  <h3 className="text-sm font-bold text-white">Central de Comunicações Internas</h3>
+                  <p className="text-xs text-slate-400">Envie avisos, comunicados e alertas para todos os agentes, uma unidade ou uma equipe específica.</p>
+                </div>
+              </div>
+            </div>
+            <Suspense fallback={<PanelSkeleton rows={3} />}>
+              <PromosToggleCard />
+              <WelcomeHintToggleCard />
+              <AnnouncementsManager />
+            </Suspense>
           </TabsContent>
 
           {/* Swaps Management Tab */}
