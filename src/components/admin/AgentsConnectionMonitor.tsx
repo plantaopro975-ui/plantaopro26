@@ -283,12 +283,19 @@ export function AgentsConnectionMonitor() {
   const filteredTimeline = useMemo(() => {
     const visibleIds = new Set(filteredAgents.map((a) => a.id));
     return timeline.filter((ev) => {
+      if (selectedAgentId && ev.agent_id !== selectedAgentId) return false;
       if (!visibleIds.has(ev.agent_id)) return false;
       if (dateFrom && new Date(ev.at).getTime() < new Date(dateFrom + 'T00:00:00').getTime()) return false;
       if (dateTo && new Date(ev.at).getTime() > new Date(dateTo + 'T23:59:59').getTime()) return false;
       return true;
     }).slice(0, 500);
-  }, [timeline, filteredAgents, dateFrom, dateTo]);
+  }, [timeline, filteredAgents, dateFrom, dateTo, selectedAgentId]);
+
+  const selectedAgent = selectedAgentId ? agentIndex.get(selectedAgentId) : null;
+  const selectedAgentSessions = useMemo(() => {
+    if (!selectedAgentId) return [];
+    return timeline.filter((e) => e.agent_id === selectedAgentId).slice(0, 100);
+  }, [timeline, selectedAgentId]);
 
   const onlineCount = filteredAgents.filter((a) => a.isOnline).length;
   const statusCounts = useMemo(() => {
