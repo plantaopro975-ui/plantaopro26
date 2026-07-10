@@ -2616,10 +2616,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 {!nightEffectivelyLocked && (
                   <div className="grid grid-cols-2 gap-2">
                     {(['split', 'interval'] as Mode[]).map((m) => (
-                      <button key={m} type="button" onClick={() => setMode(m)}
+                      <button key={m} type="button" onClick={() => setMode(m)} disabled={configLocked}
                         className={cn(
                           'rounded-md border px-3 py-2 text-[12.5px] font-mono uppercase tracking-wide transition-all',
                           mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground',
+                          configLocked && 'opacity-60 cursor-not-allowed',
                         )}>
                         {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
                       </button>
