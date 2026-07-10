@@ -25,6 +25,8 @@ import {
   isNightShift, getNightWindow, formatAcreClock,
   NIGHT_START, NIGHT_END, NIGHT_TZ,
 } from '@/lib/nightShift';
+import { useAuth } from '@/contexts/AuthContext';
+import { SecurityDoctrineCard } from './SecurityDoctrineCard';
 
 /** Registra ação no histórico de atividades (activity_logs). */
 async function logRoundActivity(
@@ -468,114 +470,164 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
  *  - CHARLIE → mira/varredura de precisão (retículo deslizante)
  *  - DELTA   → sinal de rádio / barras de transmissão
  */
-function TeamOperationsStripe({ team, color, active }: { team: TeamKey; color: string; active: boolean }) {
+function TeamOperationsStripe({
+  team,
+  color,
+  active,
+  alertLevel = 'ok',
+  alertLabel,
+}: {
+  team: TeamKey;
+  color: string;
+  active: boolean;
+  alertLevel?: 'ok' | 'warn' | 'danger';
+  alertLabel?: string;
+}) {
   const uid = `tos-${team}`;
-  // Movimento discreto e cadenciado — sem glow, sem neon.
   const dur = active ? '7s' : '14s';
+  const alertColor = alertLevel === 'danger' ? '#f87171' : alertLevel === 'warn' ? '#fbbf24' : color;
   return (
-    <svg viewBox="0 0 320 46" preserveAspectRatio="none" className="h-8 w-full sm:h-10" aria-hidden>
-      <defs>
-        <linearGradient id={`${uid}-fade`} x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0%" stopColor={color} stopOpacity="0" />
-          <stop offset="22%" stopColor={color} stopOpacity="0.55" />
-          <stop offset="78%" stopColor={color} stopOpacity="0.55" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-        <clipPath id={`${uid}-clip`}><rect x="0" y="0" width="320" height="46" /></clipPath>
-      </defs>
+    <div className="relative w-full">
+      <svg
+        viewBox="0 0 320 46"
+        preserveAspectRatio="none"
+        className="h-9 w-full sm:h-11"
+        aria-hidden
+        role="img"
+      >
+        <defs>
+          <linearGradient id={`${uid}-fade`} x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor={color} stopOpacity="0" />
+            <stop offset="22%" stopColor={color} stopOpacity="0.55" />
+            <stop offset="78%" stopColor={color} stopOpacity="0.55" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+          <clipPath id={`${uid}-clip`}><rect x="0" y="0" width="320" height="46" /></clipPath>
+        </defs>
 
-      {/* baseline grid discreto */}
-      <g stroke={color} strokeOpacity="0.10" strokeWidth="0.5">
-        {Array.from({ length: 33 }).map((_, i) => (
-          <line key={i} x1={i * 10} y1="34" x2={i * 10} y2={i % 5 === 0 ? 39 : 36} />
-        ))}
-        <line x1="0" y1="34" x2="320" y2="34" strokeOpacity="0.18" />
-      </g>
+        <g stroke={color} strokeOpacity="0.10" strokeWidth="0.5">
+          {Array.from({ length: 33 }).map((_, i) => (
+            <line key={i} x1={i * 10} y1="34" x2={i * 10} y2={i % 5 === 0 ? 39 : 36} />
+          ))}
+          <line x1="0" y1="34" x2="320" y2="34" strokeOpacity="0.18" />
+        </g>
 
-      <g clipPath={`url(#${uid}-clip)`}>
-        {team === 'ALFA' && (
-          <g>
-            {/* Onda senoidal suave, sem preenchimento agressivo */}
-            <path
-              d="M-320 22 Q -280 12 -240 22 T -160 22 T -80 22 T 0 22 T 80 22 T 160 22 T 240 22 T 320 22 T 400 22"
-              fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.1" strokeLinecap="round"
-            >
-              <animateTransform attributeName="transform" type="translate" from="0 0" to="320 0" dur={dur} repeatCount="indefinite" />
-            </path>
-          </g>
-        )}
-
-        {team === 'BRAVO' && (
-          <g>
-            {/* Traço tipo ECG, sobrio */}
-            <path
-              d="M0 24 L70 24 L82 24 L90 16 L98 32 L106 24 L150 24 L210 24 L222 24 L230 18 L238 30 L246 24 L320 24"
-              fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.1" strokeLinejoin="round" strokeLinecap="round"
-            />
-          </g>
-        )}
-
-        {team === 'CHARLIE' && (
-          <g>
-            {/* Triangulação de precisão — três marcadores fixos com linha de varredura vertical */}
-            <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.14" strokeWidth="0.5" />
-            {[64, 160, 256].map((cx, i) => (
-              <g key={i} opacity="0.7">
-                <circle cx={cx} cy="24" r="3.5" fill="none" stroke={color} strokeOpacity="0.55" strokeWidth="0.7" />
-                <circle cx={cx} cy="24" r="1" fill={color} opacity="0.7" />
-                <circle cx={cx} cy="24" r="3.5" fill="none" stroke={color} strokeWidth="0.6">
-                  <animate attributeName="r" values="3.5;9;3.5" dur="4s" begin={`${i * 0.9}s`} repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.6;0;0.6" dur="4s" begin={`${i * 0.9}s`} repeatCount="indefinite" />
-                </circle>
-              </g>
-            ))}
-            {/* Linha de varredura vertical, contínua */}
-            <line x1="0" y1="6" x2="0" y2="40" stroke={`url(#${uid}-fade)`} strokeWidth="0.9">
-              <animate attributeName="x1" values="-4;324" dur={dur} repeatCount="indefinite" />
-              <animate attributeName="x2" values="-4;324" dur={dur} repeatCount="indefinite" />
-            </line>
-          </g>
-        )}
-
-        {team === 'DELTA' && (
-          <g>
-            {/* Ondas de rádio concêntricas emitindo de uma antena central */}
-            <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.12" strokeWidth="0.5" />
-            {/* Antena */}
-            <g stroke={color} strokeOpacity="0.75" strokeWidth="0.9" strokeLinecap="round" fill="none">
-              <line x1="160" y1="34" x2="160" y2="16" />
-              <line x1="156" y1="34" x2="164" y2="34" />
-              <circle cx="160" cy="14" r="1.2" fill={color} />
+        <g clipPath={`url(#${uid}-clip)`}>
+          {team === 'ALFA' && (
+            <g>
+              <path
+                d="M-320 22 Q -280 12 -240 22 T -160 22 T -80 22 T 0 22 T 80 22 T 160 22 T 240 22 T 320 22 T 400 22"
+                fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.1" strokeLinecap="round"
+              >
+                <animateTransform attributeName="transform" type="translate" from="0 0" to="320 0" dur={dur} repeatCount="indefinite" />
+              </path>
             </g>
-            {/* Arcos de emissão — esquerda e direita, expandindo suavemente */}
-            {[0, 1, 2].map((i) => (
-              <g key={i} fill="none" stroke={color} strokeWidth="0.8" strokeLinecap="round">
-                <path d="M148 22 A 14 14 0 0 0 148 26" opacity="0">
-                  <animate attributeName="d"
-                    values="M158 22 A 3 3 0 0 0 158 26;M140 20 A 22 22 0 0 0 140 28;M120 18 A 42 42 0 0 0 120 30"
-                    dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0;0.55;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
-                </path>
-                <path d="M172 22 A 14 14 0 0 1 172 26" opacity="0">
-                  <animate attributeName="d"
-                    values="M162 22 A 3 3 0 0 1 162 26;M180 20 A 22 22 0 0 1 180 28;M200 18 A 42 42 0 0 1 200 30"
-                    dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0;0.55;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
-                </path>
+          )}
+
+          {team === 'BRAVO' && (
+            <g>
+              <path
+                d="M0 24 L70 24 L82 24 L90 16 L98 32 L106 24 L150 24 L210 24 L222 24 L230 18 L238 30 L246 24 L320 24"
+                fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.1" strokeLinejoin="round" strokeLinecap="round"
+              />
+            </g>
+          )}
+
+          {team === 'CHARLIE' && (
+            <g>
+              <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.14" strokeWidth="0.5" />
+              {[64, 160, 256].map((cx, i) => (
+                <g key={i} opacity="0.7">
+                  <circle cx={cx} cy="24" r="3.5" fill="none" stroke={color} strokeOpacity="0.55" strokeWidth="0.7" />
+                  <circle cx={cx} cy="24" r="1" fill={color} opacity="0.7" />
+                  <circle cx={cx} cy="24" r="3.5" fill="none" stroke={color} strokeWidth="0.6">
+                    <animate attributeName="r" values="3.5;9;3.5" dur="4s" begin={`${i * 0.9}s`} repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.6;0;0.6" dur="4s" begin={`${i * 0.9}s`} repeatCount="indefinite" />
+                  </circle>
+                </g>
+              ))}
+              <line x1="0" y1="6" x2="0" y2="40" stroke={`url(#${uid}-fade)`} strokeWidth="0.9">
+                <animate attributeName="x1" values="-4;324" dur={dur} repeatCount="indefinite" />
+                <animate attributeName="x2" values="-4;324" dur={dur} repeatCount="indefinite" />
+              </line>
+            </g>
+          )}
+
+          {team === 'DELTA' && (
+            <g>
+              <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.12" strokeWidth="0.5" />
+              <g stroke={color} strokeOpacity="0.75" strokeWidth="0.9" strokeLinecap="round" fill="none">
+                <line x1="160" y1="34" x2="160" y2="16" />
+                <line x1="156" y1="34" x2="164" y2="34" />
+                <circle cx="160" cy="14" r="1.2" fill={color} />
               </g>
-            ))}
+              {[0, 1, 2].map((i) => (
+                <g key={i} fill="none" stroke={color} strokeWidth="0.8" strokeLinecap="round">
+                  <path d="M148 22 A 14 14 0 0 0 148 26" opacity="0">
+                    <animate attributeName="d"
+                      values="M158 22 A 3 3 0 0 0 158 26;M140 20 A 22 22 0 0 0 140 28;M120 18 A 42 42 0 0 0 120 30"
+                      dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;0.55;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
+                  </path>
+                  <path d="M172 22 A 14 14 0 0 1 172 26" opacity="0">
+                    <animate attributeName="d"
+                      values="M162 22 A 3 3 0 0 1 162 26;M180 20 A 22 22 0 0 1 180 28;M200 18 A 42 42 0 0 1 200 30"
+                      dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;0.55;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
+                  </path>
+                </g>
+              ))}
+            </g>
+          )}
+        </g>
+
+        <TeamDoctrineTicker team={team} color={color} uid={uid} />
+
+        {/* Rótulo canto direito */}
+        <g fontFamily="ui-monospace, monospace" fontSize="6" letterSpacing="1.4" fill={color} opacity="0.6">
+          <text x="316" y="10" textAnchor="end">CH-{team.slice(0, 3)}</text>
+        </g>
+
+        {/* Microalerta visual — pulso na faixa quando há falha/suspeita de acesso */}
+        {alertLevel !== 'ok' && (
+          <g>
+            <rect x="0" y="0" width="320" height="46" fill={alertColor} opacity="0">
+              <animate attributeName="opacity" values="0;0.14;0" dur="1.2s" repeatCount="3" />
+            </rect>
+            <circle cx="8" cy="8" r="3" fill={alertColor}>
+              <animate attributeName="opacity" values="1;0.25;1" dur="0.9s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="8" cy="8" r="3" fill="none" stroke={alertColor} strokeWidth="0.8">
+              <animate attributeName="r" values="3;9;3" dur="1.6s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
+            </circle>
           </g>
         )}
-      </g>
+      </svg>
 
-      {/* Ticker de doutrina — frases profissionais de segurança pública socioeducativa */}
-      <TeamDoctrineTicker team={team} color={color} uid={uid} />
+      {/* Fallback acessível quando o SVG não renderizar */}
+      <noscript>
+        <div className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground px-2 py-1">
+          Operação em tempo real · Equipe {team}
+        </div>
+      </noscript>
 
-      {/* Rótulo canto direito — discreto */}
-      <g fontFamily="ui-monospace, monospace" fontSize="6" letterSpacing="1.4" fill={color} opacity="0.5">
-        <text x="316" y="10" textAnchor="end">CH-{team.slice(0, 3)}</text>
-      </g>
-    </svg>
+      {/* Rótulo de alerta legível — sobreposto ao SVG quando ativo */}
+      {alertLevel !== 'ok' && (
+        <div
+          className="pointer-events-none absolute inset-y-0 right-2 flex items-center"
+          role="status"
+          aria-live="polite"
+        >
+          <span
+            className="rounded-sm border px-1.5 py-0.5 text-[9.5px] font-mono uppercase tracking-widest bg-background/70 backdrop-blur-sm"
+            style={{ color: alertColor, borderColor: `${alertColor}66` }}
+          >
+            {alertLabel || (alertLevel === 'danger' ? 'Acesso suspeito' : 'Atenção')}
+          </span>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -585,44 +637,83 @@ const TEAM_DOCTRINE: Record<TeamKey, string[]> = {
     'ESCUDO ATIVO · PROTEÇÃO INTEGRAL DO SOCIOEDUCANDO',
     'PRESENÇA CONSTANTE · DISCIPLINA E LEGALIDADE',
     'DEFESA DA VIDA · PRIMADO DOS DIREITOS HUMANOS',
+    'PERÍMETRO ESTÁVEL · POSTOS COBERTOS 24/7',
+    'CONDUTA ÉTICA · USO PROGRESSIVO DA FORÇA',
+    'PROTOCOLO ECA · MEDIDAS SOCIOEDUCATIVAS RESPEITADAS',
+    'CUSTÓDIA SEGURA · INTEGRIDADE FÍSICA PRESERVADA',
+    'VIGÍLIA PERMANENTE · ZERO INCIDENTES',
   ],
   BRAVO: [
     'PRONTIDÃO OPERACIONAL · RESPOSTA IMEDIATA',
     'AÇÃO CADENCIADA · CONTENÇÃO PROPORCIONAL',
     'INTERVENÇÃO SEGURA · TÉCNICA E LEGITIMIDADE',
+    'REAÇÃO TÁTICA · COMANDO ÚNICO E COORDENADO',
+    'PROTOCOLO DE CRISE · NEGOCIAÇÃO ANTES DA FORÇA',
+    'EQUIPE MOBILIZADA · TEMPO DE RESPOSTA SOB CONTROLE',
+    'CONTENÇÃO LEGAL · REGISTRO OBRIGATÓRIO DE OCORRÊNCIA',
+    'BACKUP DISPONÍVEL · REDUNDÂNCIA OPERACIONAL',
   ],
   CHARLIE: [
     'VIGILÂNCIA PRECISA · MONITORAMENTO PERMANENTE',
     'ANÁLISE DE RISCO · ANTECIPAÇÃO DE INCIDENTES',
     'INTELIGÊNCIA TÁTICA · ROTAS E PERÍMETROS SOB CONTROLE',
+    'CFTV ATIVO · PONTOS CEGOS MAPEADOS',
+    'INSPEÇÃO CONTÍNUA · RONDA COM CHECAGEM CRUZADA',
+    'DADOS EM TEMPO REAL · DECISÃO BASEADA EM EVIDÊNCIA',
+    'RECONHECIMENTO ATIVO · DESVIOS SINALIZADOS',
+    'AUDITORIA DE ACESSO · LOG IMUTÁVEL',
   ],
   DELTA: [
     'COMUNICAÇÃO INTEGRADA · CANAL SEMPRE ABERTO',
     'REDE SEGURA · COORDENAÇÃO INTERUNIDADES',
     'TRANSMISSÃO CONFIÁVEL · RESPOSTA COORDENADA',
+    'RÁDIO CRIPTOGRAFADO · SIGILO OPERACIONAL',
+    'COMANDO E CONTROLE · PONTE COM AUTORIDADES',
+    'ESCALADA CONTROLADA · ACIONAMENTO CONFORME PROTOCOLO',
+    'REGISTRO DE OCORRÊNCIA · CADEIA DE CUSTÓDIA DIGITAL',
+    'INTEROPERABILIDADE · SUPORTE À SEGURANÇA PÚBLICA',
   ],
 };
 
+/** Embaralha e evita repetição imediata da mesma sequência por equipe. */
+const shuffledCache = new Map<TeamKey, string[]>();
+function pickPhrases(team: TeamKey, count = 5): string[] {
+  const cached = shuffledCache.get(team);
+  if (cached && cached.length) return cached;
+  const arr = [...TEAM_DOCTRINE[team]];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  const picked = arr.slice(0, Math.min(count, arr.length));
+  shuffledCache.set(team, picked);
+  return picked;
+}
+
 function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
-  const phrases = TEAM_DOCTRINE[team];
-  // Repete a sequência duas vezes para varredura contínua sem "salto".
+  const phrases = pickPhrases(team, 5);
   const line = phrases.join('   ◆   ') + '   ◆   ';
   return (
     <g>
       <defs>
         <linearGradient id={`${uid}-tfade`} x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0%" stopColor={color} stopOpacity="0" />
-          <stop offset="8%" stopColor={color} stopOpacity="0.85" />
-          <stop offset="92%" stopColor={color} stopOpacity="0.85" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="10%" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="90%" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
         <mask id={`${uid}-tmask`}>
           <rect x="0" y="0" width="320" height="46" fill={`url(#${uid}-tfade)`} />
         </mask>
       </defs>
       <g mask={`url(#${uid}-tmask)`}>
-        <g fontFamily='"JetBrains Mono", ui-monospace, monospace' fontSize="5.4" letterSpacing="1.2" fill={color} opacity="0.78">
-          <text y="7">
+        {/* Faixa de contraste atrás do texto — garante legibilidade em qualquer fundo/navegador */}
+        <rect x="0" y="1" width="320" height="12" fill="#000000" fillOpacity="0.4" />
+        <g fontFamily='"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
+           fontSize="6.2" fontWeight={600} letterSpacing="1.3">
+          {/* Traço escuro por baixo para contraste em navegadores sem suporte a filter */}
+          <text y="9" fill={color} stroke="#000000" strokeOpacity="0.9" strokeWidth="0.9"
+                paintOrder="stroke" fillOpacity="0.98">
             {line + line}
             <animate attributeName="x" values="0;-640" dur="42s" repeatCount="indefinite" />
           </text>
@@ -631,6 +722,7 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
     </g>
   );
 }
+
 
 /* ================= Ready-to-start professional banner ================= */
 function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; color: string; count: number; ready: boolean }) {
@@ -1077,6 +1169,55 @@ function Section({
 export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
 
   const [open, setOpen] = useState(false);
+  const { isAdmin, masterSession } = useAuth();
+  const isAdminUser = isAdmin || !!masterSession;
+
+  // Microalertas — assina falhas recentes de autenticação e reflete na faixa "Operação em tempo real"
+  const [securityAlert, setSecurityAlert] = useState<{ level: 'ok' | 'warn' | 'danger'; label?: string }>({ level: 'ok' });
+  const alertTimerRef = useRef<number | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const clearLater = (ms: number) => {
+      if (alertTimerRef.current) window.clearTimeout(alertTimerRef.current);
+      alertTimerRef.current = window.setTimeout(() => {
+        if (!cancelled) setSecurityAlert({ level: 'ok' });
+      }, ms);
+    };
+    // Verificação inicial: janela de 2 min
+    (async () => {
+      try {
+        const since = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+        const { data } = await supabase
+          .from('login_attempts')
+          .select('id, success, attempt_time')
+          .eq('success', false)
+          .gte('attempt_time', since)
+          .limit(5);
+        if (!cancelled && (data?.length || 0) >= 3) {
+          setSecurityAlert({ level: 'danger', label: `${data!.length} falhas recentes` });
+          clearLater(12000);
+        }
+      } catch { /* ignore */ }
+    })();
+
+    const ch = supabase
+      .channel('rounds-security-alerts')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'login_attempts' }, (payload) => {
+        const rec = payload.new as { success?: boolean } | null;
+        if (rec && rec.success === false) {
+          setSecurityAlert({ level: 'danger', label: 'Falha de autenticação' });
+          clearLater(8000);
+        }
+      })
+      .subscribe();
+    return () => {
+      cancelled = true;
+      if (alertTimerRef.current) window.clearTimeout(alertTimerRef.current);
+      supabase.removeChannel(ch);
+    };
+  }, []);
+
+
   const [team, setTeam] = useState<TeamKey>('ALFA');
   const [mode, setMode] = useState<Mode>('split');
   const [startTime, setStartTime] = useState('07:00');
@@ -2090,7 +2231,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   className="relative border-t px-3 py-1.5 sm:px-4"
                   style={{ borderColor: `${teamColor}22`, background: `linear-gradient(180deg, ${teamColor}08, transparent)` }}
                 >
-                  <TeamOperationsStripe team={team} color={teamColor} active={!!currentView && !currentView.done} />
+                  <TeamOperationsStripe
+                    team={team}
+                    color={teamColor}
+                    active={!!currentView && !currentView.done}
+                    alertLevel={securityAlert.level}
+                    alertLabel={securityAlert.label}
+                  />
+                  {isAdminUser && <SecurityDoctrineCard color={teamColor} />}
                 </div>
               </div>
 
