@@ -117,8 +117,8 @@ export function AuthDialog({
           "w-[94vw] p-0 gap-0 overflow-hidden",
           variant === 'register' ? "max-w-[480px]" : "max-w-[440px]",
           "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950",
-          "border-2",
-          !teamBranded && styles.border,
+          // outline removido — sem border-2 nem ring duplicado
+          "border-0",
           "shadow-2xl",
           !teamBranded && styles.glow,
           // Instant open/close — no zoom/slide/fade delays
@@ -127,20 +127,20 @@ export function AuthDialog({
           "flex flex-col max-h-[92dvh] sm:max-h-[88vh]"
         )}
         style={teamBranded && teamColor ? {
-          borderColor: `${teamColor.primary}80`,
-          boxShadow: `0 25px 60px -12px ${teamColor.glow}, 0 0 0 1px ${teamColor.primary}30`,
+          boxShadow: `0 25px 60px -12px ${teamColor.glow}`,
         } : undefined}
       >
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">{subtitle || title}</DialogDescription>
 
-        {/* Top accent bar (flat) */}
+        {/* Top accent bar (única linha superior) */}
         <div
           className={cn("h-1 w-full shrink-0", !teamBranded && "bg-gradient-to-r", !teamBranded && styles.accent)}
           style={teamBranded && teamColor ? {
             background: `linear-gradient(90deg, ${teamColor.secondary}, ${teamColor.primary}, ${teamColor.secondary})`,
           } : undefined}
         />
+
 
 
         {/* HERO — team-branded (compact professional) */}
