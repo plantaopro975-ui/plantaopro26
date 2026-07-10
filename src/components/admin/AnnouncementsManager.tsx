@@ -102,6 +102,11 @@ export function AnnouncementsManager() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  // Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'expired'>('all');
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'low' | 'normal' | 'high' | 'urgent'>('all');
+
   // Form state
   const [formData, setFormData] = useState({
     title: '',
