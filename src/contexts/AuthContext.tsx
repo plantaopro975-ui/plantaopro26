@@ -128,12 +128,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUserRole(null);
             try { clearAllCredentials(); } catch { /* ignore */ }
             if (!wasIntentional && hasInitializedRef.current) {
-              try {
-                toast.warning('Sessão encerrada', {
-                  description: 'Sua sessão expirou ou foi invalidada. Credenciais salvas foram limpas por segurança.',
-                  duration: 6000,
-                });
-              } catch { /* ignore */ }
+              // Toast de "Sessão expirada / credenciais limpas" removido a pedido —
+              // a limpeza silenciosa continua acontecendo abaixo.
+
               // Redireciona para home se estiver em rota protegida, preservando ?next para retorno
               try {
                 if (typeof window !== 'undefined' && window.location.pathname !== '/') {
