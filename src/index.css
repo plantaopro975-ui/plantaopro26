@@ -1592,17 +1592,43 @@ img, svg, picture, video {
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { width: 0; height: 0; display: none; }
 
-/* Hide native browser scrollbar globally (desktop) — preserva scroll com mouse/trackpad/teclado */
-@media (min-width: 768px) {
-  html, body {
-    scrollbar-width: none;      /* Firefox */
-    -ms-overflow-style: none;   /* IE/Edge legacy */
-  }
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;              /* Chrome/Safari/Edge */
-  }
+/* Scrollbar global — fina, discreta e no tom âmbar tático.
+   Mantém o scroll totalmente funcional (mouse, trackpad, teclado, touch)
+   e substitui a barra nativa "feia" do SO por um trilho translúcido. */
+html {
+  scrollbar-width: thin;                                   /* Firefox */
+  scrollbar-color: rgba(244, 201, 116, 0.35) transparent;  /* thumb / track */
 }
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.home-typo::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+.home-typo::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+.home-typo::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(244, 201, 116, 0.45), rgba(201, 146, 43, 0.35));
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+.home-typo::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(244, 201, 116, 0.7), rgba(201, 146, 43, 0.6));
+  background-clip: padding-box;
+}
+
+/* Firefox — refina thumb no container interno da home. */
+.home-typo {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 201, 116, 0.35) transparent;
+}
+
 
