@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
+import { BrasaoSentinela } from '@/components/BrasaoSentinela';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
 
