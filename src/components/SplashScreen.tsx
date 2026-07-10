@@ -80,8 +80,10 @@ export function SplashScreen() {
         willChange: "opacity",
       }}
     >
-      {/* Imagem institucional — object-cover para preencher qualquer viewport
-          sem barras. object-position centraliza o agente em telas estreitas. */}
+      {/* Imagem institucional.
+          Desktop / landscape: object-cover para preencher toda a viewport.
+          Mobile portrait: object-contain para exibir a arte inteira (wordmark
+          + brasão + agente + viatura) sem cortar nem esmagar. */}
       <img
         src={SPLASH_URL}
         alt="PlantãoPro — Controle de Plantão, Escala e Banco de Horas"
@@ -89,13 +91,12 @@ export function SplashScreen() {
         decoding="async"
         // @ts-expect-error fetchpriority is a valid HTML attribute
         fetchpriority="high"
-        className="absolute inset-0 w-full h-full select-none pointer-events-none"
+        className="sp-splash-img absolute inset-0 w-full h-full select-none pointer-events-none"
         style={{
-          objectFit: "cover",
-          objectPosition: "center center",
           animation: "spSplashIn 700ms cubic-bezier(0.22, 1, 0.36, 1) both",
         }}
       />
+
 
       {/* Vinheta sutil para dar profundidade e integrar bordas em telas ultra-wide */}
       <div
@@ -129,6 +130,18 @@ export function SplashScreen() {
       </div>
 
       <style>{`
+        /* Default (desktop / landscape): preenche toda a viewport */
+        .sp-splash-img {
+          object-fit: cover;
+          object-position: center center;
+        }
+        /* Mobile portrait: exibe a arte inteira sem cortes/esmagamento */
+        @media (max-width: 767px) and (orientation: portrait) {
+          .sp-splash-img {
+            object-fit: contain;
+            object-position: center center;
+          }
+        }
         @keyframes spSplashIn {
           from { opacity: 0; transform: scale(1.04); filter: blur(4px); }
           to   { opacity: 1; transform: scale(1); filter: blur(0); }
@@ -148,6 +161,7 @@ export function SplashScreen() {
           }
         }
       `}</style>
+
     </div>
   );
 }

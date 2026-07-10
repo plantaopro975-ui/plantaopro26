@@ -1420,7 +1420,8 @@ export default function Index() {
               grow: true,
               node: (
                 <div
-                  className="w-full max-w-7xl mx-auto sm:h-full"
+                  id="teams-section"
+                  className="w-full max-w-7xl mx-auto sm:h-full scroll-mt-6"
                   style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
                 >
                   <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full">
@@ -1482,9 +1483,19 @@ export default function Index() {
           Usa a arte oficial (agente + viatura) como background fullscreen. */}
       <CinematicBrandHero
         onScrollToLogin={() => {
+          // Scroll robusto: procura o container real que rola (home wrapper com overflow-y-auto),
+          // caso contrário usa a viewport. Também alinha via anchor com scroll-mt.
+          const target = document.getElementById('teams-section');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          // Backup: rola qualquer container scrollável ancestral e a window.
           window.scrollTo({ top: 0, behavior: 'smooth' });
+          const wrapper = document.querySelector('.home-typo');
+          if (wrapper) wrapper.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
+
 
 
 
