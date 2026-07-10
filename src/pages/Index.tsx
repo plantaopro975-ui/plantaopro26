@@ -1529,7 +1529,7 @@ export default function Index() {
       </footer>
 
       {/* Mobile-only ultra-thin footer strip (fixo, não empurra viatura/boneco) */}
-      <div className="sm:hidden fixed bottom-0 inset-x-0 z-20 h-5 flex items-center justify-center gap-2 bg-background/80 backdrop-blur-sm border-t border-border/40 pointer-events-auto">
+      <div className="sm:hidden fixed bottom-0 inset-x-0 z-20 h-7 flex items-center justify-center gap-2 bg-background/80 backdrop-blur-sm border-t border-border/40 pointer-events-auto">
         <button
           type="button"
           onClick={() => navigate('/about')}
