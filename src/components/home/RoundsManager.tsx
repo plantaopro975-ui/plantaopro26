@@ -675,49 +675,105 @@ const TEAM_DOCTRINE: Record<TeamKey, string[]> = {
   ],
 };
 
-/** Embaralha e evita repetição imediata da mesma sequência por equipe. */
-const shuffledCache = new Map<TeamKey, string[]>();
-function pickPhrases(team: TeamKey, count = 5): string[] {
-  const cached = shuffledCache.get(team);
-  if (cached && cached.length) return cached;
-  const arr = [...TEAM_DOCTRINE[team]];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+/**
+ * Sorteia frases sem repetir a mesma sequência entre chamadas por equipe.
+ * Mantém uma fila persistente por equipe: quando esgota, reembaralha
+ * garantindo que a próxima primeira frase seja diferente da última usada.
+ */
+const phraseQueue = new Map<TeamKey, { queue: string[]; last: string | null }>();
+function nextPhrases(team: TeamKey, count = 4): string[] {
+  const state = phraseQueue.get(team) ?? { queue: [], last: null as string | null };
+  const out: string[] = [];
+  const source = TEAM_DOCTRINE[team];
+  const refill = () => {
+    const arr = [...source];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    if (state.last && arr[0] === state.last && arr.length > 1) {
+      [arr[0], arr[1]] = [arr[1], arr[0]];
+    }
+    state.queue = arr;
+  };
+  while (out.length < count) {
+    if (!state.queue.length) refill();
+    const p = state.queue.shift()!;
+    if (out.includes(p)) continue;
+    out.push(p);
+    state.last = p;
   }
-  const picked = arr.slice(0, Math.min(count, arr.length));
-  shuffledCache.set(team, picked);
-  return picked;
+  phraseQueue.set(team, state);
+  return out;
 }
 
+/**
+ * Ciclo profissional: 60s exibindo doutrina → 180s em pausa (só efeitos) → repete.
+ * A cada retomada, novas frases são sorteadas sem repetir a última sequência.
+ */
 function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
-  const phrases = pickPhrases(team, 5);
+  const [visible, setVisible] = React.useState(true);
+  const [phrases, setPhrases] = React.useState<string[]>(() => nextPhrases(team, 4));
+
+  React.useEffect(() => {
+    setPhrases(nextPhrases(team, 4));
+    setVisible(true);
+  }, [team]);
+
+  React.useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    if (visible) {
+      // 60s exibindo — depois pausa
+      t = setTimeout(() => setVisible(false), 60_000);
+    } else {
+      // 180s de pausa — depois renova frases e retoma
+      t = setTimeout(() => {
+        setPhrases(nextPhrases(team, 4));
+        setVisible(true);
+      }, 180_000);
+    }
+    return () => clearTimeout(t);
+  }, [visible, team]);
+
+  if (!visible) return null;
+
   const line = phrases.join('   ◆   ') + '   ◆   ';
   return (
-    <g>
+    <g style={{ opacity: 0, animation: 'fadeIn 900ms ease-out forwards' } as React.CSSProperties}>
       <defs>
         <linearGradient id={`${uid}-tfade`} x1="0" x2="1" y1="0" y2="0">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="10%" stopColor="#ffffff" stopOpacity="1" />
-          <stop offset="90%" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="12%" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="88%" stopColor="#ffffff" stopOpacity="1" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
         <mask id={`${uid}-tmask`}>
-          <rect x="0" y="0" width="320" height="46" fill={`url(#${uid}-tfade)`} />
+          <rect x="0" y="16" width="320" height="20" fill={`url(#${uid}-tfade)`} />
         </mask>
+        <style>{`@keyframes fadeIn{to{opacity:1}}`}</style>
       </defs>
       <g mask={`url(#${uid}-tmask)`}>
-        {/* Faixa de contraste atrás do texto — garante legibilidade em qualquer fundo/navegador */}
-        <rect x="0" y="1" width="320" height="12" fill="#000000" fillOpacity="0.4" />
-        <g fontFamily='"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
-           fontSize="6.2" fontWeight={600} letterSpacing="1.3">
-          {/* Traço escuro por baixo para contraste em navegadores sem suporte a filter */}
-          <text y="9" fill={color} stroke="#000000" strokeOpacity="0.9" strokeWidth="0.9"
-                paintOrder="stroke" fillOpacity="0.98">
-            {line + line}
-            <animate attributeName="x" values="0;-640" dur="42s" repeatCount="indefinite" />
-          </text>
-        </g>
+        {/* Faixa de contraste dedicada ao texto — legível em qualquer fundo */}
+        <rect x="0" y="17" width="320" height="16" fill="#000000" fillOpacity="0.55" />
+        <rect x="0" y="17" width="320" height="16" fill={color} fillOpacity="0.06" />
+        <line x1="0" y1="17" x2="320" y2="17" stroke={color} strokeOpacity="0.35" strokeWidth="0.4" />
+        <line x1="0" y1="33" x2="320" y2="33" stroke={color} strokeOpacity="0.35" strokeWidth="0.4" />
+        {/* Texto — tipografia maior, espaçamento confortável, com contorno para contraste */}
+        <text
+          y="29"
+          fontFamily='"Inter", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif'
+          fontSize="10.5"
+          fontWeight={700}
+          letterSpacing="0.6"
+          fill="#ffffff"
+          stroke="#000000"
+          strokeOpacity="0.85"
+          strokeWidth="0.6"
+          paintOrder="stroke"
+        >
+          {line + line}
+          <animate attributeName="x" values="0;-640" dur="90s" repeatCount="indefinite" />
+        </text>
       </g>
     </g>
   );
