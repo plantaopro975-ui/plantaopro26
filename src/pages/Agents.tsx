@@ -143,17 +143,20 @@ export default function Agents() {
 
   const fetchUnits = async () => {
     try {
-      const { data, error } = await supabase
-        .from('units')
-        .select('*')
-        .order('municipality, name');
-
-      if (error) throw error;
-      setUnits(data || []);
+      const rpc = await (supabase as any).rpc('list_units_basic');
+      if (rpc.error) {
+        console.error('[Agents] list_units_basic falhou, fallback direto:', rpc.error);
+        const fb = await supabase.from('units').select('*').order('municipality').order('name');
+        if (fb.error) throw fb.error;
+        setUnits(fb.data || []);
+        return;
+      }
+      setUnits(rpc.data || []);
     } catch (error) {
       console.error('Error fetching units:', error);
     }
   };
+
 
   const resetForm = () => {
     setFormData({
