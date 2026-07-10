@@ -62,7 +62,7 @@ export const CommandRoomBackground = memo(function CommandRoomBackground() {
       <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
     </div>
   );
-}
+});
 
 /* ---------------------------------------------------------------- */
 /* CAMADA FULL-BLEED — grid, réguas, topografia e constelação        */
