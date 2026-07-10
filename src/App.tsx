@@ -85,6 +85,7 @@ function RoutePrefetcher() {
       import("./pages/Master");
       import("./pages/Agents");
       import("./pages/Agenda");
+      import("./pages/About");
     });
     return () => cancel(handle);
   }, []);
