@@ -84,7 +84,9 @@ import { getMasterToken, setMasterToken } from '@/lib/masterSession';
 import { adminClient } from '@/lib/adminClient';
 import { Bell } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
+import iseAcreBadgeWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
 const iseAcreBadge = iseAcreBadgeAsset.url;
+const iseAcreBadgeWebp = iseAcreBadgeWebpAsset.url;
 import { PanelNav } from '@/components/ui/panel-nav';
 import { formatUnitName } from '@/lib/unitNames';
 
