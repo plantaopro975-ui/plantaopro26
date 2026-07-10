@@ -521,7 +521,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
                 DESKTOP → mantém composição centralizada equilibrada */}
             <div
-              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[160px] min-[390px]:h-[176px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(200px,27vh,290px)] xl:h-[clamp(220px,30vh,340px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[20%] xl:-translate-x-[22%] pr-0 sm:pr-0 max-w-full"
+              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(200px,27vh,290px)] xl:h-[clamp(220px,30vh,340px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[20%] xl:-translate-x-[22%] pr-0 sm:pr-0 max-w-full"
             >
 
               {/* Viatura — mobile: proporcional ao agente | desktop: um pouco mais baixa */}
@@ -532,12 +532,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[0.92] sm:scale-100 lg:scale-100 xl:scale-[1.02] origin-bottom-left"
+                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-100 lg:scale-100 xl:scale-[1.02] origin-bottom-left"
                   draggable={false}
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-[0.92] sm:scale-100 lg:scale-100 xl:scale-[1.02] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-100 lg:scale-100 xl:scale-[1.02] origin-bottom-left"
                 >
                   <span
                     aria-hidden
@@ -560,7 +560,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Agente Socioeducativo ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[0.9] sm:scale-100 lg:scale-100 xl:scale-[1.02] translate-y-0 lg:translate-y-5 xl:translate-y-7 origin-bottom sm:origin-bottom"
+                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-100 lg:scale-100 xl:scale-[1.02] translate-y-0 lg:translate-y-5 xl:translate-y-7 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
 
