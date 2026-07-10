@@ -80,12 +80,11 @@ export function RotatingLogo({
         }}
       />
       
-      {/* Logo image */}
-      <img 
-        src={logoPlantaoPro}
-        alt="PlantãoPro"
+      {/* Brasão Sentinela (unificado) */}
+      <BrasaoSentinela
+        size="100%"
         className={cn(
-          "relative z-10 w-full h-full object-contain drop-shadow-2xl transition-all duration-500",
+          "relative z-10 w-full h-full transition-all duration-500",
           isHovered && "scale-110"
         )}
         style={{
