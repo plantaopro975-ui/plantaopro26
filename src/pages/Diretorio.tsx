@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { AppShell } from '@/components/layout/AppShell';
 import { BackButton } from '@/components/BackButton';
 import { AgentsDirectoryCard, type DirectoryScope } from '@/components/agent-panel/AgentsDirectoryCard';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { Users, Building2, Globe2 } from 'lucide-react';
-import { Helmet } from 'react-helmet-async';
 
 /**
  * Diretório Agregado
@@ -22,12 +20,7 @@ export default function Diretorio() {
   const [scope, setScope] = useState<DirectoryScope>('team');
 
   return (
-    <AppShell>
-      <Helmet>
-        <title>Diretório de Agentes · Plantão Pro</title>
-        <meta name="description" content="Diretório agregado de agentes por equipe, unidade e sistema." />
-      </Helmet>
-
+    <div className="min-h-[100dvh] bg-background">
       <div className="mx-auto w-full max-w-5xl space-y-3 p-3 sm:p-4">
         <div className="flex items-center justify-between gap-2">
           <BackButton />
@@ -76,6 +69,6 @@ export default function Diretorio() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppShell>
+    </div>
   );
 }
