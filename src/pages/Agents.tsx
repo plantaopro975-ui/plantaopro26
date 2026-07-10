@@ -37,6 +37,7 @@ import { AgentDetailsDialog } from '@/components/agents/AgentDetailsDialog';
 
 import { TransferRequestDialog } from '@/components/agents/TransferRequestDialog';
 import { formatCPF, formatMatricula, formatPhone, formatBirthDate, validateCPF, parseBirthDate, calculateAge } from '@/lib/validators';
+import { fetchUnits as fetchUnitsShared } from '@/lib/units';
 
 interface Unit {
   id: string;
@@ -142,19 +143,8 @@ export default function Agents() {
   };
 
   const fetchUnits = async () => {
-    try {
-      const rpc = await (supabase as any).rpc('list_units_basic');
-      if (rpc.error) {
-        console.error('[Agents] list_units_basic falhou, fallback direto:', rpc.error);
-        const fb = await supabase.from('units').select('*').order('municipality').order('name');
-        if (fb.error) throw fb.error;
-        setUnits(fb.data || []);
-        return;
-      }
-      setUnits(rpc.data || []);
-    } catch (error) {
-      console.error('Error fetching units:', error);
-    }
+    const rows = await fetchUnitsShared({ scope: 'Agents' });
+    setUnits(rows as any);
   };
 
 
