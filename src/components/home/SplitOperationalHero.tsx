@@ -92,9 +92,9 @@ interface TeamObjectProps {
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   const imgClass = cn(
-    // object-contain preserva a proporção original do render 3D.
-    // Ocupa o slot inteiro (menos padding do wrapper) sem distorcer.
-    'block h-full w-full object-contain object-center select-none animate-float3d',
+    // Envelope FIXO: mesmo bounding box para todos os objetos 3D (padrão = rádio DELTA).
+    // h/w idênticos + object-contain = cada peça se ajusta dentro do mesmo quadrado.
+    'block h-[82%] w-[82%] max-h-[140px] max-w-[140px] sm:max-h-[150px] sm:max-w-[150px] lg:max-h-[168px] lg:max-w-[168px] object-contain object-center select-none animate-float3d',
     'drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]',
     'transition-[transform,opacity] duration-700 ease-out',
     'group-hover:scale-[1.06] group-hover:-translate-y-0.5',
@@ -102,10 +102,10 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   );
 
   return (
-    <div className="relative flex h-full w-full items-center justify-center px-3 py-1 sm:px-4 sm:py-1.5">
+    <div className="relative flex h-full w-full items-center justify-center px-2 py-1">
       <picture className="flex h-full w-full items-center justify-center">
-        <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 32vw, (max-width: 1024px) 16vw, 180px" />
-        <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 32vw, (max-width: 1024px) 16vw, 180px" />
+        <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 140px, (max-width: 1024px) 150px, 168px" />
+        <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 140px, (max-width: 1024px) 150px, 168px" />
         <img
           src={team.obj}
           alt={`Equipe ${team.key} — equipamento tático`}
@@ -114,7 +114,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
           fetchPriority={isAlfa ? 'high' : 'low'}
           width={512}
           height={512}
-          sizes="(max-width: 640px) 32vw, (max-width: 1024px) 16vw, 180px"
+          sizes="(max-width: 640px) 140px, (max-width: 1024px) 150px, 168px"
           draggable={false}
           className={imgClass}
           style={{
