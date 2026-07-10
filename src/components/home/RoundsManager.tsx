@@ -1492,6 +1492,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
 
+  // ─── Programação antecipada (armar ronda) ─────────────────────────────
+  // O agente pode configurar tudo e "Programar" a ronda antes do horário
+  // do primeiro slot. Enquanto armada, o painel exibe um cadeado e um
+  // timer profissional até o momento de iniciar automaticamente.
+  const [armedForMs, setArmedForMs] = useState<number | null>(null);
+  const armed = armedForMs != null && !running;
+
 
 
   /* ---------- início efetivo (turno noturno) ----------
