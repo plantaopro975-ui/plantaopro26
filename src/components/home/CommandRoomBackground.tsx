@@ -200,16 +200,16 @@ function HeraldicComposition() {
         {/* Glow central */}
         <circle r="120" fill="url(#hCenterGlow)" />
 
-        {/* Anéis de radar */}
-        {[90, 170, 260, 360, 460].map((r, i) => (
-          <circle key={r} r={r} fill="none" stroke="hsl(42 80% 60% / 0.22)" strokeWidth={0.9 - i * 0.12} />
+        {/* Anéis de radar — reduzidos a 4 */}
+        {[110, 220, 340, 460].map((r, i) => (
+          <circle key={r} r={r} fill="none" stroke="hsl(42 80% 60% / 0.22)" strokeWidth={0.9 - i * 0.15} />
         ))}
 
-        {/* Marcas de graduação a cada 15° no anel externo */}
+        {/* Marcas de graduação a cada 30° (12 em vez de 24) */}
         <g stroke="hsl(42 80% 60% / 0.30)" strokeWidth="0.7">
-          {Array.from({ length: 24 }).map((_, i) => {
-            const a = (i * 15 * Math.PI) / 180;
-            const r1 = 450, r2 = i % 6 === 0 ? 428 : 440;
+          {Array.from({ length: 12 }).map((_, i) => {
+            const a = (i * 30 * Math.PI) / 180;
+            const r1 = 450, r2 = i % 3 === 0 ? 428 : 440;
             return (
               <line
                 key={i}
