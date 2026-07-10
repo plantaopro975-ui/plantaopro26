@@ -214,29 +214,47 @@ export function AnnouncementsManager() {
         expires_at: formData.expires_at ? new Date(formData.expires_at).toISOString() : null,
       };
 
+      let saved: Announcement | null = null;
+
       if (hasMasterSession()) {
-        await callMasterAdmin('announcement_upsert', {
+        saved = await callMasterAdmin<Announcement>('announcement_upsert', {
           id: editingAnnouncement?.id ?? null,
           payload,
         });
-        toast.success(editingAnnouncement ? 'Aviso atualizado com sucesso' : 'Aviso criado com sucesso');
       } else if (editingAnnouncement) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('admin_announcements')
           .update(payload)
-          .eq('id', editingAnnouncement.id);
+          .eq('id', editingAnnouncement.id)
+          .select()
+          .maybeSingle();
         if (error) throw error;
-        toast.success('Aviso atualizado com sucesso');
+        saved = data as Announcement | null;
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('admin_announcements')
-          .insert(payload);
+          .insert(payload)
+          .select()
+          .maybeSingle();
         if (error) throw error;
-        toast.success('Aviso criado com sucesso');
+        saved = data as Announcement | null;
       }
+
+      // Optimistic UI: reflete a mudança imediatamente, sem esperar o refetch.
+      if (saved) {
+        setAnnouncements((prev) => {
+          const others = prev.filter((a) => a.id !== saved!.id);
+          return [saved!, ...others].sort(
+            (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+          );
+        });
+      }
+
+      toast.success(editingAnnouncement ? 'Aviso atualizado com sucesso' : 'Aviso publicado com sucesso');
 
       setDialogOpen(false);
       resetForm();
+      // Refetch em background para sincronizar com o banco.
       fetchData();
     } catch (error) {
       console.error('Error saving announcement:', error);
