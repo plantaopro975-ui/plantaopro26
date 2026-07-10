@@ -26,7 +26,7 @@ export const HomeImageBackground = memo(function HomeImageBackground() {
     >
       {/* 1 · Imagem oficial */}
       <img
-        src={splashAsset.url}
+        src={HERO_IMG_URL}
         alt=""
         draggable={false}
         decoding="async"
