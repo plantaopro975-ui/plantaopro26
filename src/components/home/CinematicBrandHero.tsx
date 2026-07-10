@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Lock } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import splashAsset from "@/assets/brand/plantaopro-splash.jpg.asset.json";
+import { useAuth } from "@/contexts/AuthContext";
 
 const IMG_URL = splashAsset.url;
 
@@ -18,17 +19,27 @@ interface CinematicBrandHeroProps {
  */
 export function CinematicBrandHero({
   onScrollToLogin,
-  onMasterClick,
 }: CinematicBrandHeroProps) {
   const navigate = useNavigate();
+  const { user, masterSession } = useAuth();
+  const isAuthenticated = !!user || !!masterSession;
 
-  const handlePrimary = () => {
+  const scrollToTeams = () => {
     if (onScrollToLogin) {
       onScrollToLogin();
-    } else {
-      // fallback: rola para o topo onde estão os cards de login
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePrimary = () => {
+    if (isAuthenticated) {
+      // Usuário logado → painel do agente
+      navigate("/agent-panel");
+      return;
+    }
+    // Não logado → rola até os cards das equipes (topo da home)
+    scrollToTeams();
   };
 
   return (
@@ -196,17 +207,7 @@ export function CinematicBrandHero({
               Conhecer o Sistema
             </button>
 
-            {onMasterClick && (
-              <button
-                type="button"
-                onClick={onMasterClick}
-                className="inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-3 text-[11px] font-mono uppercase tracking-[0.24em] text-white/50 transition-colors hover:text-amber-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-400/40"
-                aria-label="Acesso Administrador Master"
-              >
-                <Lock className="h-3 w-3" strokeWidth={2.2} />
-                <span>Master</span>
-              </button>
-            )}
+
           </div>
 
           {/* Rodapé da seção — assinatura discreta */}
