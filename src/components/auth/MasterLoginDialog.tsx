@@ -36,6 +36,13 @@ if (typeof window !== 'undefined') {
  */
 
 export function MasterLoginDialog({ open, onOpenChange, children }: MasterLoginDialogProps) {
+  // Pré-carrega o chunk da página /master assim que o dialog abre,
+  // para que o navigate('/master') após o login seja instantâneo (sem PanelSkeleton).
+  useEffect(() => {
+    if (!open) return;
+    import('@/pages/Master').catch(() => {});
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
