@@ -109,7 +109,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          {/* <ImageProtection /> — desativado temporariamente */}
+          <ImageProtection />
           <BrowserRouter>
             <RouteAwareSplashScreen />
             <AccessAcknowledgmentGate />
