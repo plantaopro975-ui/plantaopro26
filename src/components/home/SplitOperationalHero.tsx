@@ -99,10 +99,10 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   //   CHARLIE binóc → 62% mas achatado (precisa aumentar)
   //   DELTA rádio   → 32% estreito (precisa aumentar)
   const OBJECT_SCALE: Record<TeamKey, number> = {
-    ALFA: 1.02,
-    BRAVO: 0.92,
-    CHARLIE: 1.18,
-    DELTA: 1.04,
+    ALFA: 0.96,
+    BRAVO: 0.84,
+    CHARLIE: 1.04,
+    DELTA: 1.02,
   };
   const scale = OBJECT_SCALE[team.key] ?? 1;
 
@@ -110,17 +110,17 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
     'block h-full w-full object-contain object-center select-none animate-float3d',
     'drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]',
     'transition-[transform,opacity] duration-700 ease-out',
-    'group-hover:scale-[1.06] group-hover:-translate-y-0.5',
+    'group-hover:scale-[1.04] group-hover:-translate-y-0.5',
     'group-active:scale-[1.02]',
   );
 
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       {/* Quadrado fixo — mesma "moldura" para todos os 3D */}
-      <div className="relative aspect-square w-[118px] min-[390px]:w-[126px] sm:w-[128px] lg:w-[140px] xl:w-[152px] max-h-full flex items-center justify-center">
+      <div className="relative aspect-square w-[82px] min-[390px]:w-[90px] sm:w-[112px] lg:w-[124px] xl:w-[136px] max-h-full flex items-center justify-center">
         <picture className="flex h-full w-full items-center justify-center" style={{ transform: `scale(${scale})`, transformOrigin: '50% 50%' }}>
-          <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 126px, (max-width: 1024px) 128px, 152px" />
-          <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 126px, (max-width: 1024px) 128px, 152px" />
+          <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 90px, (max-width: 1024px) 112px, 136px" />
+          <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 90px, (max-width: 1024px) 112px, 136px" />
           <img
             src={team.obj}
             alt={`Equipe ${team.key} — equipamento tático`}
@@ -129,7 +129,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
             fetchPriority={isAlfa ? 'high' : 'low'}
             width={512}
             height={512}
-            sizes="(max-width: 640px) 126px, (max-width: 1024px) 128px, 152px"
+            sizes="(max-width: 640px) 90px, (max-width: 1024px) 112px, 136px"
             draggable={false}
             className={imgClass}
             style={{
@@ -160,11 +160,11 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       aria-pressed={isSelected}
       onClick={() => onSelect(t.key)}
       className={cn(
-        'group relative flex h-[clamp(112px,17.5vh,156px)] min-[390px]:h-[clamp(122px,18vh,168px)] sm:h-[clamp(100px,17vh,170px)] lg:h-[clamp(140px,26vh,180px)] xl:h-[clamp(160px,28vh,260px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+        'group relative flex h-[clamp(104px,15.5vh,132px)] min-[390px]:h-[clamp(110px,16vh,140px)] sm:h-[clamp(98px,16vh,158px)] lg:h-[clamp(132px,23vh,168px)] xl:h-[clamp(148px,25vh,220px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
         isSelected
-          ? 'border-[hsl(var(--team-accent))] -translate-y-1.5 scale-[1.02] shadow-[0_0_0_2px_hsl(var(--team-accent)/0.85),0_0_0_4px_rgba(2,6,23,0.9),0_18px_40px_-12px_hsl(var(--team-accent)/0.6),0_10px_20px_-8px_rgba(0,0,0,0.85)] ring-1 ring-[hsl(var(--team-accent)/0.45)]'
+          ? 'border-[hsl(var(--team-accent))] -translate-y-0.5 scale-[1.005] sm:-translate-y-1.5 sm:scale-[1.02] shadow-[0_0_0_2px_hsl(var(--team-accent)/0.85),0_0_0_4px_rgba(2,6,23,0.9),0_18px_40px_-12px_hsl(var(--team-accent)/0.6),0_10px_20px_-8px_rgba(0,0,0,0.85)] ring-1 ring-[hsl(var(--team-accent)/0.45)]'
           : 'border-slate-300/25 shadow-[0_0_0_1px_rgba(15,23,42,0.75),inset_0_0_0_1px_rgba(255,255,255,0.06)] hover:border-[hsl(var(--team-accent)/0.85)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_hsl(var(--team-accent)/0.7),0_14px_30px_-14px_hsl(var(--team-accent)/0.5),0_8px_18px_-10px_rgba(0,0,0,0.75)] active:translate-y-0 active:scale-[0.99]',
         className,
       )}
@@ -213,7 +213,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       ) : (
         <span aria-hidden className="team-halo" />
       )}
-      <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0 pt-1 sm:p-0.5 sm:pt-2 [perspective:600px]">
+      <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0 pt-0.5 sm:p-0.5 sm:pt-2 [perspective:600px]">
         <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
       </div>
       <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
@@ -240,8 +240,8 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
           { off: '100%', l: L.base },
         ];
         return (
-          <div className="relative z-20 flex flex-col gap-0.5 px-2 pb-2 sm:gap-1 sm:px-2.5 sm:pb-2">
-            <svg viewBox="0 0 300 72" className="block w-full h-11 min-[390px]:h-12 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
+          <div className="relative z-20 flex flex-col gap-0.5 px-1.5 pb-1.5 sm:gap-1 sm:px-2.5 sm:pb-2">
+            <svg viewBox="0 0 300 72" className="block w-full h-9 min-[390px]:h-10 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
               <defs>
                 <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
                   {stops.map((st) => (
@@ -276,7 +276,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
               </g>
             </svg>
             <span
-              className="font-mono text-[9px] min-[390px]:text-[9.5px] sm:text-[9.5px] uppercase tracking-[0.18em] sm:tracking-[0.28em] truncate text-slate-200"
+              className="font-mono text-[8px] min-[390px]:text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.14em] sm:tracking-[0.28em] truncate text-slate-200"
               style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
             >
               {t.motto}
@@ -531,7 +531,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[188px] min-[390px]:min-h-[210px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,380px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(200px,27vh,290px)] xl:min-h-[clamp(220px,30vh,340px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
             {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
 
@@ -541,23 +541,23 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
                 DESKTOP → mantém composição centralizada equilibrada */}
             <div
-              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[188px] min-[390px]:h-[210px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
+              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[160px] min-[390px]:h-[176px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(200px,27vh,290px)] xl:h-[clamp(220px,30vh,340px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[20%] xl:-translate-x-[22%] pr-0 sm:pr-0 max-w-full"
             >
 
               {/* Viatura — mobile: proporcional ao agente | desktop: um pouco mais baixa */}
-              <picture className="relative block h-full aspect-square leading-[0] translate-y-6 min-[390px]:translate-y-7 sm:translate-y-0 lg:translate-y-4 xl:translate-y-6">
+              <picture className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0 lg:translate-y-5 xl:translate-y-7">
                 <source type="image/webp" srcSet={vehicle3dWebp} />
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-100 sm:scale-100 lg:scale-[1.02] xl:scale-[1.08] origin-bottom-left"
+                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[0.92] sm:scale-100 lg:scale-100 xl:scale-[1.02] origin-bottom-left"
                   draggable={false}
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-100 sm:scale-100 lg:scale-[1.02] xl:scale-[1.08] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-[0.92] sm:scale-100 lg:scale-100 xl:scale-[1.02] origin-bottom-left"
                 >
                   <span
                     aria-hidden
@@ -580,7 +580,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Agente Socioeducativo ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.02] xl:scale-[1.08] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
+                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[0.9] sm:scale-100 lg:scale-100 xl:scale-[1.02] translate-y-0 lg:translate-y-5 xl:translate-y-7 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
 
@@ -594,13 +594,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               if (!delta) return null;
               const idx = TEAMS.indexOf(delta);
               return (
-                <div className="hidden lg:block absolute right-3 xl:right-6 bottom-2 z-[70] w-[190px] xl:w-[220px]" style={{ perspective: '900px' }}>
+                <div className="hidden lg:block absolute right-3 xl:right-6 bottom-2 z-[70] w-[176px] xl:w-[200px]" style={{ perspective: '900px' }}>
                   <TeamCard
                     team={delta}
                     idx={idx}
                     isSelected={selectedTeam === 'DELTA'}
                     onSelect={handleSelect}
-                    className="!h-[210px] xl:!h-[240px] w-full"
+                    className="!h-[180px] xl:!h-[210px] w-full"
                   />
                 </div>
               );
@@ -727,9 +727,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ MOBILE-ONLY — Viatura + Agente abaixo dos cards (compacto) ============ */}
-        <div className="sm:hidden relative z-30 order-4 px-2 pt-0 pb-1 -mt-4 min-[390px]:-mt-5 shrink-0 pointer-events-none">
-          <div className="relative mx-auto flex items-end justify-center gap-1 h-[190px] min-[390px]:h-[220px] w-full max-w-[480px]">
-            <picture className="relative block h-full aspect-square leading-[0] self-end">
+        <div className="sm:hidden relative z-30 order-4 px-2 pt-0 pb-7 -mt-2 min-[390px]:-mt-3 shrink-0 pointer-events-none">
+          <div className="relative mx-auto flex items-end justify-center gap-0 h-[128px] min-[390px]:h-[148px] w-full max-w-[340px]">
+            <picture className="relative block h-[90%] aspect-square leading-[0] self-end translate-y-1">
               <source type="image/webp" srcSet={vehicle3dWebp} />
               <img
                 src={vehicle3d}
@@ -738,10 +738,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 height={1024}
                 loading="lazy"
                 decoding="async"
-                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none"
+                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[0.94] origin-bottom-right"
                 draggable={false}
               />
-              <span aria-hidden className="pointer-events-none absolute inset-0">
+              <span aria-hidden className="pointer-events-none absolute inset-0 scale-[0.94] origin-bottom-right">
                 <span
                   aria-hidden
                   className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
@@ -754,7 +754,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 />
               </span>
             </picture>
-            <picture className="relative block h-[118%] leading-[0] -ml-2 self-end mb-6 min-[390px]:mb-8">
+            <picture className="relative block h-[106%] leading-[0] -ml-4 self-end mb-2 min-[390px]:mb-3">
               <source type="image/webp" srcSet={agent3dWebp} />
               <img
                 src={agent3d}
@@ -763,7 +763,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 height={1024}
                 loading="lazy"
                 decoding="async"
-                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none"
+                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[0.96] origin-bottom-left"
                 draggable={false}
               />
             </picture>
