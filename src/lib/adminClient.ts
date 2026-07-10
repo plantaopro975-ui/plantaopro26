@@ -29,7 +29,8 @@ type AdminAction =
   | 'approve_agent'
   | 'reject_agent'
   | 'get_pending_agents'
-  | 'force_logout';
+  | 'force_logout'
+  | 'list_dashboard_data';
 
 /**
  * Unified admin client that works for both Master (token-based) and Admin (session-based)
@@ -159,6 +160,24 @@ export const adminClient = {
   // Force global logout of a user
   forceLogout: (userId: string) =>
     callAdminBackend<{}>('force_logout', { user_id: userId }),
+
+  // Dashboard consolidado do master (bypassa RLS via service_role no edge)
+  listDashboardData: () =>
+    callAdminBackend<{
+      units: any[];
+      agents: any[];
+      users: any[];
+      accessLogs: any[];
+      stats: {
+        totalUsers: number;
+        totalAgents: number;
+        totalUnits: number;
+        pendingTransfers: number;
+        activeAgents: number;
+        expiredLicenses: number;
+        pendingApprovals: number;
+      };
+    }>('list_dashboard_data', {}),
 };
 
 /**
