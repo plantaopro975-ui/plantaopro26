@@ -19,9 +19,13 @@ import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
 import objAlfa from '@/assets/teams/alfa-shield-v2.png';
+import objAlfaWebp from '@/assets/teams/alfa-shield-v2.webp';
 import objBravo from '@/assets/teams/bravo-helmet-v2.png';
+import objBravoWebp from '@/assets/teams/bravo-helmet-v2.webp';
 import objCharlie from '@/assets/teams/charlie-optics-v2.png';
+import objCharlieWebp from '@/assets/teams/charlie-optics-v2.webp';
 import objDelta from '@/assets/teams/delta-radio-v2.png';
+import objDeltaWebp from '@/assets/teams/delta-radio-v2.webp';
 
 
 
@@ -55,19 +59,20 @@ const TEAMS: {
   role: string;
   accent: string;
   obj: string;
+  objWebp: string;
   bg: string;
   bgAvif: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa,    bgAvif: bgAlfaAvif },
-  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo,   bgAvif: bgBravoAvif },
-  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie, bgAvif: bgCharlieAvif },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   bg: bgDelta,   bgAvif: bgDeltaAvif },
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfaAvif },
+  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravoAvif },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlieAvif },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDeltaAvif },
 
 ];
 
 
 interface TeamObjectProps {
-  team: { key: TeamKey; obj: string };
+  team: { key: TeamKey; obj: string; objWebp: string };
   isAlfa: boolean;
   idx: number;
 }
@@ -101,6 +106,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
       {/* Quadrado fixo — mesma "moldura" para todos os 3D */}
       <div className="relative aspect-square w-[82px] min-[390px]:w-[90px] sm:w-[112px] lg:w-[124px] xl:w-[136px] max-h-full flex items-center justify-center">
         <picture className="flex h-full w-full items-center justify-center" style={{ transform: `scale(${scale})`, transformOrigin: '50% 50%' }}>
+          <source type="image/webp" srcSet={team.objWebp} />
           <img
             src={team.obj}
             alt={`Equipe ${team.key} — equipamento tático`}

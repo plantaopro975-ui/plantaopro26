@@ -2,7 +2,9 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Shield, Zap, Radio } from 'lucide-react';
 import logoShieldAsset from '@/assets/ise-acre-badge.png.asset.json';
+import logoShieldWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
 const logoShield = logoShieldAsset.url;
+const logoShieldWebp = logoShieldWebpAsset.url;
 import bannerBg from '@/assets/institutional-banner-bg.jpg';
 
 interface InstitutionalBannerProps {
@@ -165,29 +167,34 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
         <div className="flex items-center justify-between max-w-6xl mx-auto">
           {/* Left: Logo + ISE/ACRE badge */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="relative flex-shrink-0 aspect-square h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 flex items-center justify-center">
-              <img
-                src={logoShield}
-                alt="Instituto Socioeducativo do Acre"
-                width={128}
-                height={128}
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] cursor-pointer select-none"
-                title="ISE / ACRE"
-                draggable={false}
-                onClick={() => {
-                  const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
-                  w.__logoClicks = (w.__logoClicks || 0) + 1;
-                  if (w.__logoTimer) window.clearTimeout(w.__logoTimer);
-                  w.__logoTimer = window.setTimeout(() => { w.__logoClicks = 0; }, 800);
-                  if (w.__logoClicks >= 3) {
-                    w.__logoClicks = 0;
-                    window.dispatchEvent(new CustomEvent('open-master-login'));
-                  }
-                }}
-              />
+            <div
+              className="relative flex-shrink-0 aspect-square h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 flex items-center justify-center cursor-pointer"
+              title="ISE / ACRE"
+              onClick={() => {
+                const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
+                w.__logoClicks = (w.__logoClicks || 0) + 1;
+                if (w.__logoTimer) window.clearTimeout(w.__logoTimer);
+                w.__logoTimer = window.setTimeout(() => { w.__logoClicks = 0; }, 800);
+                if (w.__logoClicks >= 3) {
+                  w.__logoClicks = 0;
+                  window.dispatchEvent(new CustomEvent('open-master-login'));
+                }
+              }}
+            >
+              <picture>
+                <source type="image/webp" srcSet={logoShieldWebp} />
+                <img
+                  src={logoShield}
+                  alt="Instituto Socioeducativo do Acre"
+                  width={128}
+                  height={128}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] select-none"
+                  draggable={false}
+                />
+              </picture>
             </div>
             <div className="hidden sm:flex flex-col">
               <span className={cn(

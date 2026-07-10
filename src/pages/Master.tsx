@@ -84,7 +84,9 @@ import { getMasterToken, setMasterToken } from '@/lib/masterSession';
 import { adminClient } from '@/lib/adminClient';
 import { Bell } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
+import iseAcreBadgeWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
 const iseAcreBadge = iseAcreBadgeAsset.url;
+const iseAcreBadgeWebp = iseAcreBadgeWebpAsset.url;
 import { PanelNav } from '@/components/ui/panel-nav';
 import { formatUnitName } from '@/lib/unitNames';
 
@@ -566,15 +568,18 @@ export default function Master() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="relative flex-shrink-0 aspect-square h-12 w-12 flex items-center justify-center">
-              <img
-                src={iseAcreBadge}
-                alt="Instituto Socioeducativo do Acre"
-                width={96}
-                height={96}
-                loading="eager"
-                decoding="async"
-                className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
-              />
+              <picture>
+                <source type="image/webp" srcSet={iseAcreBadgeWebp} />
+                <img
+                  src={iseAcreBadge}
+                  alt="Instituto Socioeducativo do Acre"
+                  width={96}
+                  height={96}
+                  loading="eager"
+                  decoding="async"
+                  className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+                />
+              </picture>
             </div>
             <div>
               <h1 className="font-tactical text-xl font-bold tracking-[0.14em] text-gradient">Painel Master</h1>
