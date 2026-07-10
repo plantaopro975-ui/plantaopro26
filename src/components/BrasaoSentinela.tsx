@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import brasaoAsset from "@/assets/logo-plantao-pro-official.png.asset.json";
+import brasaoAsset from "@/assets/brand/brasao-sentinela-hd.png.asset.json";
 
 interface BrasaoSentinelaProps {
   size?: number | string;
@@ -46,8 +46,8 @@ export function BrasaoSentinela({
         alt={title}
         title={title}
         role="img"
-        width={1024}
-        height={1024}
+        width={1536}
+        height={1536}
         draggable={false}
         loading="eager"
         decoding="async"
