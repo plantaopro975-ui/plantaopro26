@@ -1499,25 +1499,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
 
-  const armedRef = useRef(false);
   const addAgent = () => {
-    if (armedRef.current) {
-      toast({ title: 'Programação ativa', description: 'Cancele a programação para adicionar agentes.', variant: 'destructive' });
-      return;
-    }
     setAgents((a) => [...a, `Agente ${a.length + 1}`]);
   };
   const removeAgent = (i: number) => {
-    if (armedRef.current) {
-      toast({ title: 'Programação ativa', description: 'Cancele a programação para remover agentes.', variant: 'destructive' });
-      return;
-    }
     setAgents((a) => a.filter((_, idx) => idx !== i));
   };
   const updateAgent = (i: number, v: string) => {
-    if (armedRef.current) return;
     setAgents((a) => a.map((x, idx) => (idx === i ? v : x)));
   };
+
 
   const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
 
