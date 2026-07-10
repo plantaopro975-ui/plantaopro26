@@ -188,19 +188,21 @@ export function AgentsDirectoryCard({
               />
             </div>
             <div className="flex gap-1.5">
-              <Select value={teamFilter} onValueChange={setTeamFilter}>
-                <SelectTrigger className="w-[110px] h-8 text-xs bg-slate-800/60 border-slate-700">
-                  <Filter className="h-3 w-3 mr-1" />
-                  <SelectValue placeholder="Equipe" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas equipes</SelectItem>
-                  <SelectItem value="ALFA">ALFA</SelectItem>
-                  <SelectItem value="BRAVO">BRAVO</SelectItem>
-                  <SelectItem value="CHARLIE">CHARLIE</SelectItem>
-                  <SelectItem value="DELTA">DELTA</SelectItem>
-                </SelectContent>
-              </Select>
+              {scope !== 'team' && (
+                <Select value={teamFilter} onValueChange={setTeamFilter}>
+                  <SelectTrigger className="w-[110px] h-8 text-xs bg-slate-800/60 border-slate-700">
+                    <Filter className="h-3 w-3 mr-1" />
+                    <SelectValue placeholder="Equipe" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas equipes</SelectItem>
+                    <SelectItem value="ALFA">ALFA</SelectItem>
+                    <SelectItem value="BRAVO">BRAVO</SelectItem>
+                    <SelectItem value="CHARLIE">CHARLIE</SelectItem>
+                    <SelectItem value="DELTA">DELTA</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[110px] h-8 text-xs bg-slate-800/60 border-slate-700">
                   <SelectValue placeholder="Status" />
