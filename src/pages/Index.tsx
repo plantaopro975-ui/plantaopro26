@@ -1353,8 +1353,8 @@ export default function Index() {
 
         }}
       >
-        {/* Sober command-room background — SVG only, no posters */}
-        <CommandRoomBackground />
+        {/* Background da home — imagem oficial do agente/viatura + overlays táticos */}
+        <HomeImageBackground />
 
         {/* Return-to-panel shortcut for logged-in agents browsing the homepage */}
         {user && (
