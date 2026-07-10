@@ -2,7 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
     <title>PlantaoPro - Gestão de Escalas</title>
     <meta name="description" content="Simplifique o controle de plantões CSPlantão">
     <meta name="theme-color" content="#f59e0b" />
@@ -61,7 +61,28 @@
     <style>
       html, body, #root {
         background-color: #0a0f1a;
-        min-height: 100vh;
+      }
+      /* Trava a altura no mobile para evitar redimensionamento quando a barra de endereço aparece/some */
+      @media (max-width: 767px) {
+        html, body {
+          height: 100dvh;
+          min-height: 100dvh;
+          max-height: 100dvh;
+          overflow: hidden;
+          overscroll-behavior: none;
+          position: fixed;
+          inset: 0;
+          width: 100%;
+          touch-action: pan-y pinch-zoom;
+        }
+        #root {
+          height: 100dvh;
+          max-height: 100dvh;
+          overflow: hidden;
+        }
+      }
+      @media (min-width: 768px) {
+        html, body, #root { min-height: 100vh; }
       }
     </style>
     <meta property="og:title" content="PlantaoPro - Gestão de Escalas">
