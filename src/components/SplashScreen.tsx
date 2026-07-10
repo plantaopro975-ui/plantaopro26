@@ -253,37 +253,32 @@ export function SplashScreen() {
               />
             ))}
 
-            {/* Balança da Justiça — símbolo institucional socioeducativo */}
+            {/* Monograma "P" — letra institucional serifada */}
             <g
               style={{
                 opacity: 0,
                 transformOrigin: "90px 158px",
                 animation: "splashStar 700ms 1250ms cubic-bezier(.22,1,.36,1) forwards",
               }}
-              stroke="url(#spGold)"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
             >
-              {/* Coluna vertical */}
-              <line x1="90" y1="138" x2="90" y2="176" strokeWidth="2.2" />
-              {/* Base */}
-              <line x1="80" y1="178" x2="100" y2="178" strokeWidth="3" />
-              <line x1="84" y1="176" x2="96" y2="176" strokeWidth="1.6" />
-              {/* Travessão superior */}
-              <line x1="66" y1="140" x2="114" y2="140" strokeWidth="2.2" />
-              {/* Finial */}
-              <circle cx="90" cy="136" r="2.4" fill="url(#spGold)" stroke="none" />
-              {/* Correntes */}
-              <line x1="68" y1="142" x2="68" y2="150" strokeWidth="1.2" opacity="0.85" />
-              <line x1="112" y1="142" x2="112" y2="150" strokeWidth="1.2" opacity="0.85" />
-              {/* Prato esquerdo */}
-              <path d="M60 150 Q68 162 76 150" strokeWidth="2" />
-              <line x1="60" y1="150" x2="76" y2="150" strokeWidth="1.3" opacity="0.8" />
-              {/* Prato direito */}
-              <path d="M104 150 Q112 162 120 150" strokeWidth="2" />
-              <line x1="104" y1="150" x2="120" y2="150" strokeWidth="1.3" opacity="0.8" />
+              {/* P serifado desenhado como path (haste + bojo + serifas) */}
+              <path
+                d="M74 138 L74 178 M74 138 L98 138 C110 138 116 144 116 152 C116 160 110 166 98 166 L74 166 M68 178 L86 178 M68 138 L86 138"
+                stroke="url(#spGold)"
+                strokeWidth="3.2"
+                strokeLinecap="square"
+                strokeLinejoin="miter"
+                fill="none"
+              />
+              {/* Reforço interno do bojo */}
+              <path
+                d="M82 146 L98 146 C104 146 107 149 107 152 C107 155 104 158 98 158 L82 158 Z"
+                fill="url(#spGold)"
+                opacity="0.18"
+                stroke="none"
+              />
             </g>
+
 
 
 
