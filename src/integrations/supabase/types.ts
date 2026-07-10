@@ -2394,6 +2394,23 @@ export type Database = {
       is_night_window: { Args: { p_ts?: string }; Returns: boolean }
       is_own_agent: { Args: { check_agent_id: string }; Returns: boolean }
       is_same_unit: { Args: { shift_agent_id: string }; Returns: boolean }
+      list_agents_same_team: {
+        Args: never
+        Returns: {
+          approval_status: string
+          avatar_url: string
+          id: string
+          is_active: boolean
+          is_frozen: boolean
+          license_status: string
+          matricula: string
+          name: string
+          position: string
+          role: string
+          team: string
+          unit_name: string
+        }[]
+      }
       list_agents_same_unit: {
         Args: never
         Returns: {
