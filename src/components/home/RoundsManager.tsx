@@ -1973,6 +1973,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
 
   const pauseTimer = () => setRunning(false);
+
+  /* ---------- Programar (arm) ronda antes do horário do 1º agente ----------
+   * Calcula o timestamp-alvo baseado em `startTime` (HH:MM). Se o horário já
+   * passou hoje, agenda para amanhã. Enquanto armada, o painel exibe cadeado
+   * + timer profissional e dispara startTimer() automaticamente ao zerar.
+   */
+  const armRoundForStart = () => {
+    if (!schedule) {
+      toast({ title: 'Corrija os erros antes de programar.', variant: 'destructive' });
+      return;
+    }
+    const target = toMinutes(startTime);
+    if (target == null) return;
+    const now = new Date(nowServer());
+    const t = new Date(now);
+    t.setHours(Math.floor(target / 60), target % 60, 0, 0);
+    if (t.getTime() <= nowServer() + 5_000) {
+      // Já passou (ou vai passar em <5s): agenda para amanhã
+      t.setDate(t.getDate() + 1);
+    }
+    setArmedForMs(t.getTime());
+    toast({
+      title: 'Ronda programada',
+      description: `Início automático às ${startTime}. Painel travado até lá.`,
+    });
+  };
+  const disarmRound = () => {
+    setArmedForMs(null);
+    toast({ title: 'Programação cancelada' });
+  };
+  // Auto-início ao zerar o countdown
+  useEffect(() => {
+    if (!armed || armedForMs == null) return;
+    const remaining = armedForMs - nowServer();
+    if (remaining <= 0) {
+      setArmedForMs(null);
+      startTimer();
+    }
+    // dependemos de `tick` (500ms) para reavaliar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [armed, armedForMs, tick]);
+
+
   const resetTimer = () => {
     setRunning(false);
     startedAtRef.current = null;
