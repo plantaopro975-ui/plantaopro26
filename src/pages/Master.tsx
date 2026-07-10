@@ -400,7 +400,7 @@ export default function Master() {
       setStats({
         totalUsers: usersWithRoles.length,
         totalAgents: agentsRes.count || 0,
-        totalUnits: unitsRes.count || 0,
+        totalUnits: unitsRes.count ?? unitsData?.length ?? 0,
         pendingTransfers: transfersRes.count || 0,
         activeAgents: activeCount,
         expiredLicenses: expiredCount,
