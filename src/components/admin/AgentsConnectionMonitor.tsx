@@ -104,17 +104,30 @@ export function AgentsConnectionMonitor() {
   const load = async () => {
     setLoading(true);
     try {
-      const [{ data: agentsData }, { data: logsData }] = await Promise.all([
-        supabase
-          .from('agents')
-          .select('id, name, team, matricula, unit_id, is_active, is_frozen, approval_status, unit:units(name)')
-          .order('name'),
-        supabase
-          .from('access_logs')
-          .select('agent_id, action, created_at')
-          .order('created_at', { ascending: false })
-          .limit(5000),
-      ]);
+      let agentsData: any[] | null = null;
+      let logsData: any[] | null = null;
+      if (hasMasterSession()) {
+        const [a, l] = await Promise.all([
+          callMasterAdmin<any[]>('agents_list_all'),
+          callMasterAdmin<any[]>('access_logs_list', { limit: 5000 }),
+        ]);
+        agentsData = a;
+        logsData = l;
+      } else {
+        const [aRes, lRes] = await Promise.all([
+          supabase
+            .from('agents')
+            .select('id, name, team, matricula, unit_id, is_active, is_frozen, approval_status, unit:units(name)')
+            .order('name'),
+          supabase
+            .from('access_logs')
+            .select('agent_id, action, created_at')
+            .order('created_at', { ascending: false })
+            .limit(5000),
+        ]);
+        agentsData = aRes.data as any[] | null;
+        logsData = lRes.data as any[] | null;
+      }
       const list: AgentRow[] = (agentsData || []).map((a: any) => ({
         id: a.id,
         name: a.name,
