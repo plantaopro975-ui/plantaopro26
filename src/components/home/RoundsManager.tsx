@@ -613,19 +613,48 @@ function TimeField({
   id, value, onChange, label, invalid, accent, locked, lockedHint,
 }: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string; locked?: boolean; lockedHint?: string }) {
 
-  const [h, m] = value.split(':');
-  const setH = (nh: string) => {
-    const v = Math.max(0, Math.min(23, parseInt(nh || '0', 10) || 0));
-    onChange(`${pad(v)}:${m ?? '00'}`);
-  };
-  const setM = (nm: string) => {
-    const v = Math.max(0, Math.min(59, parseInt(nm || '0', 10) || 0));
-    onChange(`${h ?? '00'}:${pad(v)}`);
+  // Buffer LOCAL de digitação — evita que o valor externo (com pad) atropele
+  // o usuário enquanto ele digita ("1" → "10" precisa ser possível sem travar).
+  const [hStr, mStr] = value.split(':');
+  const extH = hStr ?? '';
+  const extM = mStr ?? '';
+  const [hLocal, setHLocal] = useState(extH);
+  const [mLocal, setMLocal] = useState(extM);
+  const [hFocused, setHFocused] = useState(false);
+  const [mFocused, setMFocused] = useState(false);
+
+  useEffect(() => { if (!hFocused) setHLocal(extH); }, [extH, hFocused]);
+  useEffect(() => { if (!mFocused) setMLocal(extM); }, [extM, mFocused]);
+
+  const commit = (rawH: string, rawM: string) => {
+    const hi = Math.max(0, Math.min(23, parseInt(rawH || '0', 10) || 0));
+    const mi = Math.max(0, Math.min(59, parseInt(rawM || '0', 10) || 0));
+    onChange(`${pad(hi)}:${pad(mi)}`);
   };
   const bump = (which: 'h' | 'm', delta: number) => {
-    if (which === 'h') setH(String(((parseInt(h, 10) || 0) + delta + 24) % 24));
-    else setM(String(((parseInt(m, 10) || 0) + delta + 60) % 60));
+    const curH = parseInt(hLocal || extH || '0', 10) || 0;
+    const curM = parseInt(mLocal || extM || '0', 10) || 0;
+    if (which === 'h') {
+      const nv = (curH + delta + 24) % 24;
+      setHLocal(pad(nv));
+      commit(String(nv), String(curM));
+    } else {
+      const nv = (curM + delta + 60) % 60;
+      setMLocal(pad(nv));
+      commit(String(curH), String(nv));
+    }
   };
+  const onHKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp') { e.preventDefault(); bump('h', 1); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); bump('h', -1); }
+    else if (e.key === 'Enter') { commit(hLocal, mLocal); (e.currentTarget as HTMLInputElement).blur(); }
+  };
+  const onMKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp') { e.preventDefault(); bump('m', 1); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); bump('m', -1); }
+    else if (e.key === 'Enter') { commit(hLocal, mLocal); (e.currentTarget as HTMLInputElement).blur(); }
+  };
+
   return (
     <div className="grid gap-1.5">
       <label htmlFor={`${id}-h`} className="text-[12.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
@@ -640,14 +669,12 @@ function TimeField({
             22:00→06:00
           </span>
         )}
-
       </label>
       <div className={cn(
         'group relative flex items-center gap-2 rounded-md border bg-background pl-2 pr-1 h-11 transition-colors',
         invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
         locked && 'opacity-70 cursor-not-allowed pointer-events-none select-none',
       )}>
-
         <svg viewBox="0 0 32 32" className="h-6 w-6 shrink-0" aria-hidden>
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
@@ -656,12 +683,19 @@ function TimeField({
           <line x1="16" y1="16" x2="22" y2="16"  stroke={accent} strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
           <circle cx="16" cy="16" r="1.2" fill={accent} />
         </svg>
-        <input id={`${id}-h`} inputMode="numeric" maxLength={2} value={h ?? ''}
-          onChange={(e) => setH(e.target.value.replace(/\D/g, '').slice(0, 2))}
-          onFocus={(e) => e.currentTarget.select()}
-          onBlur={(e) => setH(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
-          aria-label={`${label} horas`} autoComplete="off" />
+        <input
+          id={`${id}-h`}
+          inputMode="numeric"
+          maxLength={2}
+          value={hLocal}
+          onChange={(e) => setHLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onFocus={(e) => { setHFocused(true); e.currentTarget.select(); }}
+          onBlur={() => { setHFocused(false); commit(hLocal, mLocal); }}
+          onKeyDown={onHKey}
+          className="w-8 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} horas`}
+          autoComplete="off"
+        />
         <div className="flex flex-col">
           <button type="button" onClick={() => bump('h', 1)} aria-label="Mais 1 hora"
             className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
@@ -673,12 +707,18 @@ function TimeField({
           </button>
         </div>
         <span className="font-mono text-lg text-muted-foreground/70 select-none -mt-0.5">:</span>
-        <input inputMode="numeric" maxLength={2} value={m ?? ''}
-          onChange={(e) => setM(e.target.value.replace(/\D/g, '').slice(0, 2))}
-          onFocus={(e) => e.currentTarget.select()}
-          onBlur={(e) => setM(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
-          aria-label={`${label} minutos`} autoComplete="off" />
+        <input
+          inputMode="numeric"
+          maxLength={2}
+          value={mLocal}
+          onChange={(e) => setMLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onFocus={(e) => { setMFocused(true); e.currentTarget.select(); }}
+          onBlur={() => { setMFocused(false); commit(hLocal, mLocal); }}
+          onKeyDown={onMKey}
+          className="w-8 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} minutos`}
+          autoComplete="off"
+        />
         <div className="ml-auto flex flex-col">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
             className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
