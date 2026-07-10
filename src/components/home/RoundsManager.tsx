@@ -867,23 +867,8 @@ function ArmedLockPanel({
   );
 }
 
-function TimeCell({ value, label, color, pulse }: { value: string; label: string; color: string; pulse?: boolean }) {
-  return (
-    <div className="flex flex-col items-center">
-      <span
-        className="font-mono text-2xl sm:text-3xl font-bold tabular-nums leading-none"
-        style={{
-          color,
-          textShadow: `0 0 14px ${color}66`,
-          animation: pulse ? 'armTick 1s ease-in-out infinite' : undefined,
-        }}
-      >
-        {value}
-      </span>
-      <span className="mt-0.5 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">{label}</span>
-    </div>
-  );
-}
+
+
 
 function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
   const [visible, setVisible] = useState(true);
