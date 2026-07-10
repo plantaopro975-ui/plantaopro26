@@ -24,9 +24,9 @@ const REASON_COPY: Record<Reason, { title: string; body: string }> = {
     body: "Não é permitido arrastar ou baixar imagens deste sistema.",
   },
   printscreen: {
-    title: "Captura de tela detectada",
+    title: "Captura de tela bloqueada",
     body:
-      "Capturas de tela e fotografias do conteúdo são proibidas. Este acesso é monitorado e registrado.",
+      "Este espaço reúne conteúdo dedicado a agentes de segurança pública do sistema socioeducativo. Capturas de tela, gravações e fotografias não são permitidas.",
   },
   save: {
     title: "Download bloqueado",
