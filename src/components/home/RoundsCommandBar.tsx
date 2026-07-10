@@ -8,6 +8,7 @@ import { useServerTime } from '@/hooks/useServerTime';
 import { RoundsManager } from './RoundsManager';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { BrasaoSentinela } from '@/components/BrasaoSentinela';
 
 /**
  * COMANDO UNIFICADO — barra tática única (Mission ID)
@@ -248,51 +249,8 @@ function TeamChip({ team, className }: { team: string; className?: string }) {
  */
 function MissionSeal() {
   return (
-    <span className="relative shrink-0" aria-hidden>
-      <svg viewBox="0 0 40 40" className="h-9 w-9 sm:h-10 sm:w-10 drop-shadow-[0_2px_6px_hsl(217_62%_2%/0.9)]">
-        <defs>
-          <radialGradient id="seal-fill" cx="50%" cy="35%" r="70%">
-            <stop offset="0%" stopColor="hsl(217 40% 22%)" />
-            <stop offset="65%" stopColor="hsl(217 55% 8%)" />
-            <stop offset="100%" stopColor="hsl(217 62% 3%)" />
-          </radialGradient>
-          <linearGradient id="seal-gold" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="hsl(45 95% 72%)" />
-            <stop offset="55%" stopColor="hsl(43 90% 52%)" />
-            <stop offset="100%" stopColor="hsl(35 80% 32%)" />
-          </linearGradient>
-        </defs>
-        {/* base */}
-        <circle cx="20" cy="20" r="19" fill="url(#seal-fill)" stroke="url(#seal-gold)" strokeWidth="1" />
-        {/* tick marks (escala) */}
-        <g stroke="url(#seal-gold)" strokeWidth="0.7" strokeLinecap="round" opacity="0.85">
-          {Array.from({ length: 12 }).map((_, i) => {
-            const a = (i * 30 * Math.PI) / 180;
-            const x1 = 20 + Math.cos(a) * 17;
-            const y1 = 20 + Math.sin(a) * 17;
-            const x2 = 20 + Math.cos(a) * (i % 3 === 0 ? 14.5 : 15.8);
-            const y2 = 20 + Math.sin(a) * (i % 3 === 0 ? 14.5 : 15.8);
-            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
-          })}
-        </g>
-        {/* escudo */}
-        <path
-          d="M20 8 L29 12 V21 C29 26.5 25 30 20 32 C15 30 11 26.5 11 21 V12 Z"
-          fill="hsl(217 55% 6%)"
-          stroke="url(#seal-gold)"
-          strokeWidth="0.9"
-        />
-        {/* chevrons */}
-        <path d="M14 19 L20 15 L26 19" fill="none" stroke="url(#seal-gold)" strokeWidth="1.1" strokeLinejoin="round" />
-        <path d="M14 23 L20 19 L26 23" fill="none" stroke="url(#seal-gold)" strokeWidth="1.1" strokeLinejoin="round" opacity="0.75" />
-        {/* estrela central */}
-        <path
-          d="M20 24.5 L20.9 26.5 L23 26.7 L21.4 28.1 L21.9 30.2 L20 29.1 L18.1 30.2 L18.6 28.1 L17 26.7 L19.1 26.5 Z"
-          fill="url(#seal-gold)"
-        />
-        {/* highlight */}
-        <path d="M11.5 12 Q20 5 28.5 12" fill="none" stroke="hsl(45 95% 85%)" strokeWidth="0.4" strokeLinecap="round" opacity="0.5" />
-      </svg>
+    <span className="relative shrink-0 h-9 w-9 sm:h-10 sm:w-10 inline-flex items-center justify-center" aria-hidden>
+      <BrasaoSentinela size="100%" />
     </span>
   );
 }
