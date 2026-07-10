@@ -91,22 +91,24 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
           sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 200px"
           onLoad={() => setLoaded(true)}
           className={cn(
-            'block h-full w-full max-h-[95%] max-w-[92%] sm:max-h-[80%] sm:max-w-[65%] lg:max-h-[82%] lg:max-w-[72%] xl:max-h-[85%] xl:max-w-[78%] object-contain select-none animate-float3d',
+            // Área uniforme: mesmo box para todas as equipes, object-contain garante encaixe proporcional
+            'block h-full w-full max-h-[74%] max-w-[74%] sm:max-h-[70%] sm:max-w-[66%] lg:max-h-[72%] lg:max-w-[68%] object-contain object-center select-none animate-float3d',
             'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
             'transition-[transform,opacity] duration-700 ease-out',
-            'group-hover:scale-[1.12] group-hover:-translate-y-1',
-            'group-active:scale-[1.04]',
+            'group-hover:scale-[1.08] group-hover:-translate-y-0.5',
+            'group-active:scale-[1.03]',
             isAlfa && 'alfa-vest',
             loaded ? 'opacity-100' : 'opacity-0 blur-md',
           )}
           draggable={false}
           style={{
-            transformOrigin: '50% 60%',
+            transformOrigin: '50% 55%',
             animationDelay: `${idx * 0.6}s`,
             contentVisibility: 'auto',
           }}
         />
       </picture>
+
     </>
   );
 }
