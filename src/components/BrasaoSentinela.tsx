@@ -97,19 +97,17 @@ export function BrasaoSentinela({
         />
       ))}
 
-      {/* "P" institucional — tipografia serifada real, centralizado */}
-      <text
-        x="90"
-        y="176"
-        textAnchor="middle"
-        fontFamily="'Cormorant Garamond', 'Playfair Display', Georgia, serif"
-        fontWeight="600"
-        fontSize="58"
-        fill="url(#brasaoGold)"
-        style={{ letterSpacing: "0", dominantBaseline: "alphabetic" }}
-      >
-        P
-      </text>
+      {/* Espadas cruzadas — símbolo institucional de guarda */}
+      <g>
+        <line x1="66" y1="140" x2="114" y2="176" stroke="url(#brasaoGold)" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="63" y1="137" x2="70" y2="144" stroke="url(#brasaoSteel)" strokeWidth="3.4" strokeLinecap="round" />
+        <circle cx="61" cy="135" r="2.2" fill="url(#brasaoGold)" />
+        <line x1="114" y1="140" x2="66" y2="176" stroke="url(#brasaoGold)" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="117" y1="137" x2="110" y2="144" stroke="url(#brasaoSteel)" strokeWidth="3.4" strokeLinecap="round" />
+        <circle cx="119" cy="135" r="2.2" fill="url(#brasaoGold)" />
+        <circle cx="90" cy="158" r="3" fill="url(#brasaoGold)" />
+      </g>
+
 
       {/* Louros laterais */}
       <path d="M28 110 Q10 130 32 168" stroke="url(#brasaoGold)" strokeWidth="1" fill="none" opacity="0.75" />

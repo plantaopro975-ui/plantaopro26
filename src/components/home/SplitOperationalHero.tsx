@@ -24,10 +24,15 @@ const vehicleMobile = vehicle3dPngAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
-import objAlfa from '@/assets/teams/alfa-object3d.png';
-import objBravo from '@/assets/teams/bravo-object3d.png';
-import objCharlie from '@/assets/teams/charlie-object3d.png';
-import objDelta from '@/assets/teams/delta-object3d.png';
+import objAlfaAsset from '@/assets/teams/alfa-object3d.webp.asset.json';
+import objBravoAsset from '@/assets/teams/bravo-object3d.webp.asset.json';
+import objCharlieAsset from '@/assets/teams/charlie-object3d.webp.asset.json';
+import objDeltaAsset from '@/assets/teams/delta-object3d.webp.asset.json';
+const objAlfa = objAlfaAsset.url;
+const objBravo = objBravoAsset.url;
+const objCharlie = objCharlieAsset.url;
+const objDelta = objDeltaAsset.url;
+
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
 const bgAlfa = bgAlfaAsset.url;
 import bgBravoAsset from '@/assets/teams/bg-bravo.jpg.asset.json';
@@ -72,9 +77,10 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
         loading={isAlfa ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={isAlfa ? 'high' : 'low'}
-        width={1024}
-        height={1024}
+        width={512}
+        height={512}
         sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 220px"
+
         draggable={false}
         className={cn(
           'block h-full w-full max-h-[82%] max-w-[80%] sm:max-h-[78%] sm:max-w-[74%] lg:max-h-[82%] lg:max-w-[76%] object-contain object-center select-none animate-float3d',
