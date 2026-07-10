@@ -44,13 +44,22 @@ const objDeltaAvif = objDeltaAvifAsset.url;
 
 
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
+import bgAlfaAvifAsset from '@/assets/teams/bg-alfa.avif.asset.json';
 const bgAlfa = bgAlfaAsset.url;
+const bgAlfaAvif = bgAlfaAvifAsset.url;
 import bgBravoAsset from '@/assets/teams/bg-bravo.jpg.asset.json';
+import bgBravoAvifAsset from '@/assets/teams/bg-bravo.avif.asset.json';
 const bgBravo = bgBravoAsset.url;
+const bgBravoAvif = bgBravoAvifAsset.url;
 import bgCharlieAsset from '@/assets/teams/bg-charlie.jpg.asset.json';
+import bgCharlieAvifAsset from '@/assets/teams/bg-charlie.avif.asset.json';
 const bgCharlie = bgCharlieAsset.url;
+const bgCharlieAvif = bgCharlieAvifAsset.url;
 import bgDeltaAsset from '@/assets/teams/bg-delta.jpg.asset.json';
+import bgDeltaAvifAsset from '@/assets/teams/bg-delta.avif.asset.json';
 const bgDelta = bgDeltaAsset.url;
+const bgDeltaAvif = bgDeltaAvifAsset.url;
+
 interface Props {
   onTeamClick: (team: string) => void;
 }
@@ -66,11 +75,13 @@ const TEAMS: {
   obj: string;
   objAvif: string;
   bg: string;
+  bgAvif: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    objAvif: objAlfaAvif,    bg: bgAlfa },
-  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   objAvif: objBravoAvif,   bg: bgBravo },
-  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, objAvif: objCharlieAvif, bg: bgCharlie },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   objAvif: objDeltaAvif,   bg: bgDelta },
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    objAvif: objAlfaAvif,    bg: bgAlfa,    bgAvif: bgAlfaAvif },
+  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   objAvif: objBravoAvif,   bg: bgBravo,   bgAvif: bgBravoAvif },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, objAvif: objCharlieAvif, bg: bgCharlie, bgAvif: bgCharlieAvif },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   objAvif: objDeltaAvif,   bg: bgDelta,   bgAvif: bgDeltaAvif },
+
 ];
 
 
@@ -81,12 +92,13 @@ interface TeamObjectProps {
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   const imgClass = cn(
-    'block h-full w-full max-h-[98%] max-w-[96%] sm:max-h-[96%] sm:max-w-[92%] lg:max-h-[98%] lg:max-w-[94%] object-contain object-center select-none animate-float3d',
-    'drop-shadow-[0_24px_36px_rgba(0,0,0,0.92)]',
+    'block h-full w-full max-h-[68%] max-w-[62%] sm:max-h-[64%] sm:max-w-[58%] lg:max-h-[70%] lg:max-w-[62%] object-contain object-center select-none animate-float3d',
+    'drop-shadow-[0_14px_22px_rgba(0,0,0,0.75)]',
     'transition-[transform,opacity] duration-700 ease-out',
-    'group-hover:scale-[1.08] group-hover:-translate-y-1',
+    'group-hover:scale-[1.06] group-hover:-translate-y-1',
     'group-active:scale-[1.02]',
   );
+
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       <picture>
@@ -140,21 +152,26 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       )}
       style={{ ['--team-accent' as any]: t.accent }}
     >
-      <img
-        src={t.bg}
-        alt=""
-        aria-hidden
-        loading="lazy"
-        decoding="async"
-        className={cn(
-          'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
-          'transition-all duration-500 ease-out',
-          isSelected
-            ? 'opacity-100 scale-105 saturate-125 contrast-110'
-            : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
-        )}
-        draggable={false}
-      />
+      <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
+        <source type="image/avif" srcSet={t.bgAvif} />
+        <source type="image/webp" srcSet={t.bg} />
+        <img
+          src={t.bg}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          decoding="async"
+          className={cn(
+            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
+            'transition-all duration-500 ease-out',
+            isSelected
+              ? 'opacity-100 scale-105 saturate-125 contrast-110'
+              : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
+          )}
+          draggable={false}
+        />
+      </picture>
+
       <span aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,6,23,0.78)_100%)]" />
       <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-t from-slate-950/90 to-transparent" />
       <span
