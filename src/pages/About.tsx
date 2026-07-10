@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
 import aboutHero from '@/assets/about-hero.jpg';
-import { toast } from 'sonner';
+
 
 
 const features = [
