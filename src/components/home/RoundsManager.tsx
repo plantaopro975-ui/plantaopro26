@@ -2137,6 +2137,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       t.setDate(t.getDate() + 1);
     }
     setArmedForMs(t.getTime());
+    autoFiredRef.current = null; // libera guard para esta nova programação
     toast({
       title: 'Ronda programada',
       description: `Início automático às ${startTime}. Painel travado até lá.`,
@@ -2144,19 +2145,24 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const disarmRound = () => {
     setArmedForMs(null);
+    autoFiredRef.current = null;
+    setCancelArmConfirmOpen(false);
     toast({ title: 'Programação cancelada' });
   };
-  // Auto-início ao zerar o countdown
+  // Auto-início ao zerar o countdown — protegido por ref para disparar
+  // exatamente 1x por programação, imune a re-renders/StrictMode.
   useEffect(() => {
     if (!armed || armedForMs == null) return;
+    if (autoFiredRef.current === armedForMs) return; // já disparou p/ este alvo
     const remaining = armedForMs - nowServer();
     if (remaining <= 0) {
+      autoFiredRef.current = armedForMs;
       setArmedForMs(null);
       startTimer();
     }
-    // dependemos de `tick` (500ms) para reavaliar
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [armed, armedForMs, tick]);
+
 
 
   const resetTimer = () => {
