@@ -102,6 +102,11 @@ export function AnnouncementsManager() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  // Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'expired'>('all');
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'low' | 'normal' | 'high' | 'urgent'>('all');
+
   // Form state
   const [formData, setFormData] = useState({
     title: '',
@@ -308,17 +313,43 @@ export function AnnouncementsManager() {
     );
   }
 
+  // Derived stats & filtered list
+  const now = new Date();
+  const stats = {
+    total: announcements.length,
+    active: announcements.filter(a => a.is_active && new Date(a.starts_at) <= now && (!a.expires_at || new Date(a.expires_at) > now)).length,
+    expired: announcements.filter(a => a.expires_at && new Date(a.expires_at) < now).length,
+    urgent: announcements.filter(a => a.priority === 'urgent' && a.is_active).length,
+  };
+
+  const filteredAnnouncements = announcements.filter((a) => {
+    // Status
+    const isExpired = a.expires_at && new Date(a.expires_at) < now;
+    const isActive = a.is_active && new Date(a.starts_at) <= now && !isExpired;
+    if (statusFilter === 'active' && !isActive) return false;
+    if (statusFilter === 'inactive' && (a.is_active && !isExpired)) return false;
+    if (statusFilter === 'expired' && !isExpired) return false;
+    // Priority
+    if (priorityFilter !== 'all' && a.priority !== priorityFilter) return false;
+    // Search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      if (!a.title.toLowerCase().includes(q) && !(a.content || '').toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg">
             <Megaphone className="h-5 w-5 text-black" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">Gerenciador de Avisos</h3>
-            <p className="text-xs text-slate-400">Crie e gerencie avisos para os agentes</p>
+            <h3 className="text-lg font-bold text-white">Comunicações Internas</h3>
+            <p className="text-xs text-slate-400">Publique e gerencie avisos direcionados a agentes, unidades ou equipes</p>
           </div>
         </div>
         <Button
@@ -326,25 +357,88 @@ export function AnnouncementsManager() {
           className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-black font-bold shadow-lg"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Novo Aviso
+          Nova Comunicação
         </Button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <Card className="bg-slate-800/60 border-slate-700/60">
+          <CardContent className="p-3">
+            <p className="text-[10px] uppercase text-slate-400 tracking-wide">Total</p>
+            <p className="text-2xl font-black text-white leading-tight">{stats.total}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-emerald-500/10 border-emerald-500/30">
+          <CardContent className="p-3">
+            <p className="text-[10px] uppercase text-emerald-300 tracking-wide">Publicadas</p>
+            <p className="text-2xl font-black text-emerald-400 leading-tight">{stats.active}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-red-500/10 border-red-500/30">
+          <CardContent className="p-3">
+            <p className="text-[10px] uppercase text-red-300 tracking-wide">Urgentes</p>
+            <p className="text-2xl font-black text-red-400 leading-tight">{stats.urgent}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-slate-500/10 border-slate-500/30">
+          <CardContent className="p-3">
+            <p className="text-[10px] uppercase text-slate-300 tracking-wide">Expiradas</p>
+            <p className="text-2xl font-black text-slate-400 leading-tight">{stats.expired}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Input
+          placeholder="Buscar por título ou conteúdo..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          maxLength={200}
+          className="bg-slate-800 border-slate-700 text-white flex-1"
+        />
+        <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+          <SelectTrigger className="bg-slate-800 border-slate-700 text-white w-full sm:w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-slate-700">
+            <SelectItem value="all" className="text-white">Todos os status</SelectItem>
+            <SelectItem value="active" className="text-white">Publicadas</SelectItem>
+            <SelectItem value="inactive" className="text-white">Rascunhos</SelectItem>
+            <SelectItem value="expired" className="text-white">Expiradas</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={priorityFilter} onValueChange={(v) => setPriorityFilter(v as any)}>
+          <SelectTrigger className="bg-slate-800 border-slate-700 text-white w-full sm:w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-slate-700">
+            <SelectItem value="all" className="text-white">Todas prioridades</SelectItem>
+            {priorityOptions.map(p => (
+              <SelectItem key={p.value} value={p.value} className="text-white">{p.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Announcements List */}
       <ScrollArea className="h-[500px]">
         <div className="space-y-3 pr-4">
-          {announcements.length === 0 ? (
+          {filteredAnnouncements.length === 0 ? (
             <Card className="bg-slate-800/50 border-slate-700/50">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Megaphone className="h-12 w-12 text-slate-600 mb-4" />
-                <p className="text-slate-400 text-center">Nenhum aviso cadastrado</p>
+                <p className="text-slate-400 text-center">
+                  {announcements.length === 0 ? 'Nenhuma comunicação cadastrada' : 'Nenhum resultado para os filtros aplicados'}
+                </p>
                 <p className="text-slate-500 text-sm text-center mt-1">
-                  Clique em "Novo Aviso" para criar o primeiro
+                  {announcements.length === 0 ? 'Clique em "Nova Comunicação" para publicar a primeira' : 'Ajuste a busca ou os filtros acima'}
                 </p>
               </CardContent>
             </Card>
           ) : (
-            announcements.map((announcement) => {
+            filteredAnnouncements.map((announcement) => {
               const priorityConfig = getPriorityConfig(announcement.priority);
               const PriorityIcon = priorityConfig.icon;
               const isExpired = announcement.expires_at && new Date(announcement.expires_at) < new Date();
