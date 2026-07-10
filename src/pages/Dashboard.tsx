@@ -166,6 +166,9 @@ export default function Dashboard() {
                 <AnnouncementsCard />
               </div>
 
+              {/* Security Audit - Full Width */}
+              <SecurityAuditCard />
+
               {/* Activity Logs - Full Width */}
               <ActivityLogsCard />
 
