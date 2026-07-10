@@ -97,15 +97,19 @@ export function BrasaoSentinela({
         />
       ))}
 
-      {/* "P" institucional — opticamente centralizado no escudo */}
-      <path
-        d="M68 136 L68 180 M68 136 L92 136 C104 136 110 142 110 149 C110 156 104 162 92 162 L68 162"
-        stroke="url(#brasaoGold)"
-        strokeWidth="3.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
+      {/* "P" institucional — tipografia serifada real, centralizado */}
+      <text
+        x="90"
+        y="176"
+        textAnchor="middle"
+        fontFamily="'Cormorant Garamond', 'Playfair Display', Georgia, serif"
+        fontWeight="600"
+        fontSize="58"
+        fill="url(#brasaoGold)"
+        style={{ letterSpacing: "0", dominantBaseline: "alphabetic" }}
+      >
+        P
+      </text>
 
       {/* Louros laterais */}
       <path d="M28 110 Q10 130 32 168" stroke="url(#brasaoGold)" strokeWidth="1" fill="none" opacity="0.75" />
