@@ -209,19 +209,23 @@ export function AnnouncementsManager() {
         expires_at: formData.expires_at ? new Date(formData.expires_at).toISOString() : null,
       };
 
-      if (editingAnnouncement) {
+      if (hasMasterSession()) {
+        await callMasterAdmin('announcement_upsert', {
+          id: editingAnnouncement?.id ?? null,
+          payload,
+        });
+        toast.success(editingAnnouncement ? 'Aviso atualizado com sucesso' : 'Aviso criado com sucesso');
+      } else if (editingAnnouncement) {
         const { error } = await supabase
           .from('admin_announcements')
           .update(payload)
           .eq('id', editingAnnouncement.id);
-
         if (error) throw error;
         toast.success('Aviso atualizado com sucesso');
       } else {
         const { error } = await supabase
           .from('admin_announcements')
           .insert(payload);
-
         if (error) throw error;
         toast.success('Aviso criado com sucesso');
       }
