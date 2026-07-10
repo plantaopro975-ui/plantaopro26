@@ -544,20 +544,20 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[188px] min-[390px]:h-[210px] sm:h-[clamp(90px,14vh,240px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,380px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[22%] xl:-translate-x-[26%] pr-0 sm:pr-0 max-w-full"
             >
 
-              {/* Viatura — mobile: menor, encostada à esquerda | desktop: mantém */}
-              <picture className="relative block h-full aspect-square leading-[0] translate-y-6 min-[390px]:translate-y-7 sm:translate-y-0">
+              {/* Viatura — mobile: proporcional ao agente | desktop: um pouco mais baixa */}
+              <picture className="relative block h-full aspect-square leading-[0] translate-y-6 min-[390px]:translate-y-7 sm:translate-y-0 lg:translate-y-4 xl:translate-y-6">
                 <source type="image/webp" srcSet={vehicle3dWebp} />
                 <img
                   src={vehicle3d}
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.12] sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-100 sm:scale-100 lg:scale-[1.02] xl:scale-[1.08] origin-bottom-left"
                   draggable={false}
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-[1.12] sm:scale-100 lg:scale-[1.12] xl:scale-[1.2] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-100 sm:scale-100 lg:scale-[1.02] xl:scale-[1.08] origin-bottom-left"
                 >
                   <span
                     aria-hidden
@@ -572,7 +572,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 </span>
               </picture>
 
-              {/* Agente — mobile: menor, encostado à direita | desktop: mantém */}
+              {/* Agente — proporção alinhada à viatura em todos os breakpoints */}
               <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
                 <source type="image/webp" srcSet={agent3dWebp} />
                 <img
@@ -580,11 +580,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Agente Socioeducativo ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.05] xl:scale-[1.12] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
+                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-100 sm:scale-100 lg:scale-[1.02] xl:scale-[1.08] translate-y-0 lg:translate-y-4 xl:translate-y-6 origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
 
               </picture>
+
             </div>
 
             {/* DELTA card — desktop only, ao lado do agente */}
