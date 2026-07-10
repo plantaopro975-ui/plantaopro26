@@ -77,9 +77,10 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
         loading={isAlfa ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={isAlfa ? 'high' : 'low'}
-        width={1024}
-        height={1024}
+        width={512}
+        height={512}
         sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 220px"
+
         draggable={false}
         className={cn(
           'block h-full w-full max-h-[82%] max-w-[80%] sm:max-h-[78%] sm:max-w-[74%] lg:max-h-[82%] lg:max-w-[76%] object-contain object-center select-none animate-float3d',
