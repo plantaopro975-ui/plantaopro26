@@ -45,23 +45,7 @@ export const HomeImageBackground = memo(function HomeImageBackground() {
              ou vinheta. Legibilidade dos cards vem do backdrop-blur próprio
              deles (definido em .home-typo em src/index.css). */}
 
-      {/* 6 · Hairline âmbar topo */}
-      <div
-        className="absolute top-0 inset-x-0 h-px"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(244,201,116,0.35), transparent)",
-        }}
-      />
-
-      {/* 6b · Hairline âmbar base */}
-      <div
-        className="absolute bottom-0 inset-x-0 h-px"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(244,201,116,0.25), transparent)",
-        }}
-      />
+      {/* Sem overlays, sem hairlines, sem vinheta — imagem pura. */}
     </div>
   );
 });
