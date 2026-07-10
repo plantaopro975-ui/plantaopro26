@@ -992,7 +992,7 @@ export default function Master() {
                           <TableCell>
                             {agent.unit ? (
                               <div>
-                                <div className="font-medium text-sm">{agent.unit.name}</div>
+                                <div className="font-medium text-sm">{formatUnitName(agent.unit.name)}</div>
                                 <div className="text-xs text-muted-foreground">{agent.unit.municipality}</div>
                               </div>
                             ) : '-'}
@@ -1306,7 +1306,7 @@ export default function Master() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Unidade</p>
-                  <p>{selectedAgent.unit?.name || '-'}</p>
+                  <p>{formatUnitName(selectedAgent.unit?.name) || '-'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Equipe</p>
