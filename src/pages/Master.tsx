@@ -86,6 +86,7 @@ import { Bell } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
 const iseAcreBadge = iseAcreBadgeAsset.url;
 import { PanelNav } from '@/components/ui/panel-nav';
+import { formatUnitName } from '@/lib/unitNames';
 
 interface UserWithRole {
   id: string;
@@ -165,6 +166,7 @@ export default function Master() {
     pendingApprovals: 0,
   });
   const [loadingData, setLoadingData] = useState(true);
+  const [unitsError, setUnitsError] = useState<string | null>(null);
   const [agentSearchTerm, setAgentSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   
@@ -323,12 +325,28 @@ export default function Master() {
 
       setUsers(usersWithRoles);
 
-      // Fetch units
-      const { data: unitsData } = await supabase
-        .from('units')
-        .select('*')
-        .order('municipality, name');
-      
+      // Fetch units — usa RPC pública (SECURITY DEFINER) para funcionar com sessão master (sem auth.uid())
+      setUnitsError(null);
+      let unitsData: Unit[] | null = null;
+      const rpcRes = await (supabase as any).rpc('list_units_basic');
+      if (rpcRes.error) {
+        console.error('[Master] list_units_basic RPC falhou:', rpcRes.error);
+        // Fallback: tenta leitura direta (funciona se houver sessão authenticated)
+        const fallback = await supabase.from('units').select('*').order('name');
+        if (fallback.error) {
+          console.error('[Master] fallback units select falhou:', fallback.error);
+          setUnitsError(rpcRes.error.message || fallback.error.message || 'Falha ao carregar unidades');
+        } else {
+          unitsData = (fallback.data as Unit[]) || [];
+        }
+      } else {
+        unitsData = (rpcRes.data as Unit[]) || [];
+      }
+
+      if (unitsData && unitsData.length === 0) {
+        setUnitsError('Nenhuma unidade retornada pela consulta. Verifique permissões (RLS) ou o cadastro.');
+        console.warn('[Master] Consulta de unidades retornou vazio.');
+      }
       setUnits(unitsData || []);
 
       // Fetch agents with license info
