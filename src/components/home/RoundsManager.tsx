@@ -777,23 +777,21 @@ function ArmedLockPanel({
 
   return (
     <div
-      className="relative mb-2 overflow-hidden rounded-lg border p-3 sm:p-4"
+      className="relative mb-1.5 overflow-hidden rounded-md border px-2 py-1.5"
       style={{
         borderColor: `${color}55`,
         background: `linear-gradient(135deg, ${color}12 0%, transparent 60%), hsl(var(--card))`,
-        boxShadow: `0 16px 38px -22px ${color}, inset 0 1px 0 ${color}22`,
+        boxShadow: `0 8px 24px -18px ${color}, inset 0 1px 0 ${color}22`,
       }}
       role="status"
       aria-live="polite"
     >
-      {/* faixa scanline */}
       <span
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px"
         style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
       />
-      <div className="flex items-start gap-3 sm:gap-4">
-        {/* Cadeado com halo pulsante */}
+      <div className="flex items-center gap-2 min-w-0">
         <div className="relative shrink-0">
           <div
             className="absolute inset-0 rounded-full"
@@ -803,60 +801,59 @@ function ArmedLockPanel({
             }}
           />
           <div
-            className="relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full border"
+            className="relative flex h-7 w-7 items-center justify-center rounded-full border"
             style={{ borderColor: `${color}88`, background: `${color}18` }}
           >
-            <Lock className="h-6 w-6 sm:h-7 sm:w-7" style={{ color }} strokeWidth={2.2} />
+            <Lock className="h-3.5 w-3.5" style={{ color }} strokeWidth={2.3} />
           </div>
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+          <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] text-muted-foreground leading-none">
             <span
-              className="inline-block h-1.5 w-1.5 rounded-full"
+              className="inline-block h-1 w-1 rounded-full"
               style={{ backgroundColor: color, animation: 'armDot 1.2s ease-in-out infinite' }}
             />
-            Ronda programada · painel travado
+            Programada · dispara às <span className="text-foreground/90 font-semibold">{startLabel}</span>
           </div>
-          <div className="mt-0.5 text-[13px] sm:text-sm font-semibold text-foreground/95 leading-snug">
-            Equipe <span style={{ color }}>{team}</span>
-            {firstAgent && <> · início por <span className="text-foreground">{firstAgent}</span></>} às <span className="text-foreground">{startLabel}</span>
-          </div>
-
-          {/* Countdown profissional */}
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <TimeCell value={hh} label="h" color={color} />
-            <span className="text-lg sm:text-xl font-bold opacity-40" style={{ color }}>:</span>
-            <TimeCell value={mm} label="min" color={color} />
-            <span className="text-lg sm:text-xl font-bold opacity-40" style={{ color }}>:</span>
-            <TimeCell value={ss} label="s" color={color} pulse={isImminent} />
-          </div>
-
-          <div className="mt-1.5 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
-            Disparo automático em {targetLabel}
+          <div className="mt-0.5 flex items-baseline gap-2 flex-wrap">
+            <span
+              className="font-mono text-base sm:text-lg font-bold tabular-nums leading-none"
+              style={{
+                color,
+                textShadow: `0 0 10px ${color}55`,
+                animation: isImminent ? 'armTick 1s ease-in-out infinite' : undefined,
+              }}
+            >
+              {hh}:{mm}:{ss}
+            </span>
+            <span className="text-[10px] text-muted-foreground truncate">
+              {team}{firstAgent ? ` · ${firstAgent}` : ''}
+            </span>
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <Button
             type="button"
             size="sm"
             variant="ghost"
             onClick={onStartNow}
-            className="h-8 px-2 text-[11px] font-semibold"
+            className="h-7 px-1.5 text-[10.5px] font-semibold"
             style={{ color }}
-            title="Iniciar imediatamente sem esperar o horário programado"
+            title="Iniciar imediatamente"
           >
-            <Play className="h-3 w-3 mr-1" /> Iniciar agora
+            <Play className="h-3 w-3 mr-1" /> Agora
           </Button>
           <Button
             type="button"
             size="sm"
             variant="ghost"
             onClick={onCancel}
-            className="h-8 px-2 text-[11px] text-muted-foreground hover:text-destructive"
+            className="h-7 px-1.5 text-[10.5px] text-muted-foreground hover:text-destructive"
+            title="Cancelar programação"
           >
-            <XCircle className="h-3 w-3 mr-1" /> Cancelar
+            <XCircle className="h-3 w-3" />
           </Button>
         </div>
       </div>
