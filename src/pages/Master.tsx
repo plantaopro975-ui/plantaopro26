@@ -768,8 +768,20 @@ export default function Master() {
 
           {/* Overview Tab - Units */}
           <TabsContent value="overview" className="space-y-6 mt-6">
+            {unitsError && (
+              <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+                <strong>Aviso — Unidades:</strong> {unitsError}
+                <button
+                  type="button"
+                  onClick={fetchData}
+                  className="ml-3 underline underline-offset-2 hover:text-amber-100"
+                >
+                  Tentar novamente
+                </button>
+              </div>
+            )}
             <UnitsManagementCard 
-              units={units}
+              units={units.map(u => ({ ...u, name: formatUnitName(u.name) }))}
               agents={agents.map(a => ({
                 id: a.id,
                 name: a.name,
@@ -880,9 +892,14 @@ export default function Master() {
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
                           <SelectContent className="bg-popover border-border">
+                            {units.length === 0 && (
+                              <div className="px-3 py-2 text-sm text-amber-500">
+                                Nenhuma unidade disponível. {unitsError ? `(${unitsError})` : ''}
+                              </div>
+                            )}
                             {units.map((unit) => (
                               <SelectItem key={unit.id} value={unit.id}>
-                                {unit.name} - {unit.municipality}
+                                {formatUnitName(unit.name)} — {unit.municipality}
                               </SelectItem>
                             ))}
                           </SelectContent>
