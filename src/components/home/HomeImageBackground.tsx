@@ -1,5 +1,8 @@
 import { memo } from "react";
-import splashAsset from "@/assets/brand/plantaopro-splash.jpg.asset.json";
+
+// Servida diretamente de public/ para funcionar tanto em dev quanto em produção
+// (a URL /__l5e/... do CDN só resolve no ambiente publicado).
+const HERO_IMG_URL = "/plantaopro-hero.jpg";
 
 /**
  * HomeImageBackground — substituiu a antiga SVG CommandRoomBackground.
