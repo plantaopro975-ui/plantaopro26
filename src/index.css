@@ -1587,6 +1587,27 @@ img, svg, picture, video {
 }
 
 
+/* ============================================================
+ * Homepage cards translucent — deixa a imagem de BG (agente +
+ * viatura) transparecer atrás dos cards operacionais. Aplica-se
+ * apenas dentro de `.home-typo` (Index/homepage) para não afetar
+ * o Dashboard/Admin, que continuam com seus fundos sólidos.
+ * ============================================================ */
+.home-typo [class*="bg-card"],
+.home-typo [class*="bg-background"],
+.home-typo [class*="bg-slate-8"],
+.home-typo [class*="bg-slate-9"],
+.home-typo [class*="bg-zinc-8"],
+.home-typo [class*="bg-zinc-9"],
+.home-typo [class*="bg-neutral-8"],
+.home-typo [class*="bg-neutral-9"],
+.home-typo .tactical-card,
+.home-typo .tactical-cards {
+  background-color: rgba(6, 10, 18, 0.42) !important;
+  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+}
+
 
 /* Utility: hide scrollbar while preserving scroll capability */
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
