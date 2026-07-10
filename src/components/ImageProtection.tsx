@@ -24,9 +24,9 @@ const REASON_COPY: Record<Reason, { title: string; body: string }> = {
     body: "Não é permitido arrastar ou baixar imagens deste sistema.",
   },
   printscreen: {
-    title: "Captura de tela detectada",
+    title: "Captura de tela bloqueada",
     body:
-      "Capturas de tela e fotografias do conteúdo são proibidas. Este acesso é monitorado e registrado.",
+      "Este espaço reúne conteúdo dedicado a agentes de segurança pública do sistema socioeducativo. Capturas de tela, gravações e fotografias não são permitidas.",
   },
   save: {
     title: "Download bloqueado",
@@ -151,7 +151,7 @@ export function ImageProtection() {
         // Some OSes only send keyup for PrintScreen — cover both.
         try {
           navigator.clipboard?.writeText?.(
-            "Captura bloqueada — PlantãoPro (uso institucional).",
+            "Captura bloqueada — PlantãoPro · conteúdo dedicado a agentes de segurança pública do sistema socioeducativo.",
           );
         } catch {
           /* ignore */
@@ -200,14 +200,14 @@ export function ImageProtection() {
       hour: "2-digit",
       minute: "2-digit",
     });
-    const label = `ISE • ACRE • SISTEMA SOCIOEDUCATIVO • ${stamp}`;
+    const label = `PLANTÃOPRO • AGENTES DE SEGURANÇA · SOCIOEDUCATIVO • ${stamp}`;
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='520' height='320' viewBox='0 0 520 320'>
       <g fill='none' fill-rule='evenodd' opacity='0.09'>
         <text x='0' y='160' transform='rotate(-24 260 160)' font-family='IBM Plex Mono, monospace' font-size='16' font-weight='600' fill='#fbbf24' letter-spacing='2'>
           ${label}
         </text>
         <text x='40' y='300' transform='rotate(-24 260 160)' font-family='IBM Plex Mono, monospace' font-size='11' fill='#f59e0b' letter-spacing='4'>
-          PROTEGIDO • PLANTÃOPRO • USO INSTITUCIONAL
+          CONTEÚDO PROTEGIDO • DEDICADO AOS AGENTES
         </text>
       </g>
     </svg>`;
@@ -369,7 +369,7 @@ export function ImageProtection() {
               fontSize="9"
               letterSpacing="4"
             >
-              CONTEÚDO PROTEGIDO · USO INSTITUCIONAL
+              CONTEÚDO PROTEGIDO · CÓPIA NÃO AUTORIZADA
             </text>
             <text
               x="160"
@@ -381,7 +381,7 @@ export function ImageProtection() {
               fontSize="8"
               letterSpacing="3"
             >
-              ISE · ACRE · SISTEMA SOCIOEDUCATIVO
+              DEDICADO AOS AGENTES DE SEGURANÇA · SOCIOEDUCATIVO
             </text>
           </svg>
         </div>
@@ -485,19 +485,21 @@ export function ImageProtection() {
                 {msg.title}
               </h2>
               <div className="text-[10px] uppercase tracking-[0.28em] text-amber-500/70 mb-4 font-mono">
-                Sistema Socioeducativo · ISE Acre
+                Dedicado aos agentes · Segurança Socioeducativa
               </div>
 
               <p className="text-zinc-200 text-sm leading-relaxed mb-3">
                 {msg.body}
               </p>
               <p className="text-zinc-400 text-xs leading-relaxed">
-                Este conteúdo pertence à{" "}
+                O <span className="text-zinc-200 font-medium">PlantãoPro</span>{" "}
+                é um espaço independente criado para apoiar{" "}
                 <span className="text-zinc-200 font-medium">
-                  Equipe de Segurança do Sistema Socioeducativo
+                  agentes de segurança pública do sistema socioeducativo
                 </span>
-                . Cópias, capturas e fotografias são registradas e podem
-                acarretar sanções institucionais.
+                . Não é um site institucional ou oficial — todo o conteúdo é
+                autoral e protegido. Cópias, capturas ou fotografias não são
+                autorizadas.
               </p>
 
               <button
