@@ -61,55 +61,31 @@ const TEAMS: {
   { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   bg: bgDelta },
 ];
 
+import { TeamEmblem } from './TeamEmblem';
+
 interface TeamObjectProps {
-  team: { key: string; obj: string };
+  team: { key: TeamKey; obj: string };
   isAlfa: boolean;
   idx: number;
 }
-function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
-  const [loaded, setLoaded] = useState(false);
+function TeamObject({ team, idx }: TeamObjectProps) {
   return (
-    <>
-      {/* Skeleton blur-up: fixa espaço, evita CLS */}
-      <span
-        aria-hidden
+    <div className="relative flex h-full w-full items-center justify-center">
+      <TeamEmblem
+        team={team.key}
         className={cn(
-          'absolute inset-3 rounded-lg bg-gradient-to-br from-white/[0.04] to-white/[0.01]',
-          'transition-opacity duration-500',
-          loaded ? 'opacity-0' : 'opacity-100 animate-pulse',
+          'block h-full w-full max-h-[86%] max-w-[86%] sm:max-h-[82%] sm:max-w-[78%] lg:max-h-[84%] lg:max-w-[80%] select-none animate-float3d',
+          'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
+          'transition-[transform,opacity] duration-700 ease-out',
+          'group-hover:scale-[1.06] group-hover:-translate-y-0.5',
+          'group-active:scale-[1.02]',
         )}
+        style={{
+          transformOrigin: '50% 55%',
+          animationDelay: `${idx * 0.6}s`,
+        }}
       />
-      <picture className="relative flex h-full w-full items-center justify-center">
-        <img
-          src={team.obj}
-          alt={`Equipe ${team.key} — equipamento tático 3D`}
-          loading={isAlfa ? 'eager' : 'lazy'}
-          decoding="async"
-          fetchPriority={isAlfa ? 'high' : 'low'}
-          width={512}
-          height={512}
-          sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 200px"
-          onLoad={() => setLoaded(true)}
-          className={cn(
-            // Área uniforme: mesmo box para todas as equipes, object-contain garante encaixe proporcional
-            'block h-full w-full max-h-[74%] max-w-[74%] sm:max-h-[70%] sm:max-w-[66%] lg:max-h-[72%] lg:max-w-[68%] object-contain object-center select-none animate-float3d',
-            'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
-            'transition-[transform,opacity] duration-700 ease-out',
-            'group-hover:scale-[1.08] group-hover:-translate-y-0.5',
-            'group-active:scale-[1.03]',
-            isAlfa && 'alfa-vest',
-            loaded ? 'opacity-100' : 'opacity-0 blur-md',
-          )}
-          draggable={false}
-          style={{
-            transformOrigin: '50% 55%',
-            animationDelay: `${idx * 0.6}s`,
-            contentVisibility: 'auto',
-          }}
-        />
-      </picture>
-
-    </>
+    </div>
   );
 }
 
