@@ -18,6 +18,23 @@ export function AccessAcknowledgmentGate() {
   const [accepted, setAccepted] = useState(false);
   const [rejected, setRejected] = useState(false);
 
+  const handleBackdropWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
+    const target = event.target as HTMLElement | null;
+    const scrollablePanel = target?.closest<HTMLElement>('[data-access-gate-panel]');
+
+    if (scrollablePanel && scrollablePanel.scrollHeight > scrollablePanel.clientHeight) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollablePanel;
+      const isScrollingUpAtTop = event.deltaY < 0 && scrollTop <= 0;
+      const isScrollingDownAtBottom = event.deltaY > 0 && scrollTop + clientHeight >= scrollHeight - 1;
+
+      if (!isScrollingUpAtTop && !isScrollingDownAtBottom) {
+        return;
+      }
+    }
+
+    window.scrollBy({ top: event.deltaY, left: event.deltaX, behavior: "auto" });
+  };
+
   useEffect(() => {
     if (isExemptRoute) {
       setOpen(false);
@@ -53,9 +70,10 @@ export function AccessAcknowledgmentGate() {
       aria-modal="true"
       aria-labelledby="ack-title"
       aria-describedby="ack-desc"
+      onWheel={handleBackdropWheel}
       className="fixed inset-0 z-[10000] flex items-center justify-center overflow-y-auto bg-[radial-gradient(ellipse_at_center,hsl(32_20%_8%)_0%,hsl(222_50%_3%)_80%)] px-4 py-6"
     >
-      <div className="relative w-full max-w-sm">
+      <div data-access-gate-panel className="relative w-full max-w-sm">
         <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-b from-[#0b0d14]/95 to-[#05070d]/95 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.3)] backdrop-blur">
           {/* Imagem hero cinematográfica — proporção 4:3 mostrada por inteiro */}
           <div className="relative w-full overflow-hidden bg-[#05070d]" style={{ aspectRatio: '4 / 3' }}>
