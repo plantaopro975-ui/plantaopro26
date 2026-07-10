@@ -339,7 +339,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 order-3 sm:order-none mt-0">
+        <div className="relative hidden sm:grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 sm:order-none mt-0">
 
           {/* LEFT — CTA + selos */}
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
@@ -641,7 +641,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
         {/* ============ Team Selector Grid — no mobile vai para o topo (order-2) ============ */}
-        <div className="relative shrink-0 px-3 sm:px-3 pt-0 sm:pt-3 pb-1 mt-0 sm:mt-2 order-4 sm:order-none">
+        <div className="relative shrink-0 px-3 sm:px-3 pt-1 sm:pt-3 pb-1 mt-0 sm:mt-2 order-3 sm:order-none">
 
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-200">
