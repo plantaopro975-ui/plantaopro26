@@ -623,19 +623,9 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
       <g mask={`url(#${uid}-tmask)`}>
         <g fontFamily='"JetBrains Mono", ui-monospace, monospace' fontSize="5.4" letterSpacing="1.2" fill={color} opacity="0.78">
           <text y="7">
-            <textPath href={`#${uid}-tpath`} startOffset="0">{line + line}</textPath>
+            {line + line}
+            <animate attributeName="x" values="0;-640" dur="42s" repeatCount="indefinite" />
           </text>
-        </g>
-        {/* trilha invisível para textPath */}
-        <path id={`${uid}-tpath`} d="M0 7 H2000" fill="none" stroke="none" />
-        <g transform="translate(0 0)">
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            values="0 0; -640 0"
-            dur="42s"
-            repeatCount="indefinite"
-          />
         </g>
       </g>
     </g>
