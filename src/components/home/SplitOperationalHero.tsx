@@ -51,27 +51,33 @@ const TEAMS: {
   obj: string;
   bg: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Colete · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa },
+  { key: 'ALFA',    motto: 'Escudo · Proteção',   op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa },
   { key: 'BRAVO',   motto: 'Capacete · Ação',     op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo },
-  { key: 'CHARLIE', motto: 'Distintivo · Honra',  op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie },
+  { key: 'CHARLIE', motto: 'Óptica · Vigilância', op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie },
   { key: 'DELTA',   motto: 'Rádio · Velocidade',  op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   bg: bgDelta },
 ];
-
-import { TeamEmblem } from './TeamEmblem';
 
 interface TeamObjectProps {
   team: { key: TeamKey; obj: string };
   isAlfa: boolean;
   idx: number;
 }
-function TeamObject({ team, idx }: TeamObjectProps) {
+function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   return (
     <div className="relative flex h-full w-full items-center justify-center">
-      <TeamEmblem
-        team={team.key}
+      <img
+        src={team.obj}
+        alt={`Equipe ${team.key} — equipamento tático`}
+        loading={isAlfa ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchPriority={isAlfa ? 'high' : 'low'}
+        width={1024}
+        height={1024}
+        sizes="(max-width: 640px) 42vw, (max-width: 1024px) 18vw, 220px"
+        draggable={false}
         className={cn(
-          'block h-full w-full max-h-[86%] max-w-[86%] sm:max-h-[82%] sm:max-w-[78%] lg:max-h-[84%] lg:max-w-[80%] select-none animate-float3d',
-          'drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]',
+          'block h-full w-full max-h-[82%] max-w-[80%] sm:max-h-[78%] sm:max-w-[74%] lg:max-h-[82%] lg:max-w-[76%] object-contain object-center select-none animate-float3d',
+          'drop-shadow-[0_20px_32px_rgba(0,0,0,0.9)]',
           'transition-[transform,opacity] duration-700 ease-out',
           'group-hover:scale-[1.06] group-hover:-translate-y-0.5',
           'group-active:scale-[1.02]',
@@ -79,6 +85,7 @@ function TeamObject({ team, idx }: TeamObjectProps) {
         style={{
           transformOrigin: '50% 55%',
           animationDelay: `${idx * 0.6}s`,
+          contentVisibility: 'auto',
         }}
       />
     </div>
