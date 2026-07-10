@@ -24,12 +24,15 @@ export const HomeImageBackground = memo(function HomeImageBackground() {
       className="absolute inset-0 pointer-events-none overflow-hidden z-0"
       aria-hidden
     >
-      {/* 1 · Imagem oficial */}
+      {/* 1 · Imagem oficial — carregamento prioritário para não travar o boot */}
       <img
         src={HERO_IMG_URL}
         alt=""
         draggable={false}
-        decoding="async"
+        decoding="sync"
+        loading="eager"
+        // @ts-expect-error fetchpriority é atributo HTML válido
+        fetchpriority="high"
         className="absolute inset-0 w-full h-full select-none"
         style={{
           objectFit: "cover",
