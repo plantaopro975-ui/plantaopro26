@@ -91,10 +91,12 @@ interface TeamObjectProps {
   idx: number;
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
+  // Envelope QUADRADO IDÊNTICO para todas as equipes.
+  // Tamanho fixo por breakpoint garante que ALFA/BRAVO/CHARLIE/DELTA
+  // ocupem o mesmo bounding box. `object-contain` respeita a proporção
+  // nativa de cada asset dentro desse quadrado.
   const imgClass = cn(
-    // Envelope FIXO: mesmo bounding box para todos os objetos 3D (padrão = rádio DELTA).
-    // h/w idênticos + object-contain = cada peça se ajusta dentro do mesmo quadrado.
-    'block h-[82%] w-[82%] max-h-[140px] max-w-[140px] sm:max-h-[150px] sm:max-w-[150px] lg:max-h-[168px] lg:max-w-[168px] object-contain object-center select-none animate-float3d',
+    'block h-full w-full object-contain object-center select-none animate-float3d',
     'drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]',
     'transition-[transform,opacity] duration-700 ease-out',
     'group-hover:scale-[1.06] group-hover:-translate-y-0.5',
@@ -102,28 +104,31 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   );
 
   return (
-    <div className="relative flex h-full w-full items-center justify-center px-2 py-1">
-      <picture className="flex h-full w-full items-center justify-center">
-        <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 140px, (max-width: 1024px) 150px, 168px" />
-        <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 140px, (max-width: 1024px) 150px, 168px" />
-        <img
-          src={team.obj}
-          alt={`Equipe ${team.key} — equipamento tático`}
-          loading={isAlfa ? 'eager' : 'lazy'}
-          decoding="async"
-          fetchPriority={isAlfa ? 'high' : 'low'}
-          width={512}
-          height={512}
-          sizes="(max-width: 640px) 140px, (max-width: 1024px) 150px, 168px"
-          draggable={false}
-          className={imgClass}
-          style={{
-            transformOrigin: '50% 50%',
-            animationDelay: `${idx * 0.6}s`,
-            contentVisibility: 'auto',
-          }}
-        />
-      </picture>
+    <div className="relative flex h-full w-full items-center justify-center">
+      {/* Quadrado fixo — mesma "moldura" para todos os 3D */}
+      <div className="relative aspect-square w-[118px] min-[390px]:w-[126px] sm:w-[128px] lg:w-[140px] xl:w-[152px] max-h-full flex items-center justify-center">
+        <picture className="flex h-full w-full items-center justify-center">
+          <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 126px, (max-width: 1024px) 128px, 152px" />
+          <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 126px, (max-width: 1024px) 128px, 152px" />
+          <img
+            src={team.obj}
+            alt={`Equipe ${team.key} — equipamento tático`}
+            loading={isAlfa ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={isAlfa ? 'high' : 'low'}
+            width={512}
+            height={512}
+            sizes="(max-width: 640px) 126px, (max-width: 1024px) 128px, 152px"
+            draggable={false}
+            className={imgClass}
+            style={{
+              transformOrigin: '50% 50%',
+              animationDelay: `${idx * 0.6}s`,
+              contentVisibility: 'auto',
+            }}
+          />
+        </picture>
+      </div>
     </div>
   );
 }
