@@ -122,22 +122,28 @@ export function AnnouncementsManager() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [announcementsResult, unitsResult] = await Promise.all([
-        supabase
-          .from('admin_announcements')
-          .select('*')
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('units')
-          .select('id, name')
-          .order('name')
-      ]);
-
-      if (announcementsResult.data) {
-        setAnnouncements(announcementsResult.data as Announcement[]);
-      }
-      if (unitsResult.data) {
-        setUnits(unitsResult.data as Unit[]);
+      if (hasMasterSession()) {
+        // Master session (sem auth.uid()) → usar edge function com service_role
+        const [ann, un] = await Promise.all([
+          callMasterAdmin<Announcement[]>('announcement_list'),
+          callMasterAdmin<Unit[]>('units_list'),
+        ]);
+        setAnnouncements((ann ?? []) as Announcement[]);
+        setUnits((un ?? []) as Unit[]);
+      } else {
+        const [announcementsResult, unitsResult] = await Promise.all([
+          supabase
+            .from('admin_announcements')
+            .select('*')
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('units')
+            .select('id, name')
+            .order('name')
+        ]);
+        if (announcementsResult.error) throw announcementsResult.error;
+        if (announcementsResult.data) setAnnouncements(announcementsResult.data as Announcement[]);
+        if (unitsResult.data) setUnits(unitsResult.data as Unit[]);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
