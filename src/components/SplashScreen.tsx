@@ -252,18 +252,18 @@ export function SplashScreen() {
               />
             ))}
 
-            {/* "P" institucional — centralizado */}
+            {/* "P" institucional — opticamente centralizado no escudo */}
             <path
-              d="M84 140 L84 176 M84 140 L100 140 C110 140 114 146 114 153 C114 160 110 166 100 166 L84 166"
+              d="M68 136 L68 180 M68 136 L92 136 C104 136 110 142 110 149 C110 156 104 162 92 162 L68 162"
               stroke="url(#spGold)"
-              strokeWidth="3"
-              strokeLinecap="square"
-              strokeLinejoin="miter"
+              strokeWidth="3.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               fill="none"
               style={{
-                strokeDasharray: 120,
-                strokeDashoffset: 120,
-                animation: "splashDraw 750ms 1300ms cubic-bezier(.22,1,.36,1) forwards",
+                strokeDasharray: 140,
+                strokeDashoffset: 140,
+                animation: "splashDraw 800ms 1300ms cubic-bezier(.22,1,.36,1) forwards",
               }}
             />
 
