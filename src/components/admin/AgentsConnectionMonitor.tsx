@@ -151,8 +151,14 @@ export function AgentsConnectionMonitor() {
 
   useEffect(() => { load(); }, []);
   useEffect(() => {
-    const i = setInterval(() => { setTick((t) => t + 1); load(); }, 20_000);
+    // Poll rápido para sincronizar login/logout mesmo quando Realtime está bloqueado por RLS.
+    const i = setInterval(() => { setTick((t) => t + 1); load(); }, 10_000);
     return () => clearInterval(i);
+  }, []);
+  // Force re-render do relógio de "sessão ativa" a cada 30s (durações relativas).
+  useEffect(() => {
+    const t = setInterval(() => setTick((x) => x + 1), 30_000);
+    return () => clearInterval(t);
   }, []);
 
   const agentIndex = useMemo(() => {
