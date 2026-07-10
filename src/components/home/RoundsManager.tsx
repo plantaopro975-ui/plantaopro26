@@ -581,7 +581,7 @@ function TeamOperationsStripe({
           )}
         </g>
 
-        <TeamDoctrineTicker team={team} color={color} uid={uid} />
+        {/* Ticker moved to HTML overlay below for crisp typography */}
 
         {/* Rótulo canto direito */}
         <g fontFamily="ui-monospace, monospace" fontSize="6" letterSpacing="1.4" fill={color} opacity="0.6">
