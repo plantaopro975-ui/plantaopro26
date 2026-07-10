@@ -77,6 +77,7 @@ const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagemen
 const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
 const PendingApprovalsManager = lazy(() => import('@/components/admin/PendingApprovalsManager').then(m => ({ default: m.PendingApprovalsManager })));
 const RecentRegistrationsAudit = lazy(() => import('@/components/admin/RecentRegistrationsAudit').then(m => ({ default: m.RecentRegistrationsAudit })));
+const AccessAuditPanel = lazy(() => import('@/components/admin/AccessAuditPanel').then(m => ({ default: m.AccessAuditPanel })));
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { formatCPF, validateCPF } from '@/lib/validators';
 import { cn } from '@/lib/utils';
