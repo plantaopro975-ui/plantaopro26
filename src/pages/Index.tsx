@@ -63,12 +63,11 @@ import { DeveloperSignature } from '@/components/DeveloperSignature';
 import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
-import { CinematicBrandHero } from '@/components/home/CinematicBrandHero';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
 import { useHomeCardOrder, type HomeCardId } from '@/hooks/useHomeCardOrder';
 
-import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
+import { HomeImageBackground } from '@/components/home/HomeImageBackground';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { setMasterToken } from '@/lib/masterSession';
