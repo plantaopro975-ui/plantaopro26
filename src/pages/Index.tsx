@@ -1477,14 +1477,8 @@ export default function Index() {
 
 
 
-      {/* Seção institucional cinematográfica — abaixo dos cards operacionais.
-          Usa a arte oficial (agente + viatura) como background fullscreen. */}
-      <CinematicBrandHero
-        onScrollToLogin={() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onMasterClick={() => setShowMasterLogin(true)}
-      />
+      {/* CinematicBrandHero removido — a imagem agora é o próprio background
+          da home (HomeImageBackground), tornando essa seção redundante. */}
 
 
 
