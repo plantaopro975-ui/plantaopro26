@@ -28,10 +28,19 @@ import objAlfaAsset from '@/assets/teams/alfa-object3d-v3.webp.asset.json';
 import objBravoAsset from '@/assets/teams/bravo-object3d-v3.webp.asset.json';
 import objCharlieAsset from '@/assets/teams/charlie-object3d-v3.webp.asset.json';
 import objDeltaAsset from '@/assets/teams/delta-object3d-v3.webp.asset.json';
+import objAlfaAvifAsset from '@/assets/teams/alfa-object3d-v3.avif.asset.json';
+import objBravoAvifAsset from '@/assets/teams/bravo-object3d-v3.avif.asset.json';
+import objCharlieAvifAsset from '@/assets/teams/charlie-object3d-v3.avif.asset.json';
+import objDeltaAvifAsset from '@/assets/teams/delta-object3d-v3.avif.asset.json';
 const objAlfa = objAlfaAsset.url;
 const objBravo = objBravoAsset.url;
 const objCharlie = objCharlieAsset.url;
 const objDelta = objDeltaAsset.url;
+const objAlfaAvif = objAlfaAvifAsset.url;
+const objBravoAvif = objBravoAvifAsset.url;
+const objCharlieAvif = objCharlieAvifAsset.url;
+const objDeltaAvif = objDeltaAvifAsset.url;
+
 
 
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
