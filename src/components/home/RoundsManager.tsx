@@ -2224,14 +2224,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   // Auto-início ao zerar o countdown — protegido por ref para disparar
   // exatamente 1x por programação, imune a re-renders/StrictMode.
+  // A âncora é fixada no `armedForMs` alvo (não em Date.now no tick) para
+  // GARANTIR que o cronômetro comece no slot do Agente 1 mesmo que o tick
+  // do React chegue algumas dezenas/centenas de ms após o horário-alvo.
   useEffect(() => {
     if (!armed || armedForMs == null) return;
     if (autoFiredRef.current === armedForMs) return; // já disparou p/ este alvo
     const remaining = armedForMs - nowServer();
     if (remaining <= 0) {
-      autoFiredRef.current = armedForMs;
+      const target = armedForMs;
+      autoFiredRef.current = target;
       setArmedForMs(null);
-      startTimer();
+      startTimer({ anchorOverrideMs: target });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [armed, armedForMs, tick]);
