@@ -226,6 +226,25 @@ export function CinematicBrandHero({
             </span>
           </div>
         </div>
+
+        {/* Tactical corner brackets — apenas desktop, para casar com o
+            estilo dos demais cards da home. */}
+        <span
+          aria-hidden
+          className="hidden sm:block absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-amber-500/50 rounded-tl-lg"
+        />
+        <span
+          aria-hidden
+          className="hidden sm:block absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-amber-500/50 rounded-tr-lg"
+        />
+        <span
+          aria-hidden
+          className="hidden sm:block absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-amber-500/50 rounded-bl-lg"
+        />
+        <span
+          aria-hidden
+          className="hidden sm:block absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-amber-500/50 rounded-br-lg"
+        />
       </div>
     </section>
   );
