@@ -226,6 +226,9 @@ export function CinematicBrandHero({
             </span>
           </div>
         </div>
+        {/* /content max-w-xl */}
+      </div>
+      {/* /content z-10 wrapper */}
 
         {/* Tactical corner brackets — apenas desktop, para casar com o
             estilo dos demais cards da home. */}
@@ -246,6 +249,7 @@ export function CinematicBrandHero({
           className="hidden sm:block absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-amber-500/50 rounded-br-lg"
         />
       </div>
+      {/* /card container */}
     </section>
   );
 }
