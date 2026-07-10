@@ -1345,7 +1345,7 @@ export default function Index() {
     <Suspense fallback={null}>
     <>
       <div
-        className="home-typo min-h-full flex flex-col bg-background relative overflow-x-clip max-sm:overflow-x-hidden overscroll-contain home-compact max-sm:overflow-y-auto"
+        className="home-typo min-h-full flex flex-col bg-background relative overflow-x-clip max-sm:overflow-x-hidden home-compact max-sm:overflow-y-auto"
         style={{
           fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
           ['--home-gap' as any]: 'clamp(2px, 0.35vh, 8px)',
@@ -1375,7 +1375,7 @@ export default function Index() {
 
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex min-h-0 flex-1 flex-col sm:overflow-hidden">
+      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-visible">
         {user && (
           <div
             className="w-full max-w-6xl mx-auto pt-2"
@@ -1464,7 +1464,7 @@ export default function Index() {
                 return (
                   <div
                     key={id}
-                    className={b.grow ? 'min-h-0 shrink-0 overflow-visible sm:flex-1 sm:overflow-hidden' : 'shrink-0 overflow-hidden'}
+                    className={b.grow ? 'min-h-0 shrink-0 overflow-visible sm:flex-1' : 'shrink-0 overflow-hidden'}
                   >
                     {b.node}
                   </div>
