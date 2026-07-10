@@ -92,10 +92,11 @@ interface TeamObjectProps {
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   const imgClass = cn(
-    'block h-full w-full max-h-[52%] max-w-[46%] sm:max-h-[50%] sm:max-w-[44%] lg:max-h-[54%] lg:max-w-[48%] object-contain object-center select-none animate-float3d',
-    'drop-shadow-[0_14px_22px_rgba(0,0,0,0.75)]',
+    // Contido: nunca ultrapassa ~40% do slot, sempre centralizado
+    'block max-h-[40%] max-w-[38%] sm:max-h-[42%] sm:max-w-[38%] lg:max-h-[44%] lg:max-w-[40%] object-contain object-center select-none animate-float3d',
+    'drop-shadow-[0_10px_18px_rgba(0,0,0,0.65)]',
     'transition-[transform,opacity] duration-700 ease-out',
-    'group-hover:scale-[1.06] group-hover:-translate-y-1',
+    'group-hover:scale-[1.05] group-hover:-translate-y-0.5',
     'group-active:scale-[1.02]',
   );
 
@@ -116,7 +117,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
           draggable={false}
           className={imgClass}
           style={{
-            transformOrigin: '50% 55%',
+            transformOrigin: '50% 50%',
             animationDelay: `${idx * 0.6}s`,
             contentVisibility: 'auto',
           }}
