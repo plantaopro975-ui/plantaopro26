@@ -605,6 +605,10 @@ function TeamOperationsStripe({
         )}
       </svg>
 
+      {/* Ticker HTML — tipografia nítida, legível em qualquer navegador */}
+      <TeamDoctrineTicker team={team} color={color} uid={uid} />
+
+
       {/* Fallback acessível quando o SVG não renderizar */}
       <noscript>
         <div className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground px-2 py-1">
