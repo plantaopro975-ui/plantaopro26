@@ -145,8 +145,8 @@ export function AgentsDirectoryCard({
     });
   }, [agents, debouncedSearch, teamFilter, statusFilter, onlineIds]);
 
-  const totalActive = agents.filter((a) => a.is_active && a.approval_status === 'approved').length;
-  const totalOnline = agents.filter((a) => onlineIds.has(a.id)).length;
+  const totalActive = filtered.filter((a) => a.is_active && a.approval_status === 'approved').length;
+  const totalOnline = filtered.filter((a) => onlineIds.has(a.id)).length;
 
   const initials = (name: string) =>
     name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
@@ -173,7 +173,7 @@ export function AgentsDirectoryCard({
                 {totalOnline} on
               </Badge>
               <Badge variant="outline" className="h-5 px-1.5 border-amber-500/40 text-amber-200 bg-amber-500/10">
-                <Shield className="h-2.5 w-2.5 mr-1" /> {totalActive}/{agents.length}
+                <Shield className="h-2.5 w-2.5 mr-1" /> {totalActive}/{filtered.length}
               </Badge>
             </div>
           </div>
