@@ -191,11 +191,14 @@ export function SplashScreen() {
               />
             ))}
 
-            {/* Monograma "P" institucional em ouro */}
+            {/* Monograma "P" institucional em ouro — centralizado no hexágono (90,100) */}
             <g
-              transform="translate(56,54)"
+              transform="translate(50,55) scale(0.82)"
               filter="url(#emblGlow)"
-              style={{ animation: "emblMono 900ms 350ms cubic-bezier(.22,1,.36,1) both" }}
+              style={{
+                animation: "emblMono 900ms 350ms cubic-bezier(.22,1,.36,1) both",
+                transformOrigin: "90px 100px",
+              }}
             >
               {/* Haste + arco + serifas */}
               <path
@@ -204,7 +207,7 @@ export function SplashScreen() {
                    M6 92 L30 92
                    M6 6 L30 6"
                 stroke="url(#emblGold)"
-                strokeWidth="4.2"
+                strokeWidth="4.6"
                 strokeLinecap="square"
                 strokeLinejoin="miter"
                 fill="none"

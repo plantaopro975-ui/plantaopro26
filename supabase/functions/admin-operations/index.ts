@@ -706,6 +706,59 @@ serve(async (req) => {
       return json({ success: true });
     }
 
+    // ===== DASHBOARD DATA (Master painel) =====
+    // Consolida units + agents + users + logs + stats em uma única chamada,
+    // usando service_role para bypassar RLS quando o master faz login por token.
+    if (action === "list_dashboard_data") {
+      const [unitsRes, agentsRes, profilesRes, rolesRes, logsRes, transfersRes] = await Promise.all([
+        admin.from("units").select("id, name, municipality, director_name, coordinator_name, address, email, phone").order("municipality").order("name"),
+        admin.from("agents").select("id, name, cpf, matricula, email, phone, address, team, is_active, unit_id, approval_status, license_status, license_expires_at, license_notes, created_at, unit:units(name, municipality)").order("name"),
+        admin.from("profiles").select("user_id, full_name, created_at"),
+        admin.from("user_roles").select("user_id, role"),
+        admin.from("access_logs").select("id, agent_id, action, created_at, ip_address, user_agent, agent:agents(name)").order("created_at", { ascending: false }).limit(100),
+        admin.from("transfer_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      ]);
+
+      if (unitsRes.error || agentsRes.error) {
+        console.error("list_dashboard_data errors", { units: unitsRes.error, agents: agentsRes.error });
+        return json({ success: false, error: "Falha ao carregar dados do painel." }, 500);
+      }
+
+      const agents = agentsRes.data ?? [];
+      const now = Date.now();
+      const expiredLicenses = agents.filter((a: any) => a.license_expires_at && new Date(a.license_expires_at).getTime() < now).length;
+      const activeAgents = agents.filter((a: any) => a.is_active && a.approval_status === "approved").length;
+      const pendingApprovals = agents.filter((a: any) => a.approval_status === "pending" || a.approval_status == null).length;
+
+      const roleMap = new Map<string, string>();
+      (rolesRes.data ?? []).forEach((r: any) => roleMap.set(r.user_id, r.role));
+      const users = (profilesRes.data ?? []).map((p: any) => ({
+        id: p.user_id,
+        email: p.full_name || "Usuário",
+        created_at: p.created_at,
+        role: roleMap.get(p.user_id) ?? "user",
+      }));
+
+      return json({
+        success: true,
+        data: {
+          units: unitsRes.data ?? [],
+          agents,
+          users,
+          accessLogs: logsRes.data ?? [],
+          stats: {
+            totalUsers: users.length,
+            totalAgents: agents.length,
+            totalUnits: unitsRes.data?.length ?? 0,
+            pendingTransfers: transfersRes.count ?? 0,
+            activeAgents,
+            expiredLicenses,
+            pendingApprovals,
+          },
+        },
+      });
+    }
+
     return json({ success: false, error: "Ação desconhecida." }, 400);
   } catch (err) {
     console.error("admin-operations error", err);
