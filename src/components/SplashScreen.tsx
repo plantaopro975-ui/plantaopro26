@@ -2,14 +2,25 @@ import { useEffect, useState } from "react";
 import { pushDiagEvent } from "@/lib/diagLog";
 
 /**
- * Splash — "Sentinel Emblem" v8.
- * Direção editorial: composição minimalista, negativo generoso, um único
- * emblema institucional dominante (hexágono duplo + monograma "P" em ouro)
- * sobre carvão profundo com aurora sutil. Tipografia clássica com serifa
- * de exibição no wordmark. Duração ~2.4s. Respeita prefers-reduced-motion.
+ * Splash — "Boot Tático" v9.
+ * Direção institucional cotando o HUD do site (amber-on-navy, grid, brackets,
+ * telemetria monospace, wordmark serifa + estêncil ISE). Duração ~2.6s.
+ * Respeita prefers-reduced-motion.
  */
 
 let splashMountedThisRuntime = false;
+
+const GOLD = "#f4c974";
+const GOLD_DEEP = "#c9922b";
+const INK = "#e9edf3";
+const NAVY_0 = "#050505";
+
+const BOOT_LINES: { t: string; msg: string; hot?: boolean }[] = [
+  { t: "0.12", msg: "Iniciando módulos ISE..." },
+  { t: "0.45", msg: "Verificando credenciais..." },
+  { t: "1.12", msg: "Sincronizando escalas..." },
+  { t: "2.04", msg: "Sistema pronto. Acessando...", hot: true },
+];
 
 export function SplashScreen() {
   const [visible, setVisible] = useState(() => !splashMountedThisRuntime);
@@ -19,8 +30,8 @@ export function SplashScreen() {
     pushDiagEvent("info", "splash_mount", { willRender: visible });
     if (!visible) return;
     splashMountedThisRuntime = true;
-    const t1 = window.setTimeout(() => setFadeOut(true), 2400);
-    const t2 = window.setTimeout(() => setVisible(false), 3050);
+    const t1 = window.setTimeout(() => setFadeOut(true), 2600);
+    const t2 = window.setTimeout(() => setVisible(false), 3250);
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
@@ -30,12 +41,6 @@ export function SplashScreen() {
 
   if (!visible) return null;
 
-  const GOLD_HI = "#f4c974";
-  const GOLD    = "#c9922b";
-  const GOLD_LO = "#7a5312";
-  const IVORY   = "#ece4d3";
-  const INK     = "#e9edf3";
-
   return (
     <div
       role="status"
@@ -43,336 +48,266 @@ export function SplashScreen() {
       className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse 90% 60% at 50% 45%, #16202c 0%, #0b1218 55%, #05080c 100%)",
+          "radial-gradient(ellipse 90% 60% at 50% 45%, #0A1128 0%, #060912 60%, #050505 100%)",
+        color: GOLD,
+        fontFamily: "'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace",
         opacity: fadeOut ? 0 : 1,
-        transition: "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+        transition: "opacity 650ms cubic-bezier(0.22, 1, 0.36, 1)",
       }}
     >
-      {/* Aurora sutil */}
+      {/* HUD grid layer */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 30% at 50% 30%, rgba(201,146,43,0.10), transparent 70%)",
-        }}
-      />
-
-      {/* Grão / textura muito leve */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
+        className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px)",
-          backgroundSize: "3px 3px",
+            "linear-gradient(to right, rgba(244,201,116,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(244,201,116,0.06) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+          maskImage:
+            "radial-gradient(ellipse at center, black 40%, transparent 85%)",
         }}
       />
 
-      {/* Filete superior e inferior — moldura editorial */}
-      <div
-        aria-hidden
-        className="absolute inset-x-10 top-8 h-px"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${GOLD}55, transparent)`,
-          animation: "emblFade 700ms 200ms both",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-x-10 bottom-8 h-px"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${GOLD}55, transparent)`,
-          animation: "emblFade 700ms 260ms both",
-        }}
-      />
-
-      {/* Micro-legenda topo */}
-      <div
-        aria-hidden
-        className="absolute top-12 left-1/2 -translate-x-1/2 text-[9px] uppercase"
-        style={{
-          color: `${IVORY}88`,
-          letterSpacing: "0.65em",
-          fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-          animation: "emblFade 700ms 340ms both",
-        }}
-      >
-        Est. 2024 · Acre · Brasil
+      {/* Scanline */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute left-0 right-0 h-[2px]"
+          style={{
+            top: 0,
+            background: `linear-gradient(90deg, transparent, ${GOLD}22, transparent)`,
+            animation: "spScan 3.6s linear infinite",
+          }}
+        />
       </div>
 
-      {/* Composição central */}
-      <div className="relative flex flex-col items-center px-8">
-        {/* Emblema — hexágono duplo com monograma "P" */}
+      {/* Frame brackets */}
+      {[
+        "top-6 left-6 border-t-2 border-l-2",
+        "top-6 right-6 border-t-2 border-r-2",
+        "bottom-6 left-6 border-b-2 border-l-2",
+        "bottom-6 right-6 border-b-2 border-r-2",
+      ].map((cls, i) => (
+        <span
+          key={i}
+          aria-hidden
+          className={`absolute w-9 h-9 ${cls}`}
+          style={{
+            borderColor: `${GOLD}66`,
+            animation: `spFade 500ms ${120 + i * 80}ms both`,
+          }}
+        />
+      ))}
+
+      {/* Top telemetry */}
+      <div
+        className="absolute top-8 left-8 right-8 flex items-start justify-between text-[10px] uppercase tracking-[0.22em]"
+        style={{ color: `${INK}99`, animation: "spFade 600ms 200ms both" }}
+      >
+        <div className="flex flex-col gap-1">
+          <span className="flex items-center gap-2">
+            <span
+              className="inline-block w-1.5 h-1.5 rounded-full"
+              style={{
+                background: GOLD,
+                boxShadow: `0 0 6px ${GOLD}`,
+                animation: "spPulse 1.4s ease-in-out infinite",
+              }}
+            />
+            <span style={{ color: GOLD }}>Secure link established</span>
+          </span>
+          <span>ID: ISE-ACRE // OPS-ALPHA</span>
+        </div>
+        <div className="text-right leading-relaxed">
+          <div>LAT: 9.9748° S</div>
+          <div>LON: 67.8111° W</div>
+        </div>
+      </div>
+
+      {/* Central composition */}
+      <div className="relative z-10 flex flex-col items-center px-8">
+        {/* Emblema — hexágono ISE em ouro */}
         <div
-          className="relative"
-          style={{ animation: "emblRise 1000ms cubic-bezier(.22,1,.36,1) both" }}
+          className="relative mb-8"
+          style={{ animation: "spRise 900ms cubic-bezier(.22,1,.36,1) both" }}
         >
-          <svg
-            width="180"
-            height="200"
-            viewBox="0 0 180 200"
-            xmlns="http://www.w3.org/2000/svg"
+          <div
             aria-hidden
-          >
+            className="absolute inset-0 rounded-full"
+            style={{
+              border: `1px solid ${GOLD}33`,
+              animation: "spSpin 14s linear infinite",
+              inset: "-14px",
+            }}
+          />
+          <svg width="86" height="86" viewBox="0 0 100 100" aria-hidden>
             <defs>
-              <linearGradient id="emblGold" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%"   stopColor={GOLD_HI} />
-                <stop offset="55%"  stopColor={GOLD} />
-                <stop offset="100%" stopColor={GOLD_LO} />
+              <linearGradient id="spGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#f4c974" />
+                <stop offset="55%" stopColor="#c9922b" />
+                <stop offset="100%" stopColor="#7a5312" />
               </linearGradient>
-              <linearGradient id="emblGoldSoft" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stopColor={GOLD_HI} stopOpacity="0.9" />
-                <stop offset="100%" stopColor={GOLD_LO} stopOpacity="0.55" />
-              </linearGradient>
-              <radialGradient id="emblCore" cx="0.5" cy="0.45" r="0.65">
-                <stop offset="0%"  stopColor="#1a2735" />
-                <stop offset="100%" stopColor="#070c12" />
-              </radialGradient>
-              <filter id="emblGlow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="3.2" result="b" />
-                <feMerge>
-                  <feMergeNode in="b" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
             </defs>
-
-            {/* Halo dourado atrás */}
-            <ellipse
-              cx="90"
-              cy="100"
-              rx="86"
-              ry="86"
-              fill="url(#emblCore)"
-              opacity="0.0"
-            />
-            <ellipse
-              cx="90"
-              cy="100"
-              rx="78"
-              ry="78"
-              fill="none"
-              stroke={`${GOLD}22`}
-              strokeWidth="0.6"
-              style={{ animation: "emblRing 3200ms ease-out infinite" }}
-            />
-
-            {/* Hexágono externo */}
             <polygon
-              points="90,18 156,55 156,145 90,182 24,145 24,55"
-              fill="url(#emblCore)"
-              stroke="url(#emblGold)"
-              strokeWidth="1.8"
+              points="50,6 88,28 88,72 50,94 12,72 12,28"
+              fill="none"
+              stroke="url(#spGold)"
+              strokeWidth="2.2"
               strokeLinejoin="miter"
             />
-
-            {/* Hexágono interno (linha fina) */}
             <polygon
-              points="90,30 145,62 145,138 90,170 35,138 35,62"
+              points="50,18 78,34 78,66 50,82 22,66 22,34"
               fill="none"
-              stroke="url(#emblGoldSoft)"
-              strokeWidth="0.7"
-              opacity="0.7"
+              stroke={`${GOLD}66`}
+              strokeWidth="0.8"
             />
-
-            {/* Pequenos pinos nos vértices */}
-            {[
-              [90, 18], [156, 55], [156, 145],
-              [90, 182], [24, 145], [24, 55],
-            ].map(([x, y]) => (
-              <circle
-                key={`${x}-${y}`}
-                cx={x}
-                cy={y}
-                r="1.6"
-                fill={GOLD_HI}
-                opacity="0.85"
-              />
-            ))}
-
-            {/* Monograma "P" institucional em ouro — centralizado no hexágono (90,100) */}
-            <g
-              transform="translate(50,55) scale(0.82)"
-              filter="url(#emblGlow)"
-              style={{
-                animation: "emblMono 900ms 350ms cubic-bezier(.22,1,.36,1) both",
-                transformOrigin: "90px 100px",
-              }}
-            >
-              {/* Haste + arco + serifas */}
-              <path
-                d="M14 6 L14 92
-                   M14 6 L46 6 C64 6 74 18 74 32 C74 46 64 58 46 58 L14 58
-                   M6 92 L30 92
-                   M6 6 L30 6"
-                stroke="url(#emblGold)"
-                strokeWidth="4.6"
-                strokeLinecap="square"
-                strokeLinejoin="miter"
-                fill="none"
-              />
-              {/* Preenchimento sutil do bojo */}
-              <path
-                d="M22 16 L46 16 C58 16 64 24 64 32 C64 40 58 48 46 48 L22 48 Z"
-                fill="url(#emblGold)"
-                opacity="0.14"
-              />
+            {/* Monograma P */}
+            <g stroke="url(#spGold)" strokeWidth="3.2" strokeLinecap="square" fill="none">
+              <path d="M40 30 L40 70" />
+              <path d="M40 30 L56 30 C64 30 68 36 68 42 C68 48 64 54 56 54 L40 54" />
             </g>
-
-            {/* Estrelas nos cantos superiores (referência institucional) */}
-            <g fill={GOLD_HI} opacity="0.85">
-              <polygon points="42,44 44,49 49,49 45,52 47,57 42,54 37,57 39,52 35,49 40,49" transform="scale(0.55) translate(28,10)" />
-              <polygon points="42,44 44,49 49,49 45,52 47,57 42,54 37,57 39,52 35,49 40,49" transform="scale(0.55) translate(240,10)" />
-            </g>
+            <path
+              d="M44 34 L56 34 C60 34 62 38 62 42 C62 46 60 50 56 50 L44 50 Z"
+              fill="url(#spGold)"
+              opacity="0.18"
+            />
           </svg>
         </div>
 
         {/* Wordmark */}
         <div
-          className="mt-9 flex flex-col items-center"
-          style={{ animation: "emblFade 800ms 700ms both" }}
+          className="flex flex-col items-center"
+          style={{ animation: "spFade 700ms 500ms both" }}
         >
-          <div
-            className="flex items-baseline gap-[0.24em]"
+          <h1
+            className="text-[44px] md:text-[54px] leading-none tracking-tight relative"
             style={{
-              fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+              fontFamily:
+                "'Libre Baskerville', 'Playfair Display', Georgia, serif",
+              fontWeight: 700,
               color: INK,
             }}
           >
+            PLANTÃO{" "}
             <span
-              className="text-[38px] leading-none"
-              style={{ fontWeight: 400, letterSpacing: "0.02em" }}
-            >
-              Plant<span style={{ fontStyle: "italic" }}>ã</span>o
-            </span>
-            <span
-              className="text-[38px] leading-none"
               style={{
-                background: `linear-gradient(180deg, ${GOLD_HI}, ${GOLD_LO})`,
+                background: `linear-gradient(180deg, ${GOLD}, ${GOLD_DEEP})`,
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                fontWeight: 600,
-                fontStyle: "italic",
               }}
             >
-              Pro
+              PRO
             </span>
-          </div>
-
-          {/* Divisor com losango */}
-          <div className="mt-4 flex items-center gap-3">
-            <span
-              className="h-px w-14"
-              style={{ background: `linear-gradient(90deg, transparent, ${GOLD}bb)` }}
-            />
             <span
               aria-hidden
-              className="inline-block"
+              className="absolute -bottom-2 left-0 right-0 h-px"
               style={{
-                width: 6,
-                height: 6,
-                background: `linear-gradient(135deg, ${GOLD_HI}, ${GOLD_LO})`,
-                transform: "rotate(45deg)",
+                background: `linear-gradient(90deg, transparent, ${GOLD}88, transparent)`,
               }}
             />
-            <span
-              className="h-px w-14"
-              style={{ background: `linear-gradient(270deg, transparent, ${GOLD}bb)` }}
-            />
-          </div>
+          </h1>
 
-          <div
-            className="mt-3 text-[10px] uppercase"
+          <p
+            className="mt-5 text-[11px] uppercase"
             style={{
-              color: `${IVORY}9a`,
-              letterSpacing: "0.62em",
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              color: `${GOLD}cc`,
+              letterSpacing: "0.4em",
+              animation: "spFade 700ms 750ms both",
             }}
           >
-            Comando Socioeducativo
-          </div>
+            Sistema Profissional · Escala · Banco de Horas
+          </p>
         </div>
 
-        {/* Régua de progresso minimalista */}
+        {/* Console boot log */}
         <div
-          className="mt-10 flex items-center gap-3"
-          style={{ animation: "emblFade 500ms 1100ms both" }}
+          className="mt-10 w-[280px] text-[9px] uppercase tracking-[0.18em] flex flex-col gap-1.5"
+          style={{ color: `${GOLD}99` }}
         >
-          <span
-            className="text-[8px] uppercase"
-            style={{
-              color: `${IVORY}55`,
-              letterSpacing: "0.42em",
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-            }}
-          >
-            Iniciando
-          </span>
+          {BOOT_LINES.map((line, i) => (
+            <div key={i} className="flex gap-2">
+              <span style={{ opacity: 0.45 }}>[{line.t}]</span>
+              <span
+                className="sp-boot-line overflow-hidden whitespace-nowrap"
+                style={{
+                  animation: `spType 380ms steps(22) ${400 * (i + 1)}ms forwards`,
+                  color: line.hot ? GOLD : undefined,
+                  fontWeight: line.hot ? 600 : 400,
+                  borderRight:
+                    i === BOOT_LINES.length - 1 ? "none" : `2px solid ${GOLD}`,
+                  width: 0,
+                }}
+              >
+                {line.msg}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Progress rail */}
+        <div
+          className="mt-10 w-[280px] h-[3px] relative overflow-hidden"
+          style={{
+            background: `${GOLD}18`,
+            animation: "spFade 500ms 900ms both",
+          }}
+        >
           <div
-            className="h-[1px] w-[200px] overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.06)" }}
-          >
-            <div
-              className="h-full"
-              style={{
-                background: `linear-gradient(90deg, transparent, ${GOLD_HI}, ${GOLD}, transparent)`,
-                transform: "translateX(-100%)",
-                animation: "emblProgress 1700ms 350ms cubic-bezier(.65,.05,.36,1) forwards",
-              }}
-            />
-          </div>
-          <span
-            className="text-[8px] uppercase"
+            className="absolute inset-y-0 left-0"
             style={{
-              color: `${GOLD}bb`,
-              letterSpacing: "0.42em",
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              width: "0%",
+              background: `linear-gradient(90deg, ${GOLD_DEEP}, ${GOLD})`,
+              boxShadow: `0 0 10px ${GOLD}`,
+              animation: "spFill 2.2s cubic-bezier(.65,.05,.36,1) 300ms forwards",
             }}
-          >
-            Pronto
-          </span>
+          />
         </div>
       </div>
 
-      {/* Rodapé — assinatura */}
+      {/* Bottom telemetry */}
       <div
-        aria-hidden
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 text-[8px] uppercase"
-        style={{
-          color: `${IVORY}55`,
-          letterSpacing: "0.55em",
-          fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-          animation: "emblFade 700ms 1250ms both",
-        }}
+        className="absolute bottom-8 left-8 right-8 flex items-center justify-between text-[9px] uppercase tracking-[0.28em]"
+        style={{ color: `${INK}66`, animation: "spFade 700ms 1000ms both" }}
       >
-        ISE · Sentinela Digital
+        <span>M-01 · SIGILO · AES-256</span>
+        <span>ISE / ACRE · v2.7</span>
       </div>
 
       <style>{`
-        @keyframes emblFade {
+        @keyframes spFade {
           from { opacity: 0; transform: translateY(4px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes emblRise {
-          from { opacity: 0; transform: translateY(18px) scale(0.94); filter: blur(6px); }
+        @keyframes spRise {
+          from { opacity: 0; transform: translateY(14px) scale(0.94); filter: blur(6px); }
           to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
-        @keyframes emblMono {
-          from { opacity: 0; transform: scale(0.82); }
-          to   { opacity: 1; transform: scale(1); }
+        @keyframes spScan {
+          0%   { top: -2%; opacity: 0; }
+          10%  { opacity: 1; }
+          90%  { opacity: 1; }
+          100% { top: 102%; opacity: 0; }
         }
-        @keyframes emblRing {
-          0%   { transform: scale(0.94); opacity: 0.0; transform-origin: 90px 100px; }
-          40%  { opacity: 0.55; }
-          100% { transform: scale(1.10); opacity: 0; transform-origin: 90px 100px; }
+        @keyframes spPulse {
+          0%,100% { opacity: 1; }
+          50%     { opacity: 0.4; }
         }
-        @keyframes emblProgress {
-          from { transform: translateX(-100%); }
-          to   { transform: translateX(100%); }
+        @keyframes spSpin {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+        @keyframes spType {
+          from { width: 0; }
+          to   { width: 100%; }
+        }
+        @keyframes spFill {
+          from { width: 0%; }
+          to   { width: 100%; }
         }
         @media (prefers-reduced-motion: reduce) {
-          [role="status"] * { animation-duration: 1ms !important; animation-delay: 0ms !important; }
+          [role="status"] * {
+            animation-duration: 1ms !important;
+            animation-delay: 0ms !important;
+          }
         }
       `}</style>
     </div>
