@@ -24,6 +24,22 @@ import { pushConsoleError, pushDiagEvent } from "@/lib/diagLog";
   };
 })();
 
+// Cleanup legado: a função "Programar ronda" foi removida definitivamente.
+// Purga qualquer chave residual de armed-rounds no boot para garantir que
+// nenhum estado antigo do localStorage interfira com o botão Iniciar.
+(function purgeArmedRoundsLegacy() {
+  try {
+    (['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const).forEach((team) => {
+      localStorage.removeItem(`plantaopro_armed_${team}`);
+    });
+    // Varredura defensiva para variantes desconhecidas do prefixo.
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('plantaopro_armed_')) localStorage.removeItem(k);
+    }
+  } catch { /* ignore */ }
+})();
+
 function isSafeModeActive(): boolean {
   try {
     const enabled = localStorage.getItem('plantaopro_safe_mode') === 'true';
