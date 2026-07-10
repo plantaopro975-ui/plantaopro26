@@ -726,9 +726,14 @@ export default function Master() {
             <PendingApprovalsManager onApprovalChange={fetchData} />
           </TabsContent>
 
-          {/* Audit — Recém-cadastrados (aprovação automática) */}
+          {/* Audit — Recém-cadastrados + Auditoria de Acessos */}
           <TabsContent value="audit" className="space-y-6 mt-6">
-            <RecentRegistrationsAudit daysWindow={30} onChange={fetchData} />
+            <Suspense fallback={<PanelSkeleton rows={4} />}>
+              <AccessAuditPanel />
+            </Suspense>
+            <Suspense fallback={<PanelSkeleton rows={4} />}>
+              <RecentRegistrationsAudit daysWindow={30} onChange={fetchData} />
+            </Suspense>
           </TabsContent>
 
 
