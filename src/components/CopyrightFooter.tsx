@@ -139,15 +139,18 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
               <div className="relative shrink-0">
                 <div className="absolute inset-0 rounded-md bg-primary/15 blur-md" />
                 <div className="relative h-12 w-12 rounded-md ring-1 ring-primary/35 bg-gradient-to-br from-card to-background flex items-center justify-center p-1.5 shadow-[0_4px_14px_hsl(222_60%_2%/0.6)]">
-                  <img
-                    src={iseAcreBadge}
-                    alt="Brasão ISE Acre"
-                    width={96}
-                    height={96}
-                    loading="lazy"
-                    decoding="async"
-                    className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-                  />
+                  <picture>
+                    <source type="image/webp" srcSet={iseAcreBadgeWebp} />
+                    <img
+                      src={iseAcreBadge}
+                      alt="Brasão ISE Acre"
+                      width={96}
+                      height={96}
+                      loading="lazy"
+                      decoding="async"
+                      className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                    />
+                  </picture>
                 </div>
               </div>
               <div className="flex flex-col leading-tight">
