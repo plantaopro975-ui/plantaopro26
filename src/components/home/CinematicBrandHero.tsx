@@ -51,7 +51,10 @@ export function CinematicBrandHero({
         background: "#050505",
       }}
     >
-      {/* Background: imagem institucional */}
+      {/* Background: imagem institucional.
+          Desktop (sm+): scale up ancorado à direita para dar mais protagonismo
+          ao agente + viatura sem afetar os elementos ao redor (texto e CTAs
+          permanecem à esquerda, fora do foco visual do zoom). */}
       <img
         src={IMG_URL}
         alt=""
@@ -59,12 +62,14 @@ export function CinematicBrandHero({
         draggable={false}
         loading="lazy"
         decoding="async"
-        className="absolute inset-0 w-full h-full select-none pointer-events-none"
+        className="absolute inset-0 w-full h-full select-none pointer-events-none origin-right sm:scale-[1.28] lg:scale-[1.38] xl:scale-[1.45]"
         style={{
           objectFit: "cover",
           objectPosition: "center right",
+          transformOrigin: "right center",
         }}
       />
+
 
       {/* Overlay escuro (esquerda → direita) para legibilidade dos CTAs */}
       <div
