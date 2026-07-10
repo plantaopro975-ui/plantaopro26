@@ -112,12 +112,8 @@ function FullBleedLayer() {
       <rect width="100%" height="100%" fill="url(#bgGrid)" />
 
       {/* Réguas nas 4 bordas */}
-      <rect x="0" y="0" width="100%" height="8" fill="url(#tickH)" />
-      <rect x="0" y="calc(100% - 8px)" width="100%" height="8" fill="url(#tickH)"
-            style={{ transform: 'scaleY(-1)', transformOrigin: 'center', transformBox: 'fill-box' }} />
-      <rect x="0" y="0" width="8" height="100%" fill="url(#tickV)" />
-      <rect x="calc(100% - 8px)" y="0" width="8" height="100%" fill="url(#tickV)"
-            style={{ transform: 'scaleX(-1)', transformOrigin: 'center', transformBox: 'fill-box' }} />
+      {/* Réguas de ticks âmbar removidas — nenhum elemento amarelo nas bordas */}
+
 
       {/* Contornos topográficos — 5 linhas mascaradas */}
       <g mask="url(#mFade)" opacity="0.32">
