@@ -100,6 +100,8 @@ export function AgentsConnectionMonitor() {
   const [statusFilter, setStatusFilter] = useState<'all' | RegStatus | 'online' | 'offline'>('all');
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'agents' | 'timeline'>('agents');
 
   const load = async () => {
     setLoading(true);
