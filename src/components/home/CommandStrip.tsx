@@ -5,7 +5,7 @@ import { useServerTime } from '@/hooks/useServerTime';
 
 import { cn } from '@/lib/utils';
 import bannerBg from '@/assets/institutional-banner-bg.webp';
-import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
+
 
 /**
  * CommandStrip — faixa institucional Noir & Gold.
