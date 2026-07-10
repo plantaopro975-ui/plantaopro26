@@ -17,7 +17,7 @@ import {
   Zap,
   Lock,
 } from 'lucide-react';
-import logoPlantaoPro from '@/assets/logo-plantao-pro.png';
+import { BrasaoSentinela } from '@/components/BrasaoSentinela';
 import aboutHero from '@/assets/about-hero.jpg';
 
 
@@ -102,10 +102,10 @@ export default function About() {
           </div>
 
           <div className="relative flex items-center gap-3 px-4 py-2.5 md:gap-6 md:px-8 md:py-4">
-            <img
-              src={logoPlantaoPro}
-              alt="PlantãoPro"
-              className="h-12 w-12 md:h-16 md:w-16 flex-shrink-0 object-contain drop-shadow-[0_0_20px_rgba(217,168,63,0.5)]"
+            <BrasaoSentinela
+              size="100%"
+              title="PlantãoPro"
+              className="h-12 w-12 md:h-16 md:w-16 flex-shrink-0 drop-shadow-[0_0_20px_rgba(217,168,63,0.5)]"
             />
             <div className="flex-1 min-w-0 space-y-1">
               <p
