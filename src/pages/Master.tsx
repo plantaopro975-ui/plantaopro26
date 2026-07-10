@@ -7,6 +7,7 @@ const hudBgStyle = { ['--hud-bg-url' as any]: `url(${hudPageBg})` };
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { PanelSkeleton } from '@/components/ui/panel-skeleton';
+import { SectionBoundary } from '@/components/ui/section-boundary';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -69,8 +70,6 @@ const AgentPasswordManager = lazy(() => import('@/components/admin/AgentPassword
 const CredentialsViewer = lazy(() => import('@/components/admin/CredentialsViewer').then(m => ({ default: m.CredentialsViewer })));
 const PasswordRequestsManager = lazy(() => import('@/components/admin/PasswordRequestsManager').then(m => ({ default: m.PasswordRequestsManager })));
 const AnnouncementsManager = lazy(() => import('@/components/admin/AnnouncementsManager').then(m => ({ default: m.AnnouncementsManager })));
-const PromosToggleCard = lazy(() => import('@/components/admin/PromosToggleCard').then(m => ({ default: m.PromosToggleCard })));
-const WelcomeHintToggleCard = lazy(() => import('@/components/admin/WelcomeHintToggleCard').then(m => ({ default: m.WelcomeHintToggleCard })));
 const SwapManagementPanel = lazy(() => import('@/components/admin/SwapManagementPanel').then(m => ({ default: m.SwapManagementPanel })));
 const LicenseFinanceControl = lazy(() => import('@/components/admin/LicenseFinanceControl').then(m => ({ default: m.LicenseFinanceControl })));
 const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagementCard').then(m => ({ default: m.UnitsManagementCard })));
@@ -169,6 +168,7 @@ export default function Master() {
     pendingApprovals: 0,
   });
   const [loadingData, setLoadingData] = useState(true);
+  const [hasLoadedData, setHasLoadedData] = useState(false);
   const [unitsError, setUnitsError] = useState<string | null>(null);
   const [agentSearchTerm, setAgentSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
@@ -362,6 +362,7 @@ export default function Master() {
         variant: 'destructive',
       });
     } finally {
+      setHasLoadedData(true);
       setLoadingData(false);
     }
   };
@@ -549,7 +550,7 @@ export default function Master() {
   });
 
 
-  if (isLoading || loadingData) {
+  if (isLoading || (loadingData && !hasLoadedData)) {
     return (
       <div className="min-h-dvh p-4 md:p-6 hud-scope hud-page-bg" style={hudBgStyle}>
         <div className="max-w-7xl mx-auto">
@@ -1220,11 +1221,9 @@ export default function Master() {
                 </div>
               </div>
             </div>
-            <Suspense fallback={<PanelSkeleton rows={3} />}>
-              <PromosToggleCard />
-              <WelcomeHintToggleCard />
+            <SectionBoundary label="Comunicações Internas" fallback={<PanelSkeleton rows={3} />}>
               <AnnouncementsManager />
-            </Suspense>
+            </SectionBoundary>
           </TabsContent>
 
           {/* Swaps Management Tab */}
