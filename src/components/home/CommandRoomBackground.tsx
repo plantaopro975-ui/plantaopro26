@@ -14,7 +14,9 @@
  *
  * Totalmente responsivo — não corta em mobile, tablet, desktop ou ultrawide.
  */
-export function CommandRoomBackground() {
+import { memo } from 'react';
+
+export const CommandRoomBackground = memo(function CommandRoomBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
       {/* 1 · Wash tonal */}
@@ -60,23 +62,20 @@ export function CommandRoomBackground() {
       <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
     </div>
   );
-}
+});
 
 /* ---------------------------------------------------------------- */
 /* CAMADA FULL-BLEED — grid, réguas, topografia e constelação        */
 /* ---------------------------------------------------------------- */
 function FullBleedLayer() {
-  // 9 unidades do Acre (posições relativas em %) — mantém metáfora sem depender de dados
+  // 7 unidades — reduzido de 9 para diminuir nós DOM
   const nodes = [
-    { x: 14, y: 22 }, { x: 28, y: 38 }, { x: 42, y: 18 },
-    { x: 58, y: 32 }, { x: 72, y: 24 }, { x: 86, y: 44 },
-    { x: 22, y: 68 }, { x: 50, y: 76 }, { x: 78, y: 66 },
+    { x: 16, y: 24 }, { x: 40, y: 18 }, { x: 64, y: 30 },
+    { x: 86, y: 42 }, { x: 24, y: 70 }, { x: 54, y: 76 },
+    { x: 80, y: 66 },
   ];
-  // Rede triangulada leve entre unidades
   const edges: [number, number][] = [
-    [0, 1], [1, 2], [2, 3], [3, 4], [4, 5],
-    [1, 6], [3, 7], [4, 8], [6, 7], [7, 8],
-    [0, 6], [5, 8],
+    [0, 1], [1, 2], [2, 3], [0, 4], [4, 5], [5, 6], [3, 6], [2, 5],
   ];
 
   return (
@@ -86,27 +85,23 @@ function FullBleedLayer() {
       aria-hidden
     >
       <defs>
-        {/* Grid duplo */}
-        <pattern id="bgFine" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
+        {/* Grid duplo aninhado — 1 rect em vez de 2 */}
+        <pattern id="bgFine" width="32" height="32" patternUnits="userSpaceOnUse">
           <path d="M32 0H0V32" fill="none" stroke="hsl(220 60% 80% / 0.05)" strokeWidth="0.5" />
         </pattern>
-        <pattern id="bgCoarse" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
+        <pattern id="bgGrid" width="160" height="160" patternUnits="userSpaceOnUse">
+          <rect width="160" height="160" fill="url(#bgFine)" />
           <path d="M160 0H0V160" fill="none" stroke="hsl(42 70% 60% / 0.09)" strokeWidth="0.8" />
         </pattern>
-        {/* Ticks das réguas */}
-        <pattern id="tickH" x="0" y="0" width="80" height="8" patternUnits="userSpaceOnUse">
+        {/* Ticks das réguas — 1 marcador principal por 80px */}
+        <pattern id="tickH" width="80" height="8" patternUnits="userSpaceOnUse">
           <line x1="0" y1="0" x2="0" y2="8" stroke="hsl(42 70% 60% / 0.28)" strokeWidth="0.6" />
-          <line x1="20" y1="0" x2="20" y2="4" stroke="hsl(42 70% 60% / 0.16)" strokeWidth="0.5" />
           <line x1="40" y1="0" x2="40" y2="4" stroke="hsl(42 70% 60% / 0.16)" strokeWidth="0.5" />
-          <line x1="60" y1="0" x2="60" y2="4" stroke="hsl(42 70% 60% / 0.16)" strokeWidth="0.5" />
         </pattern>
-        <pattern id="tickV" x="0" y="0" width="8" height="80" patternUnits="userSpaceOnUse">
+        <pattern id="tickV" width="8" height="80" patternUnits="userSpaceOnUse">
           <line x1="0" y1="0" x2="8" y2="0" stroke="hsl(42 70% 60% / 0.28)" strokeWidth="0.6" />
-          <line x1="0" y1="20" x2="4" y2="20" stroke="hsl(42 70% 60% / 0.16)" strokeWidth="0.5" />
           <line x1="0" y1="40" x2="4" y2="40" stroke="hsl(42 70% 60% / 0.16)" strokeWidth="0.5" />
-          <line x1="0" y1="60" x2="4" y2="60" stroke="hsl(42 70% 60% / 0.16)" strokeWidth="0.5" />
         </pattern>
-        {/* Máscara radial para conteúdo esmaecer nas bordas */}
         <radialGradient id="fadeMask" cx="50%" cy="50%" r="60%">
           <stop offset="0%" stopColor="white" stopOpacity="1" />
           <stop offset="70%" stopColor="white" stopOpacity="0.35" />
@@ -117,9 +112,8 @@ function FullBleedLayer() {
         </mask>
       </defs>
 
-      {/* Grid */}
-      <rect width="100%" height="100%" fill="url(#bgFine)" />
-      <rect width="100%" height="100%" fill="url(#bgCoarse)" />
+      {/* Grid — 1 único rect */}
+      <rect width="100%" height="100%" fill="url(#bgGrid)" />
 
       {/* Réguas nas 4 bordas */}
       <rect x="0" y="0" width="100%" height="8" fill="url(#tickH)" />
@@ -129,12 +123,12 @@ function FullBleedLayer() {
       <rect x="calc(100% - 8px)" y="0" width="8" height="100%" fill="url(#tickV)"
             style={{ transform: 'scaleX(-1)', transformOrigin: 'center', transformBox: 'fill-box' }} />
 
-      {/* Contornos topográficos — camada mascarada, evita competir com centro */}
-      <g mask="url(#mFade)" opacity="0.35">
+      {/* Contornos topográficos — 5 linhas mascaradas */}
+      <g mask="url(#mFade)" opacity="0.32">
         <TopoLines />
       </g>
 
-      {/* Constelação das 9 unidades socioeducativas */}
+      {/* Constelação */}
       <g opacity="0.55">
         {edges.map(([a, b], i) => (
           <line
@@ -148,7 +142,6 @@ function FullBleedLayer() {
         ))}
         {nodes.map((n, i) => (
           <g key={i}>
-            <circle cx={`${n.x}%`} cy={`${n.y}%`} r="6" fill="hsl(42 90% 60% / 0.08)" />
             <circle cx={`${n.x}%`} cy={`${n.y}%`} r="2.2" fill="hsl(42 90% 62% / 0.55)" />
             <circle cx={`${n.x}%`} cy={`${n.y}%`} r="1" fill="hsl(42 100% 88% / 0.9)" />
           </g>
@@ -158,23 +151,20 @@ function FullBleedLayer() {
   );
 }
 
-/* Linhas topográficas — Bezier suaves horizontais */
+/* Linhas topográficas — 5 Beziers suaves */
 function TopoLines() {
-  const lines = Array.from({ length: 9 });
+  const rows = [10, 28, 46, 64, 82];
   return (
     <>
-      {lines.map((_, i) => {
-        const y = 8 + i * 11; // % vertical
-        return (
-          <path
-            key={i}
-            d={`M -5% ${y}% C 20% ${y - 4}%, 40% ${y + 6}%, 55% ${y - 3}% S 90% ${y + 5}%, 105% ${y - 2}%`}
-            fill="none"
-            stroke="hsl(220 60% 78% / 0.10)"
-            strokeWidth={i % 3 === 0 ? '0.9' : '0.55'}
-          />
-        );
-      })}
+      {rows.map((y, i) => (
+        <path
+          key={i}
+          d={`M -5% ${y}% C 25% ${y - 5}%, 55% ${y + 6}%, 80% ${y - 3}% S 110% ${y + 4}%, 115% ${y - 1}%`}
+          fill="none"
+          stroke="hsl(220 60% 78% / 0.10)"
+          strokeWidth={i % 2 === 0 ? '0.9' : '0.55'}
+        />
+      ))}
     </>
   );
 }
@@ -210,16 +200,16 @@ function HeraldicComposition() {
         {/* Glow central */}
         <circle r="120" fill="url(#hCenterGlow)" />
 
-        {/* Anéis de radar */}
-        {[90, 170, 260, 360, 460].map((r, i) => (
-          <circle key={r} r={r} fill="none" stroke="hsl(42 80% 60% / 0.22)" strokeWidth={0.9 - i * 0.12} />
+        {/* Anéis de radar — reduzidos a 4 */}
+        {[110, 220, 340, 460].map((r, i) => (
+          <circle key={r} r={r} fill="none" stroke="hsl(42 80% 60% / 0.22)" strokeWidth={0.9 - i * 0.15} />
         ))}
 
-        {/* Marcas de graduação a cada 15° no anel externo */}
+        {/* Marcas de graduação a cada 30° (12 em vez de 24) */}
         <g stroke="hsl(42 80% 60% / 0.30)" strokeWidth="0.7">
-          {Array.from({ length: 24 }).map((_, i) => {
-            const a = (i * 15 * Math.PI) / 180;
-            const r1 = 450, r2 = i % 6 === 0 ? 428 : 440;
+          {Array.from({ length: 12 }).map((_, i) => {
+            const a = (i * 30 * Math.PI) / 180;
+            const r1 = 450, r2 = i % 3 === 0 ? 428 : 440;
             return (
               <line
                 key={i}
@@ -314,7 +304,7 @@ function LaurelArc({ side }: { side: 'left' | 'right' }) {
   const sign = side === 'left' ? -1 : 1;
   const startAngle = side === 'left' ? 210 : -30;
   const endAngle = side === 'left' ? 330 : 90;
-  const steps = 11;
+  const steps = 8;
   const rx = 220, ry = 240;
 
   const items = [];
