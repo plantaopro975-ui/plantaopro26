@@ -1420,7 +1420,8 @@ export default function Index() {
               grow: true,
               node: (
                 <div
-                  className="w-full max-w-7xl mx-auto sm:h-full"
+                  id="teams-section"
+                  className="w-full max-w-7xl mx-auto sm:h-full scroll-mt-6"
                   style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
                 >
                   <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full">
