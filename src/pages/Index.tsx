@@ -1534,21 +1534,21 @@ export default function Index() {
           type="button"
           onClick={() => navigate('/about')}
           aria-label="Sobre o aplicativo"
-          className="inline-flex items-center gap-1 text-[8px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70 hover:text-primary transition-colors"
+          className="inline-flex items-center gap-1 text-[10.5px] font-mono tracking-[0.18em] uppercase text-muted-foreground/80 hover:text-primary transition-colors"
         >
-          <Info className="h-2.5 w-2.5" strokeWidth={2.2} />
+          <Info className="h-3 w-3" strokeWidth={2.2} />
           <span>Sobre</span>
         </button>
-        <span className="text-muted-foreground/40 text-[8px]">·</span>
-        <span className="text-[8px] font-mono tracking-[0.2em] uppercase text-amber-400/80 font-semibold">PlantãoPro</span>
-        <span className="text-muted-foreground/40 text-[8px]">·</span>
+        <span className="text-muted-foreground/40 text-[10.5px]">·</span>
+        <span className="text-[10.5px] font-mono tracking-[0.18em] uppercase text-amber-400/90 font-semibold">PlantãoPro</span>
+        <span className="text-muted-foreground/40 text-[10.5px]">·</span>
         <button
           type="button"
           onClick={() => setShowMasterLogin(true)}
           aria-label="Acesso Administrador Master"
-          className="inline-flex items-center gap-1 text-[8px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70 hover:text-primary transition-colors"
+          className="inline-flex items-center gap-1 text-[10.5px] font-mono tracking-[0.18em] uppercase text-muted-foreground/80 hover:text-primary transition-colors"
         >
-          <Lock className="h-2.5 w-2.5" strokeWidth={2.2} />
+          <Lock className="h-3 w-3" strokeWidth={2.2} />
           <span>Master</span>
         </button>
       </div>
