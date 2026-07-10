@@ -515,10 +515,34 @@ export function AgentsConnectionMonitor() {
           </div>
         </div>
 
-        <Tabs defaultValue="agents">
+        {selectedAgent && (
+          <div className="flex items-center justify-between gap-3 flex-wrap p-3 rounded-md border border-primary/40 bg-primary/5">
+            <div className="flex items-center gap-2 flex-wrap text-sm">
+              <PresenceDot on={online.has(selectedAgent.id)} />
+              <span className="font-semibold">{selectedAgent.name}</span>
+              {selectedAgent.matricula && (
+                <span className="text-xs text-muted-foreground font-mono">Mat. {selectedAgent.matricula}</span>
+              )}
+              <Badge variant="outline" className="text-[10px]">
+                {selectedAgentSessions.filter((s) => s.type === 'login').length} logins registrados
+              </Badge>
+              <Badge variant="outline" className="text-[10px]">
+                {selectedAgentSessions.filter((s) => s.type === 'logout').length} logouts
+              </Badge>
+            </div>
+            <Button size="sm" variant="ghost" onClick={() => setSelectedAgentId(null)}>
+              Limpar seleção
+            </Button>
+          </div>
+        )}
+
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
           <TabsList>
             <TabsTrigger value="agents"><Users className="h-3.5 w-3.5 mr-1.5" />Agentes</TabsTrigger>
-            <TabsTrigger value="timeline"><Clock className="h-3.5 w-3.5 mr-1.5" />Linha do tempo</TabsTrigger>
+            <TabsTrigger value="timeline">
+              <Clock className="h-3.5 w-3.5 mr-1.5" />
+              Linha do tempo{selectedAgent ? ` — ${selectedAgent.name}` : ''}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="agents" className="mt-3">
