@@ -151,7 +151,7 @@ export function AgentsConnectionMonitor() {
 
   useEffect(() => { load(); }, []);
   useEffect(() => {
-    const i = setInterval(() => setTick((t) => t + 1), 30_000);
+    const i = setInterval(() => { setTick((t) => t + 1); load(); }, 20_000);
     return () => clearInterval(i);
   }, []);
 
