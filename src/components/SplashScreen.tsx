@@ -252,17 +252,18 @@ export function SplashScreen() {
               />
             ))}
 
-            {/* Faixa inferior "P" institucional */}
+            {/* "P" institucional — centralizado */}
             <path
-              d="M78 148 L78 172 M78 148 L94 148 C102 148 106 152 106 158 C106 164 102 168 94 168 L78 168"
+              d="M84 140 L84 176 M84 140 L100 140 C110 140 114 146 114 153 C114 160 110 166 100 166 L84 166"
               stroke="url(#spGold)"
-              strokeWidth="2.8"
+              strokeWidth="3"
               strokeLinecap="square"
+              strokeLinejoin="miter"
               fill="none"
               style={{
-                strokeDasharray: 100,
-                strokeDashoffset: 100,
-                animation: "splashDraw 700ms 1300ms cubic-bezier(.22,1,.36,1) forwards",
+                strokeDasharray: 120,
+                strokeDashoffset: 120,
+                animation: "splashDraw 750ms 1300ms cubic-bezier(.22,1,.36,1) forwards",
               }}
             />
 
