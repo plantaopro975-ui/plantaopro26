@@ -676,9 +676,39 @@ const TEAM_DOCTRINE: Record<TeamKey, string[]> = {
 };
 
 /**
+ * Frases institucionais rotativas — divulgação profissional do PlantãoPro
+ * e do desenvolvedor. Injetadas em ciclo controlado dentro do ticker.
+ */
+const BRAND_PROMOS: string[] = [
+  'PLANTÃO PRO · GESTÃO INTELIGENTE DE PLANTÕES SOCIOEDUCATIVOS',
+  'PLANTÃO PRO · ESCALAS, BANCO DE HORAS E RONDAS EM TEMPO REAL',
+  'PLANTÃO PRO · SEGURANÇA, AUDITORIA E CONFORMIDADE OPERACIONAL',
+  'PLANTÃO PRO · TECNOLOGIA A SERVIÇO DA SEGURANÇA PÚBLICA',
+  "DESENVOLVIDO POR FRANC D'NIS · AGENTE SOCIOEDUCATIVO · FEIJÓ/AC",
+  "ENGENHARIA DE SOFTWARE POR FRANC D'NIS · SOLUÇÕES PARA O SISTEMA SOCIOEDUCATIVO",
+];
+const brandQueue: { queue: string[]; last: string | null } = { queue: [], last: null };
+function nextBrand(): string {
+  if (!brandQueue.queue.length) {
+    const arr = [...BRAND_PROMOS];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    if (brandQueue.last && arr[0] === brandQueue.last && arr.length > 1) {
+      [arr[0], arr[1]] = [arr[1], arr[0]];
+    }
+    brandQueue.queue = arr;
+  }
+  const p = brandQueue.queue.shift()!;
+  brandQueue.last = p;
+  return p;
+}
+
+/**
  * Sorteia frases sem repetir a mesma sequência entre chamadas por equipe.
- * Mantém uma fila persistente por equipe: quando esgota, reembaralha
- * garantindo que a próxima primeira frase seja diferente da última usada.
+ * Injeta 1 frase institucional (PlantãoPro / desenvolvedor) na posição 2
+ * para divulgação profissional contínua, sem poluir a doutrina da equipe.
  */
 const phraseQueue = new Map<TeamKey, { queue: string[]; last: string | null }>();
 function nextPhrases(team: TeamKey, count = 4): string[] {
@@ -704,8 +734,12 @@ function nextPhrases(team: TeamKey, count = 4): string[] {
     state.last = p;
   }
   phraseQueue.set(team, state);
+  // Injeta uma frase institucional na segunda posição (rotativa, sem repetir).
+  if (out.length >= 2) out.splice(2, 0, nextBrand());
+  else out.push(nextBrand());
   return out;
 }
+
 
 /**
  * Ciclo profissional: 60s exibindo doutrina → 180s em pausa (só efeitos) → repete.
