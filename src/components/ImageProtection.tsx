@@ -1,12 +1,11 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { ShieldAlert, X } from "lucide-react";
+import { X } from "lucide-react";
 
 type Reason =
   | "copy"
   | "context"
   | "drag"
   | "printscreen"
-  | "devtools"
   | "save"
   | "print"
   | "source";
@@ -26,11 +25,8 @@ const REASON_COPY: Record<Reason, { title: string; body: string }> = {
   },
   printscreen: {
     title: "Captura de tela detectada",
-    body: "Capturas de tela são monitoradas. A distribuição do conteúdo é proibida.",
-  },
-  devtools: {
-    title: "Atalho restrito",
-    body: "Ferramentas de desenvolvedor e inspeção de código não são permitidas.",
+    body:
+      "Capturas de tela e fotografias do conteúdo são proibidas. Este acesso é monitorado e registrado.",
   },
   save: {
     title: "Download bloqueado",
@@ -49,17 +45,13 @@ const REASON_COPY: Record<Reason, { title: string; body: string }> = {
 /**
  * Global protection layer:
  * - Blocks right-click / drag / copy on images, svgs, videos
- * - Blocks keyboard shortcuts: PrintScreen, F12, Ctrl/⌘+S/P/U, Ctrl+Shift+I/J/C
- * - Briefly hides the screen after PrintScreen is released
- * - Shows a professional dialog with contextual message
+ * - Blocks keyboard shortcuts: PrintScreen, Ctrl/⌘+S/P/U
+ * - Briefly scrambles the screen when PrintScreen is pressed
+ * - Shows a professional SVG dialog with contextual message
  *
  * Deterrent-only; determined users can still capture via external tools.
  */
 export function ImageProtection() {
-  // Proteção de captura/cópia temporariamente desativada a pedido do usuário.
-  return null;
-  // eslint-disable-next-line no-unreachable
-  function _disabled() {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<Reason>("context");
   const [scrambled, setScrambled] = useState(false);
@@ -73,7 +65,9 @@ export function ImageProtection() {
   useEffect(() => {
     const onContext = (e: MouseEvent) => {
       const t = e.target as HTMLElement | null;
-      const isMedia = !!t?.closest?.("img,svg,picture,video,[data-protect-image]");
+      const isMedia = !!t?.closest?.(
+        "img,svg,picture,video,canvas,[data-protect-image]",
+      );
       if (!isMedia) return;
       e.preventDefault();
       e.stopPropagation();
@@ -81,15 +75,24 @@ export function ImageProtection() {
     };
     const onDragStart = (e: DragEvent) => {
       const t = e.target as HTMLElement | null;
-      if (!t?.closest?.("img,svg,picture,video")) return;
+      if (!t?.closest?.("img,svg,picture,video,canvas")) return;
       e.preventDefault();
       show("drag");
     };
     const onCopy = (e: ClipboardEvent) => {
       const sel = window.getSelection?.()?.toString();
-      if (sel) return; // let text copy work
       const active = document.activeElement as HTMLElement | null;
-      if (active?.closest?.("img,svg,picture,video")) {
+      const isEditable =
+        active?.tagName === "INPUT" ||
+        active?.tagName === "TEXTAREA" ||
+        active?.isContentEditable;
+      if (sel && isEditable) return; // allow copy inside form fields
+      if (sel) {
+        e.preventDefault();
+        show("copy");
+        return;
+      }
+      if (active?.closest?.("img,svg,picture,video,canvas")) {
         e.preventDefault();
         show("copy");
       }
@@ -108,18 +111,20 @@ export function ImageProtection() {
   useEffect(() => {
     const scramble = () => {
       setScrambled(true);
-      setTimeout(() => setScrambled(false), 1500);
+      window.setTimeout(() => setScrambled(false), 1400);
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
-      const k = e.key;
-      const kL = k.toLowerCase();
+      const kL = e.key.toLowerCase();
       const mod = e.ctrlKey || e.metaKey;
 
-      // PrintScreen: bloqueio temporariamente desativado a pedido do usuário
-
-
-      // DevTools shortcuts: no longer blocked/warned (removed per request)
+      // PrintScreen — scramble immediately to poison the frame buffer
+      if (e.key === "PrintScreen" || kL === "printscreen") {
+        e.preventDefault();
+        scramble();
+        show("printscreen");
+        return;
+      }
 
       // View source
       if (mod && kL === "u") {
@@ -127,14 +132,12 @@ export function ImageProtection() {
         show("source");
         return;
       }
-
       // Save
       if (mod && kL === "s") {
         e.preventDefault();
         show("save");
         return;
       }
-
       // Print
       if (mod && kL === "p") {
         e.preventDefault();
@@ -143,37 +146,49 @@ export function ImageProtection() {
       }
     };
 
-    // PrintScreen keyup: bloqueio temporariamente desativado
-    const onKeyUp = (_e: KeyboardEvent) => {
-      /* noop */
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "PrintScreen") {
+        // Some OSes only send keyup for PrintScreen — cover both.
+        try {
+          navigator.clipboard?.writeText?.(
+            "Captura bloqueada — PlantãoPro (uso institucional).",
+          );
+        } catch {
+          /* ignore */
+        }
+        scramble();
+        show("printscreen");
+      }
     };
 
-
-    // DevTools open-detection removed per request (no more warning dialog)
-
-    // Block print via matchMedia (Ctrl+P fallback on some browsers)
     const onBeforePrint = (e: Event) => {
       e.preventDefault?.();
       scramble();
       show("print");
     };
-    window.addEventListener("beforeprint", onBeforePrint);
+
+    const onVisibility = () => {
+      // Poison snapshot briefly when the tab loses focus (common capture flow)
+      if (document.visibilityState === "hidden") scramble();
+    };
 
     document.addEventListener("keydown", onKeyDown, true);
     document.addEventListener("keyup", onKeyUp, true);
+    window.addEventListener("beforeprint", onBeforePrint);
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       document.removeEventListener("keydown", onKeyDown, true);
       document.removeEventListener("keyup", onKeyUp, true);
       window.removeEventListener("beforeprint", onBeforePrint);
-      
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [show]);
 
   // Auto-dismiss dialog
   useEffect(() => {
     if (!open) return;
-    const t = setTimeout(() => setOpen(false), 5000);
-    return () => clearTimeout(t);
+    const t = window.setTimeout(() => setOpen(false), 6000);
+    return () => window.clearTimeout(t);
   }, [open]);
 
   // ---- Watermark tiled pattern (SVG data-URI) ----
@@ -217,7 +232,7 @@ export function ImageProtection() {
         }}
       />
 
-      {/* PrintScreen scramble curtain */}
+      {/* PrintScreen scramble curtain — professional SVG message */}
       {scrambled && (
         <div
           aria-hidden="true"
@@ -225,18 +240,150 @@ export function ImageProtection() {
             position: "fixed",
             inset: 0,
             zIndex: 9999,
-            background: "#0a0a0a",
+            background:
+              "radial-gradient(ellipse at center, #14100a 0%, #050505 80%)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#fbbf24",
-            fontFamily: "'Saira Condensed', 'IBM Plex Sans', sans-serif",
-            fontSize: 22,
-            letterSpacing: "0.3em",
-            textTransform: "uppercase",
+            flexDirection: "column",
+            gap: 24,
+            padding: 24,
           }}
         >
-          ⛨ Captura Bloqueada
+          <svg
+            width="320"
+            height="200"
+            viewBox="0 0 320 200"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient id="scrGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#f0d78c" />
+                <stop offset="100%" stopColor="#b8860b" />
+              </linearGradient>
+              <filter id="scrGlow">
+                <feGaussianBlur stdDeviation="3" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            {/* HUD corner brackets */}
+            <path
+              d="M8 8 L48 8 M8 8 L8 48"
+              stroke="url(#scrGold)"
+              strokeWidth="1.5"
+              fill="none"
+              opacity="0.6"
+            />
+            <path
+              d="M312 8 L272 8 M312 8 L312 48"
+              stroke="url(#scrGold)"
+              strokeWidth="1.5"
+              fill="none"
+              opacity="0.6"
+            />
+            <path
+              d="M8 192 L48 192 M8 192 L8 152"
+              stroke="url(#scrGold)"
+              strokeWidth="1.5"
+              fill="none"
+              opacity="0.6"
+            />
+            <path
+              d="M312 192 L272 192 M312 192 L312 152"
+              stroke="url(#scrGold)"
+              strokeWidth="1.5"
+              fill="none"
+              opacity="0.6"
+            />
+
+            {/* Shield */}
+            <g transform="translate(130 30)" filter="url(#scrGlow)">
+              <path
+                d="M30 4 L58 14 V44 C58 62 46 78 30 88 C14 78 2 62 2 44 V14 Z"
+                fill="rgba(0,0,0,0.85)"
+                stroke="url(#scrGold)"
+                strokeWidth="2"
+              />
+              {/* Camera with slash */}
+              <rect
+                x="14"
+                y="34"
+                width="32"
+                height="20"
+                rx="2"
+                fill="none"
+                stroke="url(#scrGold)"
+                strokeWidth="1.8"
+              />
+              <path
+                d="M20 34 L23 30 H37 L40 34"
+                fill="none"
+                stroke="url(#scrGold)"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+              />
+              <circle
+                cx="30"
+                cy="44"
+                r="5"
+                fill="none"
+                stroke="url(#scrGold)"
+                strokeWidth="1.6"
+              />
+              <line
+                x1="10"
+                y1="60"
+                x2="50"
+                y2="24"
+                stroke="#ef4444"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            </g>
+
+            {/* Title */}
+            <text
+              x="160"
+              y="150"
+              textAnchor="middle"
+              fill="url(#scrGold)"
+              fontFamily="'Libre Baskerville', Georgia, serif"
+              fontSize="20"
+              fontWeight="700"
+              letterSpacing="1"
+            >
+              Captura Bloqueada
+            </text>
+            <text
+              x="160"
+              y="170"
+              textAnchor="middle"
+              fill="#f0d78c"
+              opacity="0.75"
+              fontFamily="'IBM Plex Mono', ui-monospace, monospace"
+              fontSize="9"
+              letterSpacing="4"
+            >
+              CONTEÚDO PROTEGIDO · USO INSTITUCIONAL
+            </text>
+            <text
+              x="160"
+              y="186"
+              textAnchor="middle"
+              fill="#c9a84c"
+              opacity="0.55"
+              fontFamily="'IBM Plex Mono', ui-monospace, monospace"
+              fontSize="8"
+              letterSpacing="3"
+            >
+              ISE · ACRE · SISTEMA SOCIOEDUCATIVO
+            </text>
+          </svg>
         </div>
       )}
 
@@ -248,12 +395,12 @@ export function ImageProtection() {
           className="fixed inset-0 z-[10000] flex items-center justify-center px-4 animate-in fade-in duration-200"
           onClick={() => setOpen(false)}
         >
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" />
           <div
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-md rounded-xl border border-amber-500/40 bg-zinc-950 shadow-2xl shadow-amber-900/30 overflow-hidden animate-in zoom-in-95 duration-200"
           >
-            <div className="h-1 bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600" />
+            <div className="h-1 bg-gradient-to-r from-amber-600 via-amber-300 to-amber-600" />
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -264,73 +411,110 @@ export function ImageProtection() {
             </button>
 
             <div className="p-6 flex flex-col items-center text-center">
-              <div className="mb-4">
-                <svg width="88" height="88" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="ipShield" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#fbbf24" />
-                      <stop offset="100%" stopColor="#b45309" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M50 6 L86 20 V48 C86 70 70 86 50 94 C30 86 14 70 14 48 V20 Z"
-                    fill="url(#ipShield)"
-                    stroke="#fde68a"
-                    strokeWidth="2"
-                  />
-                  <path
-                    d="M50 28 L68 36 V52 C68 65 60 74 50 79 C40 74 32 65 32 52 V36 Z"
-                    fill="#0a0a0a"
-                    stroke="#fde68a"
-                    strokeWidth="1.5"
-                  />
-                  <ShieldAlert
-                    x="38"
-                    y="42"
-                    width="24"
-                    height="24"
-                    stroke="#fbbf24"
-                    strokeWidth="2"
+              {/* Professional SVG shield mark */}
+              <svg
+                width="96"
+                height="108"
+                viewBox="0 0 96 108"
+                fill="none"
+                aria-hidden="true"
+                className="mb-4"
+              >
+                <defs>
+                  <linearGradient id="dlgGold" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#fde68a" />
+                    <stop offset="100%" stopColor="#b45309" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M48 4 L88 18 V52 C88 76 70 96 48 104 C26 96 8 76 8 52 V18 Z"
+                  fill="rgba(10,10,10,0.9)"
+                  stroke="url(#dlgGold)"
+                  strokeWidth="2.5"
+                />
+                <path
+                  d="M48 20 L74 30 V54 C74 71 62 84 48 88 C34 84 22 71 22 54 V30 Z"
+                  fill="none"
+                  stroke="url(#dlgGold)"
+                  strokeOpacity="0.55"
+                  strokeWidth="1"
+                />
+                {/* Camera-with-slash glyph */}
+                <g transform="translate(28 40)">
+                  <rect
+                    x="0"
+                    y="6"
+                    width="40"
+                    height="26"
+                    rx="3"
                     fill="none"
+                    stroke="url(#dlgGold)"
+                    strokeWidth="2"
                   />
-                </svg>
-              </div>
+                  <path
+                    d="M8 6 L12 1 H28 L32 6"
+                    fill="none"
+                    stroke="url(#dlgGold)"
+                    strokeWidth="2"
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="20"
+                    cy="19"
+                    r="6"
+                    fill="none"
+                    stroke="url(#dlgGold)"
+                    strokeWidth="1.8"
+                  />
+                  <line
+                    x1="-4"
+                    y1="36"
+                    x2="44"
+                    y2="-4"
+                    stroke="#ef4444"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                </g>
+              </svg>
 
               <h2
                 id="img-protect-title"
-                className="font-['Saira_Condensed',_'IBM_Plex_Sans',_sans-serif] uppercase tracking-widest text-amber-400 text-xl font-bold mb-1"
+                className="font-['Libre_Baskerville',_Georgia,_serif] text-amber-300 text-xl font-bold mb-1"
               >
                 {msg.title}
               </h2>
-              <div className="text-[10px] uppercase tracking-[0.25em] text-amber-500/70 mb-4">
-                Sistema Socioeducativo
+              <div className="text-[10px] uppercase tracking-[0.28em] text-amber-500/70 mb-4 font-mono">
+                Sistema Socioeducativo · ISE Acre
               </div>
 
-              <p className="text-zinc-200 text-sm leading-relaxed mb-3">{msg.body}</p>
+              <p className="text-zinc-200 text-sm leading-relaxed mb-3">
+                {msg.body}
+              </p>
               <p className="text-zinc-400 text-xs leading-relaxed">
                 Este conteúdo pertence à{" "}
                 <span className="text-zinc-200 font-medium">
                   Equipe de Segurança do Sistema Socioeducativo
                 </span>
-                . Acessos e tentativas de cópia são registrados.
+                . Cópias, capturas e fotografias são registradas e podem
+                acarretar sanções institucionais.
               </p>
 
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="mt-5 px-6 py-2 rounded-md bg-amber-500 hover:bg-amber-400 text-zinc-950 text-sm font-semibold uppercase tracking-wider transition-colors"
+                className="mt-5 px-6 py-2 rounded-md bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-zinc-950 text-sm font-bold uppercase tracking-wider transition-colors"
               >
                 Entendi
               </button>
             </div>
 
-            <div className="px-4 py-2 bg-zinc-900/80 border-t border-zinc-800 text-[10px] text-center text-zinc-500 uppercase tracking-widest">
-              PlantãoPro • Acesso Monitorado
+            <div className="px-4 py-2 bg-zinc-900/80 border-t border-zinc-800 text-[10px] text-center text-zinc-500 uppercase tracking-widest font-mono">
+              PlantãoPro · Acesso Monitorado
             </div>
           </div>
         </div>
       )}
     </>
   );
-  }
 }
