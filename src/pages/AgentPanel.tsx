@@ -208,10 +208,8 @@ export default function AgentPanel() {
       void import('@/components/agent-panel/PasswordChangeRequest');
       void import('@/components/agent-panel/SmartAlarmClock');
       void import('@/components/agent-panel/RoundsHistoryCard');
-      void import('@/components/agent-panel/AgentsDirectoryCard');
       void import('@/components/agent-panel/ShiftOperationsCenter');
       void import('@/components/agent-panel/ShiftBriefingCard');
-      void import('@/components/dashboard/TacticalRadar');
       void import('@/components/DiagnosticReportButton');
       void import('@/components/home/RoundsManager');
     };
