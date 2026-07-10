@@ -1637,6 +1637,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   // timer profissional até o momento de iniciar automaticamente.
   const [armedForMs, setArmedForMs] = useState<number | null>(null);
   const armed = armedForMs != null && !running;
+  // Guard: garante que o auto-início dispare UMA ÚNICA vez por programação,
+  // mesmo se React re-renderizar ou o efeito reavaliar múltiplas vezes.
+  const autoFiredRef = useRef<number | null>(null);
+  const [cancelArmConfirmOpen, setCancelArmConfirmOpen] = useState(false);
 
 
 
