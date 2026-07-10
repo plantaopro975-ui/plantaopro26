@@ -25,6 +25,8 @@ import {
   isNightShift, getNightWindow, formatAcreClock,
   NIGHT_START, NIGHT_END, NIGHT_TZ,
 } from '@/lib/nightShift';
+import { useAuth } from '@/contexts/AuthContext';
+import { SecurityDoctrineCard } from './SecurityDoctrineCard';
 
 /** Registra ação no histórico de atividades (activity_logs). */
 async function logRoundActivity(
