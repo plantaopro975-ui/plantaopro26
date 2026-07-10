@@ -708,8 +708,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
         {/* ============ MOBILE-ONLY — Viatura + Agente abaixo dos cards (compacto) ============ */}
         <div className="sm:hidden relative z-30 order-4 px-2 pt-1 pb-8 mt-0 shrink-0 pointer-events-none">
-          <div className="relative mx-auto flex items-end justify-center gap-0 h-[118px] min-[390px]:h-[132px] w-full max-w-[300px]">
-            <picture className="relative block h-[84%] aspect-square leading-[0] self-end translate-y-0.5">
+          <div className="relative mx-auto flex items-end justify-center gap-0 h-[168px] min-[390px]:h-[188px] w-full max-w-[340px]">
+            <picture className="relative block h-full aspect-square leading-[0] self-end translate-y-0.5">
               <source type="image/webp" srcSet={vehicle3dWebp} />
               <img
                 src={vehicle3d}
@@ -718,10 +718,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 height={1024}
                 loading="lazy"
                 decoding="async"
-                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[0.9] origin-bottom-right"
+                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[1.18] origin-bottom-right"
                 draggable={false}
               />
-              <span aria-hidden className="pointer-events-none absolute inset-0 scale-[0.9] origin-bottom-right">
+              <span aria-hidden className="pointer-events-none absolute inset-0 scale-[1.18] origin-bottom-right">
                 <span
                   aria-hidden
                   className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
