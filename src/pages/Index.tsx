@@ -1399,7 +1399,7 @@ export default function Index() {
           const savedCount = getSavedCredentials().length;
           const wrap = (child: JSX.Element, extra = '') => (
             <div
-              className={cn('w-full max-w-6xl mx-auto', extra)}
+              className={cn('w-full max-w-6xl sm:max-w-4xl lg:max-w-5xl mx-auto sm:px-8 lg:px-16 xl:px-24', extra)}
               style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
             >
               {child}
