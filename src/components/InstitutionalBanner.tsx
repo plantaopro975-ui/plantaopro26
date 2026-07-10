@@ -1,10 +1,9 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import { Shield, Zap, Radio } from 'lucide-react';
-import logoShieldAsset from '@/assets/ise-acre-badge.png.asset.json';
-import logoShieldWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
-const logoShield = logoShieldAsset.url;
-const logoShieldWebp = logoShieldWebpAsset.url;
+import logoOfficialAsset from '@/assets/logo-plantao-pro-official.png.asset.json';
+const logoShield = logoOfficialAsset.url;
+const logoShieldWebp = logoOfficialAsset.url;
 import bannerBg from '@/assets/institutional-banner-bg.jpg';
 
 interface InstitutionalBannerProps {
