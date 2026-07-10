@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import splashAsset from "@/assets/brand/plantaopro-splash.jpg.asset.json";
+import splashAvif from "@/assets/brand/plantaopro-splash.avif.asset.json";
+import splashWebp from "@/assets/brand/plantaopro-splash.webp.asset.json";
 import { useAuth } from "@/contexts/AuthContext";
 
 const IMG_URL = splashAsset.url;
+const IMG_AVIF = splashAvif.url;
+const IMG_WEBP = splashWebp.url;
 
 interface CinematicBrandHeroProps {
   onScrollToLogin?: () => void;
@@ -55,21 +59,25 @@ export function CinematicBrandHero({
           Desktop (sm+): scale up ancorado à direita para dar mais protagonismo
           ao agente + viatura sem afetar os elementos ao redor (texto e CTAs
           permanecem à esquerda, fora do foco visual do zoom). */}
-      <img
-        src={IMG_URL}
-        alt=""
-        aria-hidden
-        draggable={false}
-        loading="eager"
-        decoding="sync"
-        fetchPriority="high"
-        className="absolute inset-0 w-full h-full select-none pointer-events-none origin-right sm:scale-[1.28] lg:scale-[1.38] xl:scale-[1.45]"
-        style={{
-          objectFit: "cover",
-          objectPosition: "center right",
-          transformOrigin: "right center",
-        }}
-      />
+      <picture>
+        <source srcSet={IMG_AVIF} type="image/avif" />
+        <source srcSet={IMG_WEBP} type="image/webp" />
+        <img
+          src={IMG_URL}
+          alt=""
+          aria-hidden
+          draggable={false}
+          loading="eager"
+          decoding="sync"
+          fetchPriority="high"
+          className="absolute inset-0 w-full h-full select-none pointer-events-none origin-right sm:scale-[1.28] lg:scale-[1.38] xl:scale-[1.45]"
+          style={{
+            objectFit: "cover",
+            objectPosition: "center right",
+            transformOrigin: "right center",
+          }}
+        />
+      </picture>
 
 
       {/* Overlay escuro (esquerda → direita) para legibilidade dos CTAs */}
