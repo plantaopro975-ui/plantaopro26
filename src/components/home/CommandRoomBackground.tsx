@@ -304,7 +304,7 @@ function LaurelArc({ side }: { side: 'left' | 'right' }) {
   const sign = side === 'left' ? -1 : 1;
   const startAngle = side === 'left' ? 210 : -30;
   const endAngle = side === 'left' ? 330 : 90;
-  const steps = 11;
+  const steps = 8;
   const rx = 220, ry = 240;
 
   const items = [];
