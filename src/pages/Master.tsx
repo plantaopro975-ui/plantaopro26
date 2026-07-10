@@ -246,6 +246,28 @@ export default function Master() {
   useEffect(() => {
     if (masterSession) {
       fetchData();
+
+      // Prefetch dos chunks das abas para tornar a troca instantânea
+      requestIdleCallback?.(() => {
+        import('@/components/agents/TransferApprovalPanel');
+        import('@/components/agents/AdminResetPasswordDialog');
+        import('@/components/admin/EditAgentDialog');
+        import('@/components/admin/EditUnitDialog');
+        import('@/components/admin/DeleteAgentDialog');
+        import('@/components/admin/LicenseManagementDialog');
+        import('@/components/admin/DeleteUserDialog');
+        import('@/components/admin/AgentPasswordManager');
+        import('@/components/admin/CredentialsViewer');
+        import('@/components/admin/PasswordRequestsManager');
+        import('@/components/admin/AnnouncementsManager');
+        import('@/components/admin/SwapManagementPanel');
+        import('@/components/admin/LicenseFinanceControl');
+        import('@/components/admin/UnitsManagementCard');
+        import('@/components/admin/AgentAccessControl');
+        import('@/components/admin/PendingApprovalsManager');
+        import('@/components/admin/RecentRegistrationsAudit');
+      });
+
       
       // Realtime subscription para mudanças em agentes
       const agentsChannel = supabase
