@@ -216,7 +216,9 @@ export function AuthDialog({
               <div className="flex justify-center mb-5">
                 <div className={cn("p-4 rounded-2xl bg-gradient-to-br backdrop-blur-sm",
                   styles.logoBg, "border border-white/10 shadow-lg")}>
-                  <img src={logoShield} alt="Plantão Pro" className="w-16 h-16 object-contain drop-shadow-lg" />
+                  <div className="relative aspect-square h-16 w-16 flex items-center justify-center flex-shrink-0">
+                    <img src={logoShield} alt="Plantão Pro" width={128} height={128} loading="eager" decoding="async" className="max-h-full max-w-full h-full w-full object-contain drop-shadow-lg" />
+                  </div>
                 </div>
               </div>
               {teamBadge && (

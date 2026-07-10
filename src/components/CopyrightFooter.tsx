@@ -139,7 +139,11 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
                   <img
                     src={iseAcreBadge}
                     alt="Brasão ISE Acre"
-                    className="h-full w-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                    width={96}
+                    height={96}
+                    loading="lazy"
+                    decoding="async"
+                    className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                   />
                 </div>
               </div>
