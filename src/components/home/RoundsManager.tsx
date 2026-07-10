@@ -773,47 +773,51 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
 
   if (!visible) return null;
 
-  const line = phrases.join('   ◆   ') + '   ◆   ';
+  const sep = ' \u2022 ';
+  const line = phrases.join(sep);
+
   return (
-    <g style={{ opacity: 0, animation: 'fadeIn 900ms ease-out forwards' }}>
-      <defs>
-        <linearGradient id={`${uid}-tfade`} x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="12%" stopColor="#ffffff" stopOpacity="1" />
-          <stop offset="88%" stopColor="#ffffff" stopOpacity="1" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-        <mask id={`${uid}-tmask`}>
-          <rect x="0" y="16" width="320" height="20" fill={`url(#${uid}-tfade)`} />
-        </mask>
-        <style>{`@keyframes fadeIn{to{opacity:1}}`}</style>
-      </defs>
-      <g mask={`url(#${uid}-tmask)`}>
-        {/* Faixa de contraste dedicada ao texto — legível em qualquer fundo */}
-        <rect x="0" y="17" width="320" height="16" fill="#000000" fillOpacity="0.55" />
-        <rect x="0" y="17" width="320" height="16" fill={color} fillOpacity="0.06" />
-        <line x1="0" y1="17" x2="320" y2="17" stroke={color} strokeOpacity="0.35" strokeWidth="0.4" />
-        <line x1="0" y1="33" x2="320" y2="33" stroke={color} strokeOpacity="0.35" strokeWidth="0.4" />
-        {/* Texto — tipografia maior, espaçamento confortável, com contorno para contraste */}
-        <text
-          y="29"
-          fontFamily='"Inter", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif'
-          fontSize="10.5"
-          fontWeight={700}
-          letterSpacing="0.6"
-          fill="#ffffff"
-          stroke="#000000"
-          strokeOpacity="0.85"
-          strokeWidth="0.6"
-          paintOrder="stroke"
-        >
-          {line + line}
-          <animate attributeName="x" values="0;-640" dur="90s" repeatCount="indefinite" />
-        </text>
-      </g>
-    </g>
+    <div
+      className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center overflow-hidden"
+      style={{
+        height: 22,
+        background: `linear-gradient(90deg, transparent, ${color}12 12%, ${color}12 88%, transparent), rgba(0,0,0,0.55)`,
+        borderTop: `1px solid ${color}44`,
+        maskImage: 'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
+        WebkitMaskImage: 'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
+        opacity: 0,
+        animation: `${uid}-tfade 700ms ease-out forwards`,
+      }}
+      aria-live="polite"
+    >
+      <style>{`
+        @keyframes ${uid}-tfade { to { opacity: 1 } }
+        @keyframes ${uid}-tscroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
+      <div
+        className="flex whitespace-nowrap will-change-transform"
+        style={{
+          animation: `${uid}-tscroll 75s linear infinite`,
+          fontFamily: '"IBM Plex Sans", "Inter", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif',
+          fontSize: 12.5,
+          lineHeight: 1,
+          fontWeight: 600,
+          letterSpacing: '0.08em',
+          color: '#ffffff',
+          textShadow: `0 1px 0 rgba(0,0,0,0.9), 0 0 8px ${color}55`,
+          padding: '0 12px',
+        }}
+      >
+        <span style={{ paddingRight: 40 }}>{line}</span>
+        <span style={{ paddingRight: 40 }} aria-hidden>{line}</span>
+      </div>
+    </div>
   );
 }
+
 
 
 /* ================= Ready-to-start professional banner ================= */
