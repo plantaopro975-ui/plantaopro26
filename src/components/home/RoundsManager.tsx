@@ -1628,6 +1628,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
 
+  const armedRef = useRef(false);
   const addAgent = () => {
     if (armedRef.current) {
       toast({ title: 'Programação ativa', description: 'Cancele a programação para adicionar agentes.', variant: 'destructive' });
