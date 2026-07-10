@@ -1399,7 +1399,7 @@ export default function Index() {
           const savedCount = getSavedCredentials().length;
           const wrap = (child: JSX.Element, extra = '') => (
             <div
-              className={cn('w-full max-w-6xl mx-auto sm:mx-0 sm:ml-6 lg:ml-12 xl:ml-20 sm:max-w-2xl lg:max-w-3xl xl:max-w-[44rem]', extra)}
+              className={cn('w-full max-w-6xl mx-auto', extra)}
               style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
             >
               {child}
@@ -1419,7 +1419,7 @@ export default function Index() {
               grow: true,
               node: (
                 <div
-                  className="w-full max-w-6xl mx-auto sm:mx-0 sm:ml-6 lg:ml-12 xl:ml-20 sm:max-w-2xl lg:max-w-3xl xl:max-w-[44rem] sm:h-full"
+                  className="w-full max-w-7xl mx-auto sm:h-full"
                   style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
                 >
                   <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full">
