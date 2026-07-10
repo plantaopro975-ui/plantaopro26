@@ -189,12 +189,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               sessionStorage.removeItem('masterSession');
             } catch {}
             try { clearAllCredentials(); } catch { /* ignore */ }
-            try {
-              toast.warning('Sessão expirada', {
-                description: 'Suas credenciais salvas foram limpas por segurança. Faça login novamente.',
-                duration: 6000,
-              });
-            } catch { /* ignore */ }
+            // Toast "Sessão expirada / credenciais limpas" removido a pedido — limpeza segue silenciosa.
+
             // Redireciona para home se estiver em rota protegida, preservando ?next para retorno
             try {
               if (typeof window !== 'undefined' && window.location.pathname !== '/') {
