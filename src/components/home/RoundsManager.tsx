@@ -1646,10 +1646,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     // "quanto falta pro slot do agente atual terminar" atualize em tempo real
     // enquanto o operador só configura a ronda.
     const needsPreview = nightEffectivelyLocked && mode === 'split' && !!schedule;
-    if (!running && !needsPreview) return;
+    if (!running && !needsPreview && !armed) return;
     const id = setInterval(() => setTick((t) => t + 1), 500);
     return () => clearInterval(id);
-  }, [running, nightEffectivelyLocked, mode, schedule]);
+  }, [running, nightEffectivelyLocked, mode, schedule, armed]);
 
   const live = useMemo(() => {
     if (!schedule || !running || startedAtRef.current == null) return null;
