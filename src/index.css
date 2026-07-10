@@ -436,14 +436,21 @@ body {
   width: 100%;
   min-width: 100%;
   max-width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  max-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   overscroll-behavior-x: none;
   touch-action: pan-y pinch-zoom;
+}
+
+/* Mobile: trava viewport (barra de endereço estável, sem redimensionamento). */
+@media (max-width: 767px) {
+  #root {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
 }
 
 
