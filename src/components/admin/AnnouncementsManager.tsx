@@ -265,6 +265,8 @@ export function AnnouncementsManager() {
   };
 
   const handleDelete = async (id: string) => {
+    // Optimistic remove
+    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
     try {
       if (hasMasterSession()) {
         await callMasterAdmin('announcement_delete', { id });
@@ -278,14 +280,18 @@ export function AnnouncementsManager() {
       toast.success('Aviso excluído com sucesso');
       setDeleteDialogOpen(false);
       setDeletingId(null);
-      fetchData();
     } catch (error) {
       console.error('Error deleting announcement:', error);
       toast.error('Erro ao excluir aviso');
+      fetchData(); // reverte estado em caso de erro
     }
   };
 
   const toggleActive = async (announcement: Announcement) => {
+    // Optimistic toggle
+    setAnnouncements((prev) =>
+      prev.map((a) => (a.id === announcement.id ? { ...a, is_active: !a.is_active } : a)),
+    );
     try {
       if (hasMasterSession()) {
         await callMasterAdmin('announcement_toggle', {
@@ -300,10 +306,10 @@ export function AnnouncementsManager() {
         if (error) throw error;
       }
       toast.success(`Aviso ${!announcement.is_active ? 'ativado' : 'desativado'}`);
-      fetchData();
     } catch (error) {
       console.error('Error toggling announcement:', error);
       toast.error('Erro ao alterar status');
+      fetchData(); // reverte em caso de erro
     }
   };
 
