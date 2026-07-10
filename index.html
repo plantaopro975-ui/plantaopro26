@@ -16,8 +16,10 @@
     <!-- Preload backdrop de carregamento (baixo custo, ~55KB, cache-forever no CDN) -->
     <link rel="preload" as="image" href="/__l5e/assets-v1/42788cce-196f-4a9e-ac3e-175e0f810f4e/loading-backdrop.webp" fetchpriority="low" />
 
-    <!-- Preload splash institucional (aparece antes do login/PlantaoHome) -->
-    <link rel="preload" as="image" href="/__l5e/assets-v1/d1531a9d-1b9d-44fd-b552-514605db97cd/plantaopro-splash.jpg" fetchpriority="high" />
+    <!-- Preload splash institucional (LCP): AVIF prioritário para navegadores modernos,
+         WebP como fallback. JPG fica só como último recurso via <picture>. -->
+    <link rel="preload" as="image" type="image/avif" href="/__l5e/assets-v1/b46f5fff-72fa-42e6-ab6d-399dffce6d6d/plantaopro-splash.avif" fetchpriority="high" />
+    <link rel="preload" as="image" type="image/webp" href="/__l5e/assets-v1/daa04562-bbb9-4c2c-b4e0-c99584022bc5/plantaopro-splash.webp" fetchpriority="high" />
 
     
     <!-- Preconnect Supabase para acelerar 1ª chamada (economiza ~100-300ms em 4G) -->

@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import splashAsset from "@/assets/brand/plantaopro-splash.jpg.asset.json";
+import splashAvif from "@/assets/brand/plantaopro-splash.avif.asset.json";
+import splashWebp from "@/assets/brand/plantaopro-splash.webp.asset.json";
 import { useAuth } from "@/contexts/AuthContext";
 
 const IMG_URL = splashAsset.url;
+const IMG_AVIF = splashAvif.url;
+const IMG_WEBP = splashWebp.url;
 
 interface CinematicBrandHeroProps {
   onScrollToLogin?: () => void;
