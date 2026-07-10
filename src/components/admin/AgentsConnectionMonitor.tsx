@@ -570,8 +570,21 @@ export function AgentsConnectionMonitor() {
                     const sessionInfo = r.isOnline
                       ? r.loginAt ? `há ${formatDistanceToNow(new Date(r.loginAt), { locale: ptBR })}` : 'sessão ativa'
                       : r.loginAt ? fmtAbs(r.loginAt) : '—';
+                    const isSelected = selectedAgentId === r.id;
                     return (
-                      <TableRow key={r.id} className={r.isOnline ? 'bg-emerald-500/5' : undefined}>
+                      <TableRow
+                        key={r.id}
+                        onClick={() => {
+                          setSelectedAgentId(isSelected ? null : r.id);
+                          if (!isSelected) setActiveTab('timeline');
+                        }}
+                        className={cn(
+                          'cursor-pointer transition-colors',
+                          r.isOnline && 'bg-emerald-500/5',
+                          isSelected && 'bg-primary/10 ring-1 ring-primary/40',
+                        )}
+                        title="Clique para ver a linha do tempo deste agente"
+                      >
                         <TableCell><PresenceDot on={r.isOnline} /></TableCell>
                         <TableCell>
                           <div className="font-medium">{r.name}</div>
