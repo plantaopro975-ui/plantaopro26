@@ -200,14 +200,14 @@ export function ImageProtection() {
       hour: "2-digit",
       minute: "2-digit",
     });
-    const label = `ISE • ACRE • SISTEMA SOCIOEDUCATIVO • ${stamp}`;
+    const label = `PLANTÃOPRO • AGENTES DE SEGURANÇA · SOCIOEDUCATIVO • ${stamp}`;
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='520' height='320' viewBox='0 0 520 320'>
       <g fill='none' fill-rule='evenodd' opacity='0.09'>
         <text x='0' y='160' transform='rotate(-24 260 160)' font-family='IBM Plex Mono, monospace' font-size='16' font-weight='600' fill='#fbbf24' letter-spacing='2'>
           ${label}
         </text>
         <text x='40' y='300' transform='rotate(-24 260 160)' font-family='IBM Plex Mono, monospace' font-size='11' fill='#f59e0b' letter-spacing='4'>
-          PROTEGIDO • PLANTÃOPRO • USO INSTITUCIONAL
+          CONTEÚDO PROTEGIDO • DEDICADO AOS AGENTES
         </text>
       </g>
     </svg>`;
