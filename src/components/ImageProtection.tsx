@@ -151,7 +151,7 @@ export function ImageProtection() {
         // Some OSes only send keyup for PrintScreen — cover both.
         try {
           navigator.clipboard?.writeText?.(
-            "Captura bloqueada — PlantãoPro (uso institucional).",
+            "Captura bloqueada — PlantãoPro · conteúdo dedicado a agentes de segurança pública do sistema socioeducativo.",
           );
         } catch {
           /* ignore */
