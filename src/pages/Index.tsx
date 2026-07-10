@@ -1484,8 +1484,8 @@ export default function Index() {
         onScrollToLogin={() => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
-        onMasterClick={() => setShowMasterLogin(true)}
       />
+
 
 
 
