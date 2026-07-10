@@ -187,6 +187,70 @@ serve(async (req) => {
       return json({ success: true, data: {} });
     }
 
+    // ===== Announcements (admin_announcements) =====
+    if (action === "announcement_list") {
+      const { data, error } = await admin
+        .from("admin_announcements")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) return json({ success: false, error: error.message }, 400);
+      return json({ success: true, data });
+    }
+
+    if (action === "announcement_upsert") {
+      const payload = body?.payload ?? {};
+      if (!payload?.title || typeof payload.title !== "string") {
+        return json({ success: false, error: "Título obrigatório." }, 400);
+      }
+      const id = body?.id ? String(body.id) : null;
+      if (id) {
+        const { data, error } = await admin
+          .from("admin_announcements")
+          .update(payload)
+          .eq("id", id)
+          .select()
+          .maybeSingle();
+        if (error) return json({ success: false, error: error.message }, 400);
+        return json({ success: true, data });
+      }
+      const { data, error } = await admin
+        .from("admin_announcements")
+        .insert(payload)
+        .select()
+        .maybeSingle();
+      if (error) return json({ success: false, error: error.message }, 400);
+      return json({ success: true, data });
+    }
+
+    if (action === "announcement_toggle") {
+      const id = String(body?.id ?? "");
+      const isActive = !!body?.is_active;
+      if (!id) return json({ success: false, error: "id obrigatório." }, 400);
+      const { error } = await admin
+        .from("admin_announcements")
+        .update({ is_active: isActive })
+        .eq("id", id);
+      if (error) return json({ success: false, error: error.message }, 400);
+      return json({ success: true, data: {} });
+    }
+
+    if (action === "announcement_delete") {
+      const id = String(body?.id ?? "");
+      if (!id) return json({ success: false, error: "id obrigatório." }, 400);
+      const { error } = await admin.from("admin_announcements").delete().eq("id", id);
+      if (error) return json({ success: false, error: error.message }, 400);
+      return json({ success: true, data: {} });
+    }
+
+    if (action === "units_list") {
+      const { data, error } = await admin
+        .from("units")
+        .select("id, name")
+        .order("name");
+      if (error) return json({ success: false, error: error.message }, 400);
+      return json({ success: true, data });
+    }
+
     return json({ success: false, error: "Ação desconhecida." }, 400);
   } catch (err) {
     console.error("master-admin error", err);
