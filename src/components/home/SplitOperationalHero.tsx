@@ -24,14 +24,15 @@ const vehicleMobile = vehicle3dPngAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
-import objAlfaAsset from '@/assets/teams/alfa-object3d.webp.asset.json';
-import objBravoAsset from '@/assets/teams/bravo-object3d.webp.asset.json';
-import objCharlieAsset from '@/assets/teams/charlie-object3d.webp.asset.json';
-import objDeltaAsset from '@/assets/teams/delta-object3d.webp.asset.json';
+import objAlfaAsset from '@/assets/teams/alfa-object3d-v3.webp.asset.json';
+import objBravoAsset from '@/assets/teams/bravo-object3d-v3.webp.asset.json';
+import objCharlieAsset from '@/assets/teams/charlie-object3d-v3.webp.asset.json';
+import objDeltaAsset from '@/assets/teams/delta-object3d-v3.webp.asset.json';
 const objAlfa = objAlfaAsset.url;
 const objBravo = objBravoAsset.url;
 const objCharlie = objCharlieAsset.url;
 const objDelta = objDeltaAsset.url;
+
 
 import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
 const bgAlfa = bgAlfaAsset.url;
