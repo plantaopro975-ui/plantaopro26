@@ -1528,6 +1528,29 @@ export default function Index() {
         />
       </footer>
 
+      {/* Mobile-only ultra-thin footer strip (fixo, não empurra viatura/boneco) */}
+      <div className="sm:hidden fixed bottom-0 inset-x-0 z-20 h-5 flex items-center justify-center gap-3 bg-background/80 backdrop-blur-sm border-t border-border/40 pointer-events-auto">
+        <button
+          type="button"
+          onClick={() => navigate('/about')}
+          aria-label="Sobre o aplicativo"
+          className="inline-flex items-center gap-1 text-[8px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70 hover:text-primary transition-colors"
+        >
+          <Info className="h-2.5 w-2.5" strokeWidth={2.2} />
+          <span>Sobre</span>
+        </button>
+        <span className="text-muted-foreground/40 text-[8px]">·</span>
+        <button
+          type="button"
+          onClick={() => setShowMasterLogin(true)}
+          aria-label="Acesso Administrador Master"
+          className="inline-flex items-center gap-1 text-[8px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70 hover:text-primary transition-colors"
+        >
+          <Lock className="h-2.5 w-2.5" strokeWidth={2.2} />
+          <span>Master</span>
+        </button>
+      </div>
+
 
 
 
