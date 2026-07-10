@@ -18,7 +18,7 @@ import splashAsset from "@/assets/brand/plantaopro-splash.jpg.asset.json";
 export const HomeImageBackground = memo(function HomeImageBackground() {
   return (
     <div
-      className="fixed inset-0 pointer-events-none overflow-hidden z-0"
+      className="absolute inset-0 pointer-events-none overflow-hidden z-0"
       aria-hidden
     >
       {/* 1 · Imagem oficial */}
