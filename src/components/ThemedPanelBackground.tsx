@@ -3,6 +3,7 @@ import { useEffect, useState, forwardRef } from 'react';
 import { getThemeAssets } from '@/lib/themeAssets';
 import { teamPosters, teamColors } from '@/lib/teamAssets';
 import { cn } from '@/lib/utils';
+import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
 
 interface ThemedPanelBackgroundProps {
   team?: string | null;
