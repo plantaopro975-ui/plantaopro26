@@ -891,6 +891,29 @@ function TimeCell({ value, label, color, pulse }: { value: string; label: string
 function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
   const [visible, setVisible] = useState(true);
   const [phrases, setPhrases] = useState<string[]>(() => nextPhrases(team, 4));
+  // Só revela o ticker depois que a IBM Plex Sans estiver realmente pronta —
+  // elimina o FOUT (flash com fallback) em qualquer navegador com FontFace API.
+  // Navegadores sem `document.fonts` (muito antigos) revelam imediatamente.
+  const [fontReady, setFontReady] = useState<boolean>(() => {
+    if (typeof document === 'undefined') return true;
+    const fs = (document as Document & { fonts?: FontFaceSet }).fonts;
+    return !fs;
+  });
+
+  useEffect(() => {
+    if (fontReady) return;
+    const fs = (document as Document & { fonts?: FontFaceSet }).fonts;
+    if (!fs) { setFontReady(true); return; }
+    let cancelled = false;
+    // Pré-carrega os dois pesos usados (600 corpo, 700 caso apareça)
+    Promise.all([
+      fs.load('600 12.5px "IBM Plex Sans"').catch(() => null),
+      fs.load('700 12.5px "IBM Plex Sans"').catch(() => null),
+    ]).then(() => { if (!cancelled) setFontReady(true); });
+    // Fallback duro após 2s para nunca deixar o ticker invisível
+    const t = window.setTimeout(() => { if (!cancelled) setFontReady(true); }, 2000);
+    return () => { cancelled = true; window.clearTimeout(t); };
+  }, [fontReady]);
 
   useEffect(() => {
     setPhrases(nextPhrases(team, 4));
@@ -910,7 +933,8 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
     return () => clearTimeout(t);
   }, [visible, team]);
 
-  if (!visible) return null;
+  if (!visible || !fontReady) return null;
+
 
   const sep = ' \u2022 ';
   const line = phrases.join(sep);
@@ -1637,6 +1661,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   // timer profissional até o momento de iniciar automaticamente.
   const [armedForMs, setArmedForMs] = useState<number | null>(null);
   const armed = armedForMs != null && !running;
+  // Guard: garante que o auto-início dispare UMA ÚNICA vez por programação,
+  // mesmo se React re-renderizar ou o efeito reavaliar múltiplas vezes.
+  const autoFiredRef = useRef<number | null>(null);
+  const [cancelArmConfirmOpen, setCancelArmConfirmOpen] = useState(false);
 
 
 
@@ -2133,6 +2161,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       t.setDate(t.getDate() + 1);
     }
     setArmedForMs(t.getTime());
+    autoFiredRef.current = null; // libera guard para esta nova programação
     toast({
       title: 'Ronda programada',
       description: `Início automático às ${startTime}. Painel travado até lá.`,
@@ -2140,19 +2169,24 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const disarmRound = () => {
     setArmedForMs(null);
+    autoFiredRef.current = null;
+    setCancelArmConfirmOpen(false);
     toast({ title: 'Programação cancelada' });
   };
-  // Auto-início ao zerar o countdown
+  // Auto-início ao zerar o countdown — protegido por ref para disparar
+  // exatamente 1x por programação, imune a re-renders/StrictMode.
   useEffect(() => {
     if (!armed || armedForMs == null) return;
+    if (autoFiredRef.current === armedForMs) return; // já disparou p/ este alvo
     const remaining = armedForMs - nowServer();
     if (remaining <= 0) {
+      autoFiredRef.current = armedForMs;
       setArmedForMs(null);
       startTimer();
     }
-    // dependemos de `tick` (500ms) para reavaliar
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [armed, armedForMs, tick]);
+
 
 
   const resetTimer = () => {
@@ -2889,7 +2923,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             team={team}
                             firstAgent={schedule?.rows[0]?.name}
                             startLabel={startTime}
-                            onCancel={disarmRound}
+                            onCancel={() => setCancelArmConfirmOpen(true)}
                             onStartNow={() => { setArmedForMs(null); setStartConfirmOpen(true); }}
                           />
                         )}
@@ -2936,7 +2970,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <Button
                               type="button"
                               size="sm"
-                              onClick={disarmRound}
+                              onClick={() => setCancelArmConfirmOpen(true)}
                               variant="outline"
                               className="h-9 px-4 border-destructive/45 text-destructive hover:bg-destructive/10"
                             >
@@ -3138,6 +3172,27 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         secondaryLabel="Sim, sair"
         onSecondary={confirmAndClose}
       />
+
+      {/* Confirmação para destravar a ronda programada — evita perda acidental de escala */}
+      <ConfirmDialog
+        open={cancelArmConfirmOpen}
+        onOpenChange={setCancelArmConfirmOpen}
+        variant="warning"
+        kicker="CANCELAR PROGRAMAÇÃO"
+        title="Destravar a ronda programada?"
+        description={
+          <span>
+            A escala configurada para <b>{startTime}</b> será cancelada e o cadeado removido.{' '}
+            Você precisará programar novamente para agendar o início automático.
+          </span>
+        }
+        accent={teamColor}
+        primaryLabel="Manter programação"
+        onPrimary={() => setCancelArmConfirmOpen(false)}
+        secondaryLabel="Sim, cancelar"
+        onSecondary={disarmRound}
+      />
+
 
     </>
   );
