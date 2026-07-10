@@ -76,7 +76,7 @@ export default function About() {
 
   return (
     <div
-      className="h-screen overflow-hidden relative bg-[#050810] flex flex-col"
+      className="min-h-screen sm:h-screen sm:overflow-hidden relative bg-[#050810] flex flex-col"
       style={{ fontFamily: SANS }}
     >
       {/* Fixed realistic background */}
