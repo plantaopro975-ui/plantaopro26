@@ -1345,13 +1345,12 @@ export default function Index() {
     <Suspense fallback={null}>
     <>
       <div
-        className="home-typo min-h-full flex flex-col bg-background relative overflow-x-hidden overflow-y-auto overscroll-contain home-compact"
+        className="home-typo min-h-full flex flex-col bg-background relative overflow-x-hidden overscroll-contain home-compact max-sm:overflow-y-auto"
         style={{
           fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
           ['--home-gap' as any]: 'clamp(2px, 0.35vh, 8px)',
           ['--home-pad-x' as any]: 'clamp(2px, 0.6vw, 16px)',
           ['--home-pad-y' as any]: 'clamp(0px, 0.2vh, 6px)',
-
         }}
       >
         {/* Sober command-room background — SVG only, no posters */}
