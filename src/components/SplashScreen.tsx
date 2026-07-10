@@ -38,15 +38,6 @@ export function SplashScreen() {
     if (!visible) return;
     splashMountedThisRuntime = true;
 
-    // Assume o controle: remove o splash inline do index.html (se ainda
-    // presente) para não sobrepor e criar flash duplo.
-    try {
-      const anyWin = window as unknown as { __hidePwaSplash?: () => void };
-      anyWin.__hidePwaSplash?.();
-    } catch {
-      /* noop */
-    }
-
     // Trava scroll enquanto splash está visível
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";

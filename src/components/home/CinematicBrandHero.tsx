@@ -34,18 +34,12 @@ export function CinematicBrandHero({
   return (
     <section
       aria-label="PlantãoPro — Controle profissional de plantão"
-      className="relative w-full sm:px-6 lg:px-10 sm:py-10 lg:py-14"
+      className="relative w-full overflow-hidden isolate"
+      style={{
+        minHeight: "clamp(520px, 85vh, 900px)",
+        background: "#050505",
+      }}
     >
-      {/* Card container — no desktop vira uma "peça" alinhada aos demais
-          blocos da home (max-w-7xl, cantos arredondados, borda âmbar,
-          brackets táticos). No mobile permanece fullscreen edge-to-edge. */}
-      <div
-        className="relative w-full overflow-hidden isolate sm:mx-auto sm:max-w-7xl sm:rounded-2xl sm:border sm:border-amber-500/20 sm:shadow-[0_20px_60px_-20px_rgba(0,0,0,0.7)]"
-        style={{
-          minHeight: "clamp(520px, 70vh, 760px)",
-          background: "#050505",
-        }}
-      >
       {/* Background: imagem institucional */}
       <img
         src={IMG_URL}
@@ -226,30 +220,7 @@ export function CinematicBrandHero({
             </span>
           </div>
         </div>
-        {/* /content max-w-xl */}
       </div>
-      {/* /content z-10 wrapper */}
-
-        {/* Tactical corner brackets — apenas desktop, para casar com o
-            estilo dos demais cards da home. */}
-        <span
-          aria-hidden
-          className="hidden sm:block absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-amber-500/50 rounded-tl-lg"
-        />
-        <span
-          aria-hidden
-          className="hidden sm:block absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-amber-500/50 rounded-tr-lg"
-        />
-        <span
-          aria-hidden
-          className="hidden sm:block absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-amber-500/50 rounded-bl-lg"
-        />
-        <span
-          aria-hidden
-          className="hidden sm:block absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-amber-500/50 rounded-br-lg"
-        />
-      </div>
-      {/* /card container */}
     </section>
   );
 }

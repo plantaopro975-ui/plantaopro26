@@ -54,9 +54,6 @@
     <!-- iOS home screen / standalone -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-    <!-- iOS PWA splash screen (native startup image) — usa a arte oficial -->
-    <link rel="apple-touch-startup-image" href="/__l5e/assets-v1/d1531a9d-1b9d-44fd-b552-514605db97cd/plantaopro-splash.jpg" />
-
     <!-- Windows tiles -->
     <meta name="msapplication-TileImage" content="/icon-192.png" />
     <meta name="msapplication-TileColor" content="#0a0f1a" />
@@ -113,44 +110,6 @@
 </head>
 
   <body>
-    <!-- Splash inline PWA — visível ANTES do React montar. Elimina flash
-         branco/preto no cold boot. Removido automaticamente quando o app
-         monta, ou após 6s de segurança. -->
-    <div id="pwa-splash" aria-hidden="true" style="
-      position:fixed;inset:0;z-index:2147483000;
-      background:#050505 center/cover no-repeat
-        url('/__l5e/assets-v1/d1531a9d-1b9d-44fd-b552-514605db97cd/plantaopro-splash.jpg');
-      opacity:1;transition:opacity 550ms cubic-bezier(0.22,1,0.36,1);
-      pointer-events:none;
-    ">
-      <div style="
-        position:absolute;left:50%;bottom:8%;transform:translateX(-50%);
-        width:220px;height:2px;border-radius:999px;
-        background:rgba(244,201,116,0.18);overflow:hidden;
-      ">
-        <div id="pwa-splash-bar" style="
-          height:100%;width:0%;
-          background:linear-gradient(90deg,#c9922b,#f4c974);
-          box-shadow:0 0 10px rgba(244,201,116,0.7);
-          transition:width 1.6s cubic-bezier(0.65,0.05,0.36,1);
-        "></div>
-      </div>
-    </div>
-    <script>
-      // Anima a barra imediatamente
-      requestAnimationFrame(function () {
-        var bar = document.getElementById('pwa-splash-bar');
-        if (bar) bar.style.width = '100%';
-      });
-      // Remoção coordenada: quando o React sinalizar OU após 6s (safety net)
-      window.__hidePwaSplash = function () {
-        var el = document.getElementById('pwa-splash');
-        if (!el) return;
-        el.style.opacity = '0';
-        setTimeout(function () { if (el && el.parentNode) el.parentNode.removeChild(el); }, 600);
-      };
-      setTimeout(function () { if (window.__hidePwaSplash) window.__hidePwaSplash(); }, 6000);
-    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

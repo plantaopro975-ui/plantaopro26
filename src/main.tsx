@@ -161,21 +161,6 @@ if ("serviceWorker" in navigator && shouldSkipServiceWorker()) {
 
 createRoot(document.getElementById("root")!).render(<App />);
 
-// Hide the inline PWA splash (index.html) once React has mounted.
-// The React <SplashScreen> then handles its own fade on top. If the current
-// route skips the React splash (/about, /install), the inline one still
-// dismisses cleanly instead of waiting for the 6s safety net.
-requestAnimationFrame(() => {
-  requestAnimationFrame(() => {
-    try {
-      const w = window as unknown as { __hidePwaSplash?: () => void };
-      w.__hidePwaSplash?.();
-    } catch {
-      /* noop */
-    }
-  });
-});
-
 // Hide the native Capacitor splash screen once React has mounted.
 // No-op on the web (import resolves but call fails silently outside native).
 (async () => {
