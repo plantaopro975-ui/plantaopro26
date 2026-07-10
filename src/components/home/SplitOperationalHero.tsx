@@ -164,7 +164,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       ) : (
         <span aria-hidden className="team-halo" />
       )}
-      <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0.5 pt-2 sm:p-2 sm:pt-4 [perspective:600px]">
+      <div className="relative z-20 flex items-center justify-center flex-1 min-h-0 p-0 pt-1 sm:p-0.5 sm:pt-2 [perspective:600px]">
         <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
       </div>
       <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
