@@ -712,21 +712,19 @@ function nextPhrases(team: TeamKey, count = 4): string[] {
  * A cada retomada, novas frases são sorteadas sem repetir a última sequência.
  */
 function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string; uid: string }) {
-  const [visible, setVisible] = React.useState(true);
-  const [phrases, setPhrases] = React.useState<string[]>(() => nextPhrases(team, 4));
+  const [visible, setVisible] = useState(true);
+  const [phrases, setPhrases] = useState<string[]>(() => nextPhrases(team, 4));
 
-  React.useEffect(() => {
+  useEffect(() => {
     setPhrases(nextPhrases(team, 4));
     setVisible(true);
   }, [team]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let t: ReturnType<typeof setTimeout>;
     if (visible) {
-      // 60s exibindo — depois pausa
       t = setTimeout(() => setVisible(false), 60_000);
     } else {
-      // 180s de pausa — depois renova frases e retoma
       t = setTimeout(() => {
         setPhrases(nextPhrases(team, 4));
         setVisible(true);
@@ -739,7 +737,7 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
 
   const line = phrases.join('   ◆   ') + '   ◆   ';
   return (
-    <g style={{ opacity: 0, animation: 'fadeIn 900ms ease-out forwards' } as React.CSSProperties}>
+    <g style={{ opacity: 0, animation: 'fadeIn 900ms ease-out forwards' }}>
       <defs>
         <linearGradient id={`${uid}-tfade`} x1="0" x2="1" y1="0" y2="0">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
