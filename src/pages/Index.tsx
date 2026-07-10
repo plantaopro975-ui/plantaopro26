@@ -1492,10 +1492,12 @@ export default function Index() {
 
 
       {/* Mobile-only beta notice */}
-      <BetaNoticeFooter />
+      <div className="hidden sm:block">
+        <BetaNoticeFooter />
+      </div>
 
-      {/* Rodapé institucional profissional (Sobre/Master integrados) */}
-      <footer className="relative z-30 mt-6 w-full">
+      {/* Rodapé institucional profissional (Sobre/Master integrados) — oculto no mobile */}
+      <footer className="relative z-30 mt-6 w-full hidden sm:block">
         <CopyrightFooter
           compact
           leftSlot={

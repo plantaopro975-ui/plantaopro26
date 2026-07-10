@@ -675,8 +675,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ MOBILE-ONLY — Viatura + Agente abaixo dos cards (compacto) ============ */}
-        <div className="sm:hidden relative z-30 order-4 px-3 pt-1 pb-0 shrink-0 pointer-events-none">
-          <div className="relative mx-auto flex items-end justify-center gap-1 h-[130px] min-[390px]:h-[150px] w-full max-w-[420px]">
+        <div className="sm:hidden relative z-30 order-4 px-2 pt-1 pb-1 shrink-0 pointer-events-none">
+          <div className="relative mx-auto flex items-end justify-center gap-1 h-[190px] min-[390px]:h-[220px] w-full max-w-[480px]">
             <picture className="relative block h-full aspect-square leading-[0] self-end">
               <source type="image/webp" srcSet={vehicle3dWebp} />
               <img
@@ -686,11 +686,11 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 height={1024}
                 loading="lazy"
                 decoding="async"
-                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_8px_12px_rgba(0,0,0,0.7)] select-none"
+                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none"
                 draggable={false}
               />
             </picture>
-            <picture className="relative block h-[95%] leading-[0] -ml-1 self-end -mb-6 min-[390px]:-mb-8">
+            <picture className="relative block h-full leading-[0] -ml-1 self-end">
               <source type="image/webp" srcSet={agent3dWebp} />
               <img
                 src={agent3d}
