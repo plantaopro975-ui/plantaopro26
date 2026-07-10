@@ -92,41 +92,38 @@ interface TeamObjectProps {
 }
 function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   const imgClass = cn(
-    // Proporcional ao slot: ~60% da menor dimensão via aspect-square wrapper.
-    // Sempre centralizado, nunca vaza do card em telas pequenas.
+    // object-contain preserva a proporção original do render 3D.
+    // Ocupa o slot inteiro (menos padding do wrapper) sem distorcer.
     'block h-full w-full object-contain object-center select-none animate-float3d',
-    'drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]',
+    'drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]',
     'transition-[transform,opacity] duration-700 ease-out',
-    'group-hover:scale-[1.04] group-hover:-translate-y-0.5',
+    'group-hover:scale-[1.06] group-hover:-translate-y-0.5',
     'group-active:scale-[1.02]',
   );
 
   return (
-    <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
-      {/* Wrapper aspect-square garante proporção idêntica em qualquer tamanho de card */}
-      <div className="relative aspect-square h-[70%] max-h-full w-auto max-w-[70%] flex items-center justify-center">
-        <picture className="block h-full w-full">
-          <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 30vw, (max-width: 1024px) 14vw, 160px" />
-          <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 30vw, (max-width: 1024px) 14vw, 160px" />
-          <img
-            src={team.obj}
-            alt={`Equipe ${team.key} — equipamento tático`}
-            loading={isAlfa ? 'eager' : 'lazy'}
-            decoding="async"
-            fetchPriority={isAlfa ? 'high' : 'low'}
-            width={512}
-            height={512}
-            sizes="(max-width: 640px) 30vw, (max-width: 1024px) 14vw, 160px"
-            draggable={false}
-            className={imgClass}
-            style={{
-              transformOrigin: '50% 50%',
-              animationDelay: `${idx * 0.6}s`,
-              contentVisibility: 'auto',
-            }}
-          />
-        </picture>
-      </div>
+    <div className="relative flex h-full w-full items-center justify-center px-3 py-1 sm:px-4 sm:py-1.5">
+      <picture className="flex h-full w-full items-center justify-center">
+        <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 32vw, (max-width: 1024px) 16vw, 180px" />
+        <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 32vw, (max-width: 1024px) 16vw, 180px" />
+        <img
+          src={team.obj}
+          alt={`Equipe ${team.key} — equipamento tático`}
+          loading={isAlfa ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={isAlfa ? 'high' : 'low'}
+          width={512}
+          height={512}
+          sizes="(max-width: 640px) 32vw, (max-width: 1024px) 16vw, 180px"
+          draggable={false}
+          className={imgClass}
+          style={{
+            transformOrigin: '50% 50%',
+            animationDelay: `${idx * 0.6}s`,
+            contentVisibility: 'auto',
+          }}
+        />
+      </picture>
     </div>
   );
 }
