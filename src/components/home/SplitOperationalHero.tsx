@@ -11,15 +11,10 @@ import { useVisitorPresence } from '@/hooks/useVisitorPresence';
 
 
 
-import agent3dWebpAsset from '@/assets/hero/agent-ise-3d.webp.asset.json';
-import agent3dPngAsset from '@/assets/hero/agent-ise-3d.png.asset.json';
-const agent3dWebp = agent3dWebpAsset.url;
-const agent3d = agent3dPngAsset.url;
-import vehicle3dWebpAsset from '@/assets/hero/vehicle-ise-3d.webp.asset.json';
-import vehicle3dPngAsset from '@/assets/hero/vehicle-ise-3d.png.asset.json';
-const vehicle3dWebp = vehicle3dWebpAsset.url;
-const vehicle3d = vehicle3dPngAsset.url;
-const vehicleMobile = vehicle3dPngAsset.url;
+import agent3dWebp from '@/assets/hero/agent-ise-3d.local.webp';
+import agent3d from '@/assets/hero/agent-ise-3d.local.png';
+import vehicle3dWebp from '@/assets/hero/vehicle-ise-3d.local.webp';
+import vehicle3d from '@/assets/hero/vehicle-ise-3d.local.png';
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
@@ -145,7 +140,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       aria-pressed={isSelected}
       onClick={() => onSelect(t.key)}
       className={cn(
-        'group relative flex h-[clamp(104px,15.5vh,132px)] min-[390px]:h-[clamp(110px,16vh,140px)] sm:h-[clamp(98px,16vh,158px)] lg:h-[clamp(132px,23vh,168px)] xl:h-[clamp(148px,25vh,220px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+        'group relative flex h-[clamp(100px,15vh,126px)] min-[390px]:h-[clamp(104px,15.5vh,132px)] sm:h-[clamp(98px,16vh,158px)] lg:h-[clamp(132px,23vh,168px)] xl:h-[clamp(148px,25vh,220px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
         isSelected
@@ -712,9 +707,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ MOBILE-ONLY — Viatura + Agente abaixo dos cards (compacto) ============ */}
-        <div className="sm:hidden relative z-30 order-4 px-2 pt-0 pb-7 -mt-2 min-[390px]:-mt-3 shrink-0 pointer-events-none">
-          <div className="relative mx-auto flex items-end justify-center gap-0 h-[128px] min-[390px]:h-[148px] w-full max-w-[340px]">
-            <picture className="relative block h-[90%] aspect-square leading-[0] self-end translate-y-1">
+        <div className="sm:hidden relative z-30 order-4 px-2 pt-1 pb-8 mt-0 shrink-0 pointer-events-none">
+          <div className="relative mx-auto flex items-end justify-center gap-0 h-[118px] min-[390px]:h-[132px] w-full max-w-[300px]">
+            <picture className="relative block h-[84%] aspect-square leading-[0] self-end translate-y-0.5">
               <source type="image/webp" srcSet={vehicle3dWebp} />
               <img
                 src={vehicle3d}
@@ -723,10 +718,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 height={1024}
                 loading="lazy"
                 decoding="async"
-                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[0.94] origin-bottom-right"
+                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[0.9] origin-bottom-right"
                 draggable={false}
               />
-              <span aria-hidden className="pointer-events-none absolute inset-0 scale-[0.94] origin-bottom-right">
+              <span aria-hidden className="pointer-events-none absolute inset-0 scale-[0.9] origin-bottom-right">
                 <span
                   aria-hidden
                   className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
@@ -739,7 +734,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 />
               </span>
             </picture>
-            <picture className="relative block h-[106%] leading-[0] -ml-4 self-end mb-2 min-[390px]:mb-3">
+            <picture className="relative block h-[100%] leading-[0] -ml-5 self-end mb-1 min-[390px]:mb-2">
               <source type="image/webp" srcSet={agent3dWebp} />
               <img
                 src={agent3d}
@@ -748,7 +743,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 height={1024}
                 loading="lazy"
                 decoding="async"
-                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[0.96] origin-bottom-left"
+                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[0.9] origin-bottom-left"
                 draggable={false}
               />
             </picture>
