@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { PanelSkeleton } from '@/components/ui/panel-skeleton';
 import { SystemOverviewCard } from '@/components/dashboard/SystemOverviewCard';
 import { ActivityLogsCard } from '@/components/dashboard/ActivityLogsCard';
+import { SecurityAuditCard } from '@/components/dashboard/SecurityAuditCard';
 import { UnitsManagementCard } from '@/components/dashboard/UnitsManagementCard';
 import { BHControlCard } from '@/components/dashboard/BHControlCard';
 import { AnnouncementsCard } from '@/components/dashboard/AnnouncementsCard';
