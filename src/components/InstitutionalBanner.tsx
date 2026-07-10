@@ -165,23 +165,30 @@ export function InstitutionalBanner({ onSettingsClick }: InstitutionalBannerProp
         <div className="flex items-center justify-between max-w-6xl mx-auto">
           {/* Left: Logo + ISE/ACRE badge */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <img 
-              src={logoShield}
-              alt="Instituto Socioeducativo do Acre"
-              className="h-12 sm:h-14 md:h-16 w-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] cursor-pointer select-none"
-              title="ISE / ACRE"
-              draggable={false}
-              onClick={() => {
-                const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
-                w.__logoClicks = (w.__logoClicks || 0) + 1;
-                if (w.__logoTimer) window.clearTimeout(w.__logoTimer);
-                w.__logoTimer = window.setTimeout(() => { w.__logoClicks = 0; }, 800);
-                if (w.__logoClicks >= 3) {
-                  w.__logoClicks = 0;
-                  window.dispatchEvent(new CustomEvent('open-master-login'));
-                }
-              }}
-            />
+            <div className="relative flex-shrink-0 aspect-square h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 flex items-center justify-center">
+              <img
+                src={logoShield}
+                alt="Instituto Socioeducativo do Acre"
+                width={128}
+                height={128}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] cursor-pointer select-none"
+                title="ISE / ACRE"
+                draggable={false}
+                onClick={() => {
+                  const w = window as unknown as { __logoClicks?: number; __logoTimer?: number };
+                  w.__logoClicks = (w.__logoClicks || 0) + 1;
+                  if (w.__logoTimer) window.clearTimeout(w.__logoTimer);
+                  w.__logoTimer = window.setTimeout(() => { w.__logoClicks = 0; }, 800);
+                  if (w.__logoClicks >= 3) {
+                    w.__logoClicks = 0;
+                    window.dispatchEvent(new CustomEvent('open-master-login'));
+                  }
+                }}
+              />
+            </div>
             <div className="hidden sm:flex flex-col">
               <span className={cn(
                 "text-sm sm:text-base md:text-lg font-black tracking-[0.15em] uppercase",
