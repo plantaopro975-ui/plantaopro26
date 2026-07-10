@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { pushDiagEvent } from "@/lib/diagLog";
 
 /**
- * Cinematic splash — Command Center v3.
- * Sequence (~3s):
- *  0.0s  HUD hexagon field draws in, top/bottom bars slide
- *  0.2s  Crest core materializes with radial burst
- *  0.5s  Radar sweep locks + 3 ping bursts across unit markers
- *  0.9s  Wordmark reveal (clip-path wipe) + laurel arcs
- *  1.1s  Boot log ticker (4 lines, staggered)
- *  1.8s  12-segment progress meter fills
- *  2.4s  "AUTORIZADO" stamp locks in
- *  2.6s  Fade to app
+ * Cinematic splash — Command Center v4 "Aurum Tactical".
+ * Timeline (~2.6s):
+ *  0.00s  Deep-space wash + hex mesh materializes
+ *  0.10s  Top/bottom HUD bars slide in with coordinates
+ *  0.20s  Radar rings & compass ticks draw (stroke-dasharray)
+ *  0.35s  Constellation of 8 ISE units lights up + connecting triangulation lines
+ *  0.55s  Tactical shield reveals with 3D lift + laurel arcs
+ *  0.90s  Wordmark wipes in (gold gradient) with subtitle
+ *  1.20s  Boot log ticker (4 lines)
+ *  1.80s  Segmented telemetry meter fills
+ *  2.20s  "ACESSO AUTORIZADO" stamp locks
+ *  2.60s  Fade to app
  */
 
 let splashMountedThisRuntime = false;
@@ -19,7 +21,6 @@ let splashMountCount = 0;
 
 export function SplashScreen() {
   const shouldRender = !splashMountedThisRuntime;
-
   const [visible, setVisible] = useState(shouldRender);
   const [fadeOut, setFadeOut] = useState(false);
 
@@ -29,14 +30,11 @@ export function SplashScreen() {
       count: splashMountCount,
       moduleGuard: splashMountedThisRuntime,
       willRender: shouldRender,
-      referrer: typeof document !== "undefined" ? document.referrer : "",
-      visibility: typeof document !== "undefined" ? document.visibilityState : "",
     });
-
     if (!shouldRender) return;
     splashMountedThisRuntime = true;
-    const t1 = window.setTimeout(() => setFadeOut(true), 2700);
-    const t2 = window.setTimeout(() => setVisible(false), 3300);
+    const t1 = window.setTimeout(() => setFadeOut(true), 2600);
+    const t2 = window.setTimeout(() => setVisible(false), 3200);
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
@@ -53,41 +51,35 @@ export function SplashScreen() {
       }`}
       aria-hidden={fadeOut}
       role="dialog"
-      aria-label="Inicializando Plantão Pro"
+      aria-label="Inicializando PlantãoPro"
       style={{
         background:
-          "radial-gradient(ellipse 80% 60% at 50% 42%, #0b1226 0%, #060912 55%, #030509 100%)",
+          "radial-gradient(ellipse 90% 65% at 50% 45%, #0d1730 0%, #070b1a 55%, #02040a 100%)",
       }}
     >
-      {/* ============ LAYER 1: hex HUD + noise ============ */}
-      <div className="splash-hex absolute inset-0" />
-      <div className="splash-noise absolute inset-0 mix-blend-overlay opacity-[0.10]" />
-
-      {/* Golden atmospheric wash */}
+      {/* Layered atmosphere */}
+      <div className="splash-hex absolute inset-0" aria-hidden />
+      <div className="splash-noise absolute inset-0 mix-blend-overlay opacity-[0.08]" aria-hidden />
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 55% 42% at 50% 50%, rgba(212,175,55,0.22) 0%, transparent 62%)",
+            "radial-gradient(ellipse 50% 40% at 50% 50%, rgba(240,196,84,0.20) 0%, transparent 65%)",
         }}
       />
-
-      {/* Vertical meridian sweep */}
-      <div className="splash-meridian absolute inset-y-0 left-1/2 w-px" aria-hidden />
-
-      {/* Scanlines + vignette */}
       <div className="splash-scan absolute inset-0 pointer-events-none" aria-hidden />
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.78) 100%)",
+            "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.82) 100%)",
         }}
       />
+      <div className="splash-meridian absolute inset-y-0 left-1/2 w-px" aria-hidden />
 
-      {/* ============ TOP HUD ============ */}
+      {/* TOP HUD */}
       <div
         className="splash-top absolute top-0 inset-x-0 flex items-center justify-between px-5 sm:px-8 py-4 text-[9.5px] uppercase tracking-[0.4em] text-amber-200/75"
         style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
@@ -102,9 +94,9 @@ export function SplashScreen() {
           <span className="hidden sm:inline text-amber-100/60">SEQ · 0x24F</span>
         </div>
         <div className="hidden md:flex items-center gap-3 text-amber-100/50">
-          <span>NODE · ACRE-BR</span>
+          <span>-9.9754 · -67.8249</span>
           <span className="h-3 w-px bg-amber-500/30" />
-          <span>ISE · SEJUSP</span>
+          <span>NODE · ACRE-BR</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="hidden sm:inline text-amber-100/50">CIPHER · AES-256</span>
@@ -112,204 +104,231 @@ export function SplashScreen() {
         </div>
       </div>
 
-      {/* Corner brackets */}
       <CornerBracket className="top-14 left-4" />
       <CornerBracket className="top-14 right-4" rotate={90} />
       <CornerBracket className="bottom-14 left-4" rotate={270} />
       <CornerBracket className="bottom-14 right-4" rotate={180} />
 
-      {/* ============ CENTER STAGE ============ */}
-      <div className="relative h-full w-full flex flex-col items-center justify-center gap-6 sm:gap-7 px-6 text-center">
-        {/* Emblem stage */}
-        <div className="relative h-[240px] w-[240px] md:h-[280px] md:w-[280px]">
-          {/* Radar SVG */}
-          <svg viewBox="0 0 240 240" className="absolute inset-0 h-full w-full">
+      {/* CENTER STAGE */}
+      <div className="relative h-full w-full flex flex-col items-center justify-center gap-5 sm:gap-6 px-6 text-center">
+        {/* EMBLEM — 320px SVG canvas */}
+        <div className="relative h-[260px] w-[260px] sm:h-[300px] sm:w-[300px]">
+          <svg viewBox="0 0 300 300" className="absolute inset-0 h-full w-full">
             <defs>
-              <linearGradient id="sweepGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="rgba(212,175,55,0)" />
+              <linearGradient id="v4Gold" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#fef3c7" />
+                <stop offset="45%" stopColor="#f0d78c" />
+                <stop offset="70%" stopColor="#d4af37" />
+                <stop offset="100%" stopColor="#6b4a0e" />
+              </linearGradient>
+              <linearGradient id="v4Sweep" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="rgba(240,215,140,0)" />
                 <stop offset="100%" stopColor="rgba(240,215,140,0.55)" />
               </linearGradient>
-              <radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.5">
-                <stop offset="0%" stopColor="rgba(240,215,140,0.35)" />
+              <radialGradient id="v4Core" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0%" stopColor="rgba(240,215,140,0.42)" />
                 <stop offset="100%" stopColor="rgba(240,215,140,0)" />
               </radialGradient>
-              <linearGradient id="goldStroke" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f0d78c" />
-                <stop offset="50%" stopColor="#d4af37" />
-                <stop offset="100%" stopColor="#8a6a1c" />
+              <linearGradient id="v4Line" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="rgba(240,215,140,0.9)" />
+                <stop offset="100%" stopColor="rgba(240,215,140,0.15)" />
               </linearGradient>
+              <filter id="v4Glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="2" result="b" />
+                <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
             </defs>
 
             {/* Core glow */}
-            <circle cx="120" cy="120" r="110" fill="url(#coreGlow)" className="splash-core" />
+            <circle cx="150" cy="150" r="140" fill="url(#v4Core)" className="v4-core" />
 
-            {/* Concentric rings */}
-            {[110, 90, 70, 50, 30].map((r, i) => (
+            {/* Concentric rings — drawn with stroke-dasharray reveal */}
+            {[140, 118, 96, 74, 52, 30].map((r, i) => (
               <circle
                 key={r}
-                cx="120"
-                cy="120"
+                cx="150"
+                cy="150"
                 r={r}
                 fill="none"
-                stroke="rgba(212,175,55,0.22)"
-                strokeWidth={i === 0 ? 1 : 0.6}
-                strokeDasharray={i % 2 === 0 ? "2 3" : undefined}
+                stroke="rgba(212,175,55,0.28)"
+                strokeWidth={i === 0 ? 1 : 0.55}
+                strokeDasharray={i % 2 === 0 ? "3 4" : `${2 * Math.PI * r}`}
+                strokeDashoffset={i % 2 === 0 ? 0 : 2 * Math.PI * r}
+                className="v4-ring"
+                style={{ animationDelay: `${200 + i * 60}ms`, ["--len" as any]: 2 * Math.PI * r }}
               />
             ))}
-            {/* Cross axes */}
-            <line x1="120" y1="10" x2="120" y2="230" stroke="rgba(212,175,55,0.15)" strokeWidth="0.6" />
-            <line x1="10" y1="120" x2="230" y2="120" stroke="rgba(212,175,55,0.15)" strokeWidth="0.6" />
-            {/* Diagonal axes */}
-            <line x1="42" y1="42" x2="198" y2="198" stroke="rgba(212,175,55,0.08)" strokeWidth="0.5" />
-            <line x1="198" y1="42" x2="42" y2="198" stroke="rgba(212,175,55,0.08)" strokeWidth="0.5" />
 
-            {/* Compass ticks (N/E/S/W) */}
+            {/* Cross axes */}
+            <line x1="150" y1="10" x2="150" y2="290" stroke="rgba(212,175,55,0.18)" strokeWidth="0.6" className="v4-axis" />
+            <line x1="10" y1="150" x2="290" y2="150" stroke="rgba(212,175,55,0.18)" strokeWidth="0.6" className="v4-axis" style={{ animationDelay: "80ms" }} />
+            <line x1="55" y1="55" x2="245" y2="245" stroke="rgba(212,175,55,0.10)" strokeWidth="0.5" className="v4-axis" style={{ animationDelay: "160ms" }} />
+            <line x1="245" y1="55" x2="55" y2="245" stroke="rgba(212,175,55,0.10)" strokeWidth="0.5" className="v4-axis" style={{ animationDelay: "220ms" }} />
+
+            {/* Compass ticks */}
             {[
-              { x: 120, y: 6, t: "N" },
-              { x: 232, y: 122, t: "E" },
-              { x: 120, y: 236, t: "S" },
-              { x: 6, y: 122, t: "W" },
+              { x: 150, y: 8, t: "N" },
+              { x: 292, y: 152, t: "E" },
+              { x: 150, y: 296, t: "S" },
+              { x: 8, y: 152, t: "W" },
             ].map(({ x, y, t }) => (
               <text
                 key={t}
                 x={x}
                 y={y}
                 textAnchor="middle"
-                fontSize="7"
-                fill="rgba(240,215,140,0.55)"
+                fontSize="8"
+                fill="rgba(240,215,140,0.65)"
                 fontFamily="'IBM Plex Mono', monospace"
                 letterSpacing="1"
                 dy="2.5"
+                className="v4-fade"
+                style={{ animationDelay: "500ms" }}
               >
                 {t}
               </text>
             ))}
 
-            {/* Unit markers (constellation of ISE units) */}
+            {/* Triangulation grid — 8 unit constellation with connecting lines */}
+            <g className="v4-net">
+              {[
+                [80, 92], [220, 100], [232, 172], [200, 232],
+                [150, 250], [90, 220], [58, 158], [150, 62],
+              ].map(([x1, y1], i, arr) => {
+                const [x2, y2] = arr[(i + 3) % arr.length];
+                return (
+                  <line
+                    key={`ln-${i}`}
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke="url(#v4Line)"
+                    strokeWidth="0.5"
+                    strokeDasharray="240"
+                    strokeDashoffset="240"
+                    className="v4-triangulate"
+                    style={{ animationDelay: `${420 + i * 55}ms` }}
+                  />
+                );
+              })}
+            </g>
+
+            {/* Unit markers */}
             {[
-              { cx: 68, cy: 78, d: 800 },
-              { cx: 178, cy: 92, d: 1100 },
-              { cx: 190, cy: 168, d: 1400 },
-              { cx: 82, cy: 176, d: 1700 },
-              { cx: 152, cy: 62, d: 2000 },
-            ].map((p, i) => (
-              <g key={i}>
+              [80, 92], [220, 100], [232, 172], [200, 232],
+              [150, 250], [90, 220], [58, 158], [150, 62],
+            ].map(([cx, cy], i) => (
+              <g key={`u-${i}`}>
                 <circle
-                  cx={p.cx}
-                  cy={p.cy}
-                  r="2"
+                  cx={cx}
+                  cy={cy}
+                  r="2.4"
                   fill="#f0d78c"
-                  className="splash-unit"
-                  style={{ animationDelay: `${p.d}ms` }}
+                  filter="url(#v4Glow)"
+                  className="v4-unit"
+                  style={{ animationDelay: `${600 + i * 70}ms` }}
                 />
                 <circle
-                  cx={p.cx}
-                  cy={p.cy}
-                  r="2"
+                  cx={cx}
+                  cy={cy}
+                  r="2.4"
                   fill="none"
                   stroke="#f0d78c"
-                  strokeWidth="0.8"
-                  className="splash-ping"
-                  style={{ animationDelay: `${p.d}ms` }}
+                  strokeWidth="0.7"
+                  className="v4-ping"
+                  style={{ animationDelay: `${600 + i * 70}ms` }}
                 />
               </g>
             ))}
 
-            {/* Sweep wedge */}
-            <g
-              className="splash-sweep-g"
-              style={{ transformOrigin: "120px 120px", transformBox: "fill-box" as any }}
-            >
-              <path
-                d="M120 120 L120 10 A110 110 0 0 1 226 106 Z"
-                fill="url(#sweepGrad)"
-                opacity="0.85"
-              />
-              <line x1="120" y1="120" x2="120" y2="10" stroke="rgba(240,215,140,0.7)" strokeWidth="0.8" />
+            {/* Radar sweep */}
+            <g className="v4-sweep" style={{ transformOrigin: "150px 150px", transformBox: "fill-box" as any }}>
+              <path d="M150 150 L150 10 A140 140 0 0 1 285 130 Z" fill="url(#v4Sweep)" opacity="0.85" />
+              <line x1="150" y1="150" x2="150" y2="10" stroke="rgba(240,215,140,0.7)" strokeWidth="0.8" />
             </g>
 
             {/* Laurel arcs */}
-            <g className="splash-laurel">
-              <path
-                d="M46 168 Q22 120 46 72"
-                fill="none"
-                stroke="url(#goldStroke)"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-              <path
-                d="M194 168 Q218 120 194 72"
-                fill="none"
-                stroke="url(#goldStroke)"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-              {/* laurel leaves */}
-              {[80, 100, 120, 140, 160].map((y, i) => (
+            <g className="v4-laurel">
+              <path d="M56 210 Q22 150 56 90" fill="none" stroke="url(#v4Gold)" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M244 210 Q278 150 244 90" fill="none" stroke="url(#v4Gold)" strokeWidth="1.6" strokeLinecap="round" />
+              {[100, 125, 150, 175, 200].map((y, i) => (
                 <g key={i}>
-                  <ellipse cx={38} cy={y} rx="5" ry="2" fill="url(#goldStroke)" opacity="0.75" transform={`rotate(-25 38 ${y})`} />
-                  <ellipse cx={202} cy={y} rx="5" ry="2" fill="url(#goldStroke)" opacity="0.75" transform={`rotate(25 202 ${y})`} />
+                  <ellipse cx={46} cy={y} rx="6" ry="2.2" fill="url(#v4Gold)" opacity="0.78" transform={`rotate(-25 46 ${y})`} />
+                  <ellipse cx={254} cy={y} rx="6" ry="2.2" fill="url(#v4Gold)" opacity="0.78" transform={`rotate(25 254 ${y})`} />
                 </g>
               ))}
             </g>
           </svg>
 
-          {/* Crest (layered SVG) */}
-          <div className="splash-shield absolute inset-0 flex items-center justify-center">
-            <svg width="128" height="150" viewBox="0 0 128 150" fill="none" className="drop-shadow-[0_0_28px_rgba(240,215,140,0.55)]">
+          {/* Central crest — drawn with stroke-dasharray */}
+          <div className="v4-shield-wrap absolute inset-0 flex items-center justify-center">
+            <svg width="140" height="164" viewBox="0 0 140 164" fill="none" className="drop-shadow-[0_0_28px_rgba(240,215,140,0.55)]">
               <defs>
-                <linearGradient id="crestGold" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="v4Crest" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#fef3c7" />
                   <stop offset="45%" stopColor="#f0d78c" />
                   <stop offset="70%" stopColor="#d4af37" />
                   <stop offset="100%" stopColor="#6b4a0e" />
                 </linearGradient>
-                <linearGradient id="crestFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="rgba(15,20,38,0.95)" />
-                  <stop offset="100%" stopColor="rgba(5,8,16,0.85)" />
+                <linearGradient id="v4CrestFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(15,22,42,0.96)" />
+                  <stop offset="100%" stopColor="rgba(5,8,18,0.9)" />
                 </linearGradient>
               </defs>
+
               {/* Outer plate */}
               <path
-                d="M64 3 L120 24 V72 C120 104 96 132 64 145 C32 132 8 104 8 72 V24 Z"
-                fill="url(#crestFill)"
-                stroke="url(#crestGold)"
+                d="M70 4 L130 26 V78 C130 112 104 142 70 156 C36 142 10 112 10 78 V26 Z"
+                fill="url(#v4CrestFill)"
+                stroke="url(#v4Crest)"
                 strokeWidth="2.4"
+                strokeDasharray="600"
+                strokeDashoffset="600"
+                className="v4-crest-draw"
               />
               {/* Inner bevel */}
               <path
-                d="M64 12 L112 30 V70 C112 98 92 122 64 134 C36 122 16 98 16 70 V30 Z"
+                d="M70 14 L122 32 V76 C122 106 100 132 70 144 C40 132 18 106 18 76 V32 Z"
                 fill="none"
-                stroke="url(#crestGold)"
+                stroke="url(#v4Crest)"
                 strokeWidth="0.7"
-                opacity="0.55"
+                opacity="0.6"
+                strokeDasharray="500"
+                strokeDashoffset="500"
+                className="v4-crest-draw"
+                style={{ animationDelay: "100ms" }}
               />
               {/* Star */}
               <path
-                d="M64 34 L70 52 L89 52 L74 64 L80 82 L64 71 L48 82 L54 64 L39 52 L58 52 Z"
-                fill="url(#crestGold)"
+                d="M70 38 L77 58 L98 58 L81 71 L88 91 L70 79 L52 91 L59 71 L42 58 L63 58 Z"
+                fill="url(#v4Crest)"
+                className="v4-crest-fill"
               />
               {/* Chevrons */}
-              <path d="M32 96 L64 82 L96 96" stroke="url(#crestGold)" strokeWidth="2.4" fill="none" strokeLinecap="round" />
-              <path d="M32 110 L64 96 L96 110" stroke="url(#crestGold)" strokeWidth="2.4" fill="none" strokeLinecap="round" opacity="0.72" />
-              <path d="M32 124 L64 110 L96 124" stroke="url(#crestGold)" strokeWidth="2.4" fill="none" strokeLinecap="round" opacity="0.45" />
+              <path d="M34 104 L70 88 L106 104" stroke="url(#v4Crest)" strokeWidth="2.6" fill="none" strokeLinecap="round"
+                strokeDasharray="200" strokeDashoffset="200" className="v4-crest-draw" style={{ animationDelay: "260ms" }} />
+              <path d="M34 120 L70 104 L106 120" stroke="url(#v4Crest)" strokeWidth="2.6" fill="none" strokeLinecap="round" opacity="0.72"
+                strokeDasharray="200" strokeDashoffset="200" className="v4-crest-draw" style={{ animationDelay: "340ms" }} />
+              <path d="M34 136 L70 120 L106 136" stroke="url(#v4Crest)" strokeWidth="2.6" fill="none" strokeLinecap="round" opacity="0.45"
+                strokeDasharray="200" strokeDashoffset="200" className="v4-crest-draw" style={{ animationDelay: "420ms" }} />
               {/* Rivets */}
-              <circle cx="18" cy="30" r="1.4" fill="url(#crestGold)" />
-              <circle cx="110" cy="30" r="1.4" fill="url(#crestGold)" />
-              <circle cx="64" cy="9" r="1.4" fill="url(#crestGold)" />
+              <circle cx="18" cy="32" r="1.6" fill="url(#v4Crest)" className="v4-crest-fill" />
+              <circle cx="122" cy="32" r="1.6" fill="url(#v4Crest)" className="v4-crest-fill" />
+              <circle cx="70" cy="10" r="1.6" fill="url(#v4Crest)" className="v4-crest-fill" />
             </svg>
           </div>
 
-          {/* Rotating ring accents */}
-          <div className="splash-ring absolute -inset-2 rounded-full border border-amber-400/20" aria-hidden />
-          <div className="splash-ring-slow absolute -inset-5 rounded-full border border-dashed border-amber-400/12" aria-hidden />
+          {/* Rotating outer rings */}
+          <div className="v4-ring-orbit absolute -inset-3 rounded-full border border-amber-400/25" aria-hidden />
+          <div className="v4-ring-orbit-slow absolute -inset-7 rounded-full border border-dashed border-amber-400/15" aria-hidden />
         </div>
 
         {/* Wordmark */}
-        <div className="space-y-2.5">
-          <div className="splash-reveal overflow-hidden inline-block">
+        <div className="space-y-2">
+          <div className="v4-reveal overflow-hidden inline-block">
             <h1
-              className="text-[26px] sm:text-[34px] md:text-[42px] font-bold tracking-[0.12em] leading-none whitespace-nowrap"
+              className="text-[28px] sm:text-[36px] md:text-[44px] font-bold tracking-[0.12em] leading-none whitespace-nowrap"
               style={{
                 fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif",
                 background: "linear-gradient(180deg, #fef3c7 0%, #f0d78c 55%, #a97b1c 100%)",
@@ -324,7 +343,7 @@ export function SplashScreen() {
           <div className="flex items-center justify-center gap-3">
             <span className="h-px w-10 sm:w-16 bg-gradient-to-r from-transparent to-amber-400/60" />
             <span
-              className="text-[8.5px] sm:text-[10px] uppercase tracking-[0.5em] text-amber-200/75"
+              className="text-[8.5px] sm:text-[10px] uppercase tracking-[0.5em] text-amber-200/80"
               style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
             >
               Comando · Socioeducativo · Acre
@@ -335,28 +354,28 @@ export function SplashScreen() {
 
         {/* Boot log */}
         <div
-          className="splash-log w-full max-w-[340px] sm:max-w-[400px] space-y-1 text-left text-[9.5px] uppercase tracking-[0.22em] text-amber-100/55"
+          className="v4-log w-full max-w-[340px] sm:max-w-[400px] space-y-1 text-left text-[9.5px] uppercase tracking-[0.22em] text-amber-100/60"
           style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
         >
-          <LogLine delay={1100} label="AUTH · Insígnia Master" value="Validada" />
-          <LogLine delay={1350} label="LINK · Malha 24/7" value="Estável" />
-          <LogLine delay={1600} label="RADAR · Unidades ISE" value="9 / 9" />
-          <LogLine delay={1850} label="HUD · Console Comando" value="Pronto" />
+          <LogLine delay={1200} label="AUTH · Insígnia" value="Validada" />
+          <LogLine delay={1380} label="LINK · Malha 24/7" value="Estável" />
+          <LogLine delay={1560} label="RADAR · Unidades ISE" value="9 / 9" />
+          <LogLine delay={1740} label="HUD · Console" value="Pronto" />
         </div>
 
-        {/* Segmented progress meter */}
+        {/* Segmented meter */}
         <div className="w-full max-w-[280px] sm:max-w-[320px] flex flex-col items-center gap-1.5">
-          <div className="flex items-center justify-between w-full text-[8.5px] tracking-[0.3em] uppercase text-amber-200/50"
+          <div className="flex items-center justify-between w-full text-[8.5px] tracking-[0.3em] uppercase text-amber-200/60"
             style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}>
             <span>Inicializando</span>
             <span className="text-amber-300/80">100%</span>
           </div>
-          <div className="grid grid-cols-12 gap-[3px] w-full">
-            {Array.from({ length: 12 }).map((_, i) => (
+          <div className="grid grid-cols-14 gap-[3px] w-full" style={{ gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
+            {Array.from({ length: 14 }).map((_, i) => (
               <span
                 key={i}
-                className="splash-seg h-[6px] rounded-[1px]"
-                style={{ animationDelay: `${1900 + i * 55}ms` }}
+                className="v4-seg h-[6px] rounded-[1px]"
+                style={{ animationDelay: `${1800 + i * 40}ms` }}
               />
             ))}
           </div>
@@ -364,7 +383,7 @@ export function SplashScreen() {
 
         {/* Authorization stamp */}
         <div
-          className="splash-stamp inline-flex items-center gap-2.5 px-3.5 py-1.5 border rounded-sm"
+          className="v4-stamp inline-flex items-center gap-2.5 px-3.5 py-1.5 border rounded-sm"
           style={{
             borderColor: "rgba(240,215,140,0.55)",
             background: "rgba(240,215,140,0.08)",
@@ -382,7 +401,7 @@ export function SplashScreen() {
         </div>
       </div>
 
-      {/* ============ BOTTOM HUD ============ */}
+      {/* BOTTOM HUD */}
       <div
         className="splash-bottom absolute bottom-0 inset-x-0 flex items-center justify-between px-5 sm:px-8 py-4 text-[9.5px] uppercase tracking-[0.4em] text-amber-200/65"
         style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
@@ -398,74 +417,50 @@ export function SplashScreen() {
       </div>
 
       <style>{`
-        @keyframes splashFadeUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes v4FadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes v4Reveal { 0% { clip-path: inset(0 100% 0 0); } 100% { clip-path: inset(0 0 0 0); } }
+        @keyframes v4Ring { to { transform: rotate(360deg); } }
+        @keyframes v4Sweep { 0% { transform: rotate(-30deg); } 100% { transform: rotate(330deg); } }
+        @keyframes v4Scan { 0% { background-position: 0 -100vh; } 100% { background-position: 0 100vh; } }
+        @keyframes v4HexDraw { from { opacity: 0; transform: scale(1.06); } to { opacity: 0.32; transform: scale(1); } }
+        @keyframes v4Meridian { 0% { opacity: 0; transform: scaleY(0); } 40% { opacity: 1; } 100% { opacity: 0.55; transform: scaleY(1); } }
+        @keyframes v4Core { 0% { opacity: 0; transform: scale(0.6); } 60% { opacity: 1; transform: scale(1.08); } 100% { opacity: 0.7; transform: scale(1); } }
+        @keyframes v4RingDraw {
+          0% { stroke-dashoffset: var(--len); opacity: 0; }
+          40% { opacity: 1; }
+          100% { stroke-dashoffset: 0; opacity: 1; }
         }
-        @keyframes splashShieldIn {
+        @keyframes v4Axis { 0% { opacity: 0; transform: scale(0.7); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes v4Fade { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes v4Triangulate { 0% { stroke-dashoffset: 240; opacity: 0; } 40% { opacity: 0.8; } 100% { stroke-dashoffset: 0; opacity: 0.55; } }
+        @keyframes v4Unit { 0% { opacity: 0; transform: scale(0); } 60% { opacity: 1; transform: scale(1.7); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes v4Ping { 0% { opacity: 0.9; transform: scale(0.5); } 100% { opacity: 0; transform: scale(4.5); } }
+        @keyframes v4Laurel { 0% { opacity: 0; transform: scale(0.85); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes v4ShieldIn {
           0% { transform: scale(0.55) rotateX(-25deg); opacity: 0; filter: blur(12px); }
           55% { transform: scale(1.08) rotateX(0); opacity: 1; filter: blur(0); }
           100% { transform: scale(1); opacity: 1; }
         }
-        @keyframes splashReveal {
-          0% { clip-path: inset(0 100% 0 0); }
-          100% { clip-path: inset(0 0 0 0); }
-        }
-        @keyframes splashRing { to { transform: rotate(360deg); } }
-        @keyframes splashSweep {
-          0% { transform: rotate(-30deg); }
-          100% { transform: rotate(330deg); }
-        }
-        @keyframes splashScan {
-          0% { background-position: 0 -100vh; }
-          100% { background-position: 0 100vh; }
-        }
-        @keyframes hexDraw {
-          from { opacity: 0; transform: scale(1.06); }
-          to { opacity: 0.35; transform: scale(1); }
-        }
-        @keyframes meridian {
-          0% { opacity: 0; transform: scaleY(0); }
-          40% { opacity: 1; }
-          100% { opacity: 0.55; transform: scaleY(1); }
-        }
-        @keyframes coreGlow {
-          0% { opacity: 0; transform: scale(0.6); transform-origin: center; }
-          60% { opacity: 1; transform: scale(1.08); }
-          100% { opacity: 0.75; transform: scale(1); }
-        }
-        @keyframes laurelIn {
-          0% { opacity: 0; transform: scale(0.85); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes unitBlink {
-          0%   { opacity: 0; transform: scale(0); }
-          60%  { opacity: 1; transform: scale(1.5); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes unitPing {
-          0%   { opacity: 0.9; transform: scale(0.5); }
-          100% { opacity: 0; transform: scale(4); }
-        }
-        @keyframes segIn {
+        @keyframes v4CrestDraw { to { stroke-dashoffset: 0; } }
+        @keyframes v4CrestFillIn { 0% { opacity: 0; transform: scale(0.4); transform-origin: center; transform-box: fill-box; } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes v4Seg {
           0% { opacity: 0; transform: scaleX(0); background: rgba(240,215,140,0.15); }
           60% { opacity: 1; background: rgba(240,215,140,0.9); box-shadow: 0 0 8px rgba(240,215,140,0.6); }
           100% { opacity: 1; transform: scaleX(1); background: linear-gradient(90deg,#d4af37,#f0d78c,#d4af37); box-shadow: 0 0 6px rgba(240,215,140,0.45); }
         }
-        @keyframes stampIn {
+        @keyframes v4Stamp {
           0% { opacity: 0; transform: scale(1.3) rotate(-4deg); filter: blur(3px); }
           60% { opacity: 1; transform: scale(0.94) rotate(0); filter: blur(0); }
           100% { opacity: 1; transform: scale(1); }
         }
 
         .splash-hex {
-          background-color: transparent;
           background-image:
-            radial-gradient(circle at 20px 20px, rgba(240,215,140,0.06) 1px, transparent 1.4px),
+            radial-gradient(circle at 20px 20px, rgba(240,215,140,0.07) 1px, transparent 1.4px),
             linear-gradient(60deg, rgba(240,215,140,0.06) 1px, transparent 1px),
             linear-gradient(-60deg, rgba(240,215,140,0.06) 1px, transparent 1px);
           background-size: 40px 40px, 40px 70px, 40px 70px;
-          animation: hexDraw 900ms ease-out both;
+          animation: v4HexDraw 900ms ease-out both;
         }
         .splash-noise {
           background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
@@ -473,34 +468,34 @@ export function SplashScreen() {
         .splash-meridian {
           background: linear-gradient(180deg, transparent 0%, rgba(240,215,140,0.28) 15%, transparent 42%, transparent 58%, rgba(240,215,140,0.28) 85%, transparent 100%);
           box-shadow: 0 0 12px rgba(240,215,140,0.18);
-          animation: meridian 1.1s cubic-bezier(.22,1,.36,1) both;
+          animation: v4Meridian 1s cubic-bezier(.22,1,.36,1) both;
           transform-origin: center;
         }
         .splash-scan {
-          background: repeating-linear-gradient(
-            180deg,
-            rgba(240,215,140,0.035) 0px,
-            rgba(240,215,140,0.035) 1px,
-            transparent 2px,
-            transparent 4px
-          );
-          animation: splashScan 5s linear infinite;
+          background: repeating-linear-gradient(180deg, rgba(240,215,140,0.035) 0px, rgba(240,215,140,0.035) 1px, transparent 2px, transparent 4px);
+          animation: v4Scan 5s linear infinite;
         }
 
-        .splash-core { animation: coreGlow 1200ms cubic-bezier(.22,1,.36,1) 300ms both; transform-origin: center; transform-box: fill-box; }
-        .splash-shield { animation: splashShieldIn 1000ms cubic-bezier(.22,1,.36,1) 250ms both; transform-origin: center; perspective: 800px; }
-        .splash-ring { animation: splashRing 9s linear infinite; }
-        .splash-ring-slow { animation: splashRing 18s linear infinite reverse; }
-        .splash-sweep-g { animation: splashSweep 2.2s cubic-bezier(.4,0,.2,1) infinite; }
-        .splash-laurel { opacity: 0; animation: laurelIn 700ms cubic-bezier(.22,1,.36,1) 700ms forwards; transform-origin: center; transform-box: fill-box; }
-        .splash-unit { opacity: 0; transform-origin: center; transform-box: fill-box; animation: unitBlink 600ms cubic-bezier(.22,1,.36,1) both; }
-        .splash-ping { opacity: 0; transform-origin: center; transform-box: fill-box; animation: unitPing 1.4s ease-out infinite; }
-        .splash-reveal h1 { animation: splashReveal 900ms cubic-bezier(.7,0,.3,1) 900ms both; }
-        .splash-log { animation: splashFadeUp 500ms ease-out 1050ms both; }
-        .splash-top { animation: splashFadeUp 500ms ease-out 100ms both; }
-        .splash-bottom { animation: splashFadeUp 500ms ease-out 250ms both; }
-        .splash-seg { opacity: 0; transform-origin: left center; animation: segIn 240ms cubic-bezier(.22,1,.36,1) both; background: rgba(240,215,140,0.12); }
-        .splash-stamp { opacity: 0; animation: stampIn 550ms cubic-bezier(.22,1,.36,1) 2400ms forwards; box-shadow: 0 0 24px rgba(240,215,140,0.18), inset 0 0 12px rgba(240,215,140,0.08); }
+        .v4-core { transform-origin: center; transform-box: fill-box; animation: v4Core 1200ms cubic-bezier(.22,1,.36,1) 200ms both; }
+        .v4-ring { animation: v4RingDraw 900ms cubic-bezier(.22,1,.36,1) both; }
+        .v4-axis { transform-origin: center; transform-box: fill-box; opacity: 0; animation: v4Axis 500ms cubic-bezier(.22,1,.36,1) 150ms both; }
+        .v4-fade { opacity: 0; animation: v4Fade 500ms ease-out both; }
+        .v4-triangulate { animation: v4Triangulate 900ms cubic-bezier(.22,1,.36,1) both; }
+        .v4-unit { opacity: 0; transform-origin: center; transform-box: fill-box; animation: v4Unit 600ms cubic-bezier(.22,1,.36,1) both; }
+        .v4-ping { opacity: 0; transform-origin: center; transform-box: fill-box; animation: v4Ping 1.6s ease-out infinite; }
+        .v4-sweep { animation: v4Sweep 2.4s cubic-bezier(.4,0,.2,1) 500ms infinite; }
+        .v4-laurel { opacity: 0; transform-origin: center; transform-box: fill-box; animation: v4Laurel 700ms cubic-bezier(.22,1,.36,1) 800ms forwards; }
+        .v4-shield-wrap { animation: v4ShieldIn 1000ms cubic-bezier(.22,1,.36,1) 550ms both; transform-origin: center; perspective: 800px; }
+        .v4-crest-draw { animation: v4CrestDraw 900ms cubic-bezier(.22,1,.36,1) 700ms forwards; }
+        .v4-crest-fill { opacity: 0; animation: v4CrestFillIn 500ms cubic-bezier(.22,1,.36,1) 1200ms forwards; }
+        .v4-ring-orbit { animation: v4Ring 9s linear infinite; }
+        .v4-ring-orbit-slow { animation: v4Ring 20s linear infinite reverse; }
+        .v4-reveal h1 { animation: v4Reveal 900ms cubic-bezier(.7,0,.3,1) 900ms both; }
+        .v4-log { animation: v4FadeUp 500ms ease-out 1150ms both; }
+        .v4-seg { opacity: 0; transform-origin: left center; animation: v4Seg 220ms cubic-bezier(.22,1,.36,1) both; background: rgba(240,215,140,0.12); }
+        .v4-stamp { opacity: 0; animation: v4Stamp 550ms cubic-bezier(.22,1,.36,1) 2200ms forwards; box-shadow: 0 0 24px rgba(240,215,140,0.18), inset 0 0 12px rgba(240,215,140,0.08); }
+        .splash-top { animation: v4FadeUp 500ms ease-out 100ms both; }
+        .splash-bottom { animation: v4FadeUp 500ms ease-out 250ms both; }
 
         @media (prefers-reduced-motion: reduce) {
           .splash-root *, .splash-root { animation: none !important; }
@@ -531,7 +526,7 @@ function LogLine({ label, value, delay }: { label: string; value: string; delay:
   return (
     <div
       className="flex justify-between items-center border-b border-amber-500/12 pb-0.5"
-      style={{ animation: `splashFadeUp 400ms ease-out ${delay}ms both` }}
+      style={{ animation: `v4FadeUp 400ms ease-out ${delay}ms both` }}
     >
       <span className="flex items-center gap-1.5">
         <span className="text-amber-400/80">›</span>
