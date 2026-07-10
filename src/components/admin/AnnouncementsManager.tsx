@@ -1,5 +1,31 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMasterToken } from '@/lib/masterSession';
+
+// Chama uma ação privilegiada no edge function `master-admin` (bypass de RLS via service_role).
+async function callMasterAdmin<T = any>(action: string, payload: Record<string, unknown> = {}): Promise<T> {
+  const token = getMasterToken();
+  if (!token) throw new Error('Sessão master ausente.');
+  const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/master-admin`;
+  const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-master-token': token,
+      'authorization': `Bearer ${anon}`,
+      'apikey': anon,
+    },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok || !j?.success) {
+    throw new Error(j?.error || `Falha (${res.status}) na ação ${action}`);
+  }
+  return j.data as T;
+}
+
+const hasMasterSession = () => !!getMasterToken();
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -96,22 +122,28 @@ export function AnnouncementsManager() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [announcementsResult, unitsResult] = await Promise.all([
-        supabase
-          .from('admin_announcements')
-          .select('*')
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('units')
-          .select('id, name')
-          .order('name')
-      ]);
-
-      if (announcementsResult.data) {
-        setAnnouncements(announcementsResult.data as Announcement[]);
-      }
-      if (unitsResult.data) {
-        setUnits(unitsResult.data as Unit[]);
+      if (hasMasterSession()) {
+        // Master session (sem auth.uid()) → usar edge function com service_role
+        const [ann, un] = await Promise.all([
+          callMasterAdmin<Announcement[]>('announcement_list'),
+          callMasterAdmin<Unit[]>('units_list'),
+        ]);
+        setAnnouncements((ann ?? []) as Announcement[]);
+        setUnits((un ?? []) as Unit[]);
+      } else {
+        const [announcementsResult, unitsResult] = await Promise.all([
+          supabase
+            .from('admin_announcements')
+            .select('*')
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('units')
+            .select('id, name')
+            .order('name')
+        ]);
+        if (announcementsResult.error) throw announcementsResult.error;
+        if (announcementsResult.data) setAnnouncements(announcementsResult.data as Announcement[]);
+        if (unitsResult.data) setUnits(unitsResult.data as Unit[]);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -177,19 +209,23 @@ export function AnnouncementsManager() {
         expires_at: formData.expires_at ? new Date(formData.expires_at).toISOString() : null,
       };
 
-      if (editingAnnouncement) {
+      if (hasMasterSession()) {
+        await callMasterAdmin('announcement_upsert', {
+          id: editingAnnouncement?.id ?? null,
+          payload,
+        });
+        toast.success(editingAnnouncement ? 'Aviso atualizado com sucesso' : 'Aviso criado com sucesso');
+      } else if (editingAnnouncement) {
         const { error } = await supabase
           .from('admin_announcements')
           .update(payload)
           .eq('id', editingAnnouncement.id);
-
         if (error) throw error;
         toast.success('Aviso atualizado com sucesso');
       } else {
         const { error } = await supabase
           .from('admin_announcements')
           .insert(payload);
-
         if (error) throw error;
         toast.success('Aviso criado com sucesso');
       }
@@ -207,12 +243,15 @@ export function AnnouncementsManager() {
 
   const handleDelete = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('admin_announcements')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      if (hasMasterSession()) {
+        await callMasterAdmin('announcement_delete', { id });
+      } else {
+        const { error } = await supabase
+          .from('admin_announcements')
+          .delete()
+          .eq('id', id);
+        if (error) throw error;
+      }
       toast.success('Aviso excluído com sucesso');
       setDeleteDialogOpen(false);
       setDeletingId(null);
@@ -225,12 +264,18 @@ export function AnnouncementsManager() {
 
   const toggleActive = async (announcement: Announcement) => {
     try {
-      const { error } = await supabase
-        .from('admin_announcements')
-        .update({ is_active: !announcement.is_active })
-        .eq('id', announcement.id);
-
-      if (error) throw error;
+      if (hasMasterSession()) {
+        await callMasterAdmin('announcement_toggle', {
+          id: announcement.id,
+          is_active: !announcement.is_active,
+        });
+      } else {
+        const { error } = await supabase
+          .from('admin_announcements')
+          .update({ is_active: !announcement.is_active })
+          .eq('id', announcement.id);
+        if (error) throw error;
+      }
       toast.success(`Aviso ${!announcement.is_active ? 'ativado' : 'desativado'}`);
       fetchData();
     } catch (error) {
