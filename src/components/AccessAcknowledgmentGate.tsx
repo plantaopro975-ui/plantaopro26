@@ -17,6 +17,12 @@ export function AccessAcknowledgmentGate() {
   const [open, setOpen] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [rejected, setRejected] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+
+  const closeGate = () => {
+    setOpen(false);
+  };
 
   const handleBackdropWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
     const target = event.target as HTMLElement | null;
