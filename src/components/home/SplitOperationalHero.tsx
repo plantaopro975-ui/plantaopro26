@@ -72,7 +72,7 @@ const TEAMS: {
 
 
 interface TeamObjectProps {
-  team: { key: TeamKey; obj: string };
+  team: { key: TeamKey; obj: string; objWebp: string };
   isAlfa: boolean;
   idx: number;
 }
@@ -106,6 +106,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
       {/* Quadrado fixo — mesma "moldura" para todos os 3D */}
       <div className="relative aspect-square w-[82px] min-[390px]:w-[90px] sm:w-[112px] lg:w-[124px] xl:w-[136px] max-h-full flex items-center justify-center">
         <picture className="flex h-full w-full items-center justify-center" style={{ transform: `scale(${scale})`, transformOrigin: '50% 50%' }}>
+          <source type="image/webp" srcSet={team.objWebp} />
           <img
             src={team.obj}
             alt={`Equipe ${team.key} — equipamento tático`}
