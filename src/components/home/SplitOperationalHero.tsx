@@ -23,22 +23,10 @@ const vehicleMobile = vehicle3dPngAsset.url;
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
-import objAlfaAsset from '@/assets/teams/alfa-object3d-v3.webp.asset.json';
-import objBravoAsset from '@/assets/teams/bravo-object3d-v3.webp.asset.json';
-import objCharlieAsset from '@/assets/teams/charlie-object3d-v3.webp.asset.json';
-import objDeltaAsset from '@/assets/teams/delta-object3d-v3.webp.asset.json';
-import objAlfaAvifAsset from '@/assets/teams/alfa-object3d-v3.avif.asset.json';
-import objBravoAvifAsset from '@/assets/teams/bravo-object3d-v3.avif.asset.json';
-import objCharlieAvifAsset from '@/assets/teams/charlie-object3d-v3.avif.asset.json';
-import objDeltaAvifAsset from '@/assets/teams/delta-object3d-v3.avif.asset.json';
-const objAlfa = objAlfaAsset.url;
-const objBravo = objBravoAsset.url;
-const objCharlie = objCharlieAsset.url;
-const objDelta = objDeltaAsset.url;
-const objAlfaAvif = objAlfaAvifAsset.url;
-const objBravoAvif = objBravoAvifAsset.url;
-const objCharlieAvif = objCharlieAvifAsset.url;
-const objDeltaAvif = objDeltaAvifAsset.url;
+import objAlfa from '@/assets/teams/alfa-shield-v2.png';
+import objBravo from '@/assets/teams/bravo-helmet-v2.png';
+import objCharlie from '@/assets/teams/charlie-optics-v2.png';
+import objDelta from '@/assets/teams/delta-radio-v2.png';
 
 
 
@@ -72,20 +60,19 @@ const TEAMS: {
   role: string;
   accent: string;
   obj: string;
-  objAvif: string;
   bg: string;
   bgAvif: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    objAvif: objAlfaAvif,    bg: bgAlfa,    bgAvif: bgAlfaAvif },
-  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   objAvif: objBravoAvif,   bg: bgBravo,   bgAvif: bgBravoAvif },
-  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, objAvif: objCharlieAvif, bg: bgCharlie, bgAvif: bgCharlieAvif },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   objAvif: objDeltaAvif,   bg: bgDelta,   bgAvif: bgDeltaAvif },
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    bg: bgAlfa,    bgAvif: bgAlfaAvif },
+  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   bg: bgBravo,   bgAvif: bgBravoAvif },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, bg: bgCharlie, bgAvif: bgCharlieAvif },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   bg: bgDelta,   bgAvif: bgDeltaAvif },
 
 ];
 
 
 interface TeamObjectProps {
-  team: { key: TeamKey; obj: string; objAvif: string };
+  team: { key: TeamKey; obj: string };
   isAlfa: boolean;
   idx: number;
 }
@@ -99,9 +86,9 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
   //   CHARLIE binóc → 62% mas achatado (precisa aumentar)
   //   DELTA rádio   → 32% estreito (precisa aumentar)
   const OBJECT_SCALE: Record<TeamKey, number> = {
-    ALFA: 0.96,
-    BRAVO: 0.84,
-    CHARLIE: 1.04,
+    ALFA: 0.94,
+    BRAVO: 0.9,
+    CHARLIE: 0.92,
     DELTA: 1.02,
   };
   const scale = OBJECT_SCALE[team.key] ?? 1;
@@ -119,8 +106,6 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
       {/* Quadrado fixo — mesma "moldura" para todos os 3D */}
       <div className="relative aspect-square w-[82px] min-[390px]:w-[90px] sm:w-[112px] lg:w-[124px] xl:w-[136px] max-h-full flex items-center justify-center">
         <picture className="flex h-full w-full items-center justify-center" style={{ transform: `scale(${scale})`, transformOrigin: '50% 50%' }}>
-          <source type="image/avif" srcSet={team.objAvif} sizes="(max-width: 640px) 90px, (max-width: 1024px) 112px, 136px" />
-          <source type="image/webp" srcSet={team.obj} sizes="(max-width: 640px) 90px, (max-width: 1024px) 112px, 136px" />
           <img
             src={team.obj}
             alt={`Equipe ${team.key} — equipamento tático`}
