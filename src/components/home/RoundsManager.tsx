@@ -460,6 +460,215 @@ function TeamHero({ team, color }: { team: TeamKey; color: string }) {
   );
 }
 
+/* ================= Team-varying animated stripe =================
+ * Ocupa a área ociosa do cabeçalho "Operação em tempo real" com
+ * uma assinatura visual profissional que MUDA conforme a equipe.
+ *  - ALFA    → onda senoidal contínua (escudo/defesa fluida)
+ *  - BRAVO   → pulsos radar/heartbeat (ataque cadenciado)
+ *  - CHARLIE → mira/varredura de precisão (retículo deslizante)
+ *  - DELTA   → sinal de rádio / barras de transmissão
+ */
+function TeamOperationsStripe({ team, color, active }: { team: TeamKey; color: string; active: boolean }) {
+  const uid = `tos-${team}`;
+  const dur = active ? '3.6s' : '9s';
+  return (
+    <svg viewBox="0 0 320 46" preserveAspectRatio="none" className="h-8 w-full sm:h-10" aria-hidden>
+      <defs>
+        <linearGradient id={`${uid}-fade`} x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity="0" />
+          <stop offset="18%" stopColor={color} stopOpacity="0.85" />
+          <stop offset="82%" stopColor={color} stopOpacity="0.85" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${uid}-fill`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.35" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <filter id={`${uid}-glow`} x="-10%" y="-40%" width="120%" height="180%">
+          <feGaussianBlur stdDeviation="0.9" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <clipPath id={`${uid}-clip`}><rect x="0" y="0" width="320" height="46" /></clipPath>
+      </defs>
+
+      {/* baseline grid ticks — comum a todas as equipes */}
+      <g stroke={color} strokeOpacity="0.14" strokeWidth="0.5">
+        {Array.from({ length: 33 }).map((_, i) => (
+          <line key={i} x1={i * 10} y1="34" x2={i * 10} y2={i % 5 === 0 ? 40 : 37} />
+        ))}
+        <line x1="0" y1="34" x2="320" y2="34" strokeOpacity="0.25" />
+      </g>
+
+      <g clipPath={`url(#${uid}-clip)`}>
+        {team === 'ALFA' && (
+          <g filter={`url(#${uid}-glow)`}>
+            {/* Onda senoidal deslizante — 2 caminhos idênticos deslocando para dar loop */}
+            <g>
+              <path
+                d="M-320 22 Q -280 6 -240 22 T -160 22 T -80 22 T 0 22 T 80 22 T 160 22 T 240 22 T 320 22 T 400 22"
+                fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.6" strokeLinecap="round"
+              >
+                <animateTransform attributeName="transform" type="translate" from="0 0" to="320 0" dur={dur} repeatCount="indefinite" />
+              </path>
+              <path
+                d="M-320 22 Q -280 6 -240 22 T -160 22 T -80 22 T 0 22 T 80 22 T 160 22 T 240 22 T 320 22 T 400 22 L 400 46 L -320 46 Z"
+                fill={`url(#${uid}-fill)`} opacity="0.75"
+              >
+                <animateTransform attributeName="transform" type="translate" from="0 0" to="320 0" dur={dur} repeatCount="indefinite" />
+              </path>
+            </g>
+          </g>
+        )}
+
+        {team === 'BRAVO' && (
+          <g filter={`url(#${uid}-glow)`}>
+            {/* Heartbeat / pulso tático */}
+            <path
+              d="M0 24 L60 24 L72 24 L80 10 L88 38 L96 24 L120 24 L180 24 L192 24 L200 12 L208 36 L216 24 L260 24 L320 24"
+              fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round"
+            />
+            {/* Ponto varredor */}
+            <circle r="2.4" fill={color}>
+              <animateMotion dur={dur} repeatCount="indefinite"
+                path="M0 24 L60 24 L72 24 L80 10 L88 38 L96 24 L120 24 L180 24 L192 24 L200 12 L208 36 L216 24 L260 24 L320 24" />
+              <animate attributeName="opacity" values="1;0.5;1" dur="0.9s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        )}
+
+        {team === 'CHARLIE' && (
+          <g filter={`url(#${uid}-glow)`}>
+            {/* Trilha discreta */}
+            <line x1="0" y1="24" x2="320" y2="24" stroke={`url(#${uid}-fade)`} strokeWidth="1" strokeDasharray="2 4" />
+            {/* Retículo/mira deslizando */}
+            <g>
+              <animateTransform attributeName="transform" type="translate" from="-30 0" to="330 0" dur={dur} repeatCount="indefinite" />
+              <circle cx="0" cy="24" r="9" fill="none" stroke={color} strokeOpacity="0.9" strokeWidth="1.1" />
+              <circle cx="0" cy="24" r="4" fill="none" stroke={color} strokeOpacity="0.7" strokeWidth="0.8" />
+              <line x1="-14" y1="24" x2="-5" y2="24" stroke={color} strokeWidth="1" />
+              <line x1="5" y1="24" x2="14" y2="24" stroke={color} strokeWidth="1" />
+              <line x1="0" y1="10" x2="0" y2="19" stroke={color} strokeWidth="1" />
+              <line x1="0" y1="29" x2="0" y2="38" stroke={color} strokeWidth="1" />
+              <circle cx="0" cy="24" r="1.4" fill={color} />
+            </g>
+          </g>
+        )}
+
+        {team === 'DELTA' && (
+          <g filter={`url(#${uid}-glow)`}>
+            {/* Barras de sinal (equalizer de transmissão) */}
+            {Array.from({ length: 32 }).map((_, i) => {
+              const x = 6 + i * 10;
+              const seed = (i * 37) % 100;
+              return (
+                <rect key={i} x={x} y="20" width="4" height="8" rx="1" fill={color} opacity="0.85">
+                  <animate
+                    attributeName="height"
+                    values={`${4 + (seed % 8)};${10 + (seed % 14)};${5 + (seed % 6)};${12 + (seed % 10)};${4 + (seed % 8)}`}
+                    dur={`${1.1 + (i % 5) * 0.15}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="y"
+                    values={`${30 - (4 + (seed % 8))};${30 - (10 + (seed % 14))};${30 - (5 + (seed % 6))};${30 - (12 + (seed % 10))};${30 - (4 + (seed % 8))}`}
+                    dur={`${1.1 + (i % 5) * 0.15}s`}
+                    repeatCount="indefinite"
+                  />
+                </rect>
+              );
+            })}
+            {/* Máscara de fade lateral */}
+            <rect x="0" y="0" width="320" height="46" fill={`url(#${uid}-fade)`} opacity="0.0" />
+          </g>
+        )}
+      </g>
+
+      {/* Rótulo canto direito — assinatura da equipe */}
+      <g fontFamily="ui-monospace, monospace" fontSize="6" letterSpacing="1.4" fill={color} opacity="0.75">
+        <text x="316" y="10" textAnchor="end">CH-{team.slice(0, 3)}</text>
+      </g>
+    </svg>
+  );
+}
+
+/* ================= Ready-to-start professional banner ================= */
+function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; color: string; count: number; ready: boolean }) {
+  const uid = `rts-${team}`;
+  return (
+    <div
+      className="relative mb-2 overflow-hidden rounded-lg border"
+      style={{
+        borderColor: `${color}55`,
+        background: `linear-gradient(90deg, ${color}18 0%, transparent 40%, transparent 60%, ${color}18 100%), hsl(var(--card))`,
+        boxShadow: `inset 0 1px 0 ${color}22, 0 0 24px -12px ${color}88`,
+      }}
+    >
+      <svg viewBox="0 0 400 44" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-70" aria-hidden>
+        <defs>
+          <linearGradient id={`${uid}-scan`} x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor={color} stopOpacity="0" />
+            <stop offset="50%" stopColor={color} stopOpacity="0.7" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {/* Linhas paralelas discretas (blueprint) */}
+        <g stroke={color} strokeOpacity="0.10" strokeWidth="0.5">
+          {[8, 16, 24, 32].map((y) => <line key={y} x1="0" y1={y} x2="400" y2={y} />)}
+        </g>
+        {/* Scanner passando */}
+        {ready && (
+          <rect x="0" y="0" width="120" height="44" fill={`url(#${uid}-scan)`}>
+            <animate attributeName="x" from="-120" to="400" dur="2.4s" repeatCount="indefinite" />
+          </rect>
+        )}
+      </svg>
+
+      <div className="relative flex items-center gap-3 px-3 py-2">
+        {/* Ícone de status — check pulsante quando pronto */}
+        <svg viewBox="0 0 32 32" className="h-8 w-8 shrink-0" aria-hidden>
+          <circle cx="16" cy="16" r="14" fill="none" stroke={color} strokeOpacity="0.6" strokeWidth="1.4" />
+          <circle cx="16" cy="16" r="11" fill={color} fillOpacity="0.15" />
+          {ready ? (
+            <>
+              <path d="M10 16.5 L14.5 21 L23 12" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="16" cy="16" r="14" fill="none" stroke={color} strokeOpacity="0.85" strokeWidth="1.2">
+                <animate attributeName="r" values="14;16;14" dur="2s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.85;0;0.85" dur="2s" repeatCount="indefinite" />
+              </circle>
+            </>
+          ) : (
+            <path d="M16 8 V17 L22 20" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
+          )}
+        </svg>
+
+        <div className="min-w-0 flex-1">
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em]" style={{ color: `${color}dd` }}>
+            {ready ? 'Cronograma pronto' : 'Aguardando configuração'}
+          </div>
+          <div className="font-display text-[13px] sm:text-[14px] font-semibold text-foreground/95 leading-tight">
+            {ready
+              ? <>Equipe <span style={{ color }}>{team}</span> · {count} agente{count === 1 ? '' : 's'} em posição</>
+              : <>Defina intervalo e agentes para gerar o cronograma</>}
+          </div>
+        </div>
+
+        {ready && (
+          <div className="hidden sm:flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest"
+               style={{ borderColor: `${color}66`, color }}>
+            <span className="relative inline-flex h-1.5 w-1.5">
+              <span className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: color, opacity: 0.6 }} />
+              <span className="relative inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
+            </span>
+            Prontos para iniciar
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+
 function RoundsHeroSVG({ color, active, silent }: { color: string; active: boolean; silent: boolean }) {
   const uid = `rh-${color.replace('#', '')}`;
   return (
@@ -613,19 +822,48 @@ function TimeField({
   id, value, onChange, label, invalid, accent, locked, lockedHint,
 }: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string; locked?: boolean; lockedHint?: string }) {
 
-  const [h, m] = value.split(':');
-  const setH = (nh: string) => {
-    const v = Math.max(0, Math.min(23, parseInt(nh || '0', 10) || 0));
-    onChange(`${pad(v)}:${m ?? '00'}`);
-  };
-  const setM = (nm: string) => {
-    const v = Math.max(0, Math.min(59, parseInt(nm || '0', 10) || 0));
-    onChange(`${h ?? '00'}:${pad(v)}`);
+  // Buffer LOCAL de digitação — evita que o valor externo (com pad) atropele
+  // o usuário enquanto ele digita ("1" → "10" precisa ser possível sem travar).
+  const [hStr, mStr] = value.split(':');
+  const extH = hStr ?? '';
+  const extM = mStr ?? '';
+  const [hLocal, setHLocal] = useState(extH);
+  const [mLocal, setMLocal] = useState(extM);
+  const [hFocused, setHFocused] = useState(false);
+  const [mFocused, setMFocused] = useState(false);
+
+  useEffect(() => { if (!hFocused) setHLocal(extH); }, [extH, hFocused]);
+  useEffect(() => { if (!mFocused) setMLocal(extM); }, [extM, mFocused]);
+
+  const commit = (rawH: string, rawM: string) => {
+    const hi = Math.max(0, Math.min(23, parseInt(rawH || '0', 10) || 0));
+    const mi = Math.max(0, Math.min(59, parseInt(rawM || '0', 10) || 0));
+    onChange(`${pad(hi)}:${pad(mi)}`);
   };
   const bump = (which: 'h' | 'm', delta: number) => {
-    if (which === 'h') setH(String(((parseInt(h, 10) || 0) + delta + 24) % 24));
-    else setM(String(((parseInt(m, 10) || 0) + delta + 60) % 60));
+    const curH = parseInt(hLocal || extH || '0', 10) || 0;
+    const curM = parseInt(mLocal || extM || '0', 10) || 0;
+    if (which === 'h') {
+      const nv = (curH + delta + 24) % 24;
+      setHLocal(pad(nv));
+      commit(String(nv), String(curM));
+    } else {
+      const nv = (curM + delta + 60) % 60;
+      setMLocal(pad(nv));
+      commit(String(curH), String(nv));
+    }
   };
+  const onHKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp') { e.preventDefault(); bump('h', 1); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); bump('h', -1); }
+    else if (e.key === 'Enter') { commit(hLocal, mLocal); (e.currentTarget as HTMLInputElement).blur(); }
+  };
+  const onMKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp') { e.preventDefault(); bump('m', 1); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); bump('m', -1); }
+    else if (e.key === 'Enter') { commit(hLocal, mLocal); (e.currentTarget as HTMLInputElement).blur(); }
+  };
+
   return (
     <div className="grid gap-1.5">
       <label htmlFor={`${id}-h`} className="text-[12.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
@@ -640,14 +878,12 @@ function TimeField({
             22:00→06:00
           </span>
         )}
-
       </label>
       <div className={cn(
         'group relative flex items-center gap-2 rounded-md border bg-background pl-2 pr-1 h-11 transition-colors',
         invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
         locked && 'opacity-70 cursor-not-allowed pointer-events-none select-none',
       )}>
-
         <svg viewBox="0 0 32 32" className="h-6 w-6 shrink-0" aria-hidden>
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
@@ -656,12 +892,19 @@ function TimeField({
           <line x1="16" y1="16" x2="22" y2="16"  stroke={accent} strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
           <circle cx="16" cy="16" r="1.2" fill={accent} />
         </svg>
-        <input id={`${id}-h`} inputMode="numeric" maxLength={2} value={h ?? ''}
-          onChange={(e) => setH(e.target.value.replace(/\D/g, '').slice(0, 2))}
-          onFocus={(e) => e.currentTarget.select()}
-          onBlur={(e) => setH(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
-          aria-label={`${label} horas`} autoComplete="off" />
+        <input
+          id={`${id}-h`}
+          inputMode="numeric"
+          maxLength={2}
+          value={hLocal}
+          onChange={(e) => setHLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onFocus={(e) => { setHFocused(true); e.currentTarget.select(); }}
+          onBlur={() => { setHFocused(false); commit(hLocal, mLocal); }}
+          onKeyDown={onHKey}
+          className="w-8 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} horas`}
+          autoComplete="off"
+        />
         <div className="flex flex-col">
           <button type="button" onClick={() => bump('h', 1)} aria-label="Mais 1 hora"
             className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
@@ -673,12 +916,18 @@ function TimeField({
           </button>
         </div>
         <span className="font-mono text-lg text-muted-foreground/70 select-none -mt-0.5">:</span>
-        <input inputMode="numeric" maxLength={2} value={m ?? ''}
-          onChange={(e) => setM(e.target.value.replace(/\D/g, '').slice(0, 2))}
-          onFocus={(e) => e.currentTarget.select()}
-          onBlur={(e) => setM(e.target.value || '0')}
-          className="w-7 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
-          aria-label={`${label} minutos`} autoComplete="off" />
+        <input
+          inputMode="numeric"
+          maxLength={2}
+          value={mLocal}
+          onChange={(e) => setMLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onFocus={(e) => { setMFocused(true); e.currentTarget.select(); }}
+          onBlur={() => { setMFocused(false); commit(hLocal, mLocal); }}
+          onKeyDown={onMKey}
+          className="w-8 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} minutos`}
+          autoComplete="off"
+        />
         <div className="ml-auto flex flex-col">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
             className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
@@ -1803,7 +2052,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </div>
                   <RoundsHeroSVG color={teamColor} active={!!currentView && !currentView.done} silent={silentMode} />
                 </div>
+                {/* Assinatura visual da equipe — ocupa a área ociosa do cabeçalho e muda por equipe */}
+                <div
+                  className="relative border-t px-3 py-1.5 sm:px-4"
+                  style={{ borderColor: `${teamColor}22`, background: `linear-gradient(180deg, ${teamColor}08, transparent)` }}
+                >
+                  <TeamOperationsStripe team={team} color={teamColor} active={!!currentView && !currentView.done} />
+                </div>
               </div>
+
 
               <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[0.7fr_1.3fr] gap-x-4 gap-y-2 items-start lg:divide-x lg:divide-border/40">
 
@@ -2024,12 +2281,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               <div className="grid gap-3 min-w-0 lg:pl-4">
 
                 <Section icon={<Timer className="h-3.5 w-3.5 text-primary" />} title="Cronograma" defaultOpen={!!schedule}>
+                  <ReadyToStartBanner
+                    team={team}
+                    color={teamColor}
+                    count={schedule?.rows.length ?? agents.filter((a) => a.trim()).length}
+                    ready={!!schedule && !running}
+                  />
                   {!schedule ? (
                     <div className="rounded-lg border border-dashed border-border bg-card/95 p-6 text-center text-[13.5px] text-muted-foreground font-sans">
                       Preencha a configuração para gerar o cronograma.
                     </div>
                   ) : (
                     <div>
+
 
                       {/* Countdown — aberto, centralizado */}
                       <div className="mb-2 flex flex-col items-center text-center gap-1">
