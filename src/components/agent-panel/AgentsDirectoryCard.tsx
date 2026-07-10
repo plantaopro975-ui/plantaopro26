@@ -91,7 +91,10 @@ export function AgentsDirectoryCard({
       try {
         setError(null);
         setLoading(true);
-        const rpcName = scope === 'system' ? 'list_agents_system' : 'list_agents_same_unit';
+        const rpcName =
+          scope === 'system' ? 'list_agents_system'
+          : scope === 'team' ? 'list_agents_same_team'
+          : 'list_agents_same_unit';
         const { data, error } = await supabase.rpc(rpcName as any);
         if (error) {
           console.error(`[AgentsDirectory] rpc ${rpcName} failed`, error);
