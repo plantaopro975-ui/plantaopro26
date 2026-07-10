@@ -53,7 +53,7 @@ const ForgotPasswordDialog = lazy(() => import('@/components/ForgotPasswordDialo
 import { SavedCredentials, getAutoLoginCredential, getSavedCredentials, getQuickLoginCredential, canQuickLogin, removeCredential, CREDENTIALS_CHANGED_EVENT } from '@/components/auth/SavedCredentials';
 const ManageCredentialsDialog = lazy(() => import('@/components/auth/ManageCredentialsDialog').then(m => ({ default: m.ManageCredentialsDialog })));
 const MasterPasswordRecoveryDialog = lazy(() => import('@/components/MasterPasswordRecoveryDialog').then(m => ({ default: m.MasterPasswordRecoveryDialog })));
-const MasterLoginDialog = lazy(() => import('@/components/auth/MasterLoginDialog').then(m => ({ default: m.MasterLoginDialog })));
+import { MasterLoginDialog } from '@/components/auth/MasterLoginDialog';
 import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
