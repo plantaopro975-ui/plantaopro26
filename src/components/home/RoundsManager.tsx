@@ -1628,9 +1628,25 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
 
-  const addAgent = () => setAgents((a) => [...a, `Agente ${a.length + 1}`]);
-  const removeAgent = (i: number) => setAgents((a) => a.filter((_, idx) => idx !== i));
-  const updateAgent = (i: number, v: string) => setAgents((a) => a.map((x, idx) => (idx === i ? v : x)));
+  const armedRef = useRef(false);
+  const addAgent = () => {
+    if (armedRef.current) {
+      toast({ title: 'Programação ativa', description: 'Cancele a programação para adicionar agentes.', variant: 'destructive' });
+      return;
+    }
+    setAgents((a) => [...a, `Agente ${a.length + 1}`]);
+  };
+  const removeAgent = (i: number) => {
+    if (armedRef.current) {
+      toast({ title: 'Programação ativa', description: 'Cancele a programação para remover agentes.', variant: 'destructive' });
+      return;
+    }
+    setAgents((a) => a.filter((_, idx) => idx !== i));
+  };
+  const updateAgent = (i: number, v: string) => {
+    if (armedRef.current) return;
+    setAgents((a) => a.map((x, idx) => (idx === i ? v : x)));
+  };
 
   const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
 
@@ -1661,6 +1677,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   // timer profissional até o momento de iniciar automaticamente.
   const [armedForMs, setArmedForMs] = useState<number | null>(null);
   const armed = armedForMs != null && !running;
+  useEffect(() => { armedRef.current = armed; }, [armed]);
+  const configLocked = armed;
   // Guard: garante que o auto-início dispare UMA ÚNICA vez por programação,
   // mesmo se React re-renderizar ou o efeito reavaliar múltiplas vezes.
   const autoFiredRef = useRef<number | null>(null);
@@ -2598,10 +2616,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 {!nightEffectivelyLocked && (
                   <div className="grid grid-cols-2 gap-2">
                     {(['split', 'interval'] as Mode[]).map((m) => (
-                      <button key={m} type="button" onClick={() => setMode(m)}
+                      <button key={m} type="button" onClick={() => setMode(m)} disabled={configLocked}
                         className={cn(
                           'rounded-md border px-3 py-2 text-[12.5px] font-mono uppercase tracking-wide transition-all',
                           mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground',
+                          configLocked && 'opacity-60 cursor-not-allowed',
                         )}>
                         {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
                       </button>
@@ -2703,33 +2722,29 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
-                      locked={nightEffectivelyLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
+                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 22:00 durante o turno noturno'} />
                     <TimeField id="rm-end" label="Término do turno" value={endTime}
                       onChange={setEndTime} invalid={hasError('end')} accent={teamColor}
-                      locked={nightEffectivelyLocked} lockedHint="Fixado às 06:00 durante o turno noturno" />
+                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 06:00 durante o turno noturno'} />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start2" label="Início" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
-                      locked={nightEffectivelyLocked} lockedHint="Fixado às 22:00 durante o turno noturno" />
+                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 22:00 durante o turno noturno'} />
 
 
                     <div className="grid gap-1.5">
                       <label htmlFor="rm-int" className="text-[12.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
                         <Timer className="h-3 w-3" /> Intervalo (min)
                       </label>
-                      <Input id="rm-int" type="number" min={1} max={240} value={intervalMin}
+                      <Input id="rm-int" type="number" min={1} max={240} value={intervalMin} disabled={configLocked}
                         onChange={(e) => setIntervalMin(Math.max(1, Math.min(240, +e.target.value || 1)))}
-                        className={cn('bg-background border-border font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive')}
+                        className={cn('bg-background border-border font-mono text-lg font-light tabular-nums h-11', hasError('interval') && 'border-destructive', configLocked && 'opacity-60 cursor-not-allowed')}
                         autoComplete="off" onKeyDown={(e) => e.key === 'e' && e.preventDefault()} />
                     </div>
                   </div>
                 )}
-
-
-
-
 
 
 
@@ -2739,8 +2754,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <div className="flex items-center justify-between gap-2">
                     <Label className="text-[12.5px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
                       <Users className="h-3 w-3" /> Agentes ({agents.length})
+                      {configLocked && (
+                        <span className="ml-1 inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-widest text-amber-300">
+                          <Lock className="h-2.5 w-2.5" /> Programado
+                        </span>
+                      )}
                     </Label>
-                    <Button type="button" size="icon" variant="outline" onClick={addAgent} className="h-7 w-7 border-border text-primary hover:bg-primary/10" aria-label="Adicionar agente">
+                    <Button type="button" size="icon" variant="outline" onClick={addAgent} disabled={configLocked} className={cn('h-7 w-7 border-border text-primary hover:bg-primary/10', configLocked && 'opacity-60 cursor-not-allowed')} aria-label="Adicionar agente" title={configLocked ? 'Bloqueado: programação ativa' : 'Adicionar agente'}>
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
@@ -2748,12 +2768,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     {agents.map((a, i) => (
                       <div key={i} className="flex items-center gap-1.5 min-w-0">
                          <span className="w-6 shrink-0 text-center font-mono text-[11.5px] text-primary tabular-nums">{pad(i + 1)}</span>
-                        <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))}
+                        <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))} disabled={configLocked}
                           placeholder={`Agente ${i + 1}`}
-                           className={cn('bg-card border-border h-7 text-xs min-w-0 flex-1', !a.trim() && 'border-destructive/60')}
+                           className={cn('bg-card border-border h-7 text-xs min-w-0 flex-1', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
                           autoComplete="off" />
                         <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
-                           disabled={agents.length <= 1} className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
+                           disabled={agents.length <= 1 || configLocked} className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
                           aria-label={`Remover ${i + 1}`}>
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
