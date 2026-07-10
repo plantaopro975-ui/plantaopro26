@@ -1209,11 +1209,22 @@ export default function Master() {
             </Card>
           </TabsContent>
 
-          {/* Announcements Tab */}
+          {/* Comunicações Internas Tab */}
           <TabsContent value="announcements" className="space-y-6 mt-6">
-            <PromosToggleCard />
-            <WelcomeHintToggleCard />
-            <AnnouncementsManager />
+            <div className="rounded-lg border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-orange-600/5 p-4">
+              <div className="flex items-center gap-3">
+                <MessageSquare className="h-5 w-5 text-amber-400" />
+                <div>
+                  <h3 className="text-sm font-bold text-white">Central de Comunicações Internas</h3>
+                  <p className="text-xs text-slate-400">Envie avisos, comunicados e alertas para todos os agentes, uma unidade ou uma equipe específica.</p>
+                </div>
+              </div>
+            </div>
+            <Suspense fallback={<PanelSkeleton rows={3} />}>
+              <PromosToggleCard />
+              <WelcomeHintToggleCard />
+              <AnnouncementsManager />
+            </Suspense>
           </TabsContent>
 
           {/* Swaps Management Tab */}
