@@ -60,8 +60,15 @@
     <meta property="og:type" content="website" />
 
     <style>
+      /* Fundo do tema aplicado imediatamente (antes do CSS carregar)
+         para eliminar flash preto durante o boot. Espelha o radial
+         do splash "Boot Tático" definido em src/index.css. */
       html, body, #root {
-        background-color: #0a0f1a;
+        background-color: #050505;
+        background-image: radial-gradient(ellipse 90% 60% at 50% 45%, #0A1128 0%, #060912 60%, #050505 100%);
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: cover;
       }
       /* Trava a altura no mobile para evitar redimensionamento quando a barra de endereço aparece/some */
       @media (max-width: 767px) {

@@ -103,7 +103,7 @@ function TeamObject({ team, isAlfa, idx }: TeamObjectProps) {
     ALFA: 1.02,
     BRAVO: 0.92,
     CHARLIE: 1.18,
-    DELTA: 1.10,
+    DELTA: 1.04,
   };
   const scale = OBJECT_SCALE[team.key] ?? 1;
 
