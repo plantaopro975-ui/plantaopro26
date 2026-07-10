@@ -2411,6 +2411,23 @@ export type Database = {
           unit_name: string
         }[]
       }
+      list_agents_system: {
+        Args: never
+        Returns: {
+          approval_status: string
+          avatar_url: string
+          id: string
+          is_active: boolean
+          is_frozen: boolean
+          license_status: string
+          matricula: string
+          name: string
+          position: string
+          team: string
+          unit_municipality: string
+          unit_name: string
+        }[]
+      }
       list_units_basic: {
         Args: never
         Returns: {
