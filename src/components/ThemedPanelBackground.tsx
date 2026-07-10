@@ -4,6 +4,9 @@ import { getThemeAssets } from '@/lib/themeAssets';
 import { teamPosters, teamColors } from '@/lib/teamAssets';
 import { cn } from '@/lib/utils';
 import { CommandRoomBackground } from '@/components/home/CommandRoomBackground';
+import splashAsset from '@/assets/brand/plantaopro-splash.jpg.asset.json';
+
+const PANEL_BRAND_BG = splashAsset.url;
 
 interface ThemedPanelBackgroundProps {
   team?: string | null;
