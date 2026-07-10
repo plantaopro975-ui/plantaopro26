@@ -369,7 +369,7 @@ export function ImageProtection() {
               fontSize="9"
               letterSpacing="4"
             >
-              CONTEÚDO PROTEGIDO · USO INSTITUCIONAL
+              CONTEÚDO PROTEGIDO · CÓPIA NÃO AUTORIZADA
             </text>
             <text
               x="160"
@@ -381,7 +381,7 @@ export function ImageProtection() {
               fontSize="8"
               letterSpacing="3"
             >
-              ISE · ACRE · SISTEMA SOCIOEDUCATIVO
+              DEDICADO AOS AGENTES DE SEGURANÇA · SOCIOEDUCATIVO
             </text>
           </svg>
         </div>
