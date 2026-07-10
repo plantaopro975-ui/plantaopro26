@@ -1657,14 +1657,50 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   // O agente pode configurar tudo e "Programar" a ronda antes do horário
   // do primeiro slot. Enquanto armada, o painel exibe um cadeado e um
   // timer profissional até o momento de iniciar automaticamente.
-  const [armedForMs, setArmedForMs] = useState<number | null>(null);
+  const ARMED_KEY = `plantaopro_armed_${team}`;
+  const [armedForMs, setArmedForMs] = useState<number | null>(() => {
+    try {
+      const raw = localStorage.getItem(`plantaopro_armed_${team}`);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as { targetMs: number };
+      if (typeof parsed?.targetMs === 'number' && parsed.targetMs > Date.now()) return parsed.targetMs;
+      localStorage.removeItem(`plantaopro_armed_${team}`);
+      return null;
+    } catch { return null; }
+  });
   const armed = armedForMs != null && !running;
   useEffect(() => { armedRef.current = armed; }, [armed]);
   const configLocked = armed;
-  // Guard: garante que o auto-início dispare UMA ÚNICA vez por programação,
-  // mesmo se React re-renderizar ou o efeito reavaliar múltiplas vezes.
   const autoFiredRef = useRef<number | null>(null);
   const [cancelArmConfirmOpen, setCancelArmConfirmOpen] = useState(false);
+
+  // Persistência: sobrevive a reload/aba fechada até o horário do disparo
+  useEffect(() => {
+    try {
+      if (armedForMs && armedForMs > Date.now()) {
+        localStorage.setItem(ARMED_KEY, JSON.stringify({ targetMs: armedForMs, team, startTime }));
+      } else {
+        localStorage.removeItem(ARMED_KEY);
+      }
+    } catch { /* ignore */ }
+  }, [armedForMs, ARMED_KEY, team, startTime]);
+
+  // Ao trocar de equipe, tenta restaurar programação salva desta equipe
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(ARMED_KEY);
+      if (!raw) { setArmedForMs(null); return; }
+      const parsed = JSON.parse(raw) as { targetMs: number; startTime?: string };
+      if (typeof parsed?.targetMs === 'number' && parsed.targetMs > Date.now()) {
+        setArmedForMs(parsed.targetMs);
+        if (parsed.startTime) setStartTime(parsed.startTime);
+      } else {
+        localStorage.removeItem(ARMED_KEY);
+        setArmedForMs(null);
+      }
+    } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [team]);
 
 
 
