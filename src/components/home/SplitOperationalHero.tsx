@@ -702,7 +702,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 />
               </span>
             </picture>
-            <picture className="relative block h-[138%] leading-[0] -ml-2 self-end mb-4 min-[390px]:mb-6">
+            <picture className="relative block h-[138%] leading-[0] -ml-2 self-end mb-0">
               <source type="image/webp" srcSet={agent3dWebp} />
               <img
                 src={agent3d}
