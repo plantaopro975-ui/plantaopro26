@@ -111,7 +111,7 @@ export default function About() {
         </div>
       </header>
 
-      <main className="container relative max-w-6xl px-3 py-2 space-y-2 flex-1 overflow-hidden flex flex-col min-h-0">
+      <main className="container relative max-w-6xl px-3 py-2 space-y-2 flex-1 sm:overflow-hidden flex flex-col min-h-0">
         {/* HERO */}
         <section className="relative overflow-hidden rounded-2xl border border-amber-500/25 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] flex-shrink-0">
           <div className="absolute inset-0">
