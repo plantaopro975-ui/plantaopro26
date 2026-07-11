@@ -145,6 +145,8 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
     setKind(k);
     setStartTime(shift?.start_time?.slice(0, 5) || KIND_DEFAULTS[k].start);
     setEndTime(shift?.end_time?.slice(0, 5) || KIND_DEFAULTS[k].end);
+    // Se o registro JÁ era vacation, considera reconhecido; caso contrário exige nova confirmação.
+    setVacationAck(k === 'vacation');
   }, [open, shift]);
 
   const handleKindChange = (next: ShiftKind) => {
@@ -152,6 +154,8 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
     const d = KIND_DEFAULTS[next];
     setStartTime(d.start);
     setEndTime(d.end);
+    // Ao trocar para vacation exige nova confirmação explícita.
+    setVacationAck(false);
     if (next === 'night') {
       const nextDay = new Date(shiftDate);
       nextDay.setDate(nextDay.getDate() + 1);
