@@ -6,10 +6,15 @@
  * (pointer-events-none). Aparece apenas em telas ≥ sm para não competir
  * com toolbars/mobile nav.
  */
-export function MadeInFeijoBadge({ inline = false }: { inline?: boolean }) {
+export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boolean; size?: 'sm' | 'md' | 'lg' }) {
   const wrapperClass = inline
-    ? "inline-flex items-center justify-center select-none opacity-80 hover:opacity-100 transition-opacity"
+    ? "inline-flex items-center justify-center select-none opacity-95 hover:opacity-100 transition-opacity drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
     : "pointer-events-none fixed bottom-1 left-1 z-[55] hidden sm:block select-none opacity-60 hover:opacity-100 transition-opacity";
+  const dims = size === 'lg'
+    ? { w: 260, h: 34 }
+    : size === 'sm'
+      ? { w: 126, h: 16.5 }
+      : { w: 200, h: 26 };
   return (
     <div
       aria-hidden={false}
@@ -21,11 +26,12 @@ export function MadeInFeijoBadge({ inline = false }: { inline?: boolean }) {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 168 22"
-        width="126"
-        height="16.5"
+        width={dims.w}
+        height={dims.h}
         role="img"
         aria-label="Feito em Feijó, Acre, Brasil"
       >
+
         <defs>
           <linearGradient id="mif-bg" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#0b1220" stopOpacity="0.92" />
