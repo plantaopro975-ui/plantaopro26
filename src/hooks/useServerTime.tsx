@@ -18,7 +18,6 @@ import { supabase } from '@/integrations/supabase/client';
 // manualmente o relógio do aparelho.
 let serverBaseMs: number | null = null;
 let monotonicBaseMs = 0;
-let deviceOffsetMs = 0; // server_ms - local_wall_clock_ms, usado só para alerta
 let lastSyncAtMonotonic = 0;
 let syncing: Promise<void> | null = null;
 
@@ -70,7 +69,6 @@ export async function syncServerTime(force = false): Promise<void> {
     if (serverMs != null) {
       serverBaseMs = serverMs;
       monotonicBaseMs = performance.now();
-      deviceOffsetMs = serverMs - Date.now();
       lastSyncAtMonotonic = monotonicBaseMs;
     }
   })();
