@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trophy, Clock, Users, CheckCircle2, ArrowRight, Sparkles, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Trophy, Clock, Users, CheckCircle2, ArrowRight, Sparkles, AlertTriangle, ShieldCheck, WifiOff } from 'lucide-react';
 
 const AUTO_CLOSE_SECONDS = 10;
 
