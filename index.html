@@ -80,25 +80,15 @@
 
 
     <style>
-      /* Fundo de boot — pinta a própria arte da SplashScreen (agente + viatura
-         + brasão) já no primeiro paint, antes do React montar. Elimina qualquer
-         flash de gradiente/quadriculado no F5.
-         - AVIF é preloaded acima com fetchpriority=high para carregar imediato.
-         - Camada escura por baixo evita flash branco caso a imagem demore. */
+      /* Fundo de boot — cor sólida escura antes do React montar.
+         A splash institucional é renderizada UMA VEZ pelo componente
+         <SplashScreen>. Antes usávamos a arte como background-image
+         aqui também, o que causava sensação de "splash duplicada"
+         quando o overlay animado fazia fade-out. */
       html, body, #root {
         background-color: #050505;
-        background-image:
-          radial-gradient(ellipse at center, rgba(3,5,10,0.45) 0%, rgba(3,5,10,0.85) 100%),
-          image-set(
-            url("/__l5e/assets-v1/b46f5fff-72fa-42e6-ab6d-399dffce6d6d/plantaopro-splash.avif") type("image/avif"),
-            url("/__l5e/assets-v1/daa04562-bbb9-4c2c-b4e0-c99584022bc5/plantaopro-splash.webp") type("image/webp"),
-            url("/__l5e/assets-v1/d1531a9d-1b9d-44fd-b552-514605db97cd/plantaopro-splash.jpg") type("image/jpeg")
-          );
-        background-position: center center, center center;
-        background-repeat: no-repeat, no-repeat;
-        background-size: cover, cover;
-        background-attachment: fixed, fixed;
       }
+
       /* Trava a altura no mobile para evitar redimensionamento quando a barra de endereço aparece/some */
       @media (max-width: 767px) {
         html, body {
