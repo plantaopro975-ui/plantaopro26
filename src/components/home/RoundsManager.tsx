@@ -2751,11 +2751,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </span>
                   <span className="ml-auto flex items-center gap-1.5 font-mono text-[11px] tabular-nums text-muted-foreground/90">
                     <span
-                      className="rounded-sm border px-1.5 py-[1px] text-foreground/85"
-                      style={{ borderColor: `${teamColor}33` }}
+                      className={`rounded-sm border px-1.5 py-[1px] transition-colors ${
+                        endingCritical
+                          ? 'border-red-500/70 bg-red-500/15 text-red-200 animate-pulse'
+                          : endingSoon
+                          ? 'border-amber-400/60 bg-amber-400/10 text-amber-200 animate-pulse'
+                          : 'text-foreground/85'
+                      }`}
+                      style={endingSoon ? undefined : { borderColor: `${teamColor}33` }}
+                      title={endingSoon ? 'Operação encerrando em breve' : undefined}
                     >
                       {fmtHMS(totalRemainingSeconds)}
+                      {endingSoon && <span className="ml-1">⏳</span>}
                     </span>
+
                     <span className="hidden xs:inline">· {schedule?.rows.length ?? agents.length} ag.</span>
                     {activeRoundName && (
                       <span className="hidden sm:inline truncate max-w-[140px]">
