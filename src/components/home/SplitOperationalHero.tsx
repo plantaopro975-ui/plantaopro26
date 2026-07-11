@@ -162,7 +162,9 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       style={{ ['--team-accent' as any]: t.accent }}
     >
       {/* Imagem preenche o card inteiro (edge-to-edge, sem faixas vazias) */}
+      {/* Mobile (<768px): retrato tático da equipe. Desktop: pôster institucional. */}
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
+        <source media="(max-width: 767px)" srcSet={MOBILE_SQUAD[t.key]} />
         <img
           src={t.bg}
           alt=""
