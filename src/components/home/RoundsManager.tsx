@@ -2938,11 +2938,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         onCancel={() => setPreNightOpen(false)}
                         onSchedule={(targetMs) => {
                           setPreNightOpen(false);
+                          // Alinha a configuração do lado esquerdo à janela
+                          // noturna pactuada (22:00 → 06:00) e trava edição.
+                          setMode('split');
+                          setStartTime(NIGHT_START);
+                          setEndTime(NIGHT_END);
                           setScheduledFor(targetMs);
                           const label = new Intl.DateTimeFormat('pt-BR', {
                             timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
                           }).format(new Date(targetMs));
-                          toast({ title: `Ronda agendada para ${label}.`, description: 'Início automático ao bater o horário.' });
+                          toast({ title: `Ronda agendada para ${label}.`, description: 'Configuração travada até 22:00 · início automático.' });
                         }}
                         color={teamColor}
                         teamName={team}
