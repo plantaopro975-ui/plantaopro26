@@ -900,8 +900,8 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
 function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; color: string; count: number; ready: boolean }) {
   return (
     <div
-      className="mb-2 flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 sm:px-3"
-      style={{ borderLeft: `2px solid ${color}` }}
+      className="mb-2 flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 sm:px-3 [&_*]:transition-none [&_*]:animate-none hover:bg-card"
+      style={{ borderLeft: `2px solid ${color}`, transition: 'none', animation: 'none' }}
     >
       {/* Ícone de status — plano, sem efeitos */}
       <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden>
