@@ -434,11 +434,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             <text x="1420" y="24" textAnchor="end">UPLINK · 2.4GHz</text>
             <text x="1420" y="880" textAnchor="end">AES-256 · RLS · LGPD</text>
           </g>
-          {/* Conectores diagonais */}
-          <g stroke="hsl(42 92% 58%)" strokeWidth="0.4" opacity="0.35" strokeDasharray="4 6">
-            <line x1="220" y1="720" x2="800" y2="450" />
-            <line x1="800" y1="450" x2="1360" y2="180" />
-          </g>
+          {/* Conectores diagonais pontilhados removidos (solicitação do usuário) */}
+
         </svg>
 
 
