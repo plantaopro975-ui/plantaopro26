@@ -203,9 +203,8 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
       </div>
       <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
-      <span aria-hidden className="absolute top-2 left-2 z-30 flex h-2 w-2">
-        <span className="absolute inset-0 rounded-full animate-ping opacity-70" style={{ background: `hsl(${t.accent})` }} />
-        <span className="relative h-2 w-2 rounded-full" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 8px hsl(${t.accent} / 0.9)` }} />
+      <span aria-hidden className="absolute top-1.5 left-1.5 z-30 flex h-2.5 w-2.5 items-center justify-center rounded-full" style={{ border: `1px solid hsl(${t.accent} / 0.55)` }}>
+        <span className="h-1.5 w-1.5 rounded-full" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 4px hsl(${t.accent} / 0.7)` }} />
       </span>
       <span
         className="absolute top-1.5 right-1.5 z-30 font-mono text-[8.5px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded backdrop-blur-md border"
@@ -474,9 +473,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     <div key={it.k} className="relative pl-2 md:pl-2.5 border-l border-amber-400/25 min-w-0">
                       <div className="font-mono text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-200/95 truncate flex items-center gap-1">
                         {it.pulse && (
-                          <span className="relative inline-flex h-1.5 w-1.5 shrink-0">
-                            <span className="absolute inset-0 rounded-full bg-emerald-400/70 animate-ping" />
-                            <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+                          <span className="relative inline-flex h-2 w-2 items-center justify-center rounded-full border border-emerald-400/55 shrink-0">
+                            <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.75)]" />
                           </span>
                         )}
                         {it.k}
@@ -658,9 +656,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       border: '1px solid hsl(142 72% 45% / 0.4)',
                     }}
                   >
-                    <span className="relative inline-flex h-1.5 w-1.5">
-                      <span className="absolute inset-0 rounded-full animate-ping opacity-60 bg-emerald-400" />
-                      <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+                    <span className="relative inline-flex h-2 w-2 items-center justify-center rounded-full border border-emerald-400/55">
+                      <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.75)]" />
                     </span>
                     <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-emerald-200 leading-none">
                       Ativo
