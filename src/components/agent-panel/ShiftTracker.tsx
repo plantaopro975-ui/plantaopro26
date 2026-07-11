@@ -10,6 +10,7 @@ import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Switch } from '@/components/ui/switch';
+import { getShiftBounds, isShiftActive } from '@/lib/shiftTime';
 
 // Countdown component for next shift
 function CountdownToShift({ shift }: { shift: CurrentShift }) {
