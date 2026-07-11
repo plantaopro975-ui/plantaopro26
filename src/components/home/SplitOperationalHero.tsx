@@ -283,18 +283,16 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         </div>
       </div>
 
-      {/* Rodapé institucional — role + OP code em faixa escura.
-          No desktop (badge octogonal), recuo lateral e inferior para não
-          ser cortado pelas quinas do clip-path. */}
-      <div className="relative z-20 flex items-center justify-between gap-2 px-3 py-2 border-t border-white/10 backdrop-blur-sm bg-slate-950/70 min-w-0 sm:mx-[16%] sm:mb-[3%] sm:mt-auto sm:rounded-md sm:border sm:border-white/15 sm:px-2 sm:py-1.5">
+      {/* Rodapé institucional — role + OP code, recuado dentro da zona segura do octógono */}
+      <div className="relative z-20 flex items-center justify-between gap-2 mx-[16%] mb-[3%] mt-auto rounded-md border border-white/15 backdrop-blur-sm bg-slate-950/70 px-2 py-1.5 min-w-0">
         <span
-          className="font-mono text-[9px] sm:text-[9px] font-semibold uppercase tracking-[0.22em] truncate min-w-0 flex-1"
+          className="font-mono text-[9px] font-semibold uppercase tracking-[0.22em] truncate min-w-0 flex-1"
           style={{ color: `hsl(${t.accent})` }}
         >
           {t.role}
         </span>
         <span
-          className="font-mono text-[8.5px] sm:text-[9px] font-bold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-sm border text-slate-100 shrink-0"
+          className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-sm border text-slate-100 shrink-0"
           style={{ borderColor: `hsl(${t.accent} / 0.55)`, background: 'rgba(2,6,23,0.6)' }}
         >
           {t.op}
