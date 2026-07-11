@@ -1844,25 +1844,30 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* ---- Sincroniza teamLog (últimas rondas) com Supabase por unidade ---- */
   const hydrateTeamLogFromCloud = useCallback(async () => {
     if (!unitId) return;
+    setTeamLogLoading(true);
     try {
       const { data, error } = await supabase
         .from('team_round_log')
-        .select('id, team, saved_name, completed_at')
+        .select('id, team, saved_name, completed_at, total_seconds, agents_count')
         .eq('unit_id', unitId)
         .order('completed_at', { ascending: false })
         .limit(15);
       if (error) throw error;
-      const mapped: TeamLogEntry[] = (data ?? []).map((r) => ({
+      const mapped: TeamLogEntry[] = (data ?? []).map((r: any) => ({
         id: r.id,
         team: r.team,
         dateISO: r.completed_at,
         savedName: r.saved_name ?? undefined,
+        totalSeconds: typeof r.total_seconds === 'number' ? r.total_seconds : undefined,
+        agentsCount: typeof r.agents_count === 'number' ? r.agents_count : undefined,
       }));
       setTeamLog(mapped);
       writeTeamLogLocal(mapped);
     } catch {
       // fallback: cache local
       setTeamLog(readTeamLogLocal());
+    } finally {
+      setTeamLogLoading(false);
     }
   }, [unitId]);
 
