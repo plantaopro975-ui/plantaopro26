@@ -659,38 +659,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               VTR · 01 · CB · 114
             </span>
 
-            {/* ============ C — Mini-radar tático (canto superior esquerdo do palco) ============ */}
-            <div aria-hidden className="hidden lg:block absolute top-2 left-6 z-[55] pointer-events-none select-none">
-              <div className="relative h-[64px] w-[64px] rounded-full border border-amber-300/25" style={{ background: 'radial-gradient(circle at center, hsl(42 90% 55% / 0.06) 0%, transparent 70%)' }}>
-                {/* anéis */}
-                <span aria-hidden className="absolute inset-2 rounded-full border border-amber-300/15" />
-                <span aria-hidden className="absolute inset-4 rounded-full border border-amber-300/15" />
-                {/* cruz */}
-                <span aria-hidden className="absolute top-1/2 left-0 right-0 h-px bg-amber-300/15" />
-                <span aria-hidden className="absolute left-1/2 top-0 bottom-0 w-px bg-amber-300/15" />
-                {/* sweep giratório */}
-                <span
-                  aria-hidden
-                  className="absolute inset-0 rounded-full motion-safe:animate-[spin_3.6s_linear_infinite]"
-                  style={{
-                    background: 'conic-gradient(from 0deg, transparent 0deg, hsl(42 90% 55% / 0.55) 60deg, transparent 90deg)',
-                    maskImage: 'radial-gradient(circle at center, black 62%, transparent 100%)',
-                    WebkitMaskImage: 'radial-gradient(circle at center, black 62%, transparent 100%)',
-                  }}
-                />
-                {/* 4 pontos = 4 equipes */}
-                <span className="absolute h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.9)]" style={{ top: '22%', left: '30%' }} />
-                <span className="absolute h-1 w-1 rounded-full bg-orange-400 shadow-[0_0_4px_rgba(251,146,60,0.9)]" style={{ top: '35%', left: '68%' }} />
-                <span className="absolute h-1 w-1 rounded-full bg-sky-400 shadow-[0_0_4px_rgba(56,189,248,0.9)]" style={{ top: '65%', left: '38%' }} />
-                <span className="absolute h-1 w-1 rounded-full bg-amber-300 shadow-[0_0_4px_rgba(252,211,77,0.9)]" style={{ top: '72%', left: '70%' }} />
-                {/* centro */}
-                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-1 w-1 rounded-full bg-amber-300 shadow-[0_0_6px_rgba(252,211,77,0.9)]" />
-              </div>
-              <div className="mt-1 flex items-center justify-center gap-1">
-                <span className="font-mono text-[7.5px] uppercase tracking-[0.28em] text-white/40 leading-none">Radar</span>
-                <span className="font-mono text-[7.5px] tabular-nums tracking-[0.14em] text-amber-200/70 leading-none">04</span>
-              </div>
-            </div>
+            {/* Mini-radar movido para a coluna esquerda (bloco Radar Tático Profissional) */}
+
 
             {/* Micro-ribbon inferior — linha única, hairline, tabular */}
             <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2 lg:gap-2.5 pointer-events-none whitespace-nowrap max-w-full px-2">
