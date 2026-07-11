@@ -93,8 +93,12 @@ export function RoundSummaryDialog({
 
   const handleSave = async () => {
     const name = savedName.trim();
+    if (name.length === 0) {
+      setWarning('Digite o nome da equipe antes de salvar.');
+      return;
+    }
     if (name.length < 2) {
-      setWarning('Informe o nome da equipe (mínimo 2 caracteres) antes de encerrar.');
+      setWarning('Nome muito curto — informe pelo menos 2 caracteres.');
       return;
     }
     setWarning(null);
