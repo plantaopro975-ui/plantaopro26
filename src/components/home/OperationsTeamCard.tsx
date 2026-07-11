@@ -88,32 +88,7 @@ export function OperationsTeamCard({ team, onClick }: OperationsTeamCardProps) {
         </div>
 
 
-          {/* Callsign — heavy stencil */}
-          <h3
-            className="font-stencil font-bold text-2xl sm:text-3xl lg:text-4xl leading-none text-foreground uppercase tracking-wider"
-            style={{ textShadow: `0 0 24px ${meta.hex}55` }}
-          >
-            {meta.callsign}
-          </h3>
 
-
-
-
-          {/* Divider */}
-          <div className="w-12 h-px my-3" style={{ backgroundColor: `${meta.hex}80` }} />
-
-          {/* Status grid */}
-          <div className="w-full grid grid-cols-2 gap-2 mt-1 font-mono-mil text-[9px] text-muted-foreground/80">
-            <div className="border border-border/50 rounded-sm px-2 py-1">
-              <div className="text-[8px] uppercase opacity-70">Setor</div>
-              <div className="text-foreground/90 mt-0.5">ACRE-N</div>
-            </div>
-            <div className="border border-border/50 rounded-sm px-2 py-1">
-              <div className="text-[8px] uppercase opacity-70">Status</div>
-              <div className="mt-0.5" style={{ color: meta.hex }}>ATIVA</div>
-            </div>
-          </div>
-        </div>
 
         {/* Bottom access bar */}
         <div
