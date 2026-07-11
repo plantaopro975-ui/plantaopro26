@@ -262,11 +262,11 @@ export function ShiftBriefingCard({
       handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
       radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
       radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
-      book_entry: bookEntry || null,
+      book_entry: null,
       handover_ok: handoverOk,
       handover_notes: handoverNotes || null,
-      observations: observations || null,
-      signature: signature || null,
+      observations: null,
+      signature: agentName || null,
       completed_at: finalize
         ? new Date().toISOString()
         : (briefingRef.current?.completed_at ?? null),
