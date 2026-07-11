@@ -17,6 +17,12 @@ export type ReminderInterval = 15 | 30 | 60;
 export interface ReminderSettings {
   enabled: boolean;
   intervalMin: ReminderInterval;
+  /**
+   * Quando `true`, TODOS os avisos são exibidos exclusivamente in-app
+   * (toasts + diálogos SVG). Nenhuma `Notification` nativa do navegador
+   * é criada e o app não solicita permissão de notificação.
+   */
+  inAppOnly: boolean;
 }
 
 const BASE_KEY = 'plantaopro_reminder_settings_v1';
@@ -39,6 +45,7 @@ export const ReminderSettingsSchema = z.object({
     .refine((v) => (ALLOWED_INTERVALS as readonly number[]).includes(v), {
       message: 'Intervalo deve ser 15, 30 ou 60 minutos',
     }),
+  inAppOnly: z.boolean(),
 });
 
 export type ReminderValidation =
@@ -57,7 +64,23 @@ export function validateReminderSettings(raw: unknown): ReminderValidation {
   return { ok: false, errors };
 }
 
-const DEFAULTS: ReminderSettings = { enabled: true, intervalMin: 30 };
+const DEFAULTS: ReminderSettings = { enabled: true, intervalMin: 30, inAppOnly: false };
+
+/**
+ * Guard central: usar sempre antes de `new Notification(...)` ou
+ * `Notification.requestPermission()`. Retorna false quando o usuário
+ * escolheu "somente in-app", ou quando o browser não suporta.
+ */
+export function areNativeNotificationsAllowed(): boolean {
+  if (typeof window === 'undefined') return false;
+  if (typeof Notification === 'undefined') return false;
+  try {
+    const s = readLocal();
+    return !s.inAppOnly;
+  } catch {
+    return true;
+  }
+}
 
 // ID do usuário ativo — definido em runtime por `bindReminderUser`. Enquanto
 // não houver usuário, usamos a chave legada para não perder preferências
