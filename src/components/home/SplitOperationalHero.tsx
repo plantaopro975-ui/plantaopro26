@@ -585,23 +585,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
             </div>
 
-            {/* DELTA card — desktop only, ao lado do agente */}
-            {(() => {
-              const delta = TEAMS.find((x) => x.key === 'DELTA');
-              if (!delta) return null;
-              const idx = TEAMS.indexOf(delta);
-              return (
-                <div className="hidden lg:block absolute right-3 xl:right-6 bottom-2 z-[70] w-[160px] xl:w-[180px]" style={{ perspective: '900px' }}>
-                  <TeamCard
-                    team={delta}
-                    idx={idx}
-                    isSelected={selectedTeam === 'DELTA'}
-                    onSelect={handleSelect}
-                    className="w-full !max-w-none"
-                  />
-                </div>
-              );
-            })()}
+            {/* DELTA agora alinhado na mesma grid das outras equipes (4 cols em lg+). */}
 
 
           </div>
