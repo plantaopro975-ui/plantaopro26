@@ -7,6 +7,8 @@ import {
   ChevronRight, Star, Sun, Moon, Target, Flame, Timer
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useServerTime } from '@/hooks/useServerTime';
+
 
 interface AgentHeroPanelProps {
   agentId: string;
