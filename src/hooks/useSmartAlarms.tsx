@@ -341,7 +341,7 @@ export function useSmartAlarms({ agentId, enabled = true }: UseSmartAlarmsProps)
         playCategorySound(alarm.category);
         
         // Show browser notification
-        if ('Notification' in window && Notification.permission === 'granted') {
+        if (areNativeNotificationsAllowed() && Notification.permission === 'granted') {
           const config = categoryConfig[alarm.category];
           new Notification(`${config.icon} ${alarm.title}`, {
             body: minutesUntil === 0 
