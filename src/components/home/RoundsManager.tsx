@@ -2390,18 +2390,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
             >
               <div
-                className="mx-auto mb-2 overflow-hidden rounded-md border bg-card/60 backdrop-blur-sm"
-                style={{ borderColor: `${teamColor}2a`, boxShadow: `inset 0 1px 0 ${teamColor}10` }}
+                className="mx-auto mb-2 overflow-hidden rounded-md border border-border bg-card"
+                style={{ borderLeft: `2px solid ${teamColor}` }}
               >
                 <div className="relative flex items-center gap-2 px-2.5 py-1 sm:px-3">
                   <span
-                    aria-hidden
-                    className="h-3 w-[3px] rounded-sm"
-                    style={{ background: teamColor, boxShadow: `0 0 6px ${teamColor}80` }}
-                  />
-                  <span
-                    className="font-mono text-[10px] uppercase tracking-[0.22em] font-medium antialiased whitespace-nowrap"
-                    style={{ color: teamColor, opacity: 0.9 }}
+                    className="font-mono text-[10px] uppercase tracking-[0.22em] font-medium whitespace-nowrap"
+                    style={{ color: teamColor }}
                   >
                     Central · {team}
                   </span>
