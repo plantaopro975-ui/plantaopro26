@@ -2783,7 +2783,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <ul className="tactical-scrollbar grid gap-0.5 max-h-24 overflow-y-auto pr-1">
                         {teamLog.map((e, i) => {
                           const preset = TEAM_PRESETS.find((p) => p.key === e.team);
-                          const color = preset?.color ?? '#94a3b8';
+                          const color = preset ? getRotatedTeamColor(e.team, colorRotation) : '#94a3b8';
                           const label = preset?.label ?? e.team;
                           const dt = new Date(e.dateISO);
                           const when = new Intl.DateTimeFormat('pt-BR', {
