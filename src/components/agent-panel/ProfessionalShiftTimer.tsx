@@ -102,7 +102,7 @@ export function ProfessionalShiftTimer({ agentId, compact = false }: Professiona
         icon: <Bell className="h-5 w-5 text-amber-500" />,
       });
       
-      if (pushEnabled && 'Notification' in window && Notification.permission === 'granted') {
+      if (pushEnabled && areNativeNotificationsAllowed() && Notification.permission === 'granted') {
         new Notification('🚨 Plantão Próximo!', {
           body: message,
           icon: '/favicon.ico',
