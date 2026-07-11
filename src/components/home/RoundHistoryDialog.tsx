@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { NIGHT_TZ } from '@/lib/nightShift';
 import { getRotatedTeamColor } from '@/lib/teamColors';
 
-export type TeamRoundLogEntry = { team: string; dateISO: string };
+export type TeamRoundLogEntry = { team: string; dateISO: string; savedName?: string };
 
 interface RoundHistoryDialogProps {
   open: boolean;
@@ -10,6 +10,7 @@ interface RoundHistoryDialogProps {
   entries: TeamRoundLogEntry[];
   onClear: () => void;
 }
+
 
 /**
  * Modal detalhado do histórico compacto de rondas.
@@ -33,6 +34,31 @@ export function RoundHistoryDialog({ open, onOpenChange, entries, onClear }: Rou
         </DialogHeader>
 
         <div className="px-4 py-3">
+          {(() => {
+            const lastNamed = entries.find((e) => e.savedName && e.savedName.trim().length > 0);
+            if (!lastNamed) return null;
+            const color = getRotatedTeamColor(lastNamed.team, 0);
+            return (
+              <div
+                className="mb-3 rounded-md border border-primary/30 bg-primary/5 px-3 py-2"
+                style={{ borderLeft: `3px solid ${color}` }}
+              >
+                <div className="font-mono text-[9.5px] uppercase tracking-[0.24em] text-primary/80">
+                  Última equipe registrada
+                </div>
+                <div className="mt-0.5 flex items-center gap-2 min-w-0">
+                  <span aria-hidden className="h-2 w-2 rounded-full shrink-0" style={{ background: color }} />
+                  <span className="font-sans font-bold text-sm uppercase tracking-wide text-slate-100 truncate">
+                    {lastNamed.team}
+                  </span>
+                  <span className="ml-auto font-sans text-[12px] font-semibold text-slate-100 truncate max-w-[55%]" title={lastNamed.savedName}>
+                    {lastNamed.savedName}
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
+
           {entries.length === 0 ? (
             <div className="rounded-md border border-dashed border-slate-800 bg-slate-900/40 p-6 text-center">
               <div className="mx-auto mb-2 h-10 w-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-500">
@@ -47,46 +73,60 @@ export function RoundHistoryDialog({ open, onOpenChange, entries, onClear }: Rou
               </div>
             </div>
           ) : (
-            <ul className="tactical-scrollbar grid gap-1 max-h-[60vh] overflow-y-auto pr-1">
-              {entries.map((e, i) => {
-                const color = getRotatedTeamColor(e.team, 0);
-                const dt = new Date(e.dateISO);
-                const date = new Intl.DateTimeFormat('pt-BR', {
-                  timeZone: NIGHT_TZ, day: '2-digit', month: '2-digit', year: 'numeric',
-                }).format(dt);
-                const time = new Intl.DateTimeFormat('pt-BR', {
-                  timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
-                }).format(dt);
-                return (
-                  <li
-                    key={i}
-                    className="flex items-center gap-3 rounded-md border border-slate-800 bg-slate-900/60 px-3 py-2"
-                    style={{ borderLeft: `3px solid ${color}` }}
-                  >
-                    <span className="font-mono text-[11px] tabular-nums text-slate-500 w-6 text-right">
-                      {String(entries.length - i).padStart(2, '0')}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: color }} />
-                        <span className="font-sans font-bold text-sm uppercase tracking-wide text-slate-100 truncate">
+            <>
+              <div className="mb-1.5 grid grid-cols-[1.5rem_1fr_1.4fr_auto] gap-2 px-3 font-mono text-[9px] uppercase tracking-[0.22em] text-slate-500">
+                <span className="text-right">#</span>
+                <span>Equipe</span>
+                <span>Nome da equipe</span>
+                <span className="text-right">Data</span>
+              </div>
+              <ul className="tactical-scrollbar grid gap-1 max-h-[60vh] overflow-y-auto pr-1">
+                {entries.map((e, i) => {
+                  const color = getRotatedTeamColor(e.team, 0);
+                  const dt = new Date(e.dateISO);
+                  const date = new Intl.DateTimeFormat('pt-BR', {
+                    timeZone: NIGHT_TZ, day: '2-digit', month: '2-digit', year: 'numeric',
+                  }).format(dt);
+                  const time = new Intl.DateTimeFormat('pt-BR', {
+                    timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
+                  }).format(dt);
+                  const named = e.savedName && e.savedName.trim().length > 0;
+                  return (
+                    <li
+                      key={i}
+                      className="grid grid-cols-[1.5rem_1fr_1.4fr_auto] items-center gap-2 rounded-md border border-slate-800 bg-slate-900/60 px-3 py-2"
+                      style={{ borderLeft: `3px solid ${color}` }}
+                    >
+                      <span className="font-mono text-[11px] tabular-nums text-slate-500 text-right">
+                        {String(entries.length - i).padStart(2, '0')}
+                      </span>
+                      <div className="min-w-0 flex items-center gap-2">
+                        <span aria-hidden className="h-2 w-2 rounded-full shrink-0" style={{ background: color }} />
+                        <span className="font-sans font-bold text-[12.5px] uppercase tracking-wide text-slate-100 truncate">
                           {e.team}
                         </span>
                       </div>
-                      <div className="mt-0.5 font-mono text-[10.5px] uppercase tracking-[0.16em] text-slate-500">
-                        Ronda realizada
+                      <div
+                        className={
+                          'min-w-0 font-sans text-[12px] truncate ' +
+                          (named ? 'text-slate-100 font-semibold' : 'text-slate-500 italic')
+                        }
+                        title={named ? e.savedName : 'Sem nome registrado'}
+                      >
+                        {named ? e.savedName : '—'}
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-mono text-[12px] font-semibold tabular-nums text-slate-100">{time}</div>
-                      <div className="font-mono text-[10px] tabular-nums text-slate-500">{date}</div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+                      <div className="text-right">
+                        <div className="font-mono text-[11.5px] font-semibold tabular-nums text-slate-100">{time}</div>
+                        <div className="font-mono text-[9.5px] tabular-nums text-slate-500">{date}</div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
           )}
         </div>
+
 
         <div className="flex items-center justify-between gap-2 border-t border-slate-800 px-4 py-2.5 bg-slate-900/40">
           <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-slate-500">

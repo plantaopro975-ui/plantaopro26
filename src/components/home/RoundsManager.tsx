@@ -2886,10 +2886,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <li key={i} className="flex items-center gap-2 min-w-0">
                               <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
                               <span className="font-sans font-semibold text-[11px] uppercase tracking-wide text-foreground truncate">{label}</span>
+                              {e.savedName && e.savedName.trim().length > 0 && (
+                                <span
+                                  className="font-sans text-[10.5px] text-primary/90 truncate max-w-[45%]"
+                                  title={e.savedName}
+                                >
+                                  · {e.savedName}
+                                </span>
+                              )}
                               <span className="ml-auto font-mono text-[10.5px] tabular-nums text-muted-foreground whitespace-nowrap">{when}</span>
                             </li>
                           );
                         })}
+
                       </ul>
                     )}
                   </div>
