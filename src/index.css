@@ -390,6 +390,13 @@
   animation: gradient-x 3s ease infinite;
 }
 
+@keyframes hud-scan-x {
+  0%   { transform: translateX(-45%); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateX(240%); opacity: 0; }
+}
+
 /* ================================
    OFFLINE MODE - PREVENT PULL TO REFRESH
    ================================ */

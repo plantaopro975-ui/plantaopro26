@@ -494,65 +494,54 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           {/* RIGHT — Agent 3D + HUD tático */}
           <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(200px,27vh,290px)] xl:min-h-[clamp(220px,30vh,340px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
 
-            {/* Reticle tático de fundo — pulso lento e discreto */}
-            <svg
+            {/* Moldura HUD ultra-discreta — hairlines nos quatro cantos, sem competir com a cena */}
+            <div aria-hidden className="hidden md:block absolute inset-x-3 top-2 bottom-2 lg:inset-x-5 lg:top-3 lg:bottom-3 pointer-events-none">
+              {/* cantoneiras finas */}
+              <span className="absolute top-0 left-0 h-3 w-3 border-t border-l border-amber-300/25" />
+              <span className="absolute top-0 right-0 h-3 w-3 border-t border-r border-amber-300/25" />
+              <span className="absolute bottom-0 left-0 h-3 w-3 border-b border-l border-amber-300/25" />
+              <span className="absolute bottom-0 right-0 h-3 w-3 border-b border-r border-amber-300/25" />
+              {/* ticks laterais discretos */}
+              <span className="absolute top-1/2 left-0 -translate-y-1/2 h-4 w-px bg-amber-300/20" />
+              <span className="absolute top-1/2 right-0 -translate-y-1/2 h-4 w-px bg-amber-300/20" />
+            </div>
+
+            {/* Scan line removida: causava faixa vertical sobre a viatura */}
+
+
+
+            {/* Rótulos verticais nas margens — tipografia mono, mesma linguagem do briefing */}
+            <span
               aria-hidden
-              className="hidden sm:block absolute inset-0 w-full h-full pointer-events-none opacity-[0.18] mix-blend-screen motion-safe:animate-pulse [animation-duration:5.5s]"
-              viewBox="0 0 400 300"
-              preserveAspectRatio="xMidYMid meet"
+              className="hidden lg:block absolute left-1 top-1/2 -translate-y-1/2 z-[60] font-mono text-[8.5px] uppercase tracking-[0.4em] text-white/30 whitespace-nowrap select-none pointer-events-none"
+              style={{ writingMode: 'vertical-rl', transform: 'translateY(-50%) rotate(180deg)' }}
             >
-              <defs>
-                <radialGradient id="reticleGlow" cx="50%" cy="65%" r="45%">
-                  <stop offset="0%" stopColor="hsl(42 90% 60%)" stopOpacity="0.35" />
-                  <stop offset="100%" stopColor="hsl(42 90% 60%)" stopOpacity="0" />
-                </radialGradient>
-              </defs>
-              <circle cx="200" cy="195" r="120" fill="url(#reticleGlow)" />
-              <circle cx="200" cy="195" r="90" fill="none" stroke="hsl(42 90% 60%)" strokeWidth="0.5" strokeDasharray="3 4" />
-              <circle cx="200" cy="195" r="50" fill="none" stroke="hsl(42 90% 60%)" strokeWidth="0.4" />
-              <line x1="200" y1="105" x2="200" y2="130" stroke="hsl(42 90% 60%)" strokeWidth="0.6" />
-              <line x1="200" y1="260" x2="200" y2="285" stroke="hsl(42 90% 60%)" strokeWidth="0.6" />
-              <line x1="110" y1="195" x2="135" y2="195" stroke="hsl(42 90% 60%)" strokeWidth="0.6" />
-              <line x1="265" y1="195" x2="290" y2="195" stroke="hsl(42 90% 60%)" strokeWidth="0.6" />
-            </svg>
+              VTR · 01
+            </span>
+            <span
+              aria-hidden
+              className="hidden lg:block absolute right-1 top-1/2 -translate-y-1/2 z-[60] font-mono text-[8.5px] uppercase tracking-[0.4em] text-white/30 whitespace-nowrap select-none pointer-events-none"
+              style={{ writingMode: 'vertical-rl' }}
+            >
+              CB · 114
+            </span>
 
-            {/* HUD callout — Viatura (top-left) */}
-            <div className="hidden md:flex absolute top-1 left-1 xl:top-2 xl:left-2 z-[60] flex-col items-start gap-0.5 rounded-md border border-white/[0.08] bg-black/45 backdrop-blur-sm px-2 py-1.5 lg:px-2.5 lg:py-2 xl:px-3 xl:py-2.5 pointer-events-none max-w-[140px] lg:max-w-[160px] xl:max-w-[190px]">
-              <span aria-hidden className="absolute -top-px -left-px h-1.5 w-1.5 border-t border-l border-amber-400/50 motion-safe:animate-pulse [animation-duration:3.2s]" />
-              <span aria-hidden className="absolute -bottom-px -right-px h-1.5 w-1.5 border-b border-r border-amber-400/50 motion-safe:animate-pulse [animation-duration:3.2s] [animation-delay:1.1s]" />
-              <span className="font-mono text-[8.5px] lg:text-[9px] xl:text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50 leading-none">Viatura · VTR-01</span>
-              <span className="font-mono text-[10px] lg:text-[10.5px] xl:text-[11.5px] font-semibold uppercase tracking-[0.14em] text-amber-200/95 leading-tight">Toyota SW4 · Blindada</span>
-              <span className="flex items-center gap-1 mt-0.5">
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
-                <span className="font-mono text-[8.5px] lg:text-[9px] xl:text-[10px] uppercase tracking-[0.18em] text-emerald-300/90 leading-none">Em patrulha</span>
+            {/* Micro-ribbon inferior — linha única, hairline, tabular */}
+            <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2.5 lg:gap-3 pointer-events-none">
+              <span className="relative inline-flex h-1.5 w-1.5">
+                <span className="absolute inset-0 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
+                <span className="absolute inset-0 rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping" />
               </span>
+              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.28em] text-white/45 leading-none">Patrulha</span>
+              <span aria-hidden className="h-2 w-px bg-white/12" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.14em] text-amber-200/85 leading-none">−9.9747°</span>
+              <span aria-hidden className="h-2 w-px bg-white/12" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.14em] text-amber-200/85 leading-none">−67.8100°</span>
+              <span aria-hidden className="h-2 w-px bg-white/12" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.28em] text-white/55 leading-none">Rio Branco · AC</span>
             </div>
 
-            {/* HUD callout — Agente (top-right) */}
-            <div className="hidden md:flex absolute top-1 right-1 xl:top-2 xl:right-2 z-[60] flex-col items-end gap-0.5 rounded-md border border-white/[0.08] bg-black/45 backdrop-blur-sm px-2 py-1.5 lg:px-2.5 lg:py-2 xl:px-3 xl:py-2.5 pointer-events-none max-w-[150px] lg:max-w-[170px] xl:max-w-[200px]">
-              <span aria-hidden className="absolute -top-px -right-px h-1.5 w-1.5 border-t border-r border-amber-400/50 motion-safe:animate-pulse [animation-duration:3.2s] [animation-delay:0.5s]" />
-              <span aria-hidden className="absolute -bottom-px -left-px h-1.5 w-1.5 border-b border-l border-amber-400/50 motion-safe:animate-pulse [animation-duration:3.2s] [animation-delay:1.6s]" />
-              <span className="font-mono text-[8.5px] lg:text-[9px] xl:text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50 leading-none">Agente · CB-114</span>
-              <span className="font-mono text-[10px] lg:text-[10.5px] xl:text-[11.5px] font-semibold uppercase tracking-[0.14em] text-amber-200/95 leading-tight text-right">Uniformizado · Alfa</span>
-              <span className="flex items-center gap-1 mt-0.5">
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
-                <span className="font-mono text-[8.5px] lg:text-[9px] xl:text-[10px] uppercase tracking-[0.18em] text-emerald-300/90 leading-none">Pronto · Escala ativa</span>
-              </span>
-            </div>
 
-            {/* Telemetria — LAT/LON/Local, padronizada com briefing */}
-            <div className="hidden md:flex absolute bottom-1.5 lg:bottom-2 xl:bottom-3 left-1/2 -translate-x-1/2 z-[60] items-center gap-2 lg:gap-2.5 rounded-md border border-white/[0.08] bg-black/55 backdrop-blur-sm px-2.5 py-1 lg:px-3 lg:py-1.5 pointer-events-none">
-              <span aria-hidden className="absolute -top-px -left-px h-1.5 w-1.5 border-t border-l border-amber-400/40" />
-              <span aria-hidden className="absolute -bottom-px -right-px h-1.5 w-1.5 border-b border-r border-amber-400/40" />
-              <MapPin aria-hidden className="h-3 w-3 text-amber-300/85 shrink-0" strokeWidth={2} />
-              <span className="font-mono text-[9px] lg:text-[9.5px] xl:text-[10px] font-medium uppercase tracking-[0.22em] text-white/50 leading-none">LAT</span>
-              <span className="font-mono text-[9.5px] lg:text-[10px] xl:text-[10.5px] tabular-nums text-amber-200/90 leading-none">−9.9747</span>
-              <span aria-hidden className="h-2.5 w-px bg-white/15" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] xl:text-[10px] font-medium uppercase tracking-[0.22em] text-white/50 leading-none">LON</span>
-              <span className="font-mono text-[9.5px] lg:text-[10px] xl:text-[10.5px] tabular-nums text-amber-200/90 leading-none">−67.8100</span>
-              <span aria-hidden className="h-2.5 w-px bg-white/15" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] xl:text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70 leading-none">Rio Branco/AC</span>
-            </div>
 
 
             {/* Cena composta */}
