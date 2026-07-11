@@ -791,14 +791,25 @@ export function ShiftBriefingCard({
 }
 
 // -------- Helpers --------
-function MiniStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function MiniStat({ icon, label, value, missing }: { icon: React.ReactNode; label: string; value: string; missing?: boolean }) {
   return (
-    <div className="rounded-md border border-slate-800 bg-slate-950/60 px-2 py-1.5">
-      <div className="text-[9px] uppercase text-slate-500 flex items-center justify-center gap-1">
+    <div className={cn(
+      'rounded-md border px-2 py-1.5 transition-colors',
+      missing
+        ? 'border-amber-500/50 bg-amber-500/10'
+        : 'border-slate-800 bg-slate-950/60'
+    )}>
+      <div className={cn(
+        'text-[9px] uppercase flex items-center justify-center gap-1',
+        missing ? 'text-amber-300' : 'text-slate-500'
+      )}>
         {icon}
         {label}
       </div>
-      <div className="font-mono text-sm text-slate-100 mt-0.5">{value}</div>
+      <div className={cn(
+        'font-mono text-sm mt-0.5',
+        missing ? 'text-amber-200' : 'text-slate-100'
+      )}>{value}</div>
     </div>
   );
 }
