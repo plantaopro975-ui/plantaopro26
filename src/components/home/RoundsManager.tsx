@@ -1367,10 +1367,34 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const clearTeamLog = () => { writeTeamLog([]); setTeamLog([]); };
 
-  /* ---- Confirmação e trava da equipe ---- */
-  const [teamConfirmed, setTeamConfirmed] = useState(false);
+  /* ---- Confirmação e trava da equipe (persistida) ---- */
+  const TEAM_LOCK_KEY = 'plantaopro_team_lock_state';
+  type TeamLockState = { team: TeamKey; teamConfirmed: boolean; scheduledFor: number | null };
+  const readTeamLock = (): TeamLockState | null => {
+    try {
+      const raw = localStorage.getItem(TEAM_LOCK_KEY);
+      if (!raw) return null;
+      const p = JSON.parse(raw) as TeamLockState;
+      // Descarta agendamento vencido (>24h no passado)
+      if (p.scheduledFor && Date.now() - p.scheduledFor > 24 * 3600_000) p.scheduledFor = null;
+      return p;
+    } catch { return null; }
+  };
+  const [teamConfirmed, setTeamConfirmed] = useState<boolean>(() => readTeamLock()?.teamConfirmed ?? false);
   const [teamConfirmOpen, setTeamConfirmOpen] = useState(false);
   const [pendingTeam, setPendingTeam] = useState<TeamKey | null>(null);
+
+  /* ---- Rodízio de cores (persistido) ---- */
+  const [colorRotation, setColorRotation] = useState<number>(() => {
+    try {
+      const raw = localStorage.getItem('plantaopro_team_color_rotation');
+      const n = raw ? parseInt(raw, 10) : 0;
+      return Number.isFinite(n) ? ((n % 4) + 4) % 4 : 0;
+    } catch { return 0; }
+  });
+
+  /* ---- Modal de histórico detalhado ---- */
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
 
   /* server clock offset (server_ms - local_ms) */
   const clockOffsetRef = useRef<number>(0);
