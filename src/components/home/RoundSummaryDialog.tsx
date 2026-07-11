@@ -52,6 +52,7 @@ export function RoundSummaryDialog({
   nextAction = 'Registrar ocorrências e preparar próxima ronda',
   silent = false,
   saved = false,
+  syncedOnline = true,
 }: Props) {
   const [progress, setProgress] = useState(0);
   const [countdown, setCountdown] = useState(AUTO_CLOSE_SECONDS);
