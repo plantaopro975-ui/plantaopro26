@@ -47,9 +47,9 @@ export function getTeamHsl(team: TeamKey): string {
 
 const ROTATION_KEY = 'plantaopro_team_color_rotation';
 
-export function getRotatedTeamColor(team: TeamKey, rotation: number = 0): string {
-  const idx = TEAM_KEYS.indexOf(team);
-  if (idx < 0) return TEAM_COLORS[team]?.hex ?? '#94a3b8';
+export function getRotatedTeamColor(team: TeamKey | string, rotation: number = 0): string {
+  const idx = TEAM_KEYS.indexOf(team as TeamKey);
+  if (idx < 0) return (TEAM_COLORS as Record<string, TeamColorToken>)[team]?.hex ?? '#94a3b8';
   const r = ((rotation % TEAM_KEYS.length) + TEAM_KEYS.length) % TEAM_KEYS.length;
   const nextTeam = TEAM_KEYS[(idx + r) % TEAM_KEYS.length];
   return TEAM_COLORS[nextTeam].hex;
