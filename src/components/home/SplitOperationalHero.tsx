@@ -394,17 +394,23 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
 
 
-            <div className="hidden sm:flex flex-col gap-1 sm:gap-1.5">
-              <span className="hidden items-center gap-2 font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
-                <span className="h-1 w-6 bg-amber-400" />
+            <div className="hidden sm:flex flex-col gap-1.5 sm:gap-2">
+              <span className="inline-flex items-center gap-2 font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-amber-300/90 leading-[1.4]">
+                <span className="h-px w-6 bg-amber-400/70" />
                 Sistema Operacional
               </span>
-              <h2 className="font-sans font-semibold uppercase tracking-[0.01em] text-white text-[20px] sm:text-[26px] lg:text-[30px] leading-[1.1]">
-
-                Comando <span className="text-amber-400 font-bold">Tático</span><br />
-                Socioeducativo
+              <h2
+                className="font-serif text-white text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.1] tracking-tight"
+                style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
+              >
+                Comando <span className="text-amber-300 italic">Tático</span><br />
+                <span className="text-white/85">Socioeducativo</span>
               </h2>
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-white/50 leading-[1.5] max-w-[42ch]">
+                Escala · Banco de horas · Ronda georreferenciada
+              </p>
             </div>
+
 
 
 
@@ -420,33 +426,25 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </div>
             </div>
 
-            {/* Mission briefing panel — preenche o espaço entre título e cena */}
+            {/* Mission briefing panel — hierarquia reduzida: sutil, sem competir com viatura/agente */}
             <div className="relative mt-1 hidden sm:block w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%]">
               <div
-                className="relative rounded-md border border-amber-400/20 bg-[linear-gradient(135deg,rgba(10,17,40,0.85)_0%,rgba(5,5,5,0.9)_100%)] px-3 py-2.5 md:px-3.5 md:py-3 overflow-hidden"
-                style={{ boxShadow: 'inset 0 1px 0 rgba(234,179,8,0.12), 0 8px 24px -12px rgba(0,0,0,0.9)' }}
+                className="relative rounded-md border border-white/8 bg-[linear-gradient(180deg,rgba(8,12,24,0.55)_0%,rgba(3,5,10,0.65)_100%)] backdrop-blur-sm px-3 py-2.5 md:px-3.5 md:py-3 overflow-hidden"
+                style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)' }}
               >
-                {/* corner brackets */}
-                <span aria-hidden className="absolute top-0 left-0 h-2.5 w-2.5 border-t border-l border-amber-400/60" />
-                <span aria-hidden className="absolute top-0 right-0 h-2.5 w-2.5 border-t border-r border-amber-400/60" />
-                <span aria-hidden className="absolute bottom-0 left-0 h-2.5 w-2.5 border-b border-l border-amber-400/60" />
-                <span aria-hidden className="absolute bottom-0 right-0 h-2.5 w-2.5 border-b border-r border-amber-400/60" />
-                {/* hatch backdrop */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 opacity-[0.08]"
-                  style={{
-                    backgroundImage: 'repeating-linear-gradient(45deg, rgba(234,179,8,0.6) 0 1px, transparent 1px 8px)',
-                  }}
-                />
+                {/* corner brackets — mais discretos */}
+                <span aria-hidden className="absolute top-0 left-0 h-2 w-2 border-t border-l border-amber-400/30" />
+                <span aria-hidden className="absolute top-0 right-0 h-2 w-2 border-t border-r border-amber-400/30" />
+                <span aria-hidden className="absolute bottom-0 left-0 h-2 w-2 border-b border-l border-amber-400/30" />
+                <span aria-hidden className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-amber-400/30" />
 
-                <div className="relative flex items-center justify-between gap-2 mb-2">
-                  <span className="font-mono text-[10px] md:text-[11px] font-medium uppercase tracking-[0.2em] text-amber-300 truncate">
+                <div className="relative flex items-center justify-between gap-2 mb-2.5">
+                  <span className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-white/55 truncate">
                     Briefing Operacional
                   </span>
                   <span
                     className={cn(
-                      'flex items-center gap-1 font-mono text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.18em] shrink-0',
+                      'flex items-center gap-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.2em] shrink-0',
                       uplinkTone.text,
                     )}
                     aria-live="polite"
@@ -458,33 +456,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
                 <div className="relative grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                   {[
-                    {
-                      k: 'Unidades',
-                      v: metrics.loading ? '——' : fmt2(metrics.units),
-                      s: 'Socioeducativas',
-                      pulse: false,
-                    },
-                    {
-                      k: 'Divisões',
-                      v: fmt2(metrics.divisions),
-                      s: 'Táticas',
-                      pulse: false,
-                    },
-                    {
-                      k: 'Efetivo',
-                      v: metrics.loading ? '——' : fmt2(metrics.agentsRegistered || metrics.agentsActive),
-                      s: 'Agentes cadastrados',
-                      pulse: false,
-                    },
-                    {
-                      k: 'Online',
-                      v: fmt2(onlineAgents),
-                      s: 'Presença agora',
-                      pulse: true,
-                    },
+                    { k: 'Unidades', v: metrics.loading ? '——' : fmt2(metrics.units), s: 'Socioeducativas', pulse: false },
+                    { k: 'Divisões', v: fmt2(metrics.divisions), s: 'Táticas', pulse: false },
+                    { k: 'Efetivo', v: metrics.loading ? '——' : fmt2(metrics.agentsRegistered || metrics.agentsActive), s: 'Agentes cadastrados', pulse: false },
+                    { k: 'Online', v: fmt2(onlineAgents), s: 'Presença agora', pulse: true },
                   ].map((it) => (
-                    <div key={it.k} className="relative pl-2 md:pl-2.5 border-l border-amber-400/25 min-w-0">
-                      <div className="font-mono text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-200/95 truncate flex items-center gap-1">
+                    <div key={it.k} className="relative pl-2 md:pl-2.5 border-l border-white/10 min-w-0">
+                      <div className="font-mono text-[9px] md:text-[10px] font-medium uppercase tracking-[0.22em] text-white/50 truncate flex items-center gap-1">
                         {it.pulse && (
                           <span className="relative inline-flex h-2 w-2 items-center justify-center rounded-full border border-emerald-400/55 shrink-0">
                             <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.75)]" />
@@ -494,36 +472,22 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       </div>
                       <div
                         className={cn(
-                          'font-sans font-bold text-[15px] md:text-[17px] lg:text-[18px] leading-none mt-0.5 tabular-nums tracking-tight',
-                          it.pulse ? 'text-emerald-300' : 'text-white',
+                          'font-sans font-semibold text-[14px] md:text-[16px] leading-none mt-1 tabular-nums tracking-tight',
+                          it.pulse ? 'text-emerald-300' : 'text-white/95',
                         )}
                       >
                         {it.v}
                       </div>
-                      <div className="font-mono text-[9px] md:text-[10px] font-medium uppercase tracking-[0.16em] text-slate-200/90 mt-0.5 truncate">
+                      <div className="font-mono text-[9px] md:text-[10px] font-normal uppercase tracking-[0.16em] text-white/40 mt-0.5 truncate">
                         {it.s}
                       </div>
                     </div>
                   ))}
                 </div>
-
-
-                {/* barcode strip */}
-                <div className="relative mt-2 flex items-end gap-[2px] h-3 opacity-70 overflow-hidden">
-                  {[3,7,4,9,5,3,8,4,6,3,9,4,7,5,3,6,4,8,3,7,5,4,9,6,3].map((h, i) => (
-                    <span
-                      key={i}
-                      className="block w-[2px] bg-amber-400/70 shrink-0"
-                      style={{ height: `${h * 10}%` }}
-                    />
-                  ))}
-                  <span className="ml-auto pl-2 font-mono text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-300 shrink-0">
-                    ISE · AC · BR
-                  </span>
-                </div>
               </div>
             </div>
           </div>
+
 
 
 

@@ -67,6 +67,7 @@ import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 import { CinematicBrandHero } from '@/components/home/CinematicBrandHero';
+import { SectionDivider } from '@/components/home/SectionDivider';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
 import { useHomeCardOrder, type HomeCardId } from '@/hooks/useHomeCardOrder';
@@ -1485,8 +1486,8 @@ export default function Index() {
         })()}
       </header>
 
-
-
+      {/* Divisor entre painel operacional e seção institucional */}
+      <SectionDivider />
 
       {/* Seção institucional cinematográfica — abaixo dos cards operacionais.
           Usa a arte oficial (agente + viatura) como background fullscreen. */}
@@ -1529,10 +1530,8 @@ export default function Index() {
         }}
       />
 
-
-
-
-
+      {/* Divisor entre seção institucional e rodapé */}
+      <SectionDivider />
 
       {/* Mobile-only beta notice */}
       <div className="hidden sm:block">
@@ -1540,7 +1539,7 @@ export default function Index() {
       </div>
 
       {/* Rodapé institucional profissional — oculto no mobile */}
-      <footer className="relative z-30 mt-6 w-full hidden sm:block">
+      <footer className="relative z-30 mt-2 w-full hidden sm:block">
         <CopyrightFooter
           compact
           leftSlot={

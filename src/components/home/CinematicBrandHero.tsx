@@ -123,7 +123,7 @@ export function CinematicBrandHero({
 
             {/* Título */}
             <h2
-              className="mt-5 font-serif text-[clamp(2rem,4.4vw,3.75rem)] leading-[1.04] tracking-tight text-white animate-fade-in"
+              className="mt-4 font-serif text-[clamp(1.9rem,4vw,3.4rem)] leading-[1.06] tracking-tight text-white animate-fade-in"
               style={{
                 fontFamily:
                   "'Libre Baskerville', 'Playfair Display', Georgia, serif",
@@ -146,13 +146,14 @@ export function CinematicBrandHero({
 
             {/* Subtítulo */}
             <p
-              className="mt-5 max-w-lg text-[clamp(0.95rem,1vw+0.5rem,1.1rem)] leading-relaxed text-white/80 animate-fade-in"
+              className="mt-4 max-w-lg text-[clamp(0.9rem,0.6vw+0.55rem,1.05rem)] leading-[1.65] text-white/75 animate-fade-in"
               style={{ animationDelay: "300ms" }}
             >
               Sistema profissional de controle de plantão, escala e banco de horas
               para o Sistema Socioeducativo. Feito para quem está na linha de
               frente.
             </p>
+
 
             {/* Métricas curtas */}
             <div
