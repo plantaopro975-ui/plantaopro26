@@ -471,33 +471,58 @@ export function ThemedBackground() {
   const { theme, resolvedTheme, themeConfig } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [showTacticalGrid, setShowTacticalGrid] = useState(false);
-  
+  // Só renderizamos os elementos decorativos (grid tático, efeitos, orbes
+  // com blur) depois que a tela principal já pintou. Isso evita competir
+  // com o LCP e reduz o custo de GPU/CPU no primeiro frame.
+  const [decorReady, setDecorReady] = useState(false);
+
   const themeAssets = getThemeAssets(theme, resolvedTheme);
-  
+
   useEffect(() => {
     setMounted(true);
     const tacticalThemes = ['tactical', 'military', 'sentinel', 'cyber', 'stealth'];
     setShowTacticalGrid(tacticalThemes.includes(resolvedTheme));
   }, [resolvedTheme]);
 
+  useEffect(() => {
+    if (!mounted) return;
+    // Aguarda o browser ficar ocioso (após o primeiro paint) para montar
+    // os enfeites. Fallback: 600ms em navegadores sem requestIdleCallback.
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+    const schedule = () => {
+      const w = window as Window & {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+        cancelIdleCallback?: (id: number) => void;
+      };
+      if (typeof w.requestIdleCallback === 'function') {
+        idleId = w.requestIdleCallback(() => setDecorReady(true), { timeout: 1200 });
+      } else {
+        timeoutId = window.setTimeout(() => setDecorReady(true), 600);
+      }
+    };
+    // Espera 2 frames para garantir que a UI principal já pintou.
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(schedule);
+      timeoutId = raf2 as unknown as number;
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      const w = window as Window & { cancelIdleCallback?: (id: number) => void };
+      if (idleId != null && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
+      if (timeoutId != null) window.clearTimeout(timeoutId);
+    };
+  }, [mounted]);
+
   if (!mounted) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Team images mosaic background - always visible */}
+      {/* Mosaico base — leve, entra junto com a UI principal */}
       <TeamMosaicBackground />
-      
-      {/* Tactical Grid Overlay - for tactical themes */}
-      {showTacticalGrid && (
-        <TacticalGrid 
-          nodeCount={40} 
-          animationSpeed="slow"
-          className="z-0"
-        />
-      )}
 
-      {/* Base gradient using theme ambient glow */}
-      <div 
+      {/* Gradiente ambiente base — barato, entra imediato */}
+      <div
         className="absolute inset-0 transition-all duration-1000"
         style={{
           background: `
@@ -508,42 +533,47 @@ export function ThemedBackground() {
         }}
       />
 
-      {/* Theme-specific background effects */}
-      {themeAssets.backgroundEffects.map((effect, index) => (
-        <RenderEffect key={`${effect.type}-${index}`} effect={effect} />
-      ))}
-
-      {/* Corner accents */}
-      <CornerAccents 
-        style={themeAssets.cornerAccents.style} 
-        color={themeAssets.cornerAccents.color} 
-      />
-
-      {/* Glow orbs (estáticas) — mantêm a identidade sem animar filter:blur,
-          o que reduz drasticamente o custo de GPU/CPU e elimina a sensação
-          de luz ofuscando o fundo escuro da home. */}
+      {/* Vinheta base — barata */}
       <div
-        className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-2xl"
-        style={{ background: themeAssets.ambientGlow.primary }}
-      />
-      <div
-        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-2xl"
-        style={{ background: themeAssets.ambientGlow.secondary }}
-      />
-      {themeAssets.ambientGlow.tertiary && (
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-2xl opacity-50"
-          style={{ background: `radial-gradient(circle, ${themeAssets.ambientGlow.tertiary} 0%, transparent 70%)` }}
-        />
-      )}
-
-      {/* Vignette effect */}
-      <div 
         className="absolute inset-0"
         style={{
           background: 'radial-gradient(ellipse at center, transparent 40%, hsl(var(--background) / 0.4) 100%)',
         }}
       />
+
+      {/* ===== Decorações pesadas: só depois do primeiro paint ===== */}
+      {decorReady && (
+        <>
+          {showTacticalGrid && (
+            <TacticalGrid nodeCount={40} animationSpeed="slow" className="z-0" />
+          )}
+
+          {themeAssets.backgroundEffects.map((effect, index) => (
+            <RenderEffect key={`${effect.type}-${index}`} effect={effect} />
+          ))}
+
+          <CornerAccents
+            style={themeAssets.cornerAccents.style}
+            color={themeAssets.cornerAccents.color}
+          />
+
+          {/* Glow orbs (estáticas, filter:blur é caro — só após o LCP) */}
+          <div
+            className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-2xl animate-fade-in"
+            style={{ background: themeAssets.ambientGlow.primary }}
+          />
+          <div
+            className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-2xl animate-fade-in"
+            style={{ background: themeAssets.ambientGlow.secondary }}
+          />
+          {themeAssets.ambientGlow.tertiary && (
+            <div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-2xl opacity-50 animate-fade-in"
+              style={{ background: `radial-gradient(circle, ${themeAssets.ambientGlow.tertiary} 0%, transparent 70%)` }}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }
