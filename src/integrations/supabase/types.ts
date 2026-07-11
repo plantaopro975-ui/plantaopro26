@@ -1786,9 +1786,13 @@ export type Database = {
           handcuff_keys_expected: number | null
           handcuffs_counted: number | null
           handcuffs_expected: number | null
+          handover_notes: string | null
+          handover_ok: boolean
           id: string
           observations: string | null
           radios: Json
+          radios_charged_count: number | null
+          radios_total_expected: number | null
           schedule_notes: string | null
           schedule_ok: boolean
           shift_date: string
@@ -1810,9 +1814,13 @@ export type Database = {
           handcuff_keys_expected?: number | null
           handcuffs_counted?: number | null
           handcuffs_expected?: number | null
+          handover_notes?: string | null
+          handover_ok?: boolean
           id?: string
           observations?: string | null
           radios?: Json
+          radios_charged_count?: number | null
+          radios_total_expected?: number | null
           schedule_notes?: string | null
           schedule_ok?: boolean
           shift_date: string
@@ -1834,9 +1842,13 @@ export type Database = {
           handcuff_keys_expected?: number | null
           handcuffs_counted?: number | null
           handcuffs_expected?: number | null
+          handover_notes?: string | null
+          handover_ok?: boolean
           id?: string
           observations?: string | null
           radios?: Json
+          radios_charged_count?: number | null
+          radios_total_expected?: number | null
           schedule_notes?: string | null
           schedule_ok?: boolean
           shift_date?: string
