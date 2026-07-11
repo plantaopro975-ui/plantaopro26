@@ -378,9 +378,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           <rect width="100%" height="100%" fill="url(#topoGrid)" />
           <rect width="100%" height="100%" fill="url(#topoDots)" />
         </svg>
-        <div aria-hidden className="hidden lg:block absolute top-1.5 right-3 z-[5] font-mono text-[8px] uppercase tracking-[0.28em] text-white/25 pointer-events-none select-none">
-          MGRS 19L GK 60148 79412 · UTM −9.9747° / −67.8100°
-        </div>
+        {/* MGRS/UTM removido do desktop — reduzir ruído visual */}
+
 
         {/* Overlay de leitura */}
         <div
