@@ -1004,7 +1004,7 @@ function AgentStatusSVG({ status, color, compact = false }: { status: 'active' |
   const label = status === 'active' ? 'EM RONDA' : status === 'done' ? 'CUMPRIDA' : 'NA FILA';
   const tone = status === 'done' ? 'hsl(var(--success))' : status === 'waiting' ? `${color}b3` : color;
   return (
-    <svg viewBox="0 0 116 24" className={cn('shrink-0', compact ? 'h-5 w-20' : 'h-6 w-28')} aria-label={label} role="img">
+    <svg viewBox="0 0 116 24" className={cn('shrink-0', compact ? 'h-[22px] w-[92px]' : 'h-6 w-28')} aria-label={label} role="img">
       <path d="M8 2H108L114 12L108 22H8L2 12Z" fill="hsl(var(--card))" fillOpacity="0.72" stroke={tone} strokeOpacity="0.62" />
       <path d="M10 5H106" stroke={tone} strokeOpacity="0.34" />
       {status === 'active' && (
@@ -1014,7 +1014,7 @@ function AgentStatusSVG({ status, color, compact = false }: { status: 'active' |
       )}
       {status === 'done' && <path d="M11 12.2L14.2 15.4L19.6 8.8" fill="none" stroke={tone} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />}
       {status === 'waiting' && <path d="M12 8H18M12 12H18M12 16H18" stroke={tone} strokeWidth="1.4" strokeLinecap="round" />}
-      <text x="63" y="15" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="8" fontWeight="700" letterSpacing="1.2" fill={tone}>{label}</text>
+      <text x="63" y="16" textAnchor="middle" fontFamily="IBM Plex Mono, monospace" fontSize="10" fontWeight="700" letterSpacing="0.8" fill={tone}>{label}</text>
     </svg>
   );
 }
