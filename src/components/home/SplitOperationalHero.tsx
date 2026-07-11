@@ -354,26 +354,18 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
         }}
       >
-        {/* Camada SVG vetorial (substitui a foto home-command-center.jpg) */}
+        {/* Camada SVG vetorial limpa — brilho sem malha quadriculada */}
         <svg
           aria-hidden
           className="absolute inset-0 h-full w-full pointer-events-none opacity-60"
           preserveAspectRatio="none"
         >
           <defs>
-            <pattern id="heroGridFine" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
-              <path d="M28 0H0V28" fill="none" stroke="hsl(220 60% 80% / 0.05)" strokeWidth="0.5" />
-            </pattern>
-            <pattern id="heroGridCoarse" x="0" y="0" width="140" height="140" patternUnits="userSpaceOnUse">
-              <path d="M140 0H0V140" fill="none" stroke="hsl(42 70% 60% / 0.09)" strokeWidth="0.8" />
-            </pattern>
             <radialGradient id="heroBgGlow" cx="50%" cy="30%" r="70%">
               <stop offset="0%" stopColor="hsl(42 90% 55% / 0.10)" />
               <stop offset="100%" stopColor="hsl(42 90% 55% / 0)" />
             </radialGradient>
           </defs>
-          <rect width="100%" height="100%" fill="url(#heroGridFine)" />
-          <rect width="100%" height="100%" fill="url(#heroGridCoarse)" />
           <rect width="100%" height="100%" fill="url(#heroBgGlow)" />
         </svg>
 
