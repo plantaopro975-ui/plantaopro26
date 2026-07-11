@@ -3093,6 +3093,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 className="mx-auto mb-1.5 overflow-hidden rounded-md border border-border bg-card"
               >
                 <div className="relative flex items-center gap-2 px-2.5 py-1 sm:px-3">
+                  <TeamGlyph team={team} color={teamColor} size={12} className="shrink-0 opacity-90" />
                   <span
                     className="font-mono text-[10px] uppercase tracking-[0.22em] font-medium whitespace-nowrap"
                     style={{ color: teamColor }}
