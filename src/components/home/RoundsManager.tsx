@@ -1831,6 +1831,86 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     return () => window.clearTimeout(t);
   }, [unitId, team, teamConfirmed, scheduledFor]);
 
+  /* ---- Sincroniza teamLog (últimas rondas) com Supabase por unidade ---- */
+  const hydrateTeamLogFromCloud = React.useCallback(async () => {
+    if (!unitId) return;
+    try {
+      const { data, error } = await supabase
+        .from('team_round_log')
+        .select('id, team, saved_name, completed_at')
+        .eq('unit_id', unitId)
+        .order('completed_at', { ascending: false })
+        .limit(15);
+      if (error) throw error;
+      const mapped: TeamLogEntry[] = (data ?? []).map((r) => ({
+        id: r.id,
+        team: r.team,
+        dateISO: r.completed_at,
+        savedName: r.saved_name ?? undefined,
+      }));
+      setTeamLog(mapped);
+      writeTeamLogLocal(mapped);
+    } catch {
+      // fallback: cache local
+      setTeamLog(readTeamLogLocal());
+    }
+  }, [unitId]);
+
+  useEffect(() => {
+    if (!open) return;
+    // Hidrata imediatamente do cache local + tenta nuvem
+    setTeamLog(readTeamLogLocal());
+    void hydrateTeamLogFromCloud();
+  }, [open, hydrateTeamLogFromCloud]);
+
+  // Realtime: reflete inserções/limpezas feitas por outros dispositivos.
+  useEffect(() => {
+    if (!unitId) return;
+    const ch = supabase
+      .channel(`team-round-log-${unitId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'team_round_log', filter: `unit_id=eq.${unitId}` },
+        () => { void hydrateTeamLogFromCloud(); },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [unitId, hydrateTeamLogFromCloud]);
+
+  const saveTeamRoundToCloud = async (params: {
+    team: string; savedName: string; totalSeconds: number; agentsCount: number;
+  }) => {
+    const { data: userData } = await supabase.auth.getUser();
+    const uid = userData?.user?.id;
+    if (!uid) throw new Error('Sessão expirada. Faça login novamente.');
+    if (!unitId) throw new Error('Unidade não encontrada para o agente atual.');
+    const { error } = await supabase.from('team_round_log').insert({
+      unit_id: unitId,
+      team: params.team,
+      saved_name: params.savedName,
+      total_seconds: params.totalSeconds,
+      agents_count: params.agentsCount,
+      completed_by: uid,
+    });
+    if (error) throw new Error(error.message);
+    await hydrateTeamLogFromCloud();
+  };
+
+  const clearTeamLog = async () => {
+    // Limpa nuvem (RLS restringe à mesma unidade) + cache local.
+    if (unitId) {
+      try {
+        await supabase.from('team_round_log').delete().eq('unit_id', unitId);
+      } catch (e) {
+        console.warn('[rounds] falha ao limpar team_round_log', e);
+      }
+    }
+    writeTeamLogLocal([]);
+    setTeamLog([]);
+  };
+
+
+
   // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
   // do lado esquerdo é travada para preservar o cronograma pactuado.
   const configLocked = scheduledFor != null;
