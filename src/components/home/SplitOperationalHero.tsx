@@ -153,19 +153,19 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
         <source type="image/webp" srcSet={t.bgAvif} />
         <img
-
           src={t.bg}
           alt=""
           aria-hidden
           loading="lazy"
           decoding="async"
           className={cn(
-            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-[center_25%] select-none',
+            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
             'transition-all duration-500 ease-out',
             isSelected
-              ? 'opacity-90 scale-105 saturate-125 contrast-110'
-              : 'opacity-70 saturate-110 contrast-105 group-hover:opacity-90 group-hover:scale-[1.04] group-hover:saturate-125',
+              ? 'opacity-95 scale-[1.03] saturate-125 contrast-110'
+              : 'opacity-75 saturate-110 contrast-105 group-hover:opacity-95 group-hover:scale-[1.02] group-hover:saturate-125',
           )}
+          style={{ objectPosition: t.key === 'DELTA' ? '50% 35%' : t.key === 'CHARLIE' ? '50% 40%' : t.key === 'BRAVO' ? '50% 38%' : '50% 42%' }}
           draggable={false}
         />
       </picture>
