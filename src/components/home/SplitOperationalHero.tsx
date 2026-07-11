@@ -769,7 +769,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
                 {/* Viatura — mobile: proporcional ao agente | desktop: pousada no chão sem cortes */}
-                <picture className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0">
+                <picture
+                  className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0"
+                  style={isDesktop ? { transform: `scale(${vehScale})`, transformOrigin: 'bottom left' } : undefined}
+                >
                   <source type="image/webp" srcSet={vehicle3dWebp} />
                   <img
                     src={vehicle3d}
