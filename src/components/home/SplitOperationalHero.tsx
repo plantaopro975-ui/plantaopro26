@@ -964,11 +964,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 {Array.from({ length: 2 }).map((_, dup) => (
                   <span key={dup} className="flex items-center gap-6 shrink-0">
                     <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-emerald-300/85">◉ SISTEMA · OPERACIONAL</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">GPS · ATIVO</span>
                     <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">OP-01 · CONTENÇÃO ATIVA</span>
                     <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">UPLINK · ESTÁVEL</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-200/85 tabular-nums">LATÊNCIA · 42 ms</span>
                     <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-200/85 tabular-nums">09 UNIDADES ONLINE</span>
                     <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">RONDA · GEORREFERENCIADA</span>
                     <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">CANAL SEGURO · AES-256</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-emerald-300/85">RLS · LGPD · ISO 27001</span>
                     <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-200/85">ISE · ACRE · 2026</span>
                     <span aria-hidden className="h-2 w-px bg-white/15" />
                   </span>
