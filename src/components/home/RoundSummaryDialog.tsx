@@ -46,6 +46,7 @@ export function RoundSummaryDialog({
   silent = false,
 }: Props) {
   const [progress, setProgress] = useState(0);
+  const [countdown, setCountdown] = useState(AUTO_CLOSE_SECONDS);
   const pct = agentsCount > 0 ? Math.round((completedCount / agentsCount) * 100) : 0;
 
   useEffect(() => {
@@ -61,9 +62,30 @@ export function RoundSummaryDialog({
     return () => cancelAnimationFrame(raf);
   }, [open, pct]);
 
+  // Auto-close countdown — releases the divider automatically so the panel
+  // is ready for the next team. Cleans timers when dialog is closed manually.
+  useEffect(() => {
+    if (!open) { setCountdown(AUTO_CLOSE_SECONDS); return; }
+    setCountdown(AUTO_CLOSE_SECONDS);
+    const tick = window.setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) {
+          window.clearInterval(tick);
+          onClose();
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(tick);
+  }, [open, onClose]);
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-md p-0 overflow-hidden border-2" style={{ borderColor: `${color}70` }}>
+      <DialogContent
+        className="max-w-md w-[calc(100vw-2rem)] sm:w-full p-0 overflow-hidden border-2 min-h-[520px] flex flex-col"
+        style={{ borderColor: `${color}70` }}
+      >
         {/* Top glow header */}
         <div className="relative h-24 overflow-hidden" style={{ background: `linear-gradient(135deg, ${color}30, transparent 60%), radial-gradient(circle at 30% 20%, ${color}55, transparent 60%)` }}>
           {!silent && (
