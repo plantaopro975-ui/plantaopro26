@@ -469,7 +469,8 @@ export function ShiftBriefingCard({
                         : String(briefing.radios_charged_count))
                     : '—'}
                 />
-                <MiniStat icon={<BookOpen className="h-3 w-3" />} label="Livro informativo" value={briefing?.book_entry ? 'OK' : '—'} />
+                <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={briefing?.handover_ok ? 'OK' : '—'} />
+                <div className="hidden sm:block" />
                 <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={briefing?.handover_ok ? 'OK' : '—'} />
               </div>
 
