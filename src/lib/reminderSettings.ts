@@ -102,7 +102,7 @@ async function persistToProfile(userId: string, settings: ReminderSettings): Pro
     // upsert por user_id — garante criação do perfil se ainda não existir.
     await supabase
       .from('profiles')
-      .update({ reminder_settings: settings as unknown as Record<string, unknown> })
+      .update({ reminder_settings: settings as unknown as never })
       .eq('user_id', userId);
   } catch { /* ignore — cache local já foi atualizado */ }
 }
