@@ -241,8 +241,7 @@ export function ShiftBriefingCard({
   const persist = async (finalize = false) => {
     if (!currentShift) return null;
     // Assinatura não é mais obrigatória — o próprio agente logado assina o registro.
-      return null;
-    }
+
 
     // 1) Sempre salvar rascunho local ANTES de tentar a rede — assim, mesmo se
     //    o navegador cair, recarregar ou perder a conexão, o preenchimento é
