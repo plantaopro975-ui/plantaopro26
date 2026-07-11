@@ -721,7 +721,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-3 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
               <TeamCard
                 key={t.key}
