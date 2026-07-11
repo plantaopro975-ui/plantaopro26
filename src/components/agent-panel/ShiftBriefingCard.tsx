@@ -62,11 +62,10 @@ type ChecklistKey =
   | 'handcuffs'
   | 'handcuff_keys'
   | 'radios'
-  | 'book'
   | 'handover';
 
 const CHECKLIST_ORDER: ChecklistKey[] = [
-  'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'book', 'handover',
+  'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'handover',
 ];
 
 // -------- Offline persistence helpers --------
