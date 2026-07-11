@@ -213,13 +213,16 @@ export function ShiftOperationsCenter({ agentId, agentName, agentTeam, unitId }:
         .order('shift_date', { ascending: true })
         .limit(3);
       const list = (data || []) as Shift[];
-      const isDuty = (s: Shift) => {
-        const start = parseISO(`${s.shift_date}T${s.start_time}`);
-        return isWithinInterval(new Date(), { start, end: addHours(start, 24) });
-      };
-      const active = list.find(isDuty) || null;
+      // Só habilita durante a janela REAL do plantão do próprio agente
+      // (respeita end_time, inclusive turnos noturnos que viram meia-noite).
+      const active = list.find((s) => isShiftActive({
+        shift_date: s.shift_date,
+        start_time: s.start_time,
+        end_time: s.end_time,
+      })) || null;
       setCurrentShift(active);
       setIsOnDuty(!!active);
+
     })();
   }, [agentId]);
 
