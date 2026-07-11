@@ -806,7 +806,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 </picture>
 
                 {/* Agente — cresce a partir do chão, sem translate positivo para não cortar os pés */}
-                <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
+                <picture
+                  className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0"
+                  style={isDesktop ? { transform: `scale(${agtScale})`, transformOrigin: 'bottom' } : undefined}
+                >
                   <source type="image/webp" srcSet={agent3dWebp} />
                   <img
                     src={agent3d}
