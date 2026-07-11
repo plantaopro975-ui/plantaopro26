@@ -23,6 +23,7 @@ import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import { PreNightScheduleDialog } from './PreNightScheduleDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { RoundHistoryDialog } from './RoundHistoryDialog';
+import { ReminderSettingsDialog } from './ReminderSettingsDialog';
 import { getRotatedTeamColor, bumpColorRotation } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
 import {
