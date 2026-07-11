@@ -852,7 +852,7 @@ export default function AgentPanel() {
                   <div
                     role="tablist"
                     aria-label="Filtro de período"
-                    className="flex items-center gap-1 p-1 rounded-lg bg-slate-900/70 border border-slate-700/70 w-full overflow-x-auto"
+                    className="flex items-center gap-1 p-1 rounded-lg bg-slate-900/70 border border-slate-700/70 w-full"
                   >
                     {([
                       { id: 'hoje', label: 'Hoje' },
@@ -867,7 +867,7 @@ export default function AgentPanel() {
                           aria-selected={active}
                           onClick={() => setShiftsFilter(f.id)}
                           className={
-                            'flex-1 min-w-[80px] px-3 py-1.5 text-xs font-semibold uppercase tracking-widest rounded-md transition-colors ' +
+                            'flex-1 min-w-0 px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-widest rounded-md transition-colors ' +
                             (active
                               ? 'bg-amber-500 text-slate-950 shadow'
                               : 'text-slate-300 hover:bg-slate-800/70')
@@ -879,33 +879,45 @@ export default function AgentPanel() {
                     })}
                   </div>
 
-                  {/* 1. Cronômetro do plantão em destaque — com moldura de contraste */}
+                  {/* Linha 1 — Cronômetro + Próximo plantão (sempre lado a lado a partir de lg) */}
                   <section
-                    aria-label="Cronômetro do plantão"
-                    className="w-full rounded-xl bg-gradient-to-br from-emerald-500/10 via-slate-900/40 to-slate-900/10 border border-emerald-500/20 p-1"
+                    aria-label="Status do plantão"
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 items-stretch"
                   >
-                    <ProfessionalShiftTimer agentId={agent.id} />
+                    <div className="min-w-0 flex rounded-xl bg-gradient-to-br from-emerald-500/10 via-slate-900/40 to-slate-900/10 border border-emerald-500/20 p-1">
+                      <div className="w-full flex flex-col [&>*]:flex-1 [&>*]:h-full">
+                        <ProfessionalShiftTimer agentId={agent.id} />
+                      </div>
+                    </div>
+                    <div className="min-w-0 flex rounded-xl bg-gradient-to-br from-amber-500/10 via-slate-900/40 to-slate-900/10 border border-amber-500/20 p-1">
+                      <div className="w-full flex flex-col [&>*]:flex-1 [&>*]:h-full">
+                        <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
+                      </div>
+                    </div>
                   </section>
 
-                  {/* 2. Próximo plantão — chamada para ação */}
-                  <section
-                    aria-label="Próximo plantão"
-                    className="w-full rounded-xl bg-gradient-to-br from-amber-500/10 via-slate-900/40 to-slate-900/10 border border-amber-500/20 p-1"
-                  >
-                    <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
-                  </section>
-
-                  {/* 3. Escala + Visão do mês — visíveis nos filtros Semana/Mês */}
+                  {/* Linha 2 — Escala da semana + Visão mensal (Semana/Mês) */}
                   {(shiftsFilter === 'semana' || shiftsFilter === 'mes') && (
-                    <section aria-label="Escala e visão mensal" className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-4 items-stretch">
-                      <div className="min-w-0 flex"><div className="w-full flex flex-col [&>*]:flex-1"><ShiftScheduleCard agentId={agent.id} /></div></div>
+                    <section
+                      aria-label="Escala e visão mensal"
+                      className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 items-stretch"
+                    >
+                      <div className="min-w-0 flex">
+                        <div className="w-full flex flex-col [&>*]:flex-1 [&>*]:h-full">
+                          <ShiftScheduleCard agentId={agent.id} />
+                        </div>
+                      </div>
                       {shiftsFilter === 'mes' && (
-                        <div className="min-w-0 flex"><div className="w-full flex flex-col [&>*]:flex-1"><ShiftCalendarOverview agentId={agent.id} /></div></div>
+                        <div className="min-w-0 flex">
+                          <div className="w-full flex flex-col [&>*]:flex-1 [&>*]:h-full">
+                            <ShiftCalendarOverview agentId={agent.id} />
+                          </div>
+                        </div>
                       )}
                     </section>
                   )}
 
-                  {/* 4. Histórico de ciclos — apenas no filtro Mês */}
+                  {/* Linha 3 — Histórico de ciclos (apenas Mês) */}
                   {shiftsFilter === 'mes' && (
                     <section aria-label="Ciclos recentes" className="w-full">
                       <RecentShiftCyclesCard agentId={agent.id} />
@@ -919,6 +931,7 @@ export default function AgentPanel() {
                     </p>
                   )}
                 </div>
+
                 </SectionBoundary>}
               </TabsContent>
 
