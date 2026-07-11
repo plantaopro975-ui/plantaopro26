@@ -3294,7 +3294,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       <RoundSummaryDialog
                         open={summaryOpen}
-                        onClose={() => { setSummaryOpen(false); setSummaryData(null); }}
+                        onClose={() => {
+                          setSummaryOpen(false);
+                          setSummaryData(null);
+                          // Reseta timer e fecha o divisor de rondas, deixando o
+                          // painel pronto para uma nova equipe. O histórico de
+                          // equipes (teamLog) permanece salvo em localStorage
+                          // para que os demais possam ver a última ronda.
+                          try { resetTimer(); } catch { /* ignore */ }
+                          setOpen(false);
+                          // Atualiza a página após um beat para garantir estado limpo.
+                          window.setTimeout(() => {
+                            try { window.location.reload(); } catch { /* ignore */ }
+                          }, 250);
+                        }}
                         color={teamColor}
                         team={team}
                         totalSeconds={summaryData?.totalSec ?? 0}
@@ -3302,6 +3315,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         completedCount={summaryData?.completed ?? schedule.rows.length}
                         silent={silentMode}
                       />
+
 
                       {/* Rows — grid responsivo, se adapta a qualquer quantidade de agentes */}
                       <ul
