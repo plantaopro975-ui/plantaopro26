@@ -128,7 +128,28 @@ const TEAM_PRESETS = [
 ] as const;
 
 type TeamKey = typeof TEAM_PRESETS[number]['key'];
-type Mode = 'split' | 'interval';
+type Mode = 'split' | 'interval' | 'proportional';
+
+/** Cadência-base padrão (regra de ouro: 1 ronda a cada X minutos). */
+const DEFAULT_CADENCE_MIN = 30;
+const CADENCE_KEY = 'plantaopro_rounds_cadence_v1';
+
+/**
+ * Expande a lista de agentes para o modo Proporcional.
+ * Regra: nRondas = arredondar(totalMin / cadenceMin), com piso = nAgentes
+ * (garante mínimo de 1 ronda por agente). Distribui as rondas ciclicamente
+ * entre os agentes (A, B, A, B, ...), respeitando a ordem informada.
+ */
+function expandProportionalAgents(baseAgents: string[], totalMin: number, cadenceMin: number): string[] {
+  const n = baseAgents.length;
+  if (n === 0) return [];
+  const cadence = Math.max(1, Math.round(cadenceMin));
+  const raw = Math.round(totalMin / cadence);
+  const rounds = Math.max(n, raw); // mínimo: 1 por agente
+  const out: string[] = [];
+  for (let i = 0; i < rounds; i++) out.push(baseAgents[i % n]);
+  return out;
+}
 type Rounding = 'exact' | 'floor' | 'ceil' | 'distribute';
 
 /* ================= templates (localStorage) ================= */
