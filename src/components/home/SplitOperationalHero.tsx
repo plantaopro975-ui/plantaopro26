@@ -856,11 +856,34 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </div>
             </div>
 
-            {/* HUD de drag + escala — só desktop */}
+            {/* HUD de drag + escala — só desktop; arrastável pela barra do topo */}
             {isDesktop && (
               <div
-                className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
+                className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col rounded-md border border-amber-400/50 bg-black/85 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
+                style={{ transform: `translate3d(${hudPos.x}px, ${hudPos.y}px, 0)` }}
               >
+                {/* Barra superior — drag handle + collapse */}
+                <div
+                  onPointerDown={onHudDown}
+                  onPointerMove={onHudMove}
+                  onPointerUp={onHudUp}
+                  onPointerCancel={onHudUp}
+                  className="flex items-center justify-between gap-3 px-2.5 py-1 border-b border-amber-400/30 cursor-grab active:cursor-grabbing"
+                  style={{ touchAction: 'none' }}
+                >
+                  <span className="text-amber-400 tracking-[0.3em]">⋮⋮ HUD</span>
+                  <button
+                    type="button"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={() => setHudCollapsed(v => !v)}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                  >
+                    {hudCollapsed ? 'expandir' : 'recolher'}
+                  </button>
+                </div>
+
+                {!hudCollapsed && (
+                <div className="flex flex-col gap-1.5 px-2.5 py-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-amber-400">◈ VIA</span>
                   <span className="text-white/90 tabular-nums">
