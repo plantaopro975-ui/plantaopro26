@@ -9,7 +9,6 @@ interface TacticalClockProps {
   showDate?: boolean;
 }
 
-const pad2 = (n: number) => String(n).padStart(2, '0');
 const MONTH_ABBR = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
 function getAcreClockParts(date: Date) {
