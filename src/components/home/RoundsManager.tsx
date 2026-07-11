@@ -1293,7 +1293,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   }, []);
 
 
-  const [team, setTeam] = useState<TeamKey>(() => (readTeamLock()?.team as TeamKey) ?? 'ALFA');
+  const [team, setTeam] = useState<TeamKey>(() => {
+    try {
+      const raw = localStorage.getItem('plantaopro_team_lock_state');
+      if (!raw) return 'ALFA';
+      const p = JSON.parse(raw) as { team?: TeamKey };
+      return (p?.team as TeamKey) ?? 'ALFA';
+    } catch { return 'ALFA'; }
+  });
   const [mode, setMode] = useState<Mode>('split');
   const [startTime, setStartTime] = useState('07:00');
   const [endTime, setEndTime] = useState('19:00');
