@@ -404,6 +404,33 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
   useEffect(() => { try { localStorage.setItem('pp-agt-scale', String(agtScale)); } catch {} }, [agtScale]);
   const clampScale = (v: number) => Math.max(0.5, Math.min(3, Math.round(v * 100) / 100));
 
+  // HUD panel: posição arrastável + colapsável
+  const [hudPos, setHudPos] = useState<{ x: number; y: number }>(() => readOffset('pp-hud-pos'));
+  const [hudCollapsed, setHudCollapsed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('pp-hud-collapsed') === '1';
+  });
+  useEffect(() => { try { localStorage.setItem('pp-hud-pos', JSON.stringify(hudPos)); } catch {} }, [hudPos]);
+  useEffect(() => { try { localStorage.setItem('pp-hud-collapsed', hudCollapsed ? '1' : '0'); } catch {} }, [hudCollapsed]);
+  const hudDragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const onHudDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    hudDragRef.current = { startX: e.clientX, startY: e.clientY, baseX: hudPos.x, baseY: hudPos.y };
+  };
+  const onHudMove = (e: React.PointerEvent) => {
+    if (!hudDragRef.current) return;
+    setHudPos({
+      x: hudDragRef.current.baseX + (e.clientX - hudDragRef.current.startX),
+      y: hudDragRef.current.baseY + (e.clientY - hudDragRef.current.startY),
+    });
+  };
+  const onHudUp = (e: React.PointerEvent) => {
+    if (!hudDragRef.current) return;
+    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+    hudDragRef.current = null;
+  };
+
   const vehDrag = makeDragHandlers('veh', vehOffset, setVehOffset);
   const agtDrag = makeDragHandlers('agt', agtOffset, setAgtOffset);
 
