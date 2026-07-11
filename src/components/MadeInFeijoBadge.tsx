@@ -91,7 +91,7 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
           FRANC D'NIS
         </text>
 
-        {/* Selo circular BR à direita */}
+        {/* Selo circular </> à direita */}
         <g transform="translate(146 3)">
           <circle cx="8" cy="8" r="7.4" fill="#0f172a" stroke="#fbbf24" strokeWidth="0.9" />
           <text
@@ -102,9 +102,9 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
             fontFamily="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
             fontSize="6.4"
             fontWeight="800"
-            letterSpacing="0.4"
+            letterSpacing="0.2"
           >
-            BR
+            {'</>'}
           </text>
         </g>
       </svg>
