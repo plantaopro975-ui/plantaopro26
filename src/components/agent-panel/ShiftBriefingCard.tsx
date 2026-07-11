@@ -541,12 +541,14 @@ export function ShiftBriefingCard({
               <ClipboardCheck className="h-5 w-5" />
               Checklist do Plantão {currentShift && format(parseISO(currentShift.shift_date), 'dd/MM/yyyy', { locale: ptBR })}
             </DialogTitle>
-            <DialogDescription className="text-slate-400 text-xs flex items-center gap-2">
-              Cada item é salvo automaticamente. Ao finalizar, o registro fica travado neste plantão.
+            <DialogDescription className="text-slate-400 text-xs flex items-center gap-2 flex-wrap">
+              Cada item é salvo automaticamente {isOnline ? '' : '(offline — será sincronizado ao reconectar)'}. Ao finalizar, o registro fica travado neste plantão.
               <span className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest">
                 {autoSaveState === 'saving' && (<><Loader2 className="h-3 w-3 animate-spin" /> salvando…</>)}
                 {autoSaveState === 'saved' && (<><CheckCircle2 className="h-3 w-3 text-emerald-400" /> salvo</>)}
                 {autoSaveState === 'error' && (<><ShieldAlert className="h-3 w-3 text-red-400" /> falha ao salvar</>)}
+                {autoSaveState === 'pending' && (<><Loader2 className="h-3 w-3 text-amber-400" /> aguardando conexão</>)}
+                {autoSaveState === 'idle' && hasPending && (<><ShieldAlert className="h-3 w-3 text-amber-400" /> pendente de envio</>)}
               </span>
             </DialogDescription>
           </DialogHeader>
