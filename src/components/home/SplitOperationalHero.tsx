@@ -492,7 +492,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D + HUD tático */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(200px,27vh,290px)] xl:min-h-[clamp(220px,30vh,340px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,400px)] 2xl:min-h-[clamp(300px,38vh,460px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
 
             {/* Moldura HUD ultra-discreta — hairlines nos quatro cantos, sem competir com a cena */}
             <div aria-hidden className="hidden md:block absolute inset-x-3 top-2 bottom-2 lg:inset-x-5 lg:top-3 lg:bottom-3 pointer-events-none">
