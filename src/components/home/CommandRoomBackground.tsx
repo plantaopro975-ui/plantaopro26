@@ -4,13 +4,9 @@
  * Camadas (do fundo para o topo):
  *   1. Wash tonal navy → âmbar
  *   2. Vignette radial (legibilidade)
- *   3. Grid duplo full-bleed (blueprint fino + grosso)
- *   4. Réguas de coordenadas nas 4 bordas (ticks + rótulos monospace)
- *   5. Contornos topográficos suaves (linhas orgânicas)
- *   6. Constelação das 9 unidades socioeducativas do Acre (pontos + rede)
- *   7. Composição heráldica central: laurel + escudo + estrela + rosa dos ventos + anéis de radar
- *   8. 4 corner brackets com labels operacionais
- *   9. Hairlines âmbar topo/base
+ *   3. Contornos topográficos suaves (linhas orgânicas)
+ *   4. Constelação das unidades socioeducativas do Acre (pontos + rede)
+ *   5. Composição heráldica central: laurel + escudo + estrela + rosa dos ventos + anéis de radar
  *
  * Totalmente responsivo — não corta em mobile, tablet, desktop ou ultrawide.
  */
@@ -37,7 +33,7 @@ export const CommandRoomBackground = memo(function CommandRoomBackground() {
         }}
       />
 
-      {/* 3 · Grid + 4 · Réguas de coordenadas + 5 · Topografia — full-bleed */}
+      {/* 3 · Topografia + constelação — full-bleed, sem malha quadriculada */}
       <FullBleedLayer />
 
       {/* 7 · Composição heráldica central */}
@@ -61,7 +57,7 @@ export const CommandRoomBackground = memo(function CommandRoomBackground() {
 });
 
 /* ---------------------------------------------------------------- */
-/* CAMADA FULL-BLEED — grid, réguas, topografia e constelação        */
+/* CAMADA FULL-BLEED — topografia e constelação, sem grid            */
 /* ---------------------------------------------------------------- */
 function FullBleedLayer() {
   // 7 unidades — reduzido de 9 para diminuir nós DOM
@@ -81,23 +77,6 @@ function FullBleedLayer() {
       aria-hidden
     >
       <defs>
-        {/* Grid duplo aninhado — 1 rect em vez de 2 */}
-        <pattern id="bgFine" width="32" height="32" patternUnits="userSpaceOnUse">
-          <path d="M32 0H0V32" fill="none" stroke="hsl(220 60% 80% / 0.05)" strokeWidth="0.5" />
-        </pattern>
-        <pattern id="bgGrid" width="160" height="160" patternUnits="userSpaceOnUse">
-          <rect width="160" height="160" fill="url(#bgFine)" />
-          <path d="M160 0H0V160" fill="none" stroke="hsl(42 70% 60% / 0.09)" strokeWidth="0.8" />
-        </pattern>
-        {/* Ticks das réguas — 1 marcador principal por 80px */}
-        <pattern id="tickH" width="80" height="8" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="0" y2="8" stroke="hsl(42 70% 60% / 0.28)" strokeWidth="0.6" />
-          <line x1="40" y1="0" x2="40" y2="4" stroke="hsl(42 70% 60% / 0.16)" strokeWidth="0.5" />
-        </pattern>
-        <pattern id="tickV" width="8" height="80" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="8" y2="0" stroke="hsl(42 70% 60% / 0.28)" strokeWidth="0.6" />
-          <line x1="0" y1="40" x2="4" y2="40" stroke="hsl(42 70% 60% / 0.16)" strokeWidth="0.5" />
-        </pattern>
         <radialGradient id="fadeMask" cx="50%" cy="50%" r="60%">
           <stop offset="0%" stopColor="white" stopOpacity="1" />
           <stop offset="70%" stopColor="white" stopOpacity="0.35" />
@@ -107,13 +86,6 @@ function FullBleedLayer() {
           <rect width="100%" height="100%" fill="url(#fadeMask)" />
         </mask>
       </defs>
-
-      {/* Grid — 1 único rect */}
-      <rect width="100%" height="100%" fill="url(#bgGrid)" />
-
-      {/* Réguas nas 4 bordas */}
-      {/* Réguas de ticks âmbar removidas — nenhum elemento amarelo nas bordas */}
-
 
       {/* Contornos topográficos — 5 linhas mascaradas */}
       <g mask="url(#mFade)" opacity="0.32">
