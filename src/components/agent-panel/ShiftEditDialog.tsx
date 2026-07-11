@@ -188,6 +188,11 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
       toast.error(parsed.error.issues[0]?.message || 'Dados inválidos');
       return;
     }
+    // Trava anti-erro: não persiste vacation sem reconhecimento explícito do operador.
+    if (kind === 'vacation' && !vacationAck) {
+      toast.error('Marque a confirmação de folga/férias/licença antes de salvar.');
+      return;
+    }
     setSaving(true);
     try {
       const payload = {
