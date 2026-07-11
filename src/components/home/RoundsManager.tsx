@@ -21,6 +21,7 @@ import { MissionLockDialog } from './MissionLockDialog';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import { PreNightScheduleDialog } from './PreNightScheduleDialog';
+import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { TacticalClock } from './TacticalClock';
 import {
   isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
@@ -1342,6 +1343,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   useEffect(() => { setHistory(readHistory()); }, [open]);
   const clearHistory = () => { writeHistory([]); setHistory([]); };
 
+  /* ---- Log resumido (cache local) de equipes das rondas realizadas ---- */
+  const TEAM_LOG_KEY = 'plantaopro_team_round_log';
+  type TeamLogEntry = { team: string; dateISO: string };
+  const readTeamLog = (): TeamLogEntry[] => {
+    try {
+      const raw = localStorage.getItem(TEAM_LOG_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr.slice(0, 15) : [];
+    } catch { return []; }
+  };
+  const writeTeamLog = (list: TeamLogEntry[]) => {
+    try { localStorage.setItem(TEAM_LOG_KEY, JSON.stringify(list.slice(0, 15))); } catch { /* ignore */ }
+  };
+  const [teamLog, setTeamLog] = useState<TeamLogEntry[]>([]);
+  useEffect(() => { setTeamLog(readTeamLog()); }, [open]);
+  const appendTeamLog = (teamName: string) => {
+    const entry: TeamLogEntry = { team: teamName, dateISO: new Date().toISOString() };
+    const next = [entry, ...readTeamLog()].slice(0, 15);
+    writeTeamLog(next);
+    setTeamLog(next);
+  };
+  const clearTeamLog = () => { writeTeamLog([]); setTeamLog([]); };
+
+  /* ---- Confirmação e trava da equipe ---- */
+  const [teamConfirmed, setTeamConfirmed] = useState(false);
+  const [teamConfirmOpen, setTeamConfirmOpen] = useState(false);
+  const [pendingTeam, setPendingTeam] = useState<TeamKey | null>(null);
+
   /* server clock offset (server_ms - local_ms) */
   const clockOffsetRef = useRef<number>(0);
   const sessionIdRef = useRef<string | null>(null);
@@ -1906,6 +1936,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setRunning(true);
+    // Log resumido (cache local) — equipe + data da ronda realizada
+    try { appendTeamLog(team); } catch { /* ignore */ }
 
     try {
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
@@ -2012,6 +2044,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setTick(0);
+    setTeamConfirmed(false);
     if (sessionIdRef.current) {
       supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
         .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
@@ -2490,17 +2523,43 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
                 <div className="grid gap-2">
-                  <Label className="text-[12.5px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
-                    <Radio className="h-3 w-3" /> Equipe
-                  </Label>
+                  <div className="flex items-center justify-between gap-2">
+                    <Label className="text-[12.5px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
+                      <Radio className="h-3 w-3" /> Equipe
+                      {(teamConfirmed || running || scheduledFor != null) && (
+                        <span className="ml-1 inline-flex items-center gap-1 rounded-sm border border-emerald-500/40 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-widest text-emerald-300">
+                          <Lock className="h-2.5 w-2.5" /> Confirmada
+                        </span>
+                      )}
+                    </Label>
+                    {teamConfirmed && !running && scheduledFor == null && (
+                      <button
+                        type="button"
+                        onClick={() => setTeamConfirmed(false)}
+                        className="font-sans text-[10.5px] uppercase tracking-wide text-muted-foreground hover:text-primary"
+                      >
+                        Trocar equipe
+                      </button>
+                    )}
+                  </div>
                   <div className="grid grid-cols-4 gap-1.5">
                     {TEAM_PRESETS.map((t) => {
                       const active = team === t.key;
+                      const teamLocked = teamConfirmed || running || scheduledFor != null;
+                      const disabled = teamLocked && !active;
                       return (
-                        <button key={t.key} type="button" onClick={() => setTeam(t.key)}
+                        <button key={t.key} type="button"
+                          disabled={disabled}
+                          onClick={() => {
+                            if (teamLocked) return;
+                            setPendingTeam(t.key);
+                            setTeamConfirmOpen(true);
+                          }}
+                          title={teamLocked ? 'Equipe travada — cancele a programação ou finalize a ronda para trocar' : `Selecionar ${t.label}`}
                           className={cn(
-                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[11.5px]',
+                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[11.5px] transition-opacity',
                             active ? 'border-transparent' : 'border-border bg-card text-foreground',
+                            disabled && 'opacity-40 cursor-not-allowed',
                           )}
                           style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))' } : undefined}
                         >
@@ -2512,6 +2571,43 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       );
                     })}
                   </div>
+
+                  {/* Histórico resumido — equipes das rondas realizadas */}
+                  {teamLog.length > 0 && (
+                    <div className="rounded-md border border-border/70 bg-card/60 p-2">
+                      <div className="mb-1 flex items-center justify-between">
+                        <div className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground">
+                          Rondas realizadas ({teamLog.length})
+                        </div>
+                        <button
+                          type="button"
+                          onClick={clearTeamLog}
+                          className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground hover:text-destructive"
+                        >
+                          Limpar
+                        </button>
+                      </div>
+                      <ul className="tactical-scrollbar grid gap-0.5 max-h-24 overflow-y-auto pr-1">
+                        {teamLog.map((e, i) => {
+                          const preset = TEAM_PRESETS.find((p) => p.key === e.team);
+                          const color = preset?.color ?? '#94a3b8';
+                          const label = preset?.label ?? e.team;
+                          const dt = new Date(e.dateISO);
+                          const when = new Intl.DateTimeFormat('pt-BR', {
+                            timeZone: NIGHT_TZ, day: '2-digit', month: '2-digit', year: '2-digit',
+                            hour: '2-digit', minute: '2-digit', hour12: false,
+                          }).format(dt);
+                          return (
+                            <li key={i} className="flex items-center gap-2 min-w-0">
+                              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
+                              <span className="font-sans font-semibold text-[11px] uppercase tracking-wide text-foreground truncate">{label}</span>
+                              <span className="ml-auto font-mono text-[10.5px] tabular-nums text-muted-foreground whitespace-nowrap">{when}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 {!nightEffectivelyLocked && (
@@ -2967,6 +3063,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         agentCount={schedule.rows.length}
                         totalDurationLabel={fmtDuration(schedule.rows.reduce((sum, r) => sum + r.duration, 0))}
                         silent={silentMode}
+                      />
+
+                      <TeamConfirmDialog
+                        open={teamConfirmOpen}
+                        color={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.color ?? teamColor) : teamColor}
+                        teamLabel={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.label ?? pendingTeam) : team}
+                        agentCount={agents.filter((a) => a.trim()).length}
+                        onCancel={() => { setTeamConfirmOpen(false); setPendingTeam(null); }}
+                        onConfirm={() => {
+                          if (pendingTeam) setTeam(pendingTeam);
+                          setTeamConfirmed(true);
+                          setTeamConfirmOpen(false);
+                          setPendingTeam(null);
+                        }}
                       />
 
                       <PreNightScheduleDialog
