@@ -38,6 +38,25 @@ export function useRoundReminder(options?: { paused?: boolean }) {
   // Reage a mudanças nas preferências (mesma aba ou outra aba).
   useEffect(() => subscribeReminderSettings(setSettings), []);
 
+  // Vincula ao usuário autenticado: hidrata do backend e passa a persistir
+  // toda mudança futura no perfil correspondente.
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (!alive) return;
+      const uid = data.user?.id ?? null;
+      const s = await bindReminderUser(uid);
+      if (alive) setSettings(s);
+    })();
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      void bindReminderUser(session?.user?.id ?? null).then((s) => {
+        if (alive) setSettings(s);
+      });
+    });
+    return () => { alive = false; sub.subscription.unsubscribe(); };
+  }, []);
+
   // Se desativado, fecha qualquer alerta em cartaz.
   useEffect(() => {
     if (!settings.enabled && open) setOpen(false);
