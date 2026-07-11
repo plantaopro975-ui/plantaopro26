@@ -204,7 +204,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
             {t.role}
           </span>
           <span
-            className="font-black leading-none text-[44px] min-[390px]:text-[52px] sm:text-[64px] md:text-[72px] tracking-[0.02em] transition-transform duration-500 group-hover:scale-105"
+            className="font-black leading-none text-[32px] min-[390px]:text-[38px] sm:text-[46px] md:text-[56px] tracking-[0.02em] whitespace-nowrap transition-transform duration-500 group-hover:scale-105"
             style={{
               color: `hsl(${t.accent})`,
               textShadow: `0 2px 12px rgba(0,0,0,0.95), 0 0 24px hsl(${t.accent} / 0.55), 0 0 2px rgba(0,0,0,0.9)`,
