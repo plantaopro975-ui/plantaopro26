@@ -2972,7 +2972,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
         <DialogContent
           ref={dialogRef as any}
-          className="w-[min(100vw-0.25rem,50rem)] sm:w-[min(100vw-0.75rem,50rem)] xl:w-[min(100vw-1rem,54rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-card border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden flex flex-col rounded-lg !transition-none !duration-0 !animate-none"
+          className="rm-dialog w-[min(100vw-0.25rem,50rem)] sm:w-[min(100vw-0.75rem,50rem)] xl:w-[min(100vw-1rem,54rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-card border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden flex flex-col rounded-lg !transition-none !duration-0 !animate-none"
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
