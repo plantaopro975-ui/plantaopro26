@@ -2057,6 +2057,79 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     await hydrateTeamLogFromCloud();
   };
 
+  /* ============ Fila de sincronização (retentativa quando volta online) ============ */
+  const PENDING_KEY = 'plantaopro_pending_team_rounds_v1';
+  type PendingItem = {
+    id: string;
+    team: string;
+    savedName: string;
+    totalSeconds: number;
+    agentsCount: number;
+    createdAt: number;
+    attempts: number;
+  };
+  const readPending = (): PendingItem[] => {
+    try {
+      const raw = localStorage.getItem(PENDING_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch { return []; }
+  };
+  const writePending = (arr: PendingItem[]) => {
+    try { localStorage.setItem(PENDING_KEY, JSON.stringify(arr.slice(0, 50))); } catch { /* ignore */ }
+  };
+  const enqueuePending = (item: Omit<PendingItem, 'id' | 'createdAt' | 'attempts'>) => {
+    const next = [...readPending(), { ...item, id: crypto.randomUUID?.() ?? String(Date.now()), createdAt: Date.now(), attempts: 0 }];
+    writePending(next);
+  };
+
+  const flushPendingRounds = useCallback(async (silent = false) => {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    const queue = readPending();
+    if (queue.length === 0) return;
+    const remaining: PendingItem[] = [];
+    let synced = 0;
+    for (const item of queue) {
+      try {
+        await saveTeamRoundToCloud({
+          team: item.team,
+          savedName: item.savedName,
+          totalSeconds: item.totalSeconds,
+          agentsCount: item.agentsCount,
+        });
+        synced++;
+      } catch (e) {
+        // Mantém na fila para próxima tentativa; incrementa attempts.
+        remaining.push({ ...item, attempts: item.attempts + 1 });
+      }
+    }
+    writePending(remaining);
+    if (synced > 0) {
+      setSummarySyncedOnline(true);
+      if (!silent) {
+        toast({
+          title: 'Sincronização concluída',
+          description: `${synced} registro${synced === 1 ? '' : 's'} de ronda sincronizado${synced === 1 ? '' : 's'} com a unidade.`,
+        });
+      }
+    }
+  }, [unitId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Retenta ao voltar online, ao ganhar foco, e a cada 60s se houver fila.
+  useEffect(() => {
+    void flushPendingRounds(true);
+    const onOnline = () => { void flushPendingRounds(); };
+    const onFocus = () => { void flushPendingRounds(true); };
+    window.addEventListener('online', onOnline);
+    window.addEventListener('focus', onFocus);
+    const iv = window.setInterval(() => { void flushPendingRounds(true); }, 60_000);
+    return () => {
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('focus', onFocus);
+      window.clearInterval(iv);
+    };
+  }, [flushPendingRounds]);
+
   const clearTeamLog = async () => {
     // Limpa nuvem (RLS restringe à mesma unidade) + cache local.
     if (unitId) {
@@ -2078,7 +2151,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
   const [summarySaved, setSummarySaved] = useState(false);
+  const [summarySyncedOnline, setSummarySyncedOnline] = useState(true);
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
+  const [historyClearConfirmOpen, setHistoryClearConfirmOpen] = useState(false);
 
   const [silentMode, setSilentMode] = useState<boolean>(() => {
     try { return localStorage.getItem('plantaopro_rounds_silent') === '1'; } catch { return false; }
@@ -3789,6 +3864,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <RoundSummaryDialog
                         open={summaryOpen}
                         saved={summarySaved}
+                        syncedOnline={summarySyncedOnline}
                         onSave={async (savedName) => {
                           // Cache local (sempre grava — funciona offline / sem unidade)
                           const entry: TeamLogEntry = {
@@ -3799,8 +3875,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           setTeamLog(next);
 
                           // Tenta sincronizar com a nuvem, mas NÃO bloqueia o
-                          // encerramento do relatório se falhar (ex.: unidade
-                          // ainda não resolvida, sessão expirada, offline).
+                          // encerramento do relatório se falhar. Em caso de
+                          // falha, enfileira para retentativa automática ao
+                          // voltar online / ganhar foco / a cada 60s.
                           let cloudErr: string | null = null;
                           try {
                             await saveTeamRoundToCloud({
@@ -3811,12 +3888,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             });
                           } catch (e) {
                             cloudErr = (e as Error)?.message || 'falha desconhecida';
-                            console.warn('[rounds] saveTeamRoundToCloud falhou — salvo apenas localmente:', cloudErr);
+                            console.warn('[rounds] saveTeamRoundToCloud falhou — enfileirado p/ retry:', cloudErr);
+                            enqueuePending({
+                              team,
+                              savedName,
+                              totalSeconds: summaryData?.totalSec ?? 0,
+                              agentsCount: schedule.rows.length,
+                            });
                           }
+                          setSummarySyncedOnline(!cloudErr);
                           setSummarySaved(true);
                           toast(
                             cloudErr
-                              ? { title: 'Registro salvo localmente', description: `Sincronização com o servidor falhou (${cloudErr}). Você já pode encerrar.`, variant: 'destructive' as const }
+                              ? { title: 'Salvo localmente (offline)', description: 'Sincronização automática quando a conexão voltar. Você já pode fechar.' }
                               : { title: 'Registro salvo', description: `Equipe ${team} registrada e sincronizada.` }
                           );
                         }}
@@ -3824,6 +3908,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           setSummaryOpen(false);
                           setSummaryData(null);
                           setSummarySaved(false);
+                          setSummarySyncedOnline(true);
                           // Reseta timer e fecha o divisor de rondas, deixando o
                           // painel pronto para uma nova equipe.
                           try { resetTimer(); } catch { /* ignore */ }
@@ -3938,7 +4023,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     Histórico ({history.length})
                   </a>
                   {history.length > 0 && (
-                    <button type="button" onClick={clearHistory} className="font-sans text-[11.5px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
+                    <button type="button" onClick={() => setHistoryClearConfirmOpen(true)} className="font-sans text-[11.5px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
                       Limpar
                     </button>
                   )}
@@ -4081,6 +4166,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       </Dialog>
 
 
+      {/* Confirmação para limpar HISTÓRICO LOCAL de sessões — SVG profissional */}
+      <Dialog open={historyClearConfirmOpen} onOpenChange={setHistoryClearConfirmOpen}>
+        <DialogContent className="max-w-sm border-2 border-destructive/60">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+              </svg>
+              Apagar histórico de sessões?
+            </DialogTitle>
+            <DialogDescription>
+              Isso remove <b>todas as {history.length} sessão{history.length === 1 ? '' : 'ões'} registrada{history.length === 1 ? '' : 's'}</b> localmente neste dispositivo. Os registros da unidade na nuvem não são afetados.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive/95 flex items-start gap-2">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span>Ação irreversível. Deseja realmente continuar?</span>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setHistoryClearConfirmOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                clearHistory();
+                setHistoryClearConfirmOpen(false);
+                toast({ title: 'Histórico apagado', description: 'Sessões locais removidas deste dispositivo.' });
+              }}
+            >
+              Sim, apagar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </>
   );

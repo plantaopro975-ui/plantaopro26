@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trophy, Clock, Users, CheckCircle2, ArrowRight, Sparkles, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Trophy, Clock, Users, CheckCircle2, ArrowRight, Sparkles, AlertTriangle, ShieldCheck, WifiOff } from 'lucide-react';
 
 const AUTO_CLOSE_SECONDS = 10;
 
@@ -27,6 +27,8 @@ interface Props {
   silent?: boolean;
   /** When true, the parent already persisted the record and we may auto-close. */
   saved?: boolean;
+  /** When false, salvo apenas no cache local — retentativa automática quando online. */
+  syncedOnline?: boolean;
 }
 
 function fmt(sec: number) {
@@ -50,6 +52,7 @@ export function RoundSummaryDialog({
   nextAction = 'Registrar ocorrências e preparar próxima ronda',
   silent = false,
   saved = false,
+  syncedOnline = true,
 }: Props) {
   const [progress, setProgress] = useState(0);
   const [countdown, setCountdown] = useState(AUTO_CLOSE_SECONDS);
@@ -90,8 +93,12 @@ export function RoundSummaryDialog({
 
   const handleSave = async () => {
     const name = savedName.trim();
+    if (name.length === 0) {
+      setWarning('Digite o nome da equipe antes de salvar.');
+      return;
+    }
     if (name.length < 2) {
-      setWarning('Informe o nome da equipe (mínimo 2 caracteres) antes de encerrar.');
+      setWarning('Nome muito curto — informe pelo menos 2 caracteres.');
       return;
     }
     setWarning(null);
@@ -198,10 +205,18 @@ export function RoundSummaryDialog({
                 <span>{warning}</span>
               </div>
             )}
-            {saved && (
+            {saved && syncedOnline && (
               <div className="flex items-start gap-1.5 rounded border border-success/40 bg-success/10 p-1.5 text-[11px] text-success">
                 <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                 <span>Registro salvo e sincronizado com a unidade.</span>
+              </div>
+            )}
+            {saved && !syncedOnline && (
+              <div className="flex items-start gap-1.5 rounded border border-amber-500/50 bg-amber-500/10 p-1.5 text-[11px] text-amber-300">
+                <WifiOff className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                <span>
+                  <b>Salvo apenas neste dispositivo (offline).</b> A sincronização com a unidade acontece automaticamente quando a conexão voltar — você já pode fechar.
+                </span>
               </div>
             )}
           </div>
