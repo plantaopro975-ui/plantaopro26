@@ -128,7 +128,28 @@ const TEAM_PRESETS = [
 ] as const;
 
 type TeamKey = typeof TEAM_PRESETS[number]['key'];
-type Mode = 'split' | 'interval';
+type Mode = 'split' | 'interval' | 'proportional';
+
+/** Cadência-base padrão (regra de ouro: 1 ronda a cada X minutos). */
+const DEFAULT_CADENCE_MIN = 30;
+const CADENCE_KEY = 'plantaopro_rounds_cadence_v1';
+
+/**
+ * Expande a lista de agentes para o modo Proporcional.
+ * Regra: nRondas = arredondar(totalMin / cadenceMin), com piso = nAgentes
+ * (garante mínimo de 1 ronda por agente). Distribui as rondas ciclicamente
+ * entre os agentes (A, B, A, B, ...), respeitando a ordem informada.
+ */
+function expandProportionalAgents(baseAgents: string[], totalMin: number, cadenceMin: number): string[] {
+  const n = baseAgents.length;
+  if (n === 0) return [];
+  const cadence = Math.max(1, Math.round(cadenceMin));
+  const raw = Math.round(totalMin / cadence);
+  const rounds = Math.max(n, raw); // mínimo: 1 por agente
+  const out: string[] = [];
+  for (let i = 0; i < rounds; i++) out.push(baseAgents[i % n]);
+  return out;
+}
 type Rounding = 'exact' | 'floor' | 'ceil' | 'distribute';
 
 /* ================= templates (localStorage) ================= */
@@ -1158,12 +1179,11 @@ function validate(input: {
   const s = toMinutes(input.startTime);
   if (s === null) issues.push({ field: 'start', message: 'Horário de início inválido.' });
 
-  if (input.mode === 'split') {
+  if (input.mode === 'split' || input.mode === 'proportional') {
     const e = toMinutes(input.endTime);
     if (e === null) issues.push({ field: 'end', message: 'Horário de término inválido.' });
     if (s !== null && e !== null) {
       if (s === e) issues.push({ field: 'end', message: 'Início e término não podem ser iguais.' });
-      // Wrap-over-midnight is permitted (turno noturno). Only flag when both são iguais.
     }
   } else {
     if (!Number.isFinite(input.intervalMin) || input.intervalMin < 1) {
@@ -1246,6 +1266,94 @@ function Section({
   );
 }
 
+/* ================= HandoffHighlight — troca de posto (SVG profissional) ================= */
+function HandoffHighlight({
+  open, onClose, team, teamColor, postNumber, agentName,
+}: {
+  open: boolean;
+  onClose: () => void;
+  team: string;
+  teamColor: string;
+  postNumber: number;
+  agentName: string;
+}) {
+  useEffect(() => {
+    if (!open) return;
+    const t = window.setTimeout(onClose, 6500);
+    return () => window.clearTimeout(t);
+  }, [open, onClose]);
+
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-x-0 top-4 z-[100] flex justify-center px-3 pointer-events-none"
+      role="status"
+      aria-live="polite"
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        className="pointer-events-auto group relative overflow-hidden rounded-xl border shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300 max-w-[520px] w-full"
+        style={{
+          background: 'linear-gradient(135deg, hsl(var(--card) / 0.96), hsl(var(--card) / 0.88))',
+          borderColor: `${teamColor}66`,
+          boxShadow: `0 0 0 1px ${teamColor}33, 0 12px 40px -8px ${teamColor}55`,
+        }}
+      >
+        {/* Faixa luminosa intermitente */}
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-[3px] animate-pulse"
+          style={{ background: `linear-gradient(90deg, transparent, ${teamColor}, transparent)` }}
+        />
+        <div className="flex items-center gap-3 px-4 py-3">
+          {/* Ícone SVG animado — anel radar + seta de troca */}
+          <svg
+            width="46" height="46" viewBox="0 0 46 46" className="shrink-0"
+            aria-hidden
+          >
+            <defs>
+              <radialGradient id="ho-glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor={teamColor} stopOpacity="0.55" />
+                <stop offset="70%" stopColor={teamColor} stopOpacity="0.05" />
+                <stop offset="100%" stopColor={teamColor} stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <circle cx="23" cy="23" r="22" fill="url(#ho-glow)" />
+            <circle cx="23" cy="23" r="14" fill="none" stroke={teamColor} strokeWidth="1.5" opacity="0.35">
+              <animate attributeName="r" values="10;18;10" dur="1.6s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.7;0.05;0.7" dur="1.6s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="23" cy="23" r="7" fill={teamColor} opacity="0.9" />
+            <path
+              d="M15 23 L21 23 M25 23 L31 23 M28 20 L31 23 L28 26"
+              stroke="#0b0f14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"
+            />
+          </svg>
+          <div className="flex-1 min-w-0 text-left">
+            <div
+              className="text-[10.5px] font-mono uppercase tracking-[0.18em]"
+              style={{ color: teamColor }}
+            >
+              EQUIPE {team} · POSTO {String(postNumber).padStart(2, '0')} · TROCA EM CURSO
+            </div>
+            <div className="text-[15px] font-semibold text-foreground leading-tight truncate mt-0.5">
+              Assumindo agora: <span style={{ color: teamColor }}>{agentName}</span>
+            </div>
+            <div className="text-[11.5px] text-muted-foreground leading-snug mt-0.5">
+              Repasse concluído. Próximo agente já está em serviço.
+            </div>
+          </div>
+          <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/70 shrink-0 hidden sm:block">
+            OK
+          </span>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+
 export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
 
   const [open, setOpen] = useState(false);
@@ -1319,6 +1427,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [startTime, setStartTime] = useState('07:00');
   const [endTime, setEndTime] = useState('19:00');
   const [intervalMin, setIntervalMin] = useState(30);
+  const [cadenceMin, setCadenceMin] = useState<number>(() => {
+    try {
+      const raw = localStorage.getItem(CADENCE_KEY);
+      const v = raw ? parseInt(raw, 10) : DEFAULT_CADENCE_MIN;
+      return Number.isFinite(v) && v >= 5 && v <= 240 ? v : DEFAULT_CADENCE_MIN;
+    } catch { return DEFAULT_CADENCE_MIN; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem(CADENCE_KEY, String(cadenceMin)); } catch { /* ignore */ }
+  }, [cadenceMin]);
   const [rounding, setRounding] = useState<Rounding>('distribute');
   const [agents, setAgents] = useState<string[]>(['Agente 1', 'Agente 2', 'Agente 3']);
 
@@ -1634,38 +1752,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* ---------- schedule com RECALIBRAGEM AUTOMÁTICA (precisão em segundos) ---------- */
   const schedule = useMemo(() => {
     if (issues.length) return null;
-    const n = agents.length;
-    if (n === 0) return null;
+    if (agents.length === 0) return null;
     if (effectiveStartMin == null) return null;
     const s = effectiveStartMin;
     const startSec = Math.round(s * 60);
 
-    // Total em segundos (split = janela do turno; interval = intervalo × N)
-    let totalSec: number;
-    if (mode === 'split') {
+    // Total em minutos da janela (para split/proporcional). Interval usa outra base.
+    let windowTotalMin = 0;
+    if (mode === 'split' || mode === 'proportional') {
       const e = toMinutes(endTime)!;
       let totalMin = e - s;
       if (totalMin <= 0) totalMin += 24 * 60; // suporta virada de meia-noite
-      totalSec = Math.max(1, Math.round(totalMin * 60));
-    } else {
-      totalSec = Math.max(1, Math.round(intervalMin * 60)) * n;
+      windowTotalMin = totalMin;
     }
 
+    // === MODO PROPORCIONAL ===
+    // Expande agentes em N rondas cíclicas baseado na cadência-base.
+    // Regra: nRondas = round(totalMin / cadenceMin), piso = nAgentes.
+    const effectiveAgents = mode === 'proportional'
+      ? expandProportionalAgents(agents, windowTotalMin, cadenceMin)
+      : agents;
+    const n = effectiveAgents.length;
+    if (n === 0) return null;
 
-    // No turno noturno travado, sempre usamos distribuição EXATA em segundos
-    // — assim os postos consomem 100% do tempo restante até 06:00 sem sobras.
+    // Total em segundos
+    let totalSec: number;
+    if (mode === 'interval') {
+      totalSec = Math.max(1, Math.round(intervalMin * 60)) * n;
+    } else {
+      totalSec = Math.max(1, Math.round(windowTotalMin * 60));
+    }
+
+    // No turno noturno travado, sempre usamos distribuição EXATA em segundos.
+    // Modo proporcional também usa 'exact' para fechar exatamente no endTime.
     const effRounding: Rounding =
-      (nightEffectivelyLocked && mode === 'split') ? 'exact' : rounding;
+      mode === 'proportional' ? 'exact'
+      : (nightEffectivelyLocked && mode === 'split') ? 'exact'
+      : rounding;
 
-    // Estratégia de fatiamento em SEGUNDOS
     const slotsSec: number[] = new Array(n).fill(0);
     if (mode === 'interval') {
-      // Intervalo fixo — cada agente recebe exatamente o intervalo escolhido
       const per = Math.round(intervalMin * 60);
       for (let i = 0; i < n; i++) slotsSec[i] = per;
     } else if (effRounding === 'exact') {
-      // Distribui em segundos inteiros, encaixando o resto nos primeiros (fecha 100% no endTime).
-      // A soma dos slots é IGUAL a totalSec — nenhuma sobra ou déficit acumulado.
       const base = Math.floor(totalSec / n);
       let leftover = totalSec - base * n;
       for (let i = 0; i < n; i++) {
@@ -1679,7 +1808,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const perMin = Math.ceil(totalSec / 60 / n);
       for (let i = 0; i < n; i++) slotsSec[i] = perMin * 60;
     } else {
-      // distribute (default): minutos inteiros + resto distribuído — recalibra para fechar no endTime
       const totalMin = Math.round(totalSec / 60);
       const baseMin = Math.floor(totalMin / n);
       let leftoverMin = totalMin - baseMin * n;
@@ -1688,16 +1816,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         slotsSec[i] = (baseMin + extra) * 60;
         if (leftoverMin > 0) leftoverMin--;
       }
-      // Ajuste fino: qualquer sobra/déficit em segundos vai para o último agente,
-      // garantindo que o horário final bata exatamente com o solicitado.
       const drift = totalSec - slotsSec.reduce((a, v) => a + v, 0);
       if (drift !== 0) slotsSec[n - 1] += drift;
     }
 
-
-    // Monta linhas com precisão de segundos; fromAbs/toAbs em minutos (float) mantém compat com o live timer.
     let cursorSec = startSec;
-    const rows = agents.map((name, i) => {
+    const rows = effectiveAgents.map((name, i) => {
       const fromSec = cursorSec;
       const toSec = cursorSec + slotsSec[i];
       cursorSec = toSec;
@@ -1707,12 +1831,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         to: fromMinutes(toSec / 60),
         fromAbs: fromSec / 60,
         toAbs: toSec / 60,
-        duration: slotsSec[i] / 60, // minutos (pode ser fracionário)
+        duration: slotsSec[i] / 60,
       };
     });
 
     const totalMinOut = slotsSec.reduce((a, v) => a + v, 0) / 60;
-    const baseSlot = totalSec / 60 / n; // slot médio em minutos (referência)
+    const baseSlot = totalSec / 60 / n;
     const hasSeconds = slotsSec.some((v) => v % 60 !== 0);
 
     return {
@@ -1723,8 +1847,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       startMin: s,
       hasRemainder: hasSeconds,
       effectiveRounding: effRounding,
+      // Metadados do modo proporcional (usados na UI)
+      proportional: mode === 'proportional' ? {
+        cadenceMin,
+        totalRounds: n,
+        agentsCount: agents.length,
+        roundsPerAgent: n / Math.max(1, agents.length),
+      } : null,
     };
-  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents, effectiveStartMin, nightEffectivelyLocked]);
+  }, [issues, mode, startTime, endTime, intervalMin, cadenceMin, rounding, agents, effectiveStartMin, nightEffectivelyLocked]);
 
 
 
@@ -2038,6 +2169,38 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const totalRemainingSeconds = schedule
     ? Math.max(0, schedule.totalSec - (currentView?.elapsed ?? 0))
     : 0;
+
+  // ==== Sinais luminosos intermitentes ANTES da troca de agente ====
+  // Ativa nos últimos 60s (âmbar) e 15s (vermelho) do slot do agente atual.
+  const slotRemainingSec = live && !live.done ? Math.max(0, live.remaining) : 0;
+  const handoffSoon = !!(live && !live.done && slotRemainingSec > 0 && slotRemainingSec <= 60);
+  const handoffImminent = !!(live && !live.done && slotRemainingSec > 0 && slotRemainingSec <= 15);
+  const nextAgentName = live && !live.done && schedule?.rows[live.index + 1]?.name;
+
+  // Beep discreto na aproximação da troca (uma vez em 60s e outra em 15s por posto)
+  const handoffBeepRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!live || live.done) return;
+    const key60 = `${live.index}-60`;
+    const key15 = `${live.index}-15`;
+    if (handoffSoon && !handoffBeepRef.current.has(key60)) {
+      handoffBeepRef.current.add(key60);
+      try { playAlert(soundRef.current); } catch { /* ignore */ }
+    }
+    if (handoffImminent && !handoffBeepRef.current.has(key15)) {
+      handoffBeepRef.current.add(key15);
+      try { playAlert(soundRef.current); } catch { /* ignore */ }
+      try {
+        if (!soundRef.current.muted && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          navigator.vibrate?.([120, 60, 120]);
+        }
+      } catch { /* ignore */ }
+    }
+    // Reset ao trocar de posto
+    if (!handoffSoon && !handoffImminent && live.remaining > 65) {
+      // sem ação — mantém sinalizado
+    }
+  }, [handoffSoon, handoffImminent, live?.index, live?.done]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Alerta visual/sonoro nos últimos minutos da operação inteira
   const endingSoon = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 300; // ≤ 5 min
@@ -2625,11 +2788,26 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </span>
 
             {running && live && !live.done && schedule && (
-              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12.5px] font-semibold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}55`, backgroundColor: `${teamColor}12` }}>
+              <span
+                className={cn(
+                  'ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12.5px] font-semibold tabular-nums transition',
+                  handoffImminent && 'animate-pulse ring-2 ring-red-500/70',
+                  handoffSoon && !handoffImminent && 'animate-pulse',
+                )}
+                style={{
+                  color: handoffImminent ? '#fca5a5' : handoffSoon ? '#fcd34d' : teamColor,
+                  border: `1px solid ${handoffImminent ? '#ef4444aa' : handoffSoon ? '#f59e0baa' : teamColor + '55'}`,
+                  backgroundColor: handoffImminent ? '#ef444422' : handoffSoon ? '#f59e0b1a' : `${teamColor}12`,
+                  boxShadow: handoffImminent ? '0 0 12px #ef444488' : handoffSoon ? '0 0 8px #f59e0b66' : undefined,
+                }}
+                title={handoffSoon ? `Troca de posto em ${Math.max(0, Math.ceil(slotRemainingSec))}s${nextAgentName ? ` — próximo: ${nextAgentName}` : ''}` : undefined}
+              >
                 <Timer className="h-3 w-3" />
                 {fmtHMS(live.remaining)}
+                {handoffSoon && <span aria-hidden className="ml-1 h-1.5 w-1.5 rounded-full bg-current animate-ping" />}
               </span>
             )}
+
 
             <ChevronRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" strokeWidth={2.5} />
 
@@ -3057,19 +3235,56 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </div>
 
                 {!nightEffectivelyLocked && (
-                  <div className="grid grid-cols-2 gap-2">
-                    {(['split', 'interval'] as Mode[]).map((m) => (
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {(['split', 'interval', 'proportional'] as Mode[]).map((m) => (
                       <button key={m} type="button" onClick={() => setMode(m)} disabled={configLocked}
                         className={cn(
-                          'rounded-md border px-3 py-1.5 text-[12.5px] font-mono uppercase tracking-wide',
+                          'rounded-md border px-2 py-1.5 text-[11.5px] font-mono uppercase tracking-wide leading-tight',
                           mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground',
                           configLocked && 'opacity-60 cursor-not-allowed',
-                        )}>
-                        {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
+                        )}
+                        title={
+                          m === 'split' ? 'Divide o turno igualmente entre agentes'
+                          : m === 'interval' ? 'Intervalo fixo por agente'
+                          : `Cadência-base: 1 ronda a cada ${cadenceMin} min · distribui automaticamente`
+                        }>
+                        {m === 'split' ? 'Dividir turno' : m === 'interval' ? 'Intervalo fixo' : 'Proporcional'}
                       </button>
                     ))}
                   </div>
                 )}
+
+                {mode === 'proportional' && !nightEffectivelyLocked && (
+                  <div className="rounded-md border border-primary/30 bg-primary/5 px-2.5 py-2 space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <label htmlFor="rm-cadence" className="text-[11.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+                        <Timer className="h-3 w-3" /> Cadência-base (min)
+                      </label>
+                      <Input
+                        id="rm-cadence"
+                        type="number"
+                        min={5}
+                        max={240}
+                        step={5}
+                        value={cadenceMin}
+                        disabled={configLocked}
+                        onChange={(e) => setCadenceMin(Math.max(5, Math.min(240, +e.target.value || DEFAULT_CADENCE_MIN)))}
+                        onKeyDown={(e) => e.key === 'e' && e.preventDefault()}
+                        className={cn('w-20 h-8 font-mono tabular-nums text-center bg-background border-border', configLocked && 'opacity-60 cursor-not-allowed')}
+                        autoComplete="off"
+                      />
+                    </div>
+                    <p className="text-[11px] leading-snug text-muted-foreground">
+                      Regra de ouro: <b className="text-foreground">1 ronda a cada {cadenceMin} min</b>. O sistema calcula automaticamente quantas rondas cabem no intervalo e distribui proporcionalmente entre os agentes (mínimo 1 ronda por agente).
+                    </p>
+                    {schedule?.proportional && (
+                      <div className="text-[11px] font-mono tabular-nums text-primary">
+                        {schedule.proportional.totalRounds} ronda{schedule.proportional.totalRounds === 1 ? '' : 's'} totais · {(schedule.total / schedule.proportional.totalRounds).toFixed(1)} min/ronda · {schedule.proportional.roundsPerAgent.toFixed(1)} por agente
+                      </div>
+                    )}
+                  </div>
+                )}
+
 
                 {/* Times / interval */}
                 {nightLocked && (
@@ -3171,7 +3386,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <div className="font-mono text-sm text-foreground">06:00</div>
                     </div>
                   </div>
-                ) : mode === 'split' ? (
+                ) : (mode === 'split' || mode === 'proportional') ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
@@ -3724,25 +3939,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
       </Dialog>
 
-      {/* Alarme de troca de ronda — padronizado */}
-      <ConfirmDialog
+      {/* Troca de posto — destaque SVG profissional, sem confirmação (auto-dismiss) */}
+      <HandoffHighlight
         open={alarm.open}
-        onOpenChange={(o) => setAlarm((a) => ({ ...a, open: o }))}
-        variant="alarm"
-        kicker={`EQUIPE ${team} · POSTO ${pad(alarm.index + 1)}`}
-        title="Hora de fazer a ronda"
-        description={
-          <span>
-            Assumir posto:{' '}
-            <span className="font-semibold" style={{ color: teamColor }}>
-              {alarm.name}
-            </span>
-          </span>
-        }
-        accent={teamColor}
-        primaryLabel="Ciente · Assumir posto"
-        onPrimary={() => setAlarm((a) => ({ ...a, open: false }))}
+        onClose={() => setAlarm((a) => ({ ...a, open: false }))}
+        team={team}
+        teamColor={teamColor}
+        postNumber={alarm.index + 1}
+        agentName={alarm.name}
       />
+
 
       {/* Confirmação de saída — hardened quando a ronda está em execução */}
       <ConfirmDialog
