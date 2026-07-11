@@ -449,33 +449,22 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
             clipPath: themeStyle.cardClipPath || undefined,
           }}
         >
-          {/* Fundo tático — gradiente radial na cor da equipe */}
+          {/* Team Poster Background — pôster cinematográfico na cor da equipe */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
             style={{
-              background: `radial-gradient(ellipse at 50% 42%, ${teamColors[team as keyof typeof teamColors]?.glow} 0%, rgba(0,0,0,0.9) 55%, #05070d 100%)`,
+              backgroundImage: `url(${teamPosters[team as keyof typeof teamPosters]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top',
             }}
           />
 
-          {/* Theme-specific overlay */}
+          {/* Theme-specific overlay (mais leve para deixar o pôster respirar) */}
           <div className={cn(
             "absolute inset-0 transition-all duration-300",
             themeStyle.overlayGradient,
-            "opacity-60 group-hover:opacity-50"
+            "opacity-70 group-hover:opacity-60"
           )} />
-
-          {/* Brasão da equipe centralizado — renderizado ACIMA do overlay para ficar visível */}
-          <div
-            aria-hidden
-            className="absolute inset-0 z-[1] transition-transform duration-500 group-hover:scale-105 pointer-events-none"
-            style={{
-              backgroundImage: `url(${getTeamEmblem(team)})`,
-              backgroundSize: '78% auto',
-              backgroundPosition: 'center 42%',
-              backgroundRepeat: 'no-repeat',
-              filter: `drop-shadow(0 6px 24px ${teamColors[team as keyof typeof teamColors]?.glow})`,
-            }}
-          />
           
           {/* Top accent stripe */}
           <div className={cn("absolute top-0 left-0 right-0 transition-all duration-300", themeStyle.topAccent)} />
