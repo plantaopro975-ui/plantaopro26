@@ -2002,9 +2002,18 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
 }
 
 /* Neutraliza drop-shadow "glow" em textos (mantém sombras direcionais). */
-.typoclear *[class*="drop-shadow-[0_0"] {
+.typoclear *[class*="drop-shadow-[0_0"],
+.home-typo *[class*="drop-shadow-[0_0"] {
   filter: none !important;
 }
+
+/* Chapa qualquer drop-shadow aplicado diretamente em títulos e parágrafos
+ * dentro dos escopos limpos. Preserva sombras em imagens, cards e ícones. */
+.home-typo :is(h1,h2,h3,h4,h5,h6,p,span,a,button,li,label)[class*="drop-shadow-"],
+.typoclear :is(h1,h2,h3,h4,h5,h6,p,span,a,button,li,label)[class*="drop-shadow-"] {
+  filter: none !important;
+}
+
 
 /* Suaviza tracking excessivo em uppercase para melhor leitura. */
 .home-typo [class*="tracking-widest"],
