@@ -2371,35 +2371,43 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               ref={fitInnerRef}
                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
             >
-              <div className="mx-auto mb-2 overflow-hidden rounded-md border bg-card" style={{ borderColor: `${teamColor}30`, boxShadow: `inset 0 1px 0 ${teamColor}12` }}>
-                <div className="relative flex items-center gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2">
-                  <div className="absolute inset-0 pointer-events-none opacity-20" style={{ background: `linear-gradient(90deg, ${teamColor}00, ${teamColor}08, ${teamColor}00)` }} />
-                  <div className="relative flex min-w-0 flex-1 items-center gap-2">
-                    <div className="hidden sm:block scale-75 origin-left -my-1"><TeamHero team={team} color={teamColor} /></div>
-                    <div className="min-w-0 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                      <span
-                        className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] font-medium antialiased"
-                        style={{ color: teamColor, opacity: 0.85 }}
-                      >
-                        Central · {team}
+              <div
+                className="mx-auto mb-2 overflow-hidden rounded-md border bg-card/60 backdrop-blur-sm"
+                style={{ borderColor: `${teamColor}2a`, boxShadow: `inset 0 1px 0 ${teamColor}10` }}
+              >
+                <div className="relative flex items-center gap-2 px-2.5 py-1 sm:px-3">
+                  <span
+                    aria-hidden
+                    className="h-3 w-[3px] rounded-sm"
+                    style={{ background: teamColor, boxShadow: `0 0 6px ${teamColor}80` }}
+                  />
+                  <span
+                    className="font-mono text-[10px] uppercase tracking-[0.22em] font-medium antialiased whitespace-nowrap"
+                    style={{ color: teamColor, opacity: 0.9 }}
+                  >
+                    Central · {team}
+                  </span>
+                  <span className="hidden sm:inline text-[11px] leading-none text-foreground/70 tracking-tight">
+                    Operação em tempo real
+                  </span>
+                  <span className="ml-auto flex items-center gap-1.5 font-mono text-[11px] tabular-nums text-muted-foreground/90">
+                    <span
+                      className="rounded-sm border px-1.5 py-[1px] text-foreground/85"
+                      style={{ borderColor: `${teamColor}33` }}
+                    >
+                      {fmtHMS(totalRemainingSeconds)}
+                    </span>
+                    <span className="hidden xs:inline">· {schedule?.rows.length ?? agents.length} ag.</span>
+                    {activeRoundName && (
+                      <span className="hidden sm:inline truncate max-w-[140px]">
+                        · <b className="uppercase text-foreground/90">{activeRoundName}</b>
                       </span>
-                      <h2 className="font-display text-[13px] sm:text-[14px] leading-none tracking-tight text-foreground/95">
-                        Operação em tempo real
-                      </h2>
-                      <span className="flex items-center gap-1.5 font-mono text-[11px] tabular-nums text-muted-foreground/90">
-                        <span className="rounded-sm border px-1.5 py-0 text-foreground/85" style={{ borderColor: `${teamColor}33` }}>
-                          {fmtHMS(totalRemainingSeconds)}
-                        </span>
-                        <span>· {schedule?.rows.length ?? agents.length} ag.</span>
-                        {activeRoundName && <span className="truncate max-w-[160px]">· <b className="uppercase text-foreground/90">{activeRoundName}</b></span>}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="scale-90 origin-right"><RoundsHeroSVG color={teamColor} active={!!currentView && !currentView.done} silent={silentMode} /></div>
+                    )}
+                  </span>
                 </div>
                 <div
                   className="relative border-t px-2.5 py-1 sm:px-3"
-                  style={{ borderColor: `${teamColor}22`, background: `linear-gradient(180deg, ${teamColor}08, transparent)` }}
+                  style={{ borderColor: `${teamColor}1c`, background: `linear-gradient(180deg, ${teamColor}06, transparent)` }}
                 >
                   <TeamOperationsStripe
                     team={team}
