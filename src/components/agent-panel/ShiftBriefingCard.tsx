@@ -356,7 +356,7 @@ export function ShiftBriefingCard({
       if (autoSaveTimer.current) window.clearTimeout(autoSaveTimer.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [adoCnt, algCnt, chvCnt, radiosCharged, radiosExpected, bookEntry, handoverOk, handoverNotes, observations, signature]);
+  }, [adoCnt, algCnt, chvCnt, tonCnt, tonExpected, radiosCharged, radiosExpected, bookEntry, handoverOk, handoverNotes, observations, signature]);
 
   // Wrapper que marca "sujo" antes de setar cada estado — só assim o auto-save dispara.
   const withDirty = <T,>(setter: (v: T) => void) => (v: T) => {
