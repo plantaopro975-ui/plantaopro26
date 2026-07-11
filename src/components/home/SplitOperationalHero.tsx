@@ -405,87 +405,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           {/* LEFT — CTA + selos */}
           <div className="pp-hero-left relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
 
-            {/* ============ RADAR TÁTICO PROFISSIONAL — canto sup. direito da coluna esquerda ============ */}
-            <div
-              aria-hidden
-              className="hidden lg:block absolute top-0 right-0 z-[45] pointer-events-none select-none"
-              style={{ width: 148, height: 148 }}
-            >
-              {/* Header técnico */}
-              <div className="absolute -top-0.5 left-0 right-0 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.28em] text-white/45 leading-none">
-                <span className="flex items-center gap-1">
-                  <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.9)]" />
-                  Radar
-                </span>
-                <span className="tabular-nums tracking-[0.18em] text-amber-200/70">R-04</span>
-              </div>
+            {/* Radar movido para a coluna direita (scene-stage) — evita sobreposição com o Briefing/Online */}
 
-              {/* Corpo do radar */}
-              <div
-                className="absolute left-1/2 -translate-x-1/2 top-3 h-[120px] w-[120px] rounded-full border border-amber-300/35"
-                style={{
-                  background:
-                    'radial-gradient(circle at 50% 50%, hsl(150 70% 45% / 0.10) 0%, hsl(150 70% 45% / 0.04) 42%, transparent 72%)',
-                  boxShadow:
-                    'inset 0 0 22px rgba(52,211,153,0.10), inset 0 0 2px rgba(252,211,77,0.35), 0 0 12px rgba(0,0,0,0.55)',
-                }}
-              >
-                {/* range rings */}
-                <span aria-hidden className="absolute inset-[10px] rounded-full border border-emerald-300/18" />
-                <span aria-hidden className="absolute inset-[22px] rounded-full border border-emerald-300/14" />
-                <span aria-hidden className="absolute inset-[36px] rounded-full border border-emerald-300/10" />
-                <span aria-hidden className="absolute inset-[50px] rounded-full border border-emerald-300/10" />
-
-                {/* cruz + eixos diagonais */}
-                <span aria-hidden className="absolute top-1/2 left-0 right-0 h-px bg-emerald-300/18" />
-                <span aria-hidden className="absolute left-1/2 top-0 bottom-0 w-px bg-emerald-300/18" />
-                <span aria-hidden className="absolute inset-0 rotate-45">
-                  <span className="absolute top-1/2 left-1 right-1 h-px bg-emerald-300/10" />
-                  <span className="absolute left-1/2 top-1 bottom-1 w-px bg-emerald-300/10" />
-                </span>
-
-                {/* graduação NESW */}
-                <span className="absolute top-0.5 left-1/2 -translate-x-1/2 font-mono text-[6.5px] tracking-[0.18em] text-emerald-200/60 leading-none">N</span>
-                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 font-mono text-[6.5px] tracking-[0.18em] text-emerald-200/45 leading-none">S</span>
-                <span className="absolute left-0.5 top-1/2 -translate-y-1/2 font-mono text-[6.5px] tracking-[0.18em] text-emerald-200/45 leading-none">W</span>
-                <span className="absolute right-0.5 top-1/2 -translate-y-1/2 font-mono text-[6.5px] tracking-[0.18em] text-emerald-200/45 leading-none">E</span>
-
-                {/* sweep giratório */}
-                <span
-                  aria-hidden
-                  className="absolute inset-0 rounded-full motion-safe:animate-[spin_4.2s_linear_infinite]"
-                  style={{
-                    background:
-                      'conic-gradient(from 0deg, transparent 0deg, hsl(150 84% 55% / 0.55) 55deg, hsl(150 84% 55% / 0.15) 78deg, transparent 92deg)',
-                    maskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)',
-                    WebkitMaskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)',
-                  }}
-                />
-
-                {/* contatos táticos — 4 equipes */}
-                <span className="absolute h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.95)] motion-safe:animate-pulse" style={{ top: '22%', left: '30%' }} />
-                <span className="absolute h-1.5 w-1.5 rounded-full bg-orange-400 shadow-[0_0_6px_rgba(251,146,60,0.95)]" style={{ top: '34%', left: '70%' }} />
-                <span className="absolute h-1.5 w-1.5 rounded-full bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.95)]" style={{ top: '66%', left: '36%' }} />
-                <span className="absolute h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_6px_rgba(252,211,77,0.95)]" style={{ top: '72%', left: '68%' }} />
-
-                {/* centro / origem */}
-                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full border border-amber-300/70">
-                  <span className="absolute inset-0.5 rounded-full bg-amber-300 shadow-[0_0_6px_rgba(252,211,77,0.9)]" />
-                </span>
-
-                {/* crosshair fino nos limites do círculo */}
-                <span aria-hidden className="absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-px bg-amber-300/55" />
-                <span aria-hidden className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1.5 w-px bg-amber-300/55" />
-                <span aria-hidden className="absolute -left-1 top-1/2 -translate-y-1/2 w-1.5 h-px bg-amber-300/55" />
-                <span aria-hidden className="absolute -right-1 top-1/2 -translate-y-1/2 w-1.5 h-px bg-amber-300/55" />
-              </div>
-
-              {/* Footer técnico */}
-              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between font-mono text-[7.5px] uppercase tracking-[0.22em] text-white/40 leading-none">
-                <span className="tabular-nums text-emerald-300/75">04 CONTATOS</span>
-                <span className="tabular-nums text-amber-200/60">2.5 KM</span>
-              </div>
-            </div>
 
 
 
