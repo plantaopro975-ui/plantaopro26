@@ -1832,7 +1832,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   }, [unitId, team, teamConfirmed, scheduledFor]);
 
   /* ---- Sincroniza teamLog (últimas rondas) com Supabase por unidade ---- */
-  const hydrateTeamLogFromCloud = React.useCallback(async () => {
+  const hydrateTeamLogFromCloud = useCallback(async () => {
     if (!unitId) return;
     try {
       const { data, error } = await supabase
