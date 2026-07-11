@@ -1474,7 +1474,7 @@ export default function Index() {
                 return (
                   <div
                     key={id}
-                    className={b.grow ? 'min-h-0 shrink-0 overflow-visible sm:flex-1' : 'shrink-0 overflow-hidden'}
+                    className={b.grow ? 'min-h-0 shrink-0 overflow-visible sm:flex-1 lg:flex-none' : 'shrink-0 overflow-hidden'}
                   >
                     {b.node}
                   </div>
