@@ -605,8 +605,54 @@ function TeamOperationsStripe({
         )}
       </svg>
 
-      {/* Ticker HTML — tipografia nítida, legível em qualquer navegador */}
-      <TeamDoctrineTicker team={team} color={color} uid={uid} />
+      {/* Linha institucional estática — sem letreiro dinâmico */}
+      <div
+        className="mt-1 flex items-center justify-between gap-2 rounded-sm border px-2 py-1"
+        style={{ borderColor: `${color}22`, background: `linear-gradient(90deg, ${color}0c, transparent 60%)` }}
+      >
+        <div className="flex items-center gap-1.5">
+          <span
+            className="font-mono text-[9px] uppercase tracking-[0.28em] px-1.5 py-[1px] rounded-sm border"
+            style={{ color, borderColor: `${color}55`, background: `${color}10` }}
+          >
+            CH-{team.slice(0, 3)}
+          </span>
+          <span className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground/80">
+            {active ? 'Em serviço' : 'Standby'}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* Barras de sinal — puro CSS, tema tático */}
+          <div className="flex items-end gap-[2px] h-3" aria-hidden>
+            {[3, 5, 7, 9].map((h, i) => (
+              <span
+                key={i}
+                className="w-[3px] rounded-[1px]"
+                style={{
+                  height: `${h}px`,
+                  background: color,
+                  opacity: active ? 0.35 + i * 0.18 : 0.18 + i * 0.08,
+                  boxShadow: active ? `0 0 4px ${color}55` : 'none',
+                }}
+              />
+            ))}
+          </div>
+          {/* Pips de estado */}
+          <div className="flex items-center gap-1" aria-hidden>
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                className="h-1.5 w-1.5 rounded-full"
+                style={{
+                  background: i === 0 ? color : `${color}44`,
+                  boxShadow: i === 0 && active ? `0 0 6px ${color}` : 'none',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
 
 
       {/* Fallback acessível quando o SVG não renderizar */}
