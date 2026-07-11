@@ -759,15 +759,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         {/* ============ Team Selector Grid — no mobile vai para o topo (order-2) ============ */}
         <div className="pp-team-selector relative shrink-0 px-3 sm:px-3 pt-1 sm:pt-1 pb-1 mt-0 sm:mt-0 order-3 sm:order-none">
 
-          <div className="flex items-center justify-between px-1 pb-1.5">
-            <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-200">
-              Selecione sua Equipe
+          <div className="flex items-center justify-between px-1 pb-1.5 lg:pb-2">
+            <span className="font-mono text-[10.5px] sm:text-[10px] lg:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-slate-100">
+              <span className="text-amber-300/90 mr-1.5">◉</span>Selecione sua Equipe
             </span>
-            <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              4 Divisões · Táticas
+            <span className="font-mono text-[10.5px] sm:text-[10px] lg:text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-300/95 tabular-nums">
+              04 · Divisões Táticas
             </span>
 
           </div>
+
 
           <div className="pp-team-grid grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
