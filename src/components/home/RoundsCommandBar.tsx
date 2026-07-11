@@ -29,9 +29,6 @@ export function RoundsCommandBar() {
   const rounds = useRoundsStats();
   const navigate = useNavigate();
 
-  // Relógio de rede — usado apenas para métricas/rótulos (a UI usa <TacticalClock />).
-  const now = useServerTime(1000);
-  void now;
 
 
   const unitLabel = useMemo(() => {
