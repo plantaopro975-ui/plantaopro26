@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
   Play, Pause, RotateCcw, Radio, ChevronRight, AlertTriangle,
-  CheckCircle2, Volume2, VolumeX, Lock, CalendarClock, XCircle,
+  CheckCircle2, Volume2, VolumeX, Lock, CalendarClock, XCircle, Settings,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
@@ -23,6 +23,7 @@ import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import { PreNightScheduleDialog } from './PreNightScheduleDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { RoundHistoryDialog } from './RoundHistoryDialog';
+import { ReminderSettingsDialog } from './ReminderSettingsDialog';
 import { getRotatedTeamColor, bumpColorRotation } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
 import {
@@ -1708,7 +1709,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     return s?.scheduledFor ?? null;
   });
 
-  /* Persistência: grava a trava de equipe/agendamento em cache. */
+  /* Persistência local: trava de equipe/agendamento em cache. */
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -1717,6 +1718,114 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       );
     } catch { /* ignore */ }
   }, [team, teamConfirmed, scheduledFor]);
+
+  /* ---- Sincronização multi-dispositivo via backend (team_lock_state) ---- */
+  const [unitId, setUnitId] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const applyingRemoteRef = useRef(false);
+  const lastSyncedRef = useRef<string>('');
+
+  // Descobre unit_id do agente autenticado (pelo CPF do email).
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        const email = userData?.user?.email;
+        if (!email) return;
+        const cpf = email.split('@')[0];
+        const { data } = await supabase
+          .from('agents')
+          .select('unit_id')
+          .eq('cpf', cpf)
+          .maybeSingle();
+        if (!cancelled && data?.unit_id) setUnitId(data.unit_id as string);
+      } catch { /* ignore */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Puxa estado remoto inicial + assina realtime.
+  useEffect(() => {
+    if (!unitId) return;
+    let cancelled = false;
+
+    const applyRemote = (row: {
+      team?: string; team_confirmed?: boolean; scheduled_for?: string | null;
+    } | null) => {
+      if (!row || cancelled) return;
+      applyingRemoteRef.current = true;
+      try {
+        const remoteTeam = (row.team as TeamKey) ?? team;
+        const remoteConfirmed = !!row.team_confirmed;
+        const remoteScheduled = row.scheduled_for ? new Date(row.scheduled_for).getTime() : null;
+        setTeam((prev) => (prev !== remoteTeam ? remoteTeam : prev));
+        setTeamConfirmed((prev) => (prev !== remoteConfirmed ? remoteConfirmed : prev));
+        setScheduledFor((prev) => (prev !== remoteScheduled ? remoteScheduled : prev));
+        lastSyncedRef.current = JSON.stringify({
+          team: remoteTeam, teamConfirmed: remoteConfirmed, scheduledFor: remoteScheduled,
+        });
+      } finally {
+        // libera o flag no próximo tick para não disparar upsert de eco.
+        setTimeout(() => { applyingRemoteRef.current = false; }, 0);
+      }
+    };
+
+    (async () => {
+      const { data } = await supabase
+        .from('team_lock_state')
+        .select('team, team_confirmed, scheduled_for')
+        .eq('unit_id', unitId)
+        .maybeSingle();
+      if (data) applyRemote(data);
+    })();
+
+    const ch = supabase
+      .channel(`team-lock-sync-${unitId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'team_lock_state', filter: `unit_id=eq.${unitId}` },
+        (payload) => {
+          const row = (payload.new ?? payload.old) as any;
+          if (payload.eventType === 'DELETE') return;
+          applyRemote(row);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(ch);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unitId]);
+
+  // Empurra alterações locais para o backend (debounced curto).
+  useEffect(() => {
+    if (!unitId) return;
+    if (applyingRemoteRef.current) return;
+    const signature = JSON.stringify({ team, teamConfirmed, scheduledFor });
+    if (signature === lastSyncedRef.current) return;
+    lastSyncedRef.current = signature;
+    const t = window.setTimeout(async () => {
+      try {
+        await supabase.from('team_lock_state').upsert(
+          {
+            unit_id: unitId,
+            team,
+            team_confirmed: teamConfirmed,
+            scheduled_for: scheduledFor ? new Date(scheduledFor).toISOString() : null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'unit_id' },
+        );
+      } catch (err) {
+        console.warn('[rounds] sync team_lock_state falhou', err);
+      }
+    }, 300);
+    return () => window.clearTimeout(t);
+  }, [unitId, team, teamConfirmed, scheduledFor]);
+
   // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
   // do lado esquerdo é travada para preservar o cronograma pactuado.
   const configLocked = scheduledFor != null;
@@ -2446,6 +2555,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </svg>
                 </button>
               )}
+
+              <button type="button" onClick={() => setSettingsOpen(true)} aria-label="Configurações do lembrete"
+                onPointerDown={(e) => e.stopPropagation()}
+                title="Configurações do lembrete de rondas"
+                className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border/90 bg-card text-muted-foreground hover:text-foreground transition-colors">
+                <Settings className="h-3.5 w-3.5" />
+              </button>
 
               <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
                 onPointerDown={(e) => e.stopPropagation()}
@@ -3344,6 +3460,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
 
+
+      <ReminderSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
 
     </>
   );
