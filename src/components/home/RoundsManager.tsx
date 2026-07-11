@@ -1362,10 +1362,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   useEffect(() => { setHistory(readHistory()); }, [open]);
   const clearHistory = () => { writeHistory([]); setHistory([]); };
 
-  /* ---- Log resumido (cache local) de equipes das rondas realizadas ---- */
+  /* ---- Log resumido de equipes das rondas realizadas ----
+     Persistido em Supabase (`team_round_log`) para sincronizar entre
+     dispositivos da mesma unidade. Mantém cache local como fallback
+     offline. */
   const TEAM_LOG_KEY = 'plantaopro_team_round_log';
-  type TeamLogEntry = { team: string; dateISO: string };
-  const readTeamLog = (): TeamLogEntry[] => {
+  type TeamLogEntry = { team: string; dateISO: string; savedName?: string; id?: string };
+  const readTeamLogLocal = (): TeamLogEntry[] => {
     try {
       const raw = localStorage.getItem(TEAM_LOG_KEY);
       if (!raw) return [];
@@ -1373,18 +1376,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       return Array.isArray(arr) ? arr.slice(0, 15) : [];
     } catch { return []; }
   };
-  const writeTeamLog = (list: TeamLogEntry[]) => {
+  const writeTeamLogLocal = (list: TeamLogEntry[]) => {
     try { localStorage.setItem(TEAM_LOG_KEY, JSON.stringify(list.slice(0, 15))); } catch { /* ignore */ }
   };
   const [teamLog, setTeamLog] = useState<TeamLogEntry[]>([]);
-  useEffect(() => { setTeamLog(readTeamLog()); }, [open]);
+  // Local optimistic append (started rounds). Cloud is written when a
+  // round is completed and the operator saves the team name.
   const appendTeamLog = (teamName: string) => {
     const entry: TeamLogEntry = { team: teamName, dateISO: new Date().toISOString() };
-    const next = [entry, ...readTeamLog()].slice(0, 15);
-    writeTeamLog(next);
+    const next = [entry, ...readTeamLogLocal()].slice(0, 15);
+    writeTeamLogLocal(next);
     setTeamLog(next);
   };
-  const clearTeamLog = () => { writeTeamLog([]); setTeamLog([]); };
+
 
   /* ---- Confirmação e trava da equipe (persistida) ---- */
   const TEAM_LOCK_KEY = 'plantaopro_team_lock_state';
