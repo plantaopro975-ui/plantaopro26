@@ -1802,6 +1802,31 @@ body:hover {
   scrollbar-color: rgba(244, 201, 116, 0.4) transparent;
 }
 
+/* ============================================================
+ * Homepage — barra de rolagem oculta, scroll 100% funcional
+ * A classe `home-route` é aplicada ao <body> pelo Index.tsx
+ * apenas enquanto o usuário está na rota "/". Esconde a
+ * scrollbar visualmente mantendo scroll via wheel/trackpad/
+ * teclado/touch em qualquer área da homepage (responsivo).
+ * ============================================================ */
+html:has(body.home-route),
+body.home-route {
+  scrollbar-width: none !important;    /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge legado */
+}
+html:has(body.home-route)::-webkit-scrollbar,
+body.home-route::-webkit-scrollbar,
+body.home-route *::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+  background: transparent !important;
+}
+body.home-route {
+  overflow-y: auto !important;
+  overscroll-behavior-y: auto;
+}
+
 
 
 
