@@ -8,13 +8,16 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Trophy, Clock, Users, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Trophy, Clock, Users, CheckCircle2, ArrowRight, Sparkles, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 const AUTO_CLOSE_SECONDS = 10;
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  onSave: (savedName: string) => Promise<void> | void;
   color: string;
   team: string;
   totalSeconds: number;
@@ -22,6 +25,8 @@ interface Props {
   completedCount: number;
   nextAction?: string;
   silent?: boolean;
+  /** When true, the parent already persisted the record and we may auto-close. */
+  saved?: boolean;
 }
 
 function fmt(sec: number) {
@@ -35,22 +40,29 @@ function fmt(sec: number) {
 }
 
 /**
- * Post-round celebration summary. Locks the UI for a beat with an
- * impressive recap card (total time, progress, next action) before
- * releasing controls again.
+ * Post-round celebration summary. Requires an explicit "team name / responsible"
+ * to be saved before allowing the divider to close. Blocks auto-close and any
+ * dialog dismiss attempt until the record is persisted upstream.
  */
 export function RoundSummaryDialog({
-  open, onClose, color, team,
+  open, onClose, onSave, color, team,
   totalSeconds, agentsCount, completedCount,
   nextAction = 'Registrar ocorrências e preparar próxima ronda',
   silent = false,
+  saved = false,
 }: Props) {
   const [progress, setProgress] = useState(0);
   const [countdown, setCountdown] = useState(AUTO_CLOSE_SECONDS);
+  const [savedName, setSavedName] = useState('');
+  const [warning, setWarning] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const pct = agentsCount > 0 ? Math.round((completedCount / agentsCount) * 100) : 0;
 
   useEffect(() => {
-    if (!open) { setProgress(0); return; }
+    if (!open) {
+      setProgress(0); setSavedName(''); setWarning(null); setSubmitting(false);
+      return;
+    }
     let raf = 0;
     const start = performance.now();
     const step = (t: number) => {
@@ -62,29 +74,50 @@ export function RoundSummaryDialog({
     return () => cancelAnimationFrame(raf);
   }, [open, pct]);
 
-  // Auto-close countdown — releases the divider automatically so the panel
-  // is ready for the next team. Cleans timers when dialog is closed manually.
+  // Auto-close countdown — ONLY runs after the record has been persisted (saved).
+  // Until then, dialog is locked open.
   useEffect(() => {
-    if (!open) { setCountdown(AUTO_CLOSE_SECONDS); return; }
+    if (!open || !saved) { setCountdown(AUTO_CLOSE_SECONDS); return; }
     setCountdown(AUTO_CLOSE_SECONDS);
     const tick = window.setInterval(() => {
       setCountdown((c) => {
-        if (c <= 1) {
-          window.clearInterval(tick);
-          onClose();
-          return 0;
-        }
+        if (c <= 1) { window.clearInterval(tick); onClose(); return 0; }
         return c - 1;
       });
     }, 1000);
     return () => window.clearInterval(tick);
-  }, [open, onClose]);
+  }, [open, saved, onClose]);
+
+  const handleSave = async () => {
+    const name = savedName.trim();
+    if (name.length < 2) {
+      setWarning('Informe o nome da equipe (mínimo 2 caracteres) antes de encerrar.');
+      return;
+    }
+    setWarning(null);
+    setSubmitting(true);
+    try {
+      await onSave(name);
+    } catch (e) {
+      setWarning((e as Error)?.message || 'Não foi possível salvar o registro. Tente novamente.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const attemptDismiss = () => {
+    if (saved) { onClose(); return; }
+    setWarning('É necessário salvar o nome da equipe da última ronda antes de encerrar.');
+  };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+    <Dialog open={open} onOpenChange={(o) => { if (!o) attemptDismiss(); }}>
       <DialogContent
-        className="max-w-md w-[calc(100vw-2rem)] sm:w-full p-0 overflow-hidden border-2 min-h-[520px] flex flex-col"
+        className="max-w-md w-[calc(100vw-2rem)] sm:w-full p-0 overflow-hidden border-2 min-h-[620px] flex flex-col"
         style={{ borderColor: `${color}70` }}
+        onEscapeKeyDown={(e) => { if (!saved) { e.preventDefault(); attemptDismiss(); } }}
+        onPointerDownOutside={(e) => { if (!saved) { e.preventDefault(); attemptDismiss(); } }}
+        onInteractOutside={(e) => { if (!saved) { e.preventDefault(); attemptDismiss(); } }}
       >
         {/* Top glow header */}
         <div className="relative h-24 overflow-hidden" style={{ background: `linear-gradient(135deg, ${color}30, transparent 60%), radial-gradient(circle at 30% 20%, ${color}55, transparent 60%)` }}>
@@ -143,8 +176,38 @@ export function RoundSummaryDialog({
             <StatCard icon={CheckCircle2} label="Status"        value="OK" color={color} />
           </div>
 
+          {/* Required save field */}
+          <div className="mt-4 rounded-lg border p-3 space-y-2" style={{ borderColor: `${color}40`, background: `${color}0A` }}>
+            <Label htmlFor="last-team-name" className="font-mono text-[9px] uppercase tracking-[0.28em] text-muted-foreground flex items-center gap-1.5">
+              <ShieldCheck className="h-3 w-3" style={{ color }} />
+              Nome da equipe da última ronda *
+            </Label>
+            <Input
+              id="last-team-name"
+              value={savedName}
+              onChange={(e) => { setSavedName(e.target.value); if (warning) setWarning(null); }}
+              placeholder={`Ex.: ${team} · Responsável / observação`}
+              autoComplete="off"
+              disabled={saved || submitting}
+              className="bg-background/60 font-sans text-sm"
+              maxLength={80}
+            />
+            {warning && (
+              <div className="flex items-start gap-1.5 rounded border border-destructive/40 bg-destructive/10 p-1.5 text-[11px] text-destructive">
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                <span>{warning}</span>
+              </div>
+            )}
+            {saved && (
+              <div className="flex items-start gap-1.5 rounded border border-success/40 bg-success/10 p-1.5 text-[11px] text-success">
+                <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                <span>Registro salvo e sincronizado com a unidade.</span>
+              </div>
+            )}
+          </div>
+
           {/* Next action */}
-          <div className="mt-4 rounded-lg border p-3" style={{ borderColor: `${color}40`, background: `${color}0A` }}>
+          <div className="mt-3 rounded-lg border p-3" style={{ borderColor: `${color}40`, background: `${color}0A` }}>
             <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-muted-foreground flex items-center gap-1.5">
               <ArrowRight className="h-3 w-3" style={{ color }} /> Próxima ação
             </div>
@@ -152,19 +215,32 @@ export function RoundSummaryDialog({
           </div>
 
           <DialogFooter className="mt-5 sm:justify-center flex-col sm:flex-row gap-2 items-center">
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground text-center">
-              Encerramento automático em{' '}
-              <span className="font-bold tabular-nums" style={{ color }}>
-                {String(countdown).padStart(2, '0')}s
-              </span>
-            </div>
-            <Button
-              onClick={onClose}
-              className="min-w-40 font-bold uppercase tracking-wide"
-              style={{ backgroundColor: color, color: '#0b0f14' }}
-            >
-              Liberar agora
-            </Button>
+            {saved ? (
+              <>
+                <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground text-center">
+                  Encerramento automático em{' '}
+                  <span className="font-bold tabular-nums" style={{ color }}>
+                    {String(countdown).padStart(2, '0')}s
+                  </span>
+                </div>
+                <Button
+                  onClick={onClose}
+                  className="min-w-40 font-bold uppercase tracking-wide"
+                  style={{ backgroundColor: color, color: '#0b0f14' }}
+                >
+                  Liberar agora
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={handleSave}
+                disabled={submitting}
+                className="min-w-52 font-bold uppercase tracking-wide"
+                style={{ backgroundColor: color, color: '#0b0f14' }}
+              >
+                {submitting ? 'Salvando...' : 'Salvar e encerrar'}
+              </Button>
+            )}
           </DialogFooter>
         </div>
 
