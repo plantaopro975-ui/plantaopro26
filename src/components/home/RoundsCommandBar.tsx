@@ -165,19 +165,19 @@ export function RoundsCommandBar() {
               <TooltipTrigger asChild>
                 <button
                   type="button"
-                  onClick={goEscalas}
+                  onClick={handleRefresh}
                   className="hidden md:flex flex-col items-end leading-tight group focus-visible:outline-none"
-                  aria-label="Ir para Comando — Escalas"
+                  aria-label="Atualizar página em tempo real"
                 >
-                  <span className="text-[10px] font-semibold text-amber-200/90 tracking-[0.22em] uppercase">Shortcut</span>
+                  <span className="text-[10px] font-semibold text-amber-200/90 tracking-[0.22em] uppercase">Sincronizar</span>
                   <span className="inline-flex items-center gap-1 text-slate-300 group-hover:text-primary transition-colors text-[10px] font-bold tracking-widest uppercase">
-                    Comando — Escalas
-                    <ArrowUpRight className="h-3 w-3" strokeWidth={2.4} />
+                    Atualizar página
+                    <RefreshCw className="h-3 w-3 group-hover:rotate-180 transition-transform duration-500" strokeWidth={2.4} />
                   </span>
                 </button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="text-xs">
-                Abre o painel operacional com as escalas
+                Recarrega a página com dados em tempo real
               </TooltipContent>
             </Tooltip>
 
