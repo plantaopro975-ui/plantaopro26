@@ -44,11 +44,33 @@ export function useRoundReminder(options?: { paused?: boolean }) {
 
   useEffect(() => {
     if (paused || !settings.enabled) return;
+    const notify = () => {
+      try {
+        if (
+          typeof Notification !== 'undefined' &&
+          Notification.permission === 'granted' &&
+          typeof document !== 'undefined' &&
+          document.visibilityState !== 'visible'
+        ) {
+          const n = new Notification('Plantão Pro · Lembrete de ronda', {
+            body: `Está no horário de iniciar a próxima ronda operacional (intervalo de ${settings.intervalMin} min). Toque para abrir o Gestor de Rondas.`,
+            tag: 'plantaopro-round-reminder',
+            icon: '/icon-192.png',
+            badge: '/favicon.png',
+            silent: false,
+          });
+          setTimeout(() => n.close(), 10000);
+        }
+      } catch { /* ignore */ }
+    };
     const check = () => {
       if (openRef.current) return;
       const last = getLastAt();
       const elapsed = Date.now() - last;
-      if (elapsed >= settings.intervalMin * 60_000) setOpen(true);
+      if (elapsed >= settings.intervalMin * 60_000) {
+        setOpen(true);
+        notify();
+      }
     };
     check();
     const iv = window.setInterval(check, 15_000);
