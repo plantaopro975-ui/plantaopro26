@@ -2619,12 +2619,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             active ? 'border-transparent' : 'border-border bg-card text-foreground',
                             disabled && 'opacity-40 cursor-not-allowed',
                           )}
-                          style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))' } : undefined}
+                          style={active ? { backgroundColor: getRotatedTeamColor(t.key, colorRotation), color: 'hsl(var(--primary-foreground))' } : undefined}
                         >
                           {t.label}
                           <span aria-hidden
                             className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full', active ? 'opacity-0' : 'opacity-70')}
-                            style={{ backgroundColor: t.color }} />
+                            style={{ backgroundColor: getRotatedTeamColor(t.key, colorRotation) }} />
                         </button>
                       );
                     })}
