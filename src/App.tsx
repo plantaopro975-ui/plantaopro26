@@ -41,7 +41,7 @@ const Master = lazy(() => import("./pages/Master"));
 const Install = lazy(() => import("./pages/Install"));
 const About = lazy(() => import("./pages/About"));
 const Agenda = lazy(() => import("./pages/Agenda"));
-const RoundsHistory = lazy(() => import("./pages/RoundsHistory"));
+
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Diretorio = lazy(() => import("./pages/Diretorio"));
 const DebugAuth = lazy(() => import("./pages/DebugAuth"));
