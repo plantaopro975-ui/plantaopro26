@@ -4,6 +4,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import heroImage from "@/assets/access-gate-hero.jpg";
+import { MadeInFeijoBadge } from "@/components/MadeInFeijoBadge";
 
 const ACK_KEY = "plantaopro_access_acknowledged_v1";
 const GATE_EXEMPT_ROUTES = new Set(["/about", "/install"]);
@@ -174,6 +175,11 @@ export function AccessAcknowledgmentGate() {
                     </div>
                   </>
                 )}
+
+                {/* Selo de origem — discreto, ocupa espaço vazio abaixo dos botões */}
+                <div className="mt-4 flex justify-center">
+                  <MadeInFeijoBadge inline />
+                </div>
               </div>
             </div>
           </div>
