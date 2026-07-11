@@ -3314,7 +3314,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     {(['split', 'interval', 'proportional'] as Mode[]).map((m) => (
                       <button key={m} type="button" onClick={() => setMode(m)} disabled={configLocked}
                         className={cn(
-                          'rounded-md border px-2 py-1.5 text-[11.5px] font-mono uppercase tracking-wide leading-tight',
+                          'rounded-md border px-1.5 py-1.5 text-[10px] sm:text-[11px] font-mono uppercase tracking-tight leading-tight text-center whitespace-nowrap overflow-hidden text-ellipsis',
                           mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground',
                           configLocked && 'opacity-60 cursor-not-allowed',
                         )}
@@ -3323,7 +3323,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           : m === 'interval' ? 'Intervalo fixo por agente'
                           : `Cadência-base: 1 ronda a cada ${cadenceMin} min · distribui automaticamente`
                         }>
-                        {m === 'split' ? 'Dividir turno' : m === 'interval' ? 'Intervalo fixo' : 'Proporcional'}
+                        {m === 'split' ? 'Dividir' : m === 'interval' ? 'Intervalo' : 'Proporcional'}
                       </button>
                     ))}
                   </div>
