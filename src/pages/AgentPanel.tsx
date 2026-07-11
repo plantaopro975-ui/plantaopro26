@@ -843,18 +843,29 @@ export default function AgentPanel() {
                 </>}
               </TabsContent>
 
-              <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
+              <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="mt-0 data-[state=inactive]:hidden">
                 {mountedTabs.has('plantoes') && <SectionBoundary label="plantoes" loadingLabel="Carregando plantões" fallback={<ModuleFallback compact={compact} />}>
-                {/* Next Shift Countdown - Top Priority */}
-                <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
-                  <ProfessionalShiftTimer agentId={agent.id} />
-                  <ShiftScheduleCard agentId={agent.id} />
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
-                  <ShiftCalendarOverview agentId={agent.id} />
-                  <RecentShiftCyclesCard agentId={agent.id} />
+                <div className="flex flex-col gap-3 md:gap-4">
+                  {/* 1. Cronômetro do plantão em destaque (largura total) */}
+                  <section aria-label="Cronômetro do plantão" className="w-full">
+                    <ProfessionalShiftTimer agentId={agent.id} />
+                  </section>
+
+                  {/* 2. Próximo plantão — chamada para ação */}
+                  <section aria-label="Próximo plantão" className="w-full">
+                    <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
+                  </section>
+
+                  {/* 3. Escala + Visão do mês lado a lado (alturas equalizadas) */}
+                  <section aria-label="Escala e visão mensal" className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-4 items-stretch">
+                    <div className="min-w-0 flex"><div className="w-full flex flex-col [&>*]:flex-1"><ShiftScheduleCard agentId={agent.id} /></div></div>
+                    <div className="min-w-0 flex"><div className="w-full flex flex-col [&>*]:flex-1"><ShiftCalendarOverview agentId={agent.id} /></div></div>
+                  </section>
+
+                  {/* 4. Histórico de ciclos — largura total */}
+                  <section aria-label="Ciclos recentes" className="w-full">
+                    <RecentShiftCyclesCard agentId={agent.id} />
+                  </section>
                 </div>
                 </SectionBoundary>}
               </TabsContent>
