@@ -39,8 +39,8 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
     if (result.ok) {
       setSettings(result.value);
     } else {
-      const msg = Object.values(result.errors)[0] ?? 'Valor inválido';
-      toast.error(msg);
+      const first = Object.values(result.errors)[0];
+      toast.error(typeof first === 'string' ? first : 'Valor inválido');
     }
   };
 
