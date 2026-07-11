@@ -69,6 +69,49 @@ const CHECKLIST_ORDER: ChecklistKey[] = [
   'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'book', 'handover',
 ];
 
+// -------- Offline persistence helpers --------
+// Draft: fotografia do formulário para sobreviver a recarregamentos offline.
+// Pending: payload aguardando sincronização com o servidor.
+const DRAFT_KEY = (shiftId: string) => `plantao_briefing_draft_${shiftId}`;
+const PENDING_KEY = (shiftId: string) => `plantao_briefing_pending_${shiftId}`;
+
+interface DraftShape {
+  adoCnt: string; algCnt: string; chvCnt: string;
+  radiosCharged: string; radiosExpected: string;
+  bookEntry: string; handoverOk: boolean; handoverNotes: string;
+  observations: string; signature: string;
+  updatedAt: number;
+}
+
+function readDraft(shiftId: string): DraftShape | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY(shiftId));
+    return raw ? JSON.parse(raw) as DraftShape : null;
+  } catch { return null; }
+}
+function writeDraft(shiftId: string, draft: Omit<DraftShape, 'updatedAt'>) {
+  try {
+    localStorage.setItem(DRAFT_KEY(shiftId), JSON.stringify({ ...draft, updatedAt: Date.now() }));
+  } catch { /* quota — ignore */ }
+}
+function readPending(shiftId: string): { payload: any; existingId: string | null } | null {
+  try {
+    const raw = localStorage.getItem(PENDING_KEY(shiftId));
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+function writePending(shiftId: string, payload: any, existingId: string | null) {
+  try {
+    localStorage.setItem(PENDING_KEY(shiftId), JSON.stringify({ payload, existingId, queuedAt: Date.now() }));
+  } catch { /* ignore */ }
+}
+function clearPending(shiftId: string) {
+  try { localStorage.removeItem(PENDING_KEY(shiftId)); } catch { /* ignore */ }
+}
+function clearDraft(shiftId: string) {
+  try { localStorage.removeItem(DRAFT_KEY(shiftId)); } catch { /* ignore */ }
+}
+
 // -------- Component --------
 export function ShiftBriefingCard({
   agentId, agentName, agentTeam, unitId, agentRole,
