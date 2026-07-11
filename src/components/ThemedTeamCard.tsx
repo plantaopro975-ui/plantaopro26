@@ -644,21 +644,8 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
             </div>
           </div>
           
-          {/* Theme badge - top left */}
-          {resolvedTheme !== 'tactical' && (
-            <div className="absolute top-2 left-2 z-10 hidden sm:block">
-              <div className={cn(
-                "px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider",
-                resolvedTheme === 'cyber' && "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40",
-                resolvedTheme === 'crimson' && "bg-red-500/20 text-red-300 border border-red-500/40",
-                resolvedTheme === 'arctic' && "bg-sky-500/20 text-sky-300 border border-sky-400/40",
-                resolvedTheme === 'sovereign' && "bg-yellow-500/20 text-yellow-300 border border-yellow-500/40",
-                resolvedTheme === 'nexus' && "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40",
-              )}>
-                {themeConfig.emoji}
-              </div>
-            </div>
-          )}
+          {/* Theme badge removido — reduz ruído visual e deixa o card mais leve. */}
+
           
           {/* Content */}
           <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 md:p-5 lg:p-6 z-10">
