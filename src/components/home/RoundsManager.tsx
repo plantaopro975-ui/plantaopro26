@@ -2286,7 +2286,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
         <DialogContent
-          className="w-[min(100vw-0.25rem,60rem)] sm:w-[min(100vw-0.75rem,60rem)] xl:w-[min(100vw-1rem,66rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col rounded-lg sm:rounded-xl shadow-2xl"
+          className="w-[min(100vw-0.25rem,56rem)] sm:w-[min(100vw-0.75rem,56rem)] xl:w-[min(100vw-1rem,60rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col rounded-lg sm:rounded-xl shadow-2xl"
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
@@ -2371,35 +2371,34 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               ref={fitInnerRef}
                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
             >
-              <div className="mx-auto mb-2.5 overflow-hidden rounded-lg border bg-card" style={{ borderColor: `${teamColor}30`, boxShadow: `inset 0 1px 0 ${teamColor}12` }}>
-                <div className="relative flex items-center gap-3 px-3 py-2.5 sm:px-4 sm:py-3">
-                  <div className="absolute inset-0 pointer-events-none opacity-25" style={{ background: `radial-gradient(circle at 82% 22%, ${teamColor}18, transparent 44%), linear-gradient(90deg, ${teamColor}00, ${teamColor}08, ${teamColor}00)` }} />
-                  <div className="relative flex min-w-0 flex-1 items-center gap-3">
-                    <div className="hidden sm:block"><TeamHero team={team} color={teamColor} /></div>
-                    <div className="min-w-0">
-                      <div
-                        className="font-mono text-[12px] sm:text-[13px] uppercase tracking-[0.32em] font-medium antialiased"
-                        style={{ color: `${teamColor}`, opacity: 0.82, textShadow: '0 1px 0 rgba(0,0,0,0.45)' }}
+              <div className="mx-auto mb-2 overflow-hidden rounded-md border bg-card" style={{ borderColor: `${teamColor}30`, boxShadow: `inset 0 1px 0 ${teamColor}12` }}>
+                <div className="relative flex items-center gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2">
+                  <div className="absolute inset-0 pointer-events-none opacity-20" style={{ background: `linear-gradient(90deg, ${teamColor}00, ${teamColor}08, ${teamColor}00)` }} />
+                  <div className="relative flex min-w-0 flex-1 items-center gap-2">
+                    <div className="hidden sm:block scale-75 origin-left -my-1"><TeamHero team={team} color={teamColor} /></div>
+                    <div className="min-w-0 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <span
+                        className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] font-medium antialiased"
+                        style={{ color: teamColor, opacity: 0.85 }}
                       >
-                        Central de Ronda · Equipe {team}
-                      </div>
-                      <h2 className="font-display text-[17px] sm:text-[22px] leading-[1.15] tracking-tight text-foreground/95 antialiased subpixel-antialiased">
+                        Central · {team}
+                      </span>
+                      <h2 className="font-display text-[13px] sm:text-[14px] leading-none tracking-tight text-foreground/95">
                         Operação em tempo real
                       </h2>
-                      <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[13px] tabular-nums text-muted-foreground/90">
-                        <span className="rounded-sm border px-1.5 py-0.5 text-foreground/85" style={{ borderColor: `${teamColor}33` }}>
-                          Restante {fmtHMS(totalRemainingSeconds)}
+                      <span className="flex items-center gap-1.5 font-mono text-[11px] tabular-nums text-muted-foreground/90">
+                        <span className="rounded-sm border px-1.5 py-0 text-foreground/85" style={{ borderColor: `${teamColor}33` }}>
+                          {fmtHMS(totalRemainingSeconds)}
                         </span>
-                        <span>{schedule?.rows.length ?? agents.length} agentes</span>
-                        {activeRoundName && <span className="truncate">No ar: <b className="uppercase text-foreground/90">{activeRoundName}</b></span>}
-                      </div>
+                        <span>· {schedule?.rows.length ?? agents.length} ag.</span>
+                        {activeRoundName && <span className="truncate max-w-[160px]">· <b className="uppercase text-foreground/90">{activeRoundName}</b></span>}
+                      </span>
                     </div>
                   </div>
-                  <RoundsHeroSVG color={teamColor} active={!!currentView && !currentView.done} silent={silentMode} />
+                  <div className="scale-90 origin-right"><RoundsHeroSVG color={teamColor} active={!!currentView && !currentView.done} silent={silentMode} /></div>
                 </div>
-                {/* Assinatura visual da equipe — ocupa a área ociosa do cabeçalho e muda por equipe */}
                 <div
-                  className="relative border-t px-3 py-1.5 sm:px-4"
+                  className="relative border-t px-2.5 py-1 sm:px-3"
                   style={{ borderColor: `${teamColor}22`, background: `linear-gradient(180deg, ${teamColor}08, transparent)` }}
                 >
                   <TeamOperationsStripe
@@ -2411,7 +2410,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   />
                   {isAdminUser && <SecurityDoctrineCard color={teamColor} />}
                 </div>
+
               </div>
+
 
 
               <div className="mx-auto w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[0.7fr_1.3fr] gap-x-4 gap-y-2 items-start lg:divide-x lg:divide-border/40">
