@@ -509,16 +509,17 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             {/* Scan line vertical — sutil, movimento contínuo lento */}
             <div
               aria-hidden
-              className="hidden md:block absolute inset-y-2 left-0 w-full pointer-events-none overflow-hidden mix-blend-screen motion-reduce:hidden"
+              className="hidden md:block absolute inset-y-3 left-0 w-full pointer-events-none overflow-hidden motion-reduce:hidden"
             >
               <span
-                className="absolute inset-y-0 left-0 w-[42%] opacity-[0.14]"
+                className="absolute inset-y-0 left-0 w-[14%] opacity-[0.08]"
                 style={{
-                  background: 'linear-gradient(90deg, transparent 0%, hsl(42 90% 60% / 0.55) 50%, transparent 100%)',
-                  animation: 'hud-scan-x 9s cubic-bezier(0.65,0,0.35,1) infinite',
+                  background: 'linear-gradient(90deg, transparent 0%, hsl(42 90% 65% / 0.5) 50%, transparent 100%)',
+                  animation: 'hud-scan-x 11s cubic-bezier(0.65,0,0.35,1) infinite',
                 }}
               />
             </div>
+
 
             {/* Rótulos verticais nas margens — tipografia mono, mesma linguagem do briefing */}
             <span
