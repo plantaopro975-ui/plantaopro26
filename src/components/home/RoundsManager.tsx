@@ -28,6 +28,7 @@ import { RoundHistoryDialog } from './RoundHistoryDialog';
 import { ReminderSettingsDialog } from './ReminderSettingsDialog';
 import { getRotatedTeamColor, bumpColorRotation, TEAM_COLORS } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
+import { TeamGlyph } from './TeamGlyph';
 import { getServerDate, getServerOffsetMs, syncServerTime } from '@/hooks/useServerTime';
 import {
   isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
