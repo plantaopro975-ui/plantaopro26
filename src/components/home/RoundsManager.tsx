@@ -3350,7 +3350,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         open={historyDialogOpen}
                         onOpenChange={setHistoryDialogOpen}
                         entries={teamLog}
-                        onClear={() => { clearTeamLog(); setHistoryDialogOpen(false); }}
+                        onClear={() => { setHistoryDialogOpen(false); setClearConfirmOpen(true); }}
                       />
 
                       <TeamConfirmDialog
