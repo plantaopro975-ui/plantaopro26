@@ -1394,6 +1394,11 @@ export default function Index() {
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
+        {/* Selo de origem — visível na homepage web sem alterar o layout */}
+        <div className="pointer-events-none fixed bottom-3 left-3 z-[60] hidden sm:flex">
+          <MadeInFeijoBadge inline />
+        </div>
+
         {/* Return-to-panel shortcut for logged-in agents browsing the homepage */}
         {user && (
           <button
@@ -1559,12 +1564,6 @@ export default function Index() {
 
       {/* Divisor entre seção institucional e rodapé */}
       <SectionDivider />
-
-      {/* Selo de origem — centralizado, discreto, não afeta layout dos demais elementos */}
-      <div className="relative z-30 w-full flex justify-center py-3">
-        <MadeInFeijoBadge inline />
-      </div>
-
 
       {/* Mobile-only beta notice */}
       <div className="hidden sm:block">
