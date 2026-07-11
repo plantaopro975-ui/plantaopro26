@@ -3424,10 +3424,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       <RoundHistoryDialog
                         open={historyDialogOpen}
-                        onOpenChange={setHistoryDialogOpen}
+                        onOpenChange={(v) => { setHistoryDialogOpen(v); if (!v) setHistoryTeamFilter(null); }}
                         entries={teamLog}
+                        loading={teamLogLoading}
+                        initialTeamFilter={historyTeamFilter}
                         onClear={() => { setHistoryDialogOpen(false); setClearConfirmOpen(true); }}
                       />
+
 
                       <TeamConfirmDialog
                         open={teamConfirmOpen}
