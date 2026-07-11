@@ -113,46 +113,48 @@ export function SplashScreen() {
 
       {/* Camada institucional mobile — wordmark, tagline, brackets, faixa
           inferior. Fica oculta em telas maiores (onde a arte já preenche). */}
-      <div className="sp-splash-mobile absolute inset-0 pointer-events-none flex flex-col justify-between px-6 pt-[max(env(safe-area-inset-top),1.5rem)] pb-[max(env(safe-area-inset-bottom),2rem)]">
-        {/* Topo: wordmark + subtítulo */}
-        <div className="flex flex-col items-center gap-1.5" style={{ animation: "spSplashDown 700ms cubic-bezier(0.22,1,0.36,1) both" }}>
-          <div className="flex items-center gap-2">
-            <span aria-hidden className="h-px w-8" style={{ background: "linear-gradient(90deg,transparent,#f4c974)" }} />
-            <span className="font-mono text-[10px] tracking-[0.42em] uppercase" style={{ color: "#f4c974" }}>
+      <div className="sp-splash-mobile absolute inset-0 pointer-events-none flex flex-col justify-between px-6 pt-[max(env(safe-area-inset-top),1.75rem)] pb-[max(env(safe-area-inset-bottom),2.25rem)]">
+        {/* Topo: kicker institucional (sem repetir o wordmark que já está na arte) */}
+        <div className="flex flex-col items-center gap-2.5" style={{ animation: "spSplashDown 700ms cubic-bezier(0.22,1,0.36,1) both" }}>
+          <div className="flex items-center gap-2.5">
+            <span aria-hidden className="h-px w-10" style={{ background: "linear-gradient(90deg,transparent,#f4c974)" }} />
+            <span className="font-mono text-[10px] tracking-[0.44em] uppercase" style={{ color: "#f4c974" }}>
               Comando Operacional
             </span>
-            <span aria-hidden className="h-px w-8" style={{ background: "linear-gradient(-90deg,transparent,#f4c974)" }} />
+            <span aria-hidden className="h-px w-10" style={{ background: "linear-gradient(-90deg,transparent,#f4c974)" }} />
           </div>
-          <h1
-            className="font-black tracking-[0.08em]"
-            style={{
-              fontSize: "34px",
-              lineHeight: 1,
-              background: "linear-gradient(180deg,#fff 0%,#f4c974 55%,#c9922b 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              textShadow: "0 2px 24px rgba(244,201,116,0.25)",
-            }}
-          >
-            PLANTÃO<span style={{ WebkitTextFillColor: "#f4c974" }}>PRO</span>
-          </h1>
-          <span className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-white/60">
+          <span className="font-mono text-[10px] tracking-[0.32em] uppercase text-white/55">
             Controle · Escala · Banco de Horas
           </span>
         </div>
 
-        {/* Rodapé: selo institucional */}
-        <div className="flex flex-col items-center gap-2" style={{ animation: "spSplashUp 700ms 120ms cubic-bezier(0.22,1,0.36,1) both" }}>
-          <div className="flex items-center gap-3 rounded-sm border border-[#f4c974]/25 bg-black/40 backdrop-blur-sm px-3 py-1.5">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#f4c974", boxShadow: "0 0 8px #f4c974" }} />
-            <span className="font-mono text-[9.5px] tracking-[0.32em] uppercase text-white/80">
-              ISE · Acre · Sistema Tático
+        {/* Rodapé: painel institucional profissional (3 métricas + selo) */}
+        <div className="flex flex-col items-center gap-3" style={{ animation: "spSplashUp 700ms 120ms cubic-bezier(0.22,1,0.36,1) both" }}>
+          {/* Painel de status compacto */}
+          <div className="flex items-stretch divide-x divide-[#f4c974]/20 rounded-sm border border-[#f4c974]/25 bg-black/50 backdrop-blur-md overflow-hidden">
+            <div className="flex flex-col items-center px-3.5 py-1.5">
+              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/45">Sistema</span>
+              <span className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-[#f4c974] font-bold leading-tight">Online</span>
+            </div>
+            <div className="flex flex-col items-center px-3.5 py-1.5">
+              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/45">Setor</span>
+              <span className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-white/90 font-bold leading-tight">ISE · AC</span>
+            </div>
+            <div className="flex flex-col items-center px-3.5 py-1.5">
+              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/45">Modo</span>
+              <span className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-white/90 font-bold leading-tight">Tático</span>
+            </div>
+          </div>
+          {/* Linha de status animada */}
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping" style={{ background: "#f4c974" }} />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: "#f4c974", boxShadow: "0 0 8px #f4c974" }} />
+            </span>
+            <span className="font-mono text-[8.5px] tracking-[0.38em] uppercase text-white/40">
+              Inicializando módulos operacionais
             </span>
           </div>
-          <span className="font-mono text-[8.5px] tracking-[0.4em] uppercase text-white/35">
-            Inicializando módulos operacionais
-          </span>
         </div>
       </div>
 
