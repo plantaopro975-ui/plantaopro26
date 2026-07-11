@@ -602,7 +602,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
             {/* Cena composta */}
             <div
-              className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(220px,30vh,300px)] xl:h-[clamp(260px,34vh,340px)] 2xl:h-[clamp(300px,38vh,400px)] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] lg:translate-y-6 xl:translate-y-8 2xl:translate-y-10 pr-0 sm:pr-0 max-w-full"
+              className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(220px,30vh,300px)] xl:h-[clamp(260px,34vh,340px)] 2xl:h-[clamp(300px,38vh,400px)] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] lg:translate-y-10 xl:translate-y-14 2xl:translate-y-16 pr-0 sm:pr-0 max-w-full"
             >
 
 
@@ -615,12 +615,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-[1.04] lg:scale-[1.18] xl:scale-[1.26] 2xl:scale-[1.34] origin-bottom-left"
+                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-[1.04] lg:scale-[1.38] xl:scale-[1.5] 2xl:scale-[1.6] origin-bottom-left"
                   draggable={false}
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.18] xl:scale-[1.26] 2xl:scale-[1.34] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.38] xl:scale-[1.5] 2xl:scale-[1.6] origin-bottom-left"
 
                 >
                   <span
@@ -644,7 +644,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Agente Socioeducativo ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.12] xl:scale-[1.18] 2xl:scale-[1.24] origin-bottom sm:origin-bottom"
+                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.28] xl:scale-[1.38] 2xl:scale-[1.46] origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
 
