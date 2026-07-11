@@ -291,7 +291,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
   const metrics = useOperationalMetrics();
   const uplinkTone =
     metrics.uplink === 'online'
-      ? { dot: 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]', text: 'text-emerald-300/90', label: 'Online' }
+      ? { dot: 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]', text: 'text-emerald-300/90', label: 'Estável' }
       : metrics.uplink === 'degraded'
       ? { dot: 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)]', text: 'text-amber-300/90', label: 'Sinal reduzido' }
       : { dot: 'bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.9)]', text: 'text-rose-300/90', label: 'Offline' };
