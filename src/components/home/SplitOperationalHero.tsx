@@ -342,13 +342,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
   return (
-    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0 overflow-x-clip">
+    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full lg:h-auto min-h-0 overflow-x-clip">
 
 
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] sm:flex-1 min-h-0 flex flex-col"
+        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] sm:flex-1 lg:flex-none min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
@@ -585,23 +585,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
             </div>
 
-            {/* DELTA card — desktop only, ao lado do agente */}
-            {(() => {
-              const delta = TEAMS.find((x) => x.key === 'DELTA');
-              if (!delta) return null;
-              const idx = TEAMS.indexOf(delta);
-              return (
-                <div className="hidden lg:block absolute right-3 xl:right-6 bottom-2 z-[70] w-[160px] xl:w-[180px]" style={{ perspective: '900px' }}>
-                  <TeamCard
-                    team={delta}
-                    idx={idx}
-                    isSelected={selectedTeam === 'DELTA'}
-                    onSelect={handleSelect}
-                    className="w-full !max-w-none"
-                  />
-                </div>
-              );
-            })()}
+            {/* DELTA agora alinhado na mesma grid das outras equipes (4 cols em lg+). */}
 
 
           </div>
@@ -696,13 +680,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               Selecione sua Equipe
             </span>
             <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              <span className="lg:hidden">4 Divisões</span>
-              <span className="hidden lg:inline">3 Divisões · DELTA ao lado</span>
+              4 Divisões · Táticas
             </span>
 
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
               <TeamCard
                 key={t.key}
@@ -710,8 +693,6 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 idx={idx}
                 isSelected={selectedTeam === t.key}
                 onSelect={handleSelect}
-                className={t.key === 'DELTA' ? 'lg:hidden' : ''}
-
               />
             ))}
           </div>

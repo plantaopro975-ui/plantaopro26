@@ -1385,7 +1385,7 @@ export default function Index() {
 
 
       {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex min-h-0 flex-1 flex-col overflow-visible">
+      <header className="relative z-20 flex min-h-0 flex-1 lg:flex-none flex-col overflow-visible">
         {user && (
           <div
             className="w-full max-w-6xl mx-auto pt-2"
@@ -1430,10 +1430,10 @@ export default function Index() {
               node: (
                 <div
                   id="teams-section"
-                  className="w-full max-w-7xl mx-auto sm:h-full scroll-mt-6"
+                  className="w-full max-w-7xl mx-auto sm:h-full lg:h-auto scroll-mt-6"
                   style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
                 >
-                  <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full">
+                  <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full lg:h-auto">
                     <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
                   </DraggableHomeCard>
                 </div>
@@ -1474,7 +1474,7 @@ export default function Index() {
                 return (
                   <div
                     key={id}
-                    className={b.grow ? 'min-h-0 shrink-0 overflow-visible sm:flex-1' : 'shrink-0 overflow-hidden'}
+                    className={b.grow ? 'min-h-0 shrink-0 overflow-visible sm:flex-1 lg:flex-none' : 'shrink-0 overflow-hidden'}
                   >
                     {b.node}
                   </div>
