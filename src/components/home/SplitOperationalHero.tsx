@@ -404,6 +404,33 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
   useEffect(() => { try { localStorage.setItem('pp-agt-scale', String(agtScale)); } catch {} }, [agtScale]);
   const clampScale = (v: number) => Math.max(0.5, Math.min(3, Math.round(v * 100) / 100));
 
+  // HUD panel: posição arrastável + colapsável
+  const [hudPos, setHudPos] = useState<{ x: number; y: number }>(() => readOffset('pp-hud-pos'));
+  const [hudCollapsed, setHudCollapsed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('pp-hud-collapsed') === '1';
+  });
+  useEffect(() => { try { localStorage.setItem('pp-hud-pos', JSON.stringify(hudPos)); } catch {} }, [hudPos]);
+  useEffect(() => { try { localStorage.setItem('pp-hud-collapsed', hudCollapsed ? '1' : '0'); } catch {} }, [hudCollapsed]);
+  const hudDragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const onHudDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    hudDragRef.current = { startX: e.clientX, startY: e.clientY, baseX: hudPos.x, baseY: hudPos.y };
+  };
+  const onHudMove = (e: React.PointerEvent) => {
+    if (!hudDragRef.current) return;
+    setHudPos({
+      x: hudDragRef.current.baseX + (e.clientX - hudDragRef.current.startX),
+      y: hudDragRef.current.baseY + (e.clientY - hudDragRef.current.startY),
+    });
+  };
+  const onHudUp = (e: React.PointerEvent) => {
+    if (!hudDragRef.current) return;
+    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+    hudDragRef.current = null;
+  };
+
   const vehDrag = makeDragHandlers('veh', vehOffset, setVehOffset);
   const agtDrag = makeDragHandlers('agt', agtOffset, setAgtOffset);
 
@@ -829,11 +856,34 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </div>
             </div>
 
-            {/* HUD de drag + escala — só desktop */}
+            {/* HUD de drag + escala — só desktop; arrastável pela barra do topo */}
             {isDesktop && (
               <div
-                className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
+                className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col rounded-md border border-amber-400/50 bg-black/85 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
+                style={{ transform: `translate3d(${hudPos.x}px, ${hudPos.y}px, 0)` }}
               >
+                {/* Barra superior — drag handle + collapse */}
+                <div
+                  onPointerDown={onHudDown}
+                  onPointerMove={onHudMove}
+                  onPointerUp={onHudUp}
+                  onPointerCancel={onHudUp}
+                  className="flex items-center justify-between gap-3 px-2.5 py-1 border-b border-amber-400/30 cursor-grab active:cursor-grabbing"
+                  style={{ touchAction: 'none' }}
+                >
+                  <span className="text-amber-400 tracking-[0.3em]">⋮⋮ HUD</span>
+                  <button
+                    type="button"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={() => setHudCollapsed(v => !v)}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                  >
+                    {hudCollapsed ? 'expandir' : 'recolher'}
+                  </button>
+                </div>
+
+                {!hudCollapsed && (
+                <div className="flex flex-col gap-1.5 px-2.5 py-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-amber-400">◈ VIA</span>
                   <span className="text-white/90 tabular-nums">
@@ -892,6 +942,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   <button type="button" onClick={() => setAgtScale(1)}
                     className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">reset</button>
                 </div>
+                </div>
+                )}
               </div>
             )}
 
