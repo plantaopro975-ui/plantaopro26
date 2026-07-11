@@ -2801,7 +2801,36 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
                         <div className="flex items-center gap-2 pt-1">
-                          {!running ? (
+                          {scheduledFor != null && !running ? (() => {
+                            const remSec = Math.max(0, Math.ceil((scheduledFor - nowServer()) / 1000));
+                            const hh = Math.floor(remSec / 3600).toString().padStart(2, '0');
+                            const mm = Math.floor((remSec % 3600) / 60).toString().padStart(2, '0');
+                            const ss = (remSec % 60).toString().padStart(2, '0');
+                            return (
+                              <div
+                                className="inline-flex items-center gap-2 h-9 rounded-md border px-3"
+                                style={{ borderColor: `${teamColor}80`, background: `${teamColor}14` }}
+                                role="status"
+                                aria-live="polite"
+                              >
+                                <CalendarClock className="h-3.5 w-3.5" style={{ color: teamColor }} />
+                                <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-300">
+                                  Agendada 22:00 · inicia em&nbsp;
+                                  <b className="tabular-nums text-slate-100">{hh}:{mm}:{ss}</b>
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setScheduledFor(null);
+                                    toast({ title: 'Agendamento cancelado.' });
+                                  }}
+                                  className="ml-1 rounded border border-slate-700/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400 hover:text-slate-100 hover:border-slate-500"
+                                >
+                                  Cancelar
+                                </button>
+                              </div>
+                            );
+                          })() : !running ? (
                             <div className="relative inline-flex">
                               <style>{`
                                 @keyframes rm-ring-pulse {
@@ -2822,6 +2851,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 size="sm"
                                 onClick={() => {
                                   if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
+                                  // Janela pré-noturna (18:00–21:59 Acre): bloqueia início
+                                  // imediato e oferece agendamento para as 22:00.
+                                  if (isPreNightWindow(new Date(nowServer())) && !overrideActive) {
+                                    setPreNightOpen(true);
+                                    return;
+                                  }
                                   setStartConfirmOpen(true);
                                 }}
                                 className="rm-play-btn h-9 px-4 border font-semibold transition-transform"
