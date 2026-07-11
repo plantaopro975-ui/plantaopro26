@@ -2454,14 +2454,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       return (
                         <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                           className={cn(
-                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[11.5px] transition-all',
-                            active ? 'border-transparent shadow-sm' : 'border-border bg-card text-foreground hover:border-border',
+                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[11.5px]',
+                            active ? 'border-transparent' : 'border-border bg-card text-foreground',
                           )}
-                          style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))', boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
+                          style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))' } : undefined}
                         >
                           {t.label}
                           <span aria-hidden
-                            className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full transition-opacity', active ? 'opacity-0' : 'opacity-70')}
+                            className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full', active ? 'opacity-0' : 'opacity-70')}
                             style={{ backgroundColor: t.color }} />
                         </button>
                       );
