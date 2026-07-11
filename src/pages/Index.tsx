@@ -1394,10 +1394,8 @@ export default function Index() {
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
-        {/* Selo de origem — visível na homepage web sem alterar o layout */}
-        <div className="pointer-events-none fixed bottom-3 left-3 z-[60] hidden sm:flex">
-          <MadeInFeijoBadge inline />
-        </div>
+        {/* (Selo movido para próximo do rodapé, em posição visível) */}
+
 
         {/* Return-to-panel shortcut for logged-in agents browsing the homepage */}
         {user && (
