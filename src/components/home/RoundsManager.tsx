@@ -1277,9 +1277,11 @@ function HandoffHighlight({
   postNumber: number;
   agentName: string;
 }) {
+  // Auto-dismiss em 4s — sem confirmação intermediária.
+  const AUTO_DISMISS_MS = 4000;
   useEffect(() => {
     if (!open) return;
-    const t = window.setTimeout(onClose, 6500);
+    const t = window.setTimeout(onClose, AUTO_DISMISS_MS);
     return () => window.clearTimeout(t);
   }, [open, onClose]);
 
@@ -1348,10 +1350,28 @@ function HandoffHighlight({
             OK
           </span>
         </div>
+        {/* Barra de progresso do auto-dismiss */}
+        <span
+          key={`${postNumber}-${agentName}`}
+          aria-hidden
+          className="absolute left-0 bottom-0 h-[2px] rm-handoff-progress"
+          style={{
+            background: `linear-gradient(90deg, ${teamColor}, ${teamColor}aa)`,
+            boxShadow: `0 0 8px ${teamColor}80`,
+          }}
+        />
+        <style>{`
+          @keyframes rmHandoffProgress { from { width: 100% } to { width: 0% } }
+          .rm-handoff-progress {
+            width: 100%;
+            animation: rmHandoffProgress ${AUTO_DISMISS_MS}ms linear forwards;
+          }
+        `}</style>
       </button>
     </div>
   );
 }
+
 
 
 export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
