@@ -51,7 +51,7 @@ export function CinematicBrandHero({
       aria-label="PlantãoPro — Controle profissional de plantão"
       className="relative w-full overflow-hidden isolate"
       style={{
-        minHeight: "clamp(520px, 85vh, 900px)",
+        minHeight: "clamp(460px, 68vh, 760px)",
         background: "#050505",
       }}
     >
