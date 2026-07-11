@@ -714,8 +714,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
         {/* ============ MOBILE-ONLY — Viatura + Agente abaixo dos cards (aproveitando o espaço) ============ */}
         <div className="sm:hidden relative z-30 order-4 px-2 pt-1 pb-3 mt-0 shrink-0 pointer-events-none">
-          <div className="relative mx-auto flex items-end justify-center gap-0 h-[220px] min-[390px]:h-[244px] w-full max-w-[380px]">
-            <picture className="relative block h-full aspect-square leading-[0] self-end translate-x-2">
+          <div className="relative mx-auto flex items-end justify-center gap-0 h-[220px] min-[390px]:h-[244px] w-full max-w-[360px]">
+            <picture className="relative block h-full aspect-square leading-[0] self-end">
+
               <source type="image/webp" srcSet={vehicle3dWebp} />
               <img
                 src={vehicle3d}
