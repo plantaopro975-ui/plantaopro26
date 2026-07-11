@@ -3187,7 +3187,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       title={endingSoon ? 'Operação encerrando em breve' : undefined}
                     >
                       {fmtHMS(totalRemainingSeconds)}
-                      {endingSoon && <span className="ml-1">⏳</span>}
+                      {endingSoon && <HourglassSVG className="ml-1 h-3.5 w-3.5 inline-block align-[-2px]" />}
                     </span>
 
                     <span className="hidden xs:inline">· {schedule?.rows.length ?? agents.length} ag.</span>
