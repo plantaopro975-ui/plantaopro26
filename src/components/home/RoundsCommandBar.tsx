@@ -161,25 +161,18 @@ export function RoundsCommandBar() {
 
           {/* ───── ZONA 3 — SHORTCUT + RELÓGIO ───── */}
           <div className="flex items-center gap-3 pl-3 sm:pl-5 border-l border-slate-800 shrink-0">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={handleRefresh}
-                  className="hidden md:flex flex-col items-end leading-tight group focus-visible:outline-none"
-                  aria-label="Atualizar página em tempo real"
-                >
-                  <span className="text-[10px] font-semibold text-amber-200/90 tracking-[0.22em] uppercase">Sincronizar</span>
-                  <span className="inline-flex items-center gap-1 text-slate-300 group-hover:text-primary transition-colors text-[10px] font-bold tracking-widest uppercase">
-                    Atualizar página
-                    <RefreshCw className="h-3 w-3 group-hover:rotate-180 transition-transform duration-500" strokeWidth={2.4} />
-                  </span>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">
-                Recarrega a página com dados em tempo real
-              </TooltipContent>
-            </Tooltip>
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="hidden md:flex flex-col items-end leading-tight group focus-visible:outline-none"
+              aria-label="Atualizar página em tempo real"
+            >
+              <span className="text-[10px] font-semibold text-amber-200/90 tracking-[0.22em] uppercase">Sincronizar</span>
+              <span className="inline-flex items-center gap-1 text-slate-300 group-hover:text-primary transition-colors text-[10px] font-bold tracking-widest uppercase">
+                Atualizar página
+                <RefreshCw className="h-3 w-3 group-hover:rotate-180 transition-transform duration-500" strokeWidth={2.4} />
+              </span>
+            </button>
 
             {/* Relógio de rede */}
             <div className="bg-slate-900/60 border border-slate-800 px-2.5 sm:px-3 py-1 flex flex-col items-center min-w-[112px] rounded-sm shadow-inner">
