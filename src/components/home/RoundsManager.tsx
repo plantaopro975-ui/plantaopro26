@@ -1695,7 +1695,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   const [preNightOpen, setPreNightOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
-  const [scheduledFor, setScheduledFor] = useState<number | null>(null);
+  const [scheduledFor, setScheduledFor] = useState<number | null>(() => {
+    const s = readTeamLock();
+    return s?.scheduledFor ?? null;
+  });
+
+  /* Persistência: grava a trava de equipe/agendamento em cache. */
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        'plantaopro_team_lock_state',
+        JSON.stringify({ team, teamConfirmed, scheduledFor }),
+      );
+    } catch { /* ignore */ }
+  }, [team, teamConfirmed, scheduledFor]);
   // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
   // do lado esquerdo é travada para preservar o cronograma pactuado.
   const configLocked = scheduledFor != null;
