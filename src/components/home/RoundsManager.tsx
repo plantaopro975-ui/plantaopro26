@@ -2556,6 +2556,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </button>
               )}
 
+              <button type="button" onClick={() => setSettingsOpen(true)} aria-label="Configurações do lembrete"
+                onPointerDown={(e) => e.stopPropagation()}
+                title="Configurações do lembrete de rondas"
+                className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border/90 bg-card text-muted-foreground hover:text-foreground transition-colors">
+                <Settings className="h-3.5 w-3.5" />
+              </button>
+
               <button type="button" onClick={requestExit} aria-label="Sair da ferramenta"
                 onPointerDown={(e) => e.stopPropagation()}
                 className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-md border border-border/90 bg-card text-muted-foreground hover:text-foreground transition-colors">
