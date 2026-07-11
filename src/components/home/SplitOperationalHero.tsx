@@ -334,6 +334,55 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     onTeamClick(k);
   }, [onTeamClick]);
 
+  // ==== DRAG MODE (desktop only, temporário) ============================
+  // Permite arrastar a cena (viatura + agente) para posicionar livremente.
+  // Persiste em localStorage para o usuário reportar o offset final.
+  const [sceneOffset, setSceneOffset] = useState<{ x: number; y: number }>(() => {
+    if (typeof window === 'undefined') return { x: 0, y: 0 };
+    try {
+      const raw = localStorage.getItem('pp-scene-offset');
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return { x: 0, y: 0 };
+  });
+  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem('pp-scene-offset', JSON.stringify(sceneOffset)); } catch {}
+  }, [sceneOffset]);
+  const onDragPointerDown = useCallback((e: React.PointerEvent) => {
+    if (!isDesktop) return;
+    e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    dragState.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      baseX: sceneOffset.x,
+      baseY: sceneOffset.y,
+    };
+    setIsDragging(true);
+  }, [isDesktop, sceneOffset]);
+  const onDragPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current) return;
+    const dx = e.clientX - dragState.current.startX;
+    const dy = e.clientY - dragState.current.startY;
+    setSceneOffset({ x: dragState.current.baseX + dx, y: dragState.current.baseY + dy });
+  }, []);
+  const onDragPointerUp = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current) return;
+    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+    dragState.current = null;
+    setIsDragging(false);
+  }, []);
+  const resetSceneOffset = useCallback(() => setSceneOffset({ x: 0, y: 0 }), []);
 
 
 
