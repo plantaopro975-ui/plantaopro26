@@ -506,19 +506,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               <span className="absolute top-1/2 right-0 -translate-y-1/2 h-4 w-px bg-amber-300/20" />
             </div>
 
-            {/* Scan line vertical — sutil, movimento contínuo lento */}
-            <div
-              aria-hidden
-              className="hidden md:block absolute inset-y-3 left-0 w-full pointer-events-none overflow-hidden motion-reduce:hidden"
-            >
-              <span
-                className="absolute inset-y-0 left-0 w-[14%] opacity-[0.08]"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, hsl(42 90% 65% / 0.5) 50%, transparent 100%)',
-                  animation: 'hud-scan-x 11s cubic-bezier(0.65,0,0.35,1) infinite',
-                }}
-              />
-            </div>
+            {/* Scan line removida: causava faixa vertical sobre a viatura */}
+
 
 
             {/* Rótulos verticais nas margens — tipografia mono, mesma linguagem do briefing */}
