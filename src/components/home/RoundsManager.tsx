@@ -3811,25 +3811,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
       </Dialog>
 
-      {/* Alarme de troca de ronda — padronizado */}
-      <ConfirmDialog
+      {/* Troca de posto — destaque SVG profissional, sem confirmação (auto-dismiss) */}
+      <HandoffHighlight
         open={alarm.open}
-        onOpenChange={(o) => setAlarm((a) => ({ ...a, open: o }))}
-        variant="alarm"
-        kicker={`EQUIPE ${team} · POSTO ${pad(alarm.index + 1)}`}
-        title="Hora de fazer a ronda"
-        description={
-          <span>
-            Assumir posto:{' '}
-            <span className="font-semibold" style={{ color: teamColor }}>
-              {alarm.name}
-            </span>
-          </span>
-        }
-        accent={teamColor}
-        primaryLabel="Ciente · Assumir posto"
-        onPrimary={() => setAlarm((a) => ({ ...a, open: false }))}
+        onClose={() => setAlarm((a) => ({ ...a, open: false }))}
+        team={team}
+        teamColor={teamColor}
+        postNumber={alarm.index + 1}
+        agentName={alarm.name}
       />
+
 
       {/* Confirmação de saída — hardened quando a ronda está em execução */}
       <ConfirmDialog
