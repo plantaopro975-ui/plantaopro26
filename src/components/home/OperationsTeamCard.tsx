@@ -92,13 +92,13 @@ export function OperationsTeamCard({ team, onClick }: OperationsTeamCardProps) {
 
         {/* Bottom access bar */}
         <div
-          className="absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-2.5 border-t transition-all duration-300 bg-background/60 group-hover:bg-[color:var(--bar)]"
+          className="absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-2.5 border-t transition-all duration-300 bg-black/70 backdrop-blur-sm group-hover:bg-[color:var(--bar)]"
           style={{
-            borderColor: `${meta.hex}55`,
-            ['--bar' as never]: `${meta.hex}20`,
+            borderColor: `${meta.hex}80`,
+            ['--bar' as never]: `${meta.hex}40`,
           }}
         >
-          <span className="flex items-center gap-1.5 font-mono-mil text-[10px] text-muted-foreground group-hover:text-foreground transition-colors">
+          <span className="flex items-center gap-1.5 font-mono-mil text-[10px] text-white/80 group-hover:text-white transition-colors">
             <Lock className="w-3 h-3" />
             ACESSAR
           </span>
@@ -107,6 +107,7 @@ export function OperationsTeamCard({ team, onClick }: OperationsTeamCardProps) {
             style={{ color: meta.hex }}
           />
         </div>
+
 
         {/* Corner brackets */}
         <span className="absolute top-1 left-1 w-3 h-3 border-l border-t pointer-events-none" style={{ borderColor: meta.hex }} aria-hidden />
