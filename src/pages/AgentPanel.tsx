@@ -558,22 +558,22 @@ export default function AgentPanel() {
       <div className="flex-1 flex flex-col w-full min-w-0 min-h-0 no-swipe-back">
         <main 
           data-compact={compact ? 'true' : 'false'}
-          className={`flex-1 w-full min-w-0 overflow-y-auto overflow-x-hidden no-swipe-back ${compact ? 'px-2 py-2 sm:p-2.5 md:p-3' : 'px-2 py-2 sm:p-3 md:p-4 lg:p-5'}`}
+          className={`flex-1 w-full min-w-0 overflow-y-auto overflow-x-hidden no-swipe-back ${compact ? 'px-1.5 py-1.5 sm:p-2 md:p-2.5' : 'px-2 py-1.5 sm:p-2.5 md:p-3 lg:p-4'}`}
           style={{
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
             overscrollBehaviorX: 'none',
             scrollBehavior: 'auto',
             touchAction: 'pan-y pinch-zoom',
-            paddingTop: 'max(env(safe-area-inset-top, 0px), 8px)',
-            paddingLeft: 'max(env(safe-area-inset-left, 0px), 8px)',
-            paddingRight: 'max(env(safe-area-inset-right, 0px), 8px)',
-            paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
+            paddingTop: 'max(env(safe-area-inset-top, 0px), 6px)',
+            paddingLeft: 'max(env(safe-area-inset-left, 0px), 6px)',
+            paddingRight: 'max(env(safe-area-inset-right, 0px), 6px)',
+            paddingBottom: 'max(env(safe-area-inset-bottom, 12px), 24px)',
           }}
         >
-          <div className={`agent-panel-inner w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
+          <div className={`agent-panel-inner w-full mx-auto pb-12 sm:pb-16 ${compact ? 'max-w-[820px] space-y-1.5 md:space-y-2' : 'max-w-[960px] space-y-2 md:space-y-2.5'}`}>
             {/* Main Tabs - sticky combined block (header + tabs) */}
-            <Tabs value={activeTab} onValueChange={handleTabChange} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
+            <Tabs value={activeTab} onValueChange={handleTabChange} className={compact ? 'space-y-1.5 md:space-y-2' : 'space-y-2 md:space-y-2.5'}>
               {/* Sticky combined block: Professional Header + Tabs Control Panel */}
               <div
                 role="region"
