@@ -147,43 +147,24 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       )}
       style={{ ['--team-accent' as any]: t.accent }}
     >
-      {/* Backdrop desfocado: preenche o card sem mostrar recortes duros do sujeito */}
+      {/* Imagem preenche o card inteiro (edge-to-edge, sem faixas vazias) */}
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
-        <source type="image/webp" srcSet={t.bgAvif} />
         <img
           src={t.bg}
           alt=""
           aria-hidden
           loading="lazy"
           decoding="async"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover scale-110 blur-md opacity-60 saturate-125"
+          className={cn(
+            'absolute inset-0 h-full w-full object-cover object-center select-none',
+            'transition-all duration-500 ease-out',
+            isSelected
+              ? 'opacity-100 scale-[1.03] saturate-125 contrast-110'
+              : 'opacity-95 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.02] group-hover:saturate-125',
+          )}
           draggable={false}
         />
       </picture>
-
-      {/* Camada principal: container com aspect-ratio + object-contain preserva a imagem inteira */}
-      <div className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center overflow-hidden">
-        <div className="relative h-full aspect-[3/4] max-h-full max-w-full">
-          <picture className="block h-full w-full">
-            <source type="image/webp" srcSet={t.bgAvif} />
-            <img
-              src={t.bg}
-              alt=""
-              aria-hidden
-              loading="lazy"
-              decoding="async"
-              className={cn(
-                'h-full w-full object-contain object-center select-none',
-                'transition-all duration-500 ease-out',
-                isSelected
-                  ? 'opacity-100 scale-[1.02] saturate-125 contrast-110'
-                  : 'opacity-90 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.01] group-hover:saturate-125',
-              )}
-              draggable={false}
-            />
-          </picture>
-        </div>
-      </div>
 
       {/* Vignette + gradient legibility (mais forte no rodapé para o footer institucional) */}
       <span aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_50%_35%,transparent_25%,rgba(2,6,23,0.7)_85%)]" />
