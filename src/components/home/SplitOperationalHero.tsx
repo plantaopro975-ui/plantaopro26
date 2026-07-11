@@ -406,10 +406,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
   // HUD panel: posição arrastável + colapsável
   const [hudPos, setHudPos] = useState<{ x: number; y: number }>(() => readOffset('pp-hud-pos'));
-  const [hudCollapsed, setHudCollapsed] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('pp-hud-collapsed') === '1';
-  });
+  const [hudCollapsed, setHudCollapsed] = useState<boolean>(false);
+
   useEffect(() => { try { localStorage.setItem('pp-hud-pos', JSON.stringify(hudPos)); } catch {} }, [hudPos]);
   useEffect(() => { try { localStorage.setItem('pp-hud-collapsed', hudCollapsed ? '1' : '0'); } catch {} }, [hudCollapsed]);
   const hudDragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
