@@ -644,29 +644,16 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
             </div>
           </div>
           
-          {/* Theme badge - top left */}
-          {resolvedTheme !== 'tactical' && (
-            <div className="absolute top-2 left-2 z-10 hidden sm:block">
-              <div className={cn(
-                "px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider",
-                resolvedTheme === 'cyber' && "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40",
-                resolvedTheme === 'crimson' && "bg-red-500/20 text-red-300 border border-red-500/40",
-                resolvedTheme === 'arctic' && "bg-sky-500/20 text-sky-300 border border-sky-400/40",
-                resolvedTheme === 'sovereign' && "bg-yellow-500/20 text-yellow-300 border border-yellow-500/40",
-                resolvedTheme === 'nexus' && "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40",
-              )}>
-                {themeConfig.emoji}
-              </div>
-            </div>
-          )}
+          {/* Theme badge removido — reduz ruído visual e deixa o card mais leve. */}
+
           
           {/* Content */}
           <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 md:p-5 lg:p-6 z-10">
             <div className="flex flex-col items-center">
-              {/* Team name with theme-specific icon - PROPORCIONAL AO CARD */}
+              {/* Nome da equipe — ícone único à esquerda para deixar o card mais leve */}
               <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                 <TeamIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 shrink-0 text-white/80" />
-                <h3 
+                <h3
                   className={cn(
                     "text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-[0.05em] sm:tracking-[0.1em] drop-shadow-lg",
                     textColor
@@ -675,17 +662,30 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
                 >
                   {team}
                 </h3>
-                <TeamIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 shrink-0 text-white/80" />
               </div>
-              
-              {/* Fio sutil sob o nome da equipe — substitui o codinome pesado por um traço tático leve */}
+
+              {/* Fio sutil sob o nome — separador tático discreto */}
               <div
                 aria-hidden
-                className="mx-auto mb-2 md:mb-3 h-px w-10 sm:w-14 md:w-16 opacity-70"
+                className="mx-auto mb-1.5 md:mb-2 h-px w-10 sm:w-14 md:w-16 opacity-70"
                 style={{
                   background: `linear-gradient(90deg, transparent, ${teamColors[team as keyof typeof teamColors]?.primary}, transparent)`,
                 }}
               />
+
+              {/* Descritor profissional curto — mantém elegância sem pesar */}
+              <p
+                className={cn(
+                  "mb-2 md:mb-3 text-center font-mono text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-white/70",
+                )}
+              >
+                {team === 'ALFA'    && '1ª Turma · Plantão 24h'}
+                {team === 'BRAVO'   && '2ª Turma · Plantão 24h'}
+                {team === 'CHARLIE' && '3ª Turma · Plantão 24h'}
+                {team === 'DELTA'   && '4ª Turma · Plantão 24h'}
+              </p>
+
+
 
               
               {/* Access button - PROPORCIONAL */}
