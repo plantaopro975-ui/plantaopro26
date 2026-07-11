@@ -65,7 +65,7 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
           <line x1="7.4" y1="0.6" x2="4.6" y2="10.4" stroke="#f59e0b" strokeWidth="1" />
         </g>
 
-        {/* Texto — CODED BY */}
+        {/* Texto — CRAFTED */}
         <text
           x="26"
           y="9.6"
@@ -75,10 +75,10 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
           fontWeight="600"
           letterSpacing="1.6"
         >
-          CODED BY
+          CRAFTED
         </text>
 
-        {/* Texto — FRANC D'NIS */}
+        {/* Texto — SOFTWARE APP */}
         <text
           x="26"
           y="17.4"
@@ -88,7 +88,7 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
           fontWeight="800"
           letterSpacing="1.4"
         >
-          FRANC D'NIS
+          SOFTWARE APP
         </text>
 
         {/* Selo circular </> à direita */}
