@@ -115,14 +115,6 @@ function ThemeDecorations({ theme }: { theme: string }) {
   if (theme === 'cyber') {
     return (
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Neon grid lines */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px),
-            linear-gradient(0deg, rgba(168, 85, 247, 0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-        }} />
         {/* Floating hexagons */}
         <div className="absolute top-1/4 left-1/4 w-32 h-32 border border-cyan-500/20 rotate-45 animate-pulse" />
         <div className="absolute bottom-1/3 right-1/4 w-24 h-24 border border-purple-500/20 rotate-12 animate-pulse" style={{ animationDelay: '1s' }} />

@@ -191,21 +191,7 @@ function RadarSweep({ effect }: { effect: BackgroundEffect }) {
 
 // Grid overlay effect
 function GridOverlay({ effect }: { effect: BackgroundEffect }) {
-  const size = effect.intensity === 'high' ? 50 : effect.intensity === 'medium' ? 80 : 100;
-  
-  return (
-    <div 
-      className="absolute inset-0"
-      style={{
-        opacity: effect.intensity === 'high' ? 0.08 : effect.intensity === 'medium' ? 0.05 : 0.03,
-        backgroundImage: `
-          linear-gradient(to right, ${effect.primaryColor} 1px, transparent 1px),
-          linear-gradient(to bottom, ${effect.primaryColor} 1px, transparent 1px)
-        `,
-        backgroundSize: `${size}px ${size}px`,
-      }}
-    />
-  );
+  return null;
 }
 
 // Scanline effect
