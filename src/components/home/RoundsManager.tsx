@@ -4166,6 +4166,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       </Dialog>
 
 
+      {/* Confirmação para limpar HISTÓRICO LOCAL de sessões — SVG profissional */}
+      <Dialog open={historyClearConfirmOpen} onOpenChange={setHistoryClearConfirmOpen}>
+        <DialogContent className="max-w-sm border-2 border-destructive/60">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+              </svg>
+              Apagar histórico de sessões?
+            </DialogTitle>
+            <DialogDescription>
+              Isso remove <b>todas as {history.length} sessão{history.length === 1 ? '' : 'ões'} registrada{history.length === 1 ? '' : 's'}</b> localmente neste dispositivo. Os registros da unidade na nuvem não são afetados.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive/95 flex items-start gap-2">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span>Ação irreversível. Deseja realmente continuar?</span>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setHistoryClearConfirmOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                clearHistory();
+                setHistoryClearConfirmOpen(false);
+                toast({ title: 'Histórico apagado', description: 'Sessões locais removidas deste dispositivo.' });
+              }}
+            >
+              Sim, apagar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </>
   );
