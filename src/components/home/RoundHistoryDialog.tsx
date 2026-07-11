@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { NIGHT_TZ } from '@/lib/nightShift';
 import { getRotatedTeamColor } from '@/lib/teamColors';
 
-export type TeamRoundLogEntry = { team: string; dateISO: string };
+export type TeamRoundLogEntry = { team: string; dateISO: string; savedName?: string };
 
 interface RoundHistoryDialogProps {
   open: boolean;
@@ -10,6 +10,7 @@ interface RoundHistoryDialogProps {
   entries: TeamRoundLogEntry[];
   onClear: () => void;
 }
+
 
 /**
  * Modal detalhado do histórico compacto de rondas.
