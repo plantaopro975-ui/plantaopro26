@@ -1653,6 +1653,30 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     if (endTime !== NIGHT_END) setEndTime(NIGHT_END);
   }, [nightEffectivelyLocked, startTime, endTime]);
 
+  /* ---------- Auto-ancorar início no horário ATUAL ao abrir (turno diurno) ----------
+   * Regra de negócio: sempre que o operador abre o Gestor de Rondas para criar
+   * ou dividir uma ronda durante o dia, o "Início do turno" passa a refletir
+   * o horário atual do servidor (arredondado a 5 min), para que as divisões
+   * sejam calculadas a partir do momento em que ele está — e não de um valor
+   * fixo (07:00) que já ficou no passado. No turno noturno o bloqueio 22:00→06:00
+   * continua prevalecendo. Só aplicamos UMA vez por abertura do modal para não
+   * brigar com edições manuais posteriores do operador.
+   */
+  const autoAnchoredRef = useRef(false);
+  useEffect(() => {
+    if (!open) { autoAnchoredRef.current = false; return; }
+    if (nightEffectivelyLocked) return;
+    if (autoAnchoredRef.current) return;
+    autoAnchoredRef.current = true;
+    const now = new Date(nowServer());
+    const totalMin = now.getHours() * 60 + now.getMinutes();
+    const rounded = Math.round(totalMin / 5) * 5;
+    const h = String(Math.floor(rounded / 60) % 24).padStart(2, '0');
+    const m = String(rounded % 60).padStart(2, '0');
+    setStartTime(`${h}:${m}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, nightEffectivelyLocked]);
+
   const activateOverride = () => {
     const reason = overrideReason.trim();
     if (reason.length < 5) {
