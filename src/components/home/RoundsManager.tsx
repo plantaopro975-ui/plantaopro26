@@ -896,56 +896,48 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
 
 
 
-/* ================= Ready-to-start professional banner ================= */
+/* ================= Ready-to-start banner — flat, token-based ================= */
 function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; color: string; count: number; ready: boolean }) {
-  const uid = `rts-${team}`;
   return (
     <div
-      className="relative mb-2 overflow-hidden rounded-md border"
-      style={{
-        borderColor: `${color}40`,
-        background: `linear-gradient(90deg, ${color}10 0%, transparent 50%), hsl(var(--card))`,
-      }}
+      className="mb-2 flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 sm:px-3"
+      style={{ borderLeft: `2px solid ${color}` }}
     >
-
-
-
-      <div className="relative flex items-center gap-3 px-3 py-2">
-        {/* Ícone de status — sóbrio, sem pulso agressivo */}
-        <svg viewBox="0 0 32 32" className="h-8 w-8 shrink-0" aria-hidden>
-          <circle cx="16" cy="16" r="14" fill="none" stroke={color} strokeOpacity="0.45" strokeWidth="1.1" />
-          <circle cx="16" cy="16" r="11" fill={color} fillOpacity="0.08" />
-          {ready ? (
-            <path d="M10 16.5 L14.5 21 L23 12" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          ) : (
-            <path d="M16 8 V17 L22 20" fill="none" stroke={color} strokeOpacity="0.75" strokeWidth="1.6" strokeLinecap="round" />
-          )}
-        </svg>
-
-        <div className="min-w-0 flex-1">
-          <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-            {ready ? 'Cronograma pronto' : 'Aguardando configuração'}
-          </div>
-          <div className="font-display text-[13px] sm:text-[14px] font-semibold text-foreground/95 leading-tight">
-            {ready
-              ? <>Equipe <span style={{ color }}>{team}</span> · {count} agente{count === 1 ? '' : 's'} em posição</>
-              : <>Defina intervalo e agentes para gerar o cronograma</>}
-          </div>
-        </div>
-
-        {ready && (
-          <div
-            className="hidden sm:flex items-center gap-1.5 rounded-sm border px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest"
-            style={{ borderColor: `${color}55`, color }}
-          >
-            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color, opacity: 0.85 }} />
-            Prontos para iniciar
-          </div>
+      {/* Ícone de status — plano, sem efeitos */}
+      <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden>
+        {ready ? (
+          <path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        ) : (
+          <>
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.6" />
+            <path d="M12 7 V12 L15.5 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </>
         )}
+      </svg>
+
+      <div className="min-w-0 flex-1">
+        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground leading-none">
+          {ready ? 'Cronograma pronto' : 'Aguardando configuração'}
+        </div>
+        <div className="mt-0.5 text-[12px] sm:text-[13px] font-medium text-foreground leading-tight truncate">
+          {ready
+            ? <>Equipe <span style={{ color }}>{team}</span> · {count} agente{count === 1 ? '' : 's'}</>
+            : <>Defina intervalo e agentes</>}
+        </div>
       </div>
+
+      {ready && (
+        <span
+          className="hidden sm:inline-flex items-center rounded-sm border border-border px-1.5 py-[1px] font-mono text-[9.5px] uppercase tracking-widest text-muted-foreground"
+        >
+          Pronto
+        </span>
+      )}
     </div>
   );
 }
+
+
 
 
 
