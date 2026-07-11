@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 
 type SoundType = 'notification' | 'alert' | 'shift' | 'urgent' | 'success';
 
