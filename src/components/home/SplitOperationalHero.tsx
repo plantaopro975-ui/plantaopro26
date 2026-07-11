@@ -747,35 +747,26 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            {/* Wrapper de drag (desktop) — envolve a cena preservando os translates internos do Tailwind */}
-            <div
-              onPointerDown={onDragPointerDown}
-              onPointerMove={onDragPointerMove}
-              onPointerUp={onDragPointerUp}
-              onPointerCancel={onDragPointerUp}
-              className="contents lg:relative lg:z-50 lg:inline-block"
-              style={
-                isDesktop
-                  ? {
-                      transform: `translate3d(${sceneOffset.x}px, ${sceneOffset.y}px, 0)`,
-                      cursor: isDragging ? 'grabbing' : 'grab',
-                      touchAction: 'none',
-                      willChange: 'transform',
-                    }
-                  : undefined
-              }
-            >
-              {/* Cena composta */}
+            {/* Cena: viatura e agente arrastáveis independentemente no desktop */}
+            <div className="contents lg:relative lg:z-50 lg:inline-block">
               <div
                 className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-4 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[460px] xl:h-[540px] 2xl:h-[620px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[10%] xl:-translate-x-[10%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
               >
-
-
-
-                {/* Viatura — mobile: proporcional ao agente | desktop: pousada no chão sem cortes */}
+                {/* Viatura — arrastável independentemente */}
                 <picture
+                  {...(isDesktop ? vehDrag : {})}
                   className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0"
-                  style={isDesktop ? { transform: `scale(${vehScale})`, transformOrigin: 'bottom left' } : undefined}
+                  style={
+                    isDesktop
+                      ? {
+                          transform: `translate3d(${vehOffset.x}px, ${vehOffset.y}px, 0) scale(${vehScale})`,
+                          transformOrigin: 'bottom left',
+                          cursor: draggingKey === 'veh' ? 'grabbing' : 'grab',
+                          touchAction: 'none',
+                          willChange: 'transform',
+                        }
+                      : undefined
+                  }
                 >
                   <source type="image/webp" srcSet={vehicle3dWebp} />
                   <img
@@ -789,8 +780,6 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   <span
                     aria-hidden
                     className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.7] xl:scale-[1.8] 2xl:scale-[1.9] origin-bottom-left"
-
-
                   >
                     <span
                       aria-hidden
@@ -803,16 +792,26 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       style={{ top: '23.2%', left: '63.4%' }}
                     />
                   </span>
-                  {/* Plataforma holográfica + scanner (desktop apenas) */}
                   <span aria-hidden className="hidden lg:block pp-holo-ring" />
                   <span aria-hidden className="hidden lg:block pp-holo-platform" />
                   <span aria-hidden className="hidden lg:block pp-holo-scanner" />
                 </picture>
 
-                {/* Agente — cresce a partir do chão, sem translate positivo para não cortar os pés */}
+                {/* Agente — arrastável independentemente */}
                 <picture
+                  {...(isDesktop ? agtDrag : {})}
                   className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0"
-                  style={isDesktop ? { transform: `scale(${agtScale})`, transformOrigin: 'bottom' } : undefined}
+                  style={
+                    isDesktop
+                      ? {
+                          transform: `translate3d(${agtOffset.x}px, ${agtOffset.y}px, 0) scale(${agtScale})`,
+                          transformOrigin: 'bottom',
+                          cursor: draggingKey === 'agt' ? 'grabbing' : 'grab',
+                          touchAction: 'none',
+                          willChange: 'transform',
+                        }
+                      : undefined
+                  }
                 >
                   <source type="image/webp" srcSet={agent3dWebp} />
                   <img
@@ -823,13 +822,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.65] xl:scale-[1.75] 2xl:scale-[1.85] origin-bottom sm:origin-bottom"
                     draggable={false}
                   />
-                  {/* Plataforma holográfica + scanner vertical (desktop apenas) */}
                   <span aria-hidden className="hidden lg:block pp-holo-ring" style={{ width: '58%' }} />
                   <span aria-hidden className="hidden lg:block pp-holo-platform" style={{ width: '58%' }} />
                   <span aria-hidden className="hidden lg:block pp-holo-scanner" />
                 </picture>
-
-
               </div>
             </div>
 
