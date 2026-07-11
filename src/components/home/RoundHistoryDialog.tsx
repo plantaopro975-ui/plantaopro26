@@ -77,9 +77,20 @@ export function RoundHistoryDialog({
   }, [entries]);
 
   const filtered = useMemo(() => {
-    return entries.filter(
+    // Dedupe: mantém apenas o registro mais recente por equipe para
+    // simplificar a leitura (data + nº de agentes), evitando várias entradas
+    // por membro. `entries` já vem ordenado por data desc.
+    const inScope = entries.filter(
       (e) => (!teamFilter || e.team === teamFilter) && inPeriod(e.dateISO, period),
     );
+    const seen = new Set<string>();
+    const deduped: TeamRoundLogEntry[] = [];
+    for (const e of inScope) {
+      if (seen.has(e.team)) continue;
+      seen.add(e.team);
+      deduped.push(e);
+    }
+    return deduped;
   }, [entries, teamFilter, period]);
 
   return (
