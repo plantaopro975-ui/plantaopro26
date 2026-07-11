@@ -1844,3 +1844,26 @@ body:not(.rm-focus-mode) > #root {
   .group:hover .animate-\[pp-briefing-sweep_1\.4s_ease-out\],
   .group:focus-within .animate-\[pp-briefing-sweep_1\.4s_ease-out\] { animation: none !important; }
 }
+
+/* ============================================================
+   Gestor de Rondas — legibilidade mobile.
+   Aumenta apenas o font-size das classes minúsculas dentro do
+   modal (.rm-dialog) no mobile, sem alterar padding/gap/altura.
+   Preserva o layout tático em desktop.
+   ============================================================ */
+@media (max-width: 640px) {
+  .rm-dialog [class*="text-[9px]"],
+  .rm-dialog [class*="text-[9.5px]"]   { font-size: 11px !important; line-height: 1.25 !important; }
+  .rm-dialog [class*="text-[10px]"],
+  .rm-dialog [class*="text-[10.5px]"]  { font-size: 12px !important; line-height: 1.25 !important; }
+  .rm-dialog [class*="text-[11px]"],
+  .rm-dialog [class*="text-[11.5px]"]  { font-size: 13px !important; line-height: 1.3 !important; }
+  .rm-dialog [class*="text-[12px]"],
+  .rm-dialog [class*="text-[12.5px]"]  { font-size: 13.5px !important; line-height: 1.35 !important; }
+  .rm-dialog [class*="text-[13px]"],
+  .rm-dialog [class*="text-[13.5px]"]  { font-size: 14px !important; line-height: 1.35 !important; }
+  .rm-dialog .text-xs                  { font-size: 13px !important; line-height: 1.3 !important; }
+  /* Compensar tracking excessivo em uppercase quando o tipo cresce */
+  .rm-dialog [class*="tracking-[0.22em]"],
+  .rm-dialog [class*="tracking-[0.28em]"] { letter-spacing: 0.14em !important; }
+}
