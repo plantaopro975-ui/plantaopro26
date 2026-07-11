@@ -473,9 +473,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     <div key={it.k} className="relative pl-2 md:pl-2.5 border-l border-amber-400/25 min-w-0">
                       <div className="font-mono text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-200/95 truncate flex items-center gap-1">
                         {it.pulse && (
-                          <span className="relative inline-flex h-1.5 w-1.5 shrink-0">
-                            <span className="absolute inset-0 rounded-full bg-emerald-400/70 animate-ping" />
-                            <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+                          <span className="relative inline-flex h-2 w-2 items-center justify-center rounded-full border border-emerald-400/55 shrink-0">
+                            <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.75)]" />
                           </span>
                         )}
                         {it.k}
