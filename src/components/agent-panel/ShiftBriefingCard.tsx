@@ -239,37 +239,58 @@ export function ShiftBriefingCard({
   const completedCount = Object.values(itemsStatus).filter(Boolean).length;
   const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
 
-  // -------- Auto-save (debounce 700ms) --------
+  // -------- Auto-save (debounce 700ms) com persistência local + fila offline --------
   const persist = async (finalize = false) => {
     if (!currentShift) return null;
     if (finalize && !signature.trim()) {
       toast.error('Assine com seu nome para finalizar o briefing.');
       return null;
     }
+
+    // 1) Sempre salvar rascunho local ANTES de tentar a rede — assim, mesmo se
+    //    o navegador cair, recarregar ou perder a conexão, o preenchimento é
+    //    preservado até a próxima sincronização.
+    writeDraft(currentShift.id, {
+      adoCnt, algCnt, chvCnt, radiosCharged, radiosExpected,
+      bookEntry, handoverOk, handoverNotes, observations, signature,
+    });
+
+    const payload: any = {
+      shift_id: currentShift.id,
+      agent_id: agentId,
+      unit_id: unitId,
+      team: agentTeam,
+      shift_date: currentShift.shift_date,
+      adolescents_counted: adoCnt !== '' ? Number(adoCnt) : null,
+      handcuffs_counted: algCnt !== '' ? Number(algCnt) : null,
+      handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
+      radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
+      radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
+      book_entry: bookEntry || null,
+      handover_ok: handoverOk,
+      handover_notes: handoverNotes || null,
+      observations: observations || null,
+      signature: signature || null,
+      completed_at: finalize
+        ? new Date().toISOString()
+        : (briefingRef.current?.completed_at ?? null),
+    };
+
+    // 2) Se estamos offline, enfileira e retorna — a sincronização acontece
+    //    automaticamente quando a conexão voltar.
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      writePending(currentShift.id, payload, briefingRef.current?.id ?? null);
+      setHasPending(true);
+      setAutoSaveState('pending');
+      if (finalize) {
+        toast.info('Sem conexão. Briefing será enviado assim que a rede voltar.');
+      }
+      return null;
+    }
+
     setSaving(true);
     setAutoSaveState('saving');
     try {
-      const payload: any = {
-        shift_id: currentShift.id,
-        agent_id: agentId,
-        unit_id: unitId,
-        team: agentTeam,
-        shift_date: currentShift.shift_date,
-        adolescents_counted: adoCnt !== '' ? Number(adoCnt) : null,
-        handcuffs_counted: algCnt !== '' ? Number(algCnt) : null,
-        handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
-        radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
-        radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
-        book_entry: bookEntry || null,
-        handover_ok: handoverOk,
-        handover_notes: handoverNotes || null,
-        observations: observations || null,
-        signature: signature || null,
-        completed_at: finalize
-          ? new Date().toISOString()
-          : (briefingRef.current?.completed_at ?? null),
-      };
-
       const existing = briefingRef.current;
       const { data, error } = existing
         ? await supabase
@@ -288,13 +309,19 @@ export function ShiftBriefingCard({
       setBriefing(data as unknown as Briefing);
       dirtyRef.current = false;
       setAutoSaveState('saved');
+      clearPending(currentShift.id);
+      setHasPending(false);
       if (finalize) {
+        clearDraft(currentShift.id);
         toast.success('Briefing finalizado e registrado.');
       }
       return data as unknown as Briefing;
     } catch (e: any) {
-      setAutoSaveState('error');
-      if (finalize) toast.error(e.message || 'Falha ao salvar briefing.');
+      // Falha de rede/servidor: mantém rascunho e enfileira para nova tentativa.
+      writePending(currentShift.id, payload, briefingRef.current?.id ?? null);
+      setHasPending(true);
+      setAutoSaveState('pending');
+      if (finalize) toast.error(e.message || 'Falha ao salvar. Mantido localmente para reenvio.');
       return null;
     } finally {
       setSaving(false);
@@ -324,6 +351,58 @@ export function ShiftBriefingCard({
     dirtyRef.current = true;
     setter(v);
   };
+
+  // -------- Sincronização automática ao voltar online --------
+  useEffect(() => {
+    const flush = async () => {
+      if (!currentShift) return;
+      const pending = readPending(currentShift.id);
+      if (!pending) return;
+      setAutoSaveState('saving');
+      try {
+        const { data, error } = pending.existingId
+          ? await supabase
+              .from('shift_briefings')
+              .update(pending.payload)
+              .eq('id', pending.existingId)
+              .select()
+              .single()
+          : await supabase
+              .from('shift_briefings')
+              .insert(pending.payload)
+              .select()
+              .single();
+        if (error) throw error;
+        setBriefing(data as unknown as Briefing);
+        clearPending(currentShift.id);
+        setHasPending(false);
+        setAutoSaveState('saved');
+        toast.success('Briefing sincronizado com o servidor.');
+        window.setTimeout(() => setAutoSaveState('idle'), 2200);
+      } catch {
+        setAutoSaveState('pending');
+      }
+    };
+
+    const handleOnline = () => { setIsOnline(true); void flush(); };
+    const handleOffline = () => { setIsOnline(false); setAutoSaveState('pending'); };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('app:back-online', handleOnline);
+
+    // Tenta drenar imediatamente ao montar/abrir (caso a conexão já esteja OK).
+    if (typeof navigator !== 'undefined' && navigator.onLine && currentShift) {
+      void flush();
+    }
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('app:back-online', handleOnline);
+    };
+  }, [currentShift]);
+
 
   // ---------- Render ----------
   if (!isLeader) return null;
