@@ -80,6 +80,7 @@ const PENDING_KEY = (shiftId: string) => `plantao_briefing_pending_${shiftId}`;
 
 interface DraftShape {
   adoCnt: string; algCnt: string; chvCnt: string;
+  tonCnt: string; tonExpected: string;
   radiosCharged: string; radiosExpected: string;
   bookEntry: string; handoverOk: boolean; handoverNotes: string;
   observations: string; signature: string;
