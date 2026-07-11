@@ -725,10 +725,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 height={1024}
                 loading="lazy"
                 decoding="async"
-                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[1.28] origin-bottom"
+                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[1.16] origin-bottom"
                 draggable={false}
               />
-              <span aria-hidden className="pointer-events-none absolute inset-0 scale-[1.28] origin-bottom">
+              <span aria-hidden className="pointer-events-none absolute inset-0 scale-[1.16] origin-bottom">
                 <span
                   aria-hidden
                   className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
@@ -750,7 +750,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 height={1024}
                 loading="lazy"
                 decoding="async"
-                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[1.18] origin-bottom-left"
+                className="block h-full w-auto object-contain object-bottom drop-shadow-[0_10px_16px_rgba(0,0,0,0.8)] select-none scale-[1.08] origin-bottom-left"
                 draggable={false}
               />
             </picture>
