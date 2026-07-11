@@ -170,45 +170,47 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         />
       </picture>
 
-      <span aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,6,23,0.78)_100%)]" />
-      <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-t from-slate-950/90 to-transparent" />
+      {/* Vignette + gradient legibility (mais forte no rodapé para o footer institucional) */}
+      <span aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_50%_35%,transparent_25%,rgba(2,6,23,0.7)_85%)]" />
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1/2 bg-gradient-to-t from-slate-950 via-slate-950/85 to-transparent" />
       <span
         aria-hidden
         className={cn(
           'pointer-events-none absolute inset-0 z-[2] transition-opacity duration-500 mix-blend-overlay',
-          isSelected ? 'opacity-40' : 'opacity-0 group-hover:opacity-25',
+          isSelected ? 'opacity-35' : 'opacity-0 group-hover:opacity-20',
         )}
-        style={{ background: `radial-gradient(ellipse at 50% 40%, hsl(${t.accent} / 0.6) 0%, transparent 70%)` }}
+        style={{ background: `radial-gradient(ellipse at 50% 40%, hsl(${t.accent} / 0.55) 0%, transparent 70%)` }}
       />
-      {isSelected && (
-        <>
-          <span aria-hidden className="absolute top-1 left-1 z-30 h-3 w-3 border-t-2 border-l-2 rounded-tl-sm" style={{ borderColor: `hsl(${t.accent})` }} />
-          <span aria-hidden className="absolute top-1 right-1 z-30 h-3 w-3 border-t-2 border-r-2 rounded-tr-sm" style={{ borderColor: `hsl(${t.accent})` }} />
-          <span aria-hidden className="absolute bottom-1 left-1 z-30 h-3 w-3 border-b-2 border-l-2 rounded-bl-sm" style={{ borderColor: `hsl(${t.accent})` }} />
-          <span aria-hidden className="absolute bottom-1 right-1 z-30 h-3 w-3 border-b-2 border-r-2 rounded-br-sm" style={{ borderColor: `hsl(${t.accent})` }} />
-        </>
-      )}
-      {t.key === 'ALFA' ? (
-        <span aria-hidden className="alfa-halo" />
-      ) : (
-        <span aria-hidden className="team-halo" />
-      )}
-      {/* Nome da equipe — tipografia grande, arte vetorial nítida */}
-      <div className="relative z-20 flex-1 min-h-0 flex flex-col items-center justify-center px-2 pt-4 pb-1">
-        <div className="relative flex flex-col items-center">
+
+      {/* Faixa lateral institucional (assinatura de cor da equipe) */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-0 z-[3] w-[3px]"
+        style={{
+          background: `linear-gradient(180deg, hsl(${t.accent}) 0%, hsl(${t.accent} / 0.4) 100%)`,
+          boxShadow: `0 0 12px hsl(${t.accent} / 0.6)`,
+        }}
+      />
+
+      {/* Cantoneiras — sempre visíveis, discretas quando idle */}
+      <span aria-hidden className={cn('absolute top-1.5 left-1.5 z-30 h-2.5 w-2.5 border-t border-l transition-all', isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-80')} style={{ borderColor: `hsl(${t.accent})` }} />
+      <span aria-hidden className={cn('absolute top-1.5 right-1.5 z-30 h-2.5 w-2.5 border-t border-r transition-all', isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-80')} style={{ borderColor: `hsl(${t.accent})` }} />
+      <span aria-hidden className={cn('absolute bottom-1.5 left-1.5 z-30 h-2.5 w-2.5 border-b border-l transition-all', isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-80')} style={{ borderColor: `hsl(${t.accent})` }} />
+      <span aria-hidden className={cn('absolute bottom-1.5 right-1.5 z-30 h-2.5 w-2.5 border-b border-r transition-all', isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-80')} style={{ borderColor: `hsl(${t.accent})` }} />
+
+      {/* Status LED (canto superior esquerdo, discreto) */}
+      <span aria-hidden className="absolute top-2.5 left-4 z-30 flex items-center gap-1.5">
+        <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 6px hsl(${t.accent})` }} />
+        <span className="font-mono text-[8px] uppercase tracking-[0.28em] text-slate-300/85">ATIVA</span>
+      </span>
+
+      {/* Nome herói — condensed, branco puro, acento reservado para stripe/underline */}
+      <div className="relative z-20 flex-1 min-h-0 flex flex-col items-center justify-center px-3 pt-5">
+        <div className="flex flex-col items-center">
           <span
-            aria-hidden
-            className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.35em] mb-1"
-            style={{ color: `hsl(${t.accent} / 0.9)`, textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}
-          >
-            {t.role}
-          </span>
-          <span
-            className="font-black leading-none text-[32px] min-[390px]:text-[38px] sm:text-[46px] md:text-[56px] tracking-[0.02em] whitespace-nowrap transition-transform duration-500 group-hover:scale-105"
+            className="font-black leading-[0.9] text-[34px] min-[390px]:text-[40px] sm:text-[48px] md:text-[60px] tracking-[0.04em] whitespace-nowrap text-white transition-transform duration-500 group-hover:scale-[1.02]"
             style={{
-              color: `hsl(${t.accent})`,
-              textShadow: `0 2px 12px rgba(0,0,0,0.95), 0 0 24px hsl(${t.accent} / 0.55), 0 0 2px rgba(0,0,0,0.9)`,
-              WebkitTextStroke: '1px rgba(0,0,0,0.4)',
+              textShadow: '0 2px 14px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,0.95)',
               fontFamily: '"Rajdhani","Oswald","Bebas Neue",system-ui,sans-serif',
             }}
           >
@@ -216,25 +218,30 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
           </span>
           <span
             aria-hidden
-            className="mt-1.5 h-[2px] w-14 sm:w-20 rounded-full"
-            style={{ background: `linear-gradient(90deg, transparent, hsl(${t.accent}), transparent)`, boxShadow: `0 0 8px hsl(${t.accent} / 0.6)` }}
+            className="mt-2 h-[2px] w-16 sm:w-24 transition-all duration-500 group-hover:w-24 sm:group-hover:w-32"
+            style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 10px hsl(${t.accent} / 0.75)` }}
           />
         </div>
       </div>
 
-      <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
-      <span aria-hidden className="absolute top-1.5 left-1.5 z-30 flex h-2.5 w-2.5 items-center justify-center rounded-full" style={{ border: `1px solid hsl(${t.accent} / 0.55)` }}>
-        <span className="h-1.5 w-1.5 rounded-full" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 4px hsl(${t.accent} / 0.7)` }} />
-      </span>
-      <span
-        className="absolute top-1.5 right-1.5 z-30 font-mono text-[8.5px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded backdrop-blur-md border"
-        style={{ color: `hsl(${t.accent})`, borderColor: `hsl(${t.accent} / 0.5)`, background: `hsl(${t.accent} / 0.12)` }}
-      >
-        {t.op}
-      </span>
+      {/* Rodapé institucional — role + OP code em faixa escura */}
+      <div className="relative z-20 flex items-center justify-between gap-2 px-3 py-2 border-t border-white/10 backdrop-blur-sm bg-slate-950/70">
+        <span
+          className="font-mono text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.28em] truncate"
+          style={{ color: `hsl(${t.accent})` }}
+        >
+          {t.role}
+        </span>
+        <span
+          className="font-mono text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-sm border text-slate-100"
+          style={{ borderColor: `hsl(${t.accent} / 0.55)`, background: 'rgba(2,6,23,0.6)' }}
+        >
+          {t.op}
+        </span>
+      </div>
 
-
-
+      {/* Fio superior de acento */}
+      <span aria-hidden className="absolute top-0 left-0 h-px w-full z-[3]" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
     </button>
   );
 }
