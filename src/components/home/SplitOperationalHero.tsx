@@ -829,22 +829,58 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </div>
             </div>
 
-            {/* HUD de drag — só desktop, mostra offset atual em px */}
+            {/* HUD de drag + escala — só desktop */}
             {isDesktop && (
               <div
-                className="hidden lg:flex absolute top-2 left-2 z-[120] items-center gap-2 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
+                className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
               >
-                <span className="text-amber-400">◈ DRAG</span>
-                <span className="text-white/90 tabular-nums">
-                  x: {sceneOffset.x}px · y: {sceneOffset.y}px
-                </span>
-                <button
-                  type="button"
-                  onClick={resetSceneOffset}
-                  className="ml-1 rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
-                >
-                  reset
-                </button>
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400">◈ DRAG</span>
+                  <span className="text-white/90 tabular-nums">
+                    x: {sceneOffset.x}px · y: {sceneOffset.y}px
+                  </span>
+                  <button
+                    type="button"
+                    onClick={resetSceneOffset}
+                    className="ml-1 rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                  >
+                    reset
+                  </button>
+                </div>
+
+                {/* Escala viatura */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-amber-400 w-12">VIATURA</span>
+                  <button type="button" onClick={() => setVehScale(s => clampScale(s - 0.05))}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">−</button>
+                  <input
+                    type="range" min={0.5} max={3} step={0.01} value={vehScale}
+                    onChange={(e) => setVehScale(clampScale(parseFloat(e.target.value)))}
+                    className="accent-amber-400 w-28"
+                  />
+                  <button type="button" onClick={() => setVehScale(s => clampScale(s + 0.05))}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">+</button>
+                  <span className="tabular-nums text-white/90 w-10 text-right">{vehScale.toFixed(2)}x</span>
+                  <button type="button" onClick={() => setVehScale(1)}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">reset</button>
+                </div>
+
+                {/* Escala agente */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-amber-400 w-12">AGENTE</span>
+                  <button type="button" onClick={() => setAgtScale(s => clampScale(s - 0.05))}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">−</button>
+                  <input
+                    type="range" min={0.5} max={3} step={0.01} value={agtScale}
+                    onChange={(e) => setAgtScale(clampScale(parseFloat(e.target.value)))}
+                    className="accent-amber-400 w-28"
+                  />
+                  <button type="button" onClick={() => setAgtScale(s => clampScale(s + 0.05))}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">+</button>
+                  <span className="tabular-nums text-white/90 w-10 text-right">{agtScale.toFixed(2)}x</span>
+                  <button type="button" onClick={() => setAgtScale(1)}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">reset</button>
+                </div>
               </div>
             )}
 
