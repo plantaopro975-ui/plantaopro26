@@ -1368,7 +1368,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
      dispositivos da mesma unidade. Mantém cache local como fallback
      offline. */
   const TEAM_LOG_KEY = 'plantaopro_team_round_log';
-  type TeamLogEntry = { team: string; dateISO: string; savedName?: string; id?: string };
+  type TeamLogEntry = {
+    team: string;
+    dateISO: string;
+    savedName?: string;
+    id?: string;
+    totalSeconds?: number;
+    agentsCount?: number;
+  };
   const readTeamLogLocal = (): TeamLogEntry[] => {
     try {
       const raw = localStorage.getItem(TEAM_LOG_KEY);
@@ -1381,6 +1388,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     try { localStorage.setItem(TEAM_LOG_KEY, JSON.stringify(list.slice(0, 15))); } catch { /* ignore */ }
   };
   const [teamLog, setTeamLog] = useState<TeamLogEntry[]>([]);
+  const [teamLogLoading, setTeamLogLoading] = useState(false);
+  const [historyTeamFilter, setHistoryTeamFilter] = useState<string | null>(null);
   // Local optimistic append (started rounds). Cloud is written when a
   // round is completed and the operator saves the team name.
   const appendTeamLog = (teamName: string) => {
@@ -1835,25 +1844,30 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* ---- Sincroniza teamLog (últimas rondas) com Supabase por unidade ---- */
   const hydrateTeamLogFromCloud = useCallback(async () => {
     if (!unitId) return;
+    setTeamLogLoading(true);
     try {
       const { data, error } = await supabase
         .from('team_round_log')
-        .select('id, team, saved_name, completed_at')
+        .select('id, team, saved_name, completed_at, total_seconds, agents_count')
         .eq('unit_id', unitId)
         .order('completed_at', { ascending: false })
         .limit(15);
       if (error) throw error;
-      const mapped: TeamLogEntry[] = (data ?? []).map((r) => ({
+      const mapped: TeamLogEntry[] = (data ?? []).map((r: any) => ({
         id: r.id,
         team: r.team,
         dateISO: r.completed_at,
         savedName: r.saved_name ?? undefined,
+        totalSeconds: typeof r.total_seconds === 'number' ? r.total_seconds : undefined,
+        agentsCount: typeof r.agents_count === 'number' ? r.agents_count : undefined,
       }));
       setTeamLog(mapped);
       writeTeamLogLocal(mapped);
     } catch {
       // fallback: cache local
       setTeamLog(readTeamLogLocal());
+    } finally {
+      setTeamLogLoading(false);
     }
   }, [unitId]);
 
@@ -2846,7 +2860,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <div className="mb-1 flex items-center justify-between">
                       <button
                         type="button"
-                        onClick={() => setHistoryDialogOpen(true)}
+                        onClick={() => { setHistoryTeamFilter(null); setHistoryDialogOpen(true); }}
                         className="group inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground hover:text-primary transition-colors"
                         title="Abrir histórico detalhado"
                       >
@@ -2867,6 +2881,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         Limpar
                       </button>
                     </div>
+
+                    {/* Topo do resumo — última equipe registrada com duração + agentes */}
+                    {(() => {
+                      const last = teamLog.find((e) => e.savedName && e.savedName.trim().length > 0);
+                      if (!last) return null;
+                      const preset = TEAM_PRESETS.find((p) => p.key === last.team);
+                      const color = preset ? getRotatedTeamColor(last.team, colorRotation) : '#94a3b8';
+                      const label = preset?.label ?? last.team;
+                      const fmtDur = (s?: number) => {
+                        if (!s || s <= 0) return null;
+                        const h = Math.floor(s / 3600);
+                        const m = Math.floor((s % 3600) / 60);
+                        return h > 0 ? `${h}h${String(m).padStart(2, '0')}` : `${m}m`;
+                      };
+                      const dur = fmtDur(last.totalSeconds);
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => { setHistoryTeamFilter(last.team); setHistoryDialogOpen(true); }}
+                          className="mb-1.5 w-full text-left rounded border border-primary/25 bg-primary/5 px-2 py-1 hover:bg-primary/10 transition-colors"
+                          style={{ borderLeft: `3px solid ${color}` }}
+                          title={`Abrir histórico filtrado por ${label}`}
+                        >
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
+                            <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] text-primary/80 shrink-0">
+                              Última
+                            </span>
+                            <span className="font-sans font-bold text-[11px] uppercase tracking-wide text-foreground truncate">
+                              {label}
+                            </span>
+                            <span className="font-sans text-[10.5px] text-primary/90 truncate flex-1" title={last.savedName}>
+                              · {last.savedName}
+                            </span>
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-2 font-mono text-[9.5px] tabular-nums text-muted-foreground">
+                            {dur && <span>⏱ {dur}</span>}
+                            {last.agentsCount ? <span>👥 {last.agentsCount} agentes</span> : null}
+                          </div>
+                        </button>
+                      );
+                    })()}
+
                     {teamLog.length === 0 ? (
                       <div className="flex items-center justify-center h-14 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
                         Nenhuma ronda registrada
@@ -2883,21 +2940,30 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             hour: '2-digit', minute: '2-digit', hour12: false,
                           }).format(dt);
                           return (
-                            <li key={i} className="flex items-center gap-2 min-w-0">
-                              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
-                              <span className="font-sans font-semibold text-[11px] uppercase tracking-wide text-foreground truncate">{label}</span>
-                              {e.savedName && e.savedName.trim().length > 0 && (
-                                <span
-                                  className="font-sans text-[10.5px] text-primary/90 truncate max-w-[45%]"
-                                  title={e.savedName}
-                                >
-                                  · {e.savedName}
-                                </span>
-                              )}
-                              <span className="ml-auto font-mono text-[10.5px] tabular-nums text-muted-foreground whitespace-nowrap">{when}</span>
+                            <li key={i}>
+                              <button
+                                type="button"
+                                onClick={() => { setHistoryTeamFilter(e.team); setHistoryDialogOpen(true); }}
+                                className="w-full flex items-center gap-2 min-w-0 rounded px-1 py-0.5 hover:bg-muted/40 transition-colors text-left"
+                                title={`Abrir histórico filtrado por ${label}`}
+                              >
+                                <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
+                                <span className="font-sans font-semibold text-[11px] uppercase tracking-wide text-foreground truncate">{label}</span>
+                                {e.savedName && e.savedName.trim().length > 0 && (
+                                  <span
+                                    className="font-sans text-[10.5px] text-primary/90 truncate max-w-[45%]"
+                                    title={e.savedName}
+                                  >
+                                    · {e.savedName}
+                                  </span>
+                                )}
+                                <span className="ml-auto font-mono text-[10.5px] tabular-nums text-muted-foreground whitespace-nowrap">{when}</span>
+                              </button>
                             </li>
                           );
                         })}
+
+
 
                       </ul>
                     )}
@@ -3358,10 +3424,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       <RoundHistoryDialog
                         open={historyDialogOpen}
-                        onOpenChange={setHistoryDialogOpen}
+                        onOpenChange={(v) => { setHistoryDialogOpen(v); if (!v) setHistoryTeamFilter(null); }}
                         entries={teamLog}
+                        loading={teamLogLoading}
+                        initialTeamFilter={historyTeamFilter}
                         onClear={() => { setHistoryDialogOpen(false); setClearConfirmOpen(true); }}
                       />
+
 
                       <TeamConfirmDialog
                         open={teamConfirmOpen}

@@ -170,15 +170,17 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       aria-pressed={isSelected}
       onClick={() => onSelect(t.key)}
       className={cn(
-        'group relative flex h-[124px] min-[390px]:h-[132px] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
-        // Desktop: formato de distintivo (octogonal) — proporção retrato, tamanho contido e centralizado
-        'sm:h-auto sm:aspect-[4/5] sm:w-full sm:max-w-[168px] lg:max-w-[188px] xl:max-w-[208px] sm:mx-auto sm:rounded-none sm:border-0',
-        'sm:[clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)] sm:[-webkit-clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)]',
+        // Formato de distintivo (octogonal) unificado em mobile e desktop.
+        // Proporção retrato + tamanho contido garantem alinhamento consistente
+        // em todos os breakpoints, com margens simétricas via `mx-auto`.
+        'group relative flex flex-col text-left bg-transparent isolate overflow-hidden',
+        'h-auto aspect-[4/5] w-full max-w-[150px] min-[390px]:max-w-[160px] sm:max-w-[168px] lg:max-w-[188px] xl:max-w-[208px] mx-auto rounded-none border-0',
+        '[clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)] [-webkit-clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)]',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
         isSelected
-          ? 'border-[hsl(var(--team-accent))] -translate-y-0.5 scale-[1.005] sm:-translate-y-1.5 sm:scale-[1.02] shadow-[0_0_0_2px_hsl(var(--team-accent)/0.85),0_0_0_4px_rgba(2,6,23,0.9),0_18px_40px_-12px_hsl(var(--team-accent)/0.6),0_10px_20px_-8px_rgba(0,0,0,0.85)] ring-1 ring-[hsl(var(--team-accent)/0.45)] sm:shadow-none sm:ring-0 sm:drop-shadow-[0_14px_26px_hsl(var(--team-accent)/0.55)]'
-          : 'border-slate-300/25 shadow-[0_0_0_1px_rgba(15,23,42,0.75),inset_0_0_0_1px_rgba(255,255,255,0.06)] hover:border-[hsl(var(--team-accent)/0.85)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_hsl(var(--team-accent)/0.7),0_14px_30px_-14px_hsl(var(--team-accent)/0.5),0_8px_18px_-10px_rgba(0,0,0,0.75)] active:translate-y-0 active:scale-[0.99] sm:shadow-none sm:drop-shadow-[0_10px_20px_rgba(0,0,0,0.75)] sm:hover:drop-shadow-[0_12px_24px_hsl(var(--team-accent)/0.5)]',
+          ? '-translate-y-0.5 scale-[1.005] sm:-translate-y-1.5 sm:scale-[1.02] drop-shadow-[0_14px_26px_hsl(var(--team-accent)/0.55)]'
+          : 'drop-shadow-[0_10px_20px_rgba(0,0,0,0.75)] hover:-translate-y-1 hover:scale-[1.01] hover:drop-shadow-[0_12px_24px_hsl(var(--team-accent)/0.5)] active:translate-y-0 active:scale-[0.99]',
         className,
       )}
       style={{ ['--team-accent' as any]: t.accent }}
@@ -237,8 +239,8 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       <span aria-hidden className={cn('absolute bottom-1.5 left-1.5 z-30 h-2.5 w-2.5 border-b border-l transition-all', isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-80')} style={{ borderColor: `hsl(${t.accent})` }} />
       <span aria-hidden className={cn('absolute bottom-1.5 right-1.5 z-30 h-2.5 w-2.5 border-b border-r transition-all', isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-80')} style={{ borderColor: `hsl(${t.accent})` }} />
 
-      {/* Status LED (canto superior — recuado no desktop para não ser clipado pelo octógono) */}
-      <span aria-hidden className="absolute top-2.5 left-4 sm:top-2 sm:left-1/2 sm:-translate-x-1/2 z-30 flex items-center gap-1.5">
+      {/* Status LED (centralizado no topo — dentro da zona segura do octógono) */}
+      <span aria-hidden className="absolute top-2 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5">
         <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 6px hsl(${t.accent})` }} />
         <span className="font-mono text-[8px] uppercase tracking-[0.28em] text-slate-300/85">ATIVA</span>
       </span>
@@ -281,18 +283,16 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         </div>
       </div>
 
-      {/* Rodapé institucional — role + OP code em faixa escura.
-          No desktop (badge octogonal), recuo lateral e inferior para não
-          ser cortado pelas quinas do clip-path. */}
-      <div className="relative z-20 flex items-center justify-between gap-2 px-3 py-2 border-t border-white/10 backdrop-blur-sm bg-slate-950/70 min-w-0 sm:mx-[16%] sm:mb-[3%] sm:mt-auto sm:rounded-md sm:border sm:border-white/15 sm:px-2 sm:py-1.5">
+      {/* Rodapé institucional — role + OP code, recuado dentro da zona segura do octógono */}
+      <div className="relative z-20 flex items-center justify-between gap-2 mx-[16%] mb-[3%] mt-auto rounded-md border border-white/15 backdrop-blur-sm bg-slate-950/70 px-2 py-1.5 min-w-0">
         <span
-          className="font-mono text-[9px] sm:text-[9px] font-semibold uppercase tracking-[0.22em] truncate min-w-0 flex-1"
+          className="font-mono text-[9px] font-semibold uppercase tracking-[0.22em] truncate min-w-0 flex-1"
           style={{ color: `hsl(${t.accent})` }}
         >
           {t.role}
         </span>
         <span
-          className="font-mono text-[8.5px] sm:text-[9px] font-bold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-sm border text-slate-100 shrink-0"
+          className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-sm border text-slate-100 shrink-0"
           style={{ borderColor: `hsl(${t.accent} / 0.55)`, background: 'rgba(2,6,23,0.6)' }}
         >
           {t.op}
@@ -721,7 +721,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4 xl:gap-5 sm:justify-items-center sm:items-end" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-3 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
               <TeamCard
                 key={t.key}
