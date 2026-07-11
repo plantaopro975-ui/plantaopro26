@@ -63,7 +63,7 @@ async function fetchServerNow(): Promise<number | null> {
 
 export async function syncServerTime(force = false): Promise<void> {
   const now = performance.now();
-  if (!force && now - lastSyncAtMonotonic < SYNC_INTERVAL_MS) return;
+  if (!force && serverBaseMs != null && now - lastSyncAtMonotonic < SYNC_INTERVAL_MS) return;
   if (syncing) return syncing;
   syncing = (async () => {
     const serverMs = await fetchServerNow();

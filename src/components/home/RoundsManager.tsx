@@ -1845,7 +1845,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             team,
             team_confirmed: teamConfirmed,
             scheduled_for: scheduledFor ? new Date(scheduledFor).toISOString() : null,
-            updated_at: new Date().toISOString(),
+            updated_at: getServerDate().toISOString(),
           },
           { onConflict: 'unit_id' },
         );
@@ -2094,15 +2094,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       setSummaryOpen(true);
 
       if (historyIdRef.current) {
+        const endedAt = nowServer();
         const finished = readHistory().map((h) =>
-          h.id === historyIdRef.current ? { ...h, endedAt: Date.now() } : h,
+          h.id === historyIdRef.current ? { ...h, endedAt } : h,
         );
         writeHistory(finished);
         setHistory(finished);
         historyIdRef.current = null;
       }
       if (sessionIdRef.current) {
-        supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
+        supabase.from('round_sessions').update({ is_active: false, ended_at: getServerDate().toISOString() })
           .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
       }
       void logRoundActivity('update', {
@@ -2114,7 +2115,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         interval_min: intervalMin,
         agents_count: schedule.rows.length,
         total_seconds: Math.round(live.elapsed),
-        completed_at: new Date().toISOString(),
+        completed_at: getServerDate().toISOString(),
       });
     }
   }, [live, schedule, team]);
@@ -2234,11 +2235,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       }
     } catch { /* ignore */ }
     // Persist history (localStorage)
+    const serverNowMs = nowServer();
     const entry: HistoryEntry = {
-      id: crypto.randomUUID?.() ?? String(Date.now()),
+      id: crypto.randomUUID?.() ?? String(serverNowMs),
       team, mode, startTime, endTime, intervalMin,
       agents: schedule.rows.map((r) => r.name),
-      startedAt: Date.now(),
+      startedAt: anchorMs,
       endedAt: null,
     };
     historyIdRef.current = entry.id;
@@ -2267,7 +2269,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           if (typeof data === 'string') sessionIdRef.current = data;
         } else {
           await supabase.from('round_sessions')
-            .update({ is_active: false, ended_at: new Date().toISOString() })
+            .update({ is_active: false, ended_at: getServerDate().toISOString() })
             .eq('user_id', uid).eq('is_active', true);
           const { data, error } = await supabase.from('round_sessions').insert({
             user_id: uid,
@@ -2335,7 +2337,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     setTick(0);
     setTeamConfirmed(false);
     if (sessionIdRef.current) {
-      supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
+      supabase.from('round_sessions').update({ is_active: false, ended_at: getServerDate().toISOString() })
         .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
     }
   };
@@ -2373,7 +2375,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(90);
     doc.text(`${modeTxt} · ${agents.length} agentes · ${fmtDuration(schedule.slot)}/agente · ${rounding}`, pageW / 2, 25, { align: 'center' });
-    doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`, pageW / 2, 30, { align: 'center' });
+    const generatedAt = getServerDate();
+    doc.text(`Gerado em ${generatedAt.toLocaleString('pt-BR')}`, pageW / 2, 30, { align: 'center' });
     doc.setTextColor(0);
 
     const statusFor = (i: number): 'Concluído' | 'Em ronda' | 'Aguardando' => {
@@ -2421,7 +2424,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       },
     });
 
-    doc.save(`rondas_equipe_${team}_${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`rondas_equipe_${team}_${generatedAt.toISOString().split('T')[0]}.pdf`);
     toast({ title: 'PDF exportado', description: 'A escala foi salva como PDF.' });
   };
 
@@ -2437,7 +2440,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         team,
         mode,
         agents: agents.filter((a) => a.trim()),
-        interrupted_at: new Date().toISOString(),
+        interrupted_at: getServerDate().toISOString(),
         current_index: live.index,
         current_agent: schedule?.rows[live.index]?.name ?? null,
         remaining_seconds: live.remaining,
@@ -3531,7 +3534,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           });
                           // Cache local como fallback offline
                           const entry: TeamLogEntry = {
-                            team, dateISO: new Date().toISOString(), savedName,
+                            team, dateISO: getServerDate().toISOString(), savedName,
                           };
                           const next = [entry, ...readTeamLogLocal()].slice(0, 15);
                           writeTeamLogLocal(next);
