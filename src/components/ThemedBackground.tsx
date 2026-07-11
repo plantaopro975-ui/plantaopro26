@@ -355,7 +355,7 @@ function WavesEffect({ effect }: { effect: BackgroundEffect }) {
   return (
     <div className="absolute bottom-0 left-0 right-0 h-48 overflow-hidden opacity-20">
       <div 
-        className="absolute bottom-0 left-0 right-0 h-24 animate-pulse"
+        className="absolute bottom-0 left-0 right-0 h-24"
         style={{
           background: `linear-gradient(to top, ${effect.primaryColor}, transparent)`,
           borderRadius: '50% 50% 0 0',
