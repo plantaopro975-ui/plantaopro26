@@ -174,7 +174,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         // Proporção retrato + tamanho contido garantem alinhamento consistente
         // em todos os breakpoints, com margens simétricas via `mx-auto`.
         'group relative flex flex-col text-left bg-transparent isolate overflow-hidden',
-        'h-auto aspect-[4/5] w-full max-w-[150px] min-[390px]:max-w-[160px] sm:max-w-[168px] lg:max-w-[188px] xl:max-w-[208px] mx-auto rounded-none border-0',
+        'h-auto aspect-[4/5] w-full max-w-[172px] min-[390px]:max-w-[188px] min-[430px]:max-w-[200px] sm:max-w-[168px] lg:max-w-[188px] xl:max-w-[208px] mx-auto rounded-none border-0',
         '[clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)] [-webkit-clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)]',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
@@ -721,7 +721,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-3 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
               <TeamCard
                 key={t.key}
