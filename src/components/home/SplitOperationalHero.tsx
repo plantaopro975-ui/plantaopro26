@@ -608,13 +608,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               if (!delta) return null;
               const idx = TEAMS.indexOf(delta);
               return (
-                <div className="hidden lg:block absolute right-3 xl:right-6 bottom-2 z-[70] w-[176px] xl:w-[200px]" style={{ perspective: '900px' }}>
+                <div className="hidden lg:block absolute right-3 xl:right-6 bottom-2 z-[70] w-[160px] xl:w-[180px]" style={{ perspective: '900px' }}>
                   <TeamCard
                     team={delta}
                     idx={idx}
                     isSelected={selectedTeam === 'DELTA'}
                     onSelect={handleSelect}
-                    className="!h-[168px] xl:!h-[188px] w-full"
+                    className="w-full !max-w-none"
                   />
                 </div>
               );
