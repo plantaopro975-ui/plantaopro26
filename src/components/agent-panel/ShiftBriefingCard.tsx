@@ -602,9 +602,28 @@ export function ShiftBriefingCard({
                 <NumberField value={chvCnt} onChange={withDirty(setChvCnt)} placeholder="Ex.: 8" />
               </ChecklistRow>
 
-              {/* 4. Rádios carregados */}
+              {/* 4. Tonfas */}
               <ChecklistRow
-                order={4} done={itemsStatus.radios}
+                order={4} done={itemsStatus.tonfas}
+                icon={<Swords className="h-4 w-4 text-amber-400" />}
+                title="Contagem das tonfas"
+                subtitle="Total de tonfas conferidas e disponíveis para uso."
+              >
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-[10px] uppercase text-slate-500">Conferidas</Label>
+                    <NumberField value={tonCnt} onChange={withDirty(setTonCnt)} placeholder="Ex.: 6" />
+                  </div>
+                  <div>
+                    <Label className="text-[10px] uppercase text-slate-500">Total esperado</Label>
+                    <NumberField value={tonExpected} onChange={withDirty(setTonExpected)} placeholder="Ex.: 6" />
+                  </div>
+                </div>
+              </ChecklistRow>
+
+              {/* 5. Rádios carregados */}
+              <ChecklistRow
+                order={5} done={itemsStatus.radios}
                 icon={<Radio className="h-4 w-4 text-amber-400" />}
                 title="Rádios carregados"
                 subtitle="Informe quantos rádios estão carregados e prontos para uso."
@@ -621,7 +640,7 @@ export function ShiftBriefingCard({
                 </div>
               </ChecklistRow>
 
-              {/* 5. Passagem de plantão */}
+              {/* 6. Passagem de plantão */}
               <ChecklistRow
                 order={5} done={itemsStatus.handover}
                 icon={<ArrowLeftRight className="h-4 w-4 text-amber-400" />}
