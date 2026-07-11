@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNetworkStatus } from '@/hooks/useOfflineCache';
+import { useServerTime } from '@/hooks/useServerTime';
 
 /**
  * Tela institucional exibida quando a conexão cai.
@@ -13,7 +14,8 @@ export function OfflineFullScreen() {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(!isOnline);
   const [retrying, setRetrying] = useState(false);
-  const [now, setNow] = useState<string>(() => new Date().toLocaleTimeString('pt-BR'));
+  const nowDate = useServerTime(1000);
+  const now = nowDate.toLocaleTimeString('pt-BR', { timeZone: 'America/Rio_Branco' });
 
   useEffect(() => {
     if (!isOnline) setVisible(true);
@@ -23,11 +25,6 @@ export function OfflineFullScreen() {
     }
   }, [isOnline, visible]);
 
-  useEffect(() => {
-    if (!visible) return;
-    const id = setInterval(() => setNow(new Date().toLocaleTimeString('pt-BR')), 1000);
-    return () => clearInterval(id);
-  }, [visible]);
 
   if (!visible) return null;
 

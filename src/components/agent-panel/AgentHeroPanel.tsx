@@ -7,6 +7,8 @@ import {
   ChevronRight, Star, Sun, Moon, Target, Flame, Timer
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useServerTime } from '@/hooks/useServerTime';
+
 
 interface AgentHeroPanelProps {
   agentId: string;
@@ -31,13 +33,9 @@ interface QuickStats {
 export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanelProps) {
   const [nextShift, setNextShift] = useState<NextShift | null>(null);
   const [stats, setStats] = useState<QuickStats>({ totalShifts: 0, completedShifts: 0, bhBalance: 0, pendingLeaves: 0 });
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const currentTime = useServerTime(1000);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
