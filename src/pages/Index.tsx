@@ -1486,8 +1486,8 @@ export default function Index() {
         })()}
       </header>
 
-
-
+      {/* Divisor entre painel operacional e seção institucional */}
+      <SectionDivider />
 
       {/* Seção institucional cinematográfica — abaixo dos cards operacionais.
           Usa a arte oficial (agente + viatura) como background fullscreen. */}
