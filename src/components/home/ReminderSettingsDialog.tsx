@@ -34,8 +34,13 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
   useEffect(() => subscribeReminderSettings(setSettings), []);
 
   const update = (patch: Partial<ReminderSettings>) => {
-    const next = setReminderSettings(patch);
-    setSettings(next);
+    const result = setReminderSettings(patch);
+    if (result.ok) {
+      setSettings(result.value);
+    } else {
+      const msg = Object.values(result.errors)[0] ?? 'Valor inválido';
+      toast.error(msg);
+    }
   };
 
   return (
