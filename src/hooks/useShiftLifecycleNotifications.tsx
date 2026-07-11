@@ -100,16 +100,20 @@ export function useShiftLifecycleNotifications({ agentId, enabled = true }: Opti
             !scheduledRef.current.has(keyEnd) &&
             !firedRef.current.has(keyEnd)
           ) {
+            const endPayload = {
+              title: '🛡️ Plantão encerrado',
+              body: `Seu plantão de ${format(start, 'dd/MM', { locale: ptBR })} foi finalizado. Bom descanso!`,
+              tag: `shift-end-${s.id}`,
+              requireInteraction: false,
+              soundType: 'success' as const,
+            };
+            pendingRef.current.set(keyEnd, { fireAt: endTs, payload: endPayload });
             const to = setTimeout(() => {
-              showNotification({
-                title: '🛡️ Plantão encerrado',
-                body: `Seu plantão de ${format(start, 'dd/MM', { locale: ptBR })} foi finalizado. Bom descanso!`,
-                tag: `shift-end-${s.id}`,
-                requireInteraction: false,
-                soundType: 'success',
-              });
+              showNotification(endPayload);
               firedRef.current.add(keyEnd);
               scheduledRef.current.delete(keyEnd);
+              pendingRef.current.delete(keyEnd);
+              try { window.dispatchEvent(new CustomEvent('shift:ended', { detail: { shiftId: s.id } })); } catch { /* ignore */ }
             }, delayEnd);
             scheduledRef.current.set(keyEnd, { key: keyEnd, timeoutId: to });
           }
