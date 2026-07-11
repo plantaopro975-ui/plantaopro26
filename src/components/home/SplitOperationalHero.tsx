@@ -467,24 +467,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       'radial-gradient(120% 90% at 50% 0%, rgba(251,191,36,0.12) 0%, rgba(251,191,36,0.04) 40%, transparent 70%)',
                   }}
                 />
-                {/* subtle diagonal sheen (contained, no layout impact) */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen transition-opacity duration-500 group-hover:opacity-[0.12] group-focus-within:opacity-[0.12]"
-                  style={{
-                    background:
-                      'linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.9) 50%, transparent 60%)',
-                  }}
-                />
-                {/* sweep highlight on hover/focus — travels once, no reflow */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 group-hover:animate-[pp-briefing-sweep_1.4s_ease-out] group-focus-within:animate-[pp-briefing-sweep_1.4s_ease-out] motion-reduce:hidden"
-                  style={{
-                    background:
-                      'linear-gradient(90deg, transparent, rgba(251,191,36,0.18), transparent)',
-                  }}
-                />
+                {/* diagonal sheen + hover sweep removidos: causavam reflexo
+                    transversal indesejado sobre o card do Briefing. */}
                 {/* faint grid texture */}
                 <span
                   aria-hidden

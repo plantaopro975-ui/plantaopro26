@@ -334,7 +334,7 @@ function AmbientOrbs({ effect }: { effect: BackgroundEffect }) {
       {Array.from({ length: orbCount }).map((_, i) => (
         <div
           key={i}
-          className="absolute rounded-full blur-3xl animate-pulse"
+          className="absolute rounded-full blur-3xl"
           style={{
             left: `${(i * 30) + 10}%`,
             top: `${(i % 2) * 40 + 20}%`,
@@ -355,7 +355,7 @@ function WavesEffect({ effect }: { effect: BackgroundEffect }) {
   return (
     <div className="absolute bottom-0 left-0 right-0 h-48 overflow-hidden opacity-20">
       <div 
-        className="absolute bottom-0 left-0 right-0 h-24 animate-pulse"
+        className="absolute bottom-0 left-0 right-0 h-24"
         style={{
           background: `linear-gradient(to top, ${effect.primaryColor}, transparent)`,
           borderRadius: '50% 50% 0 0',
@@ -363,7 +363,7 @@ function WavesEffect({ effect }: { effect: BackgroundEffect }) {
         }}
       />
       <div 
-        className="absolute bottom-0 left-[10%] right-[10%] h-16 animate-pulse"
+        className="absolute bottom-0 left-[10%] right-[10%] h-16"
         style={{
           background: `linear-gradient(to top, ${effect.primaryColor}, transparent)`,
           borderRadius: '50% 50% 0 0',
@@ -519,30 +519,21 @@ export function ThemedBackground() {
         color={themeAssets.cornerAccents.color} 
       />
 
-      {/* Glow orbs using theme colors */}
-      <div 
-        className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-3xl transition-all duration-1000 animate-pulse"
-        style={{ 
-          background: themeAssets.ambientGlow.primary,
-          animationDuration: '4s',
-        }}
+      {/* Glow orbs (estáticas) — mantêm a identidade sem animar filter:blur,
+          o que reduz drasticamente o custo de GPU/CPU e elimina a sensação
+          de luz ofuscando o fundo escuro da home. */}
+      <div
+        className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-3xl"
+        style={{ background: themeAssets.ambientGlow.primary }}
       />
-      <div 
-        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-3xl transition-all duration-1000 animate-pulse"
-        style={{ 
-          background: themeAssets.ambientGlow.secondary,
-          animationDuration: '5s',
-          animationDelay: '1s',
-        }}
+      <div
+        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-3xl"
+        style={{ background: themeAssets.ambientGlow.secondary }}
       />
       {themeAssets.ambientGlow.tertiary && (
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl opacity-50 animate-pulse"
-          style={{ 
-            background: `radial-gradient(circle, ${themeAssets.ambientGlow.tertiary} 0%, transparent 70%)`,
-            animationDuration: '6s',
-            animationDelay: '2s',
-          }}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl opacity-50"
+          style={{ background: `radial-gradient(circle, ${themeAssets.ambientGlow.tertiary} 0%, transparent 70%)` }}
         />
       )}
 
