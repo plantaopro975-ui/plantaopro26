@@ -74,16 +74,19 @@ export function useShiftLifecycleNotifications({ agentId, enabled = true }: Opti
             !scheduledRef.current.has(keyBefore) &&
             !firedRef.current.has(keyBefore)
           ) {
+            const beforePayload = {
+              title: '⏰ Plantão em 1 hora',
+              body: `Prepare-se! Seu plantão inicia às ${s.start_time?.slice(0, 5) || '07:00'} (${format(start, "dd/MM 'às' HH:mm", { locale: ptBR })}).`,
+              tag: `shift-before-${s.id}`,
+              requireInteraction: true,
+              soundType: 'shift' as const,
+            };
+            pendingRef.current.set(keyBefore, { fireAt: oneHourBefore, payload: beforePayload });
             const to = setTimeout(() => {
-              showNotification({
-                title: '⏰ Plantão em 1 hora',
-                body: `Prepare-se! Seu plantão inicia às ${s.start_time?.slice(0, 5) || '07:00'} (${format(start, "dd/MM 'às' HH:mm", { locale: ptBR })}).`,
-                tag: `shift-before-${s.id}`,
-                requireInteraction: true,
-                soundType: 'shift',
-              });
+              showNotification(beforePayload);
               firedRef.current.add(keyBefore);
               scheduledRef.current.delete(keyBefore);
+              pendingRef.current.delete(keyBefore);
             }, delayBefore);
             scheduledRef.current.set(keyBefore, { key: keyBefore, timeoutId: to });
           }
