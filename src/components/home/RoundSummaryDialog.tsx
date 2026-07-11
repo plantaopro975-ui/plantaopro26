@@ -10,6 +10,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Trophy, Clock, Users, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 
+const AUTO_CLOSE_SECONDS = 10;
+
 interface Props {
   open: boolean;
   onClose: () => void;
