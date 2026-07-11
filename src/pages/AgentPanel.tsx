@@ -592,7 +592,7 @@ export default function AgentPanel() {
                 <div
                   className={cn(
                     'mx-auto w-full',
-                    compact ? 'max-w-[880px] space-y-1.5 px-2 sm:px-3 md:px-4' : 'max-w-[1040px] space-y-2 px-2 sm:px-3 md:px-4 lg:px-5'
+                    compact ? 'max-w-[820px] space-y-1.5 px-2 sm:px-2.5 md:px-3' : 'max-w-[960px] space-y-2 px-2 sm:px-3 md:px-3.5 lg:px-4'
                   )}
                 >
 
