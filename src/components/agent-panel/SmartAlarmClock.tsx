@@ -24,6 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useServerTime } from '@/hooks/useServerTime';
 
 interface SmartAlarmClockProps {
   agentId: string;
