@@ -160,11 +160,11 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
           loading="lazy"
           decoding="async"
           className={cn(
-            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
+            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-[center_25%] select-none',
             'transition-all duration-500 ease-out',
             isSelected
-              ? 'opacity-100 scale-105 saturate-125 contrast-110'
-              : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
+              ? 'opacity-90 scale-105 saturate-125 contrast-110'
+              : 'opacity-70 saturate-110 contrast-105 group-hover:opacity-90 group-hover:scale-[1.04] group-hover:saturate-125',
           )}
           draggable={false}
         />
@@ -193,16 +193,33 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       ) : (
         <span aria-hidden className="team-halo" />
       )}
-      {/* Emblema central — grande, dominante */}
-      <div className="relative z-20 flex-1 min-h-0 flex items-center justify-center px-2 pt-4 pb-1">
-        <img
-          src={teamEmblems[t.key]}
-          alt={`Emblema ${t.key}`}
-          loading="lazy"
-          decoding="async"
-          className="max-h-full max-w-[70%] w-auto object-contain drop-shadow-[0_6px_18px_rgba(0,0,0,0.95)] transition-transform duration-500 group-hover:scale-105"
-          draggable={false}
-        />
+      {/* Nome da equipe — tipografia grande, arte vetorial nítida */}
+      <div className="relative z-20 flex-1 min-h-0 flex flex-col items-center justify-center px-2 pt-4 pb-1">
+        <div className="relative flex flex-col items-center">
+          <span
+            aria-hidden
+            className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.35em] mb-1"
+            style={{ color: `hsl(${t.accent} / 0.9)`, textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}
+          >
+            {t.role}
+          </span>
+          <span
+            className="font-black leading-none text-[32px] min-[390px]:text-[38px] sm:text-[46px] md:text-[56px] tracking-[0.02em] whitespace-nowrap transition-transform duration-500 group-hover:scale-105"
+            style={{
+              color: `hsl(${t.accent})`,
+              textShadow: `0 2px 12px rgba(0,0,0,0.95), 0 0 24px hsl(${t.accent} / 0.55), 0 0 2px rgba(0,0,0,0.9)`,
+              WebkitTextStroke: '1px rgba(0,0,0,0.4)',
+              fontFamily: '"Rajdhani","Oswald","Bebas Neue",system-ui,sans-serif',
+            }}
+          >
+            {t.key}
+          </span>
+          <span
+            aria-hidden
+            className="mt-1.5 h-[2px] w-14 sm:w-20 rounded-full"
+            style={{ background: `linear-gradient(90deg, transparent, hsl(${t.accent}), transparent)`, boxShadow: `0 0 8px hsl(${t.accent} / 0.6)` }}
+          />
+        </div>
       </div>
 
       <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
