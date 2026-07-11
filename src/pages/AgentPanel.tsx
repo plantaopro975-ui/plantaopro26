@@ -1079,7 +1079,7 @@ export default function AgentPanel() {
             {/* Footer Copyright - Compacto */}
             <CopyrightFooter className="border-t border-border/30 mt-2" />
             <div className="hidden md:flex justify-center py-1.5">
-              <HardRefreshHint />
+              <HardRefreshHint standalone />
             </div>
           </div>
         </main>
