@@ -799,6 +799,61 @@ export function ShiftBriefingCard({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ---------- Bloqueio profissional: fora do plantão ---------- */}
+      <Dialog open={lockedOpen} onOpenChange={setLockedOpen}>
+        <DialogContent className="max-w-md bg-slate-950 border-amber-500/40 text-slate-100 p-0 overflow-hidden">
+          <div className="relative px-6 pt-6 pb-4 bg-gradient-to-br from-amber-500/10 via-slate-950 to-slate-950">
+            <div className="flex flex-col items-center text-center">
+              <div className="relative">
+                <span aria-hidden className="absolute inset-0 rounded-full bg-amber-500/20 blur-2xl animate-pulse" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 64 64"
+                  className="relative h-20 w-20 text-amber-400"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M32 4l22 8v14c0 14-9.5 24.5-22 30-12.5-5.5-22-16-22-30V12l22-8z" opacity="0.9" />
+                  <rect x="22" y="30" width="20" height="16" rx="2.5" />
+                  <path d="M26 30v-5a6 6 0 0 1 12 0v5" />
+                  <circle cx="32" cy="37" r="1.8" fill="currentColor" stroke="none" />
+                  <path d="M32 39v3" />
+                </svg>
+              </div>
+              <DialogHeader className="mt-4 space-y-1">
+                <DialogTitle className="text-amber-300 text-base font-semibold tracking-wide uppercase">
+                  Acesso restrito ao plantão em curso
+                </DialogTitle>
+                <DialogDescription className="text-slate-400 text-[12.5px] leading-relaxed">
+                  O checklist de entrada e o registro de briefing só podem ser preenchidos
+                  <strong className="text-slate-200"> durante o seu plantão </strong>
+                  ativo. Fora da janela operacional o módulo permanece bloqueado por segurança.
+                </DialogDescription>
+              </DialogHeader>
+            </div>
+          </div>
+          <div className="px-6 pb-5 pt-2 space-y-2">
+            <div className="rounded-md border border-slate-800 bg-slate-900/60 px-3 py-2.5 text-[11.5px] text-slate-300 flex items-start gap-2">
+              <ShieldAlert className="h-3.5 w-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+              <span>
+                Liberação automática no <strong className="text-slate-100">dia e horário</strong> do
+                plantão registrado para <strong className="text-slate-100">{agentName}</strong>.
+              </span>
+            </div>
+            <Button
+              onClick={() => setLockedOpen(false)}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold"
+            >
+              Entendido
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
