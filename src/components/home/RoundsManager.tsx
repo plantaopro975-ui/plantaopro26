@@ -3251,7 +3251,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <div className="font-mono text-sm text-foreground">06:00</div>
                     </div>
                   </div>
-                ) : mode === 'split' ? (
+                ) : (mode === 'split' || mode === 'proportional') ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
