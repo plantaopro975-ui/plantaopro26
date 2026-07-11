@@ -1,48 +1,67 @@
 /**
- * Rodízio profissional de cores das equipes.
- *
- * A paleta base é fixa (verde, laranja, azul, amarelo tático). A cada nova
- * ronda iniciada, o offset é incrementado — assim ALFA num dia pode aparecer
- * verde, no seguinte laranja, e assim por diante, sem repetir a mesma cor
- * duas rondas seguidas para a mesma equipe.
+ * Centralized team color tokens.
+ * Single source of truth for team accents across cards, dialogs, buttons and chips.
+ * Any component that renders team branding must import from here.
  */
 
-export type TeamPaletteKey = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
+export type TeamKey = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
-/** Paleta profissional tática (mesmas cores originais, mas agora rotacionáveis). */
-export const TEAM_PALETTE: Readonly<Record<TeamPaletteKey, string>> = {
-  ALFA: '#34d399',
-  BRAVO: '#fb923c',
-  CHARLIE: '#60a5fa',
-  DELTA: '#fcd34d',
-} as const;
+export interface TeamColorToken {
+  /** Hex accent (used for inline styles / SVG fills) */
+  hex: string;
+  /** Same color expressed as HSL triple ("H S% L%") — feeds --primary and Tailwind CSS variables. */
+  hsl: string;
+  /** Foreground color that guarantees ≥ 4.5:1 contrast when placed on top of the accent. */
+  onAccent: string;
+  /** Human label */
+  label: string;
+}
 
-const ORDER: TeamPaletteKey[] = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'];
-const COLORS = ORDER.map((k) => TEAM_PALETTE[k]);
+export const TEAM_COLORS: Record<TeamKey, TeamColorToken> = {
+  ALFA:    { hex: '#34d399', hsl: '158 64% 52%', onAccent: '#03110b', label: 'ALFA' },
+  BRAVO:   { hex: '#fb923c', hsl: '25 95% 61%',  onAccent: '#1a0a02', label: 'BRAVO' },
+  CHARLIE: { hex: '#60a5fa', hsl: '213 94% 68%', onAccent: '#04122b', label: 'CHARLIE' },
+  DELTA:   { hex: '#fcd34d', hsl: '45 97% 65%',  onAccent: '#1a1204', label: 'DELTA' },
+};
+
+export const TEAM_KEYS: readonly TeamKey[] = ['ALFA', 'BRAVO', 'CHARLIE', 'DELTA'] as const;
+
+export function getTeamColor(team: TeamKey): string {
+  return TEAM_COLORS[team].hex;
+}
+
+export function getTeamOnAccent(team: TeamKey): string {
+  return TEAM_COLORS[team].onAccent;
+}
+
+export function getTeamHsl(team: TeamKey): string {
+  return TEAM_COLORS[team].hsl;
+}
+
+/* ==============================================================
+ * Color rotation (legacy) — kept for backwards compatibility.
+ * Historically the panel offered a "swap colors" novelty that
+ * rotated the accent hue among the four teams. Persisted in
+ * localStorage under `plantaopro_team_color_rotation`.
+ * ============================================================== */
 
 const ROTATION_KEY = 'plantaopro_team_color_rotation';
 
-/** Lê o offset atual (0..3). Seguro em SSR. */
-export function readColorRotation(): number {
+export function getRotatedTeamColor(team: TeamKey | string, rotation: number = 0): string {
+  const idx = TEAM_KEYS.indexOf(team as TeamKey);
+  if (idx < 0) return (TEAM_COLORS as Record<string, TeamColorToken>)[team]?.hex ?? '#94a3b8';
+  const r = ((rotation % TEAM_KEYS.length) + TEAM_KEYS.length) % TEAM_KEYS.length;
+  const nextTeam = TEAM_KEYS[(idx + r) % TEAM_KEYS.length];
+  return TEAM_COLORS[nextTeam].hex;
+}
+
+export function bumpColorRotation(): number {
   try {
-    const raw = localStorage.getItem(ROTATION_KEY);
-    const n = raw == null ? 0 : parseInt(raw, 10);
-    return Number.isFinite(n) ? ((n % COLORS.length) + COLORS.length) % COLORS.length : 0;
+    const current = Number(localStorage.getItem(ROTATION_KEY) ?? '0') || 0;
+    const next = (current + 1) % TEAM_KEYS.length;
+    localStorage.setItem(ROTATION_KEY, String(next));
+    return next;
   } catch {
     return 0;
   }
-}
-
-/** Incrementa o offset (chamar ao iniciar cada ronda). Retorna o novo valor. */
-export function bumpColorRotation(): number {
-  const next = (readColorRotation() + 1) % COLORS.length;
-  try { localStorage.setItem(ROTATION_KEY, String(next)); } catch { /* ignore */ }
-  return next;
-}
-
-/** Retorna a cor rotacionada para a equipe. */
-export function getRotatedTeamColor(team: string, offset: number = readColorRotation()): string {
-  const baseIdx = ORDER.indexOf(team as TeamPaletteKey);
-  if (baseIdx < 0) return COLORS[0];
-  return COLORS[(baseIdx + offset) % COLORS.length];
 }

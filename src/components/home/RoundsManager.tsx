@@ -26,7 +26,7 @@ import { PreNightScheduleDialog } from './PreNightScheduleDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { RoundHistoryDialog } from './RoundHistoryDialog';
 import { ReminderSettingsDialog } from './ReminderSettingsDialog';
-import { getRotatedTeamColor, bumpColorRotation } from '@/lib/teamColors';
+import { getRotatedTeamColor, bumpColorRotation, TEAM_COLORS } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
 import {
   isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
@@ -120,10 +120,10 @@ function fmtHMS(seconds: number): string {
 }
 
 const TEAM_PRESETS = [
-  { key: 'ALFA',    label: 'ALFA',    color: '#34d399' },
-  { key: 'BRAVO',   label: 'BRAVO',   color: '#fb923c' },
-  { key: 'CHARLIE', label: 'CHARLIE', color: '#60a5fa' },
-  { key: 'DELTA',   label: 'DELTA',   color: '#fcd34d' },
+  { key: 'ALFA',    label: TEAM_COLORS.ALFA.label,    color: TEAM_COLORS.ALFA.hex },
+  { key: 'BRAVO',   label: TEAM_COLORS.BRAVO.label,   color: TEAM_COLORS.BRAVO.hex },
+  { key: 'CHARLIE', label: TEAM_COLORS.CHARLIE.label, color: TEAM_COLORS.CHARLIE.hex },
+  { key: 'DELTA',   label: TEAM_COLORS.DELTA.label,   color: TEAM_COLORS.DELTA.hex },
 ] as const;
 
 type TeamKey = typeof TEAM_PRESETS[number]['key'];
@@ -1002,7 +1002,7 @@ function RoundsHeroSVG({ color, active, silent }: { color: string; active: boole
 
 function AgentStatusSVG({ status, color, compact = false }: { status: 'active' | 'done' | 'waiting'; color: string; compact?: boolean }) {
   const label = status === 'active' ? 'EM RONDA' : status === 'done' ? 'CUMPRIDA' : 'NA FILA';
-  const tone = status === 'done' ? 'hsl(var(--success))' : status === 'waiting' ? 'hsl(var(--muted-foreground))' : color;
+  const tone = status === 'done' ? 'hsl(var(--success))' : status === 'waiting' ? `${color}b3` : color;
   return (
     <svg viewBox="0 0 116 24" className={cn('shrink-0', compact ? 'h-5 w-20' : 'h-6 w-28')} aria-label={label} role="img">
       <path d="M8 2H108L114 12L108 22H8L2 12Z" fill="hsl(var(--card))" fillOpacity="0.72" stroke={tone} strokeOpacity="0.62" />
@@ -3375,16 +3375,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   }
                                   setStartConfirmOpen(true);
                                 }}
-                                className="rm-play-btn h-9 px-5 border font-mono font-bold uppercase tracking-[0.18em] text-[11.5px] rounded-sm transition-transform"
+                                className="rm-play-btn h-10 sm:h-9 px-4 sm:px-5 border font-mono font-bold uppercase tracking-[0.16em] text-[12px] sm:text-[11.5px] rounded-sm transition-transform"
                                 style={{
                                   backgroundColor: teamColor,
                                   borderColor: teamColor,
-                                  color: 'hsl(var(--primary-foreground))',
-                                  boxShadow: `0 0 20px -4px ${teamColor}, 0 0 0 1px ${teamColor}55 inset`,
+                                  color: TEAM_COLORS[team]?.onAccent ?? '#0a0a0a',
+                                  boxShadow: `0 0 18px -6px ${teamColor}, 0 0 0 1px ${teamColor}66 inset, 0 1px 0 rgba(255,255,255,0.18) inset`,
+                                  textShadow: '0 1px 0 rgba(255,255,255,0.15)',
                                 }}
                               >
-                                <Play className="rm-play-icon h-3.5 w-3.5 mr-1.5" /> Iniciar Rondas
+                                <Play className="rm-play-icon h-4 w-4 sm:h-3.5 sm:w-3.5 mr-1.5" /> Iniciar Rondas
                               </Button>
+
 
                             </div>
                           ) : (
@@ -3563,15 +3565,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           return (
                             <li key={i}
                                 className={cn(
-                                   'relative grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card px-1.5 py-1 min-w-0',
-                                  isCurrent && 'bg-primary/10',
+                                   'relative grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-sm border bg-card/70 pl-2.5 pr-1.5 py-1 min-w-0 overflow-hidden',
+                                  isCurrent && 'bg-[color:var(--rm-tint,transparent)]',
                                   isDone && 'opacity-70',
                                 )}
                                 style={{
-                                  borderColor: isCurrent ? teamColor : isDone ? 'hsl(var(--success) / 0.32)' : 'hsl(var(--border))',
-                                  borderLeftWidth: isCurrent ? 3 : 1,
+                                  borderColor: isCurrent ? teamColor : isDone ? 'hsl(var(--success) / 0.32)' : `${teamColor}22`,
+                                  borderLeftWidth: 3,
+                                  borderLeftColor: isDone ? 'hsl(var(--success) / 0.6)' : teamColor,
+                                  boxShadow: isCurrent ? `0 0 14px -6px ${teamColor}, inset 0 0 0 1px ${teamColor}33` : undefined,
+                                  ['--rm-tint' as string]: `${teamColor}14`,
                                 }}>
-                              <span className="font-mono text-[10.5px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
+                              {/* tactical corner brackets — always visible in team color */}
+                              <span aria-hidden className="pointer-events-none absolute top-0 left-0 h-1.5 w-1.5 border-t border-l" style={{ borderColor: isDone ? 'hsl(var(--success)/0.5)' : `${teamColor}80` }} />
+                              <span aria-hidden className="pointer-events-none absolute top-0 right-0 h-1.5 w-1.5 border-t border-r" style={{ borderColor: isDone ? 'hsl(var(--success)/0.5)' : `${teamColor}80` }} />
+                              <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 h-1.5 w-1.5 border-b border-l" style={{ borderColor: isDone ? 'hsl(var(--success)/0.5)' : `${teamColor}80` }} />
+                              <span aria-hidden className="pointer-events-none absolute bottom-0 right-0 h-1.5 w-1.5 border-b border-r" style={{ borderColor: isDone ? 'hsl(var(--success)/0.5)' : `${teamColor}80` }} />
+                              {/* LED indicator */}
+                              <span className="flex items-center gap-1.5 font-mono text-[10.5px] tabular-nums" style={{ color: isCurrent ? teamColor : isDone ? 'hsl(var(--success))' : `${teamColor}b3` }}>
+                                <span
+                                  aria-hidden
+                                  className={cn('inline-block h-1.5 w-1.5 rounded-full shrink-0', isCurrent && 'animate-pulse')}
+                                  style={{
+                                    background: isDone ? 'hsl(var(--success))' : teamColor,
+                                    boxShadow: isCurrent ? `0 0 8px ${teamColor}` : 'none',
+                                  }}
+                                />
+                                {pad(i + 1)}
+                              </span>
+
                               <span className="min-w-0">
                                 <span className={cn(
                                   'font-sans font-semibold text-[13px] leading-tight truncate min-w-0 flex items-center gap-1.5',

@@ -73,7 +73,7 @@ interface Props {
   onTeamClick: (team: string) => void;
 }
 
-type TeamKey = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
+import { TEAM_COLORS, type TeamKey } from '@/lib/teamColors';
 
 // Accents alinhados com src/lib/teamColors.ts (mesma paleta usada pelo Gestor de Ronda)
 const TEAMS: {
@@ -87,10 +87,10 @@ const TEAMS: {
   bg: string;
   bgAvif: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Contenção',    accent: '158 64% 52%', obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfa },
-  { key: 'BRAVO',   motto: 'Capacete · Intervenção Tática', op: 'OP-02', role: 'Intervenção Tática', accent: '25 95% 61%',  obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravo },
-  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Vigilância',   accent: '213 94% 68%', obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlie },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Comando', accent: '45 97% 65%',  obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDelta },
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Contenção',    accent: TEAM_COLORS.ALFA.hsl,    obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfa },
+  { key: 'BRAVO',   motto: 'Capacete · Intervenção Tática', op: 'OP-02', role: 'Intervenção Tática', accent: TEAM_COLORS.BRAVO.hsl,   obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravo },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Vigilância',   accent: TEAM_COLORS.CHARLIE.hsl, obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlie },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Comando',      accent: TEAM_COLORS.DELTA.hsl,   obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDelta },
 ];
 
 
