@@ -365,6 +365,23 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           <rect width="100%" height="100%" fill="url(#heroBgGlow)" />
         </svg>
 
+        {/* ============ D — Grade topográfica sutil + coordenadas UTM ============ */}
+        <svg aria-hidden className="hidden sm:block absolute inset-0 h-full w-full pointer-events-none opacity-[0.08]" preserveAspectRatio="none">
+          <defs>
+            <pattern id="topoGrid" x="0" y="0" width="56" height="56" patternUnits="userSpaceOnUse">
+              <path d="M 56 0 L 0 0 0 56" fill="none" stroke="hsl(42 90% 55%)" strokeWidth="0.5" />
+            </pattern>
+            <pattern id="topoDots" x="28" y="28" width="112" height="112" patternUnits="userSpaceOnUse">
+              <circle cx="0" cy="0" r="1" fill="hsl(42 90% 55%)" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#topoGrid)" />
+          <rect width="100%" height="100%" fill="url(#topoDots)" />
+        </svg>
+        <div aria-hidden className="hidden lg:block absolute top-1.5 right-3 z-[5] font-mono text-[8px] uppercase tracking-[0.28em] text-white/25 pointer-events-none select-none">
+          MGRS 19L GK 60148 79412 · UTM −9.9747° / −67.8100°
+        </div>
+
         {/* Overlay de leitura */}
         <div
           aria-hidden
@@ -482,7 +499,34 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* ============ B — Timeline operacional (log de eventos recentes) ============ */}
+            <div className="hidden lg:block relative mt-1.5 w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%] select-none">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-white/40 leading-none">Log Operacional</span>
+                <span aria-hidden className="flex-1 h-px bg-white/8" />
+                <span className="font-mono text-[9px] tabular-nums tracking-[0.14em] text-emerald-300/70 leading-none">LIVE</span>
+              </div>
+              <ul className="flex items-center gap-x-4 gap-y-1 flex-wrap">
+                {[
+                  { t: '08:12', c: 'ALFA', tone: 'hsl(160 84% 45%)', msg: 'Ronda iniciada' },
+                  { t: '08:45', c: 'BRAVO', tone: 'hsl(24 95% 55%)', msg: 'Check-in U-03' },
+                  { t: '09:04', c: 'CHARLIE', tone: 'hsl(210 100% 60%)', msg: 'Perímetro OK' },
+                  { t: '09:18', c: 'DELTA', tone: 'hsl(42 90% 55%)', msg: 'Uplink sync' },
+                ].map((e) => (
+                  <li key={e.t} className="flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="font-mono text-[9px] tabular-nums tracking-[0.14em] text-white/50 leading-none">{e.t}</span>
+                    <span className="h-1 w-1 rounded-full shrink-0" style={{ background: e.tone, boxShadow: `0 0 4px ${e.tone}` }} />
+                    <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] leading-none" style={{ color: e.tone }}>{e.c}</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/55 leading-none">· {e.msg}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
+
+
+
 
 
 
@@ -506,21 +550,63 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            {/* Rótulos verticais nas margens — tipografia mono, mesma linguagem do briefing */}
+            {/* ============ A — HUD vertical direito enriquecido (métricas de comando) ============ */}
+            <div aria-hidden className="hidden lg:flex absolute right-1 top-3 bottom-8 z-[60] flex-col items-center justify-between gap-2 pointer-events-none select-none">
+              {[
+                { k: 'VTR', v: '01' },
+                { k: 'FRQ', v: '155.475' },
+                { k: 'TMP', v: '27°' },
+                { k: 'BAT', v: '92%' },
+                { k: 'UP', v: '34d' },
+              ].map((it) => (
+                <span key={it.k} className="flex flex-col items-center gap-0.5">
+                  <span className="font-mono text-[7.5px] uppercase tracking-[0.28em] text-white/30 leading-none">{it.k}</span>
+                  <span className="font-mono text-[8.5px] tabular-nums tracking-[0.1em] text-amber-200/70 leading-none">{it.v}</span>
+                </span>
+              ))}
+            </div>
+
+            {/* HUD vertical esquerdo (mantido, mais discreto) */}
             <span
               aria-hidden
               className="hidden lg:block absolute left-1 top-1/2 -translate-y-1/2 z-[60] font-mono text-[8.5px] uppercase tracking-[0.4em] text-white/30 whitespace-nowrap select-none pointer-events-none"
               style={{ writingMode: 'vertical-rl', transform: 'translateY(-50%) rotate(180deg)' }}
             >
-              VTR · 01
+              VTR · 01 · CB · 114
             </span>
-            <span
-              aria-hidden
-              className="hidden lg:block absolute right-1 top-1/2 -translate-y-1/2 z-[60] font-mono text-[8.5px] uppercase tracking-[0.4em] text-white/30 whitespace-nowrap select-none pointer-events-none"
-              style={{ writingMode: 'vertical-rl' }}
-            >
-              CB · 114
-            </span>
+
+            {/* ============ C — Mini-radar tático (canto superior esquerdo do palco) ============ */}
+            <div aria-hidden className="hidden lg:block absolute top-2 left-6 z-[55] pointer-events-none select-none">
+              <div className="relative h-[64px] w-[64px] rounded-full border border-amber-300/25" style={{ background: 'radial-gradient(circle at center, hsl(42 90% 55% / 0.06) 0%, transparent 70%)' }}>
+                {/* anéis */}
+                <span aria-hidden className="absolute inset-2 rounded-full border border-amber-300/15" />
+                <span aria-hidden className="absolute inset-4 rounded-full border border-amber-300/15" />
+                {/* cruz */}
+                <span aria-hidden className="absolute top-1/2 left-0 right-0 h-px bg-amber-300/15" />
+                <span aria-hidden className="absolute left-1/2 top-0 bottom-0 w-px bg-amber-300/15" />
+                {/* sweep giratório */}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 rounded-full motion-safe:animate-[spin_3.6s_linear_infinite]"
+                  style={{
+                    background: 'conic-gradient(from 0deg, transparent 0deg, hsl(42 90% 55% / 0.55) 60deg, transparent 90deg)',
+                    maskImage: 'radial-gradient(circle at center, black 62%, transparent 100%)',
+                    WebkitMaskImage: 'radial-gradient(circle at center, black 62%, transparent 100%)',
+                  }}
+                />
+                {/* 4 pontos = 4 equipes */}
+                <span className="absolute h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.9)]" style={{ top: '22%', left: '30%' }} />
+                <span className="absolute h-1 w-1 rounded-full bg-orange-400 shadow-[0_0_4px_rgba(251,146,60,0.9)]" style={{ top: '35%', left: '68%' }} />
+                <span className="absolute h-1 w-1 rounded-full bg-sky-400 shadow-[0_0_4px_rgba(56,189,248,0.9)]" style={{ top: '65%', left: '38%' }} />
+                <span className="absolute h-1 w-1 rounded-full bg-amber-300 shadow-[0_0_4px_rgba(252,211,77,0.9)]" style={{ top: '72%', left: '70%' }} />
+                {/* centro */}
+                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-1 w-1 rounded-full bg-amber-300 shadow-[0_0_6px_rgba(252,211,77,0.9)]" />
+              </div>
+              <div className="mt-1 flex items-center justify-center gap-1">
+                <span className="font-mono text-[7.5px] uppercase tracking-[0.28em] text-white/40 leading-none">Radar</span>
+                <span className="font-mono text-[7.5px] tabular-nums tracking-[0.14em] text-amber-200/70 leading-none">04</span>
+              </div>
+            </div>
 
             {/* Micro-ribbon inferior — linha única, hairline, tabular */}
             <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2 lg:gap-2.5 pointer-events-none whitespace-nowrap max-w-full px-2">
@@ -702,8 +788,44 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             ))}
           </div>
 
+          {/* ============ E + F — Conformidade institucional + Ticker de status ============ */}
+          <div className="hidden sm:flex mt-2 items-stretch gap-3 border-t border-white/8 pt-1.5 select-none">
+            {/* E — selos de conformidade */}
+            <div className="flex items-center gap-3 lg:gap-4 shrink-0">
+              {[
+                { k: 'LGPD', v: '✓', tone: 'emerald' },
+                { k: 'RLS', v: 'ATIVO', tone: 'emerald' },
+                { k: 'ISO 27001', v: 'REF.', tone: 'amber' },
+                { k: 'UPTIME', v: '99.97%', tone: 'emerald' },
+                { k: 'SLA', v: '24/7', tone: 'amber' },
+              ].map((it) => (
+                <span key={it.k} className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                  <span className={cn('h-1 w-1 rounded-full', it.tone === 'emerald' ? 'bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.7)]' : 'bg-amber-400 shadow-[0_0_4px_rgba(251,191,36,0.7)]')} />
+                  <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/50 leading-none">{it.k}</span>
+                  <span className={cn('font-mono text-[9px] font-semibold uppercase tracking-[0.16em] leading-none tabular-nums', it.tone === 'emerald' ? 'text-emerald-300/90' : 'text-amber-300/90')}>{it.v}</span>
+                </span>
+              ))}
+            </div>
+            {/* F — Ticker de status deslizante */}
+            <div className="relative flex-1 min-w-0 overflow-hidden [mask-image:linear-gradient(90deg,transparent_0,#000_6%,#000_94%,transparent_100%)]">
+              <div className="flex items-center gap-6 whitespace-nowrap animate-[pp-ticker_28s_linear_infinite] will-change-transform">
+                {Array.from({ length: 2 }).map((_, dup) => (
+                  <span key={dup} className="flex items-center gap-6 shrink-0">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-emerald-300/85">◉ SISTEMA · OPERACIONAL</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">OP-01 · CONTENÇÃO ATIVA</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">UPLINK · ESTÁVEL</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-200/85 tabular-nums">09 UNIDADES ONLINE</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">RONDA · GEORREFERENCIADA</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">CANAL SEGURO · AES-256</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-200/85">ISE · ACRE · 2026</span>
+                    <span aria-hidden className="h-2 w-px bg-white/15" />
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
 
-          {/* Ribbon HUD removida a pedido do usuário para dar mais espaço aos cards */}
+
 
 
         </div>

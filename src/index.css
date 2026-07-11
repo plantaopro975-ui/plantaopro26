@@ -1669,3 +1669,12 @@ body:not(.rm-focus-mode) > #root {
 @media (prefers-reduced-motion: reduce) {
   body.rm-focus-mode > #root { transition: none; }
 }
+
+/* Ticker de status do hero — deslizamento horizontal contínuo */
+@keyframes pp-ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[pp-ticker_28s_linear_infinite\] { animation: none !important; }
+}
