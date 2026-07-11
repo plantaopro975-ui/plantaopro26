@@ -10,6 +10,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
 
 export type ReminderInterval = 15 | 30 | 60;
 
@@ -20,6 +21,41 @@ export interface ReminderSettings {
 
 const BASE_KEY = 'plantaopro_reminder_settings_v1';
 const EVENT = 'reminder-settings:change';
+
+/**
+ * Contrato de validação — números inteiros, no intervalo [15, 60] minutos,
+ * restritos aos passos operacionais suportados (15, 30, 60).
+ * Rejeita strings, decimais, negativos, NaN e valores fora da lista.
+ */
+export const ALLOWED_INTERVALS = [15, 30, 60] as const;
+
+export const ReminderSettingsSchema = z.object({
+  enabled: z.boolean(),
+  intervalMin: z
+    .number({ invalid_type_error: 'Intervalo deve ser numérico' })
+    .int('Intervalo deve ser um número inteiro')
+    .min(15, 'Intervalo mínimo é 15 minutos')
+    .max(60, 'Intervalo máximo é 60 minutos')
+    .refine((v) => (ALLOWED_INTERVALS as readonly number[]).includes(v), {
+      message: 'Intervalo deve ser 15, 30 ou 60 minutos',
+    }),
+});
+
+export type ReminderValidation =
+  | { ok: true; value: ReminderSettings }
+  | { ok: false; errors: Record<string, string> };
+
+export function validateReminderSettings(raw: unknown): ReminderValidation {
+  const parsed = ReminderSettingsSchema.safeParse(raw);
+  if (parsed.success) {
+    return { ok: true, value: parsed.data as ReminderSettings };
+  }
+  const errors: Record<string, string> = {};
+  for (const issue of parsed.error.issues) {
+    errors[issue.path.join('.') || '_'] = issue.message;
+  }
+  return { ok: false, errors };
+}
 
 const DEFAULTS: ReminderSettings = { enabled: true, intervalMin: 30 };
 
@@ -33,17 +69,15 @@ function storageKey(userId?: string | null): string {
   return id ? `${BASE_KEY}:${id}` : BASE_KEY;
 }
 
+/**
+ * Sanitiza entrada arbitrária (localStorage, backend, patch parcial) usando o
+ * schema zod. Qualquer campo inválido cai para o default seguro.
+ */
 function normalize(raw: unknown): ReminderSettings {
   if (!raw || typeof raw !== 'object') return { ...DEFAULTS };
-  const r = raw as Partial<ReminderSettings>;
-  const interval: ReminderInterval =
-    r.intervalMin === 15 || r.intervalMin === 30 || r.intervalMin === 60
-      ? r.intervalMin
-      : DEFAULTS.intervalMin;
-  return {
-    enabled: typeof r.enabled === 'boolean' ? r.enabled : DEFAULTS.enabled,
-    intervalMin: interval,
-  };
+  const merged = { ...DEFAULTS, ...(raw as Partial<ReminderSettings>) };
+  const parsed = ReminderSettingsSchema.safeParse(merged);
+  return parsed.success ? (parsed.data as ReminderSettings) : { ...DEFAULTS };
 }
 
 function readLocal(userId?: string | null): ReminderSettings {
