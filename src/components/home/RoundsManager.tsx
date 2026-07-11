@@ -3461,6 +3461,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
 
+      <ReminderSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+
     </>
   );
 }
