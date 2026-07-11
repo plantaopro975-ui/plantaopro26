@@ -456,10 +456,18 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
               background: `radial-gradient(ellipse at 50% 42%, ${teamColors[team as keyof typeof teamColors]?.glow} 0%, rgba(0,0,0,0.9) 55%, #05070d 100%)`,
             }}
           />
-          {/* Brasão da equipe centralizado */}
+
+          {/* Theme-specific overlay */}
+          <div className={cn(
+            "absolute inset-0 transition-all duration-300",
+            themeStyle.overlayGradient,
+            "opacity-60 group-hover:opacity-50"
+          )} />
+
+          {/* Brasão da equipe centralizado — renderizado ACIMA do overlay para ficar visível */}
           <div
             aria-hidden
-            className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+            className="absolute inset-0 z-[1] transition-transform duration-500 group-hover:scale-105 pointer-events-none"
             style={{
               backgroundImage: `url(${getTeamEmblem(team)})`,
               backgroundSize: '78% auto',
@@ -468,13 +476,6 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
               filter: `drop-shadow(0 6px 24px ${teamColors[team as keyof typeof teamColors]?.glow})`,
             }}
           />
-          
-          {/* Theme-specific overlay */}
-          <div className={cn(
-            "absolute inset-0 transition-all duration-300",
-            themeStyle.overlayGradient,
-            "group-hover:opacity-80"
-          )} />
           
           {/* Top accent stripe */}
           <div className={cn("absolute top-0 left-0 right-0 transition-all duration-300", themeStyle.topAccent)} />
