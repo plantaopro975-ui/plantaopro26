@@ -334,7 +334,7 @@ function AmbientOrbs({ effect }: { effect: BackgroundEffect }) {
       {Array.from({ length: orbCount }).map((_, i) => (
         <div
           key={i}
-          className="absolute rounded-full blur-3xl"
+          className="absolute rounded-full blur-2xl"
           style={{
             left: `${(i * 30) + 10}%`,
             top: `${(i % 2) * 40 + 20}%`,
@@ -523,16 +523,16 @@ export function ThemedBackground() {
           o que reduz drasticamente o custo de GPU/CPU e elimina a sensação
           de luz ofuscando o fundo escuro da home. */}
       <div
-        className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-3xl"
+        className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-2xl"
         style={{ background: themeAssets.ambientGlow.primary }}
       />
       <div
-        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-3xl"
+        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full blur-2xl"
         style={{ background: themeAssets.ambientGlow.secondary }}
       />
       {themeAssets.ambientGlow.tertiary && (
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl opacity-50"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-2xl opacity-50"
           style={{ background: `radial-gradient(circle, ${themeAssets.ambientGlow.tertiary} 0%, transparent 70%)` }}
         />
       )}
