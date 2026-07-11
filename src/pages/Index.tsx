@@ -150,8 +150,24 @@ export default function Index() {
   const [loginCpf, setLoginCpf] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginErrors, setLoginErrors] = useState<Record<string, string>>({});
-  const [saveCpfEnabled, setSaveCpfEnabled] = useState(true); // Default to save CPF
-  const [savePasswordEnabled, setSavePasswordEnabled] = useState(true); // Default to quick login
+  const [saveCpfEnabled, setSaveCpfEnabled] = useState<boolean>(() => {
+    try {
+      const v = localStorage.getItem('plantao_pro_save_cpf_pref');
+      return v === null ? true : v === '1';
+    } catch { return true; }
+  });
+  const [savePasswordEnabled, setSavePasswordEnabled] = useState<boolean>(() => {
+    try {
+      const v = localStorage.getItem('plantao_pro_save_password_pref');
+      return v === null ? true : v === '1';
+    } catch { return true; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('plantao_pro_save_cpf_pref', saveCpfEnabled ? '1' : '0'); } catch { /* ignore */ }
+  }, [saveCpfEnabled]);
+  useEffect(() => {
+    try { localStorage.setItem('plantao_pro_save_password_pref', savePasswordEnabled ? '1' : '0'); } catch { /* ignore */ }
+  }, [savePasswordEnabled]);
   const [enableBiometric, setEnableBiometric] = useState(false);
   const [quickLoginLoadingCpf, setQuickLoginLoadingCpf] = useState<string | null>(null);
 
