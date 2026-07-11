@@ -235,6 +235,7 @@ const App = () => (
       </ThemeProvider>
     </FontSizeProvider>
   </QueryClientProvider>
+  </SingleTabGuard>
 );
 
 export default App;
