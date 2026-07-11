@@ -338,8 +338,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     onTeamClick(k);
   }, [onTeamClick]);
 
-  // ==== DRAG + SCALE independentes (desktop only) =========================
-  // Viatura e agente têm offsets e escalas próprios, persistidos em localStorage.
+  // ==== Posição/escala fixas (desktop) — viatura e agente =================
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)');
@@ -349,88 +348,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     return () => mq.removeEventListener('change', update);
   }, []);
 
-  const readOffset = (key: string) => {
-    if (typeof window === 'undefined') return { x: 0, y: 0 };
-    try { const raw = localStorage.getItem(key); if (raw) return JSON.parse(raw); } catch {}
-    return { x: 0, y: 0 };
-  };
-  const [vehOffset, setVehOffset] = useState<{ x: number; y: number }>(() => readOffset('pp-veh-offset'));
-  const [agtOffset, setAgtOffset] = useState<{ x: number; y: number }>(() => readOffset('pp-agt-offset'));
-  useEffect(() => { try { localStorage.setItem('pp-veh-offset', JSON.stringify(vehOffset)); } catch {} }, [vehOffset]);
-  useEffect(() => { try { localStorage.setItem('pp-agt-offset', JSON.stringify(agtOffset)); } catch {} }, [agtOffset]);
+  const VEH_OFFSET = { x: -83, y: 212 };
+  const AGT_OFFSET = { x: -377, y: 223 };
+  const VEH_SCALE = 1.68;
+  const AGT_SCALE = 1.60;
 
-  const [draggingKey, setDraggingKey] = useState<null | 'veh' | 'agt'>(null);
-  const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number; setter: (o: {x:number;y:number}) => void } | null>(null);
 
-  const makeDragHandlers = (
-    key: 'veh' | 'agt',
-    offset: { x: number; y: number },
-    setter: (o: { x: number; y: number }) => void,
-  ) => ({
-    onPointerDown: (e: React.PointerEvent) => {
-      if (!isDesktop) return;
-      e.preventDefault();
-      e.stopPropagation();
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-      dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: offset.x, baseY: offset.y, setter };
-      setDraggingKey(key);
-    },
-    onPointerMove: (e: React.PointerEvent) => {
-      if (!dragRef.current) return;
-      const dx = e.clientX - dragRef.current.startX;
-      const dy = e.clientY - dragRef.current.startY;
-      dragRef.current.setter({ x: dragRef.current.baseX + dx, y: dragRef.current.baseY + dy });
-    },
-    onPointerUp: (e: React.PointerEvent) => {
-      if (!dragRef.current) return;
-      try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
-      dragRef.current = null;
-      setDraggingKey(null);
-    },
-  });
-
-  // ==== SCALE MANUAL (desktop) — viatura e agente independentes ==========
-  const [vehScale, setVehScale] = useState<number>(() => {
-    if (typeof window === 'undefined') return 1;
-    const v = parseFloat(localStorage.getItem('pp-veh-scale') || '1');
-    return Number.isFinite(v) && v > 0 ? v : 1;
-  });
-  const [agtScale, setAgtScale] = useState<number>(() => {
-    if (typeof window === 'undefined') return 1;
-    const v = parseFloat(localStorage.getItem('pp-agt-scale') || '1');
-    return Number.isFinite(v) && v > 0 ? v : 1;
-  });
-  useEffect(() => { try { localStorage.setItem('pp-veh-scale', String(vehScale)); } catch {} }, [vehScale]);
-  useEffect(() => { try { localStorage.setItem('pp-agt-scale', String(agtScale)); } catch {} }, [agtScale]);
-  const clampScale = (v: number) => Math.max(0.5, Math.min(3, Math.round(v * 100) / 100));
-
-  // HUD panel: posição arrastável + colapsável
-  const [hudPos, setHudPos] = useState<{ x: number; y: number }>(() => readOffset('pp-hud-pos'));
-  const [hudCollapsed, setHudCollapsed] = useState<boolean>(false);
-
-  useEffect(() => { try { localStorage.setItem('pp-hud-pos', JSON.stringify(hudPos)); } catch {} }, [hudPos]);
-  useEffect(() => { try { localStorage.setItem('pp-hud-collapsed', hudCollapsed ? '1' : '0'); } catch {} }, [hudCollapsed]);
-  const hudDragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
-  const onHudDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    hudDragRef.current = { startX: e.clientX, startY: e.clientY, baseX: hudPos.x, baseY: hudPos.y };
-  };
-  const onHudMove = (e: React.PointerEvent) => {
-    if (!hudDragRef.current) return;
-    setHudPos({
-      x: hudDragRef.current.baseX + (e.clientX - hudDragRef.current.startX),
-      y: hudDragRef.current.baseY + (e.clientY - hudDragRef.current.startY),
-    });
-  };
-  const onHudUp = (e: React.PointerEvent) => {
-    if (!hudDragRef.current) return;
-    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
-    hudDragRef.current = null;
-  };
-
-  const vehDrag = makeDragHandlers('veh', vehOffset, setVehOffset);
-  const agtDrag = makeDragHandlers('agt', agtOffset, setAgtOffset);
 
 
 
