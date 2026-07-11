@@ -3267,7 +3267,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       <TeamConfirmDialog
                         open={teamConfirmOpen}
-                        color={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.color ?? teamColor) : teamColor}
+                        color={pendingTeam ? getRotatedTeamColor(pendingTeam, colorRotation) : teamColor}
                         teamLabel={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.label ?? pendingTeam) : team}
                         agentCount={agents.filter((a) => a.trim()).length}
                         onCancel={() => { setTeamConfirmOpen(false); setPendingTeam(null); }}
