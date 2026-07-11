@@ -672,17 +672,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </div>
 
 
-            {/* Moldura HUD ultra-discreta — hairlines nos quatro cantos, sem competir com a cena */}
-            <div aria-hidden className="hidden md:block absolute inset-x-3 top-2 bottom-2 lg:inset-x-5 lg:top-3 lg:bottom-3 pointer-events-none">
-              {/* cantoneiras finas */}
-              <span className="absolute top-0 left-0 h-3 w-3 border-t border-l border-amber-300/25" />
-              <span className="absolute top-0 right-0 h-3 w-3 border-t border-r border-amber-300/25" />
-              <span className="absolute bottom-0 left-0 h-3 w-3 border-b border-l border-amber-300/25" />
-              <span className="absolute bottom-0 right-0 h-3 w-3 border-b border-r border-amber-300/25" />
-              {/* ticks laterais discretos */}
-              <span className="absolute top-1/2 left-0 -translate-y-1/2 h-4 w-px bg-amber-300/20" />
-              <span className="absolute top-1/2 right-0 -translate-y-1/2 h-4 w-px bg-amber-300/20" />
-            </div>
+            {/* Moldura HUD/cantoneiras removidas (solicitação do usuário) */}
+
 
             {/* Scan line removida: causava faixa vertical sobre a viatura */}
 
