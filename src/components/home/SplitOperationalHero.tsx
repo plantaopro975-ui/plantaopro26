@@ -365,6 +365,24 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           <rect width="100%" height="100%" fill="url(#heroBgGlow)" />
         </svg>
 
+        {/* ============ D — Grade topográfica sutil + coordenadas UTM ============ */}
+        <svg aria-hidden className="hidden sm:block absolute inset-0 h-full w-full pointer-events-none opacity-[0.08]" preserveAspectRatio="none">
+          <defs>
+            <pattern id="topoGrid" x="0" y="0" width="56" height="56" patternUnits="userSpaceOnUse">
+              <path d="M 56 0 L 0 0 0 56" fill="none" stroke="hsl(42 90% 55%)" strokeWidth="0.5" />
+            </pattern>
+            <pattern id="topoDots" x="28" y="28" width="112" height="112" patternUnits="userSpaceOnUse">
+              <circle cx="0" cy="0" r="1" fill="hsl(42 90% 55%)" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#topoGrid)" />
+          <rect width="100%" height="100%" fill="url(#topoDots)" />
+        </svg>
+        <div aria-hidden className="hidden lg:flex absolute top-1.5 inset-x-3 z-[5] justify-between font-mono text-[8px] uppercase tracking-[0.28em] text-white/25 pointer-events-none select-none">
+          <span>N 9.879.412 · E 660.148 · UTM 19L</span>
+          <span>MGRS 19L GK 60148 79412</span>
+        </div>
+
         {/* Overlay de leitura */}
         <div
           aria-hidden
