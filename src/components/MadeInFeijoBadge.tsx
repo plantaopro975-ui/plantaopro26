@@ -85,7 +85,7 @@ export function MadeInFeijoBadge({
           )}
           style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" }}
         >
-          Crafted
+          Developed by
         </span>
 
         {/* Separador */}
@@ -99,7 +99,7 @@ export function MadeInFeijoBadge({
           )}
           style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" }}
         >
-          Software App
+          Franc D&apos;nis
         </span>
       </div>
     </div>
