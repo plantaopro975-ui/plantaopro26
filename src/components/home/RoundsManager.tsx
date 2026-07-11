@@ -2437,7 +2437,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </div>
                 <div
                   className="relative border-t px-2.5 py-1 sm:px-3"
-                  style={{ borderColor: `${teamColor}1c`, background: `linear-gradient(180deg, ${teamColor}06, transparent)` }}
+                  style={{ borderColor: `${teamColor}1c` }}
                 >
                   <TeamOperationsStripe
                     team={team}
