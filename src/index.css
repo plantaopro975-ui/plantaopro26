@@ -1959,3 +1959,75 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   .rm-dialog [class*="tracking-[0.22em]"],
   .rm-dialog [class*="tracking-[0.28em]"] { letter-spacing: 0.14em !important; }
 }
+
+/* =========================================================
+ * TYPOCLEAR — Tipografia limpa, legível e profissional
+ * Aplicada em .home-typo (homepage) e .typoclear (painel do agente
+ * e páginas internas). Remove glow/text-shadow, suaviza tracking
+ * excessivo e neutraliza pulsos em textos — sem tocar em ícones,
+ * emblemas ou selos táticos que dependem de brilho.
+ * ========================================================= */
+.typoclear,
+.typoclear p,
+.typoclear span:not([class*="font-mono"]):not([class*="font-serif"]):not([class*="font-display"]):not([class*="font-stencil"]):not([class*="font-tactical"]),
+.typoclear button,
+.typoclear a,
+.typoclear li,
+.typoclear label,
+.typoclear input,
+.typoclear textarea,
+.typoclear select,
+.typoclear div:not([class*="font-mono"]):not([class*="font-serif"]):not([class*="font-display"]):not([class*="font-stencil"]):not([class*="font-tactical"]) {
+  font-family: 'Inter', 'DM Sans', 'IBM Plex Sans', system-ui, sans-serif;
+  font-feature-settings: 'ss01', 'cv01', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.typoclear h1,
+.typoclear h2,
+.typoclear h3,
+.typoclear h4,
+.typoclear h5,
+.typoclear h6 {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+
+/* Remove glow / text-shadow em textos (mantém em ícones/emblemas). */
+.home-typo :is(h1,h2,h3,h4,h5,h6,p,span,a,button,li,label,div),
+.typoclear :is(h1,h2,h3,h4,h5,h6,p,span,a,button,li,label,div) {
+  text-shadow: none !important;
+}
+
+/* Neutraliza drop-shadow "glow" em textos (mantém sombras direcionais). */
+.typoclear *[class*="drop-shadow-[0_0"] {
+  filter: none !important;
+}
+
+/* Suaviza tracking excessivo em uppercase para melhor leitura. */
+.home-typo [class*="tracking-widest"],
+.typoclear [class*="tracking-widest"],
+.home-typo [class*="tracking-[0.22em]"],
+.typoclear [class*="tracking-[0.22em]"],
+.home-typo [class*="tracking-[0.28em]"],
+.typoclear [class*="tracking-[0.28em]"],
+.home-typo [class*="tracking-[0.3em]"],
+.typoclear [class*="tracking-[0.3em]"] {
+  letter-spacing: 0.08em !important;
+}
+
+/* Desativa pulsação em textos (mantém em ícones/badges com role). */
+.typoclear :is(h1,h2,h3,h4,h5,h6,p,span,a,label).animate-pulse,
+.home-typo :is(h1,h2,h3,h4,h5,h6,p,span,a,label).animate-pulse {
+  animation: none !important;
+}
+
+/* Renderização mais nítida em números tabulares (contadores, cronômetros). */
+.typoclear .font-mono,
+.typoclear [class*="tabular-nums"] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum', 'ss01';
+}
+
