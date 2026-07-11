@@ -2697,12 +2697,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               <div className="flex items-center justify-center gap-3">
                                 <span
                                   className={cn(
-                                    'font-mono font-light tabular-nums tracking-tight leading-none break-all transition-all',
+                                    'font-mono font-light tabular-nums tracking-tight leading-none break-all',
                                     urgent
                                       ? 'text-2xl sm:text-3xl md:text-4xl font-black'
                                       : 'text-xl sm:text-2xl md:text-3xl',
 
-                                    critical && !silentMode && 'animate-pulse',
                                   )}
                                   style={{
                                     color: urgent
