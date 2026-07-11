@@ -3656,16 +3656,44 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
                       {/* Countdown — aberto, centralizado */}
-                      <div className="mb-2 flex flex-col items-center text-center gap-1">
+                      <div className="relative mb-2 flex flex-col items-center text-center gap-1 overflow-hidden rounded-lg">
+                        {/* SVG tático realista de fundo — radar + grid, não intercepta cliques */}
+                        <svg
+                          aria-hidden
+                          viewBox="0 0 400 260"
+                          preserveAspectRatio="xMidYMid slice"
+                          className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.09]"
+                        >
+                          <defs>
+                            <radialGradient id="rm-radar-grad" cx="50%" cy="50%" r="50%">
+                              <stop offset="0%" stopColor={teamColor} stopOpacity="0.9" />
+                              <stop offset="70%" stopColor={teamColor} stopOpacity="0.15" />
+                              <stop offset="100%" stopColor={teamColor} stopOpacity="0" />
+                            </radialGradient>
+                            <pattern id="rm-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                              <path d="M20 0H0V20" fill="none" stroke={teamColor} strokeWidth="0.4" />
+                            </pattern>
+                          </defs>
+                          <rect width="400" height="260" fill="url(#rm-grid)" />
+                          <circle cx="200" cy="130" r="110" fill="none" stroke={teamColor} strokeWidth="0.8" />
+                          <circle cx="200" cy="130" r="75"  fill="none" stroke={teamColor} strokeWidth="0.6" />
+                          <circle cx="200" cy="130" r="40"  fill="none" stroke={teamColor} strokeWidth="0.6" />
+                          <line x1="200" y1="20"  x2="200" y2="240" stroke={teamColor} strokeWidth="0.5" />
+                          <line x1="90"  y1="130" x2="310" y2="130" stroke={teamColor} strokeWidth="0.5" />
+                          <path d="M200 130 L310 130 A110 110 0 0 0 285 65 Z" fill="url(#rm-radar-grad)">
+                            <animateTransform attributeName="transform" type="rotate" from="0 200 130" to="360 200 130" dur="6s" repeatCount="indefinite" />
+                          </path>
+                        </svg>
+
                         {(() => {
                           // "view" unifica live (rodando) e preview (turno noturno, antes de Iniciar)
                           const view = live ?? preview;
                           const isPreview = !live && !!preview;
                           const statusLabel =
-                            running && live && !live.done ? 'Em ronda' :
+                            running && live && !live.done ? 'Restante do agente em ronda' :
                             running && live?.done ? 'Concluído' :
                             isPreview && view?.done ? 'Turno encerrado (06:00)' :
-                            isPreview ? 'Prévia em tempo real · aguardando Iniciar' :
+                            isPreview ? 'Prévia · agente atual' :
                             'Aguardando início';
                           const urgent = view && !view.done && view.remaining <= 10;
                           const critical = view && !view.done && view.remaining <= 5;
@@ -3674,9 +3702,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           const activeAgentName = view && !view.done ? schedule.rows[view.index]?.name : undefined;
                           return (
                             <>
-                              <span className="font-sans text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground">
+                              <span className="relative font-sans text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground">
                                 {statusLabel}
                               </span>
+
 
                               <div className="flex items-center justify-center gap-3">
                                 <span
@@ -3738,7 +3767,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 </div>
                               )}
 
-                              {/* Restante total do turno + próximo agente */}
+                              {/* Contadores enxutos — sem duplicação */}
                               {schedule && (
                                 <div
                                   className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[11.5px] tabular-nums"
@@ -3757,16 +3786,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                     const nextIdx = view && !view.done ? view.index + 1 : (!view ? 1 : -1);
                                     if (nextIdx < 0 || nextIdx >= schedule.rows.length) return null;
                                     const nextRow = schedule.rows[nextIdx];
-                                    const secsToNext = view && !view.done ? view.remaining : schedule.rows[0].duration * 60;
                                     return (
-                                    <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2 py-0.5 text-primary">
-                                        Próx: <b className="uppercase">{nextRow.name}</b> em&nbsp;
-                                        <b>{fmtHMS(secsToNext)}</b>
+                                      <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2 py-0.5 text-primary">
+                                        Próximo: <b className="uppercase">{nextRow.name}</b>
                                       </span>
                                     );
                                   })()}
                                 </div>
                               )}
+
 
                             </>
                           );
