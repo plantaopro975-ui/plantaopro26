@@ -16,6 +16,7 @@ import {
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { getShiftBounds, isShiftActive } from '@/lib/shiftTime';
 
 interface ProfessionalShiftTimerProps {
   agentId: string;
