@@ -900,11 +900,10 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
 function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; color: string; count: number; ready: boolean }) {
   return (
     <div
-      className="mb-2 flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 sm:px-3 [&_*]:transition-none [&_*]:animate-none hover:bg-card"
-      style={{ borderLeft: `2px solid ${color}`, transition: 'none', animation: 'none' }}
+      className="mb-1.5 flex items-center gap-2 rounded-md border border-border bg-card px-2 py-1 sm:px-2.5 [&_*]:transition-none [&_*]:animate-none hover:bg-card"
+      style={{ transition: 'none', animation: 'none' }}
     >
-      {/* Ícone de status — plano, sem efeitos */}
-      <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden>
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden>
         {ready ? (
           <path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         ) : (
@@ -915,21 +914,19 @@ function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; colo
         )}
       </svg>
 
-      <div className="min-w-0 flex-1">
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground leading-none">
+      <div className="min-w-0 flex-1 flex items-baseline gap-2 flex-wrap">
+        <span className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-muted-foreground leading-none">
           {ready ? 'Cronograma pronto' : 'Aguardando configuração'}
-        </div>
-        <div className="mt-0.5 text-[12px] sm:text-[13px] font-medium text-foreground leading-tight truncate">
+        </span>
+        <span className="text-[11.5px] sm:text-[12px] font-medium text-foreground leading-tight truncate">
           {ready
             ? <>Equipe <span style={{ color }}>{team}</span> · {count} agente{count === 1 ? '' : 's'}</>
             : <>Defina intervalo e agentes</>}
-        </div>
+        </span>
       </div>
 
       {ready && (
-        <span
-          className="hidden sm:inline-flex items-center rounded-sm border border-border px-1.5 py-[1px] font-mono text-[9.5px] uppercase tracking-widest text-muted-foreground"
-        >
+        <span className="hidden sm:inline-flex items-center rounded-sm border border-border px-1.5 py-[1px] font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
           Pronto
         </span>
       )}
@@ -2171,56 +2168,75 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     setDrag({ x: 0, y: 0 });
   };
 
-  /* ================= Drag da janela (antes de iniciar o cronômetro) ================= */
+  /* ================= Drag da janela (rAF + transform direto no DOM) ================= */
   const [drag, setDrag] = useState({ x: 0, y: 0 });
-  const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const dragRef = useRef<{
+    startX: number; startY: number; baseX: number; baseY: number;
+    boundX: number; boundY: number; nx: number; ny: number; raf: number | null;
+  } | null>(null);
   const canDrag = true;
+
+  const applyTransform = (x: number, y: number) => {
+    const el = dialogRef.current;
+    if (el) el.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+  };
 
   const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!canDrag) return;
-    // Só arrasta se clicar diretamente no header (não em botões/inputs)
     const target = e.target as HTMLElement;
     if (target.closest('button, input, select, a, [role="button"]')) return;
     e.preventDefault();
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
-    dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: drag.x, baseY: drag.y };
-  };
-  const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current) return;
-    const { startX, startY, baseX, baseY } = dragRef.current;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    // Clamp baseado no tamanho REAL da janela para mantê-la sempre inteiramente
-    // dentro da viewport — impede que "suma" fora da tela sem forma de voltar.
-    const header = e.currentTarget as HTMLDivElement;
-    const dialog = (header.closest('[role="dialog"]') as HTMLElement | null) ?? header.parentElement;
+    const dialog = (e.currentTarget as HTMLDivElement).closest('[role="dialog"]') as HTMLElement | null;
+    if (dialog) dialogRef.current = dialog as HTMLDivElement;
     const rect = dialog?.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const w = rect?.width ?? 0;
     const h = rect?.height ?? 0;
-    // Se a janela for maior que a viewport (mobile), fixa no centro (bound=0).
-    const boundX = Math.max(0, (vw - w) / 2);
-    const boundY = Math.max(0, (vh - h) / 2);
-    const nx = Math.max(-boundX, Math.min(boundX, baseX + dx));
-    const ny = Math.max(-boundY, Math.min(boundY, baseY + dy));
-    setDrag({ x: nx, y: ny });
+    dragRef.current = {
+      startX: e.clientX, startY: e.clientY,
+      baseX: drag.x, baseY: drag.y,
+      boundX: Math.max(0, (vw - w) / 2),
+      boundY: Math.max(0, (vh - h) / 2),
+      nx: drag.x, ny: drag.y, raf: null,
+    };
   };
-  const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (dragRef.current) {
-      dragRef.current = null;
-      try { (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId); } catch { /* noop */ }
+  const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current;
+    if (!d) return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    d.nx = Math.max(-d.boundX, Math.min(d.boundX, d.baseX + dx));
+    d.ny = Math.max(-d.boundY, Math.min(d.boundY, d.baseY + dy));
+    if (d.raf == null) {
+      d.raf = requestAnimationFrame(() => {
+        if (dragRef.current) {
+          applyTransform(dragRef.current.nx, dragRef.current.ny);
+          dragRef.current.raf = null;
+        }
+      });
     }
   };
-  const resetPosition = () => setDrag({ x: 0, y: 0 });
+  const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current;
+    if (d) {
+      if (d.raf != null) cancelAnimationFrame(d.raf);
+      const { nx, ny } = d;
+      dragRef.current = null;
+      try { (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId); } catch { /* noop */ }
+      setDrag({ x: nx, y: ny });
+    }
+  };
+  const resetPosition = () => { applyTransform(0, 0); setDrag({ x: 0, y: 0 }); };
 
-  // Recentra a janela se a viewport encolher e a posição atual ficar fora dos limites.
+  // Recentra a janela se a viewport encolher.
   useEffect(() => {
     const clampToViewport = () => {
       setDrag((prev) => {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
-        // Sem acesso ao tamanho real aqui — usamos margem defensiva de 40px.
         const boundX = Math.max(0, vw / 2 - 40);
         const boundY = Math.max(0, vh / 2 - 40);
         const nx = Math.max(-boundX, Math.min(boundX, prev.x));
@@ -2307,12 +2323,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
         <DialogContent
-          className="w-[min(100vw-0.25rem,54rem)] sm:w-[min(100vw-0.75rem,54rem)] xl:w-[min(100vw-1rem,58rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-card border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden flex flex-col rounded-lg"
+          ref={dialogRef as any}
+          className="w-[min(100vw-0.25rem,50rem)] sm:w-[min(100vw-0.75rem,50rem)] xl:w-[min(100vw-1rem,54rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-card border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden flex flex-col rounded-lg !transition-none !duration-0 !animate-none"
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
             borderColor: `${teamColor}44`,
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
+            willChange: 'transform',
           }}
           onEscapeKeyDown={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
@@ -2390,8 +2408,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                className="px-2 sm:px-3 py-2"
             >
               <div
-                className="mx-auto mb-2 overflow-hidden rounded-md border border-border bg-card"
-                style={{ borderLeft: `2px solid ${teamColor}` }}
+                className="mx-auto mb-1.5 overflow-hidden rounded-md border border-border bg-card"
               >
                 <div className="relative flex items-center gap-2 px-2.5 py-1 sm:px-3">
                   <span
@@ -2420,7 +2437,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </div>
                 <div
                   className="relative border-t px-2.5 py-1 sm:px-3"
-                  style={{ borderColor: `${teamColor}1c`, background: `linear-gradient(180deg, ${teamColor}06, transparent)` }}
+                  style={{ borderColor: `${teamColor}1c` }}
                 >
                   <TeamOperationsStripe
                     team={team}
