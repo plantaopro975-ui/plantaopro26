@@ -252,9 +252,29 @@ export function ShiftBriefingCard({
   const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
 
   // -------- Auto-save (debounce 700ms) com persistência local + fila offline --------
+  const MISSING_LABEL: Record<ChecklistKey, string> = {
+    adolescents: 'Contagem de adolescentes',
+    handcuffs: 'Contagem de algemas',
+    handcuff_keys: 'Contagem de chaves de algemas',
+    tonfas: 'Contagem de tonfas',
+    radios: 'Rádios carregados',
+    handover: 'Confirmação de passagem de plantão',
+  };
+
   const persist = async (finalize = false) => {
     if (!currentShift) return null;
+
+    // Validação obrigatória ao finalizar: todas as contagens + passagem precisam estar preenchidas.
+    if (finalize) {
+      const missing = CHECKLIST_ORDER.filter((k) => !itemsStatus[k]).map((k) => MISSING_LABEL[k]);
+      if (missing.length > 0) {
+        toast.error(`Preencha antes de registrar: ${missing.join(' · ')}`);
+        return null;
+      }
+    }
     // Assinatura não é mais obrigatória — o próprio agente logado assina o registro.
+
+
 
 
     // 1) Sempre salvar rascunho local ANTES de tentar a rede — assim, mesmo se
