@@ -209,14 +209,8 @@ const App = () => (
                           </RequireAuth>
                         }
                       />
-                      <Route
-                        path="/rounds-history"
-                        element={
-                          <RequireAuth mode="block">
-                            <RoundsHistory />
-                          </RequireAuth>
-                        }
-                      />
+
+
 
                       {/* Debug */}
                       <Route path="/debug/auth" element={<DebugAuth />} />
