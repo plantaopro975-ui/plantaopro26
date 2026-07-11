@@ -24,7 +24,7 @@ import { PanelSkeleton } from "@/components/ui/panel-skeleton";
 import { InactivityGuard } from "@/components/InactivityGuard";
 import { ImageProtection } from "@/components/ImageProtection";
 import { ServiceWorkerUpdateBanner } from "@/components/ServiceWorkerUpdateBanner";
-import { MadeInFeijoBadge } from "@/components/MadeInFeijoBadge";
+
 
 // Lazy-loaded routes — split into async chunks to shrink initial bundle
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -222,8 +222,6 @@ const App = () => (
                 </ReconnectingGuard>
                 {/* PWA Install Prompt - Shows on all pages when installable */}
                 <PWAInstallPrompt />
-                {/* Selo discreto de origem — canto inferior esquerdo, sem afetar layout */}
-                <MadeInFeijoBadge />
               </GlobalNavigationHandler>
               </ConfirmProvider>
             </AuthProvider>

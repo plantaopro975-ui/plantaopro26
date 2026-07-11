@@ -6,15 +6,18 @@
  * (pointer-events-none). Aparece apenas em telas ≥ sm para não competir
  * com toolbars/mobile nav.
  */
-export function MadeInFeijoBadge() {
+export function MadeInFeijoBadge({ inline = false }: { inline?: boolean }) {
+  const wrapperClass = inline
+    ? "inline-flex items-center justify-center select-none opacity-80 hover:opacity-100 transition-opacity"
+    : "pointer-events-none fixed bottom-1 left-1 z-[55] hidden sm:block select-none opacity-60 hover:opacity-100 transition-opacity";
   return (
     <div
       aria-hidden={false}
       role="note"
       title="Desenvolvido em Feijó, Acre — Brasil"
-      className="pointer-events-none fixed bottom-1 left-1 z-[55] hidden sm:block select-none opacity-60 hover:opacity-100 transition-opacity"
-      style={{ mixBlendMode: 'normal' }}
+      className={wrapperClass}
     >
+
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 168 22"

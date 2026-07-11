@@ -58,6 +58,7 @@ import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
+import { MadeInFeijoBadge } from '@/components/MadeInFeijoBadge';
 
 import { RoundReminderDialog } from '@/components/home/RoundReminderDialog';
 import { useRoundReminder } from '@/hooks/useRoundReminder';
@@ -1558,6 +1559,12 @@ export default function Index() {
 
       {/* Divisor entre seção institucional e rodapé */}
       <SectionDivider />
+
+      {/* Selo de origem — centralizado, discreto, não afeta layout dos demais elementos */}
+      <div className="relative z-30 w-full flex justify-center py-3">
+        <MadeInFeijoBadge inline />
+      </div>
+
 
       {/* Mobile-only beta notice */}
       <div className="hidden sm:block">
