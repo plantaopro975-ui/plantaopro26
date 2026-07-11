@@ -625,7 +625,7 @@ export default function AgentPanel() {
                 {/* Control Panel Header - Compact & Professional */}
                 <div className={cn(
                   'relative flex items-center justify-between gap-2 border-b border-amber-500/20',
-                  compact ? 'px-2 py-1 md:px-2.5 md:py-1.5' : 'px-2 py-1 md:px-3 md:py-2'
+                  compact ? 'px-1.5 py-0.5 md:px-2 md:py-1' : 'px-2 py-1 md:px-2.5 md:py-1.5'
                 )}>
                   <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
                     <div className="p-0.5 md:p-1 rounded-md bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 shadow-sm shadow-amber-500/30 ring-1 ring-amber-300/30 shrink-0">
@@ -635,7 +635,7 @@ export default function AgentPanel() {
                       <h2 className="text-[10px] md:text-xs font-black text-amber-100 tracking-wider uppercase truncate">
                         Painel de Controle
                       </h2>
-                      <p className="hidden md:block text-[9px] md:text-[10px] text-amber-400/80 font-medium tracking-wide">
+                      <p className="hidden lg:block text-[9px] md:text-[10px] text-amber-400/80 font-medium tracking-wide">
                         Sistema Operacional Integrado
                       </p>
                     </div>
@@ -648,10 +648,10 @@ export default function AgentPanel() {
 
                 
                 {/* Tabs Grid - Compact, readable */}
-                <div className={compact ? 'p-1.5 md:p-2' : 'p-2 md:p-2.5'}>
+                <div className={compact ? 'p-1 md:p-1.5' : 'p-1.5 md:p-2'}>
                   <TabsList className={cn(
                     'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-5 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
-                    compact ? 'p-1 gap-1 md:p-1.5 md:gap-1.5' : 'p-1 gap-1 md:p-2 md:gap-2'
+                    compact ? 'p-0.5 gap-0.5 md:p-1 md:gap-1' : 'p-1 gap-1 md:p-1.5 md:gap-1.5'
                   )}>
 
                     {([
