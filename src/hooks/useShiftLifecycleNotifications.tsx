@@ -25,6 +25,8 @@ export function useShiftLifecycleNotifications({ agentId, enabled = true }: Opti
   const { isEnabled, showNotification } = usePushNotifications();
   const scheduledRef = useRef<Map<string, ScheduledPush>>(new Map());
   const firedRef = useRef<Set<string>>(new Set());
+  // Guarda payloads agendados para conseguir disparar "atrasados" quando o app voltar do background.
+  const pendingRef = useRef<Map<string, { fireAt: number; payload: Parameters<typeof showNotification>[0] }>>(new Map());
 
   useEffect(() => {
     if (!enabled || !agentId || !isEnabled) return;
