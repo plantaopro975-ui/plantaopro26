@@ -2749,32 +2749,39 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     })}
                   </div>
 
-                  {/* Histórico resumido — equipes das rondas realizadas */}
-                  {teamLog.length > 0 && (
-                    <div className="rounded-md border border-border/70 bg-card/60 p-2">
-                      <div className="mb-1 flex items-center justify-between">
-                        <button
-                          type="button"
-                          onClick={() => setHistoryDialogOpen(true)}
-                          className="group inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground hover:text-primary transition-colors"
-                          title="Abrir histórico detalhado"
-                        >
-                          <span className="inline-flex items-center justify-center h-4 min-w-4 rounded-sm border border-primary/30 bg-primary/10 px-1 font-mono text-[9px] font-bold text-primary group-hover:bg-primary/20">
-                            {teamLog.length}
-                          </span>
-                          Rondas realizadas
-                          <svg viewBox="0 0 24 24" className="h-2.5 w-2.5 opacity-70" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
-                            <polyline points="9 18 15 12 9 6" />
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={clearTeamLog}
-                          className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground hover:text-destructive"
-                        >
-                          Limpar
-                        </button>
+                  {/* Histórico resumido — equipes das rondas realizadas.
+                      Sempre visível (mesmo vazio) para expor botão Limpar e
+                      não redimensionar a tela ao aparecer/sumir. */}
+                  <div className="rounded-md border border-border/70 bg-card/60 p-2 min-h-[86px]">
+                    <div className="mb-1 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => setHistoryDialogOpen(true)}
+                        className="group inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground hover:text-primary transition-colors"
+                        title="Abrir histórico detalhado"
+                      >
+                        <span className="inline-flex items-center justify-center h-4 min-w-4 rounded-sm border border-primary/30 bg-primary/10 px-1 font-mono text-[9px] font-bold text-primary group-hover:bg-primary/20">
+                          {teamLog.length}
+                        </span>
+                        Rondas realizadas
+                        <svg viewBox="0 0 24 24" className="h-2.5 w-2.5 opacity-70" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={clearTeamLog}
+                        disabled={teamLog.length === 0}
+                        className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground hover:text-destructive disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
+                      >
+                        Limpar
+                      </button>
+                    </div>
+                    {teamLog.length === 0 ? (
+                      <div className="flex items-center justify-center h-14 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
+                        Nenhuma ronda registrada
                       </div>
+                    ) : (
                       <ul className="tactical-scrollbar grid gap-0.5 max-h-24 overflow-y-auto pr-1">
                         {teamLog.map((e, i) => {
                           const preset = TEAM_PRESETS.find((p) => p.key === e.team);
@@ -2794,8 +2801,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           );
                         })}
                       </ul>
-                    </div>
-                  )}
+                    )}
+                  </div>
+
                 </div>
 
                 {!nightEffectivelyLocked && (
