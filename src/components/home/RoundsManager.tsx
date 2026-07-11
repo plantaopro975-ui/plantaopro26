@@ -3093,11 +3093,21 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           {schedule && mode === 'split' && (
                             <span data-testid="night-total-remaining">
                               Restante&nbsp;
-                              <b className="font-mono tabular-nums text-amber-100">
+                              <b
+                                className={`font-mono tabular-nums ${
+                                  endingCritical
+                                    ? 'text-red-300 animate-pulse'
+                                    : endingSoon
+                                    ? 'text-amber-300 animate-pulse'
+                                    : 'text-amber-100'
+                                }`}
+                              >
                                 {fmtHMS(totalRemainingSeconds)}
+                                {endingSoon && ' ⏳'}
                               </b>
                             </span>
                           )}
+
                         </div>
 
 
