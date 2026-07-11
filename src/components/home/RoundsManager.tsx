@@ -1446,6 +1446,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   // execução ainda está em vôo (fetch + insert), evitando corrida entre o
   // auto-disparo da programação e cliques manuais.
   const startingRef = useRef(false);
+  const clockSkewWarnedRef = useRef(false);
   const syncServerClock = async () => {
     try {
       const t0 = Date.now();
@@ -1453,7 +1454,21 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       if (error || !data) return;
       const rtt = (Date.now() - t0) / 2;
       const serverMs = new Date(data as string).getTime() + rtt;
-      clockOffsetRef.current = serverMs - Date.now();
+      const offset = serverMs - Date.now();
+      clockOffsetRef.current = offset;
+      // Alerta quando o relógio do dispositivo está > 5 min fora do servidor.
+      const skewMin = Math.abs(offset) / 60_000;
+      if (skewMin > 5 && !clockSkewWarnedRef.current) {
+        clockSkewWarnedRef.current = true;
+        const ahead = offset < 0; // servidor está atrás → dispositivo adiantado
+        toast({
+          title: 'Relógio do dispositivo fora do horário',
+          description: `Diferença de ${Math.round(skewMin)} min em relação ao servidor (${ahead ? 'adiantado' : 'atrasado'}). Ajuste a hora do sistema para evitar registros incorretos.`,
+          variant: 'destructive',
+        });
+      } else if (skewMin <= 5) {
+        clockSkewWarnedRef.current = false;
+      }
     } catch { /* offline: keep local clock */ }
   };
   const nowServer = () => Date.now() + clockOffsetRef.current;
