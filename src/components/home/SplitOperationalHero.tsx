@@ -207,6 +207,10 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         />
       </picture>
 
+      {/* Premium — brushed metal + glass sheen (aditivos, não alteram layout) */}
+      <span aria-hidden className="pp-card-brushed" />
+      <span aria-hidden className="pp-card-glass-sheen" />
+
       {/* Vignette + gradient legibility (mais forte no rodapé para o footer institucional) */}
       <span aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_50%_35%,transparent_25%,rgba(2,6,23,0.7)_85%)]" />
       <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1/2 bg-gradient-to-t from-slate-950 via-slate-950/85 to-transparent" />
