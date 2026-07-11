@@ -131,7 +131,7 @@ export function ShiftTracker({ agentId, compact = false }: ShiftTrackerProps) {
       });
       
       // Push notification
-      if (pushEnabled && 'Notification' in window && Notification.permission === 'granted') {
+      if (pushEnabled && areNativeNotificationsAllowed() && Notification.permission === 'granted') {
         new Notification('🚨 Plantão Próximo!', {
           body: message,
           icon: '/favicon.ico',
