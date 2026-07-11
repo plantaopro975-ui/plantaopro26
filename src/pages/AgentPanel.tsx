@@ -201,7 +201,7 @@ export default function AgentPanel() {
       void import('@/components/agent-panel/BHTracker');
       void import('@/components/agent-panel/BHEvolutionChart');
       void import('@/components/agent-panel/BHHistoryTracker');
-      void import('@/components/agent-panel/ShiftPlannerCard');
+      
       void import('@/components/agent-panel/SwapRequestsCard');
       void import('@/components/agent-panel/NotificationsAndAlertsCard');
       void import('@/components/agent-panel/AgentSettingsCard');
