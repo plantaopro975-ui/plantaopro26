@@ -4,8 +4,9 @@ import { Radar, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useRoundsStats } from '@/hooks/useRoundsStats';
-import { useServerTime } from '@/hooks/useServerTime';
+
 import { RoundsManager } from './RoundsManager';
+import { TacticalClock } from './TacticalClock';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { BrasaoSentinela } from '@/components/BrasaoSentinela';
@@ -28,12 +29,7 @@ export function RoundsCommandBar() {
   const rounds = useRoundsStats();
   const navigate = useNavigate();
 
-  // Relógio de rede — HH:mm:ss (tick 1s).
-  const now = useServerTime(1000);
-  const clock = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/Rio_Branco' });
-  const dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Rio_Branco' })
-    .replace('.', '')
-    .toUpperCase();
+
 
   const unitLabel = useMemo(() => {
     if (agent?.unit?.name) {
@@ -174,13 +170,9 @@ export function RoundsCommandBar() {
               </span>
             </button>
 
-            {/* Relógio de rede */}
-            <div className="bg-slate-900/60 border border-slate-800 px-2.5 sm:px-3 py-1 flex flex-col items-center min-w-[112px] rounded-sm shadow-inner">
-              <span className="text-[11px] sm:text-[12px] text-primary font-bold leading-none tracking-[0.14em] tabular-nums drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]">
-                {clock}
-              </span>
-              <span className="text-[10px] font-semibold text-slate-200 tracking-[0.2em] mt-0.5">{dateStr}</span>
-            </div>
+            {/* Relógio tático — mesmo componente usado no Gestor de Rondas */}
+            <TacticalClock accent="hsl(var(--primary))" />
+
           </div>
         </div>
       </div>
