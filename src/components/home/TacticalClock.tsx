@@ -9,11 +9,12 @@ interface TacticalClockProps {
 }
 
 const pad2 = (n: number) => String(n).padStart(2, '0');
+const MONTH_ABBR = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
 /**
- * Chronograph HUD — relógio tático de alta precisão sincronizado com o servidor.
- * Estética instrumental: dígitos segmentados com sombra interna, colon pulsante,
- * micro-badge LIVE, filete acento inferior. Dimensões preservadas (px-2.5 py-1).
+ * Tactical Monochrome — relógio compacto sincronizado com o servidor.
+ * Layout: [ ● LIVE ]  HH:MM:ss  │  DD MMM / YYYY
+ * Mono‑cromático com um único accent (cor da equipe) no dot LIVE.
  */
 export function TacticalClock({
   accent = '#eab308',
@@ -25,16 +26,9 @@ export function TacticalClock({
   const hh = pad2(now.getHours());
   const mm = pad2(now.getMinutes());
   const ss = pad2(now.getSeconds());
-  const blink = now.getSeconds() % 2 === 0;
-
-  const date = now.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: '2-digit',
-  });
-
-  const digitCls =
-    'inline-flex items-baseline justify-center rounded-[3px] px-[3px] font-mono font-semibold tabular-nums text-foreground bg-foreground/[0.04] shadow-[inset_0_1px_0_hsl(var(--foreground)/0.06),inset_0_-1px_0_hsl(var(--background)/0.6)]';
+  const dd = pad2(now.getDate());
+  const mon = MONTH_ABBR[now.getMonth()];
+  const yyyy = String(now.getFullYear());
 
   return (
     <div
@@ -42,88 +36,57 @@ export function TacticalClock({
       aria-live="off"
       aria-label={`Hora atual ${hh}:${mm}:${ss}`}
       className={cn(
-        'relative inline-flex items-center gap-2 rounded-md border px-2.5 py-1 select-none overflow-hidden',
-        'bg-gradient-to-b from-background/85 to-background/60 backdrop-blur-sm',
+        'flex items-center h-9 w-[220px] rounded-sm border border-border bg-card/50 px-2.5 gap-3 shadow-inner select-none',
         className,
       )}
-      style={{
-        borderColor: `${accent}55`,
-        boxShadow: `inset 0 0 0 1px ${accent}12, 0 1px 0 hsl(var(--background)/0.4)`,
-      }}
     >
-      {/* filete acento inferior — mais discreto */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-2 bottom-0 h-[1px] rounded-t-sm opacity-50"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${accent}aa, transparent)`,
-        }}
-      />
-
-      {/* LIVE micro-badge sóbrio */}
-      <span
-        aria-hidden
-        className="inline-flex items-center gap-1 font-mono text-[8.5px] font-semibold uppercase tracking-[0.2em] leading-none text-muted-foreground/80"
-      >
-        <span
-          className="relative inline-flex h-1 w-1 rounded-full"
-          style={{ background: accent }}
-        >
+      {/* Live status */}
+      <div className="flex items-center gap-1.5 shrink-0">
+        <span className="relative flex h-1.5 w-1.5">
           <span
-            className={cn(
-              'absolute inset-0 rounded-full transition-opacity duration-500',
-              blink ? 'opacity-60' : 'opacity-0',
-            )}
-            style={{ background: accent, filter: 'blur(1.5px)' }}
+            className="absolute inline-flex h-full w-full rounded-full opacity-20 animate-ping"
+            style={{ background: accent }}
+          />
+          <span
+            className="relative inline-flex h-1.5 w-1.5 rounded-full"
+            style={{ background: accent, boxShadow: `0 0 8px ${accent}99` }}
           />
         </span>
-        LIVE
-      </span>
-
-      {/* Dígitos segmentados */}
-      <span className="inline-flex items-center gap-[2px] text-[16px] sm:text-[18px] leading-none tracking-[0.01em]">
-        <span className={digitCls}>{hh}</span>
         <span
-          className={cn(
-            'font-mono font-semibold text-foreground/70 transition-opacity duration-150',
-            blink ? 'opacity-100' : 'opacity-30',
-          )}
+          className="text-[9px] font-bold tracking-[0.15em] leading-none"
+          style={{ color: accent }}
         >
-          :
+          LIVE
         </span>
-        <span className={digitCls}>{mm}</span>
+      </div>
+
+      {/* Time segment */}
+      <div className="flex-1 flex justify-center items-baseline gap-0.5 font-mono font-medium tracking-tight tabular-nums text-foreground">
+        <span className="text-sm leading-none">
+          {hh}:{mm}
+        </span>
         {showSeconds && (
-          <>
-            <span
-              className={cn(
-                'font-mono font-semibold text-foreground/70 transition-opacity duration-150',
-                blink ? 'opacity-30' : 'opacity-100',
-              )}
-            >
-              :
-            </span>
-            <span className={cn(digitCls, 'text-foreground/85 text-[13px] sm:text-[14px]')}>
-              {ss}
-            </span>
-          </>
+          <span className="text-[10px] leading-none text-muted-foreground/80">
+            :{ss}
+          </span>
         )}
-      </span>
+      </div>
 
       {showDate && (
-        <span
-          className="hidden sm:inline-flex flex-col items-start font-mono leading-none border-l pl-2"
-          style={{ borderColor: `${accent}33` }}
-        >
-          <span
-            className="text-[8.5px] font-bold uppercase tracking-[0.22em]"
-            style={{ color: `${accent}cc` }}
-          >
-            Data
-          </span>
-          <span className="mt-[3px] text-[10.5px] font-semibold uppercase tracking-[0.14em] text-muted-foreground tabular-nums">
-            {date}
-          </span>
-        </span>
+        <>
+          {/* Separator */}
+          <span aria-hidden className="h-3 w-px bg-border shrink-0" />
+
+          {/* Date segment */}
+          <div className="flex flex-col items-end leading-none pr-0.5 font-mono shrink-0">
+            <span className="text-[9px] font-bold text-muted-foreground tabular-nums">
+              {dd} {mon}
+            </span>
+            <span className="text-[8px] tracking-tighter text-muted-foreground/70 tabular-nums">
+              {yyyy}
+            </span>
+          </div>
+        </>
       )}
     </div>
   );
