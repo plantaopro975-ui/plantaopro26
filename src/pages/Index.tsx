@@ -102,6 +102,13 @@ export default function Index() {
   const { user, isLoading, signIn, signUp, setMasterSession, isAdmin, isMaster, userRole } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  /* Lembrete profissional a cada 30 min — só quando o operador está logado. */
+  const roundReminder = useRoundReminder({ intervalMin: 30, paused: !user });
+  const openRoundsManagerEvent = useCallback(() => {
+    try { window.dispatchEvent(new CustomEvent('rounds:open')); } catch { /* ignore */ }
+  }, []);
+
   const { playSound } = useSoundEffects();
   const { themeConfig, theme, resolvedTheme } = useTheme();
   const themeAssets = getThemeAssets(theme, resolvedTheme);
