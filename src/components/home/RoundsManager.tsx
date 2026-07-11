@@ -3007,25 +3007,26 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         title={running && live && !live.done ? 'Abortar ronda em execução?' : 'Encerrar sessão de rondas?'}
         description={
           running && live && !live.done ? (
-            <div className="space-y-2">
-              <p className="text-slate-200/95">
-                Encerrar agora <b>compromete a cobertura da equipe {team}</b> e deixa o posto sem responsável designado.
+            <div className="space-y-1.5">
+              <p className="text-slate-300 text-[11.5px] leading-snug">
+                Encerrar agora <b className="text-slate-100">compromete a cobertura da equipe {team}</b>.
               </p>
-              <div className="rounded-md border border-destructive/40 bg-destructive/10 px-2.5 py-1.5 text-[12px] text-destructive/95 font-mono uppercase tracking-wider flex items-center gap-2">
-                <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" aria-hidden>
+              <div className="rounded border border-destructive/40 bg-destructive/10 px-2 py-1 text-[10px] text-destructive/95 font-mono uppercase tracking-wider flex items-center gap-1.5">
+                <svg viewBox="0 0 24 24" className="h-3 w-3 shrink-0" aria-hidden>
                   <path d="M12 3 L22 20 H2 Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
                   <path d="M12 10 V14 M12 17 V17.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                 </svg>
-                <span>Ação registrada · Abortagem no histórico</span>
+                <span>Abortagem será registrada no histórico</span>
               </div>
-              <p className="text-[11.5px] text-slate-400">
-                Agente ativo: <b className="text-slate-200">{schedule?.rows[live.index]?.name ?? '—'}</b> · restam <b className="text-slate-200 tabular-nums">{fmtHMS(live.remaining)}</b>.
+              <p className="text-[10.5px] text-slate-400 leading-snug">
+                Ativo: <b className="text-slate-200">{schedule?.rows[live.index]?.name ?? '—'}</b> · restam <b className="text-slate-200 tabular-nums">{fmtHMS(live.remaining)}</b>
               </p>
             </div>
           ) : (
             'Os dados desta escala permanecerão salvos no histórico local.'
           )
         }
+
         accent={running && live && !live.done ? '#ef4444' : teamColor}
         primaryLabel={running && live && !live.done ? 'Manter no posto' : 'Continuar'}
         onPrimary={() => setConfirmExit(false)}
