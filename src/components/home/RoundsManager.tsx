@@ -1083,11 +1083,11 @@ function TimeField({
         )}
       </label>
       <div className={cn(
-        'group relative flex items-center gap-2 rounded-md border bg-background pl-2 pr-1 h-11 transition-colors',
+        'group relative flex items-center gap-1 rounded-md border bg-background pl-1.5 pr-1 h-11 transition-colors min-w-0 overflow-hidden',
         invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
         locked && 'opacity-70 cursor-not-allowed pointer-events-none select-none',
       )}>
-        <svg viewBox="0 0 32 32" className="h-6 w-6 shrink-0" aria-hidden>
+        <svg viewBox="0 0 32 32" className="h-5 w-5 shrink-0" aria-hidden>
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
                   strokeDasharray="4 3" strokeLinecap="round" />
@@ -1104,21 +1104,21 @@ function TimeField({
           onFocus={(e) => { setHFocused(true); e.currentTarget.select(); }}
           onBlur={() => { setHFocused(false); commit(hLocal, mLocal); }}
           onKeyDown={onHKey}
-          className="w-8 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          className="w-7 shrink-0 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
           aria-label={`${label} horas`}
           autoComplete="off"
         />
-        <div className="flex flex-col">
+        <div className="flex flex-col shrink-0">
           <button type="button" onClick={() => bump('h', 1)} aria-label="Mais 1 hora"
-            className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
+            className="h-[20px] w-4 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <button type="button" onClick={() => bump('h', -1)} aria-label="Menos 1 hora"
-            className="h-[22px] w-5 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground">
+            className="h-[20px] w-4 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
-        <span className="font-mono text-lg text-muted-foreground/70 select-none -mt-0.5">:</span>
+        <span className="font-mono text-base text-muted-foreground/70 select-none px-0.5 shrink-0">:</span>
         <input
           inputMode="numeric"
           maxLength={2}
@@ -1127,21 +1127,22 @@ function TimeField({
           onFocus={(e) => { setMFocused(true); e.currentTarget.select(); }}
           onBlur={() => { setMFocused(false); commit(hLocal, mLocal); }}
           onKeyDown={onMKey}
-          className="w-8 bg-transparent text-center font-mono text-lg font-light tabular-nums text-foreground outline-none"
+          className="w-7 shrink-0 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
           aria-label={`${label} minutos`}
           autoComplete="off"
         />
-        <div className="ml-auto flex flex-col">
+        <div className="flex flex-col shrink-0 ml-auto">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
-            className="h-[22px] w-5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
+            className="h-[20px] w-4 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min"
-            className="h-[22px] w-5 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground">
+            className="h-[20px] w-4 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
       </div>
+
     </div>
   );
 }
