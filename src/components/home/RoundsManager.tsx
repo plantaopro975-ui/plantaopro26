@@ -3790,23 +3790,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         open={summaryOpen}
                         saved={summarySaved}
                         onSave={async (savedName) => {
-                          // Persiste em Supabase (sincroniza com a unidade)
-                          // e no cache local. Só após esse salvamento o
-                          // fechamento é liberado.
-                          await saveTeamRoundToCloud({
-                            team,
-                            savedName,
-                            totalSeconds: summaryData?.totalSec ?? 0,
-                            agentsCount: schedule.rows.length,
-                          });
-                          // Cache local como fallback offline
+                          // Cache local (sempre grava — funciona offline / sem unidade)
                           const entry: TeamLogEntry = {
                             team, dateISO: getServerDate().toISOString(), savedName,
                           };
                           const next = [entry, ...readTeamLogLocal()].slice(0, 15);
                           writeTeamLogLocal(next);
+                          setTeamLog(next);
+
+                          // Tenta sincronizar com a nuvem, mas NÃO bloqueia o
+                          // encerramento do relatório se falhar (ex.: unidade
+                          // ainda não resolvida, sessão expirada, offline).
+                          let cloudErr: string | null = null;
+                          try {
+                            await saveTeamRoundToCloud({
+                              team,
+                              savedName,
+                              totalSeconds: summaryData?.totalSec ?? 0,
+                              agentsCount: schedule.rows.length,
+                            });
+                          } catch (e) {
+                            cloudErr = (e as Error)?.message || 'falha desconhecida';
+                            console.warn('[rounds] saveTeamRoundToCloud falhou — salvo apenas localmente:', cloudErr);
+                          }
                           setSummarySaved(true);
-                          toast({ title: 'Registro salvo', description: `Equipe ${team} registrada e sincronizada.` });
+                          toast(
+                            cloudErr
+                              ? { title: 'Registro salvo localmente', description: `Sincronização com o servidor falhou (${cloudErr}). Você já pode encerrar.`, variant: 'destructive' as const }
+                              : { title: 'Registro salvo', description: `Equipe ${team} registrada e sincronizada.` }
+                          );
                         }}
                         onClose={() => {
                           setSummaryOpen(false);
