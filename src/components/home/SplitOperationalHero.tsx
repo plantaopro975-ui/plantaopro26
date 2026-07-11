@@ -174,7 +174,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         // Proporção retrato + tamanho contido garantem alinhamento consistente
         // em todos os breakpoints, com margens simétricas via `mx-auto`.
         'group relative flex flex-col text-left bg-transparent isolate overflow-hidden',
-        'h-auto aspect-[4/5] w-full max-w-[172px] min-[390px]:max-w-[188px] min-[430px]:max-w-[200px] sm:max-w-[150px] lg:max-w-[164px] xl:max-w-[180px] mx-auto rounded-none border-0',
+        'h-auto aspect-[4/5] w-full max-w-[172px] min-[390px]:max-w-[188px] min-[430px]:max-w-[200px] sm:max-w-[170px] lg:max-w-[210px] xl:max-w-[232px] 2xl:max-w-[248px] mx-auto rounded-none border-0',
         '[clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)] [-webkit-clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)]',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
