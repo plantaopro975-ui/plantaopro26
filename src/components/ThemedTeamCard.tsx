@@ -678,17 +678,15 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
                 <TeamIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 shrink-0 text-white/80" />
               </div>
               
-              {/* War Name / Codename - PROPORCIONAL */}
-              <p className={cn(
-                "text-[10px] sm:text-xs md:text-sm text-center font-bold uppercase tracking-wider mb-2 md:mb-3 max-w-full transition-colors duration-300",
-                subTextColor,
-                "opacity-90"
-              )}>
-                {team === 'ALFA' && 'GUARDIÃO SUPREMO'}
-                {team === 'BRAVO' && 'FORÇA TÁTICA'}
-                {team === 'CHARLIE' && 'SENTINELA'}
-                {team === 'DELTA' && 'OPERAÇÃO SIGMA'}
-              </p>
+              {/* Fio sutil sob o nome da equipe — substitui o codinome pesado por um traço tático leve */}
+              <div
+                aria-hidden
+                className="mx-auto mb-2 md:mb-3 h-px w-10 sm:w-14 md:w-16 opacity-70"
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${teamColors[team as keyof typeof teamColors]?.primary}, transparent)`,
+                }}
+              />
+
               
               {/* Access button - PROPORCIONAL */}
               <div 
