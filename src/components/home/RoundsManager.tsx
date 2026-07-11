@@ -1761,7 +1761,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     }
     return list;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tickSignalFor('transition'), mode, startTime, endTime, nightEffectivelyLocked]);
+  }, [serverClock, mode, startTime, endTime, nightEffectivelyLocked]);
 
   const issues = useMemo(() => [...baseIssues, ...transitionIssues], [baseIssues, transitionIssues]);
   const hasError = (field: string) => issues.some((i) => i.field === field);
