@@ -233,15 +233,6 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         {t.op}
       </span>
 
-      {/* Motto no rodapé */}
-      <div className="relative z-20 px-2 pb-1.5 sm:pb-2 flex justify-center">
-        <span
-          className="font-mono text-[8px] min-[390px]:text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.14em] sm:tracking-[0.28em] truncate text-slate-200"
-          style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
-        >
-          {t.motto}
-        </span>
-      </div>
 
 
     </button>
