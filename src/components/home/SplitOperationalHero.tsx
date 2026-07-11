@@ -140,7 +140,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       aria-pressed={isSelected}
       onClick={() => onSelect(t.key)}
       className={cn(
-        'group relative flex h-[clamp(100px,15vh,126px)] min-[390px]:h-[clamp(104px,15.5vh,132px)] sm:h-[clamp(98px,16vh,158px)] lg:h-[clamp(132px,23vh,168px)] xl:h-[clamp(148px,25vh,220px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+        'group relative flex h-[124px] min-[390px]:h-[132px] sm:h-[148px] lg:h-[168px] xl:h-[188px] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
         isSelected
