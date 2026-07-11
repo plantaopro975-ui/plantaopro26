@@ -748,7 +748,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             >
               {/* Cena composta */}
               <div
-                className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-4 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[380px] xl:h-[440px] 2xl:h-[500px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[10%] xl:-translate-x-[10%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
+                className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-4 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[460px] xl:h-[540px] 2xl:h-[620px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[10%] xl:-translate-x-[10%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
               >
 
 
