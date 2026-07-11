@@ -443,6 +443,10 @@ export function ShiftBriefingCard({
   const finalized = !!briefing?.completed_at;
   const hasCurrentShift = !!currentShift;
 
+  // Desativa completamente o card fora do plantão — só aparece no dia do plantão.
+  if (!hasCurrentShift) return null;
+
+
   return (
     <>
       <Card className="bg-slate-900/60 border-amber-500/30 overflow-hidden">
