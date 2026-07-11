@@ -82,14 +82,14 @@ export function AccessAcknowledgmentGate() {
 
               {/* Faixa superior sobre a imagem */}
               <div
-                className="absolute top-3 left-4 right-4 flex items-center justify-between text-[9px] uppercase tracking-[0.28em] text-amber-300/90"
+                className="absolute top-3 left-4 right-4 flex items-center justify-between gap-3 text-[9px] uppercase tracking-[0.22em] text-amber-300/90"
                 style={{ fontFamily: "'IBM Plex Mono', monospace" }}
               >
-                <div className="flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-                  <span>Acesso Restrito</span>
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="truncate">Acesso Restrito</span>
                 </div>
-                <span>PlantãoPro</span>
+                <span className="shrink-0 whitespace-nowrap tracking-[0.18em]">Plantão&nbsp;Pro</span>
               </div>
 
               {/* Título sobreposto */}
