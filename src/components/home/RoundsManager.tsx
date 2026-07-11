@@ -1398,6 +1398,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* ---- Modal de histórico detalhado ---- */
   const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
 
+  /* ---- Efeito de foco: desfoca a homepage por trás enquanto o modal está aberto ---- */
+  useEffect(() => {
+    if (!open) return;
+    document.body.classList.add('rm-focus-mode');
+    return () => { document.body.classList.remove('rm-focus-mode'); };
+  }, [open]);
+
+
+
   /* server clock offset (server_ms - local_ms) */
   const clockOffsetRef = useRef<number>(0);
   const sessionIdRef = useRef<string | null>(null);
