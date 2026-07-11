@@ -2605,6 +2605,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
         >
+          {/* Tactical corner brackets tinted with team accent */}
+          <span aria-hidden className="pointer-events-none absolute top-0 left-0 z-40 h-3 w-3 border-t-2 border-l-2" style={{ borderColor: `${teamColor}80` }} />
+          <span aria-hidden className="pointer-events-none absolute top-0 right-0 z-40 h-3 w-3 border-t-2 border-r-2" style={{ borderColor: `${teamColor}80` }} />
+          <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-40 h-3 w-3 border-b-2 border-l-2" style={{ borderColor: `${teamColor}80` }} />
+          <span aria-hidden className="pointer-events-none absolute bottom-0 right-0 z-40 h-3 w-3 border-b-2 border-r-2" style={{ borderColor: `${teamColor}80` }} />
+
           {/* Sticky header — sempre visível */}
           <DialogHeader
             className={cn(
