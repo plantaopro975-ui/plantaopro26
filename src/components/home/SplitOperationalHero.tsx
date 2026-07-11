@@ -222,44 +222,54 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         <span className="font-mono text-[8px] uppercase tracking-[0.28em] text-slate-300/85">ATIVA</span>
       </span>
 
-      {/* Nome herói — condensed, branco puro, acento reservado para stripe/underline */}
-      <div className="relative z-20 flex-1 min-h-0 flex flex-col items-center justify-center px-3 pt-5">
-        <div className="flex flex-col items-center">
-          <span
-            className={cn(
-              'font-black leading-[0.9] whitespace-nowrap transition-transform duration-500 group-hover:scale-[1.02]',
-              t.key === 'CHARLIE'
-                ? 'text-[24px] min-[390px]:text-[28px] sm:text-[34px] md:text-[42px]'
-                : 'text-[30px] min-[390px]:text-[34px] sm:text-[40px] md:text-[50px]',
-            )}
-            style={{
-              color: `hsl(${t.accent})`,
-              textShadow: `0 2px 14px rgba(0,0,0,0.95), 0 0 20px hsl(${t.accent} / 0.5), 0 0 2px rgba(0,0,0,0.95)`,
-              WebkitTextStroke: '0.5px rgba(0,0,0,0.5)',
-              fontFamily: '"Rajdhani","Oswald","Bebas Neue",system-ui,sans-serif',
-              letterSpacing: t.key === 'CHARLIE' ? '0.02em' : '0.03em',
-            }}
+      {/* Nome herói — SVG auto-escalável: nunca ultrapassa o contêiner em nenhuma largura */}
+      <div className="relative z-20 flex-1 min-h-0 min-w-0 flex flex-col items-center justify-center px-3 pt-5">
+        <div className="flex flex-col items-center w-full min-w-0 max-w-full">
+          <svg
+            role="img"
+            aria-label={t.key}
+            viewBox="0 0 260 60"
+            preserveAspectRatio="xMidYMid meet"
+            className="block w-full max-w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]"
+            style={{ maxHeight: '58%' }}
           >
-            {t.key}
-          </span>
+            <text
+              x="130"
+              y="48"
+              textAnchor="middle"
+              fill={`hsl(${t.accent})`}
+              style={{
+                fontFamily: '"Rajdhani","Oswald","Bebas Neue",system-ui,sans-serif',
+                fontWeight: 900,
+                fontSize: '54px',
+                letterSpacing: t.key === 'CHARLIE' ? '1px' : '2px',
+                paintOrder: 'stroke',
+                stroke: 'rgba(0,0,0,0.55)',
+                strokeWidth: 1,
+                filter: `drop-shadow(0 2px 4px rgba(0,0,0,0.9)) drop-shadow(0 0 8px hsl(${t.accent} / 0.4))`,
+              }}
+            >
+              {t.key}
+            </text>
+          </svg>
           <span
             aria-hidden
-            className="mt-2 h-[2px] w-16 sm:w-24 transition-all duration-500 group-hover:w-24 sm:group-hover:w-32"
+            className="mt-2 h-[2px] w-16 sm:w-24 max-w-[80%] transition-all duration-500 group-hover:w-24 sm:group-hover:w-32"
             style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 10px hsl(${t.accent} / 0.75)` }}
           />
         </div>
       </div>
 
       {/* Rodapé institucional — role + OP code em faixa escura */}
-      <div className="relative z-20 flex items-center justify-between gap-2 px-3 py-2 border-t border-white/10 backdrop-blur-sm bg-slate-950/70">
+      <div className="relative z-20 flex items-center justify-between gap-2 px-3 py-2 border-t border-white/10 backdrop-blur-sm bg-slate-950/70 min-w-0">
         <span
-          className="font-mono text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.28em] truncate"
+          className="font-mono text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.28em] truncate min-w-0 flex-1"
           style={{ color: `hsl(${t.accent})` }}
         >
           {t.role}
         </span>
         <span
-          className="font-mono text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-sm border text-slate-100"
+          className="font-mono text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-sm border text-slate-100 shrink-0"
           style={{ borderColor: `hsl(${t.accent} / 0.55)`, background: 'rgba(2,6,23,0.6)' }}
         >
           {t.op}
