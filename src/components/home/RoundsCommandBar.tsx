@@ -29,12 +29,10 @@ export function RoundsCommandBar() {
   const rounds = useRoundsStats();
   const navigate = useNavigate();
 
-  // Relógio de rede — HH:mm:ss (tick 1s).
+  // Relógio de rede — usado apenas para métricas/rótulos (a UI usa <TacticalClock />).
   const now = useServerTime(1000);
-  const clock = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/Rio_Branco' });
-  const dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Rio_Branco' })
-    .replace('.', '')
-    .toUpperCase();
+  void now;
+
 
   const unitLabel = useMemo(() => {
     if (agent?.unit?.name) {
