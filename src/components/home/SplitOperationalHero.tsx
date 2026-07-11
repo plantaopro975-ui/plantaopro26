@@ -834,17 +834,28 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               <div
                 className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-amber-400">◈ DRAG</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-amber-400">◈ VIA</span>
                   <span className="text-white/90 tabular-nums">
-                    x: {sceneOffset.x}px · y: {sceneOffset.y}px
+                    x: {vehOffset.x}px · y: {vehOffset.y}px
                   </span>
                   <button
                     type="button"
-                    onClick={resetSceneOffset}
-                    className="ml-1 rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                    onClick={() => setVehOffset({ x: 0, y: 0 })}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
                   >
-                    reset
+                    reset pos
+                  </button>
+                  <span className="text-amber-400 ml-2">◈ AGT</span>
+                  <span className="text-white/90 tabular-nums">
+                    x: {agtOffset.x}px · y: {agtOffset.y}px
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setAgtOffset({ x: 0, y: 0 })}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                  >
+                    reset pos
                   </button>
                 </div>
 
