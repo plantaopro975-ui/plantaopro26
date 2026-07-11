@@ -1368,7 +1368,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
      dispositivos da mesma unidade. Mantém cache local como fallback
      offline. */
   const TEAM_LOG_KEY = 'plantaopro_team_round_log';
-  type TeamLogEntry = { team: string; dateISO: string; savedName?: string; id?: string };
+  type TeamLogEntry = {
+    team: string;
+    dateISO: string;
+    savedName?: string;
+    id?: string;
+    totalSeconds?: number;
+    agentsCount?: number;
+  };
   const readTeamLogLocal = (): TeamLogEntry[] => {
     try {
       const raw = localStorage.getItem(TEAM_LOG_KEY);
@@ -1381,6 +1388,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     try { localStorage.setItem(TEAM_LOG_KEY, JSON.stringify(list.slice(0, 15))); } catch { /* ignore */ }
   };
   const [teamLog, setTeamLog] = useState<TeamLogEntry[]>([]);
+  const [teamLogLoading, setTeamLogLoading] = useState(false);
+  const [historyTeamFilter, setHistoryTeamFilter] = useState<string | null>(null);
   // Local optimistic append (started rounds). Cloud is written when a
   // round is completed and the operator saves the team name.
   const appendTeamLog = (teamName: string) => {
