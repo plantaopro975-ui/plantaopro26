@@ -125,6 +125,7 @@ export function ShiftBriefingCard({
   const [briefing, setBriefing] = useState<Briefing | null>(null);
   const [history, setHistory] = useState<Briefing[]>([]);
   const [open, setOpen] = useState(false);
+  const [lockedOpen, setLockedOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [autoSaveState, setAutoSaveState] = useState<'idle' | 'saving' | 'saved' | 'error' | 'pending'>('idle');
   const [isOnline, setIsOnline] = useState<boolean>(typeof navigator === 'undefined' ? true : navigator.onLine);
