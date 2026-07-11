@@ -15,6 +15,7 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useLowMotion } from '@/hooks/useLowMotion';
 import { getShiftBounds, isShiftActive } from '@/lib/shiftTime';
+import { toast } from 'sonner';
 
 interface OnDutyOverlayProps {
   agentId: string;
