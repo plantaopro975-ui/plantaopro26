@@ -907,25 +907,8 @@ function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; colo
         background: `linear-gradient(90deg, ${color}10 0%, transparent 50%), hsl(var(--card))`,
       }}
     >
-      <svg viewBox="0 0 400 44" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
-        <defs>
-          <linearGradient id={`${uid}-scan`} x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor={color} stopOpacity="0" />
-            <stop offset="50%" stopColor={color} stopOpacity="0.18" />
-            <stop offset="100%" stopColor={color} stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        {/* Linhas paralelas discretas */}
-        <g stroke={color} strokeOpacity="0.07" strokeWidth="0.5">
-          {[10, 22, 34].map((y) => <line key={y} x1="0" y1={y} x2="400" y2={y} />)}
-        </g>
-        {/* Scanner passando — lento e sutil */}
-        {ready && (
-          <rect x="0" y="0" width="160" height="44" fill={`url(#${uid}-scan)`}>
-            <animate attributeName="x" from="-160" to="400" dur="6s" repeatCount="indefinite" />
-          </rect>
-        )}
-      </svg>
+
+
 
       <div className="relative flex items-center gap-3 px-3 py-2">
         {/* Ícone de status — sóbrio, sem pulso agressivo */}
