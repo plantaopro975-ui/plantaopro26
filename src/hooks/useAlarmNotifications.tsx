@@ -50,7 +50,7 @@ export function useAlarmNotifications({
     const shiftTimeStr = format(shift.shiftDate, "dd/MM 'às' HH:mm", { locale: ptBR });
     
     // Try to show native notification
-    if ('Notification' in window && Notification.permission === 'granted') {
+    if (areNativeNotificationsAllowed() && Notification.permission === 'granted') {
       const notification = new Notification('⏰ ALERTA DE PLANTÃO!', {
         body: `Seu plantão começa em ${alarmBeforeMinutes} minutos! (${shiftTimeStr})`,
         icon: '/icon-192.png',
