@@ -3565,7 +3565,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 }`}
                               >
                                 {fmtHMS(totalRemainingSeconds)}
-                                {endingSoon && ' ⏳'}
+                                {endingSoon && <HourglassSVG className="ml-1 h-3.5 w-3.5 inline-block align-[-2px]" />}
                               </b>
                             </span>
                           )}
