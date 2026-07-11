@@ -2605,6 +2605,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
         >
+          {/* Tactical corner brackets tinted with team accent */}
+          <span aria-hidden className="pointer-events-none absolute top-0 left-0 z-40 h-3 w-3 border-t-2 border-l-2" style={{ borderColor: `${teamColor}80` }} />
+          <span aria-hidden className="pointer-events-none absolute top-0 right-0 z-40 h-3 w-3 border-t-2 border-r-2" style={{ borderColor: `${teamColor}80` }} />
+          <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-40 h-3 w-3 border-b-2 border-l-2" style={{ borderColor: `${teamColor}80` }} />
+          <span aria-hidden className="pointer-events-none absolute bottom-0 right-0 z-40 h-3 w-3 border-b-2 border-r-2" style={{ borderColor: `${teamColor}80` }} />
+
           {/* Sticky header — sempre visível */}
           <DialogHeader
             className={cn(
@@ -2828,6 +2834,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       const active = team === t.key;
                       const teamLocked = teamConfirmed || running || scheduledFor != null;
                       const disabled = teamLocked && !active;
+                      const c = getRotatedTeamColor(t.key, colorRotation);
                       return (
                         <button key={t.key} type="button"
                           disabled={disabled}
@@ -2838,20 +2845,38 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           }}
                           title={teamLocked ? 'Equipe travada — cancele a programação ou finalize a ronda para trocar' : `Selecionar ${t.label}`}
                           className={cn(
-                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[11.5px] transition-opacity',
-                            active ? 'border-transparent' : 'border-border bg-card text-foreground',
+                            'group relative rounded-sm border px-1 py-1.5 font-mono font-bold uppercase tracking-[0.04em] text-[10.5px] transition-all duration-200',
+                            'flex items-center justify-center',
+
                             disabled && 'opacity-40 cursor-not-allowed',
+                            active
+                              ? 'shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset]'
+                              : 'bg-card/60 hover:bg-card',
                           )}
-                          style={active ? { backgroundColor: getRotatedTeamColor(t.key, colorRotation), color: 'hsl(var(--primary-foreground))' } : undefined}
+                          style={
+                            active
+                              ? { borderColor: c, backgroundColor: `${c}1a`, color: c, boxShadow: `0 0 14px -4px ${c}` }
+                              : { borderColor: `${c}33`, color: `${c}b3` }
+                          }
                         >
-                          {t.label}
-                          <span aria-hidden
-                            className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full', active ? 'opacity-0' : 'opacity-70')}
-                            style={{ backgroundColor: getRotatedTeamColor(t.key, colorRotation) }} />
+                          <span className="truncate leading-none">{t.label}</span>
+                          <span
+                            aria-hidden
+                            className={cn(
+                              'absolute top-1 right-1 inline-block h-1.5 w-1.5 rounded-full transition-all',
+                              active ? 'animate-pulse' : 'opacity-60',
+                            )}
+                            style={{
+                              backgroundColor: c,
+                              boxShadow: active ? `0 0 8px ${c}` : 'none',
+                            }}
+                          />
                         </button>
+
                       );
                     })}
                   </div>
+
 
                   {/* Histórico resumido — equipes das rondas realizadas.
                       Sempre visível (mesmo vazio) para expor botão Limpar e
@@ -3350,11 +3375,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   }
                                   setStartConfirmOpen(true);
                                 }}
-                                className="rm-play-btn h-9 px-4 border font-semibold transition-transform"
-                                style={{ backgroundColor: teamColor, borderColor: teamColor, color: 'hsl(var(--primary-foreground))' }}
+                                className="rm-play-btn h-9 px-5 border font-mono font-bold uppercase tracking-[0.18em] text-[11.5px] rounded-sm transition-transform"
+                                style={{
+                                  backgroundColor: teamColor,
+                                  borderColor: teamColor,
+                                  color: 'hsl(var(--primary-foreground))',
+                                  boxShadow: `0 0 20px -4px ${teamColor}, 0 0 0 1px ${teamColor}55 inset`,
+                                }}
                               >
-                                <Play className="rm-play-icon h-3.5 w-3.5 mr-1.5" /> Iniciar
+                                <Play className="rm-play-icon h-3.5 w-3.5 mr-1.5" /> Iniciar Rondas
                               </Button>
+
                             </div>
                           ) : (
                             <Button
