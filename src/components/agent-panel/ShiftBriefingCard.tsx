@@ -600,27 +600,9 @@ export function ShiftBriefingCard({
                 </div>
               </ChecklistRow>
 
-              {/* 5. Livro informativo */}
+              {/* 5. Passagem de plantão */}
               <ChecklistRow
-                order={5} done={itemsStatus.book}
-                icon={<BookOpen className="h-4 w-4 text-amber-400" />}
-                title="Livro informativo"
-                subtitle="Registre o preenchimento do livro (mínimo 10 caracteres)."
-              >
-                <Textarea
-                  value={bookEntry}
-                  onChange={(e) => withDirty(setBookEntry)(e.target.value)}
-                  placeholder="Ex.: efetivo do plantão, ocorrências, atividades..."
-                  rows={4}
-                  className="bg-slate-950/60 border-slate-700 text-sm resize-none"
-                  maxLength={4000}
-                />
-                <div className="text-[10px] text-slate-500 text-right mt-0.5">{bookEntry.length}/4000</div>
-              </ChecklistRow>
-
-              {/* 6. Passagem de plantão */}
-              <ChecklistRow
-                order={6} done={itemsStatus.handover}
+                order={5} done={itemsStatus.handover}
                 icon={<ArrowLeftRight className="h-4 w-4 text-amber-400" />}
                 title="Passagem de plantão"
                 subtitle="Confirme que a passagem foi feita com a equipe anterior."
@@ -642,23 +624,6 @@ export function ShiftBriefingCard({
                 />
               </ChecklistRow>
 
-              {/* Observações gerais removidas — redundantes com "Notas da passagem"
-                  (handoverNotes) e "Livro informativo" (bookEntry). */}
-
-
-              {/* Assinatura */}
-              <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
-                <Label className="text-[11px] uppercase tracking-widest text-amber-300 flex items-center gap-1.5">
-                  <FileText className="h-3 w-3" /> Assinatura do responsável (obrigatório para finalizar)
-                </Label>
-                <Input
-                  value={signature}
-                  onChange={(e) => withDirty(setSignature)(e.target.value)}
-                  placeholder={agentName}
-                  className="mt-1.5 bg-slate-950/60 border-slate-700 text-sm font-serif italic"
-                  maxLength={120}
-                />
-              </div>
             </div>
           </ScrollArea>
 
