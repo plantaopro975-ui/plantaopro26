@@ -174,7 +174,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         // Proporção retrato + tamanho contido garantem alinhamento consistente
         // em todos os breakpoints, com margens simétricas via `mx-auto`.
         'group relative flex flex-col text-left bg-transparent isolate overflow-hidden',
-        'h-auto aspect-[4/5] w-full max-w-[172px] min-[390px]:max-w-[188px] min-[430px]:max-w-[200px] sm:max-w-[150px] lg:max-w-[164px] xl:max-w-[180px] mx-auto rounded-none border-0',
+        'h-auto aspect-[4/5] w-full max-w-[172px] min-[390px]:max-w-[188px] min-[430px]:max-w-[200px] sm:max-w-[170px] lg:max-w-[210px] xl:max-w-[232px] 2xl:max-w-[248px] mx-auto rounded-none border-0',
         '[clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)] [-webkit-clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)]',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
@@ -378,9 +378,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           <rect width="100%" height="100%" fill="url(#topoGrid)" />
           <rect width="100%" height="100%" fill="url(#topoDots)" />
         </svg>
-        <div aria-hidden className="hidden lg:block absolute top-1.5 right-3 z-[5] font-mono text-[8px] uppercase tracking-[0.28em] text-white/25 pointer-events-none select-none">
-          MGRS 19L GK 60148 79412 · UTM −9.9747° / −67.8100°
-        </div>
+        {/* MGRS/UTM removido do desktop — reduzir ruído visual */}
+
 
         {/* Overlay de leitura */}
         <div
@@ -584,29 +583,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </div>
             </div>
 
-            {/* ============ B — Timeline operacional (log de eventos recentes) ============ */}
-            <div className="pp-operational-log hidden lg:block relative mt-1.5 w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%] select-none">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-white/40 leading-none">Log Operacional</span>
-                <span aria-hidden className="flex-1 h-px bg-white/8" />
-                <span className="font-mono text-[9px] tabular-nums tracking-[0.14em] text-emerald-300/70 leading-none">LIVE</span>
-              </div>
-              <ul className="flex items-center gap-x-4 gap-y-1 flex-wrap">
-                {[
-                  { t: '08:12', c: 'ALFA', tone: 'hsl(160 84% 45%)', msg: 'Ronda iniciada' },
-                  { t: '08:45', c: 'BRAVO', tone: 'hsl(24 95% 55%)', msg: 'Check-in U-03' },
-                  { t: '09:04', c: 'CHARLIE', tone: 'hsl(210 100% 60%)', msg: 'Perímetro OK' },
-                  { t: '09:18', c: 'DELTA', tone: 'hsl(42 90% 55%)', msg: 'Uplink sync' },
-                ].map((e) => (
-                  <li key={e.t} className="flex items-center gap-1.5 whitespace-nowrap">
-                    <span className="font-mono text-[9px] tabular-nums tracking-[0.14em] text-white/50 leading-none">{e.t}</span>
-                    <span className="h-1 w-1 rounded-full shrink-0" style={{ background: e.tone, boxShadow: `0 0 4px ${e.tone}` }} />
-                    <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] leading-none" style={{ color: e.tone }}>{e.c}</span>
-                    <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/55 leading-none">· {e.msg}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Log operacional removido do desktop — reduzir ruído e liberar altura para os cards */}
+
           </div>
 
 
@@ -634,48 +612,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            {/* ============ A — HUD vertical direito enriquecido (métricas de comando) ============ */}
-            <div aria-hidden className="hidden lg:flex absolute right-1 top-3 bottom-8 z-[60] flex-col items-center justify-between gap-2 pointer-events-none select-none">
-              {[
-                { k: 'VTR', v: '01' },
-                { k: 'FRQ', v: '155.475' },
-                { k: 'TMP', v: '27°' },
-                { k: 'BAT', v: '92%' },
-                { k: 'UP', v: '34d' },
-              ].map((it) => (
-                <span key={it.k} className="flex flex-col items-center gap-0.5">
-                  <span className="font-mono text-[7.5px] uppercase tracking-[0.28em] text-white/30 leading-none">{it.k}</span>
-                  <span className="font-mono text-[8.5px] tabular-nums tracking-[0.1em] text-amber-200/70 leading-none">{it.v}</span>
-                </span>
-              ))}
-            </div>
+            {/* HUD lateral direito, HUD vertical esquerdo e micro-ribbon inferior removidos do desktop */}
+            {/* — reduzir ruído visual e destacar cena principal + cards das equipes.               */}
 
-            {/* HUD vertical esquerdo (mantido, mais discreto) */}
-            <span
-              aria-hidden
-              className="hidden lg:block absolute left-1 top-1/2 -translate-y-1/2 z-[60] font-mono text-[8.5px] uppercase tracking-[0.4em] text-white/30 whitespace-nowrap select-none pointer-events-none"
-              style={{ writingMode: 'vertical-rl', transform: 'translateY(-50%) rotate(180deg)' }}
-            >
-              VTR · 01 · CB · 114
-            </span>
-
-            {/* Mini-radar movido para a coluna esquerda (bloco Radar Tático Profissional) */}
-
-
-            {/* Micro-ribbon inferior — linha única, hairline, tabular */}
-            <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2 lg:gap-2.5 pointer-events-none whitespace-nowrap max-w-full px-2">
-              <span className="relative inline-flex h-1.5 w-1.5 shrink-0">
-                <span className="absolute inset-0 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
-                <span className="absolute inset-0 rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping" />
-              </span>
-              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.24em] text-white/45 leading-none">Patrulha</span>
-              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.12em] text-amber-200/85 leading-none">−9.9747°</span>
-              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.12em] text-amber-200/85 leading-none">−67.8100°</span>
-              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.24em] text-white/55 leading-none">Rio Branco · AC</span>
-            </div>
 
 
 
@@ -820,15 +759,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         {/* ============ Team Selector Grid — no mobile vai para o topo (order-2) ============ */}
         <div className="pp-team-selector relative shrink-0 px-3 sm:px-3 pt-1 sm:pt-1 pb-1 mt-0 sm:mt-0 order-3 sm:order-none">
 
-          <div className="flex items-center justify-between px-1 pb-1.5">
-            <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-200">
-              Selecione sua Equipe
+          <div className="flex items-center justify-between px-1 pb-1.5 lg:pb-2">
+            <span className="font-mono text-[10.5px] sm:text-[10px] lg:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-slate-100">
+              <span className="text-amber-300/90 mr-1.5">◉</span>Selecione sua Equipe
             </span>
-            <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              4 Divisões · Táticas
+            <span className="font-mono text-[10.5px] sm:text-[10px] lg:text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-300/95 tabular-nums">
+              04 · Divisões Táticas
             </span>
 
           </div>
+
 
           <div className="pp-team-grid grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
