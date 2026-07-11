@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
+  Users, Plus, Trash2, Copy, FileDown, Timer,
   Play, Pause, RotateCcw, Radio, ChevronRight, AlertTriangle,
   CheckCircle2, Volume2, VolumeX, Lock, CalendarClock, XCircle, Settings,
 } from 'lucide-react';
