@@ -19,7 +19,7 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
     <div
       aria-hidden={false}
       role="note"
-      title="Desenvolvido em Feijó, Acre — Brasil"
+      title="Desenvolvido por Franc D'nis"
       className={wrapperClass}
     >
 
@@ -29,7 +29,7 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
         width={dims.w}
         height={dims.h}
         role="img"
-        aria-label="Feito em Feijó, Acre, Brasil"
+        aria-label="Desenvolvido por Franc D'nis"
       >
 
         <defs>
