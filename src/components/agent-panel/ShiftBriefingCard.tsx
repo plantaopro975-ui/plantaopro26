@@ -516,7 +516,15 @@ export function ShiftBriefingCard({
                 ]).filter((i) => !itemsStatus[i.key]);
 
                 return (
-                  <>
+                  <details open={!finalized} className="group">
+                    <summary className="cursor-pointer list-none flex items-center justify-between text-[10px] uppercase tracking-widest text-slate-400 hover:text-slate-200 mb-2 select-none">
+                      <span className="flex items-center gap-1.5">
+                        <ClipboardCheck className="h-3 w-3" />
+                        Itens do checklist
+                      </span>
+                      <span className="text-slate-500 group-open:hidden">▸ expandir</span>
+                      <span className="text-slate-500 hidden group-open:inline">▾ recolher</span>
+                    </summary>
                     <div className="grid grid-cols-3 gap-2 text-center">
                       <MiniStat icon={<Users className="h-3 w-3" />} label="Adolescentes" value={briefing?.adolescents_counted?.toString() ?? '—'} missing={!itemsStatus.adolescents} />
                       <MiniStat icon={<ShieldAlert className="h-3 w-3" />} label="Algemas" value={briefing?.handcuffs_counted?.toString() ?? '—'} missing={!itemsStatus.handcuffs} />
@@ -545,7 +553,7 @@ export function ShiftBriefingCard({
                     </div>
 
                     {missingSummary.length > 0 && (
-                      <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 flex items-start gap-2">
+                      <div className="mt-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 flex items-start gap-2">
                         <ShieldAlert className="h-3.5 w-3.5 text-amber-300 mt-0.5 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] uppercase tracking-widest text-amber-300 font-semibold">
@@ -564,8 +572,9 @@ export function ShiftBriefingCard({
                         </div>
                       </div>
                     )}
-                  </>
+                  </details>
                 );
+
               })()}
 
               <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-slate-400">
