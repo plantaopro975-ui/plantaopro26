@@ -612,48 +612,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            {/* ============ A — HUD vertical direito enriquecido (métricas de comando) ============ */}
-            <div aria-hidden className="hidden lg:flex absolute right-1 top-3 bottom-8 z-[60] flex-col items-center justify-between gap-2 pointer-events-none select-none">
-              {[
-                { k: 'VTR', v: '01' },
-                { k: 'FRQ', v: '155.475' },
-                { k: 'TMP', v: '27°' },
-                { k: 'BAT', v: '92%' },
-                { k: 'UP', v: '34d' },
-              ].map((it) => (
-                <span key={it.k} className="flex flex-col items-center gap-0.5">
-                  <span className="font-mono text-[7.5px] uppercase tracking-[0.28em] text-white/30 leading-none">{it.k}</span>
-                  <span className="font-mono text-[8.5px] tabular-nums tracking-[0.1em] text-amber-200/70 leading-none">{it.v}</span>
-                </span>
-              ))}
-            </div>
+            {/* HUD lateral direito, HUD vertical esquerdo e micro-ribbon inferior removidos do desktop */}
+            {/* — reduzir ruído visual e destacar cena principal + cards das equipes.               */}
 
-            {/* HUD vertical esquerdo (mantido, mais discreto) */}
-            <span
-              aria-hidden
-              className="hidden lg:block absolute left-1 top-1/2 -translate-y-1/2 z-[60] font-mono text-[8.5px] uppercase tracking-[0.4em] text-white/30 whitespace-nowrap select-none pointer-events-none"
-              style={{ writingMode: 'vertical-rl', transform: 'translateY(-50%) rotate(180deg)' }}
-            >
-              VTR · 01 · CB · 114
-            </span>
-
-            {/* Mini-radar movido para a coluna esquerda (bloco Radar Tático Profissional) */}
-
-
-            {/* Micro-ribbon inferior — linha única, hairline, tabular */}
-            <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2 lg:gap-2.5 pointer-events-none whitespace-nowrap max-w-full px-2">
-              <span className="relative inline-flex h-1.5 w-1.5 shrink-0">
-                <span className="absolute inset-0 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
-                <span className="absolute inset-0 rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping" />
-              </span>
-              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.24em] text-white/45 leading-none">Patrulha</span>
-              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.12em] text-amber-200/85 leading-none">−9.9747°</span>
-              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.12em] text-amber-200/85 leading-none">−67.8100°</span>
-              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.24em] text-white/55 leading-none">Rio Branco · AC</span>
-            </div>
 
 
 
