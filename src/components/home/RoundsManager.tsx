@@ -900,11 +900,10 @@ function TeamDoctrineTicker({ team, color, uid }: { team: TeamKey; color: string
 function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; color: string; count: number; ready: boolean }) {
   return (
     <div
-      className="mb-2 flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 sm:px-3 [&_*]:transition-none [&_*]:animate-none hover:bg-card"
-      style={{ borderLeft: `2px solid ${color}`, transition: 'none', animation: 'none' }}
+      className="mb-1.5 flex items-center gap-2 rounded-md border border-border bg-card px-2 py-1 sm:px-2.5 [&_*]:transition-none [&_*]:animate-none hover:bg-card"
+      style={{ transition: 'none', animation: 'none' }}
     >
-      {/* Ícone de status — plano, sem efeitos */}
-      <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden>
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden>
         {ready ? (
           <path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         ) : (
@@ -915,21 +914,19 @@ function ReadyToStartBanner({ team, color, count, ready }: { team: TeamKey; colo
         )}
       </svg>
 
-      <div className="min-w-0 flex-1">
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground leading-none">
+      <div className="min-w-0 flex-1 flex items-baseline gap-2 flex-wrap">
+        <span className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-muted-foreground leading-none">
           {ready ? 'Cronograma pronto' : 'Aguardando configuração'}
-        </div>
-        <div className="mt-0.5 text-[12px] sm:text-[13px] font-medium text-foreground leading-tight truncate">
+        </span>
+        <span className="text-[11.5px] sm:text-[12px] font-medium text-foreground leading-tight truncate">
           {ready
             ? <>Equipe <span style={{ color }}>{team}</span> · {count} agente{count === 1 ? '' : 's'}</>
             : <>Defina intervalo e agentes</>}
-        </div>
+        </span>
       </div>
 
       {ready && (
-        <span
-          className="hidden sm:inline-flex items-center rounded-sm border border-border px-1.5 py-[1px] font-mono text-[9.5px] uppercase tracking-widest text-muted-foreground"
-        >
+        <span className="hidden sm:inline-flex items-center rounded-sm border border-border px-1.5 py-[1px] font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
           Pronto
         </span>
       )}
