@@ -274,6 +274,8 @@ export function ShiftBriefingCard({
       adolescents_counted: adoCnt !== '' ? Number(adoCnt) : null,
       handcuffs_counted: algCnt !== '' ? Number(algCnt) : null,
       handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
+      tonfas_counted: tonCnt !== '' ? Number(tonCnt) : null,
+      tonfas_expected: tonExpected !== '' ? Number(tonExpected) : null,
       radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
       radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
       book_entry: null,
