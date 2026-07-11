@@ -646,20 +646,9 @@ export function ShiftBriefingCard({
                 />
               </ChecklistRow>
 
-              {/* Observações gerais (opcional) */}
-              <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-                <Label className="text-[11px] uppercase tracking-widest text-slate-400">
-                  Observações gerais (opcional)
-                </Label>
-                <Textarea
-                  value={observations}
-                  onChange={(e) => withDirty(setObservations)(e.target.value)}
-                  placeholder="Intercorrências, alertas, informações adicionais..."
-                  rows={3}
-                  className="bg-slate-950/60 border-slate-700 text-sm resize-none mt-1.5"
-                  maxLength={2000}
-                />
-              </div>
+              {/* Observações gerais removidas — redundantes com "Notas da passagem"
+                  (handoverNotes) e "Livro informativo" (bookEntry). */}
+
 
               {/* Assinatura */}
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
