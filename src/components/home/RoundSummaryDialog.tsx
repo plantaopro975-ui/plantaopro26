@@ -10,6 +10,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Trophy, Clock, Users, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 
+const AUTO_CLOSE_SECONDS = 10;
+
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -44,6 +46,7 @@ export function RoundSummaryDialog({
   silent = false,
 }: Props) {
   const [progress, setProgress] = useState(0);
+  const [countdown, setCountdown] = useState(AUTO_CLOSE_SECONDS);
   const pct = agentsCount > 0 ? Math.round((completedCount / agentsCount) * 100) : 0;
 
   useEffect(() => {
@@ -59,9 +62,30 @@ export function RoundSummaryDialog({
     return () => cancelAnimationFrame(raf);
   }, [open, pct]);
 
+  // Auto-close countdown — releases the divider automatically so the panel
+  // is ready for the next team. Cleans timers when dialog is closed manually.
+  useEffect(() => {
+    if (!open) { setCountdown(AUTO_CLOSE_SECONDS); return; }
+    setCountdown(AUTO_CLOSE_SECONDS);
+    const tick = window.setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) {
+          window.clearInterval(tick);
+          onClose();
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(tick);
+  }, [open, onClose]);
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-md p-0 overflow-hidden border-2" style={{ borderColor: `${color}70` }}>
+      <DialogContent
+        className="max-w-md w-[calc(100vw-2rem)] sm:w-full p-0 overflow-hidden border-2 min-h-[520px] flex flex-col"
+        style={{ borderColor: `${color}70` }}
+      >
         {/* Top glow header */}
         <div className="relative h-24 overflow-hidden" style={{ background: `linear-gradient(135deg, ${color}30, transparent 60%), radial-gradient(circle at 30% 20%, ${color}55, transparent 60%)` }}>
           {!silent && (
@@ -127,16 +151,23 @@ export function RoundSummaryDialog({
             <div className="mt-1 text-sm font-semibold" style={{ color }}>{nextAction}</div>
           </div>
 
-          <DialogFooter className="mt-5 sm:justify-center">
+          <DialogFooter className="mt-5 sm:justify-center flex-col sm:flex-row gap-2 items-center">
+            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground text-center">
+              Encerramento automático em{' '}
+              <span className="font-bold tabular-nums" style={{ color }}>
+                {String(countdown).padStart(2, '0')}s
+              </span>
+            </div>
             <Button
               onClick={onClose}
               className="min-w-40 font-bold uppercase tracking-wide"
               style={{ backgroundColor: color, color: '#0b0f14' }}
             >
-              Liberar controles
+              Liberar agora
             </Button>
           </DialogFooter>
         </div>
+
 
         <style>{`@keyframes summaryStripe { from { background-position: 0 0 } to { background-position: 120px 0 } }`}</style>
       </DialogContent>
