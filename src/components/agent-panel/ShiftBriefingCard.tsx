@@ -776,11 +776,12 @@ export function ShiftBriefingCard({
               </Button>
               <Button
                 onClick={() => persist(true).then((b) => { if (b?.completed_at) setOpen(false); })}
-                disabled={saving || !currentShift || progress < 100}
+                disabled={saving || !currentShift || progress < 100 || !handoverOk}
+                title={!handoverOk ? 'Confirme o recebimento de plantão para habilitar o envio' : undefined}
                 className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold disabled:opacity-50"
               >
                 <CheckCircle2 className="h-4 w-4 mr-1.5" />
-                Finalizar e registrar
+                {!handoverOk ? 'Confirme o recebimento' : 'Finalizar e registrar'}
               </Button>
             </div>
           </DialogFooter>
