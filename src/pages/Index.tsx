@@ -162,6 +162,13 @@ export default function Index() {
       return v === null ? true : v === '1';
     } catch { return true; }
   });
+  // Homepage: esconde a scrollbar visualmente mantendo scroll funcional
+  // em toda a página (wheel/trackpad/teclado/touch). Regras em index.css
+  // sob `body.home-route`. Remove a classe ao sair da rota.
+  useEffect(() => {
+    document.body.classList.add('home-route');
+    return () => { document.body.classList.remove('home-route'); };
+  }, []);
   useEffect(() => {
     try { localStorage.setItem('plantao_pro_save_cpf_pref', saveCpfEnabled ? '1' : '0'); } catch { /* ignore */ }
   }, [saveCpfEnabled]);
