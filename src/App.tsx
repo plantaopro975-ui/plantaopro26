@@ -222,6 +222,8 @@ const App = () => (
                 </ReconnectingGuard>
                 {/* PWA Install Prompt - Shows on all pages when installable */}
                 <PWAInstallPrompt />
+                {/* Selo discreto de origem — canto inferior esquerdo, sem afetar layout */}
+                <MadeInFeijoBadge />
               </GlobalNavigationHandler>
               </ConfirmProvider>
             </AuthProvider>
