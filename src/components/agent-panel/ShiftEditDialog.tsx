@@ -129,6 +129,9 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  // Trava explícita: só permite gravar como folga/férias/licença após o
+  // operador reconfirmar. Impede inserção acidental (bug relatado em produção).
+  const [vacationAck, setVacationAck] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -142,6 +145,8 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
     setKind(k);
     setStartTime(shift?.start_time?.slice(0, 5) || KIND_DEFAULTS[k].start);
     setEndTime(shift?.end_time?.slice(0, 5) || KIND_DEFAULTS[k].end);
+    // Se o registro JÁ era vacation, considera reconhecido; caso contrário exige nova confirmação.
+    setVacationAck(k === 'vacation');
   }, [open, shift]);
 
   const handleKindChange = (next: ShiftKind) => {
@@ -149,6 +154,8 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
     const d = KIND_DEFAULTS[next];
     setStartTime(d.start);
     setEndTime(d.end);
+    // Ao trocar para vacation exige nova confirmação explícita.
+    setVacationAck(false);
     if (next === 'night') {
       const nextDay = new Date(shiftDate);
       nextDay.setDate(nextDay.getDate() + 1);
@@ -179,6 +186,11 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
     const parsed = formSchema.safeParse({ kind, start_time: startTime, end_time: endTime });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message || 'Dados inválidos');
+      return;
+    }
+    // Trava anti-erro: não persiste vacation sem reconhecimento explícito do operador.
+    if (kind === 'vacation' && !vacationAck) {
+      toast.error('Marque a confirmação de folga/férias/licença antes de salvar.');
       return;
     }
     setSaving(true);
@@ -292,9 +304,27 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
 
 
             {kind === 'vacation' && (
-              <p className="text-xs text-slate-400 rounded border border-slate-700 bg-slate-800/60 px-3 py-2">
-                O dia será marcado como folga/férias/licença. Horário é ignorado.
-              </p>
+              <div className="rounded-md border border-amber-500/50 bg-amber-500/10 px-3 py-2.5 space-y-2">
+                <div className="flex items-start gap-2 text-[12px] text-amber-100">
+                  <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0 text-amber-300" />
+                  <span>
+                    <strong className="text-amber-200 block mb-0.5">Registro sensível — folga, férias ou licença.</strong>
+                    Esta ação cadastra o dia inteiro como afastamento e aparece na escala da equipe.
+                    Marque a confirmação abaixo somente se realmente for uma folga/férias/licença deste agente.
+                  </span>
+                </div>
+                <label className="flex items-start gap-2 cursor-pointer rounded border border-amber-500/40 bg-slate-900/60 px-2.5 py-2">
+                  <input
+                    type="checkbox"
+                    checked={vacationAck}
+                    onChange={(e) => setVacationAck(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 accent-amber-500"
+                  />
+                  <span className="text-[12px] text-amber-50">
+                    Confirmo que este dia é realmente <strong>folga / férias / licença</strong> deste agente.
+                  </span>
+                </label>
+              </div>
             )}
 
             <div
@@ -382,7 +412,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
                 <Button
                   size="sm"
                   onClick={() => setConfirmOpen(true)}
-                  disabled={saving}
+                  disabled={saving || (kind === 'vacation' && !vacationAck)}
                   className="bg-amber-500 text-black hover:bg-amber-400 min-h-11"
                 >
                   Salvar alterações

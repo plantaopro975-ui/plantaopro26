@@ -252,9 +252,29 @@ export function ShiftBriefingCard({
   const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
 
   // -------- Auto-save (debounce 700ms) com persistência local + fila offline --------
+  const MISSING_LABEL: Record<ChecklistKey, string> = {
+    adolescents: 'Contagem de adolescentes',
+    handcuffs: 'Contagem de algemas',
+    handcuff_keys: 'Contagem de chaves de algemas',
+    tonfas: 'Contagem de tonfas',
+    radios: 'Rádios carregados',
+    handover: 'Confirmação de passagem de plantão',
+  };
+
   const persist = async (finalize = false) => {
     if (!currentShift) return null;
+
+    // Validação obrigatória ao finalizar: todas as contagens + passagem precisam estar preenchidas.
+    if (finalize) {
+      const missing = CHECKLIST_ORDER.filter((k) => !itemsStatus[k]).map((k) => MISSING_LABEL[k]);
+      if (missing.length > 0) {
+        toast.error(`Preencha antes de registrar: ${missing.join(' · ')}`);
+        return null;
+      }
+    }
     // Assinatura não é mais obrigatória — o próprio agente logado assina o registro.
+
+
 
 
     // 1) Sempre salvar rascunho local ANTES de tentar a rede — assim, mesmo se
@@ -506,6 +526,46 @@ export function ShiftBriefingCard({
                   )}
                   style={{ width: `${progress}%` }}
                 />
+              </div>
+
+              {/* Resumo do Recebimento de Plantão — sempre visível quando há plantão ativo */}
+              <div
+                className={cn(
+                  'rounded-md border px-3 py-2.5 transition-colors',
+                  briefing?.handover_ok
+                    ? 'border-emerald-500/40 bg-emerald-500/5'
+                    : 'border-slate-700 bg-slate-950/60'
+                )}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-slate-400">
+                    <ArrowLeftRight className="h-3 w-3" />
+                    Recebimento de plantão
+                  </div>
+                  <Badge
+                    className={cn(
+                      'text-[9px] font-semibold',
+                      briefing?.handover_ok
+                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
+                        : 'bg-slate-800 border-slate-600 text-slate-400'
+                    )}
+                  >
+                    {briefing?.handover_ok ? (
+                      <><CheckCircle2 className="h-2.5 w-2.5 mr-1" /> CONFIRMADO</>
+                    ) : (
+                      <><Circle className="h-2.5 w-2.5 mr-1" /> NÃO CONFIRMADO</>
+                    )}
+                  </Badge>
+                </div>
+                {briefing?.handover_notes ? (
+                  <p className="mt-1.5 text-[11.5px] leading-relaxed text-slate-200 whitespace-pre-wrap break-words">
+                    “{briefing.handover_notes}”
+                  </p>
+                ) : (
+                  <p className="mt-1 text-[11px] italic text-slate-500">
+                    Sem observações registradas na passagem.
+                  </p>
+                )}
               </div>
 
               {finalized && briefing?.completed_at && (
