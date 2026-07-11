@@ -412,7 +412,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
                 <Button
                   size="sm"
                   onClick={() => setConfirmOpen(true)}
-                  disabled={saving}
+                  disabled={saving || (kind === 'vacation' && !vacationAck)}
                   className="bg-amber-500 text-black hover:bg-amber-400 min-h-11"
                 >
                   Salvar alterações
