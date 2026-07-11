@@ -3391,16 +3391,34 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       <RoundSummaryDialog
                         open={summaryOpen}
+                        saved={summarySaved}
+                        onSave={async (savedName) => {
+                          // Persiste em Supabase (sincroniza com a unidade)
+                          // e no cache local. Só após esse salvamento o
+                          // fechamento é liberado.
+                          await saveTeamRoundToCloud({
+                            team,
+                            savedName,
+                            totalSeconds: summaryData?.totalSec ?? 0,
+                            agentsCount: schedule.rows.length,
+                          });
+                          // Cache local como fallback offline
+                          const entry: TeamLogEntry = {
+                            team, dateISO: new Date().toISOString(), savedName,
+                          };
+                          const next = [entry, ...readTeamLogLocal()].slice(0, 15);
+                          writeTeamLogLocal(next);
+                          setSummarySaved(true);
+                          toast({ title: 'Registro salvo', description: `Equipe ${team} registrada e sincronizada.` });
+                        }}
                         onClose={() => {
                           setSummaryOpen(false);
                           setSummaryData(null);
+                          setSummarySaved(false);
                           // Reseta timer e fecha o divisor de rondas, deixando o
-                          // painel pronto para uma nova equipe. O histórico de
-                          // equipes (teamLog) permanece salvo em localStorage
-                          // para que os demais possam ver a última ronda.
+                          // painel pronto para uma nova equipe.
                           try { resetTimer(); } catch { /* ignore */ }
                           setOpen(false);
-                          // Atualiza a página após um beat para garantir estado limpo.
                           window.setTimeout(() => {
                             try { window.location.reload(); } catch { /* ignore */ }
                           }, 250);
@@ -3412,6 +3430,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         completedCount={summaryData?.completed ?? schedule.rows.length}
                         silent={silentMode}
                       />
+
 
 
                       {/* Rows — grid responsivo, se adapta a qualquer quantidade de agentes */}
