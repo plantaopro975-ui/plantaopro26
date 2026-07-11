@@ -2900,17 +2900,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           return (
                             <li key={i}
                                 className={cn(
-                                   'relative overflow-hidden grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card px-1.5 py-1.5 transition-all min-w-0',
+                                   'relative grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card px-1.5 py-1 min-w-0',
                                   isCurrent && 'bg-primary/10',
                                   isDone && 'opacity-70',
                                 )}
                                 style={{
-                                  borderColor: isCurrent ? `${teamColor}88` : isDone ? 'hsl(var(--success) / 0.32)' : `${teamColor}20`,
-                                  boxShadow: isCurrent ? `inset 3px 0 0 0 ${teamColor}, 0 0 22px -14px ${teamColor}` : undefined,
+                                  borderColor: isCurrent ? teamColor : isDone ? 'hsl(var(--success) / 0.32)' : 'hsl(var(--border))',
+                                  borderLeftWidth: isCurrent ? 3 : 1,
                                 }}>
-                              {isCurrent && !silentMode && (
-                                <span className="pointer-events-none absolute inset-y-0 left-0 w-1/2 opacity-20 animate-shimmer" style={{ background: `linear-gradient(90deg, transparent, ${teamColor}, transparent)` }} />
-                              )}
                               <span className="font-mono text-[10.5px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
                               <span className="min-w-0">
                                 <span className={cn(
