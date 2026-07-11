@@ -446,22 +446,48 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             {/* Mission briefing panel — hierarquia reduzida: sutil, sem competir com viatura/agente */}
             <div className="pp-briefing-panel relative mt-1 hidden sm:block w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%]">
               <div
-                className="pp-briefing-card relative rounded-md border border-white/8 bg-[linear-gradient(180deg,rgba(8,12,24,0.55)_0%,rgba(3,5,10,0.65)_100%)] backdrop-blur-sm px-3 py-2.5 md:px-3.5 md:py-3 overflow-hidden"
-                style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)' }}
+                className="pp-briefing-card group relative rounded-md border border-amber-400/25 bg-[linear-gradient(180deg,rgba(10,14,26,0.72)_0%,rgba(3,5,10,0.78)_100%)] backdrop-blur-md px-3 py-2.5 md:px-3.5 md:py-3 overflow-hidden"
+                style={{
+                  boxShadow:
+                    'inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(0,0,0,0.25), 0 6px 18px -10px rgba(251,191,36,0.28), 0 2px 6px -2px rgba(0,0,0,0.55)',
+                }}
               >
-                {/* corner brackets — mais discretos */}
-                <span aria-hidden className="absolute top-0 left-0 h-2 w-2 border-t border-l border-amber-400/30" />
-                <span aria-hidden className="absolute top-0 right-0 h-2 w-2 border-t border-r border-amber-400/30" />
-                <span aria-hidden className="absolute bottom-0 left-0 h-2 w-2 border-b border-l border-amber-400/30" />
-                <span aria-hidden className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-amber-400/30" />
+                {/* accent top hairline */}
+                <span aria-hidden className="pointer-events-none absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-amber-400/70 to-transparent" />
+                {/* subtle diagonal sheen (contained, no layout impact) */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen"
+                  style={{
+                    background:
+                      'linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.9) 50%, transparent 60%)',
+                  }}
+                />
+                {/* faint grid texture */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 opacity-[0.05]"
+                  style={{
+                    backgroundImage:
+                      'linear-gradient(rgba(251,191,36,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,0.35) 1px, transparent 1px)',
+                    backgroundSize: '18px 18px',
+                  }}
+                />
+
+                {/* corner brackets — reforçados */}
+                <span aria-hidden className="absolute top-0 left-0 h-2.5 w-2.5 border-t border-l border-amber-400/60" />
+                <span aria-hidden className="absolute top-0 right-0 h-2.5 w-2.5 border-t border-r border-amber-400/60" />
+                <span aria-hidden className="absolute bottom-0 left-0 h-2.5 w-2.5 border-b border-l border-amber-400/60" />
+                <span aria-hidden className="absolute bottom-0 right-0 h-2.5 w-2.5 border-b border-r border-amber-400/60" />
 
                 <div className="relative flex items-center justify-between gap-2 mb-2.5">
-                  <span className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-white/55 truncate">
+                  <span className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-amber-300/90 truncate">
+                    <span aria-hidden className="inline-block h-2.5 w-[3px] rounded-sm bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.7)]" />
                     Briefing Operacional
                   </span>
                   <span
                     className={cn(
-                      'flex items-center gap-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.2em] shrink-0',
+                      'flex items-center gap-1.5 rounded-sm border border-white/10 bg-black/30 px-1.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-[0.2em] shrink-0',
                       uplinkTone.text,
                     )}
                     aria-live="polite"
