@@ -4023,7 +4023,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     Histórico ({history.length})
                   </a>
                   {history.length > 0 && (
-                    <button type="button" onClick={clearHistory} className="font-sans text-[11.5px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
+                    <button type="button" onClick={() => setHistoryClearConfirmOpen(true)} className="font-sans text-[11.5px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
                       Limpar
                     </button>
                   )}
