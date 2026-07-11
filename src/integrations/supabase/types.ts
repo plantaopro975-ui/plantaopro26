@@ -1802,6 +1802,8 @@ export type Database = {
           shift_id: string | null
           signature: string | null
           team: string | null
+          tonfas_counted: number | null
+          tonfas_expected: number | null
           unit_id: string | null
           updated_at: string
         }
@@ -1830,6 +1832,8 @@ export type Database = {
           shift_id?: string | null
           signature?: string | null
           team?: string | null
+          tonfas_counted?: number | null
+          tonfas_expected?: number | null
           unit_id?: string | null
           updated_at?: string
         }
@@ -1858,6 +1862,8 @@ export type Database = {
           shift_id?: string | null
           signature?: string | null
           team?: string | null
+          tonfas_counted?: number | null
+          tonfas_expected?: number | null
           unit_id?: string | null
           updated_at?: string
         }
