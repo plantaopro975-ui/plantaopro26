@@ -45,6 +45,8 @@ interface Briefing {
   adolescents_counted: number | null;
   handcuffs_counted: number | null;
   handcuff_keys_counted: number | null;
+  tonfas_counted: number | null;
+  tonfas_expected: number | null;
   radios_charged_count: number | null;
   radios_total_expected: number | null;
   book_entry: string | null;
@@ -62,11 +64,12 @@ type ChecklistKey =
   | 'adolescents'
   | 'handcuffs'
   | 'handcuff_keys'
+  | 'tonfas'
   | 'radios'
   | 'handover';
 
 const CHECKLIST_ORDER: ChecklistKey[] = [
-  'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'handover',
+  'adolescents', 'handcuffs', 'handcuff_keys', 'tonfas', 'radios', 'handover',
 ];
 
 // -------- Offline persistence helpers --------
