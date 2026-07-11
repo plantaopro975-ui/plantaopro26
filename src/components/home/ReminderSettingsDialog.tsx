@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Bell, BellOff, Settings2 } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog';
