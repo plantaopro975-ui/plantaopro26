@@ -58,13 +58,14 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
         {/* Faixa amarela — barra de acento à esquerda */}
         <rect x="1" y="1" width="3.2" height="20" rx="1" fill="url(#mif-accent)" />
 
-        {/* Pin de localização */}
-        <g transform="translate(10 4.5)" fill="none" stroke="#fbbf24" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 0.6 C3.2 0.6 1 2.7 1 5.4 C1 8.6 6 13 6 13 C6 13 11 8.6 11 5.4 C11 2.7 8.8 0.6 6 0.6 Z" />
-          <circle cx="6" cy="5.3" r="1.7" fill="#0b1220" />
+        {/* Ícone — chevrons de código </> */}
+        <g transform="translate(9 5.5)" fill="none" stroke="#fbbf24" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="3.4,1 0.6,5.5 3.4,10" />
+          <polyline points="8.6,1 11.4,5.5 8.6,10" />
+          <line x1="7.4" y1="0.6" x2="4.6" y2="10.4" stroke="#f59e0b" strokeWidth="1" />
         </g>
 
-        {/* Texto — Made in */}
+        {/* Texto — CODED BY */}
         <text
           x="26"
           y="9.6"
@@ -74,10 +75,10 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
           fontWeight="600"
           letterSpacing="1.6"
         >
-          MADE IN
+          CODED BY
         </text>
 
-        {/* Texto — FEIJÓ · ACRE */}
+        {/* Texto — FRANC D'NIS */}
         <text
           x="26"
           y="17.4"
@@ -87,7 +88,7 @@ export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boo
           fontWeight="800"
           letterSpacing="1.4"
         >
-          FEIJÓ · ACRE
+          FRANC D'NIS
         </text>
 
         {/* Selo circular BR à direita */}
