@@ -819,9 +819,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       style={{ top: '23.2%', left: '63.4%' }}
                     />
                   </span>
-                  <span aria-hidden className="hidden lg:block pp-holo-ring" />
-                  <span aria-hidden className="hidden lg:block pp-holo-platform" />
-                  <span aria-hidden className="hidden lg:block pp-holo-scanner" />
+                  {/* removido: efeitos holográficos (anel/plataforma/scanner) sob a viatura */}
                 </picture>
 
                 {/* Agente — arrastável independentemente */}
