@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { ShieldCheck, MapPin, Cpu, Radio, Lock } from 'lucide-react';
 import iseAcreBadgeAsset from '@/assets/ise-acre-badge.png.asset.json';
 import iseAcreBadgeWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
+import { MadeInFeijoBadge } from './MadeInFeijoBadge';
 
 import { DeveloperSignature } from './DeveloperSignature';
 
