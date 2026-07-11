@@ -22,6 +22,8 @@ import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import { PreNightScheduleDialog } from './PreNightScheduleDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
+import { RoundHistoryDialog } from './RoundHistoryDialog';
+import { getRotatedTeamColor, bumpColorRotation } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
 import {
   isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
@@ -1242,6 +1244,14 @@ function Section({
 export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
 
   const [open, setOpen] = useState(false);
+  // Escuta evento global — permite abrir o Gestor por atalhos externos
+  // (ex.: botão "Fazer ronda" do lembrete de 30 min).
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener('rounds:open', handler);
+    return () => window.removeEventListener('rounds:open', handler);
+  }, []);
+
   const { isAdmin, masterSession } = useAuth();
   const isAdminUser = isAdmin || !!masterSession;
 
@@ -1291,7 +1301,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   }, []);
 
 
-  const [team, setTeam] = useState<TeamKey>('ALFA');
+  const [team, setTeam] = useState<TeamKey>(() => {
+    try {
+      const raw = localStorage.getItem('plantaopro_team_lock_state');
+      if (!raw) return 'ALFA';
+      const p = JSON.parse(raw) as { team?: TeamKey };
+      return (p?.team as TeamKey) ?? 'ALFA';
+    } catch { return 'ALFA'; }
+  });
   const [mode, setMode] = useState<Mode>('split');
   const [startTime, setStartTime] = useState('07:00');
   const [endTime, setEndTime] = useState('19:00');
@@ -1367,10 +1384,43 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const clearTeamLog = () => { writeTeamLog([]); setTeamLog([]); };
 
-  /* ---- Confirmação e trava da equipe ---- */
-  const [teamConfirmed, setTeamConfirmed] = useState(false);
+  /* ---- Confirmação e trava da equipe (persistida) ---- */
+  const TEAM_LOCK_KEY = 'plantaopro_team_lock_state';
+  type TeamLockState = { team: TeamKey; teamConfirmed: boolean; scheduledFor: number | null };
+  const readTeamLock = (): TeamLockState | null => {
+    try {
+      const raw = localStorage.getItem(TEAM_LOCK_KEY);
+      if (!raw) return null;
+      const p = JSON.parse(raw) as TeamLockState;
+      // Descarta agendamento vencido (>24h no passado)
+      if (p.scheduledFor && Date.now() - p.scheduledFor > 24 * 3600_000) p.scheduledFor = null;
+      return p;
+    } catch { return null; }
+  };
+  const [teamConfirmed, setTeamConfirmed] = useState<boolean>(() => readTeamLock()?.teamConfirmed ?? false);
   const [teamConfirmOpen, setTeamConfirmOpen] = useState(false);
   const [pendingTeam, setPendingTeam] = useState<TeamKey | null>(null);
+
+  /* ---- Rodízio de cores (persistido) ---- */
+  const [colorRotation, setColorRotation] = useState<number>(() => {
+    try {
+      const raw = localStorage.getItem('plantaopro_team_color_rotation');
+      const n = raw ? parseInt(raw, 10) : 0;
+      return Number.isFinite(n) ? ((n % 4) + 4) % 4 : 0;
+    } catch { return 0; }
+  });
+
+  /* ---- Modal de histórico detalhado ---- */
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
+
+  /* ---- Efeito de foco: desfoca a homepage por trás enquanto o modal está aberto ---- */
+  useEffect(() => {
+    if (!open) return;
+    document.body.classList.add('rm-focus-mode');
+    return () => { document.body.classList.remove('rm-focus-mode'); };
+  }, [open]);
+
+
 
   /* server clock offset (server_ms - local_ms) */
   const clockOffsetRef = useRef<number>(0);
@@ -1486,7 +1536,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
 
 
-  const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
+  // Cor rotacionada — muda a cada nova ronda para evitar repetição visual.
+  const teamColor = getRotatedTeamColor(team, colorRotation);
 
   /* sound settings */
   const [sound, setSound] = useState<SoundSettings>(DEFAULT_SOUND);
@@ -1652,7 +1703,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   const [preNightOpen, setPreNightOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
-  const [scheduledFor, setScheduledFor] = useState<number | null>(null);
+  const [scheduledFor, setScheduledFor] = useState<number | null>(() => {
+    const s = readTeamLock();
+    return s?.scheduledFor ?? null;
+  });
+
+  /* Persistência: grava a trava de equipe/agendamento em cache. */
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        'plantaopro_team_lock_state',
+        JSON.stringify({ team, teamConfirmed, scheduledFor }),
+      );
+    } catch { /* ignore */ }
+  }, [team, teamConfirmed, scheduledFor]);
   // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
   // do lado esquerdo é travada para preservar o cronograma pactuado.
   const configLocked = scheduledFor != null;
@@ -1938,6 +2002,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     setRunning(true);
     // Log resumido (cache local) — equipe + data da ronda realizada
     try { appendTeamLog(team); } catch { /* ignore */ }
+    // Rodízio profissional de cores — próxima ronda usará paleta diferente.
+    try { setColorRotation(bumpColorRotation()); } catch { /* ignore */ }
 
     try {
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
@@ -2561,12 +2627,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             active ? 'border-transparent' : 'border-border bg-card text-foreground',
                             disabled && 'opacity-40 cursor-not-allowed',
                           )}
-                          style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))' } : undefined}
+                          style={active ? { backgroundColor: getRotatedTeamColor(t.key, colorRotation), color: 'hsl(var(--primary-foreground))' } : undefined}
                         >
                           {t.label}
                           <span aria-hidden
                             className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full', active ? 'opacity-0' : 'opacity-70')}
-                            style={{ backgroundColor: t.color }} />
+                            style={{ backgroundColor: getRotatedTeamColor(t.key, colorRotation) }} />
                         </button>
                       );
                     })}
@@ -2576,9 +2642,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   {teamLog.length > 0 && (
                     <div className="rounded-md border border-border/70 bg-card/60 p-2">
                       <div className="mb-1 flex items-center justify-between">
-                        <div className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground">
-                          Rondas realizadas ({teamLog.length})
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setHistoryDialogOpen(true)}
+                          className="group inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground hover:text-primary transition-colors"
+                          title="Abrir histórico detalhado"
+                        >
+                          <span className="inline-flex items-center justify-center h-4 min-w-4 rounded-sm border border-primary/30 bg-primary/10 px-1 font-mono text-[9px] font-bold text-primary group-hover:bg-primary/20">
+                            {teamLog.length}
+                          </span>
+                          Rondas realizadas
+                          <svg viewBox="0 0 24 24" className="h-2.5 w-2.5 opacity-70" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+                            <polyline points="9 18 15 12 9 6" />
+                          </svg>
+                        </button>
                         <button
                           type="button"
                           onClick={clearTeamLog}
@@ -3063,6 +3140,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         agentCount={schedule.rows.length}
                         totalDurationLabel={fmtDuration(schedule.rows.reduce((sum, r) => sum + r.duration, 0))}
                         silent={silentMode}
+                      />
+
+                      <RoundHistoryDialog
+                        open={historyDialogOpen}
+                        onOpenChange={setHistoryDialogOpen}
+                        entries={teamLog}
+                        onClear={() => { clearTeamLog(); setHistoryDialogOpen(false); }}
                       />
 
                       <TeamConfirmDialog

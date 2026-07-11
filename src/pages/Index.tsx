@@ -59,6 +59,8 @@ import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { HardRefreshHint } from '@/components/HardRefreshHint';
+import { RoundReminderDialog } from '@/components/home/RoundReminderDialog';
+import { useRoundReminder } from '@/hooks/useRoundReminder';
 
 import { DeveloperSignature } from '@/components/DeveloperSignature';
 import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
@@ -100,6 +102,13 @@ export default function Index() {
   const { user, isLoading, signIn, signUp, setMasterSession, isAdmin, isMaster, userRole } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  /* Lembrete profissional a cada 30 min — só quando o operador está logado. */
+  const roundReminder = useRoundReminder({ intervalMin: 30, paused: !user });
+  const openRoundsManagerEvent = useCallback(() => {
+    try { window.dispatchEvent(new CustomEvent('rounds:open')); } catch { /* ignore */ }
+  }, []);
+
   const { playSound } = useSoundEffects();
   const { themeConfig, theme, resolvedTheme } = useTheme();
   const themeAssets = getThemeAssets(theme, resolvedTheme);
@@ -2197,6 +2206,12 @@ export default function Index() {
         agentName={pendingApprovalDialog.agentName}
       />
       </div>
+      <RoundReminderDialog
+        open={roundReminder.open}
+        onDismiss={roundReminder.dismiss}
+        onOpenRounds={() => { roundReminder.acknowledge(); openRoundsManagerEvent(); }}
+        intervalMin={30}
+      />
     </>
     </Suspense>
   );
