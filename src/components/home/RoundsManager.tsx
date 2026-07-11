@@ -1490,7 +1490,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     } catch { /* ignore */ }
   }, []);
   const armed = false;
-  const configLocked = false;
 
 
 
@@ -1624,6 +1623,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [preNightOpen, setPreNightOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
   const [scheduledFor, setScheduledFor] = useState<number | null>(null);
+  // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
+  // do lado esquerdo é travada para preservar o cronograma pactuado.
+  const configLocked = scheduledFor != null;
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
   const [silentMode, setSilentMode] = useState<boolean>(() => {
@@ -2936,11 +2938,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         onCancel={() => setPreNightOpen(false)}
                         onSchedule={(targetMs) => {
                           setPreNightOpen(false);
+                          // Alinha a configuração do lado esquerdo à janela
+                          // noturna pactuada (22:00 → 06:00) e trava edição.
+                          setMode('split');
+                          setStartTime(NIGHT_START);
+                          setEndTime(NIGHT_END);
                           setScheduledFor(targetMs);
                           const label = new Intl.DateTimeFormat('pt-BR', {
                             timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
                           }).format(new Date(targetMs));
-                          toast({ title: `Ronda agendada para ${label}.`, description: 'Início automático ao bater o horário.' });
+                          toast({ title: `Ronda agendada para ${label}.`, description: 'Configuração travada até 22:00 · início automático.' });
                         }}
                         color={teamColor}
                         teamName={team}
