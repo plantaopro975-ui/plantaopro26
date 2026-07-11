@@ -1668,8 +1668,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     if (nightEffectivelyLocked) return;
     if (autoAnchoredRef.current) return;
     autoAnchoredRef.current = true;
+    // Usa hora do servidor CONVERTIDA para o fuso do Acre (não o fuso do
+    // dispositivo). Assim, mesmo que o celular esteja em SP/UTC/errado,
+    // a âncora reflete o horário operacional real.
     const now = new Date(nowServer());
-    const totalMin = now.getHours() * 60 + now.getMinutes();
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: NIGHT_TZ, hour12: false, hour: '2-digit', minute: '2-digit',
+    }).formatToParts(now);
+    const get = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? '0');
+    const hNow = get('hour') % 24;
+    const mNow = get('minute');
+    const totalMin = hNow * 60 + mNow;
     const rounded = Math.round(totalMin / 5) * 5;
     const h = String(Math.floor(rounded / 60) % 24).padStart(2, '0');
     const m = String(rounded % 60).padStart(2, '0');
