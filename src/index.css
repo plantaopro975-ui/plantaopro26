@@ -576,7 +576,27 @@ body {
   }
 
   .pp-team-grid [data-team-card] {
-    max-width: 8.45rem !important;
+    max-width: 8.85rem !important;
+  }
+
+  .pp-team-card-footer {
+    margin-left: 10% !important;
+    margin-right: 10% !important;
+    gap: 0.3rem !important;
+    padding-left: 0.35rem !important;
+    padding-right: 0.35rem !important;
+  }
+
+  .pp-team-card-role {
+    font-size: 0.5rem !important;
+    letter-spacing: 0 !important;
+  }
+
+  .pp-team-card-op {
+    font-size: 0.5rem !important;
+    letter-spacing: 0.08em !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
   }
 }
 
