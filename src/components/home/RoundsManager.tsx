@@ -3100,19 +3100,56 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </div>
 
                 {!nightEffectivelyLocked && (
-                  <div className="grid grid-cols-2 gap-2">
-                    {(['split', 'interval'] as Mode[]).map((m) => (
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {(['split', 'interval', 'proportional'] as Mode[]).map((m) => (
                       <button key={m} type="button" onClick={() => setMode(m)} disabled={configLocked}
                         className={cn(
-                          'rounded-md border px-3 py-1.5 text-[12.5px] font-mono uppercase tracking-wide',
+                          'rounded-md border px-2 py-1.5 text-[11.5px] font-mono uppercase tracking-wide leading-tight',
                           mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground',
                           configLocked && 'opacity-60 cursor-not-allowed',
-                        )}>
-                        {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
+                        )}
+                        title={
+                          m === 'split' ? 'Divide o turno igualmente entre agentes'
+                          : m === 'interval' ? 'Intervalo fixo por agente'
+                          : `Cadência-base: 1 ronda a cada ${cadenceMin} min · distribui automaticamente`
+                        }>
+                        {m === 'split' ? 'Dividir turno' : m === 'interval' ? 'Intervalo fixo' : 'Proporcional'}
                       </button>
                     ))}
                   </div>
                 )}
+
+                {mode === 'proportional' && !nightEffectivelyLocked && (
+                  <div className="rounded-md border border-primary/30 bg-primary/5 px-2.5 py-2 space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <label htmlFor="rm-cadence" className="text-[11.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+                        <Timer className="h-3 w-3" /> Cadência-base (min)
+                      </label>
+                      <Input
+                        id="rm-cadence"
+                        type="number"
+                        min={5}
+                        max={240}
+                        step={5}
+                        value={cadenceMin}
+                        disabled={configLocked}
+                        onChange={(e) => setCadenceMin(Math.max(5, Math.min(240, +e.target.value || DEFAULT_CADENCE_MIN)))}
+                        onKeyDown={(e) => e.key === 'e' && e.preventDefault()}
+                        className={cn('w-20 h-8 font-mono tabular-nums text-center bg-background border-border', configLocked && 'opacity-60 cursor-not-allowed')}
+                        autoComplete="off"
+                      />
+                    </div>
+                    <p className="text-[11px] leading-snug text-muted-foreground">
+                      Regra de ouro: <b className="text-foreground">1 ronda a cada {cadenceMin} min</b>. O sistema calcula automaticamente quantas rondas cabem no intervalo e distribui proporcionalmente entre os agentes (mínimo 1 ronda por agente).
+                    </p>
+                    {schedule?.proportional && (
+                      <div className="text-[11px] font-mono tabular-nums text-primary">
+                        {schedule.proportional.totalRounds} ronda{schedule.proportional.totalRounds === 1 ? '' : 's'} totais · {(schedule.total / schedule.proportional.totalRounds).toFixed(1)} min/ronda · {schedule.proportional.roundsPerAgent.toFixed(1)} por agente
+                      </div>
+                    )}
+                  </div>
+                )}
+
 
                 {/* Times / interval */}
                 {nightLocked && (
