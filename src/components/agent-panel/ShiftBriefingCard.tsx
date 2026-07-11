@@ -69,6 +69,49 @@ const CHECKLIST_ORDER: ChecklistKey[] = [
   'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'book', 'handover',
 ];
 
+// -------- Offline persistence helpers --------
+// Draft: fotografia do formulário para sobreviver a recarregamentos offline.
+// Pending: payload aguardando sincronização com o servidor.
+const DRAFT_KEY = (shiftId: string) => `plantao_briefing_draft_${shiftId}`;
+const PENDING_KEY = (shiftId: string) => `plantao_briefing_pending_${shiftId}`;
+
+interface DraftShape {
+  adoCnt: string; algCnt: string; chvCnt: string;
+  radiosCharged: string; radiosExpected: string;
+  bookEntry: string; handoverOk: boolean; handoverNotes: string;
+  observations: string; signature: string;
+  updatedAt: number;
+}
+
+function readDraft(shiftId: string): DraftShape | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY(shiftId));
+    return raw ? JSON.parse(raw) as DraftShape : null;
+  } catch { return null; }
+}
+function writeDraft(shiftId: string, draft: Omit<DraftShape, 'updatedAt'>) {
+  try {
+    localStorage.setItem(DRAFT_KEY(shiftId), JSON.stringify({ ...draft, updatedAt: Date.now() }));
+  } catch { /* quota — ignore */ }
+}
+function readPending(shiftId: string): { payload: any; existingId: string | null } | null {
+  try {
+    const raw = localStorage.getItem(PENDING_KEY(shiftId));
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+function writePending(shiftId: string, payload: any, existingId: string | null) {
+  try {
+    localStorage.setItem(PENDING_KEY(shiftId), JSON.stringify({ payload, existingId, queuedAt: Date.now() }));
+  } catch { /* ignore */ }
+}
+function clearPending(shiftId: string) {
+  try { localStorage.removeItem(PENDING_KEY(shiftId)); } catch { /* ignore */ }
+}
+function clearDraft(shiftId: string) {
+  try { localStorage.removeItem(DRAFT_KEY(shiftId)); } catch { /* ignore */ }
+}
+
 // -------- Component --------
 export function ShiftBriefingCard({
   agentId, agentName, agentTeam, unitId, agentRole,
@@ -79,7 +122,9 @@ export function ShiftBriefingCard({
   const [history, setHistory] = useState<Briefing[]>([]);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [autoSaveState, setAutoSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [autoSaveState, setAutoSaveState] = useState<'idle' | 'saving' | 'saved' | 'error' | 'pending'>('idle');
+  const [isOnline, setIsOnline] = useState<boolean>(typeof navigator === 'undefined' ? true : navigator.onLine);
+  const [hasPending, setHasPending] = useState(false);
 
   // form state — cada plantão começa em branco (chave = shift_id)
   const [adoCnt, setAdoCnt] = useState('');
@@ -143,8 +188,29 @@ export function ShiftBriefingCard({
   }, [agentId, unitId, isLeader]);
 
   // Hidrata formulário com o briefing carregado (ou o do plantão atual).
+  // Rascunho local tem prioridade se for mais recente que o registro do servidor
+  // ou se existir sincronização pendente — assim o usuário nunca perde edições offline.
   useEffect(() => {
-    if (briefing) {
+    if (!currentShift) return;
+    const draft = readDraft(currentShift.id);
+    const pending = readPending(currentShift.id);
+    setHasPending(!!pending);
+
+    const serverTs = briefing?.completed_at ? Date.parse(briefing.completed_at) : 0;
+    const draftIsFresher = draft && (!!pending || draft.updatedAt > serverTs);
+
+    if (draft && (draftIsFresher || !briefing)) {
+      setAdoCnt(draft.adoCnt);
+      setAlgCnt(draft.algCnt);
+      setChvCnt(draft.chvCnt);
+      setRadiosCharged(draft.radiosCharged);
+      setRadiosExpected(draft.radiosExpected);
+      setBookEntry(draft.bookEntry);
+      setHandoverOk(draft.handoverOk);
+      setHandoverNotes(draft.handoverNotes);
+      setObservations(draft.observations);
+      setSignature(draft.signature);
+    } else if (briefing) {
       setAdoCnt(briefing.adolescents_counted?.toString() ?? '');
       setAlgCnt(briefing.handcuffs_counted?.toString() ?? '');
       setChvCnt(briefing.handcuff_keys_counted?.toString() ?? '');
@@ -156,7 +222,7 @@ export function ShiftBriefingCard({
       setObservations(briefing.observations ?? '');
       setSignature(briefing.signature ?? '');
     }
-  }, [briefing]);
+  }, [briefing, currentShift]);
 
   // Cálculo de conclusão de cada item do checklist
   const itemsStatus = useMemo(() => {
@@ -173,37 +239,58 @@ export function ShiftBriefingCard({
   const completedCount = Object.values(itemsStatus).filter(Boolean).length;
   const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
 
-  // -------- Auto-save (debounce 700ms) --------
+  // -------- Auto-save (debounce 700ms) com persistência local + fila offline --------
   const persist = async (finalize = false) => {
     if (!currentShift) return null;
     if (finalize && !signature.trim()) {
       toast.error('Assine com seu nome para finalizar o briefing.');
       return null;
     }
+
+    // 1) Sempre salvar rascunho local ANTES de tentar a rede — assim, mesmo se
+    //    o navegador cair, recarregar ou perder a conexão, o preenchimento é
+    //    preservado até a próxima sincronização.
+    writeDraft(currentShift.id, {
+      adoCnt, algCnt, chvCnt, radiosCharged, radiosExpected,
+      bookEntry, handoverOk, handoverNotes, observations, signature,
+    });
+
+    const payload: any = {
+      shift_id: currentShift.id,
+      agent_id: agentId,
+      unit_id: unitId,
+      team: agentTeam,
+      shift_date: currentShift.shift_date,
+      adolescents_counted: adoCnt !== '' ? Number(adoCnt) : null,
+      handcuffs_counted: algCnt !== '' ? Number(algCnt) : null,
+      handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
+      radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
+      radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
+      book_entry: bookEntry || null,
+      handover_ok: handoverOk,
+      handover_notes: handoverNotes || null,
+      observations: observations || null,
+      signature: signature || null,
+      completed_at: finalize
+        ? new Date().toISOString()
+        : (briefingRef.current?.completed_at ?? null),
+    };
+
+    // 2) Se estamos offline, enfileira e retorna — a sincronização acontece
+    //    automaticamente quando a conexão voltar.
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      writePending(currentShift.id, payload, briefingRef.current?.id ?? null);
+      setHasPending(true);
+      setAutoSaveState('pending');
+      if (finalize) {
+        toast.info('Sem conexão. Briefing será enviado assim que a rede voltar.');
+      }
+      return null;
+    }
+
     setSaving(true);
     setAutoSaveState('saving');
     try {
-      const payload: any = {
-        shift_id: currentShift.id,
-        agent_id: agentId,
-        unit_id: unitId,
-        team: agentTeam,
-        shift_date: currentShift.shift_date,
-        adolescents_counted: adoCnt !== '' ? Number(adoCnt) : null,
-        handcuffs_counted: algCnt !== '' ? Number(algCnt) : null,
-        handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
-        radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
-        radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
-        book_entry: bookEntry || null,
-        handover_ok: handoverOk,
-        handover_notes: handoverNotes || null,
-        observations: observations || null,
-        signature: signature || null,
-        completed_at: finalize
-          ? new Date().toISOString()
-          : (briefingRef.current?.completed_at ?? null),
-      };
-
       const existing = briefingRef.current;
       const { data, error } = existing
         ? await supabase
@@ -222,13 +309,19 @@ export function ShiftBriefingCard({
       setBriefing(data as unknown as Briefing);
       dirtyRef.current = false;
       setAutoSaveState('saved');
+      clearPending(currentShift.id);
+      setHasPending(false);
       if (finalize) {
+        clearDraft(currentShift.id);
         toast.success('Briefing finalizado e registrado.');
       }
       return data as unknown as Briefing;
     } catch (e: any) {
-      setAutoSaveState('error');
-      if (finalize) toast.error(e.message || 'Falha ao salvar briefing.');
+      // Falha de rede/servidor: mantém rascunho e enfileira para nova tentativa.
+      writePending(currentShift.id, payload, briefingRef.current?.id ?? null);
+      setHasPending(true);
+      setAutoSaveState('pending');
+      if (finalize) toast.error(e.message || 'Falha ao salvar. Mantido localmente para reenvio.');
       return null;
     } finally {
       setSaving(false);
@@ -258,6 +351,58 @@ export function ShiftBriefingCard({
     dirtyRef.current = true;
     setter(v);
   };
+
+  // -------- Sincronização automática ao voltar online --------
+  useEffect(() => {
+    const flush = async () => {
+      if (!currentShift) return;
+      const pending = readPending(currentShift.id);
+      if (!pending) return;
+      setAutoSaveState('saving');
+      try {
+        const { data, error } = pending.existingId
+          ? await supabase
+              .from('shift_briefings')
+              .update(pending.payload)
+              .eq('id', pending.existingId)
+              .select()
+              .single()
+          : await supabase
+              .from('shift_briefings')
+              .insert(pending.payload)
+              .select()
+              .single();
+        if (error) throw error;
+        setBriefing(data as unknown as Briefing);
+        clearPending(currentShift.id);
+        setHasPending(false);
+        setAutoSaveState('saved');
+        toast.success('Briefing sincronizado com o servidor.');
+        window.setTimeout(() => setAutoSaveState('idle'), 2200);
+      } catch {
+        setAutoSaveState('pending');
+      }
+    };
+
+    const handleOnline = () => { setIsOnline(true); void flush(); };
+    const handleOffline = () => { setIsOnline(false); setAutoSaveState('pending'); };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('app:back-online', handleOnline);
+
+    // Tenta drenar imediatamente ao montar/abrir (caso a conexão já esteja OK).
+    if (typeof navigator !== 'undefined' && navigator.onLine && currentShift) {
+      void flush();
+    }
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('app:back-online', handleOnline);
+    };
+  }, [currentShift]);
+
 
   // ---------- Render ----------
   if (!isLeader) return null;
@@ -396,12 +541,14 @@ export function ShiftBriefingCard({
               <ClipboardCheck className="h-5 w-5" />
               Checklist do Plantão {currentShift && format(parseISO(currentShift.shift_date), 'dd/MM/yyyy', { locale: ptBR })}
             </DialogTitle>
-            <DialogDescription className="text-slate-400 text-xs flex items-center gap-2">
-              Cada item é salvo automaticamente. Ao finalizar, o registro fica travado neste plantão.
+            <DialogDescription className="text-slate-400 text-xs flex items-center gap-2 flex-wrap">
+              Cada item é salvo automaticamente {isOnline ? '' : '(offline — será sincronizado ao reconectar)'}. Ao finalizar, o registro fica travado neste plantão.
               <span className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest">
                 {autoSaveState === 'saving' && (<><Loader2 className="h-3 w-3 animate-spin" /> salvando…</>)}
                 {autoSaveState === 'saved' && (<><CheckCircle2 className="h-3 w-3 text-emerald-400" /> salvo</>)}
                 {autoSaveState === 'error' && (<><ShieldAlert className="h-3 w-3 text-red-400" /> falha ao salvar</>)}
+                {autoSaveState === 'pending' && (<><Loader2 className="h-3 w-3 text-amber-400" /> aguardando conexão</>)}
+                {autoSaveState === 'idle' && hasPending && (<><ShieldAlert className="h-3 w-3 text-amber-400" /> pendente de envio</>)}
               </span>
             </DialogDescription>
           </DialogHeader>
