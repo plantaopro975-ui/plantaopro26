@@ -344,7 +344,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] sm:flex-1 lg:flex-none min-h-0 flex flex-col"
+        className="pp-home-hero relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] sm:flex-1 lg:flex-none min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
@@ -401,10 +401,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </div>
 
         {/* ============ TOP ROW — Identification + Agent + HUD ============ */}
-        <div className="relative hidden sm:grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 sm:order-none mt-0">
+        <div className="pp-hero-top-row relative hidden sm:grid gap-1 sm:gap-4 px-0 sm:px-5 pt-0 sm:pt-2 pb-0 md:grid-cols-[0.95fr_1.05fr] items-start shrink-0 sm:order-none mt-0">
 
           {/* LEFT — CTA + selos */}
-          <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
+          <div className="pp-hero-left relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
 
 
             <div className="hidden sm:flex flex-col gap-1.5 sm:gap-2">
@@ -413,13 +413,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 Sistema Operacional
               </span>
               <h2
-                className="font-serif text-white text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.1] tracking-tight"
+                className="pp-hero-title font-serif text-white text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.1] tracking-tight"
                 style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
               >
                 Comando <span className="text-amber-300 italic">Tático</span><br />
                 <span className="text-white/85">Socioeducativo</span>
               </h2>
-              <p className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-white/50 leading-[1.5] max-w-[42ch]">
+              <p className="pp-hero-subtitle font-mono text-[10.5px] uppercase tracking-[0.22em] text-white/50 leading-[1.5] max-w-[42ch]">
                 Escala · Banco de horas · Ronda georreferenciada
               </p>
             </div>
@@ -440,9 +440,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </div>
 
             {/* Mission briefing panel — hierarquia reduzida: sutil, sem competir com viatura/agente */}
-            <div className="relative mt-1 hidden sm:block w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%]">
+            <div className="pp-briefing-panel relative mt-1 hidden sm:block w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%]">
               <div
-                className="relative rounded-md border border-white/8 bg-[linear-gradient(180deg,rgba(8,12,24,0.55)_0%,rgba(3,5,10,0.65)_100%)] backdrop-blur-sm px-3 py-2.5 md:px-3.5 md:py-3 overflow-hidden"
+                className="pp-briefing-card relative rounded-md border border-white/8 bg-[linear-gradient(180deg,rgba(8,12,24,0.55)_0%,rgba(3,5,10,0.65)_100%)] backdrop-blur-sm px-3 py-2.5 md:px-3.5 md:py-3 overflow-hidden"
                 style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)' }}
               >
                 {/* corner brackets — mais discretos */}
@@ -467,7 +467,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   </span>
                 </div>
 
-                <div className="relative grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+                <div className="pp-briefing-metrics relative grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                   {[
                     { k: 'Unidades', v: metrics.loading ? '——' : fmt2(metrics.units), s: 'Socioeducativas', pulse: false },
                     { k: 'Divisões', v: fmt2(metrics.divisions), s: 'Táticas', pulse: false },
@@ -501,7 +501,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </div>
 
             {/* ============ B — Timeline operacional (log de eventos recentes) ============ */}
-            <div className="hidden lg:block relative mt-1.5 w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%] select-none">
+            <div className="pp-operational-log hidden lg:block relative mt-1.5 w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%] select-none">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-white/40 leading-none">Log Operacional</span>
                 <span aria-hidden className="flex-1 h-px bg-white/8" />
@@ -532,7 +532,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D + HUD tático */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(180px,24vh,240px)] xl:min-h-[clamp(200px,26vh,280px)] 2xl:min-h-[clamp(240px,30vh,340px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-1 pt-0 sm:pt-1 lg:pt-2 px-2 sm:px-0">
+          <div className="pp-scene-stage relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(180px,24vh,240px)] xl:min-h-[clamp(200px,26vh,280px)] 2xl:min-h-[clamp(240px,30vh,340px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-1 pt-0 sm:pt-1 lg:pt-2 px-2 sm:px-0">
 
             {/* Moldura HUD ultra-discreta — hairlines nos quatro cantos, sem competir com a cena */}
             <div aria-hidden className="hidden md:block absolute inset-x-3 top-2 bottom-2 lg:inset-x-5 lg:top-3 lg:bottom-3 pointer-events-none">
@@ -628,7 +628,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
             {/* Cena composta */}
             <div
-              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(180px,24vh,240px)] xl:h-[clamp(200px,26vh,280px)] 2xl:h-[clamp(240px,30vh,340px)] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] pr-0 sm:pr-0 max-w-full"
+              className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(180px,24vh,240px)] xl:h-[clamp(200px,26vh,280px)] 2xl:h-[clamp(240px,30vh,340px)] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] pr-0 sm:pr-0 max-w-full"
             >
 
 
@@ -764,7 +764,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
         {/* ============ Team Selector Grid — no mobile vai para o topo (order-2) ============ */}
-        <div className="relative shrink-0 px-3 sm:px-3 pt-1 sm:pt-1 pb-1 mt-0 sm:mt-0 order-3 sm:order-none">
+        <div className="pp-team-selector relative shrink-0 px-3 sm:px-3 pt-1 sm:pt-1 pb-1 mt-0 sm:mt-0 order-3 sm:order-none">
 
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-200">
@@ -776,7 +776,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
+          <div className="pp-team-grid grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
               <TeamCard
                 key={t.key}
@@ -789,7 +789,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           </div>
 
           {/* ============ E + F — Conformidade institucional + Ticker de status ============ */}
-          <div className="hidden sm:flex mt-2 items-stretch gap-3 border-t border-white/8 pt-1.5 select-none">
+          <div className="pp-compliance-strip hidden sm:flex mt-2 items-stretch gap-3 border-t border-white/8 pt-1.5 select-none">
             {/* E — selos de conformidade */}
             <div className="flex items-center gap-3 lg:gap-4 shrink-0">
               {[
