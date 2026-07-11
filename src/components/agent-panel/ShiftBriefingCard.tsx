@@ -211,6 +211,8 @@ export function ShiftBriefingCard({
       setAdoCnt(draft.adoCnt);
       setAlgCnt(draft.algCnt);
       setChvCnt(draft.chvCnt);
+      setTonCnt(draft.tonCnt ?? '');
+      setTonExpected(draft.tonExpected ?? '');
       setRadiosCharged(draft.radiosCharged);
       setRadiosExpected(draft.radiosExpected);
       setBookEntry(draft.bookEntry);
@@ -222,6 +224,8 @@ export function ShiftBriefingCard({
       setAdoCnt(briefing.adolescents_counted?.toString() ?? '');
       setAlgCnt(briefing.handcuffs_counted?.toString() ?? '');
       setChvCnt(briefing.handcuff_keys_counted?.toString() ?? '');
+      setTonCnt(briefing.tonfas_counted?.toString() ?? '');
+      setTonExpected(briefing.tonfas_expected?.toString() ?? '');
       setRadiosCharged(briefing.radios_charged_count?.toString() ?? '');
       setRadiosExpected(briefing.radios_total_expected?.toString() ?? '');
       setBookEntry(briefing.book_entry ?? '');
@@ -238,10 +242,11 @@ export function ShiftBriefingCard({
       adolescents: adoCnt !== '' && Number(adoCnt) >= 0,
       handcuffs: algCnt !== '' && Number(algCnt) >= 0,
       handcuff_keys: chvCnt !== '' && Number(chvCnt) >= 0,
+      tonfas: tonCnt !== '' && Number(tonCnt) >= 0,
       radios: radiosCharged !== '' && Number(radiosCharged) >= 0,
       handover: handoverOk,
     } as Record<ChecklistKey, boolean>;
-  }, [adoCnt, algCnt, chvCnt, radiosCharged, handoverOk]);
+  }, [adoCnt, algCnt, chvCnt, tonCnt, radiosCharged, handoverOk]);
 
   const completedCount = Object.values(itemsStatus).filter(Boolean).length;
   const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
