@@ -3,7 +3,7 @@ import { useTheme, themes } from '@/contexts/ThemeContext';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { cn } from '@/lib/utils';
 import { Radio, Star, Hexagon, Triangle, Square, Circle, Crown, Network, Octagon } from 'lucide-react';
-import { teamPosters, teamColors } from '@/lib/teamAssets';
+import { teamPosters, teamColors, getTeamEmblem } from '@/lib/teamAssets';
 
 interface ThemedTeamCardProps {
   team: string;
