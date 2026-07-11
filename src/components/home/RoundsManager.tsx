@@ -2408,8 +2408,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                className="px-2 sm:px-3 py-2"
             >
               <div
-                className="mx-auto mb-2 overflow-hidden rounded-md border border-border bg-card"
-                style={{ borderLeft: `2px solid ${teamColor}` }}
+                className="mx-auto mb-1.5 overflow-hidden rounded-md border border-border bg-card"
               >
                 <div className="relative flex items-center gap-2 px-2.5 py-1 sm:px-3">
                   <span
