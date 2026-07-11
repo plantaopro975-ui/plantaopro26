@@ -2387,7 +2387,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           >
             <div
               ref={fitInnerRef}
-               className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
+               className="px-2 sm:px-3 py-2"
             >
               <div
                 className="mx-auto mb-2 overflow-hidden rounded-md border border-border bg-card"
