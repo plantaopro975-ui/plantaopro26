@@ -2788,11 +2788,26 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </span>
 
             {running && live && !live.done && schedule && (
-              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12.5px] font-semibold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}55`, backgroundColor: `${teamColor}12` }}>
+              <span
+                className={cn(
+                  'ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12.5px] font-semibold tabular-nums transition',
+                  handoffImminent && 'animate-pulse ring-2 ring-red-500/70',
+                  handoffSoon && !handoffImminent && 'animate-pulse',
+                )}
+                style={{
+                  color: handoffImminent ? '#fca5a5' : handoffSoon ? '#fcd34d' : teamColor,
+                  border: `1px solid ${handoffImminent ? '#ef4444aa' : handoffSoon ? '#f59e0baa' : teamColor + '55'}`,
+                  backgroundColor: handoffImminent ? '#ef444422' : handoffSoon ? '#f59e0b1a' : `${teamColor}12`,
+                  boxShadow: handoffImminent ? '0 0 12px #ef444488' : handoffSoon ? '0 0 8px #f59e0b66' : undefined,
+                }}
+                title={handoffSoon ? `Troca de posto em ${Math.max(0, Math.ceil(slotRemainingSec))}s${nextAgentName ? ` — próximo: ${nextAgentName}` : ''}` : undefined}
+              >
                 <Timer className="h-3 w-3" />
                 {fmtHMS(live.remaining)}
+                {handoffSoon && <span aria-hidden className="ml-1 h-1.5 w-1.5 rounded-full bg-current animate-ping" />}
               </span>
             )}
+
 
             <ChevronRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" strokeWidth={2.5} />
 
