@@ -1833,3 +1833,14 @@ body:not(.rm-focus-mode) > #root {
 @media (prefers-reduced-motion: reduce) {
   .animate-\[pp-ticker_28s_linear_infinite\] { animation: none !important; }
 }
+
+/* Briefing Operacional — hover/focus sweep (layout-safe microinteraction) */
+@keyframes pp-briefing-sweep {
+  0%   { transform: translateX(0);    opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateX(500%); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .animate-\[pp-briefing-sweep_1\.4s_ease-out\],
+  .group:focus-within .animate-\[pp-briefing-sweep_1\.4s_ease-out\] { animation: none !important; }
+}
