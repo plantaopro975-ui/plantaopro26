@@ -2859,7 +2859,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       </button>
                       <button
                         type="button"
-                        onClick={clearTeamLog}
+                        onClick={() => setClearConfirmOpen(true)}
                         disabled={teamLog.length === 0}
                         className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground hover:text-destructive disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
                       >
