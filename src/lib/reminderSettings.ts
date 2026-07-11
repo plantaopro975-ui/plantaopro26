@@ -100,15 +100,24 @@ export function getReminderSettings(): ReminderSettings {
   return readLocal();
 }
 
-export function setReminderSettings(patch: Partial<ReminderSettings>): ReminderSettings {
-  const next = normalize({ ...readLocal(), ...patch });
+/**
+ * Aplica um patch às preferências APÓS validação rigorosa (zod).
+ * Retorna a discriminated union — não escreve nada em caso de erro,
+ * de forma que o backend e o cache nunca recebem valores inválidos.
+ */
+export function setReminderSettings(patch: Partial<ReminderSettings>): ReminderValidation {
+  const candidate = { ...readLocal(), ...patch };
+  const result = validateReminderSettings(candidate);
+  if (!result.ok) return result;
+
+  const next = result.value;
   writeLocal(next);
   try {
     window.dispatchEvent(new CustomEvent<ReminderSettings>(EVENT, { detail: next }));
   } catch { /* ignore */ }
   // Fire-and-forget: sincroniza com o backend para o usuário atual.
   if (currentUserId) void persistToProfile(currentUserId, next);
-  return next;
+  return { ok: true, value: next };
 }
 
 export function subscribeReminderSettings(
