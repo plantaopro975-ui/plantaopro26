@@ -100,6 +100,8 @@ export default function AgentPanel() {
   const { agent, isLoading: isLoadingAgent } = useAgentProfile();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('equipe');
+  const [shiftsFilter, setShiftsFilter] = useState<'hoje' | 'semana' | 'mes'>('semana');
+
   const [mountedTabs, setMountedTabs] = useState<Set<string>>(() => new Set(['equipe']));
   const { compact, toggle: toggleCompact } = useCompactMode();
   const [hasShifts, setHasShifts] = useState(true);
@@ -846,29 +848,80 @@ export default function AgentPanel() {
               <TabsContent value="plantoes" forceMount hidden={activeTab !== 'plantoes'} className="mt-0 data-[state=inactive]:hidden">
                 {mountedTabs.has('plantoes') && <SectionBoundary label="plantoes" loadingLabel="Carregando plantões" fallback={<ModuleFallback compact={compact} />}>
                 <div className="flex flex-col gap-3 md:gap-4">
-                  {/* 1. Cronômetro do plantão em destaque (largura total) */}
-                  <section aria-label="Cronômetro do plantão" className="w-full">
+                  {/* Filtros rápidos por período */}
+                  <div
+                    role="tablist"
+                    aria-label="Filtro de período"
+                    className="flex items-center gap-1 p-1 rounded-lg bg-slate-900/70 border border-slate-700/70 w-full overflow-x-auto"
+                  >
+                    {([
+                      { id: 'hoje', label: 'Hoje' },
+                      { id: 'semana', label: 'Semana' },
+                      { id: 'mes', label: 'Mês' },
+                    ] as const).map((f) => {
+                      const active = shiftsFilter === f.id;
+                      return (
+                        <button
+                          key={f.id}
+                          role="tab"
+                          aria-selected={active}
+                          onClick={() => setShiftsFilter(f.id)}
+                          className={
+                            'flex-1 min-w-[80px] px-3 py-1.5 text-xs font-semibold uppercase tracking-widest rounded-md transition-colors ' +
+                            (active
+                              ? 'bg-amber-500 text-slate-950 shadow'
+                              : 'text-slate-300 hover:bg-slate-800/70')
+                          }
+                        >
+                          {f.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* 1. Cronômetro do plantão em destaque — com moldura de contraste */}
+                  <section
+                    aria-label="Cronômetro do plantão"
+                    className="w-full rounded-xl bg-gradient-to-br from-emerald-500/10 via-slate-900/40 to-slate-900/10 border border-emerald-500/20 p-1"
+                  >
                     <ProfessionalShiftTimer agentId={agent.id} />
                   </section>
 
                   {/* 2. Próximo plantão — chamada para ação */}
-                  <section aria-label="Próximo plantão" className="w-full">
+                  <section
+                    aria-label="Próximo plantão"
+                    className="w-full rounded-xl bg-gradient-to-br from-amber-500/10 via-slate-900/40 to-slate-900/10 border border-amber-500/20 p-1"
+                  >
                     <NextShiftCountdown agentId={agent.id} agentName={agent.name} agentUnitId={agent.unit_id} agentTeam={agent.team} />
                   </section>
 
-                  {/* 3. Escala + Visão do mês lado a lado (alturas equalizadas) */}
-                  <section aria-label="Escala e visão mensal" className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-4 items-stretch">
-                    <div className="min-w-0 flex"><div className="w-full flex flex-col [&>*]:flex-1"><ShiftScheduleCard agentId={agent.id} /></div></div>
-                    <div className="min-w-0 flex"><div className="w-full flex flex-col [&>*]:flex-1"><ShiftCalendarOverview agentId={agent.id} /></div></div>
-                  </section>
+                  {/* 3. Escala + Visão do mês — visíveis nos filtros Semana/Mês */}
+                  {(shiftsFilter === 'semana' || shiftsFilter === 'mes') && (
+                    <section aria-label="Escala e visão mensal" className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-4 items-stretch">
+                      <div className="min-w-0 flex"><div className="w-full flex flex-col [&>*]:flex-1"><ShiftScheduleCard agentId={agent.id} /></div></div>
+                      {shiftsFilter === 'mes' && (
+                        <div className="min-w-0 flex"><div className="w-full flex flex-col [&>*]:flex-1"><ShiftCalendarOverview agentId={agent.id} /></div></div>
+                      )}
+                    </section>
+                  )}
 
-                  {/* 4. Histórico de ciclos — largura total */}
-                  <section aria-label="Ciclos recentes" className="w-full">
-                    <RecentShiftCyclesCard agentId={agent.id} />
-                  </section>
+                  {/* 4. Histórico de ciclos — apenas no filtro Mês */}
+                  {shiftsFilter === 'mes' && (
+                    <section aria-label="Ciclos recentes" className="w-full">
+                      <RecentShiftCyclesCard agentId={agent.id} />
+                    </section>
+                  )}
+
+                  {/* Dica quando o filtro esconde blocos */}
+                  {shiftsFilter === 'hoje' && (
+                    <p className="text-[11px] text-slate-500 text-center italic">
+                      Mostrando apenas o plantão de hoje. Use <span className="text-amber-400">Semana</span> ou <span className="text-amber-400">Mês</span> para ver a escala completa.
+                    </p>
+                  )}
                 </div>
                 </SectionBoundary>}
               </TabsContent>
+
 
               <TabsContent value="bh" forceMount hidden={activeTab !== 'bh'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
                 {mountedTabs.has('bh') && <SectionBoundary label="bh" loadingLabel="Carregando bh" fallback={<ModuleFallback compact={compact} />}>
