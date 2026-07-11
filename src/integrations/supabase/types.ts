@@ -1447,6 +1447,7 @@ export type Database = {
           home_card_order: Json | null
           id: string
           password_changed_at: string | null
+          reminder_settings: Json
           updated_at: string
           user_id: string
         }
@@ -1457,6 +1458,7 @@ export type Database = {
           home_card_order?: Json | null
           id?: string
           password_changed_at?: string | null
+          reminder_settings?: Json
           updated_at?: string
           user_id: string
         }
@@ -1467,6 +1469,7 @@ export type Database = {
           home_card_order?: Json | null
           id?: string
           password_changed_at?: string | null
+          reminder_settings?: Json
           updated_at?: string
           user_id?: string
         }
