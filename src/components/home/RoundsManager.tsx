@@ -4116,9 +4116,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </Section>
 
                 <div className="flex items-center justify-end gap-2 border-t border-border/40 pt-1.5">
-                  <a href="/rounds-history" className="font-sans text-[11.5px] uppercase tracking-wide text-primary hover:underline">
+                  <button
+                    type="button"
+                    onClick={() => { setHistoryTeamFilter(null); setHistoryDialogOpen(true); }}
+                    className="font-sans text-[11.5px] uppercase tracking-wide text-primary hover:underline"
+                  >
                     Histórico ({history.length})
-                  </a>
+                  </button>
                   {history.length > 0 && (
                     <button type="button" onClick={() => setHistoryClearConfirmOpen(true)} className="font-sans text-[11.5px] uppercase tracking-wide text-muted-foreground hover:text-destructive">
                       Limpar
