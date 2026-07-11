@@ -469,17 +469,28 @@ export function ShiftBriefingCard({
               </Badge>
               <Button
                 size="sm"
-                onClick={() => setOpen(true)}
-                disabled={!hasCurrentShift}
+                onClick={() => {
+                  if (!hasCurrentShift) {
+                    setLockedOpen(true);
+                    return;
+                  }
+                  setOpen(true);
+                }}
+                aria-disabled={!hasCurrentShift}
                 className={cn(
-                  'h-8 font-semibold',
-                  finalized
-                    ? 'bg-slate-700 hover:bg-slate-600 text-slate-100'
-                    : 'bg-amber-500 hover:bg-amber-600 text-slate-950'
+                  'h-8 font-semibold transition-all',
+                  !hasCurrentShift
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700'
+                    : finalized
+                      ? 'bg-slate-700 hover:bg-slate-600 text-slate-100'
+                      : 'bg-amber-500 hover:bg-amber-600 text-slate-950'
                 )}
               >
-                <PenLine className="h-3.5 w-3.5 mr-1.5" />
-                {finalized ? 'Revisar checklist' : 'Preencher checklist'}
+                {!hasCurrentShift ? (
+                  <><Lock className="h-3.5 w-3.5 mr-1.5" /> Bloqueado</>
+                ) : (
+                  <><PenLine className="h-3.5 w-3.5 mr-1.5" /> {finalized ? 'Revisar checklist' : 'Preencher checklist'}</>
+                )}
               </Button>
             </div>
           </div>
