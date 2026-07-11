@@ -6,6 +6,7 @@ import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useRoundsStats } from '@/hooks/useRoundsStats';
 import { useServerTime } from '@/hooks/useServerTime';
 import { RoundsManager } from './RoundsManager';
+import { TacticalClock } from './TacticalClock';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { BrasaoSentinela } from '@/components/BrasaoSentinela';
