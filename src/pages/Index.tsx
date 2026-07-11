@@ -1394,10 +1394,8 @@ export default function Index() {
         {/* Sober command-room background — SVG only, no posters */}
         <CommandRoomBackground />
 
-        {/* Selo de origem — visível na homepage web sem alterar o layout */}
-        <div className="pointer-events-none fixed bottom-3 left-3 z-[60] hidden sm:flex">
-          <MadeInFeijoBadge inline />
-        </div>
+        {/* (Selo movido para próximo do rodapé, em posição visível) */}
+
 
         {/* Return-to-panel shortcut for logged-in agents browsing the homepage */}
         {user && (
@@ -1562,11 +1560,17 @@ export default function Index() {
         }}
       />
 
+      {/* Selo de origem — destaque profissional acima do rodapé */}
+      <div className="relative z-30 w-full flex justify-center pt-4 pb-1">
+        <MadeInFeijoBadge inline size="lg" />
+      </div>
+
       {/* Divisor entre seção institucional e rodapé */}
       <SectionDivider />
 
       {/* Mobile-only beta notice */}
       <div className="hidden sm:block">
+
         <BetaNoticeFooter />
       </div>
 
