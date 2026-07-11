@@ -134,6 +134,8 @@ export function ShiftBriefingCard({
   const [adoCnt, setAdoCnt] = useState('');
   const [algCnt, setAlgCnt] = useState('');
   const [chvCnt, setChvCnt] = useState('');
+  const [tonCnt, setTonCnt] = useState('');
+  const [tonExpected, setTonExpected] = useState('');
   const [radiosCharged, setRadiosCharged] = useState('');
   const [radiosExpected, setRadiosExpected] = useState('');
   const [bookEntry, setBookEntry] = useState('');
