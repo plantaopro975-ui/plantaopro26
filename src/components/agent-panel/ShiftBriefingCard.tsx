@@ -489,30 +489,68 @@ export function ShiftBriefingCard({
             <OffDutyNotice />
           ) : (
             <>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <MiniStat icon={<Users className="h-3 w-3" />} label="Adolescentes" value={briefing?.adolescents_counted?.toString() ?? '—'} />
-                <MiniStat icon={<ShieldAlert className="h-3 w-3" />} label="Algemas" value={briefing?.handcuffs_counted?.toString() ?? '—'} />
-                <MiniStat icon={<KeyRound className="h-3 w-3" />} label="Chaves" value={briefing?.handcuff_keys_counted?.toString() ?? '—'} />
-                <MiniStat
-                  icon={<Swords className="h-3 w-3" />}
-                  label="Tonfas"
-                  value={briefing?.tonfas_counted != null
-                    ? (briefing?.tonfas_expected
-                        ? `${briefing.tonfas_counted}/${briefing.tonfas_expected}`
-                        : String(briefing.tonfas_counted))
-                    : '—'}
-                />
-                <MiniStat
-                  icon={<Radio className="h-3 w-3" />}
-                  label="Rádios carregados"
-                  value={briefing?.radios_charged_count != null
-                    ? (briefing?.radios_total_expected
-                        ? `${briefing.radios_charged_count}/${briefing.radios_total_expected}`
-                        : String(briefing.radios_charged_count))
-                    : '—'}
-                />
-                <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={briefing?.handover_ok ? 'OK' : '—'} />
-              </div>
+              {(() => {
+                const missingSummary: { key: ChecklistKey; label: string }[] = [
+                  { key: 'adolescents', label: 'Adolescentes' },
+                  { key: 'handcuffs', label: 'Algemas' },
+                  { key: 'handcuff_keys', label: 'Chaves' },
+                  { key: 'tonfas', label: 'Tonfas' },
+                  { key: 'radios', label: 'Rádios carregados' },
+                  { key: 'handover', label: 'Recebimento' },
+                ].filter((i) => !itemsStatus[i.key]);
+
+                return (
+                  <>
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <MiniStat icon={<Users className="h-3 w-3" />} label="Adolescentes" value={briefing?.adolescents_counted?.toString() ?? '—'} missing={!itemsStatus.adolescents} />
+                      <MiniStat icon={<ShieldAlert className="h-3 w-3" />} label="Algemas" value={briefing?.handcuffs_counted?.toString() ?? '—'} missing={!itemsStatus.handcuffs} />
+                      <MiniStat icon={<KeyRound className="h-3 w-3" />} label="Chaves" value={briefing?.handcuff_keys_counted?.toString() ?? '—'} missing={!itemsStatus.handcuff_keys} />
+                      <MiniStat
+                        icon={<Swords className="h-3 w-3" />}
+                        label="Tonfas"
+                        value={briefing?.tonfas_counted != null
+                          ? (briefing?.tonfas_expected
+                              ? `${briefing.tonfas_counted}/${briefing.tonfas_expected}`
+                              : String(briefing.tonfas_counted))
+                          : '—'}
+                        missing={!itemsStatus.tonfas}
+                      />
+                      <MiniStat
+                        icon={<Radio className="h-3 w-3" />}
+                        label="Rádios carregados"
+                        value={briefing?.radios_charged_count != null
+                          ? (briefing?.radios_total_expected
+                              ? `${briefing.radios_charged_count}/${briefing.radios_total_expected}`
+                              : String(briefing.radios_charged_count))
+                          : '—'}
+                        missing={!itemsStatus.radios}
+                      />
+                      <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={itemsStatus.handover ? 'OK' : '—'} missing={!itemsStatus.handover} />
+                    </div>
+
+                    {missingSummary.length > 0 && (
+                      <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 flex items-start gap-2">
+                        <ShieldAlert className="h-3.5 w-3.5 text-amber-300 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] uppercase tracking-widest text-amber-300 font-semibold">
+                            Pendências para envio
+                          </p>
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {missingSummary.map((m) => (
+                              <span
+                                key={m.key}
+                                className="text-[10px] px-1.5 py-0.5 rounded border border-amber-500/40 bg-amber-500/15 text-amber-200"
+                              >
+                                {m.label}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
               <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-slate-400">
                 <span>Preenchimento · {completedCount}/{CHECKLIST_ORDER.length}</span>
