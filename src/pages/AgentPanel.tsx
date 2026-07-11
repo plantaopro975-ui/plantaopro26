@@ -28,6 +28,7 @@ import { SessionMonitorBanner } from '@/components/SessionMonitorBanner';
 const DiagnosticReportButton = lazy(() => import('@/components/DiagnosticReportButton').then(m => ({ default: m.DiagnosticReportButton })));
 import { SafeModeToggle } from '@/components/SafeModeToggle';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
+import { HardRefreshHint } from '@/components/HardRefreshHint';
 import { AnnouncementsMural } from '@/components/AnnouncementsMural';
 import { ThemedPanelBackground } from '@/components/ThemedPanelBackground';
 import { PublicSecurityBackdrop } from '@/components/agent-panel/PublicSecurityBackdrop';
@@ -1077,6 +1078,9 @@ export default function AgentPanel() {
 
             {/* Footer Copyright - Compacto */}
             <CopyrightFooter className="border-t border-border/30 mt-2" />
+            <div className="hidden md:flex justify-center py-1.5">
+              <HardRefreshHint standalone />
+            </div>
           </div>
         </main>
       </div>

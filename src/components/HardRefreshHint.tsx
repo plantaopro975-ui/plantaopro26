@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
  *  - Ambiente nativo (Capacitor)
  *  - Telas muito pequenas (mobile) — o gesto de teclado não se aplica
  */
-export function HardRefreshHint() {
+export function HardRefreshHint({ standalone = false }: { standalone?: boolean } = {}) {
   const [visible, setVisible] = useState(false);
   const [isMac, setIsMac] = useState(false);
 
@@ -36,7 +36,7 @@ export function HardRefreshHint() {
 
   return (
     <>
-      <span className="text-muted-foreground/40">·</span>
+      {!standalone && <span className="text-muted-foreground/40">·</span>}
       <TooltipProvider delayDuration={150}>
         <Tooltip>
           <TooltipTrigger asChild>
