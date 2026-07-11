@@ -2133,6 +2133,39 @@ export type Database = {
         }
         Relationships: []
       }
+      team_lock_state: {
+        Row: {
+          created_at: string
+          scheduled_for: string | null
+          team: string
+          team_confirmed: boolean
+          unit_id: string
+          updated_at: string
+          updated_by: string | null
+          updated_by_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          scheduled_for?: string | null
+          team: string
+          team_confirmed?: boolean
+          unit_id: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          scheduled_for?: string | null
+          team?: string
+          team_confirmed?: boolean
+          unit_id?: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+        }
+        Relationships: []
+      }
       transfer_requests: {
         Row: {
           agent_id: string
@@ -2344,6 +2377,7 @@ export type Database = {
         Returns: undefined
       }
       current_agent_id: { Args: never; Returns: string }
+      current_agent_unit_id: { Args: never; Returns: string }
       extend_license: {
         Args: { p_admin_id: string; p_agent_id: string; p_months: number }
         Returns: string
