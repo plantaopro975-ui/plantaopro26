@@ -193,7 +193,17 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       ) : (
         <span aria-hidden className="team-halo" />
       )}
-      <div className="relative z-20 flex-1 min-h-0" />
+      {/* Emblema central — grande, dominante */}
+      <div className="relative z-20 flex-1 min-h-0 flex items-center justify-center px-2 pt-4 pb-1">
+        <img
+          src={teamEmblems[t.key]}
+          alt={`Emblema ${t.key}`}
+          loading="lazy"
+          decoding="async"
+          className="max-h-full max-w-[70%] w-auto object-contain drop-shadow-[0_6px_18px_rgba(0,0,0,0.95)] transition-transform duration-500 group-hover:scale-105"
+          draggable={false}
+        />
+      </div>
 
       <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
       <span aria-hidden className="absolute top-1.5 left-1.5 z-30 flex h-2.5 w-2.5 items-center justify-center rounded-full" style={{ border: `1px solid hsl(${t.accent} / 0.55)` }}>
@@ -205,15 +215,9 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       >
         {t.op}
       </span>
-      <div className="relative z-20 flex flex-col items-center gap-0.5 px-1.5 pb-1.5 sm:gap-1 sm:px-2.5 sm:pb-2">
-        <img
-          src={teamEmblems[t.key]}
-          alt={`Emblema ${t.key}`}
-          loading="lazy"
-          decoding="async"
-          className="block h-9 min-[390px]:h-10 sm:h-12 lg:h-14 xl:h-16 w-auto object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]"
-          draggable={false}
-        />
+
+      {/* Motto no rodapé */}
+      <div className="relative z-20 px-2 pb-1.5 sm:pb-2 flex justify-center">
         <span
           className="font-mono text-[8px] min-[390px]:text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.14em] sm:tracking-[0.28em] truncate text-slate-200"
           style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
@@ -221,6 +225,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
           {t.motto}
         </span>
       </div>
+
 
     </button>
   );
