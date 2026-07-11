@@ -388,6 +388,21 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
   }, []);
   const resetSceneOffset = useCallback(() => setSceneOffset({ x: 0, y: 0 }), []);
 
+  // ==== SCALE MANUAL (desktop) — viatura e agente independentes ==========
+  const [vehScale, setVehScale] = useState<number>(() => {
+    if (typeof window === 'undefined') return 1;
+    const v = parseFloat(localStorage.getItem('pp-veh-scale') || '1');
+    return Number.isFinite(v) && v > 0 ? v : 1;
+  });
+  const [agtScale, setAgtScale] = useState<number>(() => {
+    if (typeof window === 'undefined') return 1;
+    const v = parseFloat(localStorage.getItem('pp-agt-scale') || '1');
+    return Number.isFinite(v) && v > 0 ? v : 1;
+  });
+  useEffect(() => { try { localStorage.setItem('pp-veh-scale', String(vehScale)); } catch {} }, [vehScale]);
+  useEffect(() => { try { localStorage.setItem('pp-agt-scale', String(agtScale)); } catch {} }, [agtScale]);
+  const clampScale = (v: number) => Math.max(0.5, Math.min(3, Math.round(v * 100) / 100));
+
 
 
   return (
@@ -754,7 +769,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
                 {/* Viatura — mobile: proporcional ao agente | desktop: pousada no chão sem cortes */}
-                <picture className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0">
+                <picture
+                  className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0"
+                  style={isDesktop ? { transform: `scale(${vehScale})`, transformOrigin: 'bottom left' } : undefined}
+                >
                   <source type="image/webp" srcSet={vehicle3dWebp} />
                   <img
                     src={vehicle3d}
@@ -788,7 +806,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 </picture>
 
                 {/* Agente — cresce a partir do chão, sem translate positivo para não cortar os pés */}
-                <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
+                <picture
+                  className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0"
+                  style={isDesktop ? { transform: `scale(${agtScale})`, transformOrigin: 'bottom' } : undefined}
+                >
                   <source type="image/webp" srcSet={agent3dWebp} />
                   <img
                     src={agent3d}
@@ -808,22 +829,58 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </div>
             </div>
 
-            {/* HUD de drag — só desktop, mostra offset atual em px */}
+            {/* HUD de drag + escala — só desktop */}
             {isDesktop && (
               <div
-                className="hidden lg:flex absolute top-2 left-2 z-[120] items-center gap-2 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
+                className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
               >
-                <span className="text-amber-400">◈ DRAG</span>
-                <span className="text-white/90 tabular-nums">
-                  x: {sceneOffset.x}px · y: {sceneOffset.y}px
-                </span>
-                <button
-                  type="button"
-                  onClick={resetSceneOffset}
-                  className="ml-1 rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
-                >
-                  reset
-                </button>
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400">◈ DRAG</span>
+                  <span className="text-white/90 tabular-nums">
+                    x: {sceneOffset.x}px · y: {sceneOffset.y}px
+                  </span>
+                  <button
+                    type="button"
+                    onClick={resetSceneOffset}
+                    className="ml-1 rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                  >
+                    reset
+                  </button>
+                </div>
+
+                {/* Escala viatura */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-amber-400 w-12">VIATURA</span>
+                  <button type="button" onClick={() => setVehScale(s => clampScale(s - 0.05))}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">−</button>
+                  <input
+                    type="range" min={0.5} max={3} step={0.01} value={vehScale}
+                    onChange={(e) => setVehScale(clampScale(parseFloat(e.target.value)))}
+                    className="accent-amber-400 w-28"
+                  />
+                  <button type="button" onClick={() => setVehScale(s => clampScale(s + 0.05))}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">+</button>
+                  <span className="tabular-nums text-white/90 w-10 text-right">{vehScale.toFixed(2)}x</span>
+                  <button type="button" onClick={() => setVehScale(1)}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">reset</button>
+                </div>
+
+                {/* Escala agente */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-amber-400 w-12">AGENTE</span>
+                  <button type="button" onClick={() => setAgtScale(s => clampScale(s - 0.05))}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">−</button>
+                  <input
+                    type="range" min={0.5} max={3} step={0.01} value={agtScale}
+                    onChange={(e) => setAgtScale(clampScale(parseFloat(e.target.value)))}
+                    className="accent-amber-400 w-28"
+                  />
+                  <button type="button" onClick={() => setAgtScale(s => clampScale(s + 0.05))}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">+</button>
+                  <span className="tabular-nums text-white/90 w-10 text-right">{agtScale.toFixed(2)}x</span>
+                  <button type="button" onClick={() => setAgtScale(1)}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">reset</button>
+                </div>
               </div>
             )}
 
