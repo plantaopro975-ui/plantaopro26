@@ -1512,7 +1512,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
 
 
-  const teamColor = TEAM_PRESETS.find((t) => t.key === team)!.color;
+  // Cor rotacionada — muda a cada nova ronda para evitar repetição visual.
+  const teamColor = getRotatedTeamColor(team, colorRotation);
 
   /* sound settings */
   const [sound, setSound] = useState<SoundSettings>(DEFAULT_SOUND);
