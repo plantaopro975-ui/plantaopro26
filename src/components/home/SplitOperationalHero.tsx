@@ -174,7 +174,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         // Proporção retrato + tamanho contido garantem alinhamento consistente
         // em todos os breakpoints, com margens simétricas via `mx-auto`.
         'group relative flex flex-col text-left bg-transparent isolate overflow-hidden',
-        'h-auto aspect-[4/5] w-full max-w-[172px] min-[390px]:max-w-[188px] min-[430px]:max-w-[200px] sm:max-w-[168px] lg:max-w-[188px] xl:max-w-[208px] mx-auto rounded-none border-0',
+        'h-auto aspect-[4/5] w-full max-w-[172px] min-[390px]:max-w-[188px] min-[430px]:max-w-[200px] sm:max-w-[150px] lg:max-w-[164px] xl:max-w-[180px] mx-auto rounded-none border-0',
         '[clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)] [-webkit-clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)]',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
@@ -488,7 +488,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D + HUD tático */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(240px,32vh,340px)] xl:min-h-[clamp(280px,36vh,420px)] 2xl:min-h-[clamp(320px,40vh,480px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-2 lg:pt-4 px-2 sm:px-0">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(180px,24vh,240px)] xl:min-h-[clamp(200px,26vh,280px)] 2xl:min-h-[clamp(240px,30vh,340px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-1 pt-0 sm:pt-1 lg:pt-2 px-2 sm:px-0">
 
             {/* Moldura HUD ultra-discreta — hairlines nos quatro cantos, sem competir com a cena */}
             <div aria-hidden className="hidden md:block absolute inset-x-3 top-2 bottom-2 lg:inset-x-5 lg:top-3 lg:bottom-3 pointer-events-none">
@@ -523,18 +523,18 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </span>
 
             {/* Micro-ribbon inferior — linha única, hairline, tabular */}
-            <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2.5 lg:gap-3 pointer-events-none">
-              <span className="relative inline-flex h-1.5 w-1.5">
+            <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2 lg:gap-2.5 pointer-events-none whitespace-nowrap max-w-full px-2">
+              <span className="relative inline-flex h-1.5 w-1.5 shrink-0">
                 <span className="absolute inset-0 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
                 <span className="absolute inset-0 rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping" />
               </span>
-              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.28em] text-white/45 leading-none">Patrulha</span>
-              <span aria-hidden className="h-2 w-px bg-white/12" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.14em] text-amber-200/85 leading-none">−9.9747°</span>
-              <span aria-hidden className="h-2 w-px bg-white/12" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.14em] text-amber-200/85 leading-none">−67.8100°</span>
-              <span aria-hidden className="h-2 w-px bg-white/12" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.28em] text-white/55 leading-none">Rio Branco · AC</span>
+              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.24em] text-white/45 leading-none">Patrulha</span>
+              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.12em] text-amber-200/85 leading-none">−9.9747°</span>
+              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.12em] text-amber-200/85 leading-none">−67.8100°</span>
+              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.24em] text-white/55 leading-none">Rio Branco · AC</span>
             </div>
 
 
@@ -542,7 +542,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
             {/* Cena composta */}
             <div
-              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(240px,32vh,340px)] xl:h-[clamp(280px,36vh,420px)] 2xl:h-[clamp(320px,40vh,480px)] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] pr-0 sm:pr-0 max-w-full"
+              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(180px,24vh,240px)] xl:h-[clamp(200px,26vh,280px)] 2xl:h-[clamp(240px,30vh,340px)] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] pr-0 sm:pr-0 max-w-full"
             >
 
 
@@ -554,12 +554,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Viatura tática ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-[1.04] lg:scale-[1.18] xl:scale-[1.26] 2xl:scale-[1.34] origin-bottom-left"
+                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-[1.04] lg:scale-[1.04] xl:scale-[1.10] 2xl:scale-[1.16] origin-bottom-left"
                   draggable={false}
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.18] xl:scale-[1.26] 2xl:scale-[1.34] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.04] xl:scale-[1.10] 2xl:scale-[1.16] origin-bottom-left"
                 >
                   <span
                     aria-hidden
