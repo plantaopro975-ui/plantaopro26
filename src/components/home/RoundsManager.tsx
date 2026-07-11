@@ -16,6 +16,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 import { ConfirmDialog } from './ConfirmDialog';
 import { MissionLockDialog } from './MissionLockDialog';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
