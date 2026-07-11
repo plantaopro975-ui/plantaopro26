@@ -130,6 +130,49 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
               O aviso é pausado enquanto uma ronda está ativa ou o gestor está aberto.
             </p>
           </div>
+
+          {/* Modo de exibição — bloqueia notificações nativas do navegador */}
+          <div className="flex items-start justify-between gap-3 rounded-md border border-border/60 bg-card/40 px-3 py-2.5">
+            <div className="flex items-start gap-2 min-w-0">
+              {/* Emblema SVG discreto (escudo tático) */}
+              <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true" className="mt-0.5 shrink-0">
+                <defs>
+                  <linearGradient id="rs-inapp" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.95" />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.35" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M16 3 L27 8 V16 C27 22.5 22 27.5 16 29 C10 27.5 5 22.5 5 16 V8 Z"
+                  fill="url(#rs-inapp)"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth="1.2"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M11 16 L15 20 L22 12"
+                  fill="none"
+                  stroke="hsl(var(--primary-foreground))"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <div className="min-w-0">
+                <Label className="text-sm">Somente alertas in-app (SVG)</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  {settings.inAppOnly
+                    ? 'Ativo — nenhuma notificação nativa do navegador será exibida.'
+                    : 'Desativado — o app pode usar notificações do navegador em background.'}
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={settings.inAppOnly}
+              onCheckedChange={(v) => update({ inAppOnly: !!v })}
+              aria-label="Usar somente alertas in-app"
+            />
+          </div>
         </div>
 
         <div className="mt-4 flex justify-end">
