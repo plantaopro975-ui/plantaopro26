@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
   Play, Pause, RotateCcw, Radio, ChevronRight, AlertTriangle,
   CheckCircle2, Volume2, VolumeX, Lock, CalendarClock, XCircle, Settings,
 } from 'lucide-react';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter,
 } from '@/components/ui/dialog';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -1362,10 +1363,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   useEffect(() => { setHistory(readHistory()); }, [open]);
   const clearHistory = () => { writeHistory([]); setHistory([]); };
 
-  /* ---- Log resumido (cache local) de equipes das rondas realizadas ---- */
+  /* ---- Log resumido de equipes das rondas realizadas ----
+     Persistido em Supabase (`team_round_log`) para sincronizar entre
+     dispositivos da mesma unidade. Mantém cache local como fallback
+     offline. */
   const TEAM_LOG_KEY = 'plantaopro_team_round_log';
-  type TeamLogEntry = { team: string; dateISO: string };
-  const readTeamLog = (): TeamLogEntry[] => {
+  type TeamLogEntry = { team: string; dateISO: string; savedName?: string; id?: string };
+  const readTeamLogLocal = (): TeamLogEntry[] => {
     try {
       const raw = localStorage.getItem(TEAM_LOG_KEY);
       if (!raw) return [];
@@ -1373,18 +1377,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       return Array.isArray(arr) ? arr.slice(0, 15) : [];
     } catch { return []; }
   };
-  const writeTeamLog = (list: TeamLogEntry[]) => {
+  const writeTeamLogLocal = (list: TeamLogEntry[]) => {
     try { localStorage.setItem(TEAM_LOG_KEY, JSON.stringify(list.slice(0, 15))); } catch { /* ignore */ }
   };
   const [teamLog, setTeamLog] = useState<TeamLogEntry[]>([]);
-  useEffect(() => { setTeamLog(readTeamLog()); }, [open]);
+  // Local optimistic append (started rounds). Cloud is written when a
+  // round is completed and the operator saves the team name.
   const appendTeamLog = (teamName: string) => {
     const entry: TeamLogEntry = { team: teamName, dateISO: new Date().toISOString() };
-    const next = [entry, ...readTeamLog()].slice(0, 15);
-    writeTeamLog(next);
+    const next = [entry, ...readTeamLogLocal()].slice(0, 15);
+    writeTeamLogLocal(next);
     setTeamLog(next);
   };
-  const clearTeamLog = () => { writeTeamLog([]); setTeamLog([]); };
+
 
   /* ---- Confirmação e trava da equipe (persistida) ---- */
   const TEAM_LOCK_KEY = 'plantaopro_team_lock_state';
@@ -1827,11 +1832,94 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     return () => window.clearTimeout(t);
   }, [unitId, team, teamConfirmed, scheduledFor]);
 
+  /* ---- Sincroniza teamLog (últimas rondas) com Supabase por unidade ---- */
+  const hydrateTeamLogFromCloud = useCallback(async () => {
+    if (!unitId) return;
+    try {
+      const { data, error } = await supabase
+        .from('team_round_log')
+        .select('id, team, saved_name, completed_at')
+        .eq('unit_id', unitId)
+        .order('completed_at', { ascending: false })
+        .limit(15);
+      if (error) throw error;
+      const mapped: TeamLogEntry[] = (data ?? []).map((r) => ({
+        id: r.id,
+        team: r.team,
+        dateISO: r.completed_at,
+        savedName: r.saved_name ?? undefined,
+      }));
+      setTeamLog(mapped);
+      writeTeamLogLocal(mapped);
+    } catch {
+      // fallback: cache local
+      setTeamLog(readTeamLogLocal());
+    }
+  }, [unitId]);
+
+  useEffect(() => {
+    if (!open) return;
+    // Hidrata imediatamente do cache local + tenta nuvem
+    setTeamLog(readTeamLogLocal());
+    void hydrateTeamLogFromCloud();
+  }, [open, hydrateTeamLogFromCloud]);
+
+  // Realtime: reflete inserções/limpezas feitas por outros dispositivos.
+  useEffect(() => {
+    if (!unitId) return;
+    const ch = supabase
+      .channel(`team-round-log-${unitId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'team_round_log', filter: `unit_id=eq.${unitId}` },
+        () => { void hydrateTeamLogFromCloud(); },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [unitId, hydrateTeamLogFromCloud]);
+
+  const saveTeamRoundToCloud = async (params: {
+    team: string; savedName: string; totalSeconds: number; agentsCount: number;
+  }) => {
+    const { data: userData } = await supabase.auth.getUser();
+    const uid = userData?.user?.id;
+    if (!uid) throw new Error('Sessão expirada. Faça login novamente.');
+    if (!unitId) throw new Error('Unidade não encontrada para o agente atual.');
+    const { error } = await supabase.from('team_round_log').insert({
+      unit_id: unitId,
+      team: params.team,
+      saved_name: params.savedName,
+      total_seconds: params.totalSeconds,
+      agents_count: params.agentsCount,
+      completed_by: uid,
+    });
+    if (error) throw new Error(error.message);
+    await hydrateTeamLogFromCloud();
+  };
+
+  const clearTeamLog = async () => {
+    // Limpa nuvem (RLS restringe à mesma unidade) + cache local.
+    if (unitId) {
+      try {
+        await supabase.from('team_round_log').delete().eq('unit_id', unitId);
+      } catch (e) {
+        console.warn('[rounds] falha ao limpar team_round_log', e);
+      }
+    }
+    writeTeamLogLocal([]);
+    setTeamLog([]);
+  };
+
+
+
   // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
   // do lado esquerdo é travada para preservar o cronograma pactuado.
   const configLocked = scheduledFor != null;
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
+  const [summarySaved, setSummarySaved] = useState(false);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
+
   const [silentMode, setSilentMode] = useState<boolean>(() => {
     try { return localStorage.getItem('plantaopro_rounds_silent') === '1'; } catch { return false; }
   });
@@ -1973,7 +2061,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     if (live.done) {
       setRunning(false);
       setSummaryData({ totalSec: Math.round(live.elapsed), completed: schedule.rows.length });
+      setSummarySaved(false);
       setSummaryOpen(true);
+
       if (historyIdRef.current) {
         const finished = readHistory().map((h) =>
           h.id === historyIdRef.current ? { ...h, endedAt: Date.now() } : h,
@@ -2770,7 +2860,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       </button>
                       <button
                         type="button"
-                        onClick={clearTeamLog}
+                        onClick={() => setClearConfirmOpen(true)}
                         disabled={teamLog.length === 0}
                         className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground hover:text-destructive disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
                       >
@@ -3261,7 +3351,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         open={historyDialogOpen}
                         onOpenChange={setHistoryDialogOpen}
                         entries={teamLog}
-                        onClear={() => { clearTeamLog(); setHistoryDialogOpen(false); }}
+                        onClear={() => { setHistoryDialogOpen(false); setClearConfirmOpen(true); }}
                       />
 
                       <TeamConfirmDialog
@@ -3302,16 +3392,34 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       <RoundSummaryDialog
                         open={summaryOpen}
+                        saved={summarySaved}
+                        onSave={async (savedName) => {
+                          // Persiste em Supabase (sincroniza com a unidade)
+                          // e no cache local. Só após esse salvamento o
+                          // fechamento é liberado.
+                          await saveTeamRoundToCloud({
+                            team,
+                            savedName,
+                            totalSeconds: summaryData?.totalSec ?? 0,
+                            agentsCount: schedule.rows.length,
+                          });
+                          // Cache local como fallback offline
+                          const entry: TeamLogEntry = {
+                            team, dateISO: new Date().toISOString(), savedName,
+                          };
+                          const next = [entry, ...readTeamLogLocal()].slice(0, 15);
+                          writeTeamLogLocal(next);
+                          setSummarySaved(true);
+                          toast({ title: 'Registro salvo', description: `Equipe ${team} registrada e sincronizada.` });
+                        }}
                         onClose={() => {
                           setSummaryOpen(false);
                           setSummaryData(null);
+                          setSummarySaved(false);
                           // Reseta timer e fecha o divisor de rondas, deixando o
-                          // painel pronto para uma nova equipe. O histórico de
-                          // equipes (teamLog) permanece salvo em localStorage
-                          // para que os demais possam ver a última ronda.
+                          // painel pronto para uma nova equipe.
                           try { resetTimer(); } catch { /* ignore */ }
                           setOpen(false);
-                          // Atualiza a página após um beat para garantir estado limpo.
                           window.setTimeout(() => {
                             try { window.location.reload(); } catch { /* ignore */ }
                           }, 250);
@@ -3323,6 +3431,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         completedCount={summaryData?.completed ?? schedule.rows.length}
                         silent={silentMode}
                       />
+
 
 
                       {/* Rows — grid responsivo, se adapta a qualquer quantidade de agentes */}
@@ -3475,6 +3584,47 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
       <ReminderSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+
+      {/* Confirmação de limpeza do histórico de rondas realizadas */}
+      <Dialog open={clearConfirmOpen} onOpenChange={setClearConfirmOpen}>
+        <DialogContent className="max-w-sm border-2 border-destructive/60">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              Limpar histórico de rondas?
+            </DialogTitle>
+            <DialogDescription>
+              Esta ação removerá o <b>nome da última equipe</b> e todas as
+              <b> rondas registradas</b> desta unidade — em todos os dispositivos.
+              Não é possível desfazer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive/95">
+            {teamLog.length} registro{teamLog.length === 1 ? '' : 's'} serão apagados.
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setClearConfirmOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                await clearTeamLog();
+                setClearConfirmOpen(false);
+                toast({ title: 'Histórico apagado', description: 'Registros removidos da unidade.' });
+              }}
+            >
+              Sim, apagar tudo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
 
     </>
   );
