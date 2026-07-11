@@ -62,11 +62,10 @@ type ChecklistKey =
   | 'handcuffs'
   | 'handcuff_keys'
   | 'radios'
-  | 'book'
   | 'handover';
 
 const CHECKLIST_ORDER: ChecklistKey[] = [
-  'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'book', 'handover',
+  'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'handover',
 ];
 
 // -------- Offline persistence helpers --------
@@ -231,10 +230,9 @@ export function ShiftBriefingCard({
       handcuffs: algCnt !== '' && Number(algCnt) >= 0,
       handcuff_keys: chvCnt !== '' && Number(chvCnt) >= 0,
       radios: radiosCharged !== '' && Number(radiosCharged) >= 0,
-      book: bookEntry.trim().length >= 10,
       handover: handoverOk,
     } as Record<ChecklistKey, boolean>;
-  }, [adoCnt, algCnt, chvCnt, radiosCharged, bookEntry, handoverOk]);
+  }, [adoCnt, algCnt, chvCnt, radiosCharged, handoverOk]);
 
   const completedCount = Object.values(itemsStatus).filter(Boolean).length;
   const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
@@ -242,10 +240,8 @@ export function ShiftBriefingCard({
   // -------- Auto-save (debounce 700ms) com persistência local + fila offline --------
   const persist = async (finalize = false) => {
     if (!currentShift) return null;
-    if (finalize && !signature.trim()) {
-      toast.error('Assine com seu nome para finalizar o briefing.');
-      return null;
-    }
+    // Assinatura não é mais obrigatória — o próprio agente logado assina o registro.
+
 
     // 1) Sempre salvar rascunho local ANTES de tentar a rede — assim, mesmo se
     //    o navegador cair, recarregar ou perder a conexão, o preenchimento é
@@ -266,11 +262,11 @@ export function ShiftBriefingCard({
       handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
       radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
       radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
-      book_entry: bookEntry || null,
+      book_entry: null,
       handover_ok: handoverOk,
       handover_notes: handoverNotes || null,
-      observations: observations || null,
-      signature: signature || null,
+      observations: null,
+      signature: agentName || null,
       completed_at: finalize
         ? new Date().toISOString()
         : (briefingRef.current?.completed_at ?? null),
@@ -473,7 +469,6 @@ export function ShiftBriefingCard({
                         : String(briefing.radios_charged_count))
                     : '—'}
                 />
-                <MiniStat icon={<BookOpen className="h-3 w-3" />} label="Livro informativo" value={briefing?.book_entry ? 'OK' : '—'} />
                 <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={briefing?.handover_ok ? 'OK' : '—'} />
               </div>
 
@@ -604,27 +599,9 @@ export function ShiftBriefingCard({
                 </div>
               </ChecklistRow>
 
-              {/* 5. Livro informativo */}
+              {/* 5. Passagem de plantão */}
               <ChecklistRow
-                order={5} done={itemsStatus.book}
-                icon={<BookOpen className="h-4 w-4 text-amber-400" />}
-                title="Livro informativo"
-                subtitle="Registre o preenchimento do livro (mínimo 10 caracteres)."
-              >
-                <Textarea
-                  value={bookEntry}
-                  onChange={(e) => withDirty(setBookEntry)(e.target.value)}
-                  placeholder="Ex.: efetivo do plantão, ocorrências, atividades..."
-                  rows={4}
-                  className="bg-slate-950/60 border-slate-700 text-sm resize-none"
-                  maxLength={4000}
-                />
-                <div className="text-[10px] text-slate-500 text-right mt-0.5">{bookEntry.length}/4000</div>
-              </ChecklistRow>
-
-              {/* 6. Passagem de plantão */}
-              <ChecklistRow
-                order={6} done={itemsStatus.handover}
+                order={5} done={itemsStatus.handover}
                 icon={<ArrowLeftRight className="h-4 w-4 text-amber-400" />}
                 title="Passagem de plantão"
                 subtitle="Confirme que a passagem foi feita com a equipe anterior."
@@ -646,23 +623,6 @@ export function ShiftBriefingCard({
                 />
               </ChecklistRow>
 
-              {/* Observações gerais removidas — redundantes com "Notas da passagem"
-                  (handoverNotes) e "Livro informativo" (bookEntry). */}
-
-
-              {/* Assinatura */}
-              <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
-                <Label className="text-[11px] uppercase tracking-widest text-amber-300 flex items-center gap-1.5">
-                  <FileText className="h-3 w-3" /> Assinatura do responsável (obrigatório para finalizar)
-                </Label>
-                <Input
-                  value={signature}
-                  onChange={(e) => withDirty(setSignature)(e.target.value)}
-                  placeholder={agentName}
-                  className="mt-1.5 bg-slate-950/60 border-slate-700 text-sm font-serif italic"
-                  maxLength={120}
-                />
-              </div>
             </div>
           </ScrollArea>
 
