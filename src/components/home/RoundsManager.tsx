@@ -1668,8 +1668,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     if (nightEffectivelyLocked) return;
     if (autoAnchoredRef.current) return;
     autoAnchoredRef.current = true;
+    // Usa hora do servidor CONVERTIDA para o fuso do Acre (não o fuso do
+    // dispositivo). Assim, mesmo que o celular esteja em SP/UTC/errado,
+    // a âncora reflete o horário operacional real.
     const now = new Date(nowServer());
-    const totalMin = now.getHours() * 60 + now.getMinutes();
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: NIGHT_TZ, hour12: false, hour: '2-digit', minute: '2-digit',
+    }).formatToParts(now);
+    const get = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? '0');
+    const hNow = get('hour') % 24;
+    const mNow = get('minute');
+    const totalMin = hNow * 60 + mNow;
     const rounded = Math.round(totalMin / 5) * 5;
     const h = String(Math.floor(rounded / 60) % 24).padStart(2, '0');
     const m = String(rounded % 60).padStart(2, '0');
@@ -1735,7 +1744,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const transitionIssues = useMemo<Issue[]>(() => {
     const list: Issue[] = [];
     const now = new Date(nowServer());
-    const minsNow = now.getHours() * 60 + now.getMinutes();
+    const p = new Intl.DateTimeFormat('en-GB', {
+      timeZone: NIGHT_TZ, hour12: false, hour: '2-digit', minute: '2-digit',
+    }).formatToParts(now);
+    const gh = Number(p.find((x) => x.type === 'hour')?.value ?? '0') % 24;
+    const gm = Number(p.find((x) => x.type === 'minute')?.value ?? '0');
+    const minsNow = gh * 60 + gm;
     const N22 = 22 * 60;
     const N06 = 6 * 60;
     const inWindow = (Math.abs(minsNow - N22) <= 5) || (Math.abs(minsNow - N06) <= 5);
