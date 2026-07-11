@@ -2039,6 +2039,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     ? Math.max(0, schedule.totalSec - (currentView?.elapsed ?? 0))
     : 0;
 
+  // Alerta visual/sonoro nos últimos minutos da operação inteira
+  const endingSoon = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 300; // ≤ 5 min
+  const endingCritical = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 60; // ≤ 1 min
+  const endingWarnFiredRef = useRef<Set<number>>(new Set());
+  useEffect(() => {
+    if (!running || totalRemainingSeconds <= 0) return;
+    const thresholds = [300, 60, 10];
+    for (const t of thresholds) {
+      if (
+        totalRemainingSeconds <= t &&
+        totalRemainingSeconds > t - 2 &&
+        !endingWarnFiredRef.current.has(t)
+      ) {
+        endingWarnFiredRef.current.add(t);
+        const label = t === 300 ? '5 minutos' : t === 60 ? '1 minuto' : '10 segundos';
+        toast({
+          title: `⏳ Operação encerra em ${label}`,
+          description: `EQUIPE ${team} · finalize as rondas em andamento`,
+        });
+        try { playAlert(soundRef.current); } catch { /* ignore */ }
+      }
+    }
+    if (totalRemainingSeconds > 305) {
+      // reset entre execuções
+      endingWarnFiredRef.current.clear();
+    }
+  }, [totalRemainingSeconds, running, team]);
+
+
 
   // Trava persistida: quais postos já dispararam a notificação
   const notifiedRef = useRef<Set<number>>(new Set());
