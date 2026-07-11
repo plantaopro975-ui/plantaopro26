@@ -1002,7 +1002,7 @@ function RoundsHeroSVG({ color, active, silent }: { color: string; active: boole
 
 function AgentStatusSVG({ status, color, compact = false }: { status: 'active' | 'done' | 'waiting'; color: string; compact?: boolean }) {
   const label = status === 'active' ? 'EM RONDA' : status === 'done' ? 'CUMPRIDA' : 'NA FILA';
-  const tone = status === 'done' ? 'hsl(var(--success))' : status === 'waiting' ? 'hsl(var(--muted-foreground))' : color;
+  const tone = status === 'done' ? 'hsl(var(--success))' : status === 'waiting' ? `${color}b3` : color;
   return (
     <svg viewBox="0 0 116 24" className={cn('shrink-0', compact ? 'h-5 w-20' : 'h-6 w-28')} aria-label={label} role="img">
       <path d="M8 2H108L114 12L108 22H8L2 12Z" fill="hsl(var(--card))" fillOpacity="0.72" stroke={tone} strokeOpacity="0.62" />
