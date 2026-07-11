@@ -175,6 +175,11 @@ export function AccessAcknowledgmentGate() {
                     </div>
                   </>
                 )}
+
+                {/* Selo de origem — discreto, ocupa espaço vazio abaixo dos botões */}
+                <div className="mt-4 flex justify-center">
+                  <MadeInFeijoBadge inline />
+                </div>
               </div>
             </div>
           </div>
