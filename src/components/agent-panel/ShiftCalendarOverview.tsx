@@ -432,18 +432,14 @@ export function ShiftCalendarOverview({ agentId }: ShiftCalendarOverviewProps) {
 
   return (
     <Card className="relative overflow-hidden bg-slate-800/50 border-slate-700">
-      {/* Fundo decorativo em SVG: grid sutil + moldura de calendário */}
+      {/* Fundo decorativo em SVG: moldura de calendário sem grid */}
       <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <pattern id="cal-grid" width="14" height="14" patternUnits="userSpaceOnUse">
-            <path d="M14 0H0V14" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.5" />
-          </pattern>
           <linearGradient id="cal-frame" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
             <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <rect width="100%" height="100%" fill="url(#cal-grid)" />
       </svg>
       <svg aria-hidden viewBox="0 0 100 100" className="pointer-events-none absolute -top-6 -right-6 h-28 w-28 opacity-20">
         <rect x="14" y="22" width="72" height="64" rx="6" stroke="url(#cal-frame)" strokeWidth="1.5" fill="none" />

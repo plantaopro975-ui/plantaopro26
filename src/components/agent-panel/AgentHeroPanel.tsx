@@ -142,12 +142,6 @@ export function AgentHeroPanel({ agentId, agentName, agentTeam }: AgentHeroPanel
         <div className="absolute -top-20 -right-20 w-60 h-60 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }} />
-        
         {/* Scan Line Effect */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent h-full animate-scan" 
           style={{ animation: 'scan 4s ease-in-out infinite' }} />

@@ -24,16 +24,6 @@ function ThemePanelEffects({ theme }: { theme: string }) {
   if (theme === 'cyber') {
     return (
       <>
-        {/* Matrix-like lines */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-30">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
-              linear-gradient(0deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px)
-            `,
-            backgroundSize: '80px 80px',
-          }} />
-        </div>
         {/* Neon glow corners */}
         <div className="fixed top-0 left-0 w-32 h-32 pointer-events-none" style={{
           background: 'radial-gradient(circle at top left, rgba(6, 182, 212, 0.15), transparent 70%)',
@@ -95,14 +85,6 @@ function ThemePanelEffects({ theme }: { theme: string }) {
   if (theme === 'tactical') {
     return (
       <>
-        {/* Grid overlay */}
-        <div className="fixed inset-0 pointer-events-none opacity-10" style={{
-          backgroundImage: `
-            linear-gradient(90deg, rgba(251, 191, 36, 0.1) 1px, transparent 1px),
-            linear-gradient(0deg, rgba(251, 191, 36, 0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '100px 100px',
-        }} />
         {/* Amber accent corners */}
         <div className="fixed top-4 left-4 w-16 h-16 border-l-2 border-t-2 border-amber-500/20 pointer-events-none" />
         <div className="fixed top-4 right-4 w-16 h-16 border-r-2 border-t-2 border-amber-500/20 pointer-events-none" />
@@ -121,16 +103,8 @@ function ThemePanelEffects({ theme }: { theme: string }) {
     );
   }
   
-  // Default - subtle grid
-  return (
-    <div className="fixed inset-0 pointer-events-none opacity-5" style={{
-      backgroundImage: `
-        linear-gradient(90deg, hsl(var(--primary) / 0.1) 1px, transparent 1px),
-        linear-gradient(0deg, hsl(var(--primary) / 0.1) 1px, transparent 1px)
-      `,
-      backgroundSize: '80px 80px',
-    }} />
-  );
+  // Default - clean background, no grid overlay.
+  return null;
 }
 
 export const ThemedPanelBackground = forwardRef<HTMLDivElement, ThemedPanelBackgroundProps>(function ThemedPanelBackground({ 

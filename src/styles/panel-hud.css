@@ -120,12 +120,9 @@
 .hud-scope .hud-icon-3d img { width: 78%; height: 78%; object-fit: contain;
   filter: drop-shadow(0 6px 10px rgba(0,0,0,0.6)); }
 
-/* Grid overlay decorative */
+/* Grid overlay removido para fundo limpo */
 .hud-scope .hud-grid-bg {
-  background-image:
-    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
-  background-size: 44px 44px;
+  background-image: none;
 }
 
 /* Full-page photorealistic backdrop with Noir & Gold overlay */

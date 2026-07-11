@@ -41,17 +41,6 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
             aria-hidden
             className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,hsl(var(--primary))_50%,transparent)] opacity-80"
           />
-          {/* Micro grid */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.04]"
-            style={{
-              backgroundImage:
-                'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
-            }}
-          />
-
           <div className="relative mx-auto max-w-6xl px-3 sm:px-4 py-1 sm:py-2.5 flex flex-row items-center justify-between gap-2 sm:gap-3">
             {/* Left: Brand + Status + optional slot */}
             <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 font-sans">
@@ -115,16 +104,6 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
         <span
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary))_25%,hsl(var(--primary))_75%,transparent_100%)] opacity-85"
-        />
-        {/* Subtle grid */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage:
-              'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
         />
         {/* Soft cyan halo */}
         <span

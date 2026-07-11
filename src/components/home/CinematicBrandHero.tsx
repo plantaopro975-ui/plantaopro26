@@ -108,19 +108,6 @@ export function CinematicBrandHero({
         }}
       />
 
-      {/* HUD grid sutil */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none opacity-40"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(244,201,116,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(244,201,116,0.05) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-          maskImage:
-            "radial-gradient(ellipse at 30% 50%, black 30%, transparent 80%)",
-        }}
-      />
-
       {/* Conteúdo */}
       <div className="relative z-10 mx-auto max-w-7xl h-full min-h-[inherit] px-6 sm:px-10 lg:px-14 py-14 sm:py-20 flex flex-col justify-center">
         <div className="max-w-xl sm:max-w-2xl">
