@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useServerClockParts } from '@/hooks/useServerTime';
 
 interface ClockProps {
   size?: number;
@@ -8,16 +8,9 @@ interface ClockProps {
 
 export function ThemedAnalogClock({ size = 120, className = '' }: ClockProps) {
   const { resolvedTheme } = useTheme();
-  const [time, setTime] = useState(new Date());
+  const { hours: h24, minutes, seconds } = useServerClockParts();
+  const hours = h24 % 12;
 
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const seconds = time.getSeconds();
-  const minutes = time.getMinutes();
-  const hours = time.getHours() % 12;
 
   const secondDeg = seconds * 6;
   const minuteDeg = minutes * 6 + seconds * 0.1;

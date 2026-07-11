@@ -131,3 +131,38 @@ export function useServerTime(tickMs = 1000): Date {
 
   return now;
 }
+
+/**
+ * Retorna horas/minutos/segundos da hora do servidor em um fuso específico.
+ * Uso padrão para todos os relógios do app: `useServerClockParts()` = Rio Branco.
+ * Se a sync com o servidor falhar, `useServerTime` já retorna a Date local
+ * como fallback — mantendo a UI consistente.
+ */
+export function useServerClockParts(
+  timeZone: string = 'America/Rio_Branco',
+  tickMs = 1000,
+): { hours: number; minutes: number; seconds: number; date: Date } {
+  const date = useServerTime(tickMs);
+  try {
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone,
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    const parts = fmt.formatToParts(date);
+    const get = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? '0');
+    let h = get('hour');
+    if (h === 24) h = 0; // Intl pode devolver 24 em alguns runtimes
+    return { hours: h, minutes: get('minute'), seconds: get('second'), date };
+  } catch {
+    return {
+      hours: date.getHours(),
+      minutes: date.getMinutes(),
+      seconds: date.getSeconds(),
+      date,
+    };
+  }
+}
+

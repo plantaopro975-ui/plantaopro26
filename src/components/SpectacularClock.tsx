@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useServerClockParts } from '@/hooks/useServerTime';
 
 interface SpectacularClockProps {
   size?: number;
@@ -8,16 +8,8 @@ interface SpectacularClockProps {
 
 export function SpectacularClock({ size = 80, className = '' }: SpectacularClockProps) {
   const { resolvedTheme } = useTheme();
-  const [time, setTime] = useState(new Date());
+  const { hours, minutes, seconds } = useServerClockParts();
 
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const hours = time.getHours();
-  const minutes = time.getMinutes();
-  const seconds = time.getSeconds();
 
   const secondDeg = seconds * 6;
   const minuteDeg = minutes * 6 + seconds * 0.1;
