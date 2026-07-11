@@ -565,7 +565,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     idx={idx}
                     isSelected={selectedTeam === 'DELTA'}
                     onSelect={handleSelect}
-                    className="!h-[180px] xl:!h-[210px] w-full"
+                    className="!h-[168px] xl:!h-[188px] w-full"
                   />
                 </div>
               );
