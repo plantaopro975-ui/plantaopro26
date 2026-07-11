@@ -1723,10 +1723,47 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
   /* ---------- validation ---------- */
-  const issues = useMemo(
+  const baseIssues = useMemo(
     () => validate({ mode, startTime, endTime, intervalMin, agents }),
     [mode, startTime, endTime, intervalMin, agents],
   );
+
+  /* Aviso de transição de turno (janela ±5 min em 22:00 e 06:00 Acre) —
+   * bloqueia iniciar/salvar para evitar divisões inconsistentes quando o
+   * relógio está exatamente na virada do turno. Depende de `tick` para
+   * reavaliar em tempo real enquanto o modal está aberto. */
+  const transitionIssues = useMemo<Issue[]>(() => {
+    const list: Issue[] = [];
+    const now = new Date(nowServer());
+    const minsNow = now.getHours() * 60 + now.getMinutes();
+    const N22 = 22 * 60;
+    const N06 = 6 * 60;
+    const inWindow = (Math.abs(minsNow - N22) <= 5) || (Math.abs(minsNow - N06) <= 5);
+    if (inWindow) {
+      list.push({
+        field: 'start',
+        message: 'Transição de turno em andamento (22:00 ou 06:00 ±5 min). Aguarde ~5 min para evitar divisões inconsistentes.',
+      });
+    }
+    // Split/proporcional cruzando a fronteira do noturno (22:00) durante o dia
+    if (!nightEffectivelyLocked && (mode === 'split' || mode === 'proportional')) {
+      const s = toMinutes(startTime);
+      const e = toMinutes(endTime);
+      if (s !== null && e !== null && s !== e) {
+        const crosses = s < N22 && (e > N22 || e <= s);
+        if (crosses) {
+          list.push({
+            field: 'end',
+            message: 'A janela cruza 22:00 (início do turno noturno). Finalize antes das 22:00 ou aguarde o bloqueio noturno.',
+          });
+        }
+      }
+    }
+    return list;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tickSignalFor('transition'), mode, startTime, endTime, nightEffectivelyLocked]);
+
+  const issues = useMemo(() => [...baseIssues, ...transitionIssues], [baseIssues, transitionIssues]);
   const hasError = (field: string) => issues.some((i) => i.field === field);
 
   // Estado do cronômetro (hoisted — usado no cálculo do início efetivo abaixo).
