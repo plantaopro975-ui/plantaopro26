@@ -14,6 +14,7 @@ import {
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useLowMotion } from '@/hooks/useLowMotion';
+import { getShiftBounds, isShiftActive } from '@/lib/shiftTime';
 
 interface OnDutyOverlayProps {
   agentId: string;
@@ -120,35 +121,25 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
   };
 
   const checkIfStillOnDuty = (shift: Shift): boolean => {
-    const now = new Date();
-    const shiftDate = parseISO(shift.shift_date);
-    const [startHour, startMin] = shift.start_time.split(':').map(Number);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(startHour, startMin, 0);
-    const shiftEnd = addHours(shiftStart, 24);
-    return isWithinInterval(now, { start: shiftStart, end: shiftEnd });
+    return isShiftActive(shift);
   };
 
   const updateTimeRemaining = (shift: Shift) => {
     const now = new Date();
-    const shiftDate = parseISO(shift.shift_date);
-    const [startHour, startMin] = shift.start_time.split(':').map(Number);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(startHour, startMin, 0);
-    const shiftEnd = addHours(shiftStart, 24);
-    
+    const { start: shiftStart, end: shiftEnd } = getShiftBounds(shift);
+
     const hoursRemaining = Math.max(0, differenceInHours(shiftEnd, now));
     const minutesRemaining = Math.max(0, differenceInMinutes(shiftEnd, now) % 60);
     const secondsRemaining = Math.max(0, differenceInSeconds(shiftEnd, now) % 60);
-    
+
     const hoursElapsed = Math.max(0, differenceInHours(now, shiftStart));
     const minutesElapsed = Math.max(0, differenceInMinutes(now, shiftStart) % 60);
     const secondsElapsed = Math.max(0, differenceInSeconds(now, shiftStart) % 60);
-    
-    const totalMinutes = 24 * 60;
+
+    const totalMinutes = Math.max(1, differenceInMinutes(shiftEnd, shiftStart));
     const elapsedMinutes = differenceInMinutes(now, shiftStart);
     const progressPercent = Math.min(100, Math.max(0, (elapsedMinutes / totalMinutes) * 100));
-    
+
     setProgress(progressPercent);
     setTimeRemaining({ hours: hoursRemaining, minutes: minutesRemaining, seconds: secondsRemaining });
     setTimeElapsed({ hours: hoursElapsed, minutes: minutesElapsed, seconds: secondsElapsed });

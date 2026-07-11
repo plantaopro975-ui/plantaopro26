@@ -10,6 +10,7 @@ import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Switch } from '@/components/ui/switch';
+import { getShiftBounds, isShiftActive } from '@/lib/shiftTime';
 
 // Countdown component for next shift
 function CountdownToShift({ shift }: { shift: CurrentShift }) {
@@ -279,23 +280,11 @@ export function ShiftTracker({ agentId, compact = false }: ShiftTrackerProps) {
   };
 
   const checkIfStillOnDuty = (shift: CurrentShift): boolean => {
-    const now = new Date();
-    const shiftDate = parseISO(shift.shift_date);
-    const [startHour, startMin] = shift.start_time.split(':').map(Number);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(startHour, startMin, 0);
-    const shiftEnd = addHours(shiftStart, 24);
-    return isWithinInterval(now, { start: shiftStart, end: shiftEnd });
+    return isShiftActive(shift);
   };
 
   const checkIfOnDuty = (shift: CurrentShift): boolean => {
-    const now = new Date();
-    const shiftDate = parseISO(shift.shift_date);
-    const [startHour, startMin] = shift.start_time.split(':').map(Number);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(startHour, startMin, 0);
-    const shiftEnd = addHours(shiftStart, 24);
-    return isWithinInterval(now, { start: shiftStart, end: shiftEnd });
+    return isShiftActive(shift);
   };
 
   const updateTimeRemaining = (shift?: CurrentShift) => {
@@ -303,31 +292,27 @@ export function ShiftTracker({ agentId, compact = false }: ShiftTrackerProps) {
     if (!activeShift) return;
 
     const now = new Date();
-    const shiftDate = parseISO(activeShift.shift_date);
-    const [startHour, startMin] = activeShift.start_time.split(':').map(Number);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(startHour, startMin, 0);
-    
-    const shiftEnd = addHours(shiftStart, 24);
-    
+    const { start: shiftStart, end: shiftEnd } = getShiftBounds(activeShift);
+
     // Time remaining
     const hoursRemaining = differenceInHours(shiftEnd, now);
     const minutesRemaining = differenceInMinutes(shiftEnd, now) % 60;
     const secondsRemaining = differenceInSeconds(shiftEnd, now) % 60;
-    
+
     // Time elapsed
     const hoursElapsed = differenceInHours(now, shiftStart);
     const minutesElapsed = differenceInMinutes(now, shiftStart) % 60;
     const secondsElapsed = differenceInSeconds(now, shiftStart) % 60;
-    
-    const totalMinutes = 24 * 60;
+
+    const totalMinutes = Math.max(1, differenceInMinutes(shiftEnd, shiftStart));
     const elapsedMinutes = differenceInMinutes(now, shiftStart);
     const progressPercent = Math.min(100, Math.max(0, (elapsedMinutes / totalMinutes) * 100));
-    
+
     setProgress(progressPercent);
     setTimeRemaining({ hours: hoursRemaining, minutes: minutesRemaining, seconds: secondsRemaining });
     setTimeElapsed({ hours: hoursElapsed, minutes: minutesElapsed, seconds: secondsElapsed });
   };
+
 
   // Format time unit with leading zero
   const formatUnit = (value: number) => value.toString().padStart(2, '0');
@@ -441,7 +426,7 @@ export function ShiftTracker({ agentId, compact = false }: ShiftTrackerProps) {
                 <div className="flex justify-between text-[10px] text-slate-500 mt-1">
                   <span>{currentShift.start_time}</span>
                   <span className="font-medium">{progress.toFixed(0)}%</span>
-                  <span>{format(addHours(parseISO(currentShift.shift_date + 'T' + currentShift.start_time), 24), 'HH:mm')}</span>
+                  <span>{format(getShiftBounds(currentShift).end, 'HH:mm')}</span>
                 </div>
               </div>
             </div>
