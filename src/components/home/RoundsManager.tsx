@@ -2397,9 +2397,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           description: `EQUIPE ${team} · finalize as rondas em andamento`,
         });
         try { playAlert(soundRef.current); } catch { /* ignore */ }
-        // Ao chegar nos 5 min, abre modal de confirmação para o operador
-        // decidir se antecipa o encerramento ou mantém em andamento.
-        if (t === 300) setEndingConfirmOpen(true);
+        // Alerta apenas informativo (SVG/toast). Sem confirmação: a operação
+        // segue seu curso natural e o operador NÃO precisa clicar em nada.
+
       }
     }
   }, [totalRemainingSeconds, running, team]);
