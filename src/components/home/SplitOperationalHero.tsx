@@ -197,14 +197,9 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       <div className="relative z-20 flex-1 min-h-0 flex flex-col items-center justify-center px-2 pt-4 pb-1">
         <div className="relative flex flex-col items-center">
           <span
-            className="font-mono text-[9.5px] sm:text-[10.5px] font-bold uppercase tracking-[0.28em] mb-2 px-2.5 py-1 rounded-sm border backdrop-blur-md"
-            style={{
-              color: `hsl(${t.accent})`,
-              borderColor: `hsl(${t.accent} / 0.7)`,
-              background: 'rgba(2,6,23,0.72)',
-              textShadow: '0 1px 2px rgba(0,0,0,0.95)',
-              boxShadow: `0 0 12px hsl(${t.accent} / 0.35), inset 0 0 8px rgba(0,0,0,0.4)`,
-            }}
+            aria-hidden
+            className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.35em] mb-1"
+            style={{ color: `hsl(${t.accent} / 0.9)`, textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}
           >
             {t.role}
           </span>
