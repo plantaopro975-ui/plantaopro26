@@ -2206,6 +2206,12 @@ export default function Index() {
         agentName={pendingApprovalDialog.agentName}
       />
       </div>
+      <RoundReminderDialog
+        open={roundReminder.open}
+        onDismiss={roundReminder.dismiss}
+        onOpenRounds={() => { roundReminder.acknowledge(); openRoundsManagerEvent(); }}
+        intervalMin={30}
+      />
     </>
     </Suspense>
   );
