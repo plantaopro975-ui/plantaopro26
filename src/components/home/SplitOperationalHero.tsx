@@ -680,13 +680,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               Selecione sua Equipe
             </span>
             <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              <span className="lg:hidden">4 Divisões</span>
-              <span className="hidden lg:inline">3 Divisões · DELTA ao lado</span>
+              4 Divisões · Táticas
             </span>
 
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-4 sm:gap-3 lg:gap-4 xl:gap-5 justify-items-center items-end mx-auto max-w-[440px] sm:max-w-none px-1 sm:px-0" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
               <TeamCard
                 key={t.key}
@@ -694,8 +693,6 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 idx={idx}
                 isSelected={selectedTeam === t.key}
                 onSelect={handleSelect}
-                className={t.key === 'DELTA' ? 'lg:hidden' : ''}
-
               />
             ))}
           </div>
