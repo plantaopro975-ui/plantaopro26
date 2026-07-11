@@ -30,7 +30,7 @@ import { SecurityDoctrineCard } from './SecurityDoctrineCard';
 
 /** Registra ação no histórico de atividades (activity_logs). */
 async function logRoundActivity(
-  action: 'create' | 'update',
+  action: 'create' | 'update' | 'abort',
   details: Record<string, unknown>,
 ) {
   try {
