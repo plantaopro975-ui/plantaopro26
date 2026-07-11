@@ -489,30 +489,68 @@ export function ShiftBriefingCard({
             <OffDutyNotice />
           ) : (
             <>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <MiniStat icon={<Users className="h-3 w-3" />} label="Adolescentes" value={briefing?.adolescents_counted?.toString() ?? '—'} />
-                <MiniStat icon={<ShieldAlert className="h-3 w-3" />} label="Algemas" value={briefing?.handcuffs_counted?.toString() ?? '—'} />
-                <MiniStat icon={<KeyRound className="h-3 w-3" />} label="Chaves" value={briefing?.handcuff_keys_counted?.toString() ?? '—'} />
-                <MiniStat
-                  icon={<Swords className="h-3 w-3" />}
-                  label="Tonfas"
-                  value={briefing?.tonfas_counted != null
-                    ? (briefing?.tonfas_expected
-                        ? `${briefing.tonfas_counted}/${briefing.tonfas_expected}`
-                        : String(briefing.tonfas_counted))
-                    : '—'}
-                />
-                <MiniStat
-                  icon={<Radio className="h-3 w-3" />}
-                  label="Rádios carregados"
-                  value={briefing?.radios_charged_count != null
-                    ? (briefing?.radios_total_expected
-                        ? `${briefing.radios_charged_count}/${briefing.radios_total_expected}`
-                        : String(briefing.radios_charged_count))
-                    : '—'}
-                />
-                <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={briefing?.handover_ok ? 'OK' : '—'} />
-              </div>
+              {(() => {
+                const missingSummary = ([
+                  { key: 'adolescents' as ChecklistKey, label: 'Adolescentes' },
+                  { key: 'handcuffs' as ChecklistKey, label: 'Algemas' },
+                  { key: 'handcuff_keys' as ChecklistKey, label: 'Chaves' },
+                  { key: 'tonfas' as ChecklistKey, label: 'Tonfas' },
+                  { key: 'radios' as ChecklistKey, label: 'Rádios carregados' },
+                  { key: 'handover' as ChecklistKey, label: 'Recebimento' },
+                ]).filter((i) => !itemsStatus[i.key]);
+
+                return (
+                  <>
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <MiniStat icon={<Users className="h-3 w-3" />} label="Adolescentes" value={briefing?.adolescents_counted?.toString() ?? '—'} missing={!itemsStatus.adolescents} />
+                      <MiniStat icon={<ShieldAlert className="h-3 w-3" />} label="Algemas" value={briefing?.handcuffs_counted?.toString() ?? '—'} missing={!itemsStatus.handcuffs} />
+                      <MiniStat icon={<KeyRound className="h-3 w-3" />} label="Chaves" value={briefing?.handcuff_keys_counted?.toString() ?? '—'} missing={!itemsStatus.handcuff_keys} />
+                      <MiniStat
+                        icon={<Swords className="h-3 w-3" />}
+                        label="Tonfas"
+                        value={briefing?.tonfas_counted != null
+                          ? (briefing?.tonfas_expected
+                              ? `${briefing.tonfas_counted}/${briefing.tonfas_expected}`
+                              : String(briefing.tonfas_counted))
+                          : '—'}
+                        missing={!itemsStatus.tonfas}
+                      />
+                      <MiniStat
+                        icon={<Radio className="h-3 w-3" />}
+                        label="Rádios carregados"
+                        value={briefing?.radios_charged_count != null
+                          ? (briefing?.radios_total_expected
+                              ? `${briefing.radios_charged_count}/${briefing.radios_total_expected}`
+                              : String(briefing.radios_charged_count))
+                          : '—'}
+                        missing={!itemsStatus.radios}
+                      />
+                      <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={itemsStatus.handover ? 'OK' : '—'} missing={!itemsStatus.handover} />
+                    </div>
+
+                    {missingSummary.length > 0 && (
+                      <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 flex items-start gap-2">
+                        <ShieldAlert className="h-3.5 w-3.5 text-amber-300 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] uppercase tracking-widest text-amber-300 font-semibold">
+                            Pendências para envio
+                          </p>
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {missingSummary.map((m) => (
+                              <span
+                                key={m.key}
+                                className="text-[10px] px-1.5 py-0.5 rounded border border-amber-500/40 bg-amber-500/15 text-amber-200"
+                              >
+                                {m.label}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
               <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-slate-400">
                 <span>Preenchimento · {completedCount}/{CHECKLIST_ORDER.length}</span>
@@ -738,11 +776,12 @@ export function ShiftBriefingCard({
               </Button>
               <Button
                 onClick={() => persist(true).then((b) => { if (b?.completed_at) setOpen(false); })}
-                disabled={saving || !currentShift || progress < 100}
+                disabled={saving || !currentShift || progress < 100 || !handoverOk}
+                title={!handoverOk ? 'Confirme o recebimento de plantão para habilitar o envio' : undefined}
                 className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold disabled:opacity-50"
               >
                 <CheckCircle2 className="h-4 w-4 mr-1.5" />
-                Finalizar e registrar
+                {!handoverOk ? 'Confirme o recebimento' : 'Finalizar e registrar'}
               </Button>
             </div>
           </DialogFooter>
@@ -753,14 +792,25 @@ export function ShiftBriefingCard({
 }
 
 // -------- Helpers --------
-function MiniStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function MiniStat({ icon, label, value, missing }: { icon: React.ReactNode; label: string; value: string; missing?: boolean }) {
   return (
-    <div className="rounded-md border border-slate-800 bg-slate-950/60 px-2 py-1.5">
-      <div className="text-[9px] uppercase text-slate-500 flex items-center justify-center gap-1">
+    <div className={cn(
+      'rounded-md border px-2 py-1.5 transition-colors',
+      missing
+        ? 'border-amber-500/50 bg-amber-500/10'
+        : 'border-slate-800 bg-slate-950/60'
+    )}>
+      <div className={cn(
+        'text-[9px] uppercase flex items-center justify-center gap-1',
+        missing ? 'text-amber-300' : 'text-slate-500'
+      )}>
         {icon}
         {label}
       </div>
-      <div className="font-mono text-sm text-slate-100 mt-0.5">{value}</div>
+      <div className={cn(
+        'font-mono text-sm mt-0.5',
+        missing ? 'text-amber-200' : 'text-slate-100'
+      )}>{value}</div>
     </div>
   );
 }
