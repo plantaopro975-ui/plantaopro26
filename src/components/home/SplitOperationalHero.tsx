@@ -280,15 +280,15 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       </div>
 
       {/* Rodapé institucional — role + OP code, recuado dentro da zona segura do octógono */}
-      <div className="relative z-20 flex items-center justify-between gap-2 mx-[16%] mb-[3%] mt-auto rounded-md border border-white/15 backdrop-blur-sm bg-slate-950/70 px-2 py-1.5 min-w-0">
+      <div className="pp-team-card-footer relative z-20 flex items-center justify-between gap-2 mx-[16%] mb-[3%] mt-auto rounded-md border border-white/15 backdrop-blur-sm bg-slate-950/70 px-2 py-1.5 min-w-0">
         <span
-          className="font-mono text-[9px] font-semibold uppercase tracking-[0.22em] truncate min-w-0 flex-1"
+          className="pp-team-card-role font-mono text-[9px] font-semibold uppercase tracking-[0.22em] truncate min-w-0 flex-1"
           style={{ color: `hsl(${t.accent})` }}
         >
           {t.role}
         </span>
         <span
-          className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-sm border text-slate-100 shrink-0"
+          className="pp-team-card-op font-mono text-[9px] font-bold uppercase tracking-[0.18em] px-1.5 py-0.5 rounded-sm border text-slate-100 shrink-0"
           style={{ borderColor: `hsl(${t.accent} / 0.55)`, background: 'rgba(2,6,23,0.6)' }}
         >
           {t.op}
