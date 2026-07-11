@@ -140,7 +140,7 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       aria-pressed={isSelected}
       onClick={() => onSelect(t.key)}
       className={cn(
-        'group relative flex h-[clamp(100px,15vh,126px)] min-[390px]:h-[clamp(104px,15.5vh,132px)] sm:h-[clamp(98px,16vh,158px)] lg:h-[clamp(132px,23vh,168px)] xl:h-[clamp(148px,25vh,220px)] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+        'group relative flex h-[124px] min-[390px]:h-[132px] sm:h-[148px] lg:h-[168px] xl:h-[188px] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
         isSelected
@@ -565,7 +565,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     idx={idx}
                     isSelected={selectedTeam === 'DELTA'}
                     onSelect={handleSelect}
-                    className="!h-[180px] xl:!h-[210px] w-full"
+                    className="!h-[168px] xl:!h-[188px] w-full"
                   />
                 </div>
               );
@@ -670,7 +670,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-1.5 sm:gap-2 lg:gap-3 xl:gap-4" style={{ perspective: '900px' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-2 sm:gap-2.5 lg:gap-3 xl:gap-3" style={{ perspective: '900px' }}>
             {TEAMS.map((t, idx) => (
               <TeamCard
                 key={t.key}
