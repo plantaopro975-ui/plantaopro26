@@ -426,7 +426,7 @@ export function ShiftTracker({ agentId, compact = false }: ShiftTrackerProps) {
                 <div className="flex justify-between text-[10px] text-slate-500 mt-1">
                   <span>{currentShift.start_time}</span>
                   <span className="font-medium">{progress.toFixed(0)}%</span>
-                  <span>{format(addHours(parseISO(currentShift.shift_date + 'T' + currentShift.start_time), 24), 'HH:mm')}</span>
+                  <span>{format(getShiftBounds(currentShift).end, 'HH:mm')}</span>
                 </div>
               </div>
             </div>
