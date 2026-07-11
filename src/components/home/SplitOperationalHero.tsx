@@ -795,7 +795,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     alt="Agente Socioeducativo ISE"
                     width={1024}
                     height={1024}
-                    className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.02] xl:scale-[1.04] 2xl:scale-[1.06] origin-bottom sm:origin-bottom"
+                    className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.3] xl:scale-[1.35] 2xl:scale-[1.4] origin-bottom sm:origin-bottom"
                     draggable={false}
                   />
                   {/* Plataforma holográfica + scanner vertical (desktop apenas) */}
