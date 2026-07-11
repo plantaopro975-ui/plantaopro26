@@ -123,17 +123,39 @@ export function useShiftLifecycleNotifications({ agentId, enabled = true }: Opti
       }
     };
 
+    // Dispara qualquer notificação cuja hora-alvo já passou (setTimeout é throttled em background).
+    const flushOverdue = () => {
+      const now = Date.now();
+      pendingRef.current.forEach((entry, key) => {
+        if (firedRef.current.has(key)) return;
+        if (entry.fireAt <= now) {
+          showNotification(entry.payload);
+          firedRef.current.add(key);
+          const s = scheduledRef.current.get(key);
+          if (s) { clearTimeout(s.timeoutId); scheduledRef.current.delete(key); }
+          pendingRef.current.delete(key);
+          if (key.startsWith('end-')) {
+            try { window.dispatchEvent(new CustomEvent('shift:ended', { detail: { key } })); } catch { /* ignore */ }
+          }
+        }
+      });
+    };
+
     scheduleWindow();
     const refresh = setInterval(scheduleWindow, 10 * 60 * 1000);
-    const onFocus = () => scheduleWindow();
+    const onFocus = () => { flushOverdue(); scheduleWindow(); };
+    const onVisible = () => { if (!document.hidden) { flushOverdue(); scheduleWindow(); } };
     window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisible);
 
     return () => {
       cancelled = true;
       clearInterval(refresh);
       window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisible);
       scheduledRef.current.forEach((s) => clearTimeout(s.timeoutId));
       scheduledRef.current.clear();
+      pendingRef.current.clear();
     };
   }, [agentId, enabled, isEnabled, showNotification]);
 }
