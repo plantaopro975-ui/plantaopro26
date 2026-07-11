@@ -700,17 +700,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               <div
                 className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-4 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[460px] xl:h-[540px] 2xl:h-[620px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[10%] xl:-translate-x-[10%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
               >
-                {/* Viatura — arrastável independentemente */}
+                {/* Viatura */}
                 <picture
-                  {...(isDesktop ? vehDrag : {})}
                   className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0"
                   style={
                     isDesktop
                       ? {
-                          transform: `translate3d(${vehOffset.x}px, ${vehOffset.y}px, 0) scale(${vehScale})`,
+                          transform: `translate3d(${VEH_OFFSET.x}px, ${VEH_OFFSET.y}px, 0) scale(${VEH_SCALE})`,
                           transformOrigin: 'bottom left',
-                          cursor: draggingKey === 'veh' ? 'grabbing' : 'grab',
-                          touchAction: 'none',
                           willChange: 'transform',
                         }
                       : undefined
@@ -740,20 +737,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       style={{ top: '23.2%', left: '63.4%' }}
                     />
                   </span>
-                  {/* removido: efeitos holográficos (anel/plataforma/scanner) sob a viatura */}
                 </picture>
 
-                {/* Agente — arrastável independentemente */}
+                {/* Agente */}
                 <picture
-                  {...(isDesktop ? agtDrag : {})}
                   className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0"
                   style={
                     isDesktop
                       ? {
-                          transform: `translate3d(${agtOffset.x}px, ${agtOffset.y}px, 0) scale(${agtScale})`,
+                          transform: `translate3d(${AGT_OFFSET.x}px, ${AGT_OFFSET.y}px, 0) scale(${AGT_SCALE})`,
                           transformOrigin: 'bottom',
-                          cursor: draggingKey === 'agt' ? 'grabbing' : 'grab',
-                          touchAction: 'none',
                           willChange: 'transform',
                         }
                       : undefined
@@ -768,8 +761,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.65] xl:scale-[1.75] 2xl:scale-[1.85] origin-bottom sm:origin-bottom"
                     draggable={false}
                   />
-                  {/* removido: efeitos holográficos (anel/plataforma/scanner) sob o agente */}
                 </picture>
+
               </div>
             </div>
 
