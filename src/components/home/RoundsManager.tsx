@@ -2707,8 +2707,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                     color: urgent
                                       ? 'hsl(var(--destructive))'
                                       : view ? teamColor : 'hsl(var(--muted-foreground))',
-                                    textShadow: urgent ? '0 0 24px hsl(var(--destructive) / 0.7)' : undefined,
                                   }}
+
                                 >
                                   {view && !view.done
                                     ? fmtHMS(view.remaining)
