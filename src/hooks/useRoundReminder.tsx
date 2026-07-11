@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
+import { getReminderSettings, subscribeReminderSettings, type ReminderSettings } from '@/lib/reminderSettings';
 
 /**
  * Hook global de lembrete de rondas.
  *
- * A cada `intervalMin` (default 30) minutos após o último dismiss/abertura,
- * dispara `open = true`. O timestamp do último aviso é persistido em
- * localStorage para sobreviver a refresh e trocas de aba.
+ * Lê as preferências (intervalo/on-off) via `reminderSettings` — reagindo em
+ * tempo real quando o usuário altera na tela de Configurações. O timestamp
+ * do último aviso é persistido em localStorage.
  *
- * Pode ser pausado (ex.: quando o gestor de rondas está aberto ou uma
- * ronda está ativa) via `paused`.
+ * Pode ser pausado (ex.: quando o gestor está aberto ou uma ronda está
+ * ativa) via `paused`.
  */
-export function useRoundReminder(options?: { intervalMin?: number; paused?: boolean }) {
-  const intervalMin = options?.intervalMin ?? 30;
+export function useRoundReminder(options?: { paused?: boolean }) {
   const paused = !!options?.paused;
   const STORAGE_KEY = 'plantaopro_last_round_reminder_at';
+  const [settings, setSettings] = useState<ReminderSettings>(() => getReminderSettings());
   const [open, setOpen] = useState(false);
   const openRef = useRef(open);
   openRef.current = open;
@@ -25,43 +26,42 @@ export function useRoundReminder(options?: { intervalMin?: number; paused?: bool
       return Number.isFinite(n) ? n : 0;
     } catch { return 0; }
   };
-
   const setLastAt = (ms: number) => {
     try { localStorage.setItem(STORAGE_KEY, String(ms)); } catch { /* ignore */ }
   };
 
-  // Se nunca gravado, seta agora — evita disparar assim que carrega.
   useEffect(() => {
     if (getLastAt() === 0) setLastAt(Date.now());
   }, []);
 
+  // Reage a mudanças nas preferências (mesma aba ou outra aba).
+  useEffect(() => subscribeReminderSettings(setSettings), []);
+
+  // Se desativado, fecha qualquer alerta em cartaz.
   useEffect(() => {
-    if (paused) return;
+    if (!settings.enabled && open) setOpen(false);
+  }, [settings.enabled, open]);
+
+  useEffect(() => {
+    if (paused || !settings.enabled) return;
     const check = () => {
       if (openRef.current) return;
       const last = getLastAt();
       const elapsed = Date.now() - last;
-      if (elapsed >= intervalMin * 60_000) {
-        setOpen(true);
-      }
+      if (elapsed >= settings.intervalMin * 60_000) setOpen(true);
     };
     check();
-    const iv = window.setInterval(check, 15_000); // 15s de granularidade
+    const iv = window.setInterval(check, 15_000);
     const onVisible = () => { if (document.visibilityState === 'visible') check(); };
     document.addEventListener('visibilitychange', onVisible);
     return () => {
       window.clearInterval(iv);
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [intervalMin, paused]);
+  }, [settings.intervalMin, settings.enabled, paused]);
 
-  const dismiss = () => {
-    setLastAt(Date.now());
-    setOpen(false);
-  };
-
-  /** Marca como resolvido — igual a dismiss mas semanticamente indica ação. */
+  const dismiss = () => { setLastAt(Date.now()); setOpen(false); };
   const acknowledge = () => dismiss();
 
-  return { open, dismiss, acknowledge };
+  return { open, dismiss, acknowledge, settings };
 }
