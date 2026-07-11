@@ -2489,7 +2489,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <div
                     data-testid="night-shift-banner"
                     className={cn(
-                      'rounded-md border px-2.5 py-1.5 text-[12px] transition-colors',
+                      'rounded-md border px-2.5 py-1.5 text-[12px]',
                       overrideActive
                         ? 'border-red-500/40 bg-red-500/5 text-red-200/90'
                         : 'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
