@@ -544,7 +544,7 @@ export default function AgentPanel() {
     <ThemedPanelBackground team={agent?.team || null} showTeamImage={false} lowEffects>
       <PublicSecurityBackdrop minimal />
       <NetworkStatusPill />
-      <div className="hud-scope flex-1 flex flex-col w-full min-w-0 min-h-0">
+      <div className="hud-scope typoclear flex-1 flex flex-col w-full min-w-0 min-h-0">
 
 
 
