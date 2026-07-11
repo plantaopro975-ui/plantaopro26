@@ -103,8 +103,8 @@ export default function Index() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  /* Lembrete profissional a cada 30 min — só quando o operador está logado. */
-  const roundReminder = useRoundReminder({ intervalMin: 30, paused: !user });
+  /* Lembrete profissional (intervalo configurável em Configurações) — só quando logado. */
+  const roundReminder = useRoundReminder({ paused: !user });
   const openRoundsManagerEvent = useCallback(() => {
     try { window.dispatchEvent(new CustomEvent('rounds:open')); } catch { /* ignore */ }
   }, []);
