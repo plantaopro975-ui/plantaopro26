@@ -57,7 +57,7 @@ const TEAMS: {
   { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Contenção',    accent: '158 64% 52%', obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfa },
   { key: 'BRAVO',   motto: 'Capacete · Intervenção Tática', op: 'OP-02', role: 'Intervenção Tática', accent: '25 95% 61%',  obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravo },
   { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Vigilância',   accent: '213 94% 68%', obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlie },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Comando & Comunicação', accent: '45 97% 65%',  obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDelta },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Comando', accent: '45 97% 65%',  obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDelta },
 ];
 
 
