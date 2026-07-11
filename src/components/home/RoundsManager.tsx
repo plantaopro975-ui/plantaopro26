@@ -2582,18 +2582,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className={cn('tactical-scrollbar grid gap-1 max-h-36 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+                  <div className={cn('tactical-scrollbar grid gap-0.5 max-h-56 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
-                      <div key={i} className="flex items-center gap-1.5 min-w-0">
-                         <span className="w-6 shrink-0 text-center font-mono text-[11.5px] text-primary tabular-nums">{pad(i + 1)}</span>
+                      <div key={i} className="flex items-center gap-1 min-w-0">
+                         <span className="w-5 shrink-0 text-center font-mono text-[11px] text-primary tabular-nums">{pad(i + 1)}</span>
                         <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))} disabled={configLocked}
                           placeholder={`Agente ${i + 1}`}
-                           className={cn('bg-card border-border h-7 text-xs min-w-0 flex-1', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
+                           className={cn('bg-card border-border h-6 px-2 py-0 text-[11.5px] leading-none min-w-0 flex-1', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
                           autoComplete="off" />
                         <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
-                           disabled={agents.length <= 1 || configLocked} className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
+                           disabled={agents.length <= 1 || configLocked} className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
                           aria-label={`Remover ${i + 1}`}>
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     ))}
