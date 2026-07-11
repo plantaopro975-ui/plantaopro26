@@ -157,7 +157,7 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
           });
 
           // Push notification (se permissão concedida)
-          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+          if (areNativeNotificationsAllowed() && Notification.permission === 'granted') {
             try {
               new Notification(title, {
                 body,
