@@ -491,19 +491,71 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-          {/* RIGHT — Agent 3D */}
+          {/* RIGHT — Agent 3D + HUD tático */}
           <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(200px,27vh,290px)] xl:min-h-[clamp(220px,30vh,340px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
-            {/* Selo "Sistema Operacional" mobile removido a pedido do usuário */}
 
+            {/* Reticle tático de fundo — desktop only, decorativo */}
+            <svg
+              aria-hidden
+              className="hidden sm:block absolute inset-0 w-full h-full pointer-events-none opacity-[0.18] mix-blend-screen"
+              viewBox="0 0 400 300"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <defs>
+                <radialGradient id="reticleGlow" cx="50%" cy="65%" r="45%">
+                  <stop offset="0%" stopColor="hsl(42 90% 60%)" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="hsl(42 90% 60%)" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <circle cx="200" cy="195" r="120" fill="url(#reticleGlow)" />
+              <circle cx="200" cy="195" r="90" fill="none" stroke="hsl(42 90% 60%)" strokeWidth="0.5" strokeDasharray="3 4" />
+              <circle cx="200" cy="195" r="50" fill="none" stroke="hsl(42 90% 60%)" strokeWidth="0.4" />
+              <line x1="200" y1="105" x2="200" y2="130" stroke="hsl(42 90% 60%)" strokeWidth="0.6" />
+              <line x1="200" y1="260" x2="200" y2="285" stroke="hsl(42 90% 60%)" strokeWidth="0.6" />
+              <line x1="110" y1="195" x2="135" y2="195" stroke="hsl(42 90% 60%)" strokeWidth="0.6" />
+              <line x1="265" y1="195" x2="290" y2="195" stroke="hsl(42 90% 60%)" strokeWidth="0.6" />
+            </svg>
 
-            {/* removido: anéis decorativos rotativos (economia CPU/GPU) */}
-            {/* removido: halo amarelo ao pé da viatura/agente (solicitação do usuário) */}
-            {/* Cena composta:
-                MOBILE  → viatura à esquerda + agente à direita (justify-between, compacto)
-                DESKTOP → mantém composição centralizada equilibrada */}
+            {/* HUD callout — Viatura (top-left) */}
+            <div className="hidden lg:flex absolute top-1 left-1 z-[60] flex-col items-start gap-0.5 rounded-md border border-white/8 bg-black/45 backdrop-blur-sm px-2 py-1.5 pointer-events-none max-w-[150px]">
+              <span aria-hidden className="absolute -top-px -left-px h-1.5 w-1.5 border-t border-l border-amber-400/50" />
+              <span aria-hidden className="absolute -bottom-px -right-px h-1.5 w-1.5 border-b border-r border-amber-400/50" />
+              <span className="font-mono text-[8.5px] font-semibold uppercase tracking-[0.24em] text-white/45 leading-none">Viatura · VTR-01</span>
+              <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-200/95 leading-tight">Toyota SW4 · Blindada</span>
+              <span className="flex items-center gap-1 mt-0.5">
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
+                <span className="font-mono text-[8.5px] uppercase tracking-[0.18em] text-emerald-300/90 leading-none">Em patrulha</span>
+              </span>
+            </div>
+
+            {/* HUD callout — Agente (top-right) */}
+            <div className="hidden lg:flex absolute top-1 right-1 z-[60] flex-col items-end gap-0.5 rounded-md border border-white/8 bg-black/45 backdrop-blur-sm px-2 py-1.5 pointer-events-none max-w-[160px]">
+              <span aria-hidden className="absolute -top-px -right-px h-1.5 w-1.5 border-t border-r border-amber-400/50" />
+              <span aria-hidden className="absolute -bottom-px -left-px h-1.5 w-1.5 border-b border-l border-amber-400/50" />
+              <span className="font-mono text-[8.5px] font-semibold uppercase tracking-[0.24em] text-white/45 leading-none">Agente · CB-114</span>
+              <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-200/95 leading-tight text-right">Uniformizado · Alfa</span>
+              <span className="flex items-center gap-1 mt-0.5">
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
+                <span className="font-mono text-[8.5px] uppercase tracking-[0.18em] text-emerald-300/90 leading-none">Pronto · Escala ativa</span>
+              </span>
+            </div>
+
+            {/* Coordenadas — desktop only, bottom */}
+            <div className="hidden lg:flex absolute bottom-2 left-1/2 -translate-x-1/2 z-[60] items-center gap-2 rounded-sm border border-white/8 bg-black/55 backdrop-blur-sm px-2 py-0.5 pointer-events-none">
+              <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] text-white/45 leading-none">LAT</span>
+              <span className="font-mono text-[8.5px] tabular-nums text-amber-200/85 leading-none">−9.9747</span>
+              <span className="h-2 w-px bg-white/15" />
+              <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] text-white/45 leading-none">LON</span>
+              <span className="font-mono text-[8.5px] tabular-nums text-amber-200/85 leading-none">−67.8100</span>
+              <span className="h-2 w-px bg-white/15" />
+              <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] text-white/60 leading-none">Rio Branco/AC</span>
+            </div>
+
+            {/* Cena composta */}
             <div
               className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(200px,27vh,290px)] xl:h-[clamp(220px,30vh,340px)] translate-y-0 md:-translate-x-[18%] lg:-translate-x-[20%] xl:-translate-x-[22%] pr-0 sm:pr-0 max-w-full"
             >
+
 
               {/* Viatura — mobile: proporcional ao agente | desktop: um pouco mais baixa */}
               <picture className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0 lg:translate-y-5 xl:translate-y-7">
