@@ -1832,6 +1832,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const configLocked = scheduledFor != null;
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
+  const [summarySaved, setSummarySaved] = useState(false);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
+
   const [silentMode, setSilentMode] = useState<boolean>(() => {
     try { return localStorage.getItem('plantaopro_rounds_silent') === '1'; } catch { return false; }
   });
