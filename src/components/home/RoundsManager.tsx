@@ -484,8 +484,9 @@ function TeamOperationsStripe({
   alertLabel?: string;
 }) {
   const uid = `tos-${team}`;
-  const dur = active ? '7s' : '14s';
   const alertColor = alertLevel === 'danger' ? '#f87171' : alertLevel === 'warn' ? '#fbbf24' : color;
+  const channel = { ALFA: '01', BRAVO: '02', CHARLIE: '03', DELTA: '04' }[team];
+  const freq = { ALFA: '148.325', BRAVO: '151.775', CHARLIE: '154.190', DELTA: '158.640' }[team];
   return (
     <div className="relative w-full">
       <svg
@@ -495,115 +496,41 @@ function TeamOperationsStripe({
         aria-hidden
         role="img"
       >
-        <defs>
-          <linearGradient id={`${uid}-fade`} x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor={color} stopOpacity="0" />
-            <stop offset="22%" stopColor={color} stopOpacity="0.55" />
-            <stop offset="78%" stopColor={color} stopOpacity="0.55" />
-            <stop offset="100%" stopColor={color} stopOpacity="0" />
-          </linearGradient>
-          <clipPath id={`${uid}-clip`}><rect x="0" y="0" width="320" height="46" /></clipPath>
-        </defs>
-
-        <g stroke={color} strokeOpacity="0.10" strokeWidth="0.5">
+        {/* Régua de escala — estática, tipo painel de rádio */}
+        <g stroke={color} strokeOpacity="0.14" strokeWidth="0.5">
           {Array.from({ length: 33 }).map((_, i) => (
-            <line key={i} x1={i * 10} y1="34" x2={i * 10} y2={i % 5 === 0 ? 39 : 36} />
+            <line key={i} x1={i * 10} y1="34" x2={i * 10} y2={i % 5 === 0 ? 40 : 37} />
           ))}
-          <line x1="0" y1="34" x2="320" y2="34" strokeOpacity="0.18" />
+          <line x1="0" y1="34" x2="320" y2="34" strokeOpacity="0.22" />
         </g>
 
-        <g clipPath={`url(#${uid}-clip)`}>
-          {team === 'ALFA' && (
-            <g>
-              <path
-                d="M-320 22 Q -280 12 -240 22 T -160 22 T -80 22 T 0 22 T 80 22 T 160 22 T 240 22 T 320 22 T 400 22"
-                fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.1" strokeLinecap="round"
-              >
-                <animateTransform attributeName="transform" type="translate" from="0 0" to="320 0" dur={dur} repeatCount="indefinite" />
-              </path>
-            </g>
-          )}
-
-          {team === 'BRAVO' && (
-            <g>
-              <path
-                d="M0 24 L70 24 L82 24 L90 16 L98 32 L106 24 L150 24 L210 24 L222 24 L230 18 L238 30 L246 24 L320 24"
-                fill="none" stroke={`url(#${uid}-fade)`} strokeWidth="1.1" strokeLinejoin="round" strokeLinecap="round"
-              />
-            </g>
-          )}
-
-          {team === 'CHARLIE' && (
-            <g>
-              <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.14" strokeWidth="0.5" />
-              {[64, 160, 256].map((cx, i) => (
-                <g key={i} opacity="0.7">
-                  <circle cx={cx} cy="24" r="3.5" fill="none" stroke={color} strokeOpacity="0.55" strokeWidth="0.7" />
-                  <circle cx={cx} cy="24" r="1" fill={color} opacity="0.7" />
-                  <circle cx={cx} cy="24" r="3.5" fill="none" stroke={color} strokeWidth="0.6">
-                    <animate attributeName="r" values="3.5;9;3.5" dur="4s" begin={`${i * 0.9}s`} repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.6;0;0.6" dur="4s" begin={`${i * 0.9}s`} repeatCount="indefinite" />
-                  </circle>
-                </g>
-              ))}
-              <line x1="0" y1="6" x2="0" y2="40" stroke={`url(#${uid}-fade)`} strokeWidth="0.9">
-                <animate attributeName="x1" values="-4;324" dur={dur} repeatCount="indefinite" />
-                <animate attributeName="x2" values="-4;324" dur={dur} repeatCount="indefinite" />
-              </line>
-            </g>
-          )}
-
-          {team === 'DELTA' && (
-            <g>
-              <line x1="0" y1="24" x2="320" y2="24" stroke={color} strokeOpacity="0.12" strokeWidth="0.5" />
-              <g stroke={color} strokeOpacity="0.75" strokeWidth="0.9" strokeLinecap="round" fill="none">
-                <line x1="160" y1="34" x2="160" y2="16" />
-                <line x1="156" y1="34" x2="164" y2="34" />
-                <circle cx="160" cy="14" r="1.2" fill={color} />
-              </g>
-              {[0, 1, 2].map((i) => (
-                <g key={i} fill="none" stroke={color} strokeWidth="0.8" strokeLinecap="round">
-                  <path d="M148 22 A 14 14 0 0 0 148 26" opacity="0">
-                    <animate attributeName="d"
-                      values="M158 22 A 3 3 0 0 0 158 26;M140 20 A 22 22 0 0 0 140 28;M120 18 A 42 42 0 0 0 120 30"
-                      dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0;0.55;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
-                  </path>
-                  <path d="M172 22 A 14 14 0 0 1 172 26" opacity="0">
-                    <animate attributeName="d"
-                      values="M162 22 A 3 3 0 0 1 162 26;M180 20 A 22 22 0 0 1 180 28;M200 18 A 42 42 0 0 1 200 30"
-                      dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0;0.55;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
-                  </path>
-                </g>
-              ))}
-            </g>
-          )}
+        {/* Marcadores de canal estáticos */}
+        <g stroke={color} strokeWidth="0.7" fill="none">
+          <line x1="80" y1="30" x2="80" y2="40" strokeOpacity="0.5" />
+          <line x1="160" y1="26" x2="160" y2="40" strokeOpacity="0.75" />
+          <line x1="240" y1="30" x2="240" y2="40" strokeOpacity="0.5" />
         </g>
 
-        {/* Ticker moved to HTML overlay below for crisp typography */}
-
-        {/* Rótulo canto direito */}
-        <g fontFamily="ui-monospace, monospace" fontSize="6" letterSpacing="1.4" fill={color} opacity="0.6">
-          <text x="316" y="10" textAnchor="end">CH-{team.slice(0, 3)}</text>
+        {/* Diamante central — indicador de sintonia */}
+        <g transform="translate(160 20)" fill="none" stroke={color} strokeWidth="0.9">
+          <polygon points="0,-4 4,0 0,4 -4,0" fill={color} fillOpacity="0.18" />
         </g>
 
-        {/* Microalerta visual — pulso na faixa quando há falha/suspeita de acesso */}
+        {/* Rótulos institucionais */}
+        <g fontFamily="ui-monospace, monospace" fill={color}>
+          <text x="4" y="10" fontSize="6" letterSpacing="1.4" opacity="0.75">CANAL {channel}</text>
+          <text x="316" y="10" fontSize="6" letterSpacing="1.4" textAnchor="end" opacity="0.75">{freq} MHz</text>
+        </g>
+
+        {/* Microalerta visual — sem animação, apenas indicador estático */}
         {alertLevel !== 'ok' && (
           <g>
-            <rect x="0" y="0" width="320" height="46" fill={alertColor} opacity="0">
-              <animate attributeName="opacity" values="0;0.14;0" dur="1.2s" repeatCount="3" />
-            </rect>
-            <circle cx="8" cy="8" r="3" fill={alertColor}>
-              <animate attributeName="opacity" values="1;0.25;1" dur="0.9s" repeatCount="indefinite" />
-            </circle>
-            <circle cx="8" cy="8" r="3" fill="none" stroke={alertColor} strokeWidth="0.8">
-              <animate attributeName="r" values="3;9;3" dur="1.6s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
-            </circle>
+            <circle cx="8" cy="20" r="2.5" fill={alertColor} opacity="0.9" />
+            <circle cx="8" cy="20" r="4.5" fill="none" stroke={alertColor} strokeOpacity="0.55" strokeWidth="0.7" />
           </g>
         )}
       </svg>
+
 
       {/* Linha institucional estática — sem letreiro dinâmico */}
       <div
