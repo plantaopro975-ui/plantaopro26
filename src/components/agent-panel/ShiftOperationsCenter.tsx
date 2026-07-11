@@ -13,6 +13,8 @@ import {
 import {
   addHours, differenceInSeconds, format, isWithinInterval, parseISO, subDays,
 } from 'date-fns';
+import { isShiftActive } from '@/lib/shiftTime';
+
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
