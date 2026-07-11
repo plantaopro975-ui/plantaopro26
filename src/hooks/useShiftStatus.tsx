@@ -93,11 +93,22 @@ export function useShiftStatus(
     }
   }, [agentId, opts?.fallbackShift]);
 
-  // Fetch inicial + polling
+  // Fetch inicial + polling + revalidação ao voltar do background
   useEffect(() => {
     fetchStatus();
     const iv = setInterval(fetchStatus, 60_000);
-    return () => clearInterval(iv);
+    const onVisible = () => { if (!document.hidden) fetchStatus(); };
+    const onFocus = () => fetchStatus();
+    const onOnline = () => fetchStatus();
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('online', onOnline);
+    return () => {
+      clearInterval(iv);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('online', onOnline);
+    };
   }, [fetchStatus]);
 
   // Auto-refresh no instante do término

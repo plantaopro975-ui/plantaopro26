@@ -25,6 +25,8 @@ export function useShiftLifecycleNotifications({ agentId, enabled = true }: Opti
   const { isEnabled, showNotification } = usePushNotifications();
   const scheduledRef = useRef<Map<string, ScheduledPush>>(new Map());
   const firedRef = useRef<Set<string>>(new Set());
+  // Guarda payloads agendados para conseguir disparar "atrasados" quando o app voltar do background.
+  const pendingRef = useRef<Map<string, { fireAt: number; payload: Parameters<typeof showNotification>[0] }>>(new Map());
 
   useEffect(() => {
     if (!enabled || !agentId || !isEnabled) return;
@@ -72,16 +74,19 @@ export function useShiftLifecycleNotifications({ agentId, enabled = true }: Opti
             !scheduledRef.current.has(keyBefore) &&
             !firedRef.current.has(keyBefore)
           ) {
+            const beforePayload = {
+              title: '⏰ Plantão em 1 hora',
+              body: `Prepare-se! Seu plantão inicia às ${s.start_time?.slice(0, 5) || '07:00'} (${format(start, "dd/MM 'às' HH:mm", { locale: ptBR })}).`,
+              tag: `shift-before-${s.id}`,
+              requireInteraction: true,
+              soundType: 'shift' as const,
+            };
+            pendingRef.current.set(keyBefore, { fireAt: oneHourBefore, payload: beforePayload });
             const to = setTimeout(() => {
-              showNotification({
-                title: '⏰ Plantão em 1 hora',
-                body: `Prepare-se! Seu plantão inicia às ${s.start_time?.slice(0, 5) || '07:00'} (${format(start, "dd/MM 'às' HH:mm", { locale: ptBR })}).`,
-                tag: `shift-before-${s.id}`,
-                requireInteraction: true,
-                soundType: 'shift',
-              });
+              showNotification(beforePayload);
               firedRef.current.add(keyBefore);
               scheduledRef.current.delete(keyBefore);
+              pendingRef.current.delete(keyBefore);
             }, delayBefore);
             scheduledRef.current.set(keyBefore, { key: keyBefore, timeoutId: to });
           }
@@ -95,16 +100,20 @@ export function useShiftLifecycleNotifications({ agentId, enabled = true }: Opti
             !scheduledRef.current.has(keyEnd) &&
             !firedRef.current.has(keyEnd)
           ) {
+            const endPayload = {
+              title: '🛡️ Plantão encerrado',
+              body: `Seu plantão de ${format(start, 'dd/MM', { locale: ptBR })} foi finalizado. Bom descanso!`,
+              tag: `shift-end-${s.id}`,
+              requireInteraction: false,
+              soundType: 'success' as const,
+            };
+            pendingRef.current.set(keyEnd, { fireAt: endTs, payload: endPayload });
             const to = setTimeout(() => {
-              showNotification({
-                title: '🛡️ Plantão encerrado',
-                body: `Seu plantão de ${format(start, 'dd/MM', { locale: ptBR })} foi finalizado. Bom descanso!`,
-                tag: `shift-end-${s.id}`,
-                requireInteraction: false,
-                soundType: 'success',
-              });
+              showNotification(endPayload);
               firedRef.current.add(keyEnd);
               scheduledRef.current.delete(keyEnd);
+              pendingRef.current.delete(keyEnd);
+              try { window.dispatchEvent(new CustomEvent('shift:ended', { detail: { shiftId: s.id } })); } catch { /* ignore */ }
             }, delayEnd);
             scheduledRef.current.set(keyEnd, { key: keyEnd, timeoutId: to });
           }
@@ -114,17 +123,39 @@ export function useShiftLifecycleNotifications({ agentId, enabled = true }: Opti
       }
     };
 
+    // Dispara qualquer notificação cuja hora-alvo já passou (setTimeout é throttled em background).
+    const flushOverdue = () => {
+      const now = Date.now();
+      pendingRef.current.forEach((entry, key) => {
+        if (firedRef.current.has(key)) return;
+        if (entry.fireAt <= now) {
+          showNotification(entry.payload);
+          firedRef.current.add(key);
+          const s = scheduledRef.current.get(key);
+          if (s) { clearTimeout(s.timeoutId); scheduledRef.current.delete(key); }
+          pendingRef.current.delete(key);
+          if (key.startsWith('end-')) {
+            try { window.dispatchEvent(new CustomEvent('shift:ended', { detail: { key } })); } catch { /* ignore */ }
+          }
+        }
+      });
+    };
+
     scheduleWindow();
     const refresh = setInterval(scheduleWindow, 10 * 60 * 1000);
-    const onFocus = () => scheduleWindow();
+    const onFocus = () => { flushOverdue(); scheduleWindow(); };
+    const onVisible = () => { if (!document.hidden) { flushOverdue(); scheduleWindow(); } };
     window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisible);
 
     return () => {
       cancelled = true;
       clearInterval(refresh);
       window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisible);
       scheduledRef.current.forEach((s) => clearTimeout(s.timeoutId));
       scheduledRef.current.clear();
+      pendingRef.current.clear();
     };
   }, [agentId, enabled, isEnabled, showNotification]);
 }
