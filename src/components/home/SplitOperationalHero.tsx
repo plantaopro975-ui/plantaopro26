@@ -678,7 +678,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
         {/* ============ Team Selector Grid — no mobile vai para o topo (order-2) ============ */}
-        <div className="relative shrink-0 px-3 sm:px-3 pt-1 sm:pt-3 pb-1 mt-0 sm:mt-2 order-3 sm:order-none">
+        <div className="relative shrink-0 px-3 sm:px-3 pt-1 sm:pt-1 pb-1 mt-0 sm:mt-0 order-3 sm:order-none">
 
           <div className="flex items-center justify-between px-1 pb-1.5">
             <span className="font-mono text-[10.5px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-200">
