@@ -1,5 +1,6 @@
 import { useServerTime } from '@/hooks/useServerTime';
 import { cn } from '@/lib/utils';
+import { NIGHT_TZ } from '@/lib/nightShift';
 
 interface TacticalClockProps {
   accent?: string;
@@ -10,6 +11,28 @@ interface TacticalClockProps {
 
 const pad2 = (n: number) => String(n).padStart(2, '0');
 const MONTH_ABBR = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+
+function getAcreClockParts(date: Date) {
+  const parts = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: NIGHT_TZ,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? '00';
+  return {
+    hh: part('hour'),
+    mm: part('minute'),
+    ss: part('second'),
+    dd: part('day'),
+    mon: MONTH_ABBR[Math.max(0, Number(part('month')) - 1)] ?? 'JAN',
+    yyyy: part('year'),
+  };
+}
 
 /**
  * Tactical Monochrome — relógio compacto sincronizado com o servidor.
@@ -23,12 +46,7 @@ export function TacticalClock({
   showDate = true,
 }: TacticalClockProps) {
   const now = useServerTime(1000);
-  const hh = pad2(now.getHours());
-  const mm = pad2(now.getMinutes());
-  const ss = pad2(now.getSeconds());
-  const dd = pad2(now.getDate());
-  const mon = MONTH_ABBR[now.getMonth()];
-  const yyyy = String(now.getFullYear());
+  const { hh, mm, ss, dd, mon, yyyy } = getAcreClockParts(now);
 
   return (
     <div
