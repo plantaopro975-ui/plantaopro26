@@ -2,6 +2,10 @@
 // IMPORTANT: bump APP_VERSION on every UI/theme/header/footer release so that
 // installed clients evict the previous cached shell and apply changes without
 // reload loops.
+// Service Worker for Push Notifications & Offline Cache - Plantão Pro
+// IMPORTANT: bump APP_VERSION on every UI/theme/header/footer release so that
+// installed clients evict the previous cached shell and apply changes without
+// reload loops.
 const APP_VERSION = 'v15-2026-07-11-team-posters-v3';
 const STATIC_CACHE = `plantao-pro-static-${APP_VERSION}`;
 const DYNAMIC_CACHE = `plantao-pro-dynamic-${APP_VERSION}`;
