@@ -642,7 +642,7 @@ export function ShiftBriefingCard({
 
               {/* 6. Passagem de plantão */}
               <ChecklistRow
-                order={5} done={itemsStatus.handover}
+                order={6} done={itemsStatus.handover}
                 icon={<ArrowLeftRight className="h-4 w-4 text-amber-400" />}
                 title="Passagem de plantão"
                 subtitle="Confirme que a passagem foi feita com a equipe anterior."
