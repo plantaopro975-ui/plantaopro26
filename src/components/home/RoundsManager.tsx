@@ -2580,21 +2580,21 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
                 {/* Agents */}
-                <div className="grid gap-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <Label className="text-[12.5px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
-                      <Users className="h-3 w-3" /> Agentes ({agents.length})
+                <div className="grid gap-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <Label className="text-[12.5px] font-sans tracking-wide text-muted-foreground flex items-center gap-1 min-w-0 truncate">
+                      <Users className="h-3 w-3 shrink-0" /> <span className="truncate">Agentes ({agents.length})</span>
                       {configLocked && (
-                        <span className="ml-1 inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-widest text-amber-300">
+                        <span className="ml-1 inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-widest text-amber-300 shrink-0">
                           <Lock className="h-2.5 w-2.5" /> Programado
                         </span>
                       )}
                     </Label>
-                    <Button type="button" size="icon" variant="outline" onClick={addAgent} disabled={configLocked} className={cn('h-7 w-7 border-border text-primary hover:bg-primary/10', configLocked && 'opacity-60 cursor-not-allowed')} aria-label="Adicionar agente" title={configLocked ? 'Bloqueado: programação ativa' : 'Adicionar agente'}>
+                    <Button type="button" size="icon" variant="outline" onClick={addAgent} disabled={configLocked} className={cn('h-6 w-6 shrink-0 border-border text-primary hover:bg-primary/10', configLocked && 'opacity-60 cursor-not-allowed')} aria-label="Adicionar agente" title={configLocked ? 'Bloqueado: programação ativa' : 'Adicionar agente'}>
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className={cn('tactical-scrollbar grid gap-0.5 h-56 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+                  <div className={cn('tactical-scrollbar grid gap-0.5 h-56 overflow-y-auto overflow-x-hidden pr-1 rounded-md min-w-0', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
                       <div key={i} className="flex items-center gap-1 min-w-0 h-6">
                          <span className="w-5 shrink-0 text-center font-mono text-[11px] text-primary tabular-nums leading-6">{pad(i + 1)}</span>
