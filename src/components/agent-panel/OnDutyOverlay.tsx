@@ -15,6 +15,7 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useLowMotion } from '@/hooks/useLowMotion';
 import { getShiftBounds, isShiftActive } from '@/lib/shiftTime';
+import { toast } from 'sonner';
 
 interface OnDutyOverlayProps {
   agentId: string;
@@ -60,6 +61,20 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentShift && isOnDuty) {
+        // Detecta término em tempo real
+        if (!isShiftActive(currentShift)) {
+          setIsOnDuty(false);
+          toast.success('Plantão encerrado', {
+            description: 'Sua jornada foi finalizada. Bom descanso!',
+            duration: 8000,
+          });
+          try {
+            window.dispatchEvent(new CustomEvent('shift:ended', { detail: { agentId, shiftId: currentShift.id } }));
+          } catch { /* ignore */ }
+          // Recarrega para pegar próximo plantão
+          fetchShiftData();
+          return;
+        }
         updateTimeRemaining(currentShift);
       }
       if (nextShift && !isOnDuty) {
@@ -67,7 +82,7 @@ export function OnDutyOverlay({ agentId }: OnDutyOverlayProps) {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentShift, isOnDuty, nextShift]);
+  }, [currentShift, isOnDuty, nextShift, agentId]);
 
   const fetchShiftData = async () => {
     try {
