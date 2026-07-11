@@ -582,7 +582,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Agente Socioeducativo ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.18] xl:scale-[1.26] 2xl:scale-[1.34] origin-bottom"
+                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.0] xl:scale-[1.0] 2xl:scale-[1.0] origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
 
