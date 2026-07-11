@@ -656,9 +656,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       border: '1px solid hsl(142 72% 45% / 0.4)',
                     }}
                   >
-                    <span className="relative inline-flex h-1.5 w-1.5">
-                      <span className="absolute inset-0 rounded-full animate-ping opacity-60 bg-emerald-400" />
-                      <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
+                    <span className="relative inline-flex h-2 w-2 items-center justify-center rounded-full border border-emerald-400/55">
+                      <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.75)]" />
                     </span>
                     <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-emerald-200 leading-none">
                       Ativo
