@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Radio, ShieldCheck, Activity, Radar } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { teamEmblems } from '@/lib/teamAssets';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
 import { RoundsManager } from './RoundsManager';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
@@ -204,63 +205,23 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       >
         {t.op}
       </span>
-      {(() => {
-        const [h, s] = t.accent.split(' ');
-        const L = { hi: 88, up: 62, mid: 32, lo: 55, base: 24, deep: 12, bevelHi: 96, bevelLo: 18, glow: 95 } as const;
-        const c = (l: number, a?: number) => a === undefined ? `hsl(${h} ${s} ${l}%)` : `hsl(${h} ${s} ${l}% / ${a})`;
-        const uid = `tn-${t.key}-${idx}`;
-        const stops: { off: string; l: number }[] = [
-          { off: '0%',   l: L.hi },
-          { off: '35%',  l: L.up },
-          { off: '52%',  l: L.mid },
-          { off: '68%',  l: L.lo },
-          { off: '100%', l: L.base },
-        ];
-        return (
-          <div className="relative z-20 flex flex-col gap-0.5 px-1.5 pb-1.5 sm:gap-1 sm:px-2.5 sm:pb-2">
-            <svg viewBox="0 0 300 72" className="block w-full h-9 min-[390px]:h-10 sm:h-12 lg:h-14 xl:h-16" aria-label={t.key} role="img">
-              <defs>
-                <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
-                  {stops.map((st) => (
-                    <stop key={st.off} offset={st.off} stopColor={c(st.l)} />
-                  ))}
-                </linearGradient>
-                <linearGradient id={`${uid}-bevel`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor={c(L.bevelHi, 0.95)} />
-                  <stop offset="50%"  stopColor={c(L.up, 0.25)} />
-                  <stop offset="100%" stopColor={c(L.bevelLo, 0.95)} />
-                </linearGradient>
-                <linearGradient id={`${uid}-sheen`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor={c(L.glow, 0.55)} />
-                  <stop offset="100%" stopColor={c(L.glow, 0)} />
-                </linearGradient>
-                <filter id={`${uid}-shadow`} x="-20%" y="-20%" width="140%" height="160%">
-                  <feDropShadow dx="0" dy="1" stdDeviation="0.5" floodColor="#000" floodOpacity="0.95" />
-                  <feDropShadow dx="0" dy="4" stdDeviation="3"   floodColor="#000" floodOpacity="0.65" />
-                </filter>
-              </defs>
-              <g
-                filter={`url(#${uid}-shadow)`}
-                fontFamily="'Stardos Stencil','Saira Condensed','Oswald','Impact',sans-serif"
-                fontWeight={700}
-                textAnchor="middle"
-                style={{ fontStretch: 'condensed' }}
-              >
-                <text x="150" y="54" fontSize="56" fill={c(L.deep)}  transform="translate(0,3)" letterSpacing="6">{t.key}</text>
-                <text x="150" y="54" fontSize="56" fill={c(L.base)}  transform="translate(0,1.5)" letterSpacing="6">{t.key}</text>
-                <text x="150" y="54" fontSize="56" fill={`url(#${uid}-fill)`} stroke={`url(#${uid}-bevel)`} strokeWidth="1.4" paintOrder="stroke" letterSpacing="6">{t.key}</text>
-                <text x="150" y="54" fontSize="56" fill={`url(#${uid}-sheen)`} letterSpacing="6" clipPath="inset(0 0 58% 0)">{t.key}</text>
-              </g>
-            </svg>
-            <span
-              className="font-mono text-[8px] min-[390px]:text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.14em] sm:tracking-[0.28em] truncate text-slate-200"
-              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
-            >
-              {t.motto}
-            </span>
-          </div>
-        );
-      })()}
+      <div className="relative z-20 flex flex-col items-center gap-0.5 px-1.5 pb-1.5 sm:gap-1 sm:px-2.5 sm:pb-2">
+        <img
+          src={teamEmblems[t.key]}
+          alt={`Emblema ${t.key}`}
+          loading="lazy"
+          decoding="async"
+          className="block h-9 min-[390px]:h-10 sm:h-12 lg:h-14 xl:h-16 w-auto object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)]"
+          draggable={false}
+        />
+        <span
+          className="font-mono text-[8px] min-[390px]:text-[8.5px] sm:text-[9.5px] uppercase tracking-[0.14em] sm:tracking-[0.28em] truncate text-slate-200"
+          style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}
+        >
+          {t.motto}
+        </span>
+      </div>
+
     </button>
   );
 }
