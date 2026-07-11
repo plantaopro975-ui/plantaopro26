@@ -1560,6 +1560,12 @@ export default function Index() {
       {/* Divisor entre seção institucional e rodapé */}
       <SectionDivider />
 
+      {/* Selo de origem — centralizado, discreto, não afeta layout dos demais elementos */}
+      <div className="relative z-30 w-full flex justify-center py-3">
+        <MadeInFeijoBadge inline />
+      </div>
+
+
       {/* Mobile-only beta notice */}
       <div className="hidden sm:block">
         <BetaNoticeFooter />
