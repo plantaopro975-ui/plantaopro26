@@ -2043,8 +2043,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const endingSoon = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 300; // ≤ 5 min
   const endingCritical = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 60; // ≤ 1 min
   const endingWarnFiredRef = useRef<Set<number>>(new Set());
+  const [endingConfirmOpen, setEndingConfirmOpen] = useState(false);
   useEffect(() => {
-    if (!running || totalRemainingSeconds <= 0) return;
+    if (!running || totalRemainingSeconds <= 0) {
+      if (totalRemainingSeconds > 305) endingWarnFiredRef.current.clear();
+      return;
+    }
     const thresholds = [300, 60, 10];
     for (const t of thresholds) {
       if (
@@ -2059,13 +2063,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           description: `EQUIPE ${team} · finalize as rondas em andamento`,
         });
         try { playAlert(soundRef.current); } catch { /* ignore */ }
+        // Ao chegar nos 5 min, abre modal de confirmação para o operador
+        // decidir se antecipa o encerramento ou mantém em andamento.
+        if (t === 300) setEndingConfirmOpen(true);
       }
     }
-    if (totalRemainingSeconds > 305) {
-      // reset entre execuções
-      endingWarnFiredRef.current.clear();
-    }
   }, [totalRemainingSeconds, running, team]);
+
 
 
 
