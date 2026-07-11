@@ -942,6 +942,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   <button type="button" onClick={() => setAgtScale(1)}
                     className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">reset</button>
                 </div>
+                </div>
+                )}
               </div>
             )}
 
