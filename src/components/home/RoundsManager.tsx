@@ -2377,7 +2377,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const endingSoon = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 300; // ≤ 5 min
   const endingCritical = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 60; // ≤ 1 min
   const endingWarnFiredRef = useRef<Set<number>>(new Set());
-  const [endingConfirmOpen, setEndingConfirmOpen] = useState(false);
+  // (removido) endingConfirmOpen — não pedimos mais confirmação nos últimos 5 min.
   useEffect(() => {
     if (!running || totalRemainingSeconds <= 0) {
       if (totalRemainingSeconds > 305) endingWarnFiredRef.current.clear();
@@ -2397,9 +2397,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           description: `EQUIPE ${team} · finalize as rondas em andamento`,
         });
         try { playAlert(soundRef.current); } catch { /* ignore */ }
-        // Ao chegar nos 5 min, abre modal de confirmação para o operador
-        // decidir se antecipa o encerramento ou mantém em andamento.
-        if (t === 300) setEndingConfirmOpen(true);
+        // Alerta apenas informativo (SVG/toast). Sem confirmação: a operação
+        // segue seu curso natural e o operador NÃO precisa clicar em nada.
+
       }
     }
   }, [totalRemainingSeconds, running, team]);
@@ -4180,42 +4180,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         onSecondary={confirmAndClose}
       />
 
-      {/* Confirmação — últimos 5 minutos da operação */}
-      <ConfirmDialog
-        open={endingConfirmOpen}
-        onOpenChange={setEndingConfirmOpen}
-        variant="warning"
-        kicker={`EQUIPE ${team} · ÚLTIMOS 5 MIN`}
-        title="Encerrar a operação agora?"
-        description={
-          <div className="space-y-1.5">
-            <p className="text-slate-300 text-[11.5px] leading-snug">
-              A operação está entrando nos <b className="text-amber-300">últimos 5 minutos</b>.
-              Você deseja <b className="text-slate-100">finalizar a ronda/plantão</b> agora ou manter
-              em andamento até o término natural?
-            </p>
-            <p className="text-[10.5px] text-slate-400 leading-snug">
-              Restante:{' '}
-              <b className="text-slate-200 tabular-nums">{fmtHMS(totalRemainingSeconds)}</b>
-              {activeRoundName && (
-                <> · Ativo: <b className="text-slate-200">{activeRoundName}</b></>
-              )}
-            </p>
-          </div>
-        }
-        accent="#f59e0b"
-        primaryLabel="Manter em andamento"
-        onPrimary={() => setEndingConfirmOpen(false)}
-        secondaryLabel="Sim, encerrar agora"
-        onSecondary={() => {
-          setEndingConfirmOpen(false);
-          resetTimer();
-          toast({
-            title: '🛑 Operação encerrada',
-            description: `EQUIPE ${team} · encerrada manualmente nos últimos 5 min`,
-          });
-        }}
-      />
+      {/* Removido: dialog "Encerrar a operação agora?" — era um pedido de
+          confirmação desnecessário. O sistema agora apenas emite um toast
+          informativo (⏳ Operação encerra em 5 minutos) e segue seu curso. */}
+
 
 
 
