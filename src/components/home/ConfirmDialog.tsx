@@ -49,17 +49,17 @@ interface ConfirmDialogProps {
 function ConfirmIcon({ variant, color }: { variant: ConfirmVariant; color: string }) {
   const gId = `cd-${variant}-g`;
   const hId = `cd-${variant}-h`;
-  const filter = `drop-shadow(0 4px 10px ${color}66) drop-shadow(0 1px 2px #00000080)`;
+  const filter = `drop-shadow(0 2px 6px ${color}44)`;
 
   const defs = (
     <defs>
       <radialGradient id={gId} cx="35%" cy="28%" r="75%">
-        <stop offset="0%" stopColor={color} stopOpacity="0.95" />
-        <stop offset="55%" stopColor={color} stopOpacity="0.4" />
+        <stop offset="0%" stopColor={color} stopOpacity="0.9" />
+        <stop offset="55%" stopColor={color} stopOpacity="0.35" />
         <stop offset="100%" stopColor="#020617" />
       </radialGradient>
       <radialGradient id={hId} cx="35%" cy="22%" r="40%">
-        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
+        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
         <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
       </radialGradient>
     </defs>
@@ -67,10 +67,11 @@ function ConfirmIcon({ variant, color }: { variant: ConfirmVariant; color: strin
 
   const common = {
     viewBox: '0 0 48 48',
-    className: 'h-12 w-12 shrink-0',
+    className: 'h-9 w-9 shrink-0',
     style: { filter },
     'aria-hidden': true as const,
   };
+
 
   if (variant === 'alarm') {
     return (
