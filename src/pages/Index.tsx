@@ -58,6 +58,7 @@ import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
+import { MadeInFeijoBadge } from '@/components/MadeInFeijoBadge';
 
 import { RoundReminderDialog } from '@/components/home/RoundReminderDialog';
 import { useRoundReminder } from '@/hooks/useRoundReminder';
