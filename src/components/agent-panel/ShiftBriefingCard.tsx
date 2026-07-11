@@ -466,16 +466,22 @@ export function ShiftBriefingCard({
 
         <CardContent className="px-4 pb-4 space-y-3">
           {!hasCurrentShift ? (
-            <div className="flex items-center gap-2 rounded-md border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
-              <ShieldAlert className="h-4 w-4 text-slate-500" />
-              O checklist só fica disponível durante um plantão ativo (janela de 24h desde o início).
-            </div>
+            <OffDutyNotice />
           ) : (
             <>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <MiniStat icon={<Users className="h-3 w-3" />} label="Adolescentes" value={briefing?.adolescents_counted?.toString() ?? '—'} />
                 <MiniStat icon={<ShieldAlert className="h-3 w-3" />} label="Algemas" value={briefing?.handcuffs_counted?.toString() ?? '—'} />
                 <MiniStat icon={<KeyRound className="h-3 w-3" />} label="Chaves" value={briefing?.handcuff_keys_counted?.toString() ?? '—'} />
+                <MiniStat
+                  icon={<Swords className="h-3 w-3" />}
+                  label="Tonfas"
+                  value={briefing?.tonfas_counted != null
+                    ? (briefing?.tonfas_expected
+                        ? `${briefing.tonfas_counted}/${briefing.tonfas_expected}`
+                        : String(briefing.tonfas_counted))
+                    : '—'}
+                />
                 <MiniStat
                   icon={<Radio className="h-3 w-3" />}
                   label="Rádios carregados"
