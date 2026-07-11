@@ -54,7 +54,7 @@ export async function deleteAllAgentData(agentId: string): Promise<{ success: bo
   await deleteFromTable('agent_shifts', 'agent_id');
   await deleteFromTable('agent_events', 'agent_id');
   await deleteFromTable('agent_leaves', 'agent_id');
-  await deleteFromTable('shift_planner_configs', 'agent_id');
+  // shift_planner_configs removido — tabela descontinuada
   await deleteFromTable('shifts', 'agent_id');
   await deleteFromTable('transfer_requests', 'agent_id');
   await deleteFromTable('chat_room_members', 'agent_id');

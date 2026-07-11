@@ -558,22 +558,22 @@ export default function AgentPanel() {
       <div className="flex-1 flex flex-col w-full min-w-0 min-h-0 no-swipe-back">
         <main 
           data-compact={compact ? 'true' : 'false'}
-          className={`flex-1 w-full min-w-0 overflow-y-auto overflow-x-hidden no-swipe-back ${compact ? 'px-2 py-2 sm:p-2.5 md:p-3' : 'px-2 py-2 sm:p-3 md:p-4 lg:p-5'}`}
+          className={`flex-1 w-full min-w-0 overflow-y-auto overflow-x-hidden no-swipe-back ${compact ? 'px-1.5 py-1.5 sm:p-2 md:p-2.5' : 'px-2 py-1.5 sm:p-2.5 md:p-3 lg:p-4'}`}
           style={{
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
             overscrollBehaviorX: 'none',
             scrollBehavior: 'auto',
             touchAction: 'pan-y pinch-zoom',
-            paddingTop: 'max(env(safe-area-inset-top, 0px), 8px)',
-            paddingLeft: 'max(env(safe-area-inset-left, 0px), 8px)',
-            paddingRight: 'max(env(safe-area-inset-right, 0px), 8px)',
-            paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 32px)',
+            paddingTop: 'max(env(safe-area-inset-top, 0px), 6px)',
+            paddingLeft: 'max(env(safe-area-inset-left, 0px), 6px)',
+            paddingRight: 'max(env(safe-area-inset-right, 0px), 6px)',
+            paddingBottom: 'max(env(safe-area-inset-bottom, 12px), 24px)',
           }}
         >
-          <div className={`agent-panel-inner w-full mx-auto pb-16 sm:pb-20 ${compact ? 'max-w-[880px] space-y-2 md:space-y-2.5' : 'max-w-[1040px] space-y-2.5 md:space-y-3'}`}>
+          <div className={`agent-panel-inner w-full mx-auto pb-12 sm:pb-16 ${compact ? 'max-w-[820px] space-y-1.5 md:space-y-2' : 'max-w-[960px] space-y-2 md:space-y-2.5'}`}>
             {/* Main Tabs - sticky combined block (header + tabs) */}
-            <Tabs value={activeTab} onValueChange={handleTabChange} className={compact ? 'space-y-2.5 md:space-y-3' : 'space-y-2.5 md:space-y-3'}>
+            <Tabs value={activeTab} onValueChange={handleTabChange} className={compact ? 'space-y-1.5 md:space-y-2' : 'space-y-2 md:space-y-2.5'}>
               {/* Sticky combined block: Professional Header + Tabs Control Panel */}
               <div
                 role="region"
@@ -585,14 +585,14 @@ export default function AgentPanel() {
                   // permanece intacta.
                   'sticky top-0 z-50 relative left-1/2 -translate-x-1/2 w-screen',
                   'focus-within:ring-1 focus-within:ring-amber-500/40',
-                  'pt-1 pb-1'
+                  'pt-0.5 pb-0.5'
                 )}
               >
 
                 <div
                   className={cn(
                     'mx-auto w-full',
-                    compact ? 'max-w-[820px] space-y-1.5 px-2 sm:px-2.5 md:px-3' : 'max-w-[960px] space-y-2 px-2 sm:px-3 md:px-3.5 lg:px-4'
+                    compact ? 'max-w-[820px] space-y-1 px-1.5 sm:px-2 md:px-2.5' : 'max-w-[960px] space-y-1.5 px-2 sm:px-2.5 md:px-3 lg:px-3.5'
                   )}
                 >
 
@@ -625,7 +625,7 @@ export default function AgentPanel() {
                 {/* Control Panel Header - Compact & Professional */}
                 <div className={cn(
                   'relative flex items-center justify-between gap-2 border-b border-amber-500/20',
-                  compact ? 'px-2 py-1 md:px-2.5 md:py-1.5' : 'px-2 py-1 md:px-3 md:py-2'
+                  compact ? 'px-1.5 py-0.5 md:px-2 md:py-1' : 'px-2 py-1 md:px-2.5 md:py-1.5'
                 )}>
                   <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
                     <div className="p-0.5 md:p-1 rounded-md bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 shadow-sm shadow-amber-500/30 ring-1 ring-amber-300/30 shrink-0">
@@ -635,7 +635,7 @@ export default function AgentPanel() {
                       <h2 className="text-[10px] md:text-xs font-black text-amber-100 tracking-wider uppercase truncate">
                         Painel de Controle
                       </h2>
-                      <p className="hidden md:block text-[9px] md:text-[10px] text-amber-400/80 font-medium tracking-wide">
+                      <p className="hidden lg:block text-[9px] md:text-[10px] text-amber-400/80 font-medium tracking-wide">
                         Sistema Operacional Integrado
                       </p>
                     </div>
@@ -648,10 +648,10 @@ export default function AgentPanel() {
 
                 
                 {/* Tabs Grid - Compact, readable */}
-                <div className={compact ? 'p-1.5 md:p-2' : 'p-2 md:p-2.5'}>
+                <div className={compact ? 'p-1 md:p-1.5' : 'p-1.5 md:p-2'}>
                   <TabsList className={cn(
                     'bg-gradient-to-br from-slate-800/95 via-slate-900/90 to-slate-800/95 border border-amber-500/20 h-auto grid grid-cols-5 sm:grid-cols-5 lg:grid-cols-10 rounded-lg shadow-inner w-full',
-                    compact ? 'p-1 gap-1 md:p-1.5 md:gap-1.5' : 'p-1 gap-1 md:p-2 md:gap-2'
+                    compact ? 'p-0.5 gap-0.5 md:p-1 md:gap-1' : 'p-1 gap-1 md:p-1.5 md:gap-1.5'
                   )}>
 
                     {([

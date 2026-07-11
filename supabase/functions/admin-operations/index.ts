@@ -309,7 +309,7 @@ serve(async (req) => {
         { name: "agent_shifts", column: "agent_id" },
         { name: "agent_events", column: "agent_id" },
         { name: "agent_leaves", column: "agent_id" },
-        { name: "shift_planner_configs", column: "agent_id" },
+        // shift_planner_configs removido — tabela descontinuada
         { name: "shifts", column: "agent_id" },
         { name: "transfer_requests", column: "agent_id" },
         { name: "chat_room_members", column: "agent_id" },
