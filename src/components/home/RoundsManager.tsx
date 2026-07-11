@@ -1621,6 +1621,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [lockOpen, setLockOpen] = useState(false);
 
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
+  const [preNightOpen, setPreNightOpen] = useState(false);
+  /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
+  const [scheduledFor, setScheduledFor] = useState<number | null>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
   const [silentMode, setSilentMode] = useState<boolean>(() => {
