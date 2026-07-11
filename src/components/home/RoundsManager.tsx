@@ -2860,7 +2860,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <div className="mb-1 flex items-center justify-between">
                       <button
                         type="button"
-                        onClick={() => setHistoryDialogOpen(true)}
+                        onClick={() => { setHistoryTeamFilter(null); setHistoryDialogOpen(true); }}
                         className="group inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground hover:text-primary transition-colors"
                         title="Abrir histórico detalhado"
                       >
@@ -2881,6 +2881,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         Limpar
                       </button>
                     </div>
+
+                    {/* Topo do resumo — última equipe registrada com duração + agentes */}
+                    {(() => {
+                      const last = teamLog.find((e) => e.savedName && e.savedName.trim().length > 0);
+                      if (!last) return null;
+                      const preset = TEAM_PRESETS.find((p) => p.key === last.team);
+                      const color = preset ? getRotatedTeamColor(last.team, colorRotation) : '#94a3b8';
+                      const label = preset?.label ?? last.team;
+                      const fmtDur = (s?: number) => {
+                        if (!s || s <= 0) return null;
+                        const h = Math.floor(s / 3600);
+                        const m = Math.floor((s % 3600) / 60);
+                        return h > 0 ? `${h}h${String(m).padStart(2, '0')}` : `${m}m`;
+                      };
+                      const dur = fmtDur(last.totalSeconds);
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => { setHistoryTeamFilter(last.team); setHistoryDialogOpen(true); }}
+                          className="mb-1.5 w-full text-left rounded border border-primary/25 bg-primary/5 px-2 py-1 hover:bg-primary/10 transition-colors"
+                          style={{ borderLeft: `3px solid ${color}` }}
+                          title={`Abrir histórico filtrado por ${label}`}
+                        >
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
+                            <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] text-primary/80 shrink-0">
+                              Última
+                            </span>
+                            <span className="font-sans font-bold text-[11px] uppercase tracking-wide text-foreground truncate">
+                              {label}
+                            </span>
+                            <span className="font-sans text-[10.5px] text-primary/90 truncate flex-1" title={last.savedName}>
+                              · {last.savedName}
+                            </span>
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-2 font-mono text-[9.5px] tabular-nums text-muted-foreground">
+                            {dur && <span>⏱ {dur}</span>}
+                            {last.agentsCount ? <span>👥 {last.agentsCount} agentes</span> : null}
+                          </div>
+                        </button>
+                      );
+                    })()}
+
                     {teamLog.length === 0 ? (
                       <div className="flex items-center justify-center h-14 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
                         Nenhuma ronda registrada
@@ -2897,21 +2940,30 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             hour: '2-digit', minute: '2-digit', hour12: false,
                           }).format(dt);
                           return (
-                            <li key={i} className="flex items-center gap-2 min-w-0">
-                              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
-                              <span className="font-sans font-semibold text-[11px] uppercase tracking-wide text-foreground truncate">{label}</span>
-                              {e.savedName && e.savedName.trim().length > 0 && (
-                                <span
-                                  className="font-sans text-[10.5px] text-primary/90 truncate max-w-[45%]"
-                                  title={e.savedName}
-                                >
-                                  · {e.savedName}
-                                </span>
-                              )}
-                              <span className="ml-auto font-mono text-[10.5px] tabular-nums text-muted-foreground whitespace-nowrap">{when}</span>
+                            <li key={i}>
+                              <button
+                                type="button"
+                                onClick={() => { setHistoryTeamFilter(e.team); setHistoryDialogOpen(true); }}
+                                className="w-full flex items-center gap-2 min-w-0 rounded px-1 py-0.5 hover:bg-muted/40 transition-colors text-left"
+                                title={`Abrir histórico filtrado por ${label}`}
+                              >
+                                <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
+                                <span className="font-sans font-semibold text-[11px] uppercase tracking-wide text-foreground truncate">{label}</span>
+                                {e.savedName && e.savedName.trim().length > 0 && (
+                                  <span
+                                    className="font-sans text-[10.5px] text-primary/90 truncate max-w-[45%]"
+                                    title={e.savedName}
+                                  >
+                                    · {e.savedName}
+                                  </span>
+                                )}
+                                <span className="ml-auto font-mono text-[10.5px] tabular-nums text-muted-foreground whitespace-nowrap">{when}</span>
+                              </button>
                             </li>
                           );
                         })}
+
+
 
                       </ul>
                     )}
