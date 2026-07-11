@@ -394,17 +394,23 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
           <div className="relative z-20 min-w-0 flex flex-col gap-2.5 sm:gap-4 items-stretch mt-1 sm:mt-0">
 
 
-            <div className="hidden sm:flex flex-col gap-1 sm:gap-1.5">
-              <span className="hidden items-center gap-2 font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-amber-300 leading-[1.4] py-0.5 sm:inline-flex">
-                <span className="h-1 w-6 bg-amber-400" />
+            <div className="hidden sm:flex flex-col gap-1.5 sm:gap-2">
+              <span className="inline-flex items-center gap-2 font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-amber-300/90 leading-[1.4]">
+                <span className="h-px w-6 bg-amber-400/70" />
                 Sistema Operacional
               </span>
-              <h2 className="font-sans font-semibold uppercase tracking-[0.01em] text-white text-[20px] sm:text-[26px] lg:text-[30px] leading-[1.1]">
-
-                Comando <span className="text-amber-400 font-bold">Tático</span><br />
-                Socioeducativo
+              <h2
+                className="font-serif text-white text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.1] tracking-tight"
+                style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
+              >
+                Comando <span className="text-amber-300 italic">Tático</span><br />
+                <span className="text-white/85">Socioeducativo</span>
               </h2>
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-white/50 leading-[1.5] max-w-[42ch]">
+                Escala · Banco de horas · Ronda georreferenciada
+              </p>
             </div>
+
 
 
 
