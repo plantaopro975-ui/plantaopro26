@@ -49,17 +49,17 @@ interface ConfirmDialogProps {
 function ConfirmIcon({ variant, color }: { variant: ConfirmVariant; color: string }) {
   const gId = `cd-${variant}-g`;
   const hId = `cd-${variant}-h`;
-  const filter = `drop-shadow(0 4px 10px ${color}66) drop-shadow(0 1px 2px #00000080)`;
+  const filter = `drop-shadow(0 2px 6px ${color}44)`;
 
   const defs = (
     <defs>
       <radialGradient id={gId} cx="35%" cy="28%" r="75%">
-        <stop offset="0%" stopColor={color} stopOpacity="0.95" />
-        <stop offset="55%" stopColor={color} stopOpacity="0.4" />
+        <stop offset="0%" stopColor={color} stopOpacity="0.9" />
+        <stop offset="55%" stopColor={color} stopOpacity="0.35" />
         <stop offset="100%" stopColor="#020617" />
       </radialGradient>
       <radialGradient id={hId} cx="35%" cy="22%" r="40%">
-        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
+        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
         <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
       </radialGradient>
     </defs>
@@ -67,10 +67,11 @@ function ConfirmIcon({ variant, color }: { variant: ConfirmVariant; color: strin
 
   const common = {
     viewBox: '0 0 48 48',
-    className: 'h-12 w-12 shrink-0',
+    className: 'h-9 w-9 shrink-0',
     style: { filter },
     'aria-hidden': true as const,
   };
+
 
   if (variant === 'alarm') {
     return (
@@ -126,25 +127,25 @@ export function ConfirmDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-sm bg-slate-950 border border-slate-700/70 p-5 gap-4 [&>button.absolute]:hidden"
-        style={{ borderColor: `${accent}55`, boxShadow: `0 0 60px -20px ${accent}` }}
+        className="max-w-[22rem] bg-slate-950 border border-slate-700/70 p-3.5 gap-2.5 [&>button.absolute]:hidden"
+        style={{ borderColor: `${accent}55`, boxShadow: `0 10px 40px -20px ${accent}aa` }}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
         onFocusOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader>
-          <div className="flex items-start gap-3">
+        <DialogHeader className="space-y-0">
+          <div className="flex items-start gap-2.5">
             <ConfirmIcon variant={variant} color={accent} />
-            <div className="min-w-0">
-              <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-slate-500">
+            <div className="min-w-0 pt-0.5">
+              <div className="font-mono text-[9px] uppercase tracking-[0.22em] text-slate-500 leading-tight">
                 {kicker}
               </div>
-              <DialogTitle className="font-sans text-base font-normal tracking-tight text-slate-100 leading-tight">
+              <DialogTitle className="font-sans text-[13.5px] font-semibold tracking-tight text-slate-100 leading-snug mt-0.5">
                 {title}
               </DialogTitle>
               {description && (
-                <DialogDescription className="text-[12px] text-slate-400 mt-1 leading-snug">
+                <DialogDescription className="text-[11.5px] text-slate-400 mt-1 leading-snug">
                   {description}
                 </DialogDescription>
               )}
@@ -152,20 +153,20 @@ export function ConfirmDialog({
           </div>
         </DialogHeader>
 
-        {children && <div className="flex flex-col items-center gap-2 py-1">{children}</div>}
+        {children && <div className="flex flex-col items-center gap-1.5">{children}</div>}
 
         <div className={cn('grid gap-2', secondaryLabel ? 'grid-cols-2' : 'grid-cols-1')}>
           <button
             type="button"
             onClick={onPrimary}
-            className="inline-flex items-center justify-center gap-1.5 h-10 rounded-md border font-mono text-[11px] uppercase tracking-[0.16em] transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 h-8 rounded-md border font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] transition-colors"
             style={{
               borderColor: `${accent}80`,
               backgroundColor: `${accent}1a`,
               color: accent,
             }}
           >
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+            <svg viewBox="0 0 24 24" className="h-3 w-3" aria-hidden>
               <path
                 d="M5 12l5 5L20 7"
                 fill="none"
@@ -182,9 +183,9 @@ export function ConfirmDialog({
             <button
               type="button"
               onClick={onSecondary}
-              className="inline-flex items-center justify-center gap-1.5 h-10 rounded-md border border-slate-700/70 bg-slate-900/60 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-300 hover:text-slate-100 hover:border-slate-500 transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 h-8 rounded-md border border-slate-700/70 bg-slate-900/60 font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-300 hover:text-slate-100 hover:border-slate-500 transition-colors"
             >
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+              <svg viewBox="0 0 24 24" className="h-3 w-3" aria-hidden>
                 <path
                   d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4"
                   fill="none"
@@ -210,3 +211,4 @@ export function ConfirmDialog({
     </Dialog>
   );
 }
+
