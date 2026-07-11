@@ -583,29 +583,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               </div>
             </div>
 
-            {/* ============ B — Timeline operacional (log de eventos recentes) ============ */}
-            <div className="pp-operational-log hidden lg:block relative mt-1.5 w-full max-w-full md:max-w-[92%] lg:max-w-[88%] xl:max-w-[80%] select-none">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-white/40 leading-none">Log Operacional</span>
-                <span aria-hidden className="flex-1 h-px bg-white/8" />
-                <span className="font-mono text-[9px] tabular-nums tracking-[0.14em] text-emerald-300/70 leading-none">LIVE</span>
-              </div>
-              <ul className="flex items-center gap-x-4 gap-y-1 flex-wrap">
-                {[
-                  { t: '08:12', c: 'ALFA', tone: 'hsl(160 84% 45%)', msg: 'Ronda iniciada' },
-                  { t: '08:45', c: 'BRAVO', tone: 'hsl(24 95% 55%)', msg: 'Check-in U-03' },
-                  { t: '09:04', c: 'CHARLIE', tone: 'hsl(210 100% 60%)', msg: 'Perímetro OK' },
-                  { t: '09:18', c: 'DELTA', tone: 'hsl(42 90% 55%)', msg: 'Uplink sync' },
-                ].map((e) => (
-                  <li key={e.t} className="flex items-center gap-1.5 whitespace-nowrap">
-                    <span className="font-mono text-[9px] tabular-nums tracking-[0.14em] text-white/50 leading-none">{e.t}</span>
-                    <span className="h-1 w-1 rounded-full shrink-0" style={{ background: e.tone, boxShadow: `0 0 4px ${e.tone}` }} />
-                    <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] leading-none" style={{ color: e.tone }}>{e.c}</span>
-                    <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/55 leading-none">· {e.msg}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Log operacional removido do desktop — reduzir ruído e liberar altura para os cards */}
+
           </div>
 
 
