@@ -1994,6 +1994,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     setRunning(true);
     // Log resumido (cache local) — equipe + data da ronda realizada
     try { appendTeamLog(team); } catch { /* ignore */ }
+    // Rodízio profissional de cores — próxima ronda usará paleta diferente.
+    try { setColorRotation(bumpColorRotation()); } catch { /* ignore */ }
 
     try {
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
