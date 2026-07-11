@@ -186,12 +186,8 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       style={{ ['--team-accent' as any]: t.accent }}
     >
       {/* Imagem preenche o card inteiro (edge-to-edge, sem faixas vazias) */}
-      {/* Mobile (<768px): retrato tático da equipe. Desktop: pôster institucional. */}
+      {/* Pôster institucional único por equipe — evita repetição visual entre cards no mobile. */}
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
-        {/* Mobile <768px: WebP → JPEG fallback, ambos com variantes 1x/2x. */}
-        <source media="(max-width: 767px)" type="image/webp" srcSet={MOBILE_SQUAD[t.key].webpSrcSet} />
-        <source media="(max-width: 767px)" type="image/jpeg" srcSet={MOBILE_SQUAD[t.key].jpgSrcSet} />
-        {/* Desktop ≥768px: pôster institucional. */}
         <img
           src={t.bg}
           alt=""
@@ -492,7 +488,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
           {/* RIGHT — Agent 3D + HUD tático */}
-          <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(220px,30vh,320px)] xl:min-h-[clamp(260px,34vh,400px)] 2xl:min-h-[clamp(300px,38vh,460px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-0 px-2 sm:px-0">
+          <div className="relative flex items-end justify-center sm:justify-center min-h-[160px] min-[390px]:min-h-[176px] sm:min-h-[clamp(90px,14vh,220px)] lg:min-h-[clamp(240px,32vh,340px)] xl:min-h-[clamp(280px,36vh,420px)] 2xl:min-h-[clamp(320px,40vh,480px)] md:order-none z-[90] overflow-visible pb-1 sm:pb-0 mt-0 sm:mt-0 mb-0 sm:-mb-2 pt-0 sm:pt-2 lg:pt-4 px-2 sm:px-0">
 
             {/* Moldura HUD ultra-discreta — hairlines nos quatro cantos, sem competir com a cena */}
             <div aria-hidden className="hidden md:block absolute inset-x-3 top-2 bottom-2 lg:inset-x-5 lg:top-3 lg:bottom-3 pointer-events-none">
@@ -546,7 +542,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
             {/* Cena composta */}
             <div
-              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(220px,30vh,320px)] xl:h-[clamp(260px,34vh,400px)] 2xl:h-[clamp(300px,38vh,460px)] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] pr-0 sm:pr-0 max-w-full"
+              className="relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[clamp(240px,32vh,340px)] xl:h-[clamp(280px,36vh,420px)] 2xl:h-[clamp(320px,40vh,480px)] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] pr-0 sm:pr-0 max-w-full"
             >
 
 
@@ -586,7 +582,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   alt="Agente Socioeducativo ISE"
                   width={1024}
                   height={1024}
-                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.18] xl:scale-[1.26] 2xl:scale-[1.34] origin-bottom"
+                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.0] xl:scale-[1.0] 2xl:scale-[1.0] origin-bottom sm:origin-bottom"
                   draggable={false}
                 />
 
