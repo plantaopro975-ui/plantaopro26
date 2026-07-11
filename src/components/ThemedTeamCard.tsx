@@ -3,7 +3,7 @@ import { useTheme, themes } from '@/contexts/ThemeContext';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { cn } from '@/lib/utils';
 import { Radio, Star, Hexagon, Triangle, Square, Circle, Crown, Network, Octagon } from 'lucide-react';
-import { teamPosters, teamColors } from '@/lib/teamAssets';
+import { teamPosters, teamColors, getTeamEmblem } from '@/lib/teamAssets';
 
 interface ThemedTeamCardProps {
   team: string;
@@ -449,13 +449,23 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
             clipPath: themeStyle.cardClipPath || undefined,
           }}
         >
-          {/* Team Poster Background */}
-          <div 
-            className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
-            style={{ 
-              backgroundImage: `url(${teamPosters[team as keyof typeof teamPosters]})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center top',
+          {/* Fundo tático — gradiente radial na cor da equipe */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at 50% 42%, ${teamColors[team as keyof typeof teamColors]?.glow} 0%, rgba(0,0,0,0.9) 55%, #05070d 100%)`,
+            }}
+          />
+          {/* Brasão da equipe centralizado */}
+          <div
+            aria-hidden
+            className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+            style={{
+              backgroundImage: `url(${getTeamEmblem(team)})`,
+              backgroundSize: '78% auto',
+              backgroundPosition: 'center 42%',
+              backgroundRepeat: 'no-repeat',
+              filter: `drop-shadow(0 6px 24px ${teamColors[team as keyof typeof teamColors]?.glow})`,
             }}
           />
           
