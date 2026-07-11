@@ -2223,10 +2223,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             {/* Icon module — inset panel with radar crosshair */}
             <span className="relative flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center overflow-hidden rounded-lg sm:rounded-xl border border-border/90 bg-background shadow-inner">
               {/* subtle radar tint */}
-              <span aria-hidden className="absolute inset-0 bg-primary/5 animate-pulse" />
+              <span aria-hidden className="absolute inset-0 bg-primary/[0.04]" />
               {/* crosshair */}
-              <span aria-hidden className="absolute top-1/2 left-0 right-0 h-px -translate-y-1/2 bg-primary/20" />
-              <span aria-hidden className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-primary/20" />
+              <span aria-hidden className="absolute top-1/2 left-0 right-0 h-px -translate-y-1/2 bg-primary/15" />
+              <span aria-hidden className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-primary/15" />
               <svg viewBox="0 0 24 24" className="relative z-10 h-4 w-4 sm:h-6 sm:w-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M12 17h.01" />
                 <path d="M19 10.5c0-3.87-3.13-7-7-7s-7 3.13-7 7" />
@@ -2237,8 +2237,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
             {/* Content */}
             <span className="flex flex-col items-start leading-none">
-              <span className="hidden sm:flex items-center gap-1.5 font-mono text-[11.5px] font-bold uppercase tracking-[0.15em] text-primary">
-                <span aria-hidden className="h-1 w-1 rounded-full bg-primary animate-pulse" />
+              <span className="hidden sm:flex items-center gap-1.5 font-mono text-[11.5px] font-semibold uppercase tracking-[0.15em] text-primary">
+                <span aria-hidden className="h-1 w-1 rounded-full bg-primary" />
                 Ferramenta Tática
               </span>
               <span className="sm:mt-1 text-sm sm:text-lg font-bold tracking-tight text-foreground">
@@ -2247,13 +2247,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             </span>
 
             {running && live && !live.done && schedule && (
-              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12.5px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}18` }}>
+              <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[12.5px] font-semibold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}55`, backgroundColor: `${teamColor}12` }}>
                 <Timer className="h-3 w-3" />
                 {fmtHMS(live.remaining)}
               </span>
             )}
 
             <ChevronRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" strokeWidth={2.5} />
+
 
             {/* glass reflection */}
             <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -2608,25 +2609,26 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className={cn('tactical-scrollbar grid gap-0.5 h-56 overflow-y-auto overflow-x-hidden pr-1 rounded-md min-w-0', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+                  <div className={cn('tactical-scrollbar grid gap-px h-56 overflow-y-auto overflow-x-hidden pr-1 rounded-md min-w-0', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
-                      <div key={i} className="flex items-center gap-1 min-w-0 h-6">
-                         <span className="w-5 shrink-0 text-center font-mono text-[11px] text-primary tabular-nums leading-6">{pad(i + 1)}</span>
+                      <div key={i} className="flex items-center gap-1 min-w-0 h-[22px]">
+                         <span className="w-5 shrink-0 text-center font-mono text-[10.5px] font-semibold text-muted-foreground tabular-nums leading-[22px]">{pad(i + 1)}</span>
                         <Input value={a} onChange={(e) => updateAgent(i, e.target.value.toUpperCase().slice(0, 40))} disabled={configLocked}
                           placeholder={`AGENTE ${i + 1}`}
                           style={{ textOverflow: 'ellipsis' }}
-                           className={cn('bg-card border-border h-6 px-2 py-0 text-[11.5px] leading-6 uppercase tracking-wide truncate min-w-0 flex-1', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
+                           className={cn('bg-card border-border h-[22px] px-2 py-0 text-[11.5px] leading-[22px] uppercase tracking-wide truncate min-w-0 flex-1 font-medium', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
                           autoComplete="off"
                           autoCapitalize="characters"
                           spellCheck={false} />
                         <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
-                           disabled={agents.length <= 1 || configLocked} className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
+                           disabled={agents.length <= 1 || configLocked} className="h-[22px] w-[22px] shrink-0 text-muted-foreground hover:text-destructive"
                           aria-label={`Remover ${i + 1}`}>
                           <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     ))}
                   </div>
+
                 </div>
 
                 {/* Validation panel */}
@@ -2785,34 +2787,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <div className="relative inline-flex">
                               <style>{`
                                 @keyframes rm-ring-pulse {
-                                  0%   { box-shadow: 0 0 0 0 ${teamColor}66, 0 0 0 0 ${teamColor}33; }
-                                  70%  { box-shadow: 0 0 0 8px ${teamColor}00, 0 0 0 14px ${teamColor}00; }
-                                  100% { box-shadow: 0 0 0 0 ${teamColor}00, 0 0 0 0 ${teamColor}00; }
+                                  0%   { box-shadow: 0 0 0 0 ${teamColor}44; }
+                                  70%  { box-shadow: 0 0 0 8px ${teamColor}00; }
+                                  100% { box-shadow: 0 0 0 0 ${teamColor}00; }
                                 }
-                                @keyframes rm-sheen {
-                                  0%   { transform: translateX(-120%); }
-                                  60%  { transform: translateX(220%); }
-                                  100% { transform: translateX(220%); }
-                                }
-                                @keyframes rm-play-nudge {
-                                  0%, 100% { transform: translateX(0); }
-                                  50%      { transform: translateX(1.5px); }
-                                }
-                                .rm-play-btn { position: relative; overflow: hidden; animation: rm-ring-pulse 2.4s ease-out infinite; }
-                                .rm-play-btn::after {
-                                  content: ''; position: absolute; inset: 0;
-                                  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.28) 50%, transparent 70%);
-                                  transform: translateX(-120%);
-                                  animation: rm-sheen 3.6s ease-in-out infinite;
-                                  pointer-events: none;
-                                }
-                                .rm-play-btn:hover { filter: brightness(1.08); }
+                                .rm-play-btn { position: relative; animation: rm-ring-pulse 2.8s ease-out infinite; }
+                                .rm-play-btn:hover { filter: brightness(1.05); }
                                 .rm-play-btn:active { transform: scale(0.97); }
-                                .rm-play-btn .rm-play-icon { animation: rm-play-nudge 2.4s ease-in-out infinite; }
                                 @media (prefers-reduced-motion: reduce) {
-                                  .rm-play-btn, .rm-play-btn::after, .rm-play-btn .rm-play-icon { animation: none !important; }
+                                  .rm-play-btn { animation: none !important; }
                                 }
                               `}</style>
+
                               <Button
                                 type="button"
                                 size="sm"
