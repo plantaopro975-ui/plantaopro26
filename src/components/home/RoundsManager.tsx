@@ -1664,38 +1664,49 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* ---------- schedule com RECALIBRAGEM AUTOMÁTICA (precisão em segundos) ---------- */
   const schedule = useMemo(() => {
     if (issues.length) return null;
-    const n = agents.length;
-    if (n === 0) return null;
+    if (agents.length === 0) return null;
     if (effectiveStartMin == null) return null;
     const s = effectiveStartMin;
     const startSec = Math.round(s * 60);
 
-    // Total em segundos (split = janela do turno; interval = intervalo × N)
-    let totalSec: number;
-    if (mode === 'split') {
+    // Total em minutos da janela (para split/proporcional). Interval usa outra base.
+    let windowTotalMin = 0;
+    if (mode === 'split' || mode === 'proportional') {
       const e = toMinutes(endTime)!;
       let totalMin = e - s;
       if (totalMin <= 0) totalMin += 24 * 60; // suporta virada de meia-noite
-      totalSec = Math.max(1, Math.round(totalMin * 60));
-    } else {
-      totalSec = Math.max(1, Math.round(intervalMin * 60)) * n;
+      windowTotalMin = totalMin;
     }
 
+    // === MODO PROPORCIONAL ===
+    // Expande agentes em N rondas cíclicas baseado na cadência-base.
+    // Regra: nRondas = round(totalMin / cadenceMin), piso = nAgentes.
+    const effectiveAgents = mode === 'proportional'
+      ? expandProportionalAgents(agents, windowTotalMin, cadenceMin)
+      : agents;
+    const n = effectiveAgents.length;
+    if (n === 0) return null;
 
-    // No turno noturno travado, sempre usamos distribuição EXATA em segundos
-    // — assim os postos consomem 100% do tempo restante até 06:00 sem sobras.
+    // Total em segundos
+    let totalSec: number;
+    if (mode === 'interval') {
+      totalSec = Math.max(1, Math.round(intervalMin * 60)) * n;
+    } else {
+      totalSec = Math.max(1, Math.round(windowTotalMin * 60));
+    }
+
+    // No turno noturno travado, sempre usamos distribuição EXATA em segundos.
+    // Modo proporcional também usa 'exact' para fechar exatamente no endTime.
     const effRounding: Rounding =
-      (nightEffectivelyLocked && mode === 'split') ? 'exact' : rounding;
+      mode === 'proportional' ? 'exact'
+      : (nightEffectivelyLocked && mode === 'split') ? 'exact'
+      : rounding;
 
-    // Estratégia de fatiamento em SEGUNDOS
     const slotsSec: number[] = new Array(n).fill(0);
     if (mode === 'interval') {
-      // Intervalo fixo — cada agente recebe exatamente o intervalo escolhido
       const per = Math.round(intervalMin * 60);
       for (let i = 0; i < n; i++) slotsSec[i] = per;
     } else if (effRounding === 'exact') {
-      // Distribui em segundos inteiros, encaixando o resto nos primeiros (fecha 100% no endTime).
-      // A soma dos slots é IGUAL a totalSec — nenhuma sobra ou déficit acumulado.
       const base = Math.floor(totalSec / n);
       let leftover = totalSec - base * n;
       for (let i = 0; i < n; i++) {
@@ -1709,7 +1720,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const perMin = Math.ceil(totalSec / 60 / n);
       for (let i = 0; i < n; i++) slotsSec[i] = perMin * 60;
     } else {
-      // distribute (default): minutos inteiros + resto distribuído — recalibra para fechar no endTime
       const totalMin = Math.round(totalSec / 60);
       const baseMin = Math.floor(totalMin / n);
       let leftoverMin = totalMin - baseMin * n;
@@ -1718,16 +1728,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         slotsSec[i] = (baseMin + extra) * 60;
         if (leftoverMin > 0) leftoverMin--;
       }
-      // Ajuste fino: qualquer sobra/déficit em segundos vai para o último agente,
-      // garantindo que o horário final bata exatamente com o solicitado.
       const drift = totalSec - slotsSec.reduce((a, v) => a + v, 0);
       if (drift !== 0) slotsSec[n - 1] += drift;
     }
 
-
-    // Monta linhas com precisão de segundos; fromAbs/toAbs em minutos (float) mantém compat com o live timer.
     let cursorSec = startSec;
-    const rows = agents.map((name, i) => {
+    const rows = effectiveAgents.map((name, i) => {
       const fromSec = cursorSec;
       const toSec = cursorSec + slotsSec[i];
       cursorSec = toSec;
@@ -1737,12 +1743,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         to: fromMinutes(toSec / 60),
         fromAbs: fromSec / 60,
         toAbs: toSec / 60,
-        duration: slotsSec[i] / 60, // minutos (pode ser fracionário)
+        duration: slotsSec[i] / 60,
       };
     });
 
     const totalMinOut = slotsSec.reduce((a, v) => a + v, 0) / 60;
-    const baseSlot = totalSec / 60 / n; // slot médio em minutos (referência)
+    const baseSlot = totalSec / 60 / n;
     const hasSeconds = slotsSec.some((v) => v % 60 !== 0);
 
     return {
@@ -1753,8 +1759,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       startMin: s,
       hasRemainder: hasSeconds,
       effectiveRounding: effRounding,
+      // Metadados do modo proporcional (usados na UI)
+      proportional: mode === 'proportional' ? {
+        cadenceMin,
+        totalRounds: n,
+        agentsCount: agents.length,
+        roundsPerAgent: n / Math.max(1, agents.length),
+      } : null,
     };
-  }, [issues, mode, startTime, endTime, intervalMin, rounding, agents, effectiveStartMin, nightEffectivelyLocked]);
+  }, [issues, mode, startTime, endTime, intervalMin, cadenceMin, rounding, agents, effectiveStartMin, nightEffectivelyLocked]);
 
 
 
