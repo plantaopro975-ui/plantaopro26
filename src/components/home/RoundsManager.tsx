@@ -1490,7 +1490,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     } catch { /* ignore */ }
   }, []);
   const armed = false;
-  const configLocked = false;
+  // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
+  // do lado esquerdo é travada para preservar o cronograma pactuado.
+  const configLocked = scheduledFor != null;
 
 
 
