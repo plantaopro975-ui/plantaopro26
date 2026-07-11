@@ -120,10 +120,10 @@ function fmtHMS(seconds: number): string {
 }
 
 const TEAM_PRESETS = [
-  { key: 'ALFA',    label: 'ALFA',    color: '#34d399' },
-  { key: 'BRAVO',   label: 'BRAVO',   color: '#fb923c' },
-  { key: 'CHARLIE', label: 'CHARLIE', color: '#60a5fa' },
-  { key: 'DELTA',   label: 'DELTA',   color: '#fcd34d' },
+  { key: 'ALFA',    label: TEAM_COLORS.ALFA.label,    color: TEAM_COLORS.ALFA.hex },
+  { key: 'BRAVO',   label: TEAM_COLORS.BRAVO.label,   color: TEAM_COLORS.BRAVO.hex },
+  { key: 'CHARLIE', label: TEAM_COLORS.CHARLIE.label, color: TEAM_COLORS.CHARLIE.hex },
+  { key: 'DELTA',   label: TEAM_COLORS.DELTA.label,   color: TEAM_COLORS.DELTA.hex },
 ] as const;
 
 type TeamKey = typeof TEAM_PRESETS[number]['key'];
