@@ -3134,6 +3134,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         silent={silentMode}
                       />
 
+                      <RoundHistoryDialog
+                        open={historyDialogOpen}
+                        onOpenChange={setHistoryDialogOpen}
+                        entries={teamLog}
+                        onClear={() => { clearTeamLog(); setHistoryDialogOpen(false); }}
+                      />
+
                       <TeamConfirmDialog
                         open={teamConfirmOpen}
                         color={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.color ?? teamColor) : teamColor}
