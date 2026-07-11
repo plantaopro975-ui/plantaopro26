@@ -891,11 +891,6 @@ export default function AgentPanel() {
                 </SectionBoundary>}
               </TabsContent>
 
-              <TabsContent value="planejador" forceMount hidden={activeTab !== 'planejador'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('planejador') && <SectionBoundary label="planejador" loadingLabel="Carregando planejador" fallback={<ModuleFallback compact={compact} />}>
-                <ShiftPlannerCard agentId={agent.id} />
-                </SectionBoundary>}
-              </TabsContent>
 
               <TabsContent value="permutas" forceMount hidden={activeTab !== 'permutas'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
                 {mountedTabs.has('permutas') && <SectionBoundary label="permutas" loadingLabel="Carregando permutas" fallback={<ModuleFallback compact={compact} />}>
