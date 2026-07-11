@@ -1430,10 +1430,10 @@ export default function Index() {
               node: (
                 <div
                   id="teams-section"
-                  className="w-full max-w-7xl mx-auto sm:h-full scroll-mt-6"
+                  className="w-full max-w-7xl mx-auto sm:h-full lg:h-auto scroll-mt-6"
                   style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
                 >
-                  <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full">
+                  <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full lg:h-auto">
                     <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
                   </DraggableHomeCard>
                 </div>
