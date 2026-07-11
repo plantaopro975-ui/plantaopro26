@@ -86,6 +86,14 @@ export function SplashScreen() {
         willChange: "opacity",
       }}
     >
+      {/* Padrão tático de fundo (grid + brilho radial) — só aparece de forma
+          discreta e cobre TODA a splash, especialmente no mobile portrait
+          onde o object-contain deixaria barras vazias. */}
+      <div
+        aria-hidden
+        className="sp-splash-bg absolute inset-0 pointer-events-none"
+      />
+
       {/* Imagem institucional.
           Desktop / landscape: object-cover para preencher toda a viewport.
           Mobile portrait: object-contain para exibir a arte inteira (wordmark
@@ -103,6 +111,58 @@ export function SplashScreen() {
         }}
       />
 
+      {/* Camada institucional mobile — wordmark, tagline, brackets, faixa
+          inferior. Fica oculta em telas maiores (onde a arte já preenche). */}
+      <div className="sp-splash-mobile absolute inset-0 pointer-events-none flex flex-col justify-between px-6 pt-[max(env(safe-area-inset-top),1.5rem)] pb-[max(env(safe-area-inset-bottom),2rem)]">
+        {/* Topo: wordmark + subtítulo */}
+        <div className="flex flex-col items-center gap-1.5" style={{ animation: "spSplashDown 700ms cubic-bezier(0.22,1,0.36,1) both" }}>
+          <div className="flex items-center gap-2">
+            <span aria-hidden className="h-px w-8" style={{ background: "linear-gradient(90deg,transparent,#f4c974)" }} />
+            <span className="font-mono text-[10px] tracking-[0.42em] uppercase" style={{ color: "#f4c974" }}>
+              Comando Operacional
+            </span>
+            <span aria-hidden className="h-px w-8" style={{ background: "linear-gradient(-90deg,transparent,#f4c974)" }} />
+          </div>
+          <h1
+            className="font-black tracking-[0.08em]"
+            style={{
+              fontSize: "34px",
+              lineHeight: 1,
+              background: "linear-gradient(180deg,#fff 0%,#f4c974 55%,#c9922b 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              textShadow: "0 2px 24px rgba(244,201,116,0.25)",
+            }}
+          >
+            PLANTÃO<span style={{ WebkitTextFillColor: "#f4c974" }}>PRO</span>
+          </h1>
+          <span className="font-mono text-[10.5px] tracking-[0.28em] uppercase text-white/60">
+            Controle · Escala · Banco de Horas
+          </span>
+        </div>
+
+        {/* Rodapé: selo institucional */}
+        <div className="flex flex-col items-center gap-2" style={{ animation: "spSplashUp 700ms 120ms cubic-bezier(0.22,1,0.36,1) both" }}>
+          <div className="flex items-center gap-3 rounded-sm border border-[#f4c974]/25 bg-black/40 backdrop-blur-sm px-3 py-1.5">
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#f4c974", boxShadow: "0 0 8px #f4c974" }} />
+            <span className="font-mono text-[9.5px] tracking-[0.32em] uppercase text-white/80">
+              ISE · Acre · Sistema Tático
+            </span>
+          </div>
+          <span className="font-mono text-[8.5px] tracking-[0.4em] uppercase text-white/35">
+            Inicializando módulos operacionais
+          </span>
+        </div>
+      </div>
+
+      {/* Brackets táticos nos cantos (mobile only) */}
+      <div aria-hidden className="sp-splash-mobile absolute inset-0 pointer-events-none">
+        <span className="absolute top-3 left-3 h-4 w-4 border-t-2 border-l-2" style={{ borderColor: "#f4c974aa" }} />
+        <span className="absolute top-3 right-3 h-4 w-4 border-t-2 border-r-2" style={{ borderColor: "#f4c974aa" }} />
+        <span className="absolute bottom-3 left-3 h-4 w-4 border-b-2 border-l-2" style={{ borderColor: "#f4c974aa" }} />
+        <span className="absolute bottom-3 right-3 h-4 w-4 border-b-2 border-r-2" style={{ borderColor: "#f4c974aa" }} />
+      </div>
 
       {/* Vinheta sutil para dar profundidade e integrar bordas em telas ultra-wide */}
       <div
@@ -117,7 +177,7 @@ export function SplashScreen() {
       {/* Barra de progresso institucional na base */}
       <div
         aria-hidden
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[220px] h-[2px] overflow-hidden rounded-full"
+        className="absolute bottom-[max(env(safe-area-inset-bottom),1rem)] left-1/2 -translate-x-1/2 w-[220px] h-[2px] overflow-hidden rounded-full z-10"
         style={{
           background: "rgba(244, 201, 116, 0.15)",
           animation: "spSplashFade 400ms 200ms both",
@@ -136,21 +196,35 @@ export function SplashScreen() {
       </div>
 
       <style>{`
-        /* Default (desktop / landscape): preenche toda a viewport */
-        .sp-splash-img {
-          object-fit: cover;
-          object-position: center center;
-        }
-        /* Mobile portrait: exibe a arte inteira sem cortes/esmagamento */
+        /* Default (desktop / landscape): preenche toda a viewport, camada mobile oculta */
+        .sp-splash-img { object-fit: cover; object-position: center center; }
+        .sp-splash-mobile { display: none; }
+        .sp-splash-bg { opacity: 0; }
+        /* Mobile portrait: arte central + camadas institucionais ao redor */
         @media (max-width: 767px) and (orientation: portrait) {
-          .sp-splash-img {
-            object-fit: contain;
-            object-position: center center;
+          .sp-splash-img { object-fit: contain; object-position: center 58%; transform: scale(0.82); }
+          .sp-splash-mobile { display: flex; }
+          .sp-splash-bg {
+            opacity: 1;
+            background:
+              radial-gradient(ellipse 70% 45% at 50% 55%, rgba(244,201,116,0.10) 0%, transparent 70%),
+              linear-gradient(180deg, #0a0c12 0%, #12100a 50%, #050505 100%),
+              repeating-linear-gradient(0deg, transparent 0 24px, rgba(244,201,116,0.035) 24px 25px),
+              repeating-linear-gradient(90deg, transparent 0 24px, rgba(244,201,116,0.035) 24px 25px);
+            animation: spSplashFade 500ms both;
           }
         }
         @keyframes spSplashIn {
           from { opacity: 0; transform: scale(1.04); filter: blur(4px); }
           to   { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+        @keyframes spSplashDown {
+          from { opacity: 0; transform: translateY(-12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spSplashUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes spSplashFade {
           from { opacity: 0; }
