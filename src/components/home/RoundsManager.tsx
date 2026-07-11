@@ -2177,6 +2177,31 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const handoffImminent = !!(live && !live.done && slotRemainingSec > 0 && slotRemainingSec <= 15);
   const nextAgentName = live && !live.done && schedule?.rows[live.index + 1]?.name;
 
+  // Beep discreto na aproximação da troca (uma vez em 60s e outra em 15s por posto)
+  const handoffBeepRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!live || live.done) return;
+    const key60 = `${live.index}-60`;
+    const key15 = `${live.index}-15`;
+    if (handoffSoon && !handoffBeepRef.current.has(key60)) {
+      handoffBeepRef.current.add(key60);
+      try { playAlert(soundRef.current); } catch { /* ignore */ }
+    }
+    if (handoffImminent && !handoffBeepRef.current.has(key15)) {
+      handoffBeepRef.current.add(key15);
+      try { playAlert(soundRef.current); } catch { /* ignore */ }
+      try {
+        if (!soundRef.current.muted && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          navigator.vibrate?.([120, 60, 120]);
+        }
+      } catch { /* ignore */ }
+    }
+    // Reset ao trocar de posto
+    if (!handoffSoon && !handoffImminent && live.remaining > 65) {
+      // sem ação — mantém sinalizado
+    }
+  }, [handoffSoon, handoffImminent, live?.index, live?.done]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Alerta visual/sonoro nos últimos minutos da operação inteira
   const endingSoon = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 300; // ≤ 5 min
   const endingCritical = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 60; // ≤ 1 min
