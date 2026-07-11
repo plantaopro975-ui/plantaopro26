@@ -559,7 +559,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 />
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.18] xl:scale-[1.26] 2xl:scale-[1.34] origin-bottom-left"
+                  className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.04] xl:scale-[1.10] 2xl:scale-[1.16] origin-bottom-left"
                 >
                   <span
                     aria-hidden
