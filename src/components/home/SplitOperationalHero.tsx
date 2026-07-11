@@ -183,13 +183,18 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       {/* Imagem preenche o card inteiro (edge-to-edge, sem faixas vazias) */}
       {/* Mobile (<768px): retrato tático da equipe. Desktop: pôster institucional. */}
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
-        <source media="(max-width: 767px)" srcSet={MOBILE_SQUAD[t.key]} />
+        {/* Mobile <768px: WebP → JPEG fallback, ambos com variantes 1x/2x. */}
+        <source media="(max-width: 767px)" type="image/webp" srcSet={MOBILE_SQUAD[t.key].webpSrcSet} />
+        <source media="(max-width: 767px)" type="image/jpeg" srcSet={MOBILE_SQUAD[t.key].jpgSrcSet} />
+        {/* Desktop ≥768px: pôster institucional. */}
         <img
           src={t.bg}
           alt=""
           aria-hidden
           loading="lazy"
           decoding="async"
+          width={480}
+          height={480}
           className={cn(
             'absolute inset-0 h-full w-full object-cover object-center select-none',
             'transition-all duration-500 ease-out',
