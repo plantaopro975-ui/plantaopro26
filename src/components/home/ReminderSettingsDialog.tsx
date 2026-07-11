@@ -36,12 +36,12 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
 
   const update = (patch: Partial<ReminderSettings>) => {
     const result = setReminderSettings(patch);
-    if (result.ok) {
+    if (result.ok === true) {
       setSettings(result.value);
-    } else {
-      const first = Object.values(result.errors)[0];
-      toast.error(typeof first === 'string' ? first : 'Valor inválido');
+      return;
     }
+    const first = Object.values(result.errors)[0];
+    toast.error(typeof first === 'string' ? first : 'Valor inválido');
   };
 
   return (
