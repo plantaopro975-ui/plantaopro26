@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { parseISO, differenceInMinutes, isSameDay, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 
 interface UseAlarmNotificationsProps {
   agentId: string;
