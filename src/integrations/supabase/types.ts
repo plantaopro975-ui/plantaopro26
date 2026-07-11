@@ -1936,50 +1936,6 @@ export type Database = {
           },
         ]
       }
-      shift_planner_configs: {
-        Row: {
-          agent_count: number
-          agent_id: string
-          config_name: string
-          config_type: string
-          created_at: string
-          end_time: string
-          id: string
-          start_time: string
-          updated_at: string
-        }
-        Insert: {
-          agent_count?: number
-          agent_id: string
-          config_name: string
-          config_type: string
-          created_at?: string
-          end_time: string
-          id?: string
-          start_time: string
-          updated_at?: string
-        }
-        Update: {
-          agent_count?: number
-          agent_id?: string
-          config_name?: string
-          config_type?: string
-          created_at?: string
-          end_time?: string
-          id?: string
-          start_time?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "shift_planner_configs_agent_id_fkey"
-            columns: ["agent_id"]
-            isOneToOne: false
-            referencedRelation: "agents"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       shift_schedule_divergences: {
         Row: {
           agent_id: string
