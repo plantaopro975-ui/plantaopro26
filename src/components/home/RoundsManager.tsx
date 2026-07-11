@@ -3864,6 +3864,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <RoundSummaryDialog
                         open={summaryOpen}
                         saved={summarySaved}
+                        syncedOnline={summarySyncedOnline}
                         onSave={async (savedName) => {
                           // Cache local (sempre grava — funciona offline / sem unidade)
                           const entry: TeamLogEntry = {
@@ -3874,8 +3875,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           setTeamLog(next);
 
                           // Tenta sincronizar com a nuvem, mas NÃO bloqueia o
-                          // encerramento do relatório se falhar (ex.: unidade
-                          // ainda não resolvida, sessão expirada, offline).
+                          // encerramento do relatório se falhar. Em caso de
+                          // falha, enfileira para retentativa automática ao
+                          // voltar online / ganhar foco / a cada 60s.
                           let cloudErr: string | null = null;
                           try {
                             await saveTeamRoundToCloud({
@@ -3886,12 +3888,19 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             });
                           } catch (e) {
                             cloudErr = (e as Error)?.message || 'falha desconhecida';
-                            console.warn('[rounds] saveTeamRoundToCloud falhou — salvo apenas localmente:', cloudErr);
+                            console.warn('[rounds] saveTeamRoundToCloud falhou — enfileirado p/ retry:', cloudErr);
+                            enqueuePending({
+                              team,
+                              savedName,
+                              totalSeconds: summaryData?.totalSec ?? 0,
+                              agentsCount: schedule.rows.length,
+                            });
                           }
+                          setSummarySyncedOnline(!cloudErr);
                           setSummarySaved(true);
                           toast(
                             cloudErr
-                              ? { title: 'Registro salvo localmente', description: `Sincronização com o servidor falhou (${cloudErr}). Você já pode encerrar.`, variant: 'destructive' as const }
+                              ? { title: 'Salvo localmente (offline)', description: 'Sincronização automática quando a conexão voltar. Você já pode fechar.' }
                               : { title: 'Registro salvo', description: `Equipe ${team} registrada e sincronizada.` }
                           );
                         }}
@@ -3899,6 +3908,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           setSummaryOpen(false);
                           setSummaryData(null);
                           setSummarySaved(false);
+                          setSummarySyncedOnline(true);
                           // Reseta timer e fecha o divisor de rondas, deixando o
                           // painel pronto para uma nova equipe.
                           try { resetTimer(); } catch { /* ignore */ }
