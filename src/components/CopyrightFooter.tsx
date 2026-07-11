@@ -71,8 +71,6 @@ export const CopyrightFooter = forwardRef<HTMLDivElement, CopyrightFooterProps>(
             <div className="flex items-center gap-x-1.5 sm:gap-x-2 text-[9px] text-muted-foreground/75 tracking-[0.18em] uppercase whitespace-nowrap">
               <MadeInFeijoBadge inline size="sm" />
               <span className="hidden md:inline text-muted-foreground/30">·</span>
-              <DeveloperSignature compact className="hidden md:inline-flex" />
-              <span className="hidden md:inline text-muted-foreground/30">·</span>
               <span className="hidden sm:inline-flex items-center gap-1">
                 <Lock className="h-3 w-3 text-primary/60" />
                 <span>LGPD · TLS 1.3</span>
