@@ -261,7 +261,7 @@ export function ShiftBriefingCard({
     //    o navegador cair, recarregar ou perder a conexão, o preenchimento é
     //    preservado até a próxima sincronização.
     writeDraft(currentShift.id, {
-      adoCnt, algCnt, chvCnt, radiosCharged, radiosExpected,
+      adoCnt, algCnt, chvCnt, tonCnt, tonExpected, radiosCharged, radiosExpected,
       bookEntry, handoverOk, handoverNotes, observations, signature,
     });
 
