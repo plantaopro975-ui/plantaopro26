@@ -13,13 +13,14 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  ClipboardCheck, ShieldAlert, Radio, Users, KeyRound, BookOpen, ArrowLeftRight,
-  PenLine, CheckCircle2, FileText, History, Lock, Loader2, Circle,
+  ClipboardCheck, ShieldAlert, Radio, Users, KeyRound, ArrowLeftRight, Swords,
+  PenLine, CheckCircle2, History, Lock, Loader2, Circle, Timer,
 } from 'lucide-react';
-import { addHours, format, isWithinInterval, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { isShiftActive } from '@/lib/shiftTime';
 
 // -------- Types --------
 interface Props {
@@ -44,6 +45,8 @@ interface Briefing {
   adolescents_counted: number | null;
   handcuffs_counted: number | null;
   handcuff_keys_counted: number | null;
+  tonfas_counted: number | null;
+  tonfas_expected: number | null;
   radios_charged_count: number | null;
   radios_total_expected: number | null;
   book_entry: string | null;
@@ -61,11 +64,12 @@ type ChecklistKey =
   | 'adolescents'
   | 'handcuffs'
   | 'handcuff_keys'
+  | 'tonfas'
   | 'radios'
   | 'handover';
 
 const CHECKLIST_ORDER: ChecklistKey[] = [
-  'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'handover',
+  'adolescents', 'handcuffs', 'handcuff_keys', 'tonfas', 'radios', 'handover',
 ];
 
 // -------- Offline persistence helpers --------
@@ -76,6 +80,7 @@ const PENDING_KEY = (shiftId: string) => `plantao_briefing_pending_${shiftId}`;
 
 interface DraftShape {
   adoCnt: string; algCnt: string; chvCnt: string;
+  tonCnt: string; tonExpected: string;
   radiosCharged: string; radiosExpected: string;
   bookEntry: string; handoverOk: boolean; handoverNotes: string;
   observations: string; signature: string;
@@ -129,6 +134,8 @@ export function ShiftBriefingCard({
   const [adoCnt, setAdoCnt] = useState('');
   const [algCnt, setAlgCnt] = useState('');
   const [chvCnt, setChvCnt] = useState('');
+  const [tonCnt, setTonCnt] = useState('');
+  const [tonExpected, setTonExpected] = useState('');
   const [radiosCharged, setRadiosCharged] = useState('');
   const [radiosExpected, setRadiosExpected] = useState('');
   const [bookEntry, setBookEntry] = useState('');
@@ -155,10 +162,12 @@ export function ShiftBriefingCard({
         .order('shift_date', { ascending: true })
         .limit(4);
 
-      const active = (shifts || []).find((s: any) => {
-        const start = parseISO(`${s.shift_date}T${s.start_time}`);
-        return isWithinInterval(new Date(), { start, end: addHours(start, 24) });
-      }) as Shift | undefined;
+      // Ativa somente durante a janela REAL do plantão (respeita end_time).
+      const active = (shifts || []).find((s: any) => isShiftActive({
+        shift_date: s.shift_date,
+        start_time: s.start_time,
+        end_time: s.end_time,
+      })) as Shift | undefined;
 
       setCurrentShift(active || null);
 
@@ -202,6 +211,8 @@ export function ShiftBriefingCard({
       setAdoCnt(draft.adoCnt);
       setAlgCnt(draft.algCnt);
       setChvCnt(draft.chvCnt);
+      setTonCnt(draft.tonCnt ?? '');
+      setTonExpected(draft.tonExpected ?? '');
       setRadiosCharged(draft.radiosCharged);
       setRadiosExpected(draft.radiosExpected);
       setBookEntry(draft.bookEntry);
@@ -213,6 +224,8 @@ export function ShiftBriefingCard({
       setAdoCnt(briefing.adolescents_counted?.toString() ?? '');
       setAlgCnt(briefing.handcuffs_counted?.toString() ?? '');
       setChvCnt(briefing.handcuff_keys_counted?.toString() ?? '');
+      setTonCnt(briefing.tonfas_counted?.toString() ?? '');
+      setTonExpected(briefing.tonfas_expected?.toString() ?? '');
       setRadiosCharged(briefing.radios_charged_count?.toString() ?? '');
       setRadiosExpected(briefing.radios_total_expected?.toString() ?? '');
       setBookEntry(briefing.book_entry ?? '');
@@ -229,10 +242,11 @@ export function ShiftBriefingCard({
       adolescents: adoCnt !== '' && Number(adoCnt) >= 0,
       handcuffs: algCnt !== '' && Number(algCnt) >= 0,
       handcuff_keys: chvCnt !== '' && Number(chvCnt) >= 0,
+      tonfas: tonCnt !== '' && Number(tonCnt) >= 0,
       radios: radiosCharged !== '' && Number(radiosCharged) >= 0,
       handover: handoverOk,
     } as Record<ChecklistKey, boolean>;
-  }, [adoCnt, algCnt, chvCnt, radiosCharged, handoverOk]);
+  }, [adoCnt, algCnt, chvCnt, tonCnt, radiosCharged, handoverOk]);
 
   const completedCount = Object.values(itemsStatus).filter(Boolean).length;
   const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
@@ -247,7 +261,7 @@ export function ShiftBriefingCard({
     //    o navegador cair, recarregar ou perder a conexão, o preenchimento é
     //    preservado até a próxima sincronização.
     writeDraft(currentShift.id, {
-      adoCnt, algCnt, chvCnt, radiosCharged, radiosExpected,
+      adoCnt, algCnt, chvCnt, tonCnt, tonExpected, radiosCharged, radiosExpected,
       bookEntry, handoverOk, handoverNotes, observations, signature,
     });
 
@@ -260,6 +274,8 @@ export function ShiftBriefingCard({
       adolescents_counted: adoCnt !== '' ? Number(adoCnt) : null,
       handcuffs_counted: algCnt !== '' ? Number(algCnt) : null,
       handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
+      tonfas_counted: tonCnt !== '' ? Number(tonCnt) : null,
+      tonfas_expected: tonExpected !== '' ? Number(tonExpected) : null,
       radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
       radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
       book_entry: null,
@@ -340,7 +356,7 @@ export function ShiftBriefingCard({
       if (autoSaveTimer.current) window.clearTimeout(autoSaveTimer.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [adoCnt, algCnt, chvCnt, radiosCharged, radiosExpected, bookEntry, handoverOk, handoverNotes, observations, signature]);
+  }, [adoCnt, algCnt, chvCnt, tonCnt, tonExpected, radiosCharged, radiosExpected, bookEntry, handoverOk, handoverNotes, observations, signature]);
 
   // Wrapper que marca "sujo" antes de setar cada estado — só assim o auto-save dispara.
   const withDirty = <T,>(setter: (v: T) => void) => (v: T) => {
@@ -450,16 +466,22 @@ export function ShiftBriefingCard({
 
         <CardContent className="px-4 pb-4 space-y-3">
           {!hasCurrentShift ? (
-            <div className="flex items-center gap-2 rounded-md border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
-              <ShieldAlert className="h-4 w-4 text-slate-500" />
-              O checklist só fica disponível durante um plantão ativo (janela de 24h desde o início).
-            </div>
+            <OffDutyNotice />
           ) : (
             <>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <MiniStat icon={<Users className="h-3 w-3" />} label="Adolescentes" value={briefing?.adolescents_counted?.toString() ?? '—'} />
                 <MiniStat icon={<ShieldAlert className="h-3 w-3" />} label="Algemas" value={briefing?.handcuffs_counted?.toString() ?? '—'} />
                 <MiniStat icon={<KeyRound className="h-3 w-3" />} label="Chaves" value={briefing?.handcuff_keys_counted?.toString() ?? '—'} />
+                <MiniStat
+                  icon={<Swords className="h-3 w-3" />}
+                  label="Tonfas"
+                  value={briefing?.tonfas_counted != null
+                    ? (briefing?.tonfas_expected
+                        ? `${briefing.tonfas_counted}/${briefing.tonfas_expected}`
+                        : String(briefing.tonfas_counted))
+                    : '—'}
+                />
                 <MiniStat
                   icon={<Radio className="h-3 w-3" />}
                   label="Rádios carregados"
@@ -580,9 +602,28 @@ export function ShiftBriefingCard({
                 <NumberField value={chvCnt} onChange={withDirty(setChvCnt)} placeholder="Ex.: 8" />
               </ChecklistRow>
 
-              {/* 4. Rádios carregados */}
+              {/* 4. Tonfas */}
               <ChecklistRow
-                order={4} done={itemsStatus.radios}
+                order={4} done={itemsStatus.tonfas}
+                icon={<Swords className="h-4 w-4 text-amber-400" />}
+                title="Contagem das tonfas"
+                subtitle="Total de tonfas conferidas e disponíveis para uso."
+              >
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-[10px] uppercase text-slate-500">Conferidas</Label>
+                    <NumberField value={tonCnt} onChange={withDirty(setTonCnt)} placeholder="Ex.: 6" />
+                  </div>
+                  <div>
+                    <Label className="text-[10px] uppercase text-slate-500">Total esperado</Label>
+                    <NumberField value={tonExpected} onChange={withDirty(setTonExpected)} placeholder="Ex.: 6" />
+                  </div>
+                </div>
+              </ChecklistRow>
+
+              {/* 5. Rádios carregados */}
+              <ChecklistRow
+                order={5} done={itemsStatus.radios}
                 icon={<Radio className="h-4 w-4 text-amber-400" />}
                 title="Rádios carregados"
                 subtitle="Informe quantos rádios estão carregados e prontos para uso."
@@ -599,9 +640,9 @@ export function ShiftBriefingCard({
                 </div>
               </ChecklistRow>
 
-              {/* 5. Passagem de plantão */}
+              {/* 6. Passagem de plantão */}
               <ChecklistRow
-                order={5} done={itemsStatus.handover}
+                order={6} done={itemsStatus.handover}
                 icon={<ArrowLeftRight className="h-4 w-4 text-amber-400" />}
                 title="Passagem de plantão"
                 subtitle="Confirme que a passagem foi feita com a equipe anterior."
@@ -731,3 +772,55 @@ function NumberField({
     />
   );
 }
+
+/**
+ * Estado profissional exibido enquanto NÃO há plantão em curso.
+ * Substitui o antigo texto seco por um aviso institucional em SVG.
+ */
+function OffDutyNotice() {
+  return (
+    <div className="relative overflow-hidden rounded-lg border border-amber-500/25 bg-gradient-to-br from-slate-950 via-slate-900/60 to-slate-950 p-4">
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 rounded-md bg-amber-500/10 border border-amber-500/30 p-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 48 48"
+            className="h-8 w-8 text-amber-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M24 4l16 6v10c0 10-7 18-16 22-9-4-16-12-16-22V10l16-6z" opacity="0.85" />
+            <circle cx="24" cy="24" r="6" />
+            <path d="M24 18v6l4 3" />
+          </svg>
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono uppercase tracking-[0.24em] text-amber-400/90">
+              Briefing bloqueado
+            </span>
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_hsl(45_100%_55%/0.8)]" />
+          </div>
+          <h4 className="mt-1 text-sm font-semibold text-slate-100 leading-tight">
+            Aguardando início do plantão
+          </h4>
+          <p className="mt-1 text-[11.5px] leading-relaxed text-slate-400">
+            O checklist de entrada (adolescentes, algemas, chaves, tonfas, rádios e passagem de plantão)
+            será liberado automaticamente no momento em que o seu plantão iniciar. Uso restrito a{' '}
+            <strong className="text-slate-200">Chefe de Equipe</strong> e{' '}
+            <strong className="text-slate-200">Apoio</strong>.
+          </p>
+        </div>
+      </div>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(90deg,transparent,hsl(45_100%_55%/0.35),transparent)]"
+      />
+    </div>
+  );
+}
+
