@@ -523,18 +523,18 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             </span>
 
             {/* Micro-ribbon inferior — linha única, hairline, tabular */}
-            <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2.5 lg:gap-3 pointer-events-none">
-              <span className="relative inline-flex h-1.5 w-1.5">
+            <div className="hidden md:flex absolute bottom-0.5 lg:bottom-1 left-1/2 -translate-x-1/2 z-[60] items-center gap-2 lg:gap-2.5 pointer-events-none whitespace-nowrap max-w-full px-2">
+              <span className="relative inline-flex h-1.5 w-1.5 shrink-0">
                 <span className="absolute inset-0 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.7)]" />
                 <span className="absolute inset-0 rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping" />
               </span>
-              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.28em] text-white/45 leading-none">Patrulha</span>
-              <span aria-hidden className="h-2 w-px bg-white/12" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.14em] text-amber-200/85 leading-none">−9.9747°</span>
-              <span aria-hidden className="h-2 w-px bg-white/12" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.14em] text-amber-200/85 leading-none">−67.8100°</span>
-              <span aria-hidden className="h-2 w-px bg-white/12" />
-              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.28em] text-white/55 leading-none">Rio Branco · AC</span>
+              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.24em] text-white/45 leading-none">Patrulha</span>
+              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.12em] text-amber-200/85 leading-none">−9.9747°</span>
+              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] tabular-nums tracking-[0.12em] text-amber-200/85 leading-none">−67.8100°</span>
+              <span aria-hidden className="h-2 w-px bg-white/12 shrink-0" />
+              <span className="font-mono text-[9px] lg:text-[9.5px] uppercase tracking-[0.24em] text-white/55 leading-none">Rio Branco · AC</span>
             </div>
 
 
