@@ -126,20 +126,7 @@
     letter-spacing: -0.003em;
   }
 
-  /* HUD grid overlay global (herdado do splash). Fica atrás de todo conteúdo. */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image:
-      linear-gradient(to right, rgba(244,201,116,0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(244,201,116,0.06) 1px, transparent 1px);
-    background-size: 40px 40px;
-    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 85%);
-            mask-image: radial-gradient(ellipse at center, black 40%, transparent 85%);
-  }
+  /* HUD grid overlay removido para fundo limpo. */
 
   #root {
     background: transparent;
