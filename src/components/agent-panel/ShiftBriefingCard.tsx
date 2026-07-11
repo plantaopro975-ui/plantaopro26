@@ -162,10 +162,12 @@ export function ShiftBriefingCard({
         .order('shift_date', { ascending: true })
         .limit(4);
 
-      const active = (shifts || []).find((s: any) => {
-        const start = parseISO(`${s.shift_date}T${s.start_time}`);
-        return isWithinInterval(new Date(), { start, end: addHours(start, 24) });
-      }) as Shift | undefined;
+      // Ativa somente durante a janela REAL do plantão (respeita end_time).
+      const active = (shifts || []).find((s: any) => isShiftActive({
+        shift_date: s.shift_date,
+        start_time: s.start_time,
+        end_time: s.end_time,
+      })) as Shift | undefined;
 
       setCurrentShift(active || null);
 
