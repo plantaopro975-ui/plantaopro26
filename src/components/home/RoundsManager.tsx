@@ -2397,21 +2397,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </div>
                   <div className="scale-90 origin-right"><RoundsHeroSVG color={teamColor} active={!!currentView && !currentView.done} silent={silentMode} /></div>
                 </div>
-                {isAdminUser && (
-                  <div
-                    className="relative border-t px-2.5 py-1 sm:px-3"
-                    style={{ borderColor: `${teamColor}22`, background: `linear-gradient(180deg, ${teamColor}08, transparent)` }}
-                  >
-                    <TeamOperationsStripe
-                      team={team}
-                      color={teamColor}
-                      active={!!currentView && !currentView.done}
-                      alertLevel={securityAlert.level}
-                      alertLabel={securityAlert.label}
-                    />
-                    <SecurityDoctrineCard color={teamColor} />
-                  </div>
-                )}
+                <div
+                  className="relative border-t px-2.5 py-1 sm:px-3"
+                  style={{ borderColor: `${teamColor}22`, background: `linear-gradient(180deg, ${teamColor}08, transparent)` }}
+                >
+                  <TeamOperationsStripe
+                    team={team}
+                    color={teamColor}
+                    active={!!currentView && !currentView.done}
+                    alertLevel={securityAlert.level}
+                    alertLabel={securityAlert.label}
+                  />
+                  {isAdminUser && <SecurityDoctrineCard color={teamColor} />}
+                </div>
+
               </div>
 
 
