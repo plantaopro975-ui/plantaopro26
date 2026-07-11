@@ -129,6 +129,9 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  // Trava explícita: só permite gravar como folga/férias/licença após o
+  // operador reconfirmar. Impede inserção acidental (bug relatado em produção).
+  const [vacationAck, setVacationAck] = useState(false);
 
   useEffect(() => {
     return () => {
