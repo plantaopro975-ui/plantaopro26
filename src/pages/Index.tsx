@@ -1561,7 +1561,7 @@ export default function Index() {
                 </span>
                 <span>Online</span>
               </span>
-              <HardRefreshHint />
+              
               <span className="text-muted-foreground/40">·</span>
               <button
                 type="button"
