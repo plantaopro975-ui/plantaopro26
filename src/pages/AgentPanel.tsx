@@ -58,7 +58,7 @@ const NotificationsAndAlertsCard = lazy(() => import('@/components/agent-panel/N
 const AgentSettingsCard = lazy(() => import('@/components/agent-panel/AgentSettingsCard').then(m => ({ default: m.AgentSettingsCard })));
 const AgentEventsCard = lazy(() => import('@/components/agent-panel/AgentEventsCard').then(m => ({ default: m.AgentEventsCard })));
 
-const ShiftPlannerCard = lazy(() => import('@/components/agent-panel/ShiftPlannerCard'));
+
 const ShiftCalendarOverview = lazy(() => import('@/components/agent-panel/ShiftCalendarOverview').then(m => ({ default: m.ShiftCalendarOverview })));
 const RecentShiftCyclesCard = lazy(() => import('@/components/agent-panel/RecentShiftCyclesCard').then(m => ({ default: m.RecentShiftCyclesCard })));
 const BHEvolutionChart = lazy(() => import('@/components/agent-panel/BHEvolutionChart').then(m => ({ default: m.BHEvolutionChart })));
@@ -70,7 +70,7 @@ const RoundsHistoryCard = lazy(() => import('@/components/agent-panel/RoundsHist
 // AgentsDirectoryCard agora vive somente na rota /diretorio (abas Equipe/Unidade/Sistema).
 const RoundsManager = lazy(() => import('@/components/home/RoundsManager').then(m => ({ default: ((m as any).RoundsManager ?? (m as any).default) as React.ComponentType<{ customTrigger?: ReactNode }> })));
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Calculator, Shield, Zap, Key, Bell, BellRing, Megaphone, Radio, ChevronDown } from 'lucide-react';
+import { Loader2, Users, MessageCircle, Calendar, Clock, ArrowRightLeft, CalendarOff, Settings, User, CalendarDays, Shield, Zap, Key, Bell, BellRing, Megaphone, Radio, ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -201,7 +201,7 @@ export default function AgentPanel() {
       void import('@/components/agent-panel/BHTracker');
       void import('@/components/agent-panel/BHEvolutionChart');
       void import('@/components/agent-panel/BHHistoryTracker');
-      void import('@/components/agent-panel/ShiftPlannerCard');
+      
       void import('@/components/agent-panel/SwapRequestsCard');
       void import('@/components/agent-panel/NotificationsAndAlertsCard');
       void import('@/components/agent-panel/AgentSettingsCard');
@@ -686,12 +686,6 @@ export default function AgentPanel() {
                         text: 'text-cyan-200 group-data-[state=active]:text-black',
                       },
                       {
-                        value: 'planejador', label: 'Planejar', full: 'Planejador de Escalas', Icon: Calculator,
-                        trigger: 'hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:border-rose-300',
-                        icon: 'text-rose-400 group-data-[state=active]:text-white',
-                        text: 'text-rose-200 group-data-[state=active]:text-white',
-                      },
-                      {
                         value: 'permutas', label: 'Permutas', full: 'Permutas de Plantão', Icon: ArrowRightLeft,
                         trigger: 'hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:border-yellow-300',
                         icon: 'text-yellow-400 group-data-[state=active]:text-black',
@@ -891,11 +885,6 @@ export default function AgentPanel() {
                 </SectionBoundary>}
               </TabsContent>
 
-              <TabsContent value="planejador" forceMount hidden={activeTab !== 'planejador'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
-                {mountedTabs.has('planejador') && <SectionBoundary label="planejador" loadingLabel="Carregando planejador" fallback={<ModuleFallback compact={compact} />}>
-                <ShiftPlannerCard agentId={agent.id} />
-                </SectionBoundary>}
-              </TabsContent>
 
               <TabsContent value="permutas" forceMount hidden={activeTab !== 'permutas'} className="space-y-2.5 md:space-y-3 mt-0 data-[state=inactive]:hidden">
                 {mountedTabs.has('permutas') && <SectionBoundary label="permutas" loadingLabel="Carregando permutas" fallback={<ModuleFallback compact={compact} />}>
