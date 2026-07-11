@@ -160,11 +160,11 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
           loading="lazy"
           decoding="async"
           className={cn(
-            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
+            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-[center_25%] select-none',
             'transition-all duration-500 ease-out',
             isSelected
-              ? 'opacity-100 scale-105 saturate-125 contrast-110'
-              : 'opacity-80 saturate-110 contrast-105 group-hover:opacity-100 group-hover:scale-[1.04] group-hover:saturate-125',
+              ? 'opacity-90 scale-105 saturate-125 contrast-110'
+              : 'opacity-70 saturate-110 contrast-105 group-hover:opacity-90 group-hover:scale-[1.04] group-hover:saturate-125',
           )}
           draggable={false}
         />
