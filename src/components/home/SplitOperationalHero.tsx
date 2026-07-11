@@ -388,6 +388,21 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
   }, []);
   const resetSceneOffset = useCallback(() => setSceneOffset({ x: 0, y: 0 }), []);
 
+  // ==== SCALE MANUAL (desktop) — viatura e agente independentes ==========
+  const [vehScale, setVehScale] = useState<number>(() => {
+    if (typeof window === 'undefined') return 1;
+    const v = parseFloat(localStorage.getItem('pp-veh-scale') || '1');
+    return Number.isFinite(v) && v > 0 ? v : 1;
+  });
+  const [agtScale, setAgtScale] = useState<number>(() => {
+    if (typeof window === 'undefined') return 1;
+    const v = parseFloat(localStorage.getItem('pp-agt-scale') || '1');
+    return Number.isFinite(v) && v > 0 ? v : 1;
+  });
+  useEffect(() => { try { localStorage.setItem('pp-veh-scale', String(vehScale)); } catch {} }, [vehScale]);
+  useEffect(() => { try { localStorage.setItem('pp-agt-scale', String(agtScale)); } catch {} }, [agtScale]);
+  const clampScale = (v: number) => Math.max(0.5, Math.min(3, Math.round(v * 100) / 100));
+
 
 
   return (
