@@ -3738,7 +3738,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 </div>
                               )}
 
-                              {/* Restante total do turno + próximo agente */}
+                              {/* Contadores enxutos — sem duplicação */}
                               {schedule && (
                                 <div
                                   className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[11.5px] tabular-nums"
@@ -3757,16 +3757,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                     const nextIdx = view && !view.done ? view.index + 1 : (!view ? 1 : -1);
                                     if (nextIdx < 0 || nextIdx >= schedule.rows.length) return null;
                                     const nextRow = schedule.rows[nextIdx];
-                                    const secsToNext = view && !view.done ? view.remaining : schedule.rows[0].duration * 60;
                                     return (
-                                    <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2 py-0.5 text-primary">
-                                        Próx: <b className="uppercase">{nextRow.name}</b> em&nbsp;
-                                        <b>{fmtHMS(secsToNext)}</b>
+                                      <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2 py-0.5 text-primary">
+                                        Próximo: <b className="uppercase">{nextRow.name}</b>
                                       </span>
                                     );
                                   })()}
                                 </div>
                               )}
+
 
                             </>
                           );
