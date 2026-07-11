@@ -2845,8 +2845,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           }}
                           title={teamLocked ? 'Equipe travada — cancele a programação ou finalize a ronda para trocar' : `Selecionar ${t.label}`}
                           className={cn(
-                            'group relative rounded-sm border px-1.5 py-1.5 font-mono font-bold uppercase tracking-[0.14em] text-[11px] transition-all duration-200',
-                            'flex items-center justify-between gap-1.5',
+                            'group relative rounded-sm border px-1.5 py-1.5 font-mono font-bold uppercase tracking-[0.08em] text-[11px] transition-all duration-200',
+                            'flex items-center justify-center',
                             disabled && 'opacity-40 cursor-not-allowed',
                             active
                               ? 'shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset]'
@@ -2858,12 +2858,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               : { borderColor: `${c}33`, color: `${c}b3` }
                           }
                         >
-                          <span className="truncate">{t.label}</span>
+                          <span className="truncate leading-none">{t.label}</span>
                           <span
                             aria-hidden
                             className={cn(
-                              'inline-block h-1.5 w-1.5 rounded-full transition-all',
-                              active ? 'animate-pulse' : 'opacity-70',
+                              'absolute top-1 right-1 inline-block h-1.5 w-1.5 rounded-full transition-all',
+                              active ? 'animate-pulse' : 'opacity-60',
                             )}
                             style={{
                               backgroundColor: c,
@@ -2871,6 +2871,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             }}
                           />
                         </button>
+
                       );
                     })}
                   </div>
