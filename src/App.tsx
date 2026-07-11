@@ -17,6 +17,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { ConfirmProvider } from "@/components/ui/confirm-provider";
 import { SingleDeviceGuard } from "@/components/SingleDeviceGuard";
+import { SingleTabGuard } from "@/components/SingleTabGuard";
 import { SplashScreen } from "@/components/SplashScreen";
 import { AccessAcknowledgmentGate } from "@/components/AccessAcknowledgmentGate";
 import { PanelSkeleton } from "@/components/ui/panel-skeleton";
@@ -105,6 +106,7 @@ function RoutePrefetcher() {
 }
 
 const App = () => (
+  <SingleTabGuard>
   <QueryClientProvider client={queryClient}>
     <FontSizeProvider>
       <ThemeProvider>
@@ -233,6 +235,7 @@ const App = () => (
       </ThemeProvider>
     </FontSizeProvider>
   </QueryClientProvider>
+  </SingleTabGuard>
 );
 
 export default App;

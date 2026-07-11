@@ -2039,6 +2039,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     ? Math.max(0, schedule.totalSec - (currentView?.elapsed ?? 0))
     : 0;
 
+  // Alerta visual/sonoro nos últimos minutos da operação inteira
+  const endingSoon = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 300; // ≤ 5 min
+  const endingCritical = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 60; // ≤ 1 min
+  const endingWarnFiredRef = useRef<Set<number>>(new Set());
+  useEffect(() => {
+    if (!running || totalRemainingSeconds <= 0) return;
+    const thresholds = [300, 60, 10];
+    for (const t of thresholds) {
+      if (
+        totalRemainingSeconds <= t &&
+        totalRemainingSeconds > t - 2 &&
+        !endingWarnFiredRef.current.has(t)
+      ) {
+        endingWarnFiredRef.current.add(t);
+        const label = t === 300 ? '5 minutos' : t === 60 ? '1 minuto' : '10 segundos';
+        toast({
+          title: `⏳ Operação encerra em ${label}`,
+          description: `EQUIPE ${team} · finalize as rondas em andamento`,
+        });
+        try { playAlert(soundRef.current); } catch { /* ignore */ }
+      }
+    }
+    if (totalRemainingSeconds > 305) {
+      // reset entre execuções
+      endingWarnFiredRef.current.clear();
+    }
+  }, [totalRemainingSeconds, running, team]);
+
+
 
   // Trava persistida: quais postos já dispararam a notificação
   const notifiedRef = useRef<Set<number>>(new Set());
@@ -2722,11 +2751,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </span>
                   <span className="ml-auto flex items-center gap-1.5 font-mono text-[11px] tabular-nums text-muted-foreground/90">
                     <span
-                      className="rounded-sm border px-1.5 py-[1px] text-foreground/85"
-                      style={{ borderColor: `${teamColor}33` }}
+                      className={`rounded-sm border px-1.5 py-[1px] transition-colors ${
+                        endingCritical
+                          ? 'border-red-500/70 bg-red-500/15 text-red-200 animate-pulse'
+                          : endingSoon
+                          ? 'border-amber-400/60 bg-amber-400/10 text-amber-200 animate-pulse'
+                          : 'text-foreground/85'
+                      }`}
+                      style={endingSoon ? undefined : { borderColor: `${teamColor}33` }}
+                      title={endingSoon ? 'Operação encerrando em breve' : undefined}
                     >
                       {fmtHMS(totalRemainingSeconds)}
+                      {endingSoon && <span className="ml-1">⏳</span>}
                     </span>
+
                     <span className="hidden xs:inline">· {schedule?.rows.length ?? agents.length} ag.</span>
                     {activeRoundName && (
                       <span className="hidden sm:inline truncate max-w-[140px]">
@@ -3055,11 +3093,21 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           {schedule && mode === 'split' && (
                             <span data-testid="night-total-remaining">
                               Restante&nbsp;
-                              <b className="font-mono tabular-nums text-amber-100">
+                              <b
+                                className={`font-mono tabular-nums ${
+                                  endingCritical
+                                    ? 'text-red-300 animate-pulse'
+                                    : endingSoon
+                                    ? 'text-amber-300 animate-pulse'
+                                    : 'text-amber-100'
+                                }`}
+                              >
                                 {fmtHMS(totalRemainingSeconds)}
+                                {endingSoon && ' ⏳'}
                               </b>
                             </span>
                           )}
+
                         </div>
 
 
