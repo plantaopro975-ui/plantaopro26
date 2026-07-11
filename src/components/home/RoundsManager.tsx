@@ -3044,11 +3044,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               <TacticalClock accent={teamColor} />
 
               {running && live && !live.done && schedule && (
-                  <span className="hidden md:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[13.5px] font-bold tabular-nums" style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}22` }}>
-                  <Timer className="h-3 w-3" />
-                  {fmtHMS(live.remaining)}
+                  <span
+                    className="hidden md:inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[13.5px] font-bold tabular-nums"
+                    style={{ color: teamColor, border: `1px solid ${teamColor}77`, backgroundColor: `${teamColor}22` }}
+                    title="Tempo decorrido do agente em ronda (crescente)"
+                  >
+                    <span aria-hidden className="text-[10px] opacity-80">▲</span>
+                    {fmtHMS(Math.max(0, Math.min(live.slotSec ?? 0, (live.slotSec ?? 0) - live.remaining)))}
+                    <span aria-hidden className="text-[9.5px] font-sans font-medium uppercase tracking-wider opacity-70">/{fmtHMS(live.slotSec ?? 0)}</span>
                 </span>
               )}
+
 
               {(drag.x !== 0 || drag.y !== 0) && (
                 <button type="button" onClick={resetPosition} aria-label="Recentrar janela"
