@@ -327,7 +327,7 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
 
 
         {/* Team legend - Compact */}
-        {!compact && (
+        {!compact && !viewportSmall && (
           <div className="flex flex-wrap justify-center gap-x-3 gap-y-0.5 text-[9px] text-zinc-400">
             {Object.entries(teamColors).filter(([k]) => k !== 'default').map(([team, colors]) => (
               <div key={team} className="flex items-center gap-1">
