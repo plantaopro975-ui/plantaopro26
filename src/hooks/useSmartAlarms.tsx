@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, parseISO, differenceInMinutes, isToday, isTomorrow, addDays, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 
 export type AlarmCategory = 
   | 'plantao' 
