@@ -2377,7 +2377,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const endingSoon = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 300; // ≤ 5 min
   const endingCritical = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 60; // ≤ 1 min
   const endingWarnFiredRef = useRef<Set<number>>(new Set());
-  const [endingConfirmOpen, setEndingConfirmOpen] = useState(false);
+  // (removido) endingConfirmOpen — não pedimos mais confirmação nos últimos 5 min.
   useEffect(() => {
     if (!running || totalRemainingSeconds <= 0) {
       if (totalRemainingSeconds > 305) endingWarnFiredRef.current.clear();
