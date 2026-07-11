@@ -2181,6 +2181,50 @@ export type Database = {
         }
         Relationships: []
       }
+      team_round_log: {
+        Row: {
+          agents_count: number | null
+          completed_at: string
+          completed_by: string
+          created_at: string
+          id: string
+          saved_name: string
+          team: string
+          total_seconds: number | null
+          unit_id: string | null
+        }
+        Insert: {
+          agents_count?: number | null
+          completed_at?: string
+          completed_by: string
+          created_at?: string
+          id?: string
+          saved_name: string
+          team: string
+          total_seconds?: number | null
+          unit_id?: string | null
+        }
+        Update: {
+          agents_count?: number | null
+          completed_at?: string
+          completed_by?: string
+          created_at?: string
+          id?: string
+          saved_name?: string
+          team?: string
+          total_seconds?: number | null
+          unit_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_round_log_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transfer_requests: {
         Row: {
           agent_id: string
