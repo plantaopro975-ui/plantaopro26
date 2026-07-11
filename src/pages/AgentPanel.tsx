@@ -585,14 +585,14 @@ export default function AgentPanel() {
                   // permanece intacta.
                   'sticky top-0 z-50 relative left-1/2 -translate-x-1/2 w-screen',
                   'focus-within:ring-1 focus-within:ring-amber-500/40',
-                  'pt-1 pb-1'
+                  'pt-0.5 pb-0.5'
                 )}
               >
 
                 <div
                   className={cn(
                     'mx-auto w-full',
-                    compact ? 'max-w-[820px] space-y-1.5 px-2 sm:px-2.5 md:px-3' : 'max-w-[960px] space-y-2 px-2 sm:px-3 md:px-3.5 lg:px-4'
+                    compact ? 'max-w-[820px] space-y-1 px-1.5 sm:px-2 md:px-2.5' : 'max-w-[960px] space-y-1.5 px-2 sm:px-2.5 md:px-3 lg:px-3.5'
                   )}
                 >
 
