@@ -4180,42 +4180,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         onSecondary={confirmAndClose}
       />
 
-      {/* Confirmação — últimos 5 minutos da operação */}
-      <ConfirmDialog
-        open={endingConfirmOpen}
-        onOpenChange={setEndingConfirmOpen}
-        variant="warning"
-        kicker={`EQUIPE ${team} · ÚLTIMOS 5 MIN`}
-        title="Encerrar a operação agora?"
-        description={
-          <div className="space-y-1.5">
-            <p className="text-slate-300 text-[11.5px] leading-snug">
-              A operação está entrando nos <b className="text-amber-300">últimos 5 minutos</b>.
-              Você deseja <b className="text-slate-100">finalizar a ronda/plantão</b> agora ou manter
-              em andamento até o término natural?
-            </p>
-            <p className="text-[10.5px] text-slate-400 leading-snug">
-              Restante:{' '}
-              <b className="text-slate-200 tabular-nums">{fmtHMS(totalRemainingSeconds)}</b>
-              {activeRoundName && (
-                <> · Ativo: <b className="text-slate-200">{activeRoundName}</b></>
-              )}
-            </p>
-          </div>
-        }
-        accent="#f59e0b"
-        primaryLabel="Manter em andamento"
-        onPrimary={() => setEndingConfirmOpen(false)}
-        secondaryLabel="Sim, encerrar agora"
-        onSecondary={() => {
-          setEndingConfirmOpen(false);
-          resetTimer();
-          toast({
-            title: '🛑 Operação encerrada',
-            description: `EQUIPE ${team} · encerrada manualmente nos últimos 5 min`,
-          });
-        }}
-      />
+      {/* Removido: dialog "Encerrar a operação agora?" — era um pedido de
+          confirmação desnecessário. O sistema agora apenas emite um toast
+          informativo (⏳ Operação encerra em 5 minutos) e segue seu curso. */}
+
 
 
 
