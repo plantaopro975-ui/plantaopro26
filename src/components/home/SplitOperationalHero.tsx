@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Radio, ShieldCheck, Activity, Radar } from 'lucide-react';
+import { Radio, ShieldCheck, Activity, Radar, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { teamEmblems } from '@/lib/teamAssets';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
