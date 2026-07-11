@@ -338,19 +338,8 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     onTeamClick(k);
   }, [onTeamClick]);
 
-  // ==== DRAG MODE (desktop only, temporário) ============================
-  // Permite arrastar a cena (viatura + agente) para posicionar livremente.
-  // Persiste em localStorage para o usuário reportar o offset final.
-  const [sceneOffset, setSceneOffset] = useState<{ x: number; y: number }>(() => {
-    if (typeof window === 'undefined') return { x: 0, y: 0 };
-    try {
-      const raw = localStorage.getItem('pp-scene-offset');
-      if (raw) return JSON.parse(raw);
-    } catch {}
-    return { x: 0, y: 0 };
-  });
-  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  // ==== DRAG + SCALE independentes (desktop only) =========================
+  // Viatura e agente têm offsets e escalas próprios, persistidos em localStorage.
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)');
@@ -359,34 +348,46 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
-  useEffect(() => {
-    try { localStorage.setItem('pp-scene-offset', JSON.stringify(sceneOffset)); } catch {}
-  }, [sceneOffset]);
-  const onDragPointerDown = useCallback((e: React.PointerEvent) => {
-    if (!isDesktop) return;
-    e.preventDefault();
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    dragState.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      baseX: sceneOffset.x,
-      baseY: sceneOffset.y,
-    };
-    setIsDragging(true);
-  }, [isDesktop, sceneOffset]);
-  const onDragPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragState.current) return;
-    const dx = e.clientX - dragState.current.startX;
-    const dy = e.clientY - dragState.current.startY;
-    setSceneOffset({ x: dragState.current.baseX + dx, y: dragState.current.baseY + dy });
-  }, []);
-  const onDragPointerUp = useCallback((e: React.PointerEvent) => {
-    if (!dragState.current) return;
-    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
-    dragState.current = null;
-    setIsDragging(false);
-  }, []);
-  const resetSceneOffset = useCallback(() => setSceneOffset({ x: 0, y: 0 }), []);
+
+  const readOffset = (key: string) => {
+    if (typeof window === 'undefined') return { x: 0, y: 0 };
+    try { const raw = localStorage.getItem(key); if (raw) return JSON.parse(raw); } catch {}
+    return { x: 0, y: 0 };
+  };
+  const [vehOffset, setVehOffset] = useState<{ x: number; y: number }>(() => readOffset('pp-veh-offset'));
+  const [agtOffset, setAgtOffset] = useState<{ x: number; y: number }>(() => readOffset('pp-agt-offset'));
+  useEffect(() => { try { localStorage.setItem('pp-veh-offset', JSON.stringify(vehOffset)); } catch {} }, [vehOffset]);
+  useEffect(() => { try { localStorage.setItem('pp-agt-offset', JSON.stringify(agtOffset)); } catch {} }, [agtOffset]);
+
+  const [draggingKey, setDraggingKey] = useState<null | 'veh' | 'agt'>(null);
+  const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number; setter: (o: {x:number;y:number}) => void } | null>(null);
+
+  const makeDragHandlers = (
+    key: 'veh' | 'agt',
+    offset: { x: number; y: number },
+    setter: (o: { x: number; y: number }) => void,
+  ) => ({
+    onPointerDown: (e: React.PointerEvent) => {
+      if (!isDesktop) return;
+      e.preventDefault();
+      e.stopPropagation();
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: offset.x, baseY: offset.y, setter };
+      setDraggingKey(key);
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      if (!dragRef.current) return;
+      const dx = e.clientX - dragRef.current.startX;
+      const dy = e.clientY - dragRef.current.startY;
+      dragRef.current.setter({ x: dragRef.current.baseX + dx, y: dragRef.current.baseY + dy });
+    },
+    onPointerUp: (e: React.PointerEvent) => {
+      if (!dragRef.current) return;
+      try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+      dragRef.current = null;
+      setDraggingKey(null);
+    },
+  });
 
   // ==== SCALE MANUAL (desktop) — viatura e agente independentes ==========
   const [vehScale, setVehScale] = useState<number>(() => {
@@ -402,6 +403,9 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
   useEffect(() => { try { localStorage.setItem('pp-veh-scale', String(vehScale)); } catch {} }, [vehScale]);
   useEffect(() => { try { localStorage.setItem('pp-agt-scale', String(agtScale)); } catch {} }, [agtScale]);
   const clampScale = (v: number) => Math.max(0.5, Math.min(3, Math.round(v * 100) / 100));
+
+  const vehDrag = makeDragHandlers('veh', vehOffset, setVehOffset);
+  const agtDrag = makeDragHandlers('agt', agtOffset, setAgtOffset);
 
 
 
@@ -743,35 +747,26 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            {/* Wrapper de drag (desktop) — envolve a cena preservando os translates internos do Tailwind */}
-            <div
-              onPointerDown={onDragPointerDown}
-              onPointerMove={onDragPointerMove}
-              onPointerUp={onDragPointerUp}
-              onPointerCancel={onDragPointerUp}
-              className="contents lg:relative lg:z-50 lg:inline-block"
-              style={
-                isDesktop
-                  ? {
-                      transform: `translate3d(${sceneOffset.x}px, ${sceneOffset.y}px, 0)`,
-                      cursor: isDragging ? 'grabbing' : 'grab',
-                      touchAction: 'none',
-                      willChange: 'transform',
-                    }
-                  : undefined
-              }
-            >
-              {/* Cena composta */}
+            {/* Cena: viatura e agente arrastáveis independentemente no desktop */}
+            <div className="contents lg:relative lg:z-50 lg:inline-block">
               <div
                 className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-4 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[460px] xl:h-[540px] 2xl:h-[620px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[10%] xl:-translate-x-[10%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
               >
-
-
-
-                {/* Viatura — mobile: proporcional ao agente | desktop: pousada no chão sem cortes */}
+                {/* Viatura — arrastável independentemente */}
                 <picture
+                  {...(isDesktop ? vehDrag : {})}
                   className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0"
-                  style={isDesktop ? { transform: `scale(${vehScale})`, transformOrigin: 'bottom left' } : undefined}
+                  style={
+                    isDesktop
+                      ? {
+                          transform: `translate3d(${vehOffset.x}px, ${vehOffset.y}px, 0) scale(${vehScale})`,
+                          transformOrigin: 'bottom left',
+                          cursor: draggingKey === 'veh' ? 'grabbing' : 'grab',
+                          touchAction: 'none',
+                          willChange: 'transform',
+                        }
+                      : undefined
+                  }
                 >
                   <source type="image/webp" srcSet={vehicle3dWebp} />
                   <img
@@ -785,8 +780,6 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                   <span
                     aria-hidden
                     className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.7] xl:scale-[1.8] 2xl:scale-[1.9] origin-bottom-left"
-
-
                   >
                     <span
                       aria-hidden
@@ -799,16 +792,26 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       style={{ top: '23.2%', left: '63.4%' }}
                     />
                   </span>
-                  {/* Plataforma holográfica + scanner (desktop apenas) */}
                   <span aria-hidden className="hidden lg:block pp-holo-ring" />
                   <span aria-hidden className="hidden lg:block pp-holo-platform" />
                   <span aria-hidden className="hidden lg:block pp-holo-scanner" />
                 </picture>
 
-                {/* Agente — cresce a partir do chão, sem translate positivo para não cortar os pés */}
+                {/* Agente — arrastável independentemente */}
                 <picture
+                  {...(isDesktop ? agtDrag : {})}
                   className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0"
-                  style={isDesktop ? { transform: `scale(${agtScale})`, transformOrigin: 'bottom' } : undefined}
+                  style={
+                    isDesktop
+                      ? {
+                          transform: `translate3d(${agtOffset.x}px, ${agtOffset.y}px, 0) scale(${agtScale})`,
+                          transformOrigin: 'bottom',
+                          cursor: draggingKey === 'agt' ? 'grabbing' : 'grab',
+                          touchAction: 'none',
+                          willChange: 'transform',
+                        }
+                      : undefined
+                  }
                 >
                   <source type="image/webp" srcSet={agent3dWebp} />
                   <img
@@ -819,13 +822,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.65] xl:scale-[1.75] 2xl:scale-[1.85] origin-bottom sm:origin-bottom"
                     draggable={false}
                   />
-                  {/* Plataforma holográfica + scanner vertical (desktop apenas) */}
                   <span aria-hidden className="hidden lg:block pp-holo-ring" style={{ width: '58%' }} />
                   <span aria-hidden className="hidden lg:block pp-holo-platform" style={{ width: '58%' }} />
                   <span aria-hidden className="hidden lg:block pp-holo-scanner" />
                 </picture>
-
-
               </div>
             </div>
 
@@ -834,17 +834,28 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               <div
                 className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-amber-400">◈ DRAG</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-amber-400">◈ VIA</span>
                   <span className="text-white/90 tabular-nums">
-                    x: {sceneOffset.x}px · y: {sceneOffset.y}px
+                    x: {vehOffset.x}px · y: {vehOffset.y}px
                   </span>
                   <button
                     type="button"
-                    onClick={resetSceneOffset}
-                    className="ml-1 rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                    onClick={() => setVehOffset({ x: 0, y: 0 })}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
                   >
-                    reset
+                    reset pos
+                  </button>
+                  <span className="text-amber-400 ml-2">◈ AGT</span>
+                  <span className="text-white/90 tabular-nums">
+                    x: {agtOffset.x}px · y: {agtOffset.y}px
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setAgtOffset({ x: 0, y: 0 })}
+                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                  >
+                    reset pos
                   </button>
                 </div>
 
