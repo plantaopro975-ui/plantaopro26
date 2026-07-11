@@ -3563,15 +3563,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           return (
                             <li key={i}
                                 className={cn(
-                                   'relative grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card px-1.5 py-1 min-w-0',
-                                  isCurrent && 'bg-primary/10',
+                                   'relative grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-sm border bg-card/70 pl-2.5 pr-1.5 py-1 min-w-0 overflow-hidden',
+                                  isCurrent && 'bg-[color:var(--rm-tint,transparent)]',
                                   isDone && 'opacity-70',
                                 )}
                                 style={{
-                                  borderColor: isCurrent ? teamColor : isDone ? 'hsl(var(--success) / 0.32)' : 'hsl(var(--border))',
-                                  borderLeftWidth: isCurrent ? 3 : 1,
+                                  borderColor: isCurrent ? teamColor : isDone ? 'hsl(var(--success) / 0.32)' : `${teamColor}22`,
+                                  borderLeftWidth: 3,
+                                  borderLeftColor: isDone ? 'hsl(var(--success) / 0.6)' : teamColor,
+                                  boxShadow: isCurrent ? `0 0 14px -6px ${teamColor}, inset 0 0 0 1px ${teamColor}33` : undefined,
+                                  ['--rm-tint' as string]: `${teamColor}14`,
                                 }}>
-                              <span className="font-mono text-[10.5px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
+                              {/* tactical corner brackets — always visible in team color */}
+                              <span aria-hidden className="pointer-events-none absolute top-0 left-0 h-1.5 w-1.5 border-t border-l" style={{ borderColor: isDone ? 'hsl(var(--success)/0.5)' : `${teamColor}80` }} />
+                              <span aria-hidden className="pointer-events-none absolute top-0 right-0 h-1.5 w-1.5 border-t border-r" style={{ borderColor: isDone ? 'hsl(var(--success)/0.5)' : `${teamColor}80` }} />
+                              <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 h-1.5 w-1.5 border-b border-l" style={{ borderColor: isDone ? 'hsl(var(--success)/0.5)' : `${teamColor}80` }} />
+                              <span aria-hidden className="pointer-events-none absolute bottom-0 right-0 h-1.5 w-1.5 border-b border-r" style={{ borderColor: isDone ? 'hsl(var(--success)/0.5)' : `${teamColor}80` }} />
+                              {/* LED indicator */}
+                              <span className="flex items-center gap-1.5 font-mono text-[10.5px] tabular-nums" style={{ color: isCurrent ? teamColor : isDone ? 'hsl(var(--success))' : `${teamColor}b3` }}>
+                                <span
+                                  aria-hidden
+                                  className={cn('inline-block h-1.5 w-1.5 rounded-full shrink-0', isCurrent && 'animate-pulse')}
+                                  style={{
+                                    background: isDone ? 'hsl(var(--success))' : teamColor,
+                                    boxShadow: isCurrent ? `0 0 8px ${teamColor}` : 'none',
+                                  }}
+                                />
+                                {pad(i + 1)}
+                              </span>
+
                               <span className="min-w-0">
                                 <span className={cn(
                                   'font-sans font-semibold text-[13px] leading-tight truncate min-w-0 flex items-center gap-1.5',
