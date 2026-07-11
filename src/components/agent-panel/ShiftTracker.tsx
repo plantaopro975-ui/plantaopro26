@@ -280,23 +280,11 @@ export function ShiftTracker({ agentId, compact = false }: ShiftTrackerProps) {
   };
 
   const checkIfStillOnDuty = (shift: CurrentShift): boolean => {
-    const now = new Date();
-    const shiftDate = parseISO(shift.shift_date);
-    const [startHour, startMin] = shift.start_time.split(':').map(Number);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(startHour, startMin, 0);
-    const shiftEnd = addHours(shiftStart, 24);
-    return isWithinInterval(now, { start: shiftStart, end: shiftEnd });
+    return isShiftActive(shift);
   };
 
   const checkIfOnDuty = (shift: CurrentShift): boolean => {
-    const now = new Date();
-    const shiftDate = parseISO(shift.shift_date);
-    const [startHour, startMin] = shift.start_time.split(':').map(Number);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(startHour, startMin, 0);
-    const shiftEnd = addHours(shiftStart, 24);
-    return isWithinInterval(now, { start: shiftStart, end: shiftEnd });
+    return isShiftActive(shift);
   };
 
   const updateTimeRemaining = (shift?: CurrentShift) => {
@@ -304,31 +292,27 @@ export function ShiftTracker({ agentId, compact = false }: ShiftTrackerProps) {
     if (!activeShift) return;
 
     const now = new Date();
-    const shiftDate = parseISO(activeShift.shift_date);
-    const [startHour, startMin] = activeShift.start_time.split(':').map(Number);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(startHour, startMin, 0);
-    
-    const shiftEnd = addHours(shiftStart, 24);
-    
+    const { start: shiftStart, end: shiftEnd } = getShiftBounds(activeShift);
+
     // Time remaining
     const hoursRemaining = differenceInHours(shiftEnd, now);
     const minutesRemaining = differenceInMinutes(shiftEnd, now) % 60;
     const secondsRemaining = differenceInSeconds(shiftEnd, now) % 60;
-    
+
     // Time elapsed
     const hoursElapsed = differenceInHours(now, shiftStart);
     const minutesElapsed = differenceInMinutes(now, shiftStart) % 60;
     const secondsElapsed = differenceInSeconds(now, shiftStart) % 60;
-    
-    const totalMinutes = 24 * 60;
+
+    const totalMinutes = Math.max(1, differenceInMinutes(shiftEnd, shiftStart));
     const elapsedMinutes = differenceInMinutes(now, shiftStart);
     const progressPercent = Math.min(100, Math.max(0, (elapsedMinutes / totalMinutes) * 100));
-    
+
     setProgress(progressPercent);
     setTimeRemaining({ hours: hoursRemaining, minutes: minutesRemaining, seconds: secondsRemaining });
     setTimeElapsed({ hours: hoursElapsed, minutes: minutesElapsed, seconds: secondsElapsed });
   };
+
 
   // Format time unit with leading zero
   const formatUnit = (value: number) => value.toString().padStart(2, '0');
