@@ -25,13 +25,12 @@ function getTabId(): string {
 export function SingleDeviceGuard() {
   const { user, signOut } = useAuth();
   const [kicked, setKicked] = useState(false);
-  const [countdown, setCountdown] = useState(6);
+  const [countdown, setCountdown] = useState(2);
   const myTabRef = useRef<string>("");
   const myTsRef = useRef<number>(0);
 
   useEffect(() => {
     if (!user?.id) {
-      // Sessão terminou → limpa o modal para não ficar preso na tela
       setKicked(false);
       return;
     }
@@ -41,37 +40,37 @@ export function SingleDeviceGuard() {
     myTabRef.current = myTab;
     myTsRef.current = myTs;
 
-    // Janela de graça: ignora QUALQUER broadcast recebido nos primeiros 10s
-    // após o login/mount. Evita race condition em que reconexões de Realtime,
-    // hidratação de sessão ou reenvio de broadcasts derrubam o próprio usuário
-    // logo depois de entrar. Também exige gap mínimo de 3s entre timestamps
-    // para considerar "outro dispositivo" — tabs abertas ao mesmo tempo
-    // (ex.: PWA + browser) não se derrubam mais.
-    const GRACE_MS = 10_000;
-    const MIN_GAP_MS = 3_000;
+    // Política: o acesso MAIS RECENTE prevalece. Ao entrar, este dispositivo
+    // envia um "claim" avisando todas as sessões antigas para se encerrarem.
+    // Quem receber um claim mais novo (>2s) que o próprio ts, sai automaticamente.
+    // Curta janela de graça (4s) protege contra reconexões do Realtime derrubarem
+    // o próprio dispositivo que acabou de entrar.
+    const GRACE_MS = 4_000;
+    const MIN_GAP_MS = 2_000;
     const graceUntil = myTs + GRACE_MS;
 
     const channel = supabase.channel(`single-device:${user.id}`, {
       config: { broadcast: { self: false } },
     });
 
+    const handleClaim = (msg: any) => {
+      const { tabId, ts } = msg.payload ?? {};
+      if (!tabId || tabId === myTabRef.current) return;
+      if (Date.now() < graceUntil) return;
+      if (typeof ts === "number" && ts > myTsRef.current + MIN_GAP_MS) {
+        setKicked(true);
+      }
+    };
+
     channel
-      .on("broadcast", { event: "hello" }, (msg: any) => {
-        const { tabId, ts } = msg.payload ?? {};
-        if (!tabId || tabId === myTabRef.current) return;
-        // Ignora broadcasts durante a janela de graça (login recente).
-        if (Date.now() < graceUntil) return;
-        // Só considera "outro dispositivo" se o ts for suficientemente maior
-        // que o nosso — protege contra reordenação/reenvio de mensagens.
-        if (typeof ts === "number" && ts > myTsRef.current + MIN_GAP_MS) {
-          setKicked(true);
-        }
-      })
+      .on("broadcast", { event: "hello" }, handleClaim)
+      .on("broadcast", { event: "claim" }, handleClaim)
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
+          // "claim" = eu sou o dispositivo mais recente, os antigos devem sair.
           channel.send({
             type: "broadcast",
-            event: "hello",
+            event: "claim",
             payload: {
               tabId: myTab,
               ts: myTs,
@@ -93,7 +92,6 @@ export function SingleDeviceGuard() {
       /* noop */
     } finally {
       setKicked(false);
-      // Garante saída da tela travada mesmo se o estado global demorar
       if (typeof window !== "undefined" && window.location.pathname !== "/") {
         window.location.replace("/");
       }
@@ -102,7 +100,7 @@ export function SingleDeviceGuard() {
 
   useEffect(() => {
     if (!kicked) return;
-    setCountdown(6);
+    setCountdown(2);
     const interval = setInterval(() => {
       setCountdown((c) => {
         if (c <= 1) {

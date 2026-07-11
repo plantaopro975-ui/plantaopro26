@@ -32,13 +32,9 @@ import objDeltaWebp from '@/assets/teams/delta-radio-v2.webp';
 
 // Pôsteres cinematográficos táticos (background dos cards de equipe)
 import bgAlfa from '@/assets/teams/alfa-poster.jpg';
-import bgAlfaWebp from '@/assets/teams/alfa-poster.webp';
 import bgBravo from '@/assets/teams/bravo-poster.jpg';
-import bgBravoWebp from '@/assets/teams/bravo-poster.webp';
 import bgCharlie from '@/assets/teams/charlie-poster.jpg';
-import bgCharlieWebp from '@/assets/teams/charlie-poster.webp';
 import bgDelta from '@/assets/teams/delta-poster.jpg';
-import bgDeltaWebp from '@/assets/teams/delta-poster.webp';
 
 interface Props {
   onTeamClick: (team: string) => void;
@@ -46,6 +42,7 @@ interface Props {
 
 type TeamKey = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
 
+// Accents alinhados com src/lib/teamColors.ts (mesma paleta usada pelo Gestor de Ronda)
 const TEAMS: {
   key: TeamKey;
   motto: string;
@@ -57,10 +54,10 @@ const TEAMS: {
   bg: string;
   bgAvif: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Contenção',    accent: '152 76% 52%', obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfaWebp },
-  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Investida',    accent: '4 84% 60%',   obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravoWebp },
-  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Vigilância',   accent: '190 92% 58%', obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlieWebp },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Intervenção',  accent: '268 88% 68%', obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDeltaWebp },
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Contenção',    accent: '158 64% 52%', obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfa },
+  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Investida',    accent: '25 95% 61%',  obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravo },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Vigilância',   accent: '213 94% 68%', obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlie },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Intervenção',  accent: '45 97% 65%',  obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDelta },
 ];
 
 
