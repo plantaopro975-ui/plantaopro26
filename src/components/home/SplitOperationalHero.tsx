@@ -880,30 +880,48 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
                 {!hudCollapsed && (
                 <div className="flex flex-col gap-1.5 px-2.5 py-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-amber-400">◈ VIA</span>
-                  <span className="text-white/90 tabular-nums">
-                    x: {vehOffset.x}px · y: {vehOffset.y}px
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setVehOffset({ x: 0, y: 0 })}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
-                  >
-                    reset pos
-                  </button>
-                  <span className="text-amber-400 ml-2">◈ AGT</span>
-                  <span className="text-white/90 tabular-nums">
-                    x: {agtOffset.x}px · y: {agtOffset.y}px
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setAgtOffset({ x: 0, y: 0 })}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
-                  >
-                    reset pos
-                  </button>
+                {/* Live readout — valores em tempo real */}
+                <div className="flex flex-col gap-0.5 rounded border border-amber-400/30 bg-black/60 px-2 py-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-amber-400 tracking-[0.25em]">◈ VIA</span>
+                    <span className="text-white tabular-nums normal-case tracking-normal text-[11px]">
+                      x={vehOffset.x} · y={vehOffset.y} · s={vehScale.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-amber-400 tracking-[0.25em]">◈ AGT</span>
+                    <span className="text-white tabular-nums normal-case tracking-normal text-[11px]">
+                      x={agtOffset.x} · y={agtOffset.y} · s={agtScale.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const txt = `VIA x=${vehOffset.x} y=${vehOffset.y} s=${vehScale.toFixed(2)} | AGT x=${agtOffset.x} y=${agtOffset.y} s=${agtScale.toFixed(2)}`;
+                        try { navigator.clipboard?.writeText(txt); } catch {}
+                      }}
+                      className="rounded border border-amber-400/50 bg-amber-400/10 px-2 py-0.5 text-[9px] text-amber-200 hover:bg-amber-400/20 transition"
+                    >
+                      copiar valores
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVehOffset({ x: 0, y: 0 })}
+                      className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                    >
+                      reset VIA
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAgtOffset({ x: 0, y: 0 })}
+                      className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                    >
+                      reset AGT
+                    </button>
+                  </div>
                 </div>
+
 
                 {/* Escala viatura */}
                 <div className="flex items-center gap-1.5">
