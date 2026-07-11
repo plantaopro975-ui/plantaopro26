@@ -2608,25 +2608,26 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className={cn('tactical-scrollbar grid gap-0.5 h-56 overflow-y-auto overflow-x-hidden pr-1 rounded-md min-w-0', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+                  <div className={cn('tactical-scrollbar grid gap-px h-56 overflow-y-auto overflow-x-hidden pr-1 rounded-md min-w-0', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
-                      <div key={i} className="flex items-center gap-1 min-w-0 h-6">
-                         <span className="w-5 shrink-0 text-center font-mono text-[11px] text-primary tabular-nums leading-6">{pad(i + 1)}</span>
+                      <div key={i} className="flex items-center gap-1 min-w-0 h-[22px]">
+                         <span className="w-5 shrink-0 text-center font-mono text-[10.5px] font-semibold text-muted-foreground tabular-nums leading-[22px]">{pad(i + 1)}</span>
                         <Input value={a} onChange={(e) => updateAgent(i, e.target.value.toUpperCase().slice(0, 40))} disabled={configLocked}
                           placeholder={`AGENTE ${i + 1}`}
                           style={{ textOverflow: 'ellipsis' }}
-                           className={cn('bg-card border-border h-6 px-2 py-0 text-[11.5px] leading-6 uppercase tracking-wide truncate min-w-0 flex-1', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
+                           className={cn('bg-card border-border h-[22px] px-2 py-0 text-[11.5px] leading-[22px] uppercase tracking-wide truncate min-w-0 flex-1 font-medium', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
                           autoComplete="off"
                           autoCapitalize="characters"
                           spellCheck={false} />
                         <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
-                           disabled={agents.length <= 1 || configLocked} className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
+                           disabled={agents.length <= 1 || configLocked} className="h-[22px] w-[22px] shrink-0 text-muted-foreground hover:text-destructive"
                           aria-label={`Remover ${i + 1}`}>
                           <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     ))}
                   </div>
+
                 </div>
 
                 {/* Validation panel */}
