@@ -4,7 +4,7 @@ import { Radar, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useRoundsStats } from '@/hooks/useRoundsStats';
-import { useServerTime } from '@/hooks/useServerTime';
+
 import { RoundsManager } from './RoundsManager';
 import { TacticalClock } from './TacticalClock';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
