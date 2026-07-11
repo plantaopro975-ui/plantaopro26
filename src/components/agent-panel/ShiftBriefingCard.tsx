@@ -13,13 +13,14 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  ClipboardCheck, ShieldAlert, Radio, Users, KeyRound, BookOpen, ArrowLeftRight,
-  PenLine, CheckCircle2, FileText, History, Lock, Loader2, Circle,
+  ClipboardCheck, ShieldAlert, Radio, Users, KeyRound, ArrowLeftRight, Swords,
+  PenLine, CheckCircle2, History, Lock, Loader2, Circle, Timer,
 } from 'lucide-react';
-import { addHours, format, isWithinInterval, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { isShiftActive } from '@/lib/shiftTime';
 
 // -------- Types --------
 interface Props {
