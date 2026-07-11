@@ -2057,6 +2057,79 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     await hydrateTeamLogFromCloud();
   };
 
+  /* ============ Fila de sincronização (retentativa quando volta online) ============ */
+  const PENDING_KEY = 'plantaopro_pending_team_rounds_v1';
+  type PendingItem = {
+    id: string;
+    team: string;
+    savedName: string;
+    totalSeconds: number;
+    agentsCount: number;
+    createdAt: number;
+    attempts: number;
+  };
+  const readPending = (): PendingItem[] => {
+    try {
+      const raw = localStorage.getItem(PENDING_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch { return []; }
+  };
+  const writePending = (arr: PendingItem[]) => {
+    try { localStorage.setItem(PENDING_KEY, JSON.stringify(arr.slice(0, 50))); } catch { /* ignore */ }
+  };
+  const enqueuePending = (item: Omit<PendingItem, 'id' | 'createdAt' | 'attempts'>) => {
+    const next = [...readPending(), { ...item, id: crypto.randomUUID?.() ?? String(Date.now()), createdAt: Date.now(), attempts: 0 }];
+    writePending(next);
+  };
+
+  const flushPendingRounds = useCallback(async (silent = false) => {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    const queue = readPending();
+    if (queue.length === 0) return;
+    const remaining: PendingItem[] = [];
+    let synced = 0;
+    for (const item of queue) {
+      try {
+        await saveTeamRoundToCloud({
+          team: item.team,
+          savedName: item.savedName,
+          totalSeconds: item.totalSeconds,
+          agentsCount: item.agentsCount,
+        });
+        synced++;
+      } catch (e) {
+        // Mantém na fila para próxima tentativa; incrementa attempts.
+        remaining.push({ ...item, attempts: item.attempts + 1 });
+      }
+    }
+    writePending(remaining);
+    if (synced > 0) {
+      setSummarySyncedOnline(true);
+      if (!silent) {
+        toast({
+          title: 'Sincronização concluída',
+          description: `${synced} registro${synced === 1 ? '' : 's'} de ronda sincronizado${synced === 1 ? '' : 's'} com a unidade.`,
+        });
+      }
+    }
+  }, [unitId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Retenta ao voltar online, ao ganhar foco, e a cada 60s se houver fila.
+  useEffect(() => {
+    void flushPendingRounds(true);
+    const onOnline = () => { void flushPendingRounds(); };
+    const onFocus = () => { void flushPendingRounds(true); };
+    window.addEventListener('online', onOnline);
+    window.addEventListener('focus', onFocus);
+    const iv = window.setInterval(() => { void flushPendingRounds(true); }, 60_000);
+    return () => {
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('focus', onFocus);
+      window.clearInterval(iv);
+    };
+  }, [flushPendingRounds]);
+
   const clearTeamLog = async () => {
     // Limpa nuvem (RLS restringe à mesma unidade) + cache local.
     if (unitId) {
