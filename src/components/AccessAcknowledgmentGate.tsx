@@ -97,7 +97,7 @@ export function AccessAcknowledgmentGate() {
               <div className="flex-1 flex flex-col justify-end px-5 pt-8 pb-4">
                 <DialogPrimitive.Title
                   id="ack-title"
-                  className="text-[clamp(1.15rem,4.8vw,1.6rem)] font-bold leading-[1.15] tracking-[0.08em] text-amber-100 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]"
+                  className="text-[clamp(1.15rem,4.8vw,1.6rem)] font-bold leading-[1.15] tracking-[0.08em] text-amber-100"
                   style={{ fontFamily: "'Libre Baskerville', serif" }}
                 >
                   CONTROLE DE PLANTÃO
