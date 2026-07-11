@@ -641,10 +641,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
                 {/* MIDDLE — label stack */}
                 <span className="relative flex-1 min-w-0 flex flex-col justify-center px-2.5 py-1 text-left">
-                  <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-amber-300/85 leading-none">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-amber-300/90 leading-none">
                     Comando · Ronda
                   </span>
-                  <span className="font-sans text-[12.5px] font-bold uppercase tracking-[0.04em] text-amber-50 leading-tight mt-0.5 truncate" style={{ textShadow: '0 0 8px rgba(234,179,8,0.35)' }}>
+                  <span className="font-sans text-[15px] font-extrabold uppercase tracking-[0.02em] text-amber-50 leading-[1.05] mt-1 truncate" style={{ textShadow: '0 0 8px rgba(234,179,8,0.35)' }}>
                     Gestor de Rondas
                   </span>
                 </span>
@@ -661,7 +661,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     <span className="relative inline-flex h-2 w-2 items-center justify-center rounded-full border border-emerald-400/55">
                       <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.75)]" />
                     </span>
-                    <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] text-emerald-200 leading-none">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-200 leading-none">
                       Ativo
                     </span>
                   </span>
