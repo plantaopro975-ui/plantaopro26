@@ -63,17 +63,6 @@ export function RoundsCommandBar() {
         )}
         style={{ fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace' }}
       >
-        {/* Blueprint grid discreto */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-            maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 95%)',
-          }}
-        />
         {/* Cantoneiras SVG (tick corners) — assinatura tática discreta */}
         <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full text-primary/50" preserveAspectRatio="none" viewBox="0 0 100 100">
           <g fill="none" stroke="currentColor" strokeWidth="0.35" vectorEffect="non-scaling-stroke">
