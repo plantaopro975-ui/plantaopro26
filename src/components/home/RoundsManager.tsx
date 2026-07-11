@@ -22,6 +22,8 @@ import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import { PreNightScheduleDialog } from './PreNightScheduleDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
+import { RoundHistoryDialog } from './RoundHistoryDialog';
+import { getRotatedTeamColor, bumpColorRotation } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
 import {
   isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
