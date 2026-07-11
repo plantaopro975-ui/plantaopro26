@@ -203,9 +203,8 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
         <TeamObject team={t} isAlfa={t.key === 'ALFA'} idx={idx} />
       </div>
       <span aria-hidden className="absolute top-0 left-0 h-px w-full" style={{ background: `linear-gradient(90deg, hsl(${t.accent}), transparent)` }} />
-      <span aria-hidden className="absolute top-2 left-2 z-30 flex h-2 w-2">
-        <span className="absolute inset-0 rounded-full animate-ping opacity-70" style={{ background: `hsl(${t.accent})` }} />
-        <span className="relative h-2 w-2 rounded-full" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 8px hsl(${t.accent} / 0.9)` }} />
+      <span aria-hidden className="absolute top-1.5 left-1.5 z-30 flex h-2.5 w-2.5 items-center justify-center rounded-full" style={{ border: `1px solid hsl(${t.accent} / 0.55)` }}>
+        <span className="h-1.5 w-1.5 rounded-full" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 4px hsl(${t.accent} / 0.7)` }} />
       </span>
       <span
         className="absolute top-1.5 right-1.5 z-30 font-mono text-[8.5px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded backdrop-blur-md border"
