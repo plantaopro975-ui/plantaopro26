@@ -3065,6 +3065,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         silent={silentMode}
                       />
 
+                      <TeamConfirmDialog
+                        open={teamConfirmOpen}
+                        color={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.color ?? teamColor) : teamColor}
+                        teamLabel={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.label ?? pendingTeam) : team}
+                        agentCount={agents.filter((a) => a.trim()).length}
+                        onCancel={() => { setTeamConfirmOpen(false); setPendingTeam(null); }}
+                        onConfirm={() => {
+                          if (pendingTeam) setTeam(pendingTeam);
+                          setTeamConfirmed(true);
+                          setTeamConfirmOpen(false);
+                          setPendingTeam(null);
+                        }}
+                      />
+
                       <PreNightScheduleDialog
                         open={preNightOpen}
                         onCancel={() => setPreNightOpen(false)}
