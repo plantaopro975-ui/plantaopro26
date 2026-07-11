@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Radio, ShieldCheck, Activity, Radar, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { teamEmblems } from '@/lib/teamAssets';
@@ -334,6 +334,55 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     onTeamClick(k);
   }, [onTeamClick]);
 
+  // ==== DRAG MODE (desktop only, temporário) ============================
+  // Permite arrastar a cena (viatura + agente) para posicionar livremente.
+  // Persiste em localStorage para o usuário reportar o offset final.
+  const [sceneOffset, setSceneOffset] = useState<{ x: number; y: number }>(() => {
+    if (typeof window === 'undefined') return { x: 0, y: 0 };
+    try {
+      const raw = localStorage.getItem('pp-scene-offset');
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return { x: 0, y: 0 };
+  });
+  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem('pp-scene-offset', JSON.stringify(sceneOffset)); } catch {}
+  }, [sceneOffset]);
+  const onDragPointerDown = useCallback((e: React.PointerEvent) => {
+    if (!isDesktop) return;
+    e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    dragState.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      baseX: sceneOffset.x,
+      baseY: sceneOffset.y,
+    };
+    setIsDragging(true);
+  }, [isDesktop, sceneOffset]);
+  const onDragPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current) return;
+    const dx = e.clientX - dragState.current.startX;
+    const dy = e.clientY - dragState.current.startY;
+    setSceneOffset({ x: dragState.current.baseX + dx, y: dragState.current.baseY + dy });
+  }, []);
+  const onDragPointerUp = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current) return;
+    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+    dragState.current = null;
+    setIsDragging(false);
+  }, []);
+  const resetSceneOffset = useCallback(() => setSceneOffset({ x: 0, y: 0 }), []);
 
 
 
@@ -632,57 +681,96 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            {/* Cena composta */}
+            {/* Wrapper de drag (desktop) — envolve a cena preservando os translates internos do Tailwind */}
             <div
-              className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[380px] xl:h-[440px] 2xl:h-[500px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
+              onPointerDown={onDragPointerDown}
+              onPointerMove={onDragPointerMove}
+              onPointerUp={onDragPointerUp}
+              onPointerCancel={onDragPointerUp}
+              className="contents lg:relative lg:z-50 lg:inline-block"
+              style={
+                isDesktop
+                  ? {
+                      transform: `translate3d(${sceneOffset.x}px, ${sceneOffset.y}px, 0)`,
+                      cursor: isDragging ? 'grabbing' : 'grab',
+                      touchAction: 'none',
+                      willChange: 'transform',
+                    }
+                  : undefined
+              }
             >
+              {/* Cena composta */}
+              <div
+                className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[380px] xl:h-[440px] 2xl:h-[500px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
+              >
 
 
 
-              {/* Viatura — mobile: proporcional ao agente | desktop: pousada no chão sem cortes */}
-              <picture className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0">
-                <source type="image/webp" srcSet={vehicle3dWebp} />
-                <img
-                  src={vehicle3d}
-                  alt="Viatura tática ISE"
-                  width={1024}
-                  height={1024}
-                  className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-[1.04] lg:scale-[1.05] xl:scale-[1.08] 2xl:scale-[1.1] origin-bottom-left"
-                  draggable={false}
-                />
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.05] xl:scale-[1.08] 2xl:scale-[1.1] origin-bottom-left"
-
-                >
-                  <span
-                    aria-hidden
-                    className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
-                    style={{ top: '23.9%', left: '47.1%' }}
+                {/* Viatura — mobile: proporcional ao agente | desktop: pousada no chão sem cortes */}
+                <picture className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0">
+                  <source type="image/webp" srcSet={vehicle3dWebp} />
+                  <img
+                    src={vehicle3d}
+                    alt="Viatura tática ISE"
+                    width={1024}
+                    height={1024}
+                    className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-[1.04] lg:scale-[1.05] xl:scale-[1.08] 2xl:scale-[1.1] origin-bottom-left"
+                    draggable={false}
                   />
                   <span
                     aria-hidden
-                    className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                    style={{ top: '23.2%', left: '63.4%' }}
+                    className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.05] xl:scale-[1.08] 2xl:scale-[1.1] origin-bottom-left"
+
+                  >
+                    <span
+                      aria-hidden
+                      className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
+                      style={{ top: '23.9%', left: '47.1%' }}
+                    />
+                    <span
+                      aria-hidden
+                      className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
+                      style={{ top: '23.2%', left: '63.4%' }}
+                    />
+                  </span>
+                </picture>
+
+                {/* Agente — cresce a partir do chão, sem translate positivo para não cortar os pés */}
+                <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
+                  <source type="image/webp" srcSet={agent3dWebp} />
+                  <img
+                    src={agent3d}
+                    alt="Agente Socioeducativo ISE"
+                    width={1024}
+                    height={1024}
+                    className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.02] xl:scale-[1.04] 2xl:scale-[1.06] origin-bottom sm:origin-bottom"
+                    draggable={false}
                   />
-                </span>
-              </picture>
 
-              {/* Agente — cresce a partir do chão, sem translate positivo para não cortar os pés */}
-              <picture className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0">
-                <source type="image/webp" srcSet={agent3dWebp} />
-                <img
-                  src={agent3d}
-                  alt="Agente Socioeducativo ISE"
-                  width={1024}
-                  height={1024}
-                  className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.02] xl:scale-[1.04] 2xl:scale-[1.06] origin-bottom sm:origin-bottom"
-                  draggable={false}
-                />
+                </picture>
 
-              </picture>
-
+              </div>
             </div>
+
+            {/* HUD de drag — só desktop, mostra offset atual em px */}
+            {isDesktop && (
+              <div
+                className="hidden lg:flex absolute top-2 left-2 z-[120] items-center gap-2 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
+              >
+                <span className="text-amber-400">◈ DRAG</span>
+                <span className="text-white/90 tabular-nums">
+                  x: {sceneOffset.x}px · y: {sceneOffset.y}px
+                </span>
+                <button
+                  type="button"
+                  onClick={resetSceneOffset}
+                  className="ml-1 rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
+                >
+                  reset
+                </button>
+              </div>
+            )}
+
 
             {/* DELTA agora alinhado na mesma grid das outras equipes (4 cols em lg+). */}
 
