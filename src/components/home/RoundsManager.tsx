@@ -2845,8 +2845,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           }}
                           title={teamLocked ? 'Equipe travada — cancele a programação ou finalize a ronda para trocar' : `Selecionar ${t.label}`}
                           className={cn(
-                            'group relative rounded-sm border px-1.5 py-1.5 font-mono font-bold uppercase tracking-[0.08em] text-[11px] transition-all duration-200',
+                            'group relative rounded-sm border px-1 py-1.5 font-mono font-bold uppercase tracking-[0.04em] text-[10.5px] transition-all duration-200',
                             'flex items-center justify-center',
+
                             disabled && 'opacity-40 cursor-not-allowed',
                             active
                               ? 'shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset]'
