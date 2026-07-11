@@ -338,8 +338,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     onTeamClick(k);
   }, [onTeamClick]);
 
-  // ==== DRAG + SCALE independentes (desktop only) =========================
-  // Viatura e agente têm offsets e escalas próprios, persistidos em localStorage.
+  // ==== Posição/escala fixas (desktop) — viatura e agente =================
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)');
@@ -349,88 +348,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
     return () => mq.removeEventListener('change', update);
   }, []);
 
-  const readOffset = (key: string) => {
-    if (typeof window === 'undefined') return { x: 0, y: 0 };
-    try { const raw = localStorage.getItem(key); if (raw) return JSON.parse(raw); } catch {}
-    return { x: 0, y: 0 };
-  };
-  const [vehOffset, setVehOffset] = useState<{ x: number; y: number }>(() => readOffset('pp-veh-offset'));
-  const [agtOffset, setAgtOffset] = useState<{ x: number; y: number }>(() => readOffset('pp-agt-offset'));
-  useEffect(() => { try { localStorage.setItem('pp-veh-offset', JSON.stringify(vehOffset)); } catch {} }, [vehOffset]);
-  useEffect(() => { try { localStorage.setItem('pp-agt-offset', JSON.stringify(agtOffset)); } catch {} }, [agtOffset]);
+  const VEH_OFFSET = { x: -83, y: 212 };
+  const AGT_OFFSET = { x: -377, y: 223 };
+  const VEH_SCALE = 1.68;
+  const AGT_SCALE = 1.60;
 
-  const [draggingKey, setDraggingKey] = useState<null | 'veh' | 'agt'>(null);
-  const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number; setter: (o: {x:number;y:number}) => void } | null>(null);
 
-  const makeDragHandlers = (
-    key: 'veh' | 'agt',
-    offset: { x: number; y: number },
-    setter: (o: { x: number; y: number }) => void,
-  ) => ({
-    onPointerDown: (e: React.PointerEvent) => {
-      if (!isDesktop) return;
-      e.preventDefault();
-      e.stopPropagation();
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-      dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: offset.x, baseY: offset.y, setter };
-      setDraggingKey(key);
-    },
-    onPointerMove: (e: React.PointerEvent) => {
-      if (!dragRef.current) return;
-      const dx = e.clientX - dragRef.current.startX;
-      const dy = e.clientY - dragRef.current.startY;
-      dragRef.current.setter({ x: dragRef.current.baseX + dx, y: dragRef.current.baseY + dy });
-    },
-    onPointerUp: (e: React.PointerEvent) => {
-      if (!dragRef.current) return;
-      try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
-      dragRef.current = null;
-      setDraggingKey(null);
-    },
-  });
-
-  // ==== SCALE MANUAL (desktop) — viatura e agente independentes ==========
-  const [vehScale, setVehScale] = useState<number>(() => {
-    if (typeof window === 'undefined') return 1;
-    const v = parseFloat(localStorage.getItem('pp-veh-scale') || '1');
-    return Number.isFinite(v) && v > 0 ? v : 1;
-  });
-  const [agtScale, setAgtScale] = useState<number>(() => {
-    if (typeof window === 'undefined') return 1;
-    const v = parseFloat(localStorage.getItem('pp-agt-scale') || '1');
-    return Number.isFinite(v) && v > 0 ? v : 1;
-  });
-  useEffect(() => { try { localStorage.setItem('pp-veh-scale', String(vehScale)); } catch {} }, [vehScale]);
-  useEffect(() => { try { localStorage.setItem('pp-agt-scale', String(agtScale)); } catch {} }, [agtScale]);
-  const clampScale = (v: number) => Math.max(0.5, Math.min(3, Math.round(v * 100) / 100));
-
-  // HUD panel: posição arrastável + colapsável
-  const [hudPos, setHudPos] = useState<{ x: number; y: number }>(() => readOffset('pp-hud-pos'));
-  const [hudCollapsed, setHudCollapsed] = useState<boolean>(false);
-
-  useEffect(() => { try { localStorage.setItem('pp-hud-pos', JSON.stringify(hudPos)); } catch {} }, [hudPos]);
-  useEffect(() => { try { localStorage.setItem('pp-hud-collapsed', hudCollapsed ? '1' : '0'); } catch {} }, [hudCollapsed]);
-  const hudDragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
-  const onHudDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    hudDragRef.current = { startX: e.clientX, startY: e.clientY, baseX: hudPos.x, baseY: hudPos.y };
-  };
-  const onHudMove = (e: React.PointerEvent) => {
-    if (!hudDragRef.current) return;
-    setHudPos({
-      x: hudDragRef.current.baseX + (e.clientX - hudDragRef.current.startX),
-      y: hudDragRef.current.baseY + (e.clientY - hudDragRef.current.startY),
-    });
-  };
-  const onHudUp = (e: React.PointerEvent) => {
-    if (!hudDragRef.current) return;
-    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
-    hudDragRef.current = null;
-  };
-
-  const vehDrag = makeDragHandlers('veh', vehOffset, setVehOffset);
-  const agtDrag = makeDragHandlers('agt', agtOffset, setAgtOffset);
 
 
 
@@ -777,17 +700,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               <div
                 className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-4 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[460px] xl:h-[540px] 2xl:h-[620px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[10%] xl:-translate-x-[10%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
               >
-                {/* Viatura — arrastável independentemente */}
+                {/* Viatura */}
                 <picture
-                  {...(isDesktop ? vehDrag : {})}
                   className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0"
                   style={
                     isDesktop
                       ? {
-                          transform: `translate3d(${vehOffset.x}px, ${vehOffset.y}px, 0) scale(${vehScale})`,
+                          transform: `translate3d(${VEH_OFFSET.x}px, ${VEH_OFFSET.y}px, 0) scale(${VEH_SCALE})`,
                           transformOrigin: 'bottom left',
-                          cursor: draggingKey === 'veh' ? 'grabbing' : 'grab',
-                          touchAction: 'none',
                           willChange: 'transform',
                         }
                       : undefined
@@ -817,20 +737,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       style={{ top: '23.2%', left: '63.4%' }}
                     />
                   </span>
-                  {/* removido: efeitos holográficos (anel/plataforma/scanner) sob a viatura */}
                 </picture>
 
-                {/* Agente — arrastável independentemente */}
+                {/* Agente */}
                 <picture
-                  {...(isDesktop ? agtDrag : {})}
                   className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0"
                   style={
                     isDesktop
                       ? {
-                          transform: `translate3d(${agtOffset.x}px, ${agtOffset.y}px, 0) scale(${agtScale})`,
+                          transform: `translate3d(${AGT_OFFSET.x}px, ${AGT_OFFSET.y}px, 0) scale(${AGT_SCALE})`,
                           transformOrigin: 'bottom',
-                          cursor: draggingKey === 'agt' ? 'grabbing' : 'grab',
-                          touchAction: 'none',
                           willChange: 'transform',
                         }
                       : undefined
@@ -845,119 +761,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.65] xl:scale-[1.75] 2xl:scale-[1.85] origin-bottom sm:origin-bottom"
                     draggable={false}
                   />
-                  {/* removido: efeitos holográficos (anel/plataforma/scanner) sob o agente */}
                 </picture>
+
               </div>
             </div>
 
-            {/* HUD de drag + escala — só desktop; arrastável pela barra do topo */}
-            {isDesktop && (
-              <div
-                className="hidden lg:flex absolute top-2 left-2 z-[120] flex-col rounded-md border border-amber-400/50 bg-black/85 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200 backdrop-blur-sm shadow-lg pointer-events-auto select-none"
-                style={{ transform: `translate3d(${hudPos.x}px, ${hudPos.y}px, 0)` }}
-              >
-                {/* Barra superior — drag handle + collapse */}
-                <div
-                  onPointerDown={onHudDown}
-                  onPointerMove={onHudMove}
-                  onPointerUp={onHudUp}
-                  onPointerCancel={onHudUp}
-                  className="flex items-center justify-between gap-3 px-2.5 py-1 border-b border-amber-400/30 cursor-grab active:cursor-grabbing"
-                  style={{ touchAction: 'none' }}
-                >
-                  <span className="text-amber-400 tracking-[0.3em]">⋮⋮ HUD</span>
-                  <button
-                    type="button"
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onClick={() => setHudCollapsed(v => !v)}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
-                  >
-                    {hudCollapsed ? 'expandir' : 'recolher'}
-                  </button>
-                </div>
+            {/* HUD de ajuste removido — posição e escala fixadas em VEH_OFFSET/AGT_OFFSET/VEH_SCALE/AGT_SCALE */}
 
-                {!hudCollapsed && (
-                <div className="flex flex-col gap-1.5 px-2.5 py-2">
-                {/* Live readout — valores em tempo real */}
-                <div className="flex flex-col gap-0.5 rounded border border-amber-400/30 bg-black/60 px-2 py-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-amber-400 tracking-[0.25em]">◈ VIA</span>
-                    <span className="text-white tabular-nums normal-case tracking-normal text-[11px]">
-                      x={vehOffset.x} · y={vehOffset.y} · s={vehScale.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-amber-400 tracking-[0.25em]">◈ AGT</span>
-                    <span className="text-white tabular-nums normal-case tracking-normal text-[11px]">
-                      x={agtOffset.x} · y={agtOffset.y} · s={agtScale.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const txt = `VIA x=${vehOffset.x} y=${vehOffset.y} s=${vehScale.toFixed(2)} | AGT x=${agtOffset.x} y=${agtOffset.y} s=${agtScale.toFixed(2)}`;
-                        try { navigator.clipboard?.writeText(txt); } catch {}
-                      }}
-                      className="rounded border border-amber-400/50 bg-amber-400/10 px-2 py-0.5 text-[9px] text-amber-200 hover:bg-amber-400/20 transition"
-                    >
-                      copiar valores
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setVehOffset({ x: 0, y: 0 })}
-                      className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
-                    >
-                      reset VIA
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAgtOffset({ x: 0, y: 0 })}
-                      className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/80 hover:bg-white/10 hover:text-white transition"
-                    >
-                      reset AGT
-                    </button>
-                  </div>
-                </div>
-
-
-                {/* Escala viatura */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-amber-400 w-12">VIATURA</span>
-                  <button type="button" onClick={() => setVehScale(s => clampScale(s - 0.05))}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">−</button>
-                  <input
-                    type="range" min={0.5} max={3} step={0.01} value={vehScale}
-                    onChange={(e) => setVehScale(clampScale(parseFloat(e.target.value)))}
-                    className="accent-amber-400 w-28"
-                  />
-                  <button type="button" onClick={() => setVehScale(s => clampScale(s + 0.05))}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">+</button>
-                  <span className="tabular-nums text-white/90 w-10 text-right">{vehScale.toFixed(2)}x</span>
-                  <button type="button" onClick={() => setVehScale(1)}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">reset</button>
-                </div>
-
-                {/* Escala agente */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-amber-400 w-12">AGENTE</span>
-                  <button type="button" onClick={() => setAgtScale(s => clampScale(s - 0.05))}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">−</button>
-                  <input
-                    type="range" min={0.5} max={3} step={0.01} value={agtScale}
-                    onChange={(e) => setAgtScale(clampScale(parseFloat(e.target.value)))}
-                    className="accent-amber-400 w-28"
-                  />
-                  <button type="button" onClick={() => setAgtScale(s => clampScale(s + 0.05))}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/85 hover:bg-white/10">+</button>
-                  <span className="tabular-nums text-white/90 w-10 text-right">{agtScale.toFixed(2)}x</span>
-                  <button type="button" onClick={() => setAgtScale(1)}
-                    className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">reset</button>
-                </div>
-                </div>
-                )}
-              </div>
-            )}
 
 
             {/* DELTA agora alinhado na mesma grid das outras equipes (4 cols em lg+). */}
