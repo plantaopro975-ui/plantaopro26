@@ -59,6 +59,8 @@ import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { HardRefreshHint } from '@/components/HardRefreshHint';
+import { RoundReminderDialog } from '@/components/home/RoundReminderDialog';
+import { useRoundReminder } from '@/hooks/useRoundReminder';
 
 import { DeveloperSignature } from '@/components/DeveloperSignature';
 import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
