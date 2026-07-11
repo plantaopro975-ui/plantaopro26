@@ -75,12 +75,24 @@ export function ProfessionalShiftTimer({ agentId, compact = false }: Professiona
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentShift && isOnDuty) {
+        if (!isShiftActive(currentShift)) {
+          setIsOnDuty(false);
+          toast.success('Plantão encerrado', {
+            description: 'Sua jornada foi finalizada. Bom descanso!',
+            duration: 8000,
+          });
+          try {
+            window.dispatchEvent(new CustomEvent('shift:ended', { detail: { agentId, shiftId: currentShift.id } }));
+          } catch { /* ignore */ }
+          fetchShiftData();
+          return;
+        }
         updateTimeRemaining(currentShift);
       }
       checkShiftReminder();
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentShift, isOnDuty, nextShift, reminderEnabled]);
+  }, [currentShift, isOnDuty, nextShift, reminderEnabled, agentId]);
 
   const checkShiftReminder = useCallback(() => {
     if (!reminderEnabled || !nextShift) return;
