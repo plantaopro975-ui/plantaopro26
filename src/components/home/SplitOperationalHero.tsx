@@ -170,12 +170,15 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       aria-pressed={isSelected}
       onClick={() => onSelect(t.key)}
       className={cn(
-        'group relative flex h-[124px] min-[390px]:h-[132px] sm:h-[148px] lg:h-[168px] xl:h-[188px] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+        'group relative flex h-[124px] min-[390px]:h-[132px] flex-col overflow-hidden rounded-xl border-[1.5px] text-left bg-transparent isolate',
+        // Desktop: formato de distintivo (octogonal) — proporção retrato, tamanho contido e centralizado
+        'sm:h-auto sm:aspect-[4/5] sm:w-full sm:max-w-[168px] lg:max-w-[188px] xl:max-w-[208px] sm:mx-auto sm:rounded-none sm:border-0',
+        'sm:[clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)] sm:[-webkit-clip-path:polygon(22%_0%,78%_0%,100%_14%,100%_86%,78%_100%,22%_100%,0%_86%,0%_14%)]',
         'transition-all duration-300 ease-out will-change-transform [transform-style:preserve-3d]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:ring-[hsl(var(--team-accent)/0.8)]',
         isSelected
-          ? 'border-[hsl(var(--team-accent))] -translate-y-0.5 scale-[1.005] sm:-translate-y-1.5 sm:scale-[1.02] shadow-[0_0_0_2px_hsl(var(--team-accent)/0.85),0_0_0_4px_rgba(2,6,23,0.9),0_18px_40px_-12px_hsl(var(--team-accent)/0.6),0_10px_20px_-8px_rgba(0,0,0,0.85)] ring-1 ring-[hsl(var(--team-accent)/0.45)]'
-          : 'border-slate-300/25 shadow-[0_0_0_1px_rgba(15,23,42,0.75),inset_0_0_0_1px_rgba(255,255,255,0.06)] hover:border-[hsl(var(--team-accent)/0.85)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_hsl(var(--team-accent)/0.7),0_14px_30px_-14px_hsl(var(--team-accent)/0.5),0_8px_18px_-10px_rgba(0,0,0,0.75)] active:translate-y-0 active:scale-[0.99]',
+          ? 'border-[hsl(var(--team-accent))] -translate-y-0.5 scale-[1.005] sm:-translate-y-1.5 sm:scale-[1.02] shadow-[0_0_0_2px_hsl(var(--team-accent)/0.85),0_0_0_4px_rgba(2,6,23,0.9),0_18px_40px_-12px_hsl(var(--team-accent)/0.6),0_10px_20px_-8px_rgba(0,0,0,0.85)] ring-1 ring-[hsl(var(--team-accent)/0.45)] sm:shadow-none sm:ring-0 sm:drop-shadow-[0_14px_26px_hsl(var(--team-accent)/0.55)]'
+          : 'border-slate-300/25 shadow-[0_0_0_1px_rgba(15,23,42,0.75),inset_0_0_0_1px_rgba(255,255,255,0.06)] hover:border-[hsl(var(--team-accent)/0.85)] hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_hsl(var(--team-accent)/0.7),0_14px_30px_-14px_hsl(var(--team-accent)/0.5),0_8px_18px_-10px_rgba(0,0,0,0.75)] active:translate-y-0 active:scale-[0.99] sm:shadow-none sm:drop-shadow-[0_10px_20px_rgba(0,0,0,0.75)] sm:hover:drop-shadow-[0_12px_24px_hsl(var(--team-accent)/0.5)]',
         className,
       )}
       style={{ ['--team-accent' as any]: t.accent }}
