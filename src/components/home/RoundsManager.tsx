@@ -2362,6 +2362,29 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     )}
                   </span>
                 </div>
+
+                {/* Readout tático estático — sóbrio, sem animação */}
+                <div
+                  className="relative border-t grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/40"
+                  style={{ borderColor: `${teamColor}1c` }}
+                >
+                  {[
+                    { k: 'Canal', v: { ALFA: '01', BRAVO: '02', CHARLIE: '03', DELTA: '04' }[team] },
+                    { k: 'Freq.', v: { ALFA: '148.325', BRAVO: '151.775', CHARLIE: '154.190', DELTA: '158.640' }[team] },
+                    { k: 'Status', v: (!!currentView && !currentView.done) ? 'Em serviço' : 'Standby' },
+                    { k: 'Setor', v: `S-${team.slice(0, 2)}` },
+                  ].map((it) => (
+                    <div key={it.k} className="flex items-baseline justify-between gap-2 px-2.5 py-1 sm:px-3 min-w-0">
+                      <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground/80 shrink-0">
+                        {it.k}
+                      </span>
+                      <span className="font-mono text-[11px] tabular-nums text-foreground/90 truncate">
+                        {it.v}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
                 {isAdminUser && (
                   <div
                     className="relative border-t px-2.5 py-1 sm:px-3"
