@@ -1962,9 +1962,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           } catch { /* ignore */ }
           try {
             if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-              const n = new Notification('Missão cumprida', {
-                body: `EQUIPE ${team} · ${finishedRow.name} concluiu o posto ${pad(finishedIdx + 1)}.`,
+              const n = new Notification(`Plantão Pro · Ronda concluída`, {
+                body: `${finishedRow.name} finalizou o Posto ${pad(finishedIdx + 1)} da Equipe ${team}. Registro operacional confirmado.`,
                 tag: `plantaopro-rounds-done-${finishedIdx}`,
+                icon: '/icon-192.png',
+                badge: '/favicon.png',
                 silent: false,
               });
               setTimeout(() => n.close(), 8000);
