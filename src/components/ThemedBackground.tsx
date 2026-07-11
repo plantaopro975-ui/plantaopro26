@@ -334,7 +334,7 @@ function AmbientOrbs({ effect }: { effect: BackgroundEffect }) {
       {Array.from({ length: orbCount }).map((_, i) => (
         <div
           key={i}
-          className="absolute rounded-full blur-3xl animate-pulse"
+          className="absolute rounded-full blur-3xl"
           style={{
             left: `${(i * 30) + 10}%`,
             top: `${(i % 2) * 40 + 20}%`,
