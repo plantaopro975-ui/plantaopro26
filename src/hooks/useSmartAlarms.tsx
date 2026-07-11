@@ -358,7 +358,7 @@ export function useSmartAlarms({ agentId, enabled = true }: UseSmartAlarmsProps)
 
   // Request notification permission
   useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
+    if (areNativeNotificationsAllowed() && Notification.permission === 'default') {
       Notification.requestPermission();
     }
   }, []);
