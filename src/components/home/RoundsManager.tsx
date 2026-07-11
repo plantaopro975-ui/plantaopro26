@@ -2634,9 +2634,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   {teamLog.length > 0 && (
                     <div className="rounded-md border border-border/70 bg-card/60 p-2">
                       <div className="mb-1 flex items-center justify-between">
-                        <div className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground">
-                          Rondas realizadas ({teamLog.length})
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setHistoryDialogOpen(true)}
+                          className="group inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground hover:text-primary transition-colors"
+                          title="Abrir histórico detalhado"
+                        >
+                          <span className="inline-flex items-center justify-center h-4 min-w-4 rounded-sm border border-primary/30 bg-primary/10 px-1 font-mono text-[9px] font-bold text-primary group-hover:bg-primary/20">
+                            {teamLog.length}
+                          </span>
+                          Rondas realizadas
+                          <svg viewBox="0 0 24 24" className="h-2.5 w-2.5 opacity-70" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+                            <polyline points="9 18 15 12 9 6" />
+                          </svg>
+                        </button>
                         <button
                           type="button"
                           onClick={clearTeamLog}
