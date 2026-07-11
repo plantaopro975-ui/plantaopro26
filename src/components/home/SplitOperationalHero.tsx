@@ -776,6 +776,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                       style={{ top: '23.2%', left: '63.4%' }}
                     />
                   </span>
+                  {/* Plataforma holográfica + scanner (desktop apenas) */}
+                  <span aria-hidden className="hidden lg:block pp-holo-ring" />
+                  <span aria-hidden className="hidden lg:block pp-holo-platform" />
+                  <span aria-hidden className="hidden lg:block pp-holo-scanner" />
                 </picture>
 
                 {/* Agente — cresce a partir do chão, sem translate positivo para não cortar os pés */}
@@ -789,8 +793,12 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.02] xl:scale-[1.04] 2xl:scale-[1.06] origin-bottom sm:origin-bottom"
                     draggable={false}
                   />
-
+                  {/* Plataforma holográfica + scanner vertical (desktop apenas) */}
+                  <span aria-hidden className="hidden lg:block pp-holo-ring" style={{ width: '58%' }} />
+                  <span aria-hidden className="hidden lg:block pp-holo-platform" style={{ width: '58%' }} />
+                  <span aria-hidden className="hidden lg:block pp-holo-scanner" />
                 </picture>
+
 
               </div>
             </div>
