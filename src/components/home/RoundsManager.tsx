@@ -3375,16 +3375,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   }
                                   setStartConfirmOpen(true);
                                 }}
-                                className="rm-play-btn h-9 px-5 border font-mono font-bold uppercase tracking-[0.18em] text-[11.5px] rounded-sm transition-transform"
+                                className="rm-play-btn h-10 sm:h-9 px-4 sm:px-5 border font-mono font-bold uppercase tracking-[0.16em] text-[12px] sm:text-[11.5px] rounded-sm transition-transform"
                                 style={{
                                   backgroundColor: teamColor,
                                   borderColor: teamColor,
-                                  color: 'hsl(var(--primary-foreground))',
-                                  boxShadow: `0 0 20px -4px ${teamColor}, 0 0 0 1px ${teamColor}55 inset`,
+                                  color: TEAM_COLORS[team]?.onAccent ?? '#0a0a0a',
+                                  boxShadow: `0 0 18px -6px ${teamColor}, 0 0 0 1px ${teamColor}66 inset, 0 1px 0 rgba(255,255,255,0.18) inset`,
+                                  textShadow: '0 1px 0 rgba(255,255,255,0.15)',
                                 }}
                               >
-                                <Play className="rm-play-icon h-3.5 w-3.5 mr-1.5" /> Iniciar Rondas
+                                <Play className="rm-play-icon h-4 w-4 sm:h-3.5 sm:w-3.5 mr-1.5" /> Iniciar Rondas
                               </Button>
+
 
                             </div>
                           ) : (
