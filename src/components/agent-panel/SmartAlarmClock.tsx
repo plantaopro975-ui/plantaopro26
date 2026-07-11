@@ -34,7 +34,7 @@ export function SmartAlarmClock({ agentId }: SmartAlarmClockProps) {
   const { alarms, isLoading, nextAlarm, playCategorySound, refreshAlarms } = useSmartAlarms({ agentId });
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const currentTime = useServerTime(1000);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -46,10 +46,6 @@ export function SmartAlarmClock({ agentId }: SmartAlarmClockProps) {
     category: 'personalizado' as AlarmCategory,
   });
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const testSound = (category: AlarmCategory) => {
     if (isSoundEnabled) {
