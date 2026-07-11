@@ -681,9 +681,22 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            {/* Cena composta */}
+            {/* Cena composta — wrapper com drag ativo apenas em ≥lg */}
             <div
+              onPointerDown={onDragPointerDown}
+              onPointerMove={onDragPointerMove}
+              onPointerUp={onDragPointerUp}
+              onPointerCancel={onDragPointerUp}
               className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-3 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[380px] xl:h-[440px] 2xl:h-[500px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[18%] xl:-translate-x-[20%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
+              style={
+                isDesktop
+                  ? {
+                      transform: `translate3d(${sceneOffset.x}px, ${sceneOffset.y}px, 0)`,
+                      cursor: isDragging ? 'grabbing' : 'grab',
+                      touchAction: 'none',
+                    }
+                  : undefined
+              }
             >
 
 
