@@ -49,9 +49,10 @@ export function RoundsCommandBar() {
     return 'FEIJÓ · AC';
   }, [agent?.unit?.name, agent?.unit?.municipality]);
 
-  const goEscalas = () => {
-    if (user) navigate('/agent-panel');
-    else navigate('/auth');
+  const handleRefresh = () => {
+    // Recarrega a página forçando revalidação (bypass de cache) — atualização
+    // em tempo real sem depender de navegação SPA.
+    try { window.location.reload(); } catch { /* noop */ }
   };
 
   return (
