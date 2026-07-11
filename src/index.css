@@ -1812,13 +1812,20 @@ body:hover {
  * Portais do Radix (Dialog/AlertDialog) ficam fora de #root, então
  * não são afetados pelo blur.
  * ============================================================ */
+body.rm-focus-mode {
+  overflow: hidden !important;
+  scrollbar-width: none;
+}
+body.rm-focus-mode::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }
 body.rm-focus-mode > #root {
   filter: blur(10px) brightness(0.55) saturate(1.05);
   transition: filter 520ms cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   user-select: none;
   will-change: filter;
+  scrollbar-width: none;
 }
+body.rm-focus-mode > #root::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }
 body:not(.rm-focus-mode) > #root {
   transition: filter 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
