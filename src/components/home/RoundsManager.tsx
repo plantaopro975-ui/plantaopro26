@@ -2168,56 +2168,75 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     setDrag({ x: 0, y: 0 });
   };
 
-  /* ================= Drag da janela (antes de iniciar o cronômetro) ================= */
+  /* ================= Drag da janela (rAF + transform direto no DOM) ================= */
   const [drag, setDrag] = useState({ x: 0, y: 0 });
-  const dragRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const dragRef = useRef<{
+    startX: number; startY: number; baseX: number; baseY: number;
+    boundX: number; boundY: number; nx: number; ny: number; raf: number | null;
+  } | null>(null);
   const canDrag = true;
+
+  const applyTransform = (x: number, y: number) => {
+    const el = dialogRef.current;
+    if (el) el.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+  };
 
   const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!canDrag) return;
-    // Só arrasta se clicar diretamente no header (não em botões/inputs)
     const target = e.target as HTMLElement;
     if (target.closest('button, input, select, a, [role="button"]')) return;
     e.preventDefault();
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
-    dragRef.current = { startX: e.clientX, startY: e.clientY, baseX: drag.x, baseY: drag.y };
-  };
-  const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current) return;
-    const { startX, startY, baseX, baseY } = dragRef.current;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    // Clamp baseado no tamanho REAL da janela para mantê-la sempre inteiramente
-    // dentro da viewport — impede que "suma" fora da tela sem forma de voltar.
-    const header = e.currentTarget as HTMLDivElement;
-    const dialog = (header.closest('[role="dialog"]') as HTMLElement | null) ?? header.parentElement;
+    const dialog = (e.currentTarget as HTMLDivElement).closest('[role="dialog"]') as HTMLElement | null;
+    if (dialog) dialogRef.current = dialog as HTMLDivElement;
     const rect = dialog?.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const w = rect?.width ?? 0;
     const h = rect?.height ?? 0;
-    // Se a janela for maior que a viewport (mobile), fixa no centro (bound=0).
-    const boundX = Math.max(0, (vw - w) / 2);
-    const boundY = Math.max(0, (vh - h) / 2);
-    const nx = Math.max(-boundX, Math.min(boundX, baseX + dx));
-    const ny = Math.max(-boundY, Math.min(boundY, baseY + dy));
-    setDrag({ x: nx, y: ny });
+    dragRef.current = {
+      startX: e.clientX, startY: e.clientY,
+      baseX: drag.x, baseY: drag.y,
+      boundX: Math.max(0, (vw - w) / 2),
+      boundY: Math.max(0, (vh - h) / 2),
+      nx: drag.x, ny: drag.y, raf: null,
+    };
   };
-  const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (dragRef.current) {
-      dragRef.current = null;
-      try { (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId); } catch { /* noop */ }
+  const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current;
+    if (!d) return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    d.nx = Math.max(-d.boundX, Math.min(d.boundX, d.baseX + dx));
+    d.ny = Math.max(-d.boundY, Math.min(d.boundY, d.baseY + dy));
+    if (d.raf == null) {
+      d.raf = requestAnimationFrame(() => {
+        if (dragRef.current) {
+          applyTransform(dragRef.current.nx, dragRef.current.ny);
+          dragRef.current.raf = null;
+        }
+      });
     }
   };
-  const resetPosition = () => setDrag({ x: 0, y: 0 });
+  const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current;
+    if (d) {
+      if (d.raf != null) cancelAnimationFrame(d.raf);
+      const { nx, ny } = d;
+      dragRef.current = null;
+      try { (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId); } catch { /* noop */ }
+      setDrag({ x: nx, y: ny });
+    }
+  };
+  const resetPosition = () => { applyTransform(0, 0); setDrag({ x: 0, y: 0 }); };
 
-  // Recentra a janela se a viewport encolher e a posição atual ficar fora dos limites.
+  // Recentra a janela se a viewport encolher.
   useEffect(() => {
     const clampToViewport = () => {
       setDrag((prev) => {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
-        // Sem acesso ao tamanho real aqui — usamos margem defensiva de 40px.
         const boundX = Math.max(0, vw / 2 - 40);
         const boundY = Math.max(0, vh / 2 - 40);
         const nx = Math.max(-boundX, Math.min(boundX, prev.x));
