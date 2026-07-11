@@ -2307,14 +2307,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
         <DialogContent
-          className="w-[min(100vw-0.25rem,56rem)] sm:w-[min(100vw-0.75rem,56rem)] xl:w-[min(100vw-1rem,60rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col rounded-lg sm:rounded-xl shadow-2xl"
+          className="w-[min(100vw-0.25rem,54rem)] sm:w-[min(100vw-0.75rem,54rem)] xl:w-[min(100vw-1rem,58rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-card border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden flex flex-col rounded-lg shadow-lg"
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
-            borderColor: `${teamColor}55`,
-            backgroundColor: `hsl(var(--card))`,
-            backgroundImage: `linear-gradient(160deg, ${teamColor}10 0%, transparent 40%), linear-gradient(0deg, hsl(var(--card)), hsl(var(--card)))`,
-            boxShadow: `0 40px 120px -20px rgba(0,0,0,0.85), 0 0 0 1px ${teamColor}44, inset 0 1px 0 ${teamColor}22`,
+            borderColor: `${teamColor}44`,
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
           }}
           onEscapeKeyDown={(e) => e.preventDefault()}
@@ -2393,18 +2390,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
             >
               <div
-                className="mx-auto mb-2 overflow-hidden rounded-md border bg-card/60 backdrop-blur-sm"
-                style={{ borderColor: `${teamColor}2a`, boxShadow: `inset 0 1px 0 ${teamColor}10` }}
+                className="mx-auto mb-2 overflow-hidden rounded-md border border-border bg-card"
+                style={{ borderLeft: `2px solid ${teamColor}` }}
               >
                 <div className="relative flex items-center gap-2 px-2.5 py-1 sm:px-3">
                   <span
-                    aria-hidden
-                    className="h-3 w-[3px] rounded-sm"
-                    style={{ background: teamColor, boxShadow: `0 0 6px ${teamColor}80` }}
-                  />
-                  <span
-                    className="font-mono text-[10px] uppercase tracking-[0.22em] font-medium antialiased whitespace-nowrap"
-                    style={{ color: teamColor, opacity: 0.9 }}
+                    className="font-mono text-[10px] uppercase tracking-[0.22em] font-medium whitespace-nowrap"
+                    style={{ color: teamColor }}
                   >
                     Central · {team}
                   </span>
