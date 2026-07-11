@@ -21,6 +21,7 @@ import { MissionLockDialog } from './MissionLockDialog';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import { PreNightScheduleDialog } from './PreNightScheduleDialog';
+import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { TacticalClock } from './TacticalClock';
 import {
   isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
