@@ -1339,6 +1339,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [startTime, setStartTime] = useState('07:00');
   const [endTime, setEndTime] = useState('19:00');
   const [intervalMin, setIntervalMin] = useState(30);
+  const [cadenceMin, setCadenceMin] = useState<number>(() => {
+    try {
+      const raw = localStorage.getItem(CADENCE_KEY);
+      const v = raw ? parseInt(raw, 10) : DEFAULT_CADENCE_MIN;
+      return Number.isFinite(v) && v >= 5 && v <= 240 ? v : DEFAULT_CADENCE_MIN;
+    } catch { return DEFAULT_CADENCE_MIN; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem(CADENCE_KEY, String(cadenceMin)); } catch { /* ignore */ }
+  }, [cadenceMin]);
   const [rounding, setRounding] = useState<Rounding>('distribute');
   const [agents, setAgents] = useState<string[]>(['Agente 1', 'Agente 2', 'Agente 3']);
 
