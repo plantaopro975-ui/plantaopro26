@@ -1744,7 +1744,12 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const transitionIssues = useMemo<Issue[]>(() => {
     const list: Issue[] = [];
     const now = new Date(nowServer());
-    const minsNow = now.getHours() * 60 + now.getMinutes();
+    const p = new Intl.DateTimeFormat('en-GB', {
+      timeZone: NIGHT_TZ, hour12: false, hour: '2-digit', minute: '2-digit',
+    }).formatToParts(now);
+    const gh = Number(p.find((x) => x.type === 'hour')?.value ?? '0') % 24;
+    const gm = Number(p.find((x) => x.type === 'minute')?.value ?? '0');
+    const minsNow = gh * 60 + gm;
     const N22 = 22 * 60;
     const N06 = 6 * 60;
     const inWindow = (Math.abs(minsNow - N22) <= 5) || (Math.abs(minsNow - N06) <= 5);
