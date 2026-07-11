@@ -1865,6 +1865,33 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   -webkit-backdrop-filter: blur(2px) saturate(1.05);
 }
 
+/* ============================================================
+ * Ampulheta tática (HourglassSVG) — animações leves via CSS.
+ * Só anima `opacity` para permanecer na camada do compositor
+ * (GPU), evitando reflow/repaint pesados em aparelhos fracos.
+ * ============================================================ */
+@keyframes pp-hg-top-fade {
+  0%, 100% { opacity: 0.9; }
+  70%      { opacity: 0.35; }
+}
+@keyframes pp-hg-bot-fill {
+  0%, 100% { opacity: 0.4; }
+  70%      { opacity: 0.9; }
+}
+@keyframes pp-hg-stream {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.9; }
+}
+.pp-hg-top    { animation: pp-hg-top-fade 3s ease-in-out infinite; will-change: opacity; }
+.pp-hg-bot    { animation: pp-hg-bot-fill 3s ease-in-out infinite; will-change: opacity; }
+.pp-hg-stream { animation: pp-hg-stream 1.2s ease-in-out infinite; will-change: opacity; }
+@media (prefers-reduced-motion: reduce) {
+  .pp-hg-top, .pp-hg-bot, .pp-hg-stream { animation: none !important; }
+  .pp-hg-top    { opacity: 0.85; }
+  .pp-hg-bot    { opacity: 0.7; }
+  .pp-hg-stream { opacity: 0; }
+}
+
 /* Ticker de status do hero — deslizamento horizontal contínuo */
 @keyframes pp-ticker {
   0%   { transform: translateX(0); }
