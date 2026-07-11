@@ -2082,6 +2082,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     ? Math.max(0, schedule.totalSec - (currentView?.elapsed ?? 0))
     : 0;
 
+  // ==== Sinais luminosos intermitentes ANTES da troca de agente ====
+  // Ativa nos últimos 60s (âmbar) e 15s (vermelho) do slot do agente atual.
+  const slotRemainingSec = live && !live.done ? Math.max(0, live.remaining) : 0;
+  const handoffSoon = !!(live && !live.done && slotRemainingSec > 0 && slotRemainingSec <= 60);
+  const handoffImminent = !!(live && !live.done && slotRemainingSec > 0 && slotRemainingSec <= 15);
+  const nextAgentName = live && !live.done && schedule?.rows[live.index + 1]?.name;
+
   // Alerta visual/sonoro nos últimos minutos da operação inteira
   const endingSoon = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 300; // ≤ 5 min
   const endingCritical = running && totalRemainingSeconds > 0 && totalRemainingSeconds <= 60; // ≤ 1 min
