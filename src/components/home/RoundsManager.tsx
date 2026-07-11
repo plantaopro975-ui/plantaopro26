@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Users, Plus, Trash2, Copy, FileDown, Timer, Shield,
+  Users, Plus, Trash2, Copy, FileDown, Timer,
   Play, Pause, RotateCcw, Radio, ChevronRight, AlertTriangle,
   CheckCircle2, Volume2, VolumeX, Lock, CalendarClock, XCircle, Settings,
 } from 'lucide-react';
@@ -28,6 +28,7 @@ import { RoundHistoryDialog } from './RoundHistoryDialog';
 import { ReminderSettingsDialog } from './ReminderSettingsDialog';
 import { getRotatedTeamColor, bumpColorRotation, TEAM_COLORS } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
+import { TeamGlyph } from './TeamGlyph';
 import { getServerDate, getServerOffsetMs, syncServerTime } from '@/hooks/useServerTime';
 import {
   isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
@@ -3026,7 +3027,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <div className="min-w-0 flex-1 basis-44">
                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[12.5px] uppercase tracking-wider text-muted-foreground">
-                  <Shield className="h-3 w-3 shrink-0" style={{ color: teamColor }} />
+                  <TeamGlyph team={team} color={teamColor} size={13} className="shrink-0" />
                   <span>Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
@@ -3092,6 +3093,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 className="mx-auto mb-1.5 overflow-hidden rounded-md border border-border bg-card"
               >
                 <div className="relative flex items-center gap-2 px-2.5 py-1 sm:px-3">
+                  <TeamGlyph team={team} color={teamColor} size={12} className="shrink-0 opacity-90" />
                   <span
                     className="font-mono text-[10px] uppercase tracking-[0.22em] font-medium whitespace-nowrap"
                     style={{ color: teamColor }}
