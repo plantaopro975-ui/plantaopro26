@@ -479,6 +479,107 @@ body {
   touch-action: pan-x pan-y pinch-zoom;
 }
 
+/* Desktop baixo: mantém a homepage dentro do primeiro viewport sem cortar os cards. */
+@media (min-width: 640px) and (max-height: 760px) {
+  .pp-home-hero {
+    max-height: calc(100dvh - var(--app-header-height) - 4px);
+  }
+
+  .pp-hero-top-row {
+    gap: 0.75rem !important;
+    padding-top: 0.125rem !important;
+  }
+
+  .pp-hero-left {
+    gap: 0.5rem !important;
+  }
+
+  .pp-hero-title {
+    font-size: clamp(1.35rem, 1.8vw, 1.7rem) !important;
+    line-height: 1.02 !important;
+  }
+
+  .pp-hero-subtitle {
+    font-size: 0.5625rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .pp-briefing-panel {
+    margin-top: 0 !important;
+  }
+
+  .pp-briefing-card {
+    padding: 0.55rem 0.7rem !important;
+  }
+
+  .pp-briefing-metrics {
+    gap: 0.5rem !important;
+  }
+
+  .pp-operational-log {
+    margin-top: 0.35rem !important;
+  }
+
+  .pp-operational-log ul {
+    column-gap: 0.75rem !important;
+  }
+
+  .pp-scene-stage {
+    min-height: clamp(145px, 22vh, 176px) !important;
+    padding-top: 0 !important;
+  }
+
+  .pp-scene-composite {
+    height: clamp(145px, 22vh, 176px) !important;
+  }
+
+  .pp-team-selector {
+    padding-top: 0 !important;
+    margin-top: -0.25rem !important;
+  }
+
+  .pp-team-grid {
+    gap: 0.75rem !important;
+  }
+
+  .pp-team-grid [data-team-card] {
+    max-width: 9.25rem !important;
+  }
+
+  .pp-compliance-strip {
+    margin-top: 0.35rem !important;
+    padding-top: 0.35rem !important;
+    gap: 0.5rem !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 670px) {
+  .pp-home-hero {
+    border-radius: 0.875rem !important;
+  }
+
+  .pp-hero-title {
+    font-size: clamp(1.25rem, 1.65vw, 1.55rem) !important;
+  }
+
+  .pp-briefing-card {
+    padding-top: 0.45rem !important;
+    padding-bottom: 0.45rem !important;
+  }
+
+  .pp-scene-stage {
+    min-height: clamp(130px, 20vh, 156px) !important;
+  }
+
+  .pp-scene-composite {
+    height: clamp(130px, 20vh, 156px) !important;
+  }
+
+  .pp-team-grid [data-team-card] {
+    max-width: 8.45rem !important;
+  }
+}
+
 @media (max-width: 640px) {
   body {
     background-attachment: scroll;
