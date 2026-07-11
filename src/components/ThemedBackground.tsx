@@ -363,7 +363,7 @@ function WavesEffect({ effect }: { effect: BackgroundEffect }) {
         }}
       />
       <div 
-        className="absolute bottom-0 left-[10%] right-[10%] h-16 animate-pulse"
+        className="absolute bottom-0 left-[10%] right-[10%] h-16"
         style={{
           background: `linear-gradient(to top, ${effect.primaryColor}, transparent)`,
           borderRadius: '50% 50% 0 0',
