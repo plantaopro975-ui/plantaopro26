@@ -73,7 +73,7 @@ interface Props {
   onTeamClick: (team: string) => void;
 }
 
-type TeamKey = 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
+import { TEAM_COLORS, type TeamKey } from '@/lib/teamColors';
 
 // Accents alinhados com src/lib/teamColors.ts (mesma paleta usada pelo Gestor de Ronda)
 const TEAMS: {
