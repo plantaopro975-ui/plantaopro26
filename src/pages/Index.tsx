@@ -58,6 +58,7 @@ import { QuickAccessPanel } from '@/components/QuickAccessPanel';
 import { HomeAgentInfoBanner } from '@/components/HomeAgentInfoBanner';
 import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
+import { HardRefreshHint } from '@/components/HardRefreshHint';
 
 import { DeveloperSignature } from '@/components/DeveloperSignature';
 import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
@@ -1551,6 +1552,7 @@ export default function Index() {
                 </span>
                 <span>Online</span>
               </span>
+              <HardRefreshHint />
               <span className="text-muted-foreground/40">·</span>
               <button
                 type="button"
