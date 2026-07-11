@@ -1960,18 +1960,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
               navigator.vibrate?.([220, 90, 220, 90, 380]);
             }
           } catch { /* ignore */ }
-          try {
-            if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-              const n = new Notification(`Plantão Pro · Ronda concluída`, {
-                body: `${finishedRow.name} finalizou o Posto ${pad(finishedIdx + 1)} da Equipe ${team}. Registro operacional confirmado.`,
-                tag: `plantaopro-rounds-done-${finishedIdx}`,
-                icon: '/icon-192.png',
-                badge: '/favicon.png',
-                silent: false,
-              });
-              setTimeout(() => n.close(), 8000);
-            }
-          } catch { /* ignore */ }
+          // Notificações nativas do navegador foram removidas — todos os
+          // avisos são exibidos in-app via toast/diálogo SVG profissional.
         });
       }
       if (!live.done && currentIdx > 0) {
