@@ -82,7 +82,13 @@ export const TacticalRadar = forwardRef<HTMLDivElement, TacticalRadarProps>(func
 
   const rings = useMemo(() => [25, 50, 75], []);
 
-  const radarSize = compact ? 120 : 160;
+  const [viewportSmall, setViewportSmall] = useState<boolean>(() => typeof window !== 'undefined' ? window.innerWidth < 480 : false);
+  useEffect(() => {
+    const onResize = () => setViewportSmall(window.innerWidth < 480);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  const radarSize = compact ? (viewportSmall ? 96 : 120) : (viewportSmall ? 128 : 160);
   const centerX = radarSize / 2;
   const centerY = radarSize / 2;
 
