@@ -1342,6 +1342,35 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   useEffect(() => { setHistory(readHistory()); }, [open]);
   const clearHistory = () => { writeHistory([]); setHistory([]); };
 
+  /* ---- Log resumido (cache local) de equipes das rondas realizadas ---- */
+  const TEAM_LOG_KEY = 'plantaopro_team_round_log';
+  type TeamLogEntry = { team: string; dateISO: string };
+  const readTeamLog = (): TeamLogEntry[] => {
+    try {
+      const raw = localStorage.getItem(TEAM_LOG_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr.slice(0, 15) : [];
+    } catch { return []; }
+  };
+  const writeTeamLog = (list: TeamLogEntry[]) => {
+    try { localStorage.setItem(TEAM_LOG_KEY, JSON.stringify(list.slice(0, 15))); } catch { /* ignore */ }
+  };
+  const [teamLog, setTeamLog] = useState<TeamLogEntry[]>([]);
+  useEffect(() => { setTeamLog(readTeamLog()); }, [open]);
+  const appendTeamLog = (teamName: string) => {
+    const entry: TeamLogEntry = { team: teamName, dateISO: new Date().toISOString() };
+    const next = [entry, ...readTeamLog()].slice(0, 15);
+    writeTeamLog(next);
+    setTeamLog(next);
+  };
+  const clearTeamLog = () => { writeTeamLog([]); setTeamLog([]); };
+
+  /* ---- Confirmação e trava da equipe ---- */
+  const [teamConfirmed, setTeamConfirmed] = useState(false);
+  const [teamConfirmOpen, setTeamConfirmOpen] = useState(false);
+  const [pendingTeam, setPendingTeam] = useState<TeamKey | null>(null);
+
   /* server clock offset (server_ms - local_ms) */
   const clockOffsetRef = useRef<number>(0);
   const sessionIdRef = useRef<string | null>(null);
