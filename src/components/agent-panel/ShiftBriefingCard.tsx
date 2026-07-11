@@ -490,14 +490,14 @@ export function ShiftBriefingCard({
           ) : (
             <>
               {(() => {
-                const missingSummary: { key: ChecklistKey; label: string }[] = [
-                  { key: 'adolescents', label: 'Adolescentes' },
-                  { key: 'handcuffs', label: 'Algemas' },
-                  { key: 'handcuff_keys', label: 'Chaves' },
-                  { key: 'tonfas', label: 'Tonfas' },
-                  { key: 'radios', label: 'Rádios carregados' },
-                  { key: 'handover', label: 'Recebimento' },
-                ].filter((i) => !itemsStatus[i.key]);
+                const missingSummary = ([
+                  { key: 'adolescents' as ChecklistKey, label: 'Adolescentes' },
+                  { key: 'handcuffs' as ChecklistKey, label: 'Algemas' },
+                  { key: 'handcuff_keys' as ChecklistKey, label: 'Chaves' },
+                  { key: 'tonfas' as ChecklistKey, label: 'Tonfas' },
+                  { key: 'radios' as ChecklistKey, label: 'Rádios carregados' },
+                  { key: 'handover' as ChecklistKey, label: 'Recebimento' },
+                ]).filter((i) => !itemsStatus[i.key]);
 
                 return (
                   <>
