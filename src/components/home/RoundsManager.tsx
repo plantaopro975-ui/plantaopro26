@@ -1244,6 +1244,14 @@ function Section({
 export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
 
   const [open, setOpen] = useState(false);
+  // Escuta evento global — permite abrir o Gestor por atalhos externos
+  // (ex.: botão "Fazer ronda" do lembrete de 30 min).
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener('rounds:open', handler);
+    return () => window.removeEventListener('rounds:open', handler);
+  }, []);
+
   const { isAdmin, masterSession } = useAuth();
   const isAdminUser = isAdmin || !!masterSession;
 
