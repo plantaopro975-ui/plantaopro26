@@ -1643,10 +1643,24 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     // "quanto falta pro slot do agente atual terminar" atualize em tempo real
     // enquanto o operador só configura a ronda.
     const needsPreview = nightEffectivelyLocked && mode === 'split' && !!schedule;
-    if (!running && !needsPreview && !armed) return;
+    const needsSchedule = scheduledFor != null;
+    if (!running && !needsPreview && !armed && !needsSchedule) return;
     const id = setInterval(() => setTick((t) => t + 1), 500);
     return () => clearInterval(id);
-  }, [running, nightEffectivelyLocked, mode, schedule, armed]);
+  }, [running, nightEffectivelyLocked, mode, schedule, armed, scheduledFor]);
+
+  /* ---------- Auto-start quando bater 22:00 (pré-agendado) ---------- */
+  useEffect(() => {
+    if (scheduledFor == null) return;
+    if (nowServer() >= scheduledFor) {
+      const target = scheduledFor;
+      setScheduledFor(null);
+      // Ancora o início no exato 22:00 para preservar a divisão de tempo.
+      startTimer({ anchorOverrideMs: target });
+    }
+    // Depende de `tick` para reavaliar a cada 500ms enquanto agendado.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick, scheduledFor]);
 
   const live = useMemo(() => {
     if (!schedule || !running || startedAtRef.current == null) return null;
