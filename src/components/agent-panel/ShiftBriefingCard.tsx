@@ -772,3 +772,55 @@ function NumberField({
     />
   );
 }
+
+/**
+ * Estado profissional exibido enquanto NÃO há plantão em curso.
+ * Substitui o antigo texto seco por um aviso institucional em SVG.
+ */
+function OffDutyNotice() {
+  return (
+    <div className="relative overflow-hidden rounded-lg border border-amber-500/25 bg-gradient-to-br from-slate-950 via-slate-900/60 to-slate-950 p-4">
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 rounded-md bg-amber-500/10 border border-amber-500/30 p-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 48 48"
+            className="h-8 w-8 text-amber-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M24 4l16 6v10c0 10-7 18-16 22-9-4-16-12-16-22V10l16-6z" opacity="0.85" />
+            <circle cx="24" cy="24" r="6" />
+            <path d="M24 18v6l4 3" />
+          </svg>
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono uppercase tracking-[0.24em] text-amber-400/90">
+              Briefing bloqueado
+            </span>
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_hsl(45_100%_55%/0.8)]" />
+          </div>
+          <h4 className="mt-1 text-sm font-semibold text-slate-100 leading-tight">
+            Aguardando início do plantão
+          </h4>
+          <p className="mt-1 text-[11.5px] leading-relaxed text-slate-400">
+            O checklist de entrada (adolescentes, algemas, chaves, tonfas, rádios e passagem de plantão)
+            será liberado automaticamente no momento em que o seu plantão iniciar. Uso restrito a{' '}
+            <strong className="text-slate-200">Chefe de Equipe</strong> e{' '}
+            <strong className="text-slate-200">Apoio</strong>.
+          </p>
+        </div>
+      </div>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(90deg,transparent,hsl(45_100%_55%/0.35),transparent)]"
+      />
+    </div>
+  );
+}
+
