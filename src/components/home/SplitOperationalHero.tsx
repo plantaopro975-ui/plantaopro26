@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Radio, ShieldCheck, Activity, Radar, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { teamEmblems } from '@/lib/teamAssets';
