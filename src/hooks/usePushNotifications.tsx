@@ -156,6 +156,11 @@ export function usePushNotifications() {
       return false;
     }
 
+    if (!areNativeNotificationsAllowed()) {
+      // Usuário optou por manter tudo in-app — não emite nenhuma push.
+      return false;
+    }
+
     try {
       // Play tactical sound based on type
       if (payload.playSound !== false) {
