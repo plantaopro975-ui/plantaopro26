@@ -138,7 +138,7 @@ export function useAlarmNotifications({
     if (!enabled || !agentId) return;
 
     // Request notification permission
-    if ('Notification' in window && Notification.permission === 'default') {
+    if (areNativeNotificationsAllowed() && Notification.permission === 'default') {
       Notification.requestPermission();
     }
 
