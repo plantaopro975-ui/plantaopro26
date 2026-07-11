@@ -2719,7 +2719,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               </div>
 
                               {urgent && view && (
-                                <div className="font-mono text-[12.5px] uppercase tracking-[0.35em] font-bold text-destructive animate-fade-in">
+                                <div className="font-mono text-[12.5px] uppercase tracking-[0.35em] font-bold text-destructive">
                                   ⚠ {critical ? 'ALERTA FINAL · ' : 'Contagem final · '}
                                   {String(Math.max(0, Math.ceil(view.remaining))).padStart(2, '0')} segundos
                                 </div>
@@ -2728,8 +2728,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Nome grande — agente ATIVO agora (live ou preview) */}
                               {activeAgentName && (
                                 <div
-                                  className="font-display font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
-                                  style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
+                                  className="font-display font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2"
+                                  style={{ color: teamColor }}
                                 >
                                   {activeAgentName}
                                 </div>
