@@ -100,6 +100,8 @@ export default function AgentPanel() {
   const { agent, isLoading: isLoadingAgent } = useAgentProfile();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('equipe');
+  const [shiftsFilter, setShiftsFilter] = useState<'hoje' | 'semana' | 'mes'>('semana');
+
   const [mountedTabs, setMountedTabs] = useState<Set<string>>(() => new Set(['equipe']));
   const { compact, toggle: toggleCompact } = useCompactMode();
   const [hasShifts, setHasShifts] = useState(true);
