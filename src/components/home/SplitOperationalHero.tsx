@@ -36,18 +36,37 @@ import bgBravo from '@/assets/teams/bravo-poster.jpg';
 import bgCharlie from '@/assets/teams/charlie-poster.jpg';
 import bgDelta from '@/assets/teams/delta-poster.jpg';
 
-// Retratos táticos de equipe — exibidos APENAS na versão mobile (<768px)
-// para dar identidade humana/operacional aos cards em telas pequenas.
-import mobileAlfa from '@/assets/teams/mobile/alfa-squad.jpg';
-import mobileBravo from '@/assets/teams/mobile/bravo-squad.jpg';
-import mobileCharlie from '@/assets/teams/mobile/charlie-squad.jpg';
-import mobileDelta from '@/assets/teams/mobile/delta-squad.jpg';
+// Retratos táticos de equipe — exibidos APENAS na versão mobile (<768px).
+// Servidos como <picture> com variantes WebP + JPEG em dois tamanhos
+// (320w para 1x, 480w para 2x/retina) para minimizar bytes no mobile.
+import mobileAlfaSmWebp from '@/assets/teams/mobile/alfa-squad-sm.webp';
+import mobileAlfaMdWebp from '@/assets/teams/mobile/alfa-squad-md.webp';
+import mobileAlfaSmJpg  from '@/assets/teams/mobile/alfa-squad-sm.jpg';
+import mobileAlfaMdJpg  from '@/assets/teams/mobile/alfa-squad-md.jpg';
+import mobileBravoSmWebp from '@/assets/teams/mobile/bravo-squad-sm.webp';
+import mobileBravoMdWebp from '@/assets/teams/mobile/bravo-squad-md.webp';
+import mobileBravoSmJpg  from '@/assets/teams/mobile/bravo-squad-sm.jpg';
+import mobileBravoMdJpg  from '@/assets/teams/mobile/bravo-squad-md.jpg';
+import mobileCharlieSmWebp from '@/assets/teams/mobile/charlie-squad-sm.webp';
+import mobileCharlieMdWebp from '@/assets/teams/mobile/charlie-squad-md.webp';
+import mobileCharlieSmJpg  from '@/assets/teams/mobile/charlie-squad-sm.jpg';
+import mobileCharlieMdJpg  from '@/assets/teams/mobile/charlie-squad-md.jpg';
+import mobileDeltaSmWebp from '@/assets/teams/mobile/delta-squad-sm.webp';
+import mobileDeltaMdWebp from '@/assets/teams/mobile/delta-squad-md.webp';
+import mobileDeltaSmJpg  from '@/assets/teams/mobile/delta-squad-sm.jpg';
+import mobileDeltaMdJpg  from '@/assets/teams/mobile/delta-squad-md.jpg';
 
-const MOBILE_SQUAD: Record<TeamKey, string> = {
-  ALFA: mobileAlfa,
-  BRAVO: mobileBravo,
-  CHARLIE: mobileCharlie,
-  DELTA: mobileDelta,
+type MobileSquadSources = {
+  webpSrcSet: string;
+  jpgSrcSet: string;
+  jpgFallback: string;
+};
+
+const MOBILE_SQUAD: Record<TeamKey, MobileSquadSources> = {
+  ALFA:    { webpSrcSet: `${mobileAlfaSmWebp} 1x, ${mobileAlfaMdWebp} 2x`,       jpgSrcSet: `${mobileAlfaSmJpg} 1x, ${mobileAlfaMdJpg} 2x`,       jpgFallback: mobileAlfaMdJpg },
+  BRAVO:   { webpSrcSet: `${mobileBravoSmWebp} 1x, ${mobileBravoMdWebp} 2x`,     jpgSrcSet: `${mobileBravoSmJpg} 1x, ${mobileBravoMdJpg} 2x`,     jpgFallback: mobileBravoMdJpg },
+  CHARLIE: { webpSrcSet: `${mobileCharlieSmWebp} 1x, ${mobileCharlieMdWebp} 2x`, jpgSrcSet: `${mobileCharlieSmJpg} 1x, ${mobileCharlieMdJpg} 2x`, jpgFallback: mobileCharlieMdJpg },
+  DELTA:   { webpSrcSet: `${mobileDeltaSmWebp} 1x, ${mobileDeltaMdWebp} 2x`,     jpgSrcSet: `${mobileDeltaSmJpg} 1x, ${mobileDeltaMdJpg} 2x`,     jpgFallback: mobileDeltaMdJpg },
 };
 
 interface Props {
