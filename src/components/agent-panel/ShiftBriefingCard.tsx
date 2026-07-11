@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,10 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  ClipboardCheck, ShieldAlert, Radio, Users, KeyRound, BookOpen, CalendarClock,
-  PenLine, PlusCircle, Trash2, CheckCircle2, FileText, History, Lock,
+  ClipboardCheck, ShieldAlert, Radio, Users, KeyRound, BookOpen, ArrowLeftRight,
+  PenLine, CheckCircle2, FileText, History, Lock, Loader2, Circle,
 } from 'lucide-react';
 import { addHours, format, isWithinInterval, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -38,32 +37,37 @@ interface Shift {
   end_time: string;
 }
 
-interface RadioItem {
-  number: string;
-  status: 'ok' | 'defect';
-  notes: string;
-}
-
 interface Briefing {
   id: string;
   shift_id: string | null;
   shift_date: string;
-  adolescents_expected: number | null;
   adolescents_counted: number | null;
-  handcuffs_expected: number | null;
   handcuffs_counted: number | null;
-  handcuff_keys_expected: number | null;
   handcuff_keys_counted: number | null;
-  radios: RadioItem[];
-  schedule_ok: boolean;
-  schedule_notes: string | null;
+  radios_charged_count: number | null;
+  radios_total_expected: number | null;
   book_entry: string | null;
+  handover_ok: boolean;
+  handover_notes: string | null;
   observations: string | null;
   signature: string | null;
   completed_at: string | null;
 }
 
 const LEADER_ROLES = ['support', 'team_leader', 'chief', 'apoio', 'chefe_equipe'];
+
+// Cada item do checklist e como decidir se está "cumprido"
+type ChecklistKey =
+  | 'adolescents'
+  | 'handcuffs'
+  | 'handcuff_keys'
+  | 'radios'
+  | 'book'
+  | 'handover';
+
+const CHECKLIST_ORDER: ChecklistKey[] = [
+  'adolescents', 'handcuffs', 'handcuff_keys', 'radios', 'book', 'handover',
+];
 
 // -------- Component --------
 export function ShiftBriefingCard({
@@ -75,20 +79,25 @@ export function ShiftBriefingCard({
   const [history, setHistory] = useState<Briefing[]>([]);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [autoSaveState, setAutoSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
-  // form state
-  const [adoExp, setAdoExp] = useState('');
+  // form state — cada plantão começa em branco (chave = shift_id)
   const [adoCnt, setAdoCnt] = useState('');
-  const [algExp, setAlgExp] = useState('');
   const [algCnt, setAlgCnt] = useState('');
-  const [chvExp, setChvExp] = useState('');
   const [chvCnt, setChvCnt] = useState('');
-  const [radios, setRadios] = useState<RadioItem[]>([{ number: '', status: 'ok', notes: '' }]);
-  const [scheduleOk, setScheduleOk] = useState(false);
-  const [scheduleNotes, setScheduleNotes] = useState('');
+  const [radiosCharged, setRadiosCharged] = useState('');
+  const [radiosExpected, setRadiosExpected] = useState('');
   const [bookEntry, setBookEntry] = useState('');
+  const [handoverOk, setHandoverOk] = useState(false);
+  const [handoverNotes, setHandoverNotes] = useState('');
   const [observations, setObservations] = useState('');
   const [signature, setSignature] = useState('');
+
+  // Guarda-chuva para debounce e evitar race em auto-save
+  const autoSaveTimer = useRef<number | null>(null);
+  const dirtyRef = useRef(false);
+  const briefingRef = useRef<Briefing | null>(null);
+  briefingRef.current = briefing;
 
   // fetch current shift + existing briefing + history
   useEffect(() => {
@@ -109,7 +118,6 @@ export function ShiftBriefingCard({
 
       setCurrentShift(active || null);
 
-      // history (unit-wide)
       if (unitId) {
         const { data: hist } = await supabase
           .from('shift_briefings')
@@ -120,7 +128,9 @@ export function ShiftBriefingCard({
         setHistory((hist || []) as unknown as Briefing[]);
       }
 
-      // active briefing for current shift
+      // Briefing ativo do plantão atual. Se não existe, o formulário fica em
+      // branco — renovação automática por shift_id garante que cada novo
+      // plantão começa do zero.
       if (active) {
         const { data: b } = await supabase
           .from('shift_briefings')
@@ -132,51 +142,46 @@ export function ShiftBriefingCard({
     })();
   }, [agentId, unitId, isLeader]);
 
-  // hydrate form when opening
+  // Hidrata formulário com o briefing carregado (ou o do plantão atual).
   useEffect(() => {
-    if (!open) return;
     if (briefing) {
-      setAdoExp(briefing.adolescents_expected?.toString() ?? '');
       setAdoCnt(briefing.adolescents_counted?.toString() ?? '');
-      setAlgExp(briefing.handcuffs_expected?.toString() ?? '');
       setAlgCnt(briefing.handcuffs_counted?.toString() ?? '');
-      setChvExp(briefing.handcuff_keys_expected?.toString() ?? '');
       setChvCnt(briefing.handcuff_keys_counted?.toString() ?? '');
-      setRadios(briefing.radios?.length ? briefing.radios : [{ number: '', status: 'ok', notes: '' }]);
-      setScheduleOk(!!briefing.schedule_ok);
-      setScheduleNotes(briefing.schedule_notes ?? '');
+      setRadiosCharged(briefing.radios_charged_count?.toString() ?? '');
+      setRadiosExpected(briefing.radios_total_expected?.toString() ?? '');
       setBookEntry(briefing.book_entry ?? '');
+      setHandoverOk(!!briefing.handover_ok);
+      setHandoverNotes(briefing.handover_notes ?? '');
       setObservations(briefing.observations ?? '');
       setSignature(briefing.signature ?? '');
     }
-  }, [open, briefing]);
-
-  const progress = useMemo(() => {
-    if (!briefing) return 0;
-    let done = 0; const total = 5;
-    if (briefing.adolescents_counted !== null) done++;
-    if (briefing.handcuffs_counted !== null && briefing.handcuff_keys_counted !== null) done++;
-    if (briefing.radios?.length > 0) done++;
-    if (briefing.schedule_ok) done++;
-    if (briefing.book_entry && briefing.book_entry.length > 0) done++;
-    return Math.round((done / total) * 100);
   }, [briefing]);
 
-  const addRadio = () => setRadios((r) => [...r, { number: '', status: 'ok', notes: '' }]);
-  const rmRadio = (i: number) => setRadios((r) => r.filter((_, idx) => idx !== i));
-  const updRadio = (i: number, patch: Partial<RadioItem>) =>
-    setRadios((r) => r.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+  // Cálculo de conclusão de cada item do checklist
+  const itemsStatus = useMemo(() => {
+    return {
+      adolescents: adoCnt !== '' && Number(adoCnt) >= 0,
+      handcuffs: algCnt !== '' && Number(algCnt) >= 0,
+      handcuff_keys: chvCnt !== '' && Number(chvCnt) >= 0,
+      radios: radiosCharged !== '' && Number(radiosCharged) >= 0,
+      book: bookEntry.trim().length >= 10,
+      handover: handoverOk,
+    } as Record<ChecklistKey, boolean>;
+  }, [adoCnt, algCnt, chvCnt, radiosCharged, bookEntry, handoverOk]);
 
-  const submit = async (finalize: boolean) => {
-    if (!currentShift) {
-      toast.error('Nenhum plantão ativo no momento.');
-      return;
-    }
+  const completedCount = Object.values(itemsStatus).filter(Boolean).length;
+  const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
+
+  // -------- Auto-save (debounce 700ms) --------
+  const persist = async (finalize = false) => {
+    if (!currentShift) return null;
     if (finalize && !signature.trim()) {
       toast.error('Assine com seu nome para finalizar o briefing.');
-      return;
+      return null;
     }
     setSaving(true);
+    setAutoSaveState('saving');
     try {
       const payload: any = {
         shift_id: currentShift.id,
@@ -184,26 +189,27 @@ export function ShiftBriefingCard({
         unit_id: unitId,
         team: agentTeam,
         shift_date: currentShift.shift_date,
-        adolescents_expected: adoExp ? Number(adoExp) : null,
-        adolescents_counted: adoCnt ? Number(adoCnt) : null,
-        handcuffs_expected: algExp ? Number(algExp) : null,
-        handcuffs_counted: algCnt ? Number(algCnt) : null,
-        handcuff_keys_expected: chvExp ? Number(chvExp) : null,
-        handcuff_keys_counted: chvCnt ? Number(chvCnt) : null,
-        radios: radios.filter((r) => r.number.trim()),
-        schedule_ok: scheduleOk,
-        schedule_notes: scheduleNotes || null,
+        adolescents_counted: adoCnt !== '' ? Number(adoCnt) : null,
+        handcuffs_counted: algCnt !== '' ? Number(algCnt) : null,
+        handcuff_keys_counted: chvCnt !== '' ? Number(chvCnt) : null,
+        radios_charged_count: radiosCharged !== '' ? Number(radiosCharged) : null,
+        radios_total_expected: radiosExpected !== '' ? Number(radiosExpected) : null,
         book_entry: bookEntry || null,
+        handover_ok: handoverOk,
+        handover_notes: handoverNotes || null,
         observations: observations || null,
         signature: signature || null,
-        completed_at: finalize ? new Date().toISOString() : (briefing?.completed_at ?? null),
+        completed_at: finalize
+          ? new Date().toISOString()
+          : (briefingRef.current?.completed_at ?? null),
       };
 
-      const { data, error } = briefing
+      const existing = briefingRef.current;
+      const { data, error } = existing
         ? await supabase
             .from('shift_briefings')
             .update(payload)
-            .eq('id', briefing.id)
+            .eq('id', existing.id)
             .select()
             .single()
         : await supabase
@@ -214,13 +220,43 @@ export function ShiftBriefingCard({
 
       if (error) throw error;
       setBriefing(data as unknown as Briefing);
-      toast.success(finalize ? 'Briefing finalizado e registrado.' : 'Rascunho salvo.');
-      if (finalize) setOpen(false);
+      dirtyRef.current = false;
+      setAutoSaveState('saved');
+      if (finalize) {
+        toast.success('Briefing finalizado e registrado.');
+      }
+      return data as unknown as Briefing;
     } catch (e: any) {
-      toast.error(e.message || 'Falha ao salvar briefing.');
+      setAutoSaveState('error');
+      if (finalize) toast.error(e.message || 'Falha ao salvar briefing.');
+      return null;
     } finally {
       setSaving(false);
+      window.setTimeout(() => {
+        setAutoSaveState((s) => (s === 'saved' ? 'idle' : s));
+      }, 2200);
     }
+  };
+
+  // Auto-save reativo: qualquer alteração no formulário dispara persist em 700ms.
+  useEffect(() => {
+    if (!open || !currentShift) return;
+    // Ignora o primeiro ciclo (hidratação vinda do briefing)
+    if (!dirtyRef.current) return;
+    if (autoSaveTimer.current) window.clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = window.setTimeout(() => {
+      void persist(false);
+    }, 700);
+    return () => {
+      if (autoSaveTimer.current) window.clearTimeout(autoSaveTimer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adoCnt, algCnt, chvCnt, radiosCharged, radiosExpected, bookEntry, handoverOk, handoverNotes, observations, signature]);
+
+  // Wrapper que marca "sujo" antes de setar cada estado — só assim o auto-save dispara.
+  const withDirty = <T,>(setter: (v: T) => void) => (v: T) => {
+    dirtyRef.current = true;
+    setter(v);
   };
 
   // ---------- Render ----------
@@ -236,7 +272,7 @@ export function ShiftBriefingCard({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle className="flex items-center gap-2 text-sm text-amber-300">
               <ClipboardCheck className="h-4 w-4" />
-              Briefing de Entrada
+              Checklist de Entrada
               <Badge className={cn(
                 'ml-2 text-[10px]',
                 finalized
@@ -265,7 +301,7 @@ export function ShiftBriefingCard({
                 )}
               >
                 <PenLine className="h-3.5 w-3.5 mr-1.5" />
-                {finalized ? 'Revisar Briefing' : 'Iniciar Briefing'}
+                {finalized ? 'Revisar checklist' : 'Preencher checklist'}
               </Button>
             </div>
           </div>
@@ -275,7 +311,7 @@ export function ShiftBriefingCard({
           {!hasCurrentShift ? (
             <div className="flex items-center gap-2 rounded-md border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-400">
               <ShieldAlert className="h-4 w-4 text-slate-500" />
-              O briefing só fica disponível durante um plantão ativo (janela de 24h desde o início).
+              O checklist só fica disponível durante um plantão ativo (janela de 24h desde o início).
             </div>
           ) : (
             <>
@@ -283,13 +319,21 @@ export function ShiftBriefingCard({
                 <MiniStat icon={<Users className="h-3 w-3" />} label="Adolescentes" value={briefing?.adolescents_counted?.toString() ?? '—'} />
                 <MiniStat icon={<ShieldAlert className="h-3 w-3" />} label="Algemas" value={briefing?.handcuffs_counted?.toString() ?? '—'} />
                 <MiniStat icon={<KeyRound className="h-3 w-3" />} label="Chaves" value={briefing?.handcuff_keys_counted?.toString() ?? '—'} />
-                <MiniStat icon={<Radio className="h-3 w-3" />} label="Rádios" value={briefing?.radios?.length?.toString() ?? '0'} />
-                <MiniStat icon={<CalendarClock className="h-3 w-3" />} label="Cronograma" value={briefing?.schedule_ok ? 'OK' : '—'} />
-                <MiniStat icon={<BookOpen className="h-3 w-3" />} label="Livro" value={briefing?.book_entry ? 'OK' : '—'} />
+                <MiniStat
+                  icon={<Radio className="h-3 w-3" />}
+                  label="Rádios carregados"
+                  value={briefing?.radios_charged_count != null
+                    ? (briefing?.radios_total_expected
+                        ? `${briefing.radios_charged_count}/${briefing.radios_total_expected}`
+                        : String(briefing.radios_charged_count))
+                    : '—'}
+                />
+                <MiniStat icon={<BookOpen className="h-3 w-3" />} label="Livro informativo" value={briefing?.book_entry ? 'OK' : '—'} />
+                <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={briefing?.handover_ok ? 'OK' : '—'} />
               </div>
 
               <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-slate-400">
-                <span>Preenchimento</span>
+                <span>Preenchimento · {completedCount}/{CHECKLIST_ORDER.length}</span>
                 <span className={cn(progress === 100 ? 'text-emerald-400' : 'text-amber-400')}>{progress}%</span>
               </div>
               <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -346,175 +390,138 @@ export function ShiftBriefingCard({
 
       {/* ---------- Dialog ---------- */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl bg-slate-900 border-amber-500/30 text-slate-100 p-0 overflow-hidden">
+        <DialogContent className="max-w-2xl bg-slate-900 border-amber-500/30 text-slate-100 p-0 overflow-hidden">
           <DialogHeader className="px-6 pt-5 pb-3 border-b border-slate-800 bg-gradient-to-r from-amber-500/10 to-transparent">
             <DialogTitle className="flex items-center gap-2 text-amber-300">
               <ClipboardCheck className="h-5 w-5" />
-              Briefing de Entrada — Plantão {currentShift && format(parseISO(currentShift.shift_date), 'dd/MM/yyyy', { locale: ptBR })}
+              Checklist do Plantão {currentShift && format(parseISO(currentShift.shift_date), 'dd/MM/yyyy', { locale: ptBR })}
             </DialogTitle>
-            <DialogDescription className="text-slate-400 text-xs">
-              Registro operacional obrigatório. Preencha todas as seções antes de finalizar.
+            <DialogDescription className="text-slate-400 text-xs flex items-center gap-2">
+              Cada item é salvo automaticamente. Ao finalizar, o registro fica travado neste plantão.
+              <span className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest">
+                {autoSaveState === 'saving' && (<><Loader2 className="h-3 w-3 animate-spin" /> salvando…</>)}
+                {autoSaveState === 'saved' && (<><CheckCircle2 className="h-3 w-3 text-emerald-400" /> salvo</>)}
+                {autoSaveState === 'error' && (<><ShieldAlert className="h-3 w-3 text-red-400" /> falha ao salvar</>)}
+              </span>
             </DialogDescription>
           </DialogHeader>
 
           <ScrollArea className="max-h-[65vh]">
-            <div className="px-6 py-4">
-              <Tabs defaultValue="counts">
-                <TabsList className="grid grid-cols-4 bg-slate-950/60 border border-slate-800">
-                  <TabsTrigger value="counts" className="text-xs data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-300">
-                    <Users className="h-3.5 w-3.5 mr-1" /> Contagens
-                  </TabsTrigger>
-                  <TabsTrigger value="radios" className="text-xs data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-300">
-                    <Radio className="h-3.5 w-3.5 mr-1" /> Rádios
-                  </TabsTrigger>
-                  <TabsTrigger value="schedule" className="text-xs data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-300">
-                    <CalendarClock className="h-3.5 w-3.5 mr-1" /> Cronograma
-                  </TabsTrigger>
-                  <TabsTrigger value="book" className="text-xs data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-300">
-                    <BookOpen className="h-3.5 w-3.5 mr-1" /> Livro
-                  </TabsTrigger>
-                </TabsList>
+            <div className="px-6 py-4 space-y-3">
+              {/* 1. Adolescentes */}
+              <ChecklistRow
+                order={1} done={itemsStatus.adolescents}
+                icon={<Users className="h-4 w-4 text-amber-400" />}
+                title="Contagem de adolescentes"
+                subtitle="Total de acautelados presentes no início do plantão."
+              >
+                <NumberField value={adoCnt} onChange={withDirty(setAdoCnt)} placeholder="Ex.: 24" />
+              </ChecklistRow>
 
-                {/* Counts */}
-                <TabsContent value="counts" className="pt-4 space-y-4">
-                  <CountBlock
-                    icon={<Users className="h-4 w-4 text-amber-400" />}
-                    title="Adolescentes"
-                    expected={adoExp} counted={adoCnt}
-                    setExpected={setAdoExp} setCounted={setAdoCnt}
-                  />
-                  <CountBlock
-                    icon={<ShieldAlert className="h-4 w-4 text-amber-400" />}
-                    title="Algemas"
-                    expected={algExp} counted={algCnt}
-                    setExpected={setAlgExp} setCounted={setAlgCnt}
-                  />
-                  <CountBlock
-                    icon={<KeyRound className="h-4 w-4 text-amber-400" />}
-                    title="Chaves de algemas"
-                    expected={chvExp} counted={chvCnt}
-                    setExpected={setChvExp} setCounted={setChvCnt}
-                  />
-                </TabsContent>
+              {/* 2. Algemas */}
+              <ChecklistRow
+                order={2} done={itemsStatus.handcuffs}
+                icon={<ShieldAlert className="h-4 w-4 text-amber-400" />}
+                title="Contagem das algemas"
+                subtitle="Total de algemas conferidas e disponíveis para uso."
+              >
+                <NumberField value={algCnt} onChange={withDirty(setAlgCnt)} placeholder="Ex.: 8" />
+              </ChecklistRow>
 
-                {/* Radios */}
-                <TabsContent value="radios" className="pt-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-400">Registre cada rádio comunicador verificado.</span>
-                    <Button size="sm" variant="outline" onClick={addRadio} className="h-8 border-amber-500/40 text-amber-400 hover:bg-amber-500/10">
-                      <PlusCircle className="h-3.5 w-3.5 mr-1" />
-                      Adicionar rádio
-                    </Button>
-                  </div>
-                  <div className="space-y-2">
-                    {radios.map((r, i) => (
-                      <div key={i} className="grid grid-cols-12 gap-2 items-center rounded-md border border-slate-800 bg-slate-950/60 p-2">
-                        <Input
-                          placeholder="Nº/ID do rádio"
-                          value={r.number}
-                          onChange={(e) => updRadio(i, { number: e.target.value })}
-                          className="col-span-3 h-9 bg-slate-900 border-slate-700 text-sm"
-                        />
-                        <div className="col-span-3 flex gap-1">
-                          <Button
-                            type="button" size="sm"
-                            onClick={() => updRadio(i, { status: 'ok' })}
-                            className={cn(
-                              'h-9 flex-1 text-xs',
-                              r.status === 'ok' ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
-                            )}
-                          >
-                            OK
-                          </Button>
-                          <Button
-                            type="button" size="sm"
-                            onClick={() => updRadio(i, { status: 'defect' })}
-                            className={cn(
-                              'h-9 flex-1 text-xs',
-                              r.status === 'defect' ? 'bg-red-500 hover:bg-red-600 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
-                            )}
-                          >
-                            Defeito
-                          </Button>
-                        </div>
-                        <Input
-                          placeholder="Observações (opcional)"
-                          value={r.notes}
-                          onChange={(e) => updRadio(i, { notes: e.target.value })}
-                          className="col-span-5 h-9 bg-slate-900 border-slate-700 text-sm"
-                        />
-                        <Button
-                          type="button" size="icon" variant="ghost"
-                          onClick={() => rmRadio(i)}
-                          className="col-span-1 h-9 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
+              {/* 3. Chaves de algemas */}
+              <ChecklistRow
+                order={3} done={itemsStatus.handcuff_keys}
+                icon={<KeyRound className="h-4 w-4 text-amber-400" />}
+                title="Contagem das chaves de algemas"
+                subtitle="Total de chaves conferidas e sob custódia."
+              >
+                <NumberField value={chvCnt} onChange={withDirty(setChvCnt)} placeholder="Ex.: 8" />
+              </ChecklistRow>
 
-                {/* Schedule */}
-                <TabsContent value="schedule" className="pt-4 space-y-3">
-                  <label className="flex items-center gap-2 cursor-pointer rounded-md border border-slate-800 bg-slate-950/60 px-3 py-2.5">
-                    <Checkbox checked={scheduleOk} onCheckedChange={(v) => setScheduleOk(!!v)} />
-                    <span className="text-sm text-slate-200">Cronograma do dia verificado e conferido</span>
-                  </label>
+              {/* 4. Rádios carregados */}
+              <ChecklistRow
+                order={4} done={itemsStatus.radios}
+                icon={<Radio className="h-4 w-4 text-amber-400" />}
+                title="Rádios carregados"
+                subtitle="Informe quantos rádios estão carregados e prontos para uso."
+              >
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label className="text-[11px] uppercase tracking-widest text-slate-400">
-                      Observações do cronograma
-                    </Label>
-                    <Textarea
-                      value={scheduleNotes}
-                      onChange={(e) => setScheduleNotes(e.target.value)}
-                      placeholder="Ex.: atendimentos, transferências, visitas, atividades pedagógicas..."
-                      rows={5}
-                      className="bg-slate-950/60 border-slate-700 text-sm resize-none mt-1.5"
-                    />
-                  </div>
-                </TabsContent>
-
-                {/* Book */}
-                <TabsContent value="book" className="pt-4 space-y-3">
-                  <div>
-                    <Label className="text-[11px] uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                      <BookOpen className="h-3 w-3" /> Preenchimento do livro de ocorrências
-                    </Label>
-                    <Textarea
-                      value={bookEntry}
-                      onChange={(e) => setBookEntry(e.target.value)}
-                      placeholder="Registre a passagem, ocorrências e efetivo no livro..."
-                      rows={6}
-                      className="bg-slate-950/60 border-slate-700 text-sm resize-none mt-1.5"
-                      maxLength={4000}
-                    />
-                    <div className="text-[10px] text-slate-500 text-right mt-1">{bookEntry.length}/4000</div>
+                    <Label className="text-[10px] uppercase text-slate-500">Carregados</Label>
+                    <NumberField value={radiosCharged} onChange={withDirty(setRadiosCharged)} placeholder="Ex.: 6" />
                   </div>
                   <div>
-                    <Label className="text-[11px] uppercase tracking-widest text-slate-400">
-                      Observações gerais
-                    </Label>
-                    <Textarea
-                      value={observations}
-                      onChange={(e) => setObservations(e.target.value)}
-                      placeholder="Intercorrências, alertas, informações adicionais..."
-                      rows={3}
-                      className="bg-slate-950/60 border-slate-700 text-sm resize-none mt-1.5"
-                      maxLength={2000}
-                    />
+                    <Label className="text-[10px] uppercase text-slate-500">Total esperado</Label>
+                    <NumberField value={radiosExpected} onChange={withDirty(setRadiosExpected)} placeholder="Ex.: 6" />
                   </div>
-                </TabsContent>
-              </Tabs>
+                </div>
+              </ChecklistRow>
 
-              {/* Signature */}
-              <div className="mt-5 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+              {/* 5. Livro informativo */}
+              <ChecklistRow
+                order={5} done={itemsStatus.book}
+                icon={<BookOpen className="h-4 w-4 text-amber-400" />}
+                title="Livro informativo"
+                subtitle="Registre o preenchimento do livro (mínimo 10 caracteres)."
+              >
+                <Textarea
+                  value={bookEntry}
+                  onChange={(e) => withDirty(setBookEntry)(e.target.value)}
+                  placeholder="Ex.: efetivo do plantão, ocorrências, atividades..."
+                  rows={4}
+                  className="bg-slate-950/60 border-slate-700 text-sm resize-none"
+                  maxLength={4000}
+                />
+                <div className="text-[10px] text-slate-500 text-right mt-0.5">{bookEntry.length}/4000</div>
+              </ChecklistRow>
+
+              {/* 6. Passagem de plantão */}
+              <ChecklistRow
+                order={6} done={itemsStatus.handover}
+                icon={<ArrowLeftRight className="h-4 w-4 text-amber-400" />}
+                title="Passagem de plantão"
+                subtitle="Confirme que a passagem foi feita com a equipe anterior."
+              >
+                <label className="flex items-center gap-2 cursor-pointer rounded-md border border-slate-800 bg-slate-950/60 px-3 py-2.5">
+                  <Checkbox
+                    checked={handoverOk}
+                    onCheckedChange={(v) => withDirty(setHandoverOk)(!!v)}
+                  />
+                  <span className="text-sm text-slate-200">Passagem realizada e conferida</span>
+                </label>
+                <Textarea
+                  value={handoverNotes}
+                  onChange={(e) => withDirty(setHandoverNotes)(e.target.value)}
+                  placeholder="Ex.: alertas repassados, adolescentes em regime especial, pendências..."
+                  rows={3}
+                  className="bg-slate-950/60 border-slate-700 text-sm resize-none mt-2"
+                  maxLength={2000}
+                />
+              </ChecklistRow>
+
+              {/* Observações gerais (opcional) */}
+              <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+                <Label className="text-[11px] uppercase tracking-widest text-slate-400">
+                  Observações gerais (opcional)
+                </Label>
+                <Textarea
+                  value={observations}
+                  onChange={(e) => withDirty(setObservations)(e.target.value)}
+                  placeholder="Intercorrências, alertas, informações adicionais..."
+                  rows={3}
+                  className="bg-slate-950/60 border-slate-700 text-sm resize-none mt-1.5"
+                  maxLength={2000}
+                />
+              </div>
+
+              {/* Assinatura */}
+              <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
                 <Label className="text-[11px] uppercase tracking-widest text-amber-300 flex items-center gap-1.5">
                   <FileText className="h-3 w-3" /> Assinatura do responsável (obrigatório para finalizar)
                 </Label>
                 <Input
                   value={signature}
-                  onChange={(e) => setSignature(e.target.value)}
+                  onChange={(e) => withDirty(setSignature)(e.target.value)}
                   placeholder={agentName}
                   className="mt-1.5 bg-slate-950/60 border-slate-700 text-sm font-serif italic"
                   maxLength={120}
@@ -524,22 +531,18 @@ export function ShiftBriefingCard({
           </ScrollArea>
 
           <DialogFooter className="px-6 py-3 border-t border-slate-800 bg-slate-950/40 flex-row justify-between sm:justify-between">
-            <Button
-              variant="ghost"
-              onClick={() => submit(false)}
-              disabled={saving || !currentShift}
-              className="text-slate-300 hover:text-white hover:bg-slate-800"
-            >
-              Salvar rascunho
-            </Button>
+            <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
+              <CheckCircle2 className={cn('h-3.5 w-3.5', progress === 100 ? 'text-emerald-400' : 'text-slate-600')} />
+              {completedCount}/{CHECKLIST_ORDER.length} itens concluídos
+            </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setOpen(false)} className="border-slate-700 text-slate-300 hover:bg-slate-800">
                 Fechar
               </Button>
               <Button
-                onClick={() => submit(true)}
-                disabled={saving || !currentShift}
-                className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold"
+                onClick={() => persist(true).then((b) => { if (b?.completed_at) setOpen(false); })}
+                disabled={saving || !currentShift || progress < 100}
+                className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold disabled:opacity-50"
               >
                 <CheckCircle2 className="h-4 w-4 mr-1.5" />
                 Finalizar e registrar
@@ -565,54 +568,70 @@ function MiniStat({ icon, label, value }: { icon: React.ReactNode; label: string
   );
 }
 
-function CountBlock({
-  icon, title, expected, counted, setExpected, setCounted,
+function ChecklistRow({
+  order, done, icon, title, subtitle, children,
 }: {
-  icon: React.ReactNode; title: string;
-  expected: string; counted: string;
-  setExpected: (v: string) => void; setCounted: (v: string) => void;
+  order: number;
+  done: boolean;
+  icon: React.ReactNode;
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
 }) {
-  const exp = Number(expected || 0);
-  const cnt = Number(counted || 0);
-  const diff = counted !== '' && expected !== '' ? cnt - exp : null;
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2 text-sm text-slate-200 font-semibold">
-          {icon}
-          {title}
+    <div className={cn(
+      'rounded-lg border p-3 transition-colors',
+      done
+        ? 'border-emerald-500/40 bg-emerald-500/5'
+        : 'border-slate-800 bg-slate-950/60'
+    )}>
+      <div className="flex items-start gap-3 mb-2.5">
+        <div className={cn(
+          'flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-[11px] font-bold border',
+          done
+            ? 'bg-emerald-500 text-slate-950 border-emerald-400'
+            : 'bg-slate-900 text-slate-400 border-slate-700'
+        )}>
+          {done ? <CheckCircle2 className="h-4 w-4" /> : order}
         </div>
-        {diff !== null && (
-          <Badge className={cn(
-            'text-[10px]',
-            diff === 0 ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' : 'bg-red-500/20 border-red-500/40 text-red-300'
-          )}>
-            {diff === 0 ? 'CONFERE' : `DIFERENÇA ${diff > 0 ? '+' : ''}${diff}`}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-100">
+            {icon}
+            {title}
+          </div>
+          {subtitle && (
+            <p className="text-[11px] text-slate-400 mt-0.5">{subtitle}</p>
+          )}
+        </div>
+        {done ? (
+          <Badge className="text-[9px] bg-emerald-500/20 border-emerald-500/40 text-emerald-300">
+            OK
+          </Badge>
+        ) : (
+          <Badge className="text-[9px] bg-slate-800 border-slate-700 text-slate-400">
+            <Circle className="h-2 w-2 mr-1" /> PENDENTE
           </Badge>
         )}
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <Label className="text-[10px] uppercase text-slate-500">Esperado</Label>
-          <Input
-            type="number" inputMode="numeric" min={0}
-            value={expected}
-            onChange={(e) => setExpected(e.target.value.replace(/[^0-9]/g, ''))}
-            onKeyDown={(e) => e.key === 'e' && e.preventDefault()}
-            className="h-9 bg-slate-900 border-slate-700 text-sm mt-1"
-          />
-        </div>
-        <div>
-          <Label className="text-[10px] uppercase text-slate-500">Conferido</Label>
-          <Input
-            type="number" inputMode="numeric" min={0}
-            value={counted}
-            onChange={(e) => setCounted(e.target.value.replace(/[^0-9]/g, ''))}
-            onKeyDown={(e) => e.key === 'e' && e.preventDefault()}
-            className="h-9 bg-slate-900 border-slate-700 text-sm mt-1"
-          />
-        </div>
-      </div>
+      <div className="pl-10">{children}</div>
     </div>
+  );
+}
+
+function NumberField({
+  value, onChange, placeholder,
+}: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+  return (
+    <Input
+      type="number"
+      inputMode="numeric"
+      min={0}
+      value={value}
+      onChange={(e) => onChange(e.target.value.replace(/[^0-9]/g, ''))}
+      onKeyDown={(e) => e.key === 'e' && e.preventDefault()}
+      placeholder={placeholder}
+      className="h-9 bg-slate-900 border-slate-700 text-sm mt-1"
+      autoComplete="new-password"
+    />
   );
 }
