@@ -230,10 +230,9 @@ export function ShiftBriefingCard({
       handcuffs: algCnt !== '' && Number(algCnt) >= 0,
       handcuff_keys: chvCnt !== '' && Number(chvCnt) >= 0,
       radios: radiosCharged !== '' && Number(radiosCharged) >= 0,
-      book: bookEntry.trim().length >= 10,
       handover: handoverOk,
     } as Record<ChecklistKey, boolean>;
-  }, [adoCnt, algCnt, chvCnt, radiosCharged, bookEntry, handoverOk]);
+  }, [adoCnt, algCnt, chvCnt, radiosCharged, handoverOk]);
 
   const completedCount = Object.values(itemsStatus).filter(Boolean).length;
   const progress = Math.round((completedCount / CHECKLIST_ORDER.length) * 100);
@@ -241,8 +240,7 @@ export function ShiftBriefingCard({
   // -------- Auto-save (debounce 700ms) com persistência local + fila offline --------
   const persist = async (finalize = false) => {
     if (!currentShift) return null;
-    if (finalize && !signature.trim()) {
-      toast.error('Assine com seu nome para finalizar o briefing.');
+    // Assinatura não é mais obrigatória — o próprio agente logado assina o registro.
       return null;
     }
 
