@@ -429,6 +429,49 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
         </svg>
         {/* MGRS/UTM removido do desktop — reduzir ruído visual */}
 
+        {/* ============ PREMIUM HUD — hexágonos + wireframes gigantes (opacity 2–4%) ============ */}
+        <svg aria-hidden className="hidden sm:block absolute inset-0 h-full w-full pointer-events-none opacity-[0.04] mix-blend-screen" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <pattern id="pp-hex" width="60" height="52" patternUnits="userSpaceOnUse" patternTransform="translate(0,0)">
+              <polygon points="30,2 58,17 58,45 30,60 2,45 2,17" fill="none" stroke="hsl(42 92% 58%)" strokeWidth="0.6" />
+            </pattern>
+            <radialGradient id="pp-hex-mask" cx="50%" cy="45%" r="65%">
+              <stop offset="0%" stopColor="#000" stopOpacity="1" />
+              <stop offset="70%" stopColor="#000" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#000" stopOpacity="0" />
+            </radialGradient>
+            <mask id="pp-hex-mask-m"><rect width="100%" height="100%" fill="url(#pp-hex-mask)" /></mask>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#pp-hex)" mask="url(#pp-hex-mask-m)" />
+          {/* Vetores/wireframe circulares (ultra-discretos) */}
+          <g stroke="hsl(150 70% 55%)" strokeWidth="0.5" fill="none" opacity="0.55">
+            <circle cx="220" cy="720" r="140" />
+            <circle cx="220" cy="720" r="90" />
+            <circle cx="220" cy="720" r="46" />
+            <line x1="60" y1="720" x2="380" y2="720" />
+            <line x1="220" y1="560" x2="220" y2="880" />
+          </g>
+          <g stroke="hsl(42 92% 58%)" strokeWidth="0.5" fill="none" opacity="0.6">
+            <circle cx="1360" cy="180" r="120" />
+            <circle cx="1360" cy="180" r="72" />
+            <path d="M1240 180 L1480 180 M1360 60 L1360 300" />
+          </g>
+          {/* Coordenadas técnicas discretas */}
+          <g fill="hsl(42 92% 58%)" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontSize="9" opacity="0.65">
+            <text x="24" y="24">N 09°58'12" · W 67°48'44"</text>
+            <text x="24" y="880">SEC · CMD-01 / ZONA A</text>
+            <text x="1420" y="24" textAnchor="end">UPLINK · 2.4GHz</text>
+            <text x="1420" y="880" textAnchor="end">AES-256 · RLS · LGPD</text>
+          </g>
+          {/* Conectores diagonais */}
+          <g stroke="hsl(42 92% 58%)" strokeWidth="0.4" opacity="0.35" strokeDasharray="4 6">
+            <line x1="220" y1="720" x2="800" y2="450" />
+            <line x1="800" y1="450" x2="1360" y2="180" />
+          </g>
+        </svg>
+
+
+
 
         {/* Overlay de leitura */}
         <div
