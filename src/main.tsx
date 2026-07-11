@@ -131,6 +131,9 @@ if ("serviceWorker" in navigator && shouldSkipServiceWorker()) {
           return;
         }
         pushDiagEvent('info', 'sw_activated_reload');
+        try {
+          sessionStorage.setItem('pp_sw_updated_banner', event.data?.version || '1');
+        } catch { /* ignore */ }
         window.location.reload();
       }
     });

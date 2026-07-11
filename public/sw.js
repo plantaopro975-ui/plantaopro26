@@ -6,7 +6,7 @@
 // IMPORTANT: bump APP_VERSION on every UI/theme/header/footer release so that
 // installed clients evict the previous cached shell and apply changes without
 // reload loops.
-const APP_VERSION = 'v17-2026-07-11-splash-dedupe';
+const APP_VERSION = 'v18-2026-07-11-splash-purge';
 const STATIC_CACHE = `plantao-pro-static-${APP_VERSION}`;
 const DYNAMIC_CACHE = `plantao-pro-dynamic-${APP_VERSION}`;
 const VALID_CACHES = new Set([STATIC_CACHE, DYNAMIC_CACHE]);
@@ -40,6 +40,7 @@ self.addEventListener('activate', (event) => {
   console.log('[SW] Activating', APP_VERSION);
   event.waitUntil((async () => {
     const cacheNames = await caches.keys();
+    // 1) Delete any cache from a previous APP_VERSION
     await Promise.all(
       cacheNames
         .filter((name) => !VALID_CACHES.has(name))
@@ -48,11 +49,32 @@ self.addEventListener('activate', (event) => {
           return caches.delete(name);
         })
     );
+    // 2) Defensive: purge index.html, root navigation and splash assets from
+    //    any remaining cache (including current-version caches), so a stale
+    //    HTML/splash response can never resurface after an update.
+    const purgePatterns = [
+      /\/index\.html(\?|$)/i,
+      /\/$/,
+      /plantaopro-splash\.(avif|webp|jpg|jpeg|png)(\?|$)/i,
+    ];
+    const remaining = await caches.keys();
+    await Promise.all(remaining.map(async (name) => {
+      const cache = await caches.open(name);
+      const reqs = await cache.keys();
+      await Promise.all(reqs.map((req) => {
+        if (purgePatterns.some((rx) => rx.test(req.url))) {
+          console.log('[SW] Purging stale entry:', req.url, 'from', name);
+          return cache.delete(req);
+        }
+        return Promise.resolve();
+      }));
+    }));
     await self.clients.claim();
     const wins = await self.clients.matchAll({ type: 'window' });
     wins.forEach((client) => client.postMessage({ type: 'SW_ACTIVATED', version: APP_VERSION }));
   })());
 });
+
 
 // ---------------------------------------------------------------------------
 // Fetch strategy (coherent + timeout-safe)

@@ -22,6 +22,7 @@ import { AccessAcknowledgmentGate } from "@/components/AccessAcknowledgmentGate"
 import { PanelSkeleton } from "@/components/ui/panel-skeleton";
 import { InactivityGuard } from "@/components/InactivityGuard";
 import { ImageProtection } from "@/components/ImageProtection";
+import { ServiceWorkerUpdateBanner } from "@/components/ServiceWorkerUpdateBanner";
 
 // Lazy-loaded routes — split into async chunks to shrink initial bundle
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -111,6 +112,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <ImageProtection />
+          <ServiceWorkerUpdateBanner />
           <BrowserRouter>
             <RouteAwareSplashScreen />
             <AccessAcknowledgmentGate />
