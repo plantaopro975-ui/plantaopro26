@@ -27,6 +27,8 @@ interface Props {
   silent?: boolean;
   /** When true, the parent already persisted the record and we may auto-close. */
   saved?: boolean;
+  /** When false, salvo apenas no cache local — retentativa automática quando online. */
+  syncedOnline?: boolean;
 }
 
 function fmt(sec: number) {
