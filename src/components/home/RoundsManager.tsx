@@ -2452,7 +2452,43 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
               {/* ============ COLUNA ESQUERDA — CONFIGURAÇÃO ============ */}
               <Section icon={<Radio className="h-3.5 w-3.5 text-primary" />} title="Configuração" defaultOpen>
-                {/* Team pills */}
+                {/* Indicador discreto — programação ativa (pré-noturno → 22:00) */}
+                {scheduledFor != null && !running && (() => {
+                  const remSec = Math.max(0, Math.ceil((scheduledFor - nowServer()) / 1000));
+                  const hh = Math.floor(remSec / 3600).toString().padStart(2, '0');
+                  const mm = Math.floor((remSec % 3600) / 60).toString().padStart(2, '0');
+                  const ss = (remSec % 60).toString().padStart(2, '0');
+                  const targetLabel = new Intl.DateTimeFormat('pt-BR', {
+                    timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
+                  }).format(new Date(scheduledFor));
+                  return (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="flex items-center gap-2 rounded-md border px-2.5 py-1.5"
+                      style={{ borderColor: `${teamColor}55`, background: `${teamColor}0d` }}
+                    >
+                      <span
+                        aria-hidden
+                        className="relative inline-flex h-1.5 w-1.5 shrink-0 rounded-full"
+                        style={{ background: teamColor, boxShadow: `0 0 0 3px ${teamColor}22` }}
+                      />
+                      <CalendarClock className="h-3.5 w-3.5 shrink-0" style={{ color: teamColor }} />
+                      <div className="min-w-0 flex-1 leading-tight">
+                        <div className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground">
+                          Programação ativa
+                        </div>
+                        <div className="font-sans text-[11.5px] text-foreground truncate">
+                          Início automático às <b className="font-semibold" style={{ color: teamColor }}>{targetLabel}</b>
+                          <span className="text-muted-foreground"> · em </span>
+                          <b className="font-mono tabular-nums">{hh}:{mm}:{ss}</b>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+
                 <div className="grid gap-2">
                   <Label className="text-[12.5px] font-sans tracking-wide text-muted-foreground flex items-center gap-1">
                     <Radio className="h-3 w-3" /> Equipe
