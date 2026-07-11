@@ -188,8 +188,29 @@ export function ShiftBriefingCard({
   }, [agentId, unitId, isLeader]);
 
   // Hidrata formulário com o briefing carregado (ou o do plantão atual).
+  // Rascunho local tem prioridade se for mais recente que o registro do servidor
+  // ou se existir sincronização pendente — assim o usuário nunca perde edições offline.
   useEffect(() => {
-    if (briefing) {
+    if (!currentShift) return;
+    const draft = readDraft(currentShift.id);
+    const pending = readPending(currentShift.id);
+    setHasPending(!!pending);
+
+    const serverTs = briefing?.completed_at ? Date.parse(briefing.completed_at) : 0;
+    const draftIsFresher = draft && (!!pending || draft.updatedAt > serverTs);
+
+    if (draft && (draftIsFresher || !briefing)) {
+      setAdoCnt(draft.adoCnt);
+      setAlgCnt(draft.algCnt);
+      setChvCnt(draft.chvCnt);
+      setRadiosCharged(draft.radiosCharged);
+      setRadiosExpected(draft.radiosExpected);
+      setBookEntry(draft.bookEntry);
+      setHandoverOk(draft.handoverOk);
+      setHandoverNotes(draft.handoverNotes);
+      setObservations(draft.observations);
+      setSignature(draft.signature);
+    } else if (briefing) {
       setAdoCnt(briefing.adolescents_counted?.toString() ?? '');
       setAlgCnt(briefing.handcuffs_counted?.toString() ?? '');
       setChvCnt(briefing.handcuff_keys_counted?.toString() ?? '');
@@ -201,7 +222,7 @@ export function ShiftBriefingCard({
       setObservations(briefing.observations ?? '');
       setSignature(briefing.signature ?? '');
     }
-  }, [briefing]);
+  }, [briefing, currentShift]);
 
   // Cálculo de conclusão de cada item do checklist
   const itemsStatus = useMemo(() => {
