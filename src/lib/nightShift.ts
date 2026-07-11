@@ -10,6 +10,11 @@ export const NIGHT_START = '22:00' as const;
 export const NIGHT_END = '06:00' as const;
 export const NIGHT_TZ = 'America/Rio_Branco' as const;
 
+/** Hora (Acre) a partir da qual só é permitido AGENDAR a ronda para as 22:00. */
+export const PRE_NIGHT_START_HOUR = 18;
+/** Hora (Acre) em que o turno noturno efetivamente começa. */
+export const NIGHT_START_HOUR = 22;
+
 /** Returns the hour (0-23) of the given date in America/Rio_Branco. */
 export function getAcreHour(date: Date): number {
   const parts = new Intl.DateTimeFormat('en-US', {
