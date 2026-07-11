@@ -237,8 +237,8 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       <span aria-hidden className={cn('absolute bottom-1.5 left-1.5 z-30 h-2.5 w-2.5 border-b border-l transition-all', isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-80')} style={{ borderColor: `hsl(${t.accent})` }} />
       <span aria-hidden className={cn('absolute bottom-1.5 right-1.5 z-30 h-2.5 w-2.5 border-b border-r transition-all', isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-80')} style={{ borderColor: `hsl(${t.accent})` }} />
 
-      {/* Status LED (canto superior esquerdo, discreto) */}
-      <span aria-hidden className="absolute top-2.5 left-4 z-30 flex items-center gap-1.5">
+      {/* Status LED (canto superior — recuado no desktop para não ser clipado pelo octógono) */}
+      <span aria-hidden className="absolute top-2.5 left-4 sm:top-2 sm:left-1/2 sm:-translate-x-1/2 z-30 flex items-center gap-1.5">
         <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: `hsl(${t.accent})`, boxShadow: `0 0 6px hsl(${t.accent})` }} />
         <span className="font-mono text-[8px] uppercase tracking-[0.28em] text-slate-300/85">ATIVA</span>
       </span>
