@@ -1623,6 +1623,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [preNightOpen, setPreNightOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
   const [scheduledFor, setScheduledFor] = useState<number | null>(null);
+  // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
+  // do lado esquerdo é travada para preservar o cronograma pactuado.
+  const configLocked = scheduledFor != null;
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
   const [silentMode, setSilentMode] = useState<boolean>(() => {
