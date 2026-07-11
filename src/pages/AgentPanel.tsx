@@ -686,12 +686,6 @@ export default function AgentPanel() {
                         text: 'text-cyan-200 group-data-[state=active]:text-black',
                       },
                       {
-                        value: 'planejador', label: 'Planejar', full: 'Planejador de Escalas', Icon: Calculator,
-                        trigger: 'hover:bg-rose-500/15 hover:border-rose-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-400 data-[state=active]:via-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:border-rose-300',
-                        icon: 'text-rose-400 group-data-[state=active]:text-white',
-                        text: 'text-rose-200 group-data-[state=active]:text-white',
-                      },
-                      {
                         value: 'permutas', label: 'Permutas', full: 'Permutas de Plantão', Icon: ArrowRightLeft,
                         trigger: 'hover:bg-yellow-500/15 hover:border-yellow-500/50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-400 data-[state=active]:via-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-black data-[state=active]:border-yellow-300',
                         icon: 'text-yellow-400 group-data-[state=active]:text-black',
