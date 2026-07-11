@@ -662,17 +662,30 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
                 >
                   {team}
                 </h3>
-                <TeamIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 shrink-0 text-white/80" />
               </div>
-              
-              {/* Fio sutil sob o nome da equipe — substitui o codinome pesado por um traço tático leve */}
+
+              {/* Fio sutil sob o nome — separador tático discreto */}
               <div
                 aria-hidden
-                className="mx-auto mb-2 md:mb-3 h-px w-10 sm:w-14 md:w-16 opacity-70"
+                className="mx-auto mb-1.5 md:mb-2 h-px w-10 sm:w-14 md:w-16 opacity-70"
                 style={{
                   background: `linear-gradient(90deg, transparent, ${teamColors[team as keyof typeof teamColors]?.primary}, transparent)`,
                 }}
               />
+
+              {/* Descritor profissional curto — mantém elegância sem pesar */}
+              <p
+                className={cn(
+                  "mb-2 md:mb-3 text-center font-mono text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-white/70",
+                )}
+              >
+                {team === 'ALFA'    && '1ª Turma · Plantão 24h'}
+                {team === 'BRAVO'   && '2ª Turma · Plantão 24h'}
+                {team === 'CHARLIE' && '3ª Turma · Plantão 24h'}
+                {team === 'DELTA'   && '4ª Turma · Plantão 24h'}
+              </p>
+
+
 
               
               {/* Access button - PROPORCIONAL */}
