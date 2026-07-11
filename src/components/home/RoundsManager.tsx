@@ -1665,7 +1665,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const autoAnchoredRef = useRef(false);
   useEffect(() => {
     if (!open) { autoAnchoredRef.current = false; return; }
-    if (running || armed) return;
     if (nightEffectivelyLocked) return;
     if (autoAnchoredRef.current) return;
     autoAnchoredRef.current = true;
@@ -1676,7 +1675,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const m = String(rounded % 60).padStart(2, '0');
     setStartTime(`${h}:${m}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, nightEffectivelyLocked, running, armed]);
+  }, [open, nightEffectivelyLocked]);
 
   const activateOverride = () => {
     const reason = overrideReason.trim();
