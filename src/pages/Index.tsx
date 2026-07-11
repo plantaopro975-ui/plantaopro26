@@ -990,6 +990,9 @@ export default function Index() {
         const agentData = Array.isArray(rowsA) && rowsA.length ? rowsA[0] : null;
 
         saveCredential(cleanCpf, agentData?.name, savePasswordEnabled ? loginPassword : undefined);
+      } else {
+        // Usuário desmarcou "Lembrar CPF" — respeitar e remover qualquer credencial salva
+        try { removeCredential(cleanCpf); } catch { /* ignore */ }
       }
       // Always update last login time for quick login feature
       updateLastLogin(cleanCpf);
