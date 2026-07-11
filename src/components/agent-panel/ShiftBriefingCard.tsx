@@ -470,8 +470,6 @@ export function ShiftBriefingCard({
                     : '—'}
                 />
                 <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={briefing?.handover_ok ? 'OK' : '—'} />
-                <div className="hidden sm:block" />
-                <MiniStat icon={<ArrowLeftRight className="h-3 w-3" />} label="Passagem" value={briefing?.handover_ok ? 'OK' : '—'} />
               </div>
 
               <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-slate-400">
