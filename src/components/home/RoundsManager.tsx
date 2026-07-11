@@ -1179,12 +1179,11 @@ function validate(input: {
   const s = toMinutes(input.startTime);
   if (s === null) issues.push({ field: 'start', message: 'Horário de início inválido.' });
 
-  if (input.mode === 'split') {
+  if (input.mode === 'split' || input.mode === 'proportional') {
     const e = toMinutes(input.endTime);
     if (e === null) issues.push({ field: 'end', message: 'Horário de término inválido.' });
     if (s !== null && e !== null) {
       if (s === e) issues.push({ field: 'end', message: 'Início e término não podem ser iguais.' });
-      // Wrap-over-midnight is permitted (turno noturno). Only flag when both são iguais.
     }
   } else {
     if (!Number.isFinite(input.intervalMin) || input.intervalMin < 1) {
