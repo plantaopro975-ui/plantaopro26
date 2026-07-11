@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -130,7 +131,7 @@ export function ShiftTracker({ agentId, compact = false }: ShiftTrackerProps) {
       });
       
       // Push notification
-      if (pushEnabled && 'Notification' in window && Notification.permission === 'granted') {
+      if (pushEnabled && areNativeNotificationsAllowed() && Notification.permission === 'granted') {
         new Notification('🚨 Plantão Próximo!', {
           body: message,
           icon: '/favicon.ico',

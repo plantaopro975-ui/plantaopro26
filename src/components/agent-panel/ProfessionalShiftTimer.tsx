@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -101,7 +102,7 @@ export function ProfessionalShiftTimer({ agentId, compact = false }: Professiona
         icon: <Bell className="h-5 w-5 text-amber-500" />,
       });
       
-      if (pushEnabled && 'Notification' in window && Notification.permission === 'granted') {
+      if (pushEnabled && areNativeNotificationsAllowed() && Notification.permission === 'granted') {
         new Notification('🚨 Plantão Próximo!', {
           body: message,
           icon: '/favicon.ico',

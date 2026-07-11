@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, parseISO, differenceInMinutes, isToday, isTomorrow, addDays, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 
 export type AlarmCategory = 
   | 'plantao' 
@@ -340,7 +341,7 @@ export function useSmartAlarms({ agentId, enabled = true }: UseSmartAlarmsProps)
         playCategorySound(alarm.category);
         
         // Show browser notification
-        if ('Notification' in window && Notification.permission === 'granted') {
+        if (areNativeNotificationsAllowed() && Notification.permission === 'granted') {
           const config = categoryConfig[alarm.category];
           new Notification(`${config.icon} ${alarm.title}`, {
             body: minutesUntil === 0 
@@ -357,7 +358,7 @@ export function useSmartAlarms({ agentId, enabled = true }: UseSmartAlarmsProps)
 
   // Request notification permission
   useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
+    if (areNativeNotificationsAllowed() && Notification.permission === 'default') {
       Notification.requestPermission();
     }
   }, []);

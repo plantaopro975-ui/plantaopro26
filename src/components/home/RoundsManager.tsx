@@ -16,6 +16,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 import { ConfirmDialog } from './ConfirmDialog';
 import { MissionLockDialog } from './MissionLockDialog';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
@@ -2107,7 +2108,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     try { setColorRotation(bumpColorRotation()); } catch { /* ignore */ }
 
     try {
-      if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+      // Respeita a preferência "somente in-app" (Configurações do Lembrete).
+      // Só solicitamos permissão nativa quando o modo permite Notifications.
+      if (areNativeNotificationsAllowed() && Notification.permission === 'default') {
         Notification.requestPermission().catch(() => { /* ignore */ });
       }
     } catch { /* ignore */ }

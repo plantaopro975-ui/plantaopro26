@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 import {
   Dialog,
   DialogContent,
@@ -156,7 +157,7 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
           });
 
           // Push notification (se permissão concedida)
-          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+          if (areNativeNotificationsAllowed() && Notification.permission === 'granted') {
             try {
               new Notification(title, {
                 body,
@@ -206,8 +207,8 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
 
   // Solicita permissão de notificação uma vez ao ativar
   const requestNotifPermission = async () => {
-    if (typeof Notification === 'undefined') {
-      toast.error('Este navegador não suporta notificações');
+    if (!areNativeNotificationsAllowed()) {
+      toast.info('Modo "somente in-app" ativo — notificações do navegador estão desativadas nas configurações.');
       return;
     }
     if (Notification.permission === 'granted') return;

@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { parseISO, differenceInMinutes, isSameDay, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 
 interface UseAlarmNotificationsProps {
   agentId: string;
@@ -49,7 +50,7 @@ export function useAlarmNotifications({
     const shiftTimeStr = format(shift.shiftDate, "dd/MM 'às' HH:mm", { locale: ptBR });
     
     // Try to show native notification
-    if ('Notification' in window && Notification.permission === 'granted') {
+    if (areNativeNotificationsAllowed() && Notification.permission === 'granted') {
       const notification = new Notification('⏰ ALERTA DE PLANTÃO!', {
         body: `Seu plantão começa em ${alarmBeforeMinutes} minutos! (${shiftTimeStr})`,
         icon: '/icon-192.png',
@@ -137,7 +138,7 @@ export function useAlarmNotifications({
     if (!enabled || !agentId) return;
 
     // Request notification permission
-    if ('Notification' in window && Notification.permission === 'default') {
+    if (areNativeNotificationsAllowed() && Notification.permission === 'default') {
       Notification.requestPermission();
     }
 

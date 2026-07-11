@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
+import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
 
 type SoundType = 'notification' | 'alert' | 'shift' | 'urgent' | 'success';
 
@@ -120,6 +121,10 @@ export function usePushNotifications() {
     }
 
     try {
+      if (!areNativeNotificationsAllowed()) {
+        toast.info('Modo "somente in-app" ativo — notificações do navegador estão desativadas nas configurações.');
+        return false;
+      }
       const result = await Notification.requestPermission();
       setPermission(result);
 
@@ -148,6 +153,11 @@ export function usePushNotifications() {
 
     if (permission !== 'granted') {
       console.warn('Notification permission not granted');
+      return false;
+    }
+
+    if (!areNativeNotificationsAllowed()) {
+      // Usuário optou por manter tudo in-app — não emite nenhuma push.
       return false;
     }
 
