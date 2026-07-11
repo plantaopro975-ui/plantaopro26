@@ -2043,6 +2043,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setTick(0);
+    setTeamConfirmed(false);
     if (sessionIdRef.current) {
       supabase.from('round_sessions').update({ is_active: false, ended_at: new Date().toISOString() })
         .eq('id', sessionIdRef.current).then(() => { sessionIdRef.current = null; });
