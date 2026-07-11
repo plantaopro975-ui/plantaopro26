@@ -110,11 +110,6 @@ export function SmartAlarmClock({ agentId }: SmartAlarmClockProps) {
           <div className="w-40 h-40 rounded-full border border-cyan-500/20 animate-ping" style={{ animationDuration: '3s' }} />
         </div>
         
-        {/* Grid overlay */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `radial-gradient(circle at center, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '20px 20px'
-        }} />
       </div>
 
       <div className="relative z-10 p-4 sm:p-5">

@@ -378,17 +378,6 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
               'linear-gradient(180deg, rgba(5,5,10,0.85) 0%, rgba(10,17,40,0.75) 45%, rgba(5,5,10,0.92) 100%)',
           }}
         />
-        {/* Backdrop layers */}
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-[0.10] pointer-events-none"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(234,179,8,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(234,179,8,0.35) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-            maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
-          }}
-        />
         {/* removido: glow amarelo inferior sob viatura/agente (solicitação do usuário) */}
 
 
