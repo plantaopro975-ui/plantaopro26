@@ -19,7 +19,13 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-[60] bg-black/80 duration-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      // Cinematic tactical scrim: radial vignette + gradiente + blur suave
+      "fixed inset-0 z-[60]",
+      "bg-[radial-gradient(ellipse_at_center,hsl(0_0%_0%/0.55)_0%,hsl(0_0%_0%/0.82)_60%,hsl(0_0%_0%/0.94)_100%)]",
+      "backdrop-blur-[6px] backdrop-saturate-125",
+      "duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+      "data-[state=open]:animate-in data-[state=closed]:animate-out",
+      "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}
