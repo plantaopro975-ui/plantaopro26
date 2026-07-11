@@ -106,6 +106,7 @@ function RoutePrefetcher() {
 }
 
 const App = () => (
+  <SingleTabGuard>
   <QueryClientProvider client={queryClient}>
     <FontSizeProvider>
       <ThemeProvider>
