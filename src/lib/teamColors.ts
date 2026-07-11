@@ -37,3 +37,31 @@ export function getTeamOnAccent(team: TeamKey): string {
 export function getTeamHsl(team: TeamKey): string {
   return TEAM_COLORS[team].hsl;
 }
+
+/* ==============================================================
+ * Color rotation (legacy) — kept for backwards compatibility.
+ * Historically the panel offered a "swap colors" novelty that
+ * rotated the accent hue among the four teams. Persisted in
+ * localStorage under `plantaopro_team_color_rotation`.
+ * ============================================================== */
+
+const ROTATION_KEY = 'plantaopro_team_color_rotation';
+
+export function getRotatedTeamColor(team: TeamKey, rotation: number = 0): string {
+  const idx = TEAM_KEYS.indexOf(team);
+  if (idx < 0) return TEAM_COLORS[team]?.hex ?? '#94a3b8';
+  const r = ((rotation % TEAM_KEYS.length) + TEAM_KEYS.length) % TEAM_KEYS.length;
+  const nextTeam = TEAM_KEYS[(idx + r) % TEAM_KEYS.length];
+  return TEAM_COLORS[nextTeam].hex;
+}
+
+export function bumpColorRotation(): number {
+  try {
+    const current = Number(localStorage.getItem(ROTATION_KEY) ?? '0') || 0;
+    const next = (current + 1) % TEAM_KEYS.length;
+    localStorage.setItem(ROTATION_KEY, String(next));
+    return next;
+  } catch {
+    return 0;
+  }
+}
