@@ -31,7 +31,22 @@ export function getAcreHour(date: Date): number {
 /** True when the given date falls in the night window (22:00–06:00 Acre). */
 export function isNightShift(date: Date = new Date()): boolean {
   const h = getAcreHour(date);
-  return h >= 22 || h < 6;
+  return h >= NIGHT_START_HOUR || h < 6;
+}
+
+/**
+ * True quando o horário está na janela de PRÉ-noite (18:00–21:59 Acre).
+ * Nesse intervalo o operador só pode AGENDAR o início para as 22:00,
+ * não iniciar imediatamente.
+ */
+export function isPreNightWindow(date: Date = new Date()): boolean {
+  const h = getAcreHour(date);
+  return h >= PRE_NIGHT_START_HOUR && h < NIGHT_START_HOUR;
+}
+
+/** Timestamp (ms UTC) do próximo 22:00 no fuso Acre, relativo à data informada. */
+export function getNext22Ms(date: Date = new Date()): number {
+  return getNightWindow(date).startsAt.getTime();
 }
 
 /**
