@@ -342,13 +342,13 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
   return (
-    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full min-h-0 overflow-x-clip">
+    <section className="relative mx-auto w-full max-w-[1600px] flex flex-col h-full lg:h-auto min-h-0 overflow-x-clip">
 
 
 
       {/* ============ SINGLE VIEWPORT STAGE ============ */}
       <article
-        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] sm:flex-1 min-h-0 flex flex-col"
+        className="relative overflow-hidden mt-1 sm:mt-2 mx-2 sm:mx-3 rounded-2xl shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)] sm:flex-1 lg:flex-none min-h-0 flex flex-col"
         aria-labelledby="mission-title"
         style={{
           background: 'radial-gradient(ellipse at 50% 30%, #0A1128 0%, #050505 70%)',
