@@ -3611,8 +3611,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   {isCurrent
                                     ? `Em ronda · faltam ${fmtHMS(remainingForRow)}`
                                     : isDone
-                                      ? 'Missão cumprida · posto encerrado'
-                                      : `Aguardando acionamento · duração ${fmtDuration(r.duration)}`}
+                                      ? 'Cumprida · encerrado'
+                                      : `Em espera · ${fmtDuration(r.duration)}`}
                                 </span>
                               </span>
                               <span className="flex flex-col items-end gap-0.5">
