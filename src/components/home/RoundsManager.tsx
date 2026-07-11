@@ -2365,20 +2365,32 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 {/* Readout tático estático — sóbrio, sem animação */}
                 <div
-                  className="relative border-t grid grid-cols-2 sm:grid-cols-4 divide-x divide-border/40"
-                  style={{ borderColor: `${teamColor}1c` }}
+                  className="relative border-t grid grid-cols-2 sm:grid-cols-4"
+                  style={{ borderColor: `${teamColor}33` }}
                 >
                   {[
                     { k: 'Canal', v: { ALFA: '01', BRAVO: '02', CHARLIE: '03', DELTA: '04' }[team] },
                     { k: 'Freq.', v: { ALFA: '148.325', BRAVO: '151.775', CHARLIE: '154.190', DELTA: '158.640' }[team] },
                     { k: 'Status', v: (!!currentView && !currentView.done) ? 'Em serviço' : 'Standby' },
                     { k: 'Setor', v: `S-${team.slice(0, 2)}` },
-                  ].map((it) => (
-                    <div key={it.k} className="flex items-baseline justify-between gap-2 px-2.5 py-1 sm:px-3 min-w-0">
-                      <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground/80 shrink-0">
+                  ].map((it, idx) => (
+                    <div
+                      key={it.k}
+                      className={cn(
+                        'flex items-baseline justify-between gap-2 px-2.5 py-1 sm:px-3 min-w-0',
+                        idx > 0 && 'border-l',
+                        idx === 2 && 'sm:border-l border-l-0 border-t sm:border-t-0',
+                        idx === 3 && 'border-t sm:border-t-0',
+                      )}
+                      style={{ borderColor: `${teamColor}33` }}
+                    >
+                      <span
+                        className="font-mono text-[9px] uppercase tracking-[0.22em] shrink-0"
+                        style={{ color: `${teamColor}` , opacity: 0.75 }}
+                      >
                         {it.k}
                       </span>
-                      <span className="font-mono text-[11px] tabular-nums text-foreground/90 truncate">
+                      <span className="font-mono text-[11px] tabular-nums text-foreground/90 truncate uppercase">
                         {it.v}
                       </span>
                     </div>
@@ -2582,14 +2594,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className={cn('tactical-scrollbar grid gap-0.5 max-h-56 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+                  <div className={cn('tactical-scrollbar grid gap-0.5 h-56 overflow-y-auto pr-1 rounded-md', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
-                      <div key={i} className="flex items-center gap-1 min-w-0">
-                         <span className="w-5 shrink-0 text-center font-mono text-[11px] text-primary tabular-nums">{pad(i + 1)}</span>
-                        <Input value={a} onChange={(e) => updateAgent(i, e.target.value.slice(0, 40))} disabled={configLocked}
-                          placeholder={`Agente ${i + 1}`}
-                           className={cn('bg-card border-border h-6 px-2 py-0 text-[11.5px] leading-none min-w-0 flex-1', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
-                          autoComplete="off" />
+                      <div key={i} className="flex items-center gap-1 min-w-0 h-6">
+                         <span className="w-5 shrink-0 text-center font-mono text-[11px] text-primary tabular-nums leading-6">{pad(i + 1)}</span>
+                        <Input value={a} onChange={(e) => updateAgent(i, e.target.value.toUpperCase().slice(0, 40))} disabled={configLocked}
+                          placeholder={`AGENTE ${i + 1}`}
+                          style={{ textOverflow: 'ellipsis' }}
+                           className={cn('bg-card border-border h-6 px-2 py-0 text-[11.5px] leading-6 uppercase tracking-wide truncate min-w-0 flex-1', !a.trim() && 'border-destructive/60', configLocked && 'opacity-70 cursor-not-allowed')}
+                          autoComplete="off"
+                          autoCapitalize="characters"
+                          spellCheck={false} />
                         <Button type="button" size="icon" variant="ghost" onClick={() => removeAgent(i)}
                            disabled={agents.length <= 1 || configLocked} className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
                           aria-label={`Remover ${i + 1}`}>
