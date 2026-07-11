@@ -2787,34 +2787,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <div className="relative inline-flex">
                               <style>{`
                                 @keyframes rm-ring-pulse {
-                                  0%   { box-shadow: 0 0 0 0 ${teamColor}66, 0 0 0 0 ${teamColor}33; }
-                                  70%  { box-shadow: 0 0 0 8px ${teamColor}00, 0 0 0 14px ${teamColor}00; }
-                                  100% { box-shadow: 0 0 0 0 ${teamColor}00, 0 0 0 0 ${teamColor}00; }
+                                  0%   { box-shadow: 0 0 0 0 ${teamColor}44; }
+                                  70%  { box-shadow: 0 0 0 8px ${teamColor}00; }
+                                  100% { box-shadow: 0 0 0 0 ${teamColor}00; }
                                 }
-                                @keyframes rm-sheen {
-                                  0%   { transform: translateX(-120%); }
-                                  60%  { transform: translateX(220%); }
-                                  100% { transform: translateX(220%); }
-                                }
-                                @keyframes rm-play-nudge {
-                                  0%, 100% { transform: translateX(0); }
-                                  50%      { transform: translateX(1.5px); }
-                                }
-                                .rm-play-btn { position: relative; overflow: hidden; animation: rm-ring-pulse 2.4s ease-out infinite; }
-                                .rm-play-btn::after {
-                                  content: ''; position: absolute; inset: 0;
-                                  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.28) 50%, transparent 70%);
-                                  transform: translateX(-120%);
-                                  animation: rm-sheen 3.6s ease-in-out infinite;
-                                  pointer-events: none;
-                                }
-                                .rm-play-btn:hover { filter: brightness(1.08); }
+                                .rm-play-btn { position: relative; animation: rm-ring-pulse 2.8s ease-out infinite; }
+                                .rm-play-btn:hover { filter: brightness(1.05); }
                                 .rm-play-btn:active { transform: scale(0.97); }
-                                .rm-play-btn .rm-play-icon { animation: rm-play-nudge 2.4s ease-in-out infinite; }
                                 @media (prefers-reduced-motion: reduce) {
-                                  .rm-play-btn, .rm-play-btn::after, .rm-play-btn .rm-play-icon { animation: none !important; }
+                                  .rm-play-btn { animation: none !important; }
                                 }
                               `}</style>
+
                               <Button
                                 type="button"
                                 size="sm"
