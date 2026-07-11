@@ -121,6 +121,10 @@ export function usePushNotifications() {
     }
 
     try {
+      if (!areNativeNotificationsAllowed()) {
+        toast.info('Modo "somente in-app" ativo — notificações do navegador estão desativadas nas configurações.');
+        return false;
+      }
       const result = await Notification.requestPermission();
       setPermission(result);
 
