@@ -1489,8 +1489,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
-    const evaluate = async () => {
-      await syncServerClock();
+    const tick = () => {
       if (cancelled) return;
       const now = new Date(nowServer());
       setServerClock(now);
@@ -1506,9 +1505,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         setOverrideActive(false);
       }
     };
-    evaluate();
-    const iv = setInterval(evaluate, 1000);
-    return () => { cancelled = true; clearInterval(iv); };
+    // Sync com o servidor apenas na abertura e a cada 60s, para não
+    // sobrecarregar a RPC. O relógio continua avançando localmente a cada
+    // segundo com o offset em cache, então mesmo que o dispositivo esteja
+    // com a hora errada o horário exibido permanece correto (fuso Acre).
+    syncServerClock().finally(tick);
+    const syncIv = setInterval(() => { syncServerClock().finally(tick); }, 60_000);
+    const tickIv = setInterval(tick, 1000);
+    return () => { cancelled = true; clearInterval(syncIv); clearInterval(tickIv); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, overrideActive]);
 
