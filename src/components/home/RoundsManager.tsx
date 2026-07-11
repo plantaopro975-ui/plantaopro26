@@ -2307,14 +2307,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
         <DialogContent
-          className="w-[min(100vw-0.25rem,56rem)] sm:w-[min(100vw-0.75rem,56rem)] xl:w-[min(100vw-1rem,60rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-background border text-foreground p-0 gap-0 [&>button.absolute]:hidden transition-colors duration-500 flex flex-col rounded-lg sm:rounded-xl shadow-2xl"
+          className="w-[min(100vw-0.25rem,54rem)] sm:w-[min(100vw-0.75rem,54rem)] xl:w-[min(100vw-1rem,58rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-card border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden flex flex-col rounded-lg shadow-lg"
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
-            borderColor: `${teamColor}55`,
-            backgroundColor: `hsl(var(--card))`,
-            backgroundImage: `linear-gradient(160deg, ${teamColor}10 0%, transparent 40%), linear-gradient(0deg, hsl(var(--card)), hsl(var(--card)))`,
-            boxShadow: `0 40px 120px -20px rgba(0,0,0,0.85), 0 0 0 1px ${teamColor}44, inset 0 1px 0 ${teamColor}22`,
+            borderColor: `${teamColor}44`,
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
           }}
           onEscapeKeyDown={(e) => e.preventDefault()}
