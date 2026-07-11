@@ -1560,11 +1560,17 @@ export default function Index() {
         }}
       />
 
+      {/* Selo de origem — destaque profissional acima do rodapé */}
+      <div className="relative z-30 w-full flex justify-center pt-4 pb-1">
+        <MadeInFeijoBadge inline size="lg" />
+      </div>
+
       {/* Divisor entre seção institucional e rodapé */}
       <SectionDivider />
 
       {/* Mobile-only beta notice */}
       <div className="hidden sm:block">
+
         <BetaNoticeFooter />
       </div>
 
