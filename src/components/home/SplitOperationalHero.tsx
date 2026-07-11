@@ -208,9 +208,11 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       <div className="relative z-20 flex-1 min-h-0 flex flex-col items-center justify-center px-3 pt-5">
         <div className="flex flex-col items-center">
           <span
-            className="font-black leading-[0.9] text-[34px] min-[390px]:text-[40px] sm:text-[48px] md:text-[60px] tracking-[0.04em] whitespace-nowrap text-white transition-transform duration-500 group-hover:scale-[1.02]"
+            className="font-black leading-[0.9] text-[34px] min-[390px]:text-[40px] sm:text-[48px] md:text-[60px] tracking-[0.04em] whitespace-nowrap transition-transform duration-500 group-hover:scale-[1.02]"
             style={{
-              textShadow: '0 2px 14px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,0.95)',
+              color: `hsl(${t.accent})`,
+              textShadow: `0 2px 14px rgba(0,0,0,0.95), 0 0 20px hsl(${t.accent} / 0.5), 0 0 2px rgba(0,0,0,0.95)`,
+              WebkitTextStroke: '0.5px rgba(0,0,0,0.5)',
               fontFamily: '"Rajdhani","Oswald","Bebas Neue",system-ui,sans-serif',
             }}
           >
