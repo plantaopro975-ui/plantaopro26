@@ -36,6 +36,20 @@ import bgBravo from '@/assets/teams/bravo-poster.jpg';
 import bgCharlie from '@/assets/teams/charlie-poster.jpg';
 import bgDelta from '@/assets/teams/delta-poster.jpg';
 
+// Retratos táticos de equipe — exibidos APENAS na versão mobile (<768px)
+// para dar identidade humana/operacional aos cards em telas pequenas.
+import mobileAlfa from '@/assets/teams/mobile/alfa-squad.jpg';
+import mobileBravo from '@/assets/teams/mobile/bravo-squad.jpg';
+import mobileCharlie from '@/assets/teams/mobile/charlie-squad.jpg';
+import mobileDelta from '@/assets/teams/mobile/delta-squad.jpg';
+
+const MOBILE_SQUAD: Record<TeamKey, string> = {
+  ALFA: mobileAlfa,
+  BRAVO: mobileBravo,
+  CHARLIE: mobileCharlie,
+  DELTA: mobileDelta,
+};
+
 interface Props {
   onTeamClick: (team: string) => void;
 }
@@ -148,7 +162,9 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       style={{ ['--team-accent' as any]: t.accent }}
     >
       {/* Imagem preenche o card inteiro (edge-to-edge, sem faixas vazias) */}
+      {/* Mobile (<768px): retrato tático da equipe. Desktop: pôster institucional. */}
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
+        <source media="(max-width: 767px)" srcSet={MOBILE_SQUAD[t.key]} />
         <img
           src={t.bg}
           alt=""
