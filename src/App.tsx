@@ -112,6 +112,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <ImageProtection />
+          <ServiceWorkerUpdateBanner />
           <BrowserRouter>
             <RouteAwareSplashScreen />
             <AccessAcknowledgmentGate />
