@@ -2474,8 +2474,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     {(['split', 'interval'] as Mode[]).map((m) => (
                       <button key={m} type="button" onClick={() => setMode(m)} disabled={configLocked}
                         className={cn(
-                          'rounded-md border px-3 py-2 text-[12.5px] font-mono uppercase tracking-wide transition-all',
-                          mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground',
+                          'rounded-md border px-3 py-1.5 text-[12.5px] font-mono uppercase tracking-wide',
+                          mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground',
                           configLocked && 'opacity-60 cursor-not-allowed',
                         )}>
                         {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
