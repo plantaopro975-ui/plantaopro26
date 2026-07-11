@@ -650,10 +650,10 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
           {/* Content */}
           <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 md:p-5 lg:p-6 z-10">
             <div className="flex flex-col items-center">
-              {/* Team name with theme-specific icon - PROPORCIONAL AO CARD */}
+              {/* Nome da equipe — ícone único à esquerda para deixar o card mais leve */}
               <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                 <TeamIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 shrink-0 text-white/80" />
-                <h3 
+                <h3
                   className={cn(
                     "text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-[0.05em] sm:tracking-[0.1em] drop-shadow-lg",
                     textColor
