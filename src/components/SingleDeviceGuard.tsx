@@ -41,6 +41,16 @@ export function SingleDeviceGuard() {
     myTabRef.current = myTab;
     myTsRef.current = myTs;
 
+    // Janela de graça: ignora QUALQUER broadcast recebido nos primeiros 10s
+    // após o login/mount. Evita race condition em que reconexões de Realtime,
+    // hidratação de sessão ou reenvio de broadcasts derrubam o próprio usuário
+    // logo depois de entrar. Também exige gap mínimo de 3s entre timestamps
+    // para considerar "outro dispositivo" — tabs abertas ao mesmo tempo
+    // (ex.: PWA + browser) não se derrubam mais.
+    const GRACE_MS = 10_000;
+    const MIN_GAP_MS = 3_000;
+    const graceUntil = myTs + GRACE_MS;
+
     const channel = supabase.channel(`single-device:${user.id}`, {
       config: { broadcast: { self: false } },
     });
@@ -49,7 +59,11 @@ export function SingleDeviceGuard() {
       .on("broadcast", { event: "hello" }, (msg: any) => {
         const { tabId, ts } = msg.payload ?? {};
         if (!tabId || tabId === myTabRef.current) return;
-        if (typeof ts === "number" && ts > myTsRef.current) {
+        // Ignora broadcasts durante a janela de graça (login recente).
+        if (Date.now() < graceUntil) return;
+        // Só considera "outro dispositivo" se o ts for suficientemente maior
+        // que o nosso — protege contra reordenação/reenvio de mensagens.
+        if (typeof ts === "number" && ts > myTsRef.current + MIN_GAP_MS) {
           setKicked(true);
         }
       })
