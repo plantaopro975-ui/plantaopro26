@@ -64,7 +64,7 @@ export function AccessAcknowledgmentGate() {
           className="fixed left-1/2 top-1/2 z-[10000] max-h-[calc(100dvh-1rem)] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain focus:outline-none [scrollbar-width:thin] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95"
         >
           <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-b from-[#0b0d14]/95 to-[#05070d]/95 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.3)] backdrop-blur">
-            {/* Imagem hero cinematográfica — proporção 4:3 mostrada por inteiro */}
+            {/* Imagem hero cinematográfica — preenche todo o card, sem margens */}
             <div
               className="relative w-full overflow-hidden bg-[#05070d]"
               style={{ aspectRatio: "4 / 3" }}
@@ -75,14 +75,15 @@ export function AccessAcknowledgmentGate() {
                 aria-hidden="true"
                 width={1024}
                 height={768}
-                className="absolute inset-0 h-full w-full object-contain"
+                className="absolute inset-0 h-full w-full object-cover object-center"
               />
-              <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#05070d]/85 to-transparent pointer-events-none" />
-              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#05070d] to-transparent pointer-events-none" />
+              {/* Gradientes de leitura */}
+              <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#05070d]/90 via-[#05070d]/40 to-transparent pointer-events-none" />
+              <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#05070d] via-[#05070d]/85 to-transparent pointer-events-none" />
 
               {/* Faixa superior sobre a imagem */}
               <div
-                className="absolute top-3 left-4 right-4 flex items-center justify-between gap-3 text-[9px] uppercase tracking-[0.22em] text-amber-300/90"
+                className="absolute top-3 left-4 right-4 flex items-center justify-between gap-3 text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-amber-300/90"
                 style={{ fontFamily: "'IBM Plex Mono', monospace" }}
               >
                 <div className="flex items-center gap-1.5 min-w-0">
@@ -92,17 +93,17 @@ export function AccessAcknowledgmentGate() {
                 <span className="shrink-0 whitespace-nowrap tracking-[0.18em]">Plantão&nbsp;Pro</span>
               </div>
 
-              {/* Título sobreposto */}
-              <div className="absolute bottom-3 left-4 right-4">
+              {/* Título sobreposto — escala fluida, line-height controlado */}
+              <div className="absolute bottom-4 left-4 right-4">
                 <DialogPrimitive.Title
                   id="ack-title"
-                  className="text-lg font-bold tracking-[0.12em] text-amber-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                  className="text-[clamp(1.05rem,4.6vw,1.5rem)] font-bold leading-[1.15] tracking-[0.08em] text-amber-100 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]"
                   style={{ fontFamily: "'Libre Baskerville', serif" }}
                 >
                   CONTROLE DE PLANTÃO
                 </DialogPrimitive.Title>
                 <p
-                  className="mt-0.5 text-[9px] uppercase tracking-[0.3em] text-amber-300/80"
+                  className="mt-1.5 text-[10px] sm:text-[11px] uppercase leading-[1.5] tracking-[0.22em] text-amber-300/80"
                   style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                 >
                   Sistema profissional · Escala · Banco de horas
