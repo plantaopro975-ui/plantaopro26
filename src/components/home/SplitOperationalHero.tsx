@@ -153,19 +153,19 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
         <source type="image/webp" srcSet={t.bgAvif} />
         <img
-
           src={t.bg}
           alt=""
           aria-hidden
           loading="lazy"
           decoding="async"
           className={cn(
-            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-[center_25%] select-none',
+            'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover select-none',
             'transition-all duration-500 ease-out',
             isSelected
-              ? 'opacity-90 scale-105 saturate-125 contrast-110'
-              : 'opacity-70 saturate-110 contrast-105 group-hover:opacity-90 group-hover:scale-[1.04] group-hover:saturate-125',
+              ? 'opacity-95 scale-[1.03] saturate-125 contrast-110'
+              : 'opacity-75 saturate-110 contrast-105 group-hover:opacity-95 group-hover:scale-[1.02] group-hover:saturate-125',
           )}
+          style={{ objectPosition: t.key === 'DELTA' ? '50% 35%' : t.key === 'CHARLIE' ? '50% 40%' : t.key === 'BRAVO' ? '50% 38%' : '50% 42%' }}
           draggable={false}
         />
       </picture>
@@ -208,12 +208,18 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       <div className="relative z-20 flex-1 min-h-0 flex flex-col items-center justify-center px-3 pt-5">
         <div className="flex flex-col items-center">
           <span
-            className="font-black leading-[0.9] text-[34px] min-[390px]:text-[40px] sm:text-[48px] md:text-[60px] tracking-[0.04em] whitespace-nowrap transition-transform duration-500 group-hover:scale-[1.02]"
+            className={cn(
+              'font-black leading-[0.9] whitespace-nowrap transition-transform duration-500 group-hover:scale-[1.02]',
+              t.key === 'CHARLIE'
+                ? 'text-[24px] min-[390px]:text-[28px] sm:text-[34px] md:text-[42px]'
+                : 'text-[30px] min-[390px]:text-[34px] sm:text-[40px] md:text-[50px]',
+            )}
             style={{
               color: `hsl(${t.accent})`,
               textShadow: `0 2px 14px rgba(0,0,0,0.95), 0 0 20px hsl(${t.accent} / 0.5), 0 0 2px rgba(0,0,0,0.95)`,
               WebkitTextStroke: '0.5px rgba(0,0,0,0.5)',
               fontFamily: '"Rajdhani","Oswald","Bebas Neue",system-ui,sans-serif',
+              letterSpacing: t.key === 'CHARLIE' ? '0.02em' : '0.03em',
             }}
           >
             {t.key}
