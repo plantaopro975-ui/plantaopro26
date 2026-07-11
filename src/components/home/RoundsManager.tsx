@@ -2085,10 +2085,24 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const currentIdx = live?.index ?? -1;
 
-  /* Exit guard — evita fechamento acidental */
+  /* Exit guard — evita fechamento acidental (bloqueio forte quando rodando) */
   const [confirmExit, setConfirmExit] = useState(false);
   const requestExit = () => setConfirmExit(true);
   const confirmAndClose = () => {
+    // Registra abortagem quando a ronda estava em execução
+    if (running && live && !live.done) {
+      void logRoundActivity('abort', {
+        team,
+        mode,
+        agents: agents.filter((a) => a.trim()),
+        interrupted_at: new Date().toISOString(),
+        current_index: live.index,
+        current_agent: schedule?.rows[live.index]?.name ?? null,
+        remaining_seconds: live.remaining,
+        total_remaining_seconds: totalRemainingSeconds,
+        reason: 'user_abort',
+      });
+    }
     setConfirmExit(false);
     setRunning(false);
     setOpen(false);
