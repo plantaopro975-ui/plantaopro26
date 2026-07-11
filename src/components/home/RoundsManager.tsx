@@ -2798,8 +2798,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
                                 setStartConfirmOpen(true);
                               }}
-                              className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
-                              style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
+                              className="h-9 px-4 border font-semibold"
+                              style={{ backgroundColor: teamColor, borderColor: teamColor, color: 'hsl(var(--primary-foreground))' }}
                             >
                               <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
                             </Button>
