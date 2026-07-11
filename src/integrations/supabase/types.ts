@@ -2449,6 +2449,19 @@ export type Database = {
         }
         Returns: number
       }
+      get_agent_shift_status: {
+        Args: { _agent_id: string }
+        Returns: {
+          end_time: string
+          is_on_duty: boolean
+          seconds_remaining: number
+          shift_date: string
+          shift_end_ts: string
+          shift_id: string
+          shift_start_ts: string
+          start_time: string
+        }[]
+      }
       get_public_operational_counts: {
         Args: never
         Returns: {
@@ -2567,6 +2580,7 @@ export type Database = {
           unit_name: string
         }[]
       }
+      recalc_stale_shift_statuses: { Args: never; Returns: number }
       record_login_attempt: {
         Args: { p_identifier: string; p_ip?: string; p_success: boolean }
         Returns: undefined
