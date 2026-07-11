@@ -151,16 +151,23 @@ export function RoundSummaryDialog({
             <div className="mt-1 text-sm font-semibold" style={{ color }}>{nextAction}</div>
           </div>
 
-          <DialogFooter className="mt-5 sm:justify-center">
+          <DialogFooter className="mt-5 sm:justify-center flex-col sm:flex-row gap-2 items-center">
+            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground text-center">
+              Encerramento automático em{' '}
+              <span className="font-bold tabular-nums" style={{ color }}>
+                {String(countdown).padStart(2, '0')}s
+              </span>
+            </div>
             <Button
               onClick={onClose}
               className="min-w-40 font-bold uppercase tracking-wide"
               style={{ backgroundColor: color, color: '#0b0f14' }}
             >
-              Liberar controles
+              Liberar agora
             </Button>
           </DialogFooter>
         </div>
+
 
         <style>{`@keyframes summaryStripe { from { background-position: 0 0 } to { background-position: 120px 0 } }`}</style>
       </DialogContent>
