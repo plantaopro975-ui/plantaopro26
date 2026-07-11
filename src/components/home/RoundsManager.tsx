@@ -3027,7 +3027,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <div className="min-w-0 flex-1 basis-44">
                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-[12.5px] uppercase tracking-wider text-muted-foreground">
-                  <Shield className="h-3 w-3 shrink-0" style={{ color: teamColor }} />
+                  <TeamGlyph team={team} color={teamColor} size={13} className="shrink-0" />
                   <span>Equipe</span>
                   <span className="font-semibold tracking-wide" style={{ color: teamColor }}>{team}</span>
                 </div>
