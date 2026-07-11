@@ -51,35 +51,30 @@ export function TacticalClock({
         boxShadow: `inset 0 0 0 1px ${accent}12, 0 1px 0 hsl(var(--background)/0.4)`,
       }}
     >
-      {/* filete acento inferior */}
+      {/* filete acento inferior — mais discreto */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-1.5 bottom-0 h-[1.5px] rounded-t-sm opacity-80"
+        className="pointer-events-none absolute inset-x-2 bottom-0 h-[1px] rounded-t-sm opacity-50"
         style={{
-          background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
+          background: `linear-gradient(90deg, transparent, ${accent}aa, transparent)`,
         }}
       />
 
-      {/* LIVE micro-badge com dot pulsante */}
+      {/* LIVE micro-badge sóbrio */}
       <span
         aria-hidden
-        className="inline-flex items-center gap-1 rounded-sm border px-1 py-[1px] font-mono text-[8.5px] font-bold uppercase tracking-[0.18em] leading-none"
-        style={{
-          color: accent,
-          borderColor: `${accent}40`,
-          background: `${accent}0d`,
-        }}
+        className="inline-flex items-center gap-1 font-mono text-[8.5px] font-semibold uppercase tracking-[0.2em] leading-none text-muted-foreground/80"
       >
         <span
           className="relative inline-flex h-1 w-1 rounded-full"
-          style={{ background: accent, boxShadow: `0 0 6px ${accent}` }}
+          style={{ background: accent }}
         >
           <span
             className={cn(
               'absolute inset-0 rounded-full transition-opacity duration-500',
-              blink ? 'opacity-70' : 'opacity-0',
+              blink ? 'opacity-60' : 'opacity-0',
             )}
-            style={{ background: accent, filter: 'blur(2px)' }}
+            style={{ background: accent, filter: 'blur(1.5px)' }}
           />
         </span>
         LIVE
@@ -90,10 +85,9 @@ export function TacticalClock({
         <span className={digitCls}>{hh}</span>
         <span
           className={cn(
-            'font-mono font-semibold text-foreground/80 transition-opacity duration-150',
-            blink ? 'opacity-100' : 'opacity-25',
+            'font-mono font-semibold text-foreground/70 transition-opacity duration-150',
+            blink ? 'opacity-100' : 'opacity-30',
           )}
-          style={{ textShadow: `0 0 6px ${accent}66` }}
         >
           :
         </span>
@@ -102,10 +96,9 @@ export function TacticalClock({
           <>
             <span
               className={cn(
-                'font-mono font-semibold text-foreground/80 transition-opacity duration-150',
-                blink ? 'opacity-25' : 'opacity-100',
+                'font-mono font-semibold text-foreground/70 transition-opacity duration-150',
+                blink ? 'opacity-30' : 'opacity-100',
               )}
-              style={{ textShadow: `0 0 6px ${accent}66` }}
             >
               :
             </span>
