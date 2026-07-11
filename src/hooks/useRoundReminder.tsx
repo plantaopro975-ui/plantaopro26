@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { getReminderSettings, subscribeReminderSettings, type ReminderSettings } from '@/lib/reminderSettings';
+import { getReminderSettings, subscribeReminderSettings, bindReminderUser, type ReminderSettings } from '@/lib/reminderSettings';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Hook global de lembrete de rondas.
