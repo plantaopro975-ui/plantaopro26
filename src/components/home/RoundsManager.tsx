@@ -1266,6 +1266,94 @@ function Section({
   );
 }
 
+/* ================= HandoffHighlight — troca de posto (SVG profissional) ================= */
+function HandoffHighlight({
+  open, onClose, team, teamColor, postNumber, agentName,
+}: {
+  open: boolean;
+  onClose: () => void;
+  team: string;
+  teamColor: string;
+  postNumber: number;
+  agentName: string;
+}) {
+  useEffect(() => {
+    if (!open) return;
+    const t = window.setTimeout(onClose, 6500);
+    return () => window.clearTimeout(t);
+  }, [open, onClose]);
+
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-x-0 top-4 z-[100] flex justify-center px-3 pointer-events-none"
+      role="status"
+      aria-live="polite"
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        className="pointer-events-auto group relative overflow-hidden rounded-xl border shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300 max-w-[520px] w-full"
+        style={{
+          background: 'linear-gradient(135deg, hsl(var(--card) / 0.96), hsl(var(--card) / 0.88))',
+          borderColor: `${teamColor}66`,
+          boxShadow: `0 0 0 1px ${teamColor}33, 0 12px 40px -8px ${teamColor}55`,
+        }}
+      >
+        {/* Faixa luminosa intermitente */}
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-[3px] animate-pulse"
+          style={{ background: `linear-gradient(90deg, transparent, ${teamColor}, transparent)` }}
+        />
+        <div className="flex items-center gap-3 px-4 py-3">
+          {/* Ícone SVG animado — anel radar + seta de troca */}
+          <svg
+            width="46" height="46" viewBox="0 0 46 46" className="shrink-0"
+            aria-hidden
+          >
+            <defs>
+              <radialGradient id="ho-glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor={teamColor} stopOpacity="0.55" />
+                <stop offset="70%" stopColor={teamColor} stopOpacity="0.05" />
+                <stop offset="100%" stopColor={teamColor} stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <circle cx="23" cy="23" r="22" fill="url(#ho-glow)" />
+            <circle cx="23" cy="23" r="14" fill="none" stroke={teamColor} strokeWidth="1.5" opacity="0.35">
+              <animate attributeName="r" values="10;18;10" dur="1.6s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.7;0.05;0.7" dur="1.6s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="23" cy="23" r="7" fill={teamColor} opacity="0.9" />
+            <path
+              d="M15 23 L21 23 M25 23 L31 23 M28 20 L31 23 L28 26"
+              stroke="#0b0f14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"
+            />
+          </svg>
+          <div className="flex-1 min-w-0 text-left">
+            <div
+              className="text-[10.5px] font-mono uppercase tracking-[0.18em]"
+              style={{ color: teamColor }}
+            >
+              EQUIPE {team} · POSTO {String(postNumber).padStart(2, '0')} · TROCA EM CURSO
+            </div>
+            <div className="text-[15px] font-semibold text-foreground leading-tight truncate mt-0.5">
+              Assumindo agora: <span style={{ color: teamColor }}>{agentName}</span>
+            </div>
+            <div className="text-[11.5px] text-muted-foreground leading-snug mt-0.5">
+              Repasse concluído. Próximo agente já está em serviço.
+            </div>
+          </div>
+          <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/70 shrink-0 hidden sm:block">
+            OK
+          </span>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+
 export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNode } = {}) {
 
   const [open, setOpen] = useState(false);
