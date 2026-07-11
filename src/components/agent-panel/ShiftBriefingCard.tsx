@@ -122,7 +122,9 @@ export function ShiftBriefingCard({
   const [history, setHistory] = useState<Briefing[]>([]);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [autoSaveState, setAutoSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [autoSaveState, setAutoSaveState] = useState<'idle' | 'saving' | 'saved' | 'error' | 'pending'>('idle');
+  const [isOnline, setIsOnline] = useState<boolean>(typeof navigator === 'undefined' ? true : navigator.onLine);
+  const [hasPending, setHasPending] = useState(false);
 
   // form state — cada plantão começa em branco (chave = shift_id)
   const [adoCnt, setAdoCnt] = useState('');
