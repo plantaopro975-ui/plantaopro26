@@ -1,113 +1,107 @@
+import { cn } from '@/lib/utils';
+
 /**
- * MadeInFeijoBadge — Selo discreto de origem
+ * MadeInFeijoBadge — Selo tático de origem do software.
  *
- * SVG inline, tipografia mono, ancorado em `position: fixed` no canto
- * inferior-esquerdo. Não redimensiona layout nem interfere em cliques
- * (pointer-events-none). Aparece apenas em telas ≥ sm para não competir
- * com toolbars/mobile nav.
+ * Renderizado em HTML/CSS (não SVG) para nitidez perfeita em qualquer
+ * densidade de pixel. Combina com a tipografia do rodapé.
  */
-export function MadeInFeijoBadge({ inline = false, size = 'md' }: { inline?: boolean; size?: 'sm' | 'md' | 'lg' }) {
+export function MadeInFeijoBadge({
+  inline = false,
+  size = 'md',
+  className,
+}: {
+  inline?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}) {
   const wrapperClass = inline
-    ? "inline-flex items-center justify-center select-none opacity-95 hover:opacity-100 transition-opacity drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
-    : "pointer-events-none fixed bottom-1 left-1 z-[55] hidden sm:block select-none opacity-60 hover:opacity-100 transition-opacity";
-  const dims = size === 'lg'
-    ? { w: 260, h: 34 }
-    : size === 'sm'
-      ? { w: 126, h: 16.5 }
-      : { w: 200, h: 26 };
+    ? 'inline-flex items-center select-none'
+    : 'pointer-events-none fixed bottom-2 left-2 z-[55] hidden sm:inline-flex select-none';
+
+  const sizeMap = {
+    sm: {
+      pad: 'px-1.5 py-[3px] gap-1.5',
+      tag: 'text-[8px] tracking-[0.20em]',
+      title: 'text-[9px] tracking-[0.22em]',
+      chev: 'text-[9px]',
+      bar: 'h-3',
+    },
+    md: {
+      pad: 'px-2 py-1 gap-2',
+      tag: 'text-[9px] tracking-[0.22em]',
+      title: 'text-[11px] tracking-[0.24em]',
+      chev: 'text-[11px]',
+      bar: 'h-4',
+    },
+    lg: {
+      pad: 'px-3 py-1.5 gap-2.5',
+      tag: 'text-[10px] tracking-[0.24em]',
+      title: 'text-[13px] tracking-[0.26em]',
+      chev: 'text-[13px]',
+      bar: 'h-5',
+    },
+  }[size];
+
   return (
     <div
-      aria-hidden={false}
       role="note"
-      title="Desenvolvido por Franc D'nis"
-      className={wrapperClass}
+      title="Software desenvolvido por Franc D'nis"
+      aria-label="Software desenvolvido por Franc D'nis"
+      className={cn(wrapperClass, className)}
     >
-
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 168 22"
-        width={dims.w}
-        height={dims.h}
-        role="img"
-        aria-label="Desenvolvido por Franc D'nis"
+      <div
+        className={cn(
+          'inline-flex items-center rounded-md border border-amber-500/30 bg-[linear-gradient(180deg,hsl(220_40%_7%/0.95),hsl(222_45%_4%/0.98))] shadow-[0_1px_0_hsl(45_95%_55%/0.15)_inset,0_2px_8px_rgba(0,0,0,0.35)]',
+          sizeMap.pad,
+        )}
       >
-
-        <defs>
-          <linearGradient id="mif-bg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#0b1220" stopOpacity="0.92" />
-            <stop offset="1" stopColor="#050912" stopOpacity="0.94" />
-          </linearGradient>
-          <linearGradient id="mif-accent" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#f59e0b" />
-            <stop offset="1" stopColor="#fbbf24" />
-          </linearGradient>
-        </defs>
-
-        {/* Cápsula */}
-        <rect
-          x="0.5"
-          y="0.5"
-          width="167"
-          height="21"
-          rx="4"
-          fill="url(#mif-bg)"
-          stroke="#1e293b"
-          strokeWidth="1"
+        {/* Acento amarelo lateral */}
+        <span
+          aria-hidden
+          className={cn(
+            'w-[3px] rounded-sm bg-gradient-to-b from-amber-400 to-amber-600 shadow-[0_0_6px_hsl(45_95%_55%/0.55)]',
+            sizeMap.bar,
+          )}
         />
 
-        {/* Faixa amarela — barra de acento à esquerda */}
-        <rect x="1" y="1" width="3.2" height="20" rx="1" fill="url(#mif-accent)" />
-
-        {/* Ícone — chevrons de código </> */}
-        <g transform="translate(9 5.5)" fill="none" stroke="#fbbf24" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="3.4,1 0.6,5.5 3.4,10" />
-          <polyline points="8.6,1 11.4,5.5 8.6,10" />
-          <line x1="7.4" y1="0.6" x2="4.6" y2="10.4" stroke="#f59e0b" strokeWidth="1" />
-        </g>
-
-        {/* Texto — CRAFTED */}
-        <text
-          x="26"
-          y="9.6"
-          fill="#94a3b8"
-          fontFamily="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
-          fontSize="5.6"
-          fontWeight="600"
-          letterSpacing="1.6"
+        {/* Chevron </> */}
+        <span
+          aria-hidden
+          className={cn(
+            'font-mono font-bold text-amber-400 leading-none',
+            sizeMap.chev,
+          )}
+          style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" }}
         >
-          CRAFTED
-        </text>
+          {'</>'}
+        </span>
 
-        {/* Texto — SOFTWARE APP */}
-        <text
-          x="26"
-          y="17.4"
-          fill="#f1f5f9"
-          fontFamily="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
-          fontSize="7.2"
-          fontWeight="800"
-          letterSpacing="1.4"
+        {/* Tag pequena */}
+        <span
+          className={cn(
+            'font-mono font-semibold uppercase text-slate-400 leading-none',
+            sizeMap.tag,
+          )}
+          style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" }}
         >
-          SOFTWARE APP
-        </text>
+          Crafted
+        </span>
 
-        {/* Selo circular </> à direita */}
-        <g transform="translate(146 3)">
-          <circle cx="8" cy="8" r="7.4" fill="#0f172a" stroke="#fbbf24" strokeWidth="0.9" />
-          <text
-            x="8"
-            y="10.4"
-            textAnchor="middle"
-            fill="#fbbf24"
-            fontFamily="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
-            fontSize="6.4"
-            fontWeight="800"
-            letterSpacing="0.2"
-          >
-            {'</>'}
-          </text>
-        </g>
-      </svg>
+        {/* Separador */}
+        <span aria-hidden className="text-amber-500/40 leading-none">·</span>
+
+        {/* Título */}
+        <span
+          className={cn(
+            'font-mono font-extrabold uppercase text-slate-100 leading-none',
+            sizeMap.title,
+          )}
+          style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" }}
+        >
+          Software App
+        </span>
+      </div>
     </div>
   );
 }
