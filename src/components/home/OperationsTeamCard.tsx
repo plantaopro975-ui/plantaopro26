@@ -77,14 +77,14 @@ export function OperationsTeamCard({ team, onClick }: OperationsTeamCardProps) {
         {/* Callsign at bottom */}
         <div className="absolute inset-x-0 bottom-10 px-4 flex flex-col items-center text-center">
           <h3
-            className="font-stencil font-bold text-2xl sm:text-3xl lg:text-4xl leading-none text-white uppercase tracking-wider drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
-            style={{ textShadow: `0 0 24px ${meta.hex}` }}
+            className="font-stencil font-bold text-2xl sm:text-3xl lg:text-4xl leading-none text-white uppercase tracking-wider"
           >
             {meta.callsign}
           </h3>
-          <p className="mt-2 font-mono-mil text-[10px] tracking-[0.15em] uppercase text-white/80 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+          <p className="mt-2 font-mono-mil text-[10px] tracking-[0.15em] uppercase text-white/80">
             {meta.motto}
           </p>
+
         </div>
 
 
