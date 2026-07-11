@@ -63,27 +63,26 @@ export function AccessAcknowledgmentGate() {
           aria-describedby="ack-desc"
           className="fixed left-1/2 top-1/2 z-[10000] max-h-[calc(100dvh-1rem)] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain focus:outline-none [scrollbar-width:thin] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95"
         >
-          <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-b from-[#0b0d14]/95 to-[#05070d]/95 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.3)] backdrop-blur">
-            {/* Imagem hero cinematográfica — preenche todo o card, sem margens */}
-            <div
-              className="relative w-full overflow-hidden bg-[#05070d]"
-              style={{ aspectRatio: "4 / 3" }}
-            >
-              <img
-                src={heroImage}
-                alt=""
-                aria-hidden="true"
-                width={1024}
-                height={768}
-                className="absolute inset-0 h-full w-full object-cover object-center"
-              />
-              {/* Gradientes de leitura */}
-              <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#05070d]/90 via-[#05070d]/40 to-transparent pointer-events-none" />
-              <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#05070d] via-[#05070d]/85 to-transparent pointer-events-none" />
+          <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.35)]">
+            {/* Imagem de fundo — ocupa o card inteiro (topo → base) */}
+            <img
+              src={heroImage}
+              alt=""
+              aria-hidden="true"
+              width={1024}
+              height={768}
+              className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none select-none"
+            />
+            {/* Overlays de leitura sobre a imagem completa */}
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_30%,rgba(5,7,13,0.15)_0%,rgba(5,7,13,0.75)_55%,rgba(5,7,13,0.95)_100%)]" />
+            <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-[#05070d]/95 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#05070d] via-[#05070d]/90 to-transparent pointer-events-none" />
 
-              {/* Faixa superior sobre a imagem */}
+            {/* Conteúdo em coluna, sempre proporcional ao card */}
+            <div className="relative flex flex-col min-h-[560px] sm:min-h-[600px]">
+              {/* Cabeçalho */}
               <div
-                className="absolute top-3 left-4 right-4 flex items-center justify-between gap-3 text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-amber-300/90"
+                className="flex items-center justify-between gap-3 px-5 pt-4 text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-amber-300/95"
                 style={{ fontFamily: "'IBM Plex Mono', monospace" }}
               >
                 <div className="flex items-center gap-1.5 min-w-0">
@@ -93,99 +92,89 @@ export function AccessAcknowledgmentGate() {
                 <span className="shrink-0 whitespace-nowrap tracking-[0.18em]">Plantão&nbsp;Pro</span>
               </div>
 
-              {/* Título sobreposto — escala fluida, line-height controlado */}
-              <div className="absolute bottom-4 left-4 right-4">
+              {/* Título — centralizado sobre a imagem */}
+              <div className="flex-1 flex flex-col justify-end px-5 pt-8 pb-4">
                 <DialogPrimitive.Title
                   id="ack-title"
-                  className="text-[clamp(1.05rem,4.6vw,1.5rem)] font-bold leading-[1.15] tracking-[0.08em] text-amber-100 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]"
+                  className="text-[clamp(1.15rem,4.8vw,1.6rem)] font-bold leading-[1.15] tracking-[0.08em] text-amber-100 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]"
                   style={{ fontFamily: "'Libre Baskerville', serif" }}
                 >
                   CONTROLE DE PLANTÃO
                 </DialogPrimitive.Title>
                 <p
-                  className="mt-1.5 text-[10px] sm:text-[11px] uppercase leading-[1.5] tracking-[0.22em] text-amber-300/80"
+                  className="mt-1.5 text-[10px] sm:text-[11px] uppercase leading-[1.5] tracking-[0.22em] text-amber-300/85"
                   style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                 >
                   Sistema profissional · Escala · Banco de horas
                 </p>
               </div>
-            </div>
 
-            <div className="px-5 pb-5 pt-4">
-              {/* Corpo */}
-              <DialogPrimitive.Description
-                id="ack-desc"
-                asChild
-              >
-                <div className="space-y-2 text-[12px] leading-relaxed text-amber-50/85">
-                  <p>
-                    Plataforma operacional destinada a{" "}
-                    <strong className="text-amber-300">
-                      agentes socioeducativos
-                    </strong>{" "}
-                    para gestão de plantões, folgas, trocas de escala e banco
-                    de horas com precisão profissional.
-                  </p>
-                  <p className="text-[11px] text-amber-200/60">
-                    O acesso é restrito ao público-alvo. Confirme seu perfil
-                    para prosseguir.
-                  </p>
-                </div>
-              </DialogPrimitive.Description>
-
-              {rejected ? (
-                <div
-                  role="alert"
-                  className="mt-4 rounded-lg border border-rose-500/40 bg-rose-500/10 p-3 text-center space-y-1"
-                >
-                  <div className="text-rose-300 text-xs font-semibold tracking-wide uppercase">
-                    Acesso não autorizado
+              {/* Corpo interativo — bloco escuro com blur para separar da imagem */}
+              <div className="relative px-5 pb-5 pt-4 bg-[#05070d]/85 backdrop-blur-sm border-t border-amber-500/15">
+                <DialogPrimitive.Description id="ack-desc" asChild>
+                  <div className="space-y-2 text-[12px] leading-relaxed text-amber-50/90">
+                    <p>
+                      Plataforma operacional destinada a{" "}
+                      <strong className="text-amber-300">agentes socioeducativos</strong>{" "}
+                      para gestão de plantões, folgas, trocas de escala e banco de horas com precisão profissional.
+                    </p>
+                    <p className="text-[11px] text-amber-200/60">
+                      O acesso é restrito ao público-alvo. Confirme seu perfil para prosseguir.
+                    </p>
                   </div>
-                  <p className="text-[11px] text-rose-100/80 leading-relaxed">
-                    Esta plataforma é dedicada exclusivamente a agentes
-                    socioeducativos em exercício.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <label className="mt-4 flex items-start gap-2.5 cursor-pointer">
-                    <Checkbox
-                      checked={accepted}
-                      onCheckedChange={(v) => setAccepted(!!v)}
-                      aria-label="Confirmo que sou agente socioeducativo"
-                      className="mt-0.5 border-amber-500/60 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500 data-[state=checked]:text-black"
-                    />
-                    <span className="text-[11.5px] text-amber-50/90 select-none">
-                      Confirmo que sou{" "}
-                      <strong className="text-amber-300">
-                        agente socioeducativo
-                      </strong>{" "}
-                      e utilizarei a plataforma para fins profissionais.
-                    </span>
-                  </label>
+                </DialogPrimitive.Description>
 
-                  <div className="mt-4 flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setRejected(true)}
-                      className="flex-1 h-9 border-zinc-700 bg-zinc-900/60 text-zinc-300 hover:bg-zinc-800 hover:text-white text-xs"
-                    >
-                      Não sou
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      disabled={!accepted}
-                      onClick={handleAccept}
-                      className="flex-[1.4] h-9 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold hover:from-amber-400 hover:to-amber-300 disabled:opacity-40 shadow-md shadow-amber-500/30 text-xs"
-                    >
-                      Acessar plataforma
-                    </Button>
+                {rejected ? (
+                  <div
+                    role="alert"
+                    className="mt-4 rounded-lg border border-rose-500/40 bg-rose-500/10 p-3 text-center space-y-1"
+                  >
+                    <div className="text-rose-300 text-xs font-semibold tracking-wide uppercase">
+                      Acesso não autorizado
+                    </div>
+                    <p className="text-[11px] text-rose-100/80 leading-relaxed">
+                      Esta plataforma é dedicada exclusivamente a agentes socioeducativos em exercício.
+                    </p>
                   </div>
-                </>
-              )}
+                ) : (
+                  <>
+                    <label className="mt-4 flex items-start gap-2.5 cursor-pointer">
+                      <Checkbox
+                        checked={accepted}
+                        onCheckedChange={(v) => setAccepted(!!v)}
+                        aria-label="Confirmo que sou agente socioeducativo"
+                        className="mt-0.5 border-amber-500/60 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500 data-[state=checked]:text-black"
+                      />
+                      <span className="text-[11.5px] text-amber-50/90 select-none">
+                        Confirmo que sou{" "}
+                        <strong className="text-amber-300">agente socioeducativo</strong>{" "}
+                        e utilizarei a plataforma para fins profissionais.
+                      </span>
+                    </label>
+
+                    <div className="mt-4 flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setRejected(true)}
+                        className="flex-1 h-9 border-zinc-700 bg-zinc-900/60 text-zinc-300 hover:bg-zinc-800 hover:text-white text-xs"
+                      >
+                        Não sou
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={!accepted}
+                        onClick={handleAccept}
+                        className="flex-[1.4] h-9 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold hover:from-amber-400 hover:to-amber-300 disabled:opacity-40 shadow-md shadow-amber-500/30 text-xs"
+                      >
+                        Acessar plataforma
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </DialogPrimitive.Content>
