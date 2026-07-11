@@ -150,9 +150,9 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       style={{ ['--team-accent' as any]: t.accent }}
     >
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
-        <source type="image/avif" srcSet={t.bgAvif} />
-        <source type="image/webp" srcSet={t.bg} />
+        <source type="image/webp" srcSet={t.bgAvif} />
         <img
+
           src={t.bg}
           alt=""
           aria-hidden
