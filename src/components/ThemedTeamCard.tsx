@@ -449,13 +449,26 @@ export function ThemedTeamCard({ team, onClick }: ThemedTeamCardProps) {
             clipPath: themeStyle.cardClipPath || undefined,
           }}
         >
-          {/* Team Poster Background */}
-          <div 
+          {/* Team Emblem (novo brasão substitui o pôster antigo) */}
+          <div
             className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
-            style={{ 
-              backgroundImage: `url(${teamPosters[team as keyof typeof teamPosters]})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center top',
+            style={{
+              backgroundImage: `radial-gradient(ellipse at 50% 45%, ${teamColors[team as keyof typeof teamColors]?.glow} 0%, rgba(0,0,0,0.85) 55%, #05070d 100%), url(${getTeamEmblem(team)})`,
+              backgroundSize: 'auto, 78% auto',
+              backgroundPosition: 'center, center 42%',
+              backgroundRepeat: 'no-repeat, no-repeat',
+              backgroundBlendMode: 'normal, normal',
+            }}
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+            style={{
+              backgroundImage: `url(${getTeamEmblem(team)})`,
+              backgroundSize: '78% auto',
+              backgroundPosition: 'center 42%',
+              backgroundRepeat: 'no-repeat',
+              filter: `drop-shadow(0 6px 24px ${teamColors[team as keyof typeof teamColors]?.glow})`,
             }}
           />
           
