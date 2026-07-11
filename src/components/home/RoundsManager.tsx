@@ -30,7 +30,7 @@ import { SecurityDoctrineCard } from './SecurityDoctrineCard';
 
 /** Registra ação no histórico de atividades (activity_logs). */
 async function logRoundActivity(
-  action: 'create' | 'update',
+  action: 'create' | 'update' | 'abort',
   details: Record<string, unknown>,
 ) {
   try {
@@ -2085,10 +2085,24 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const currentIdx = live?.index ?? -1;
 
-  /* Exit guard — evita fechamento acidental */
+  /* Exit guard — evita fechamento acidental (bloqueio forte quando rodando) */
   const [confirmExit, setConfirmExit] = useState(false);
   const requestExit = () => setConfirmExit(true);
   const confirmAndClose = () => {
+    // Registra abortagem quando a ronda estava em execução
+    if (running && live && !live.done) {
+      void logRoundActivity('abort', {
+        team,
+        mode,
+        agents: agents.filter((a) => a.trim()),
+        interrupted_at: new Date().toISOString(),
+        current_index: live.index,
+        current_agent: schedule?.rows[live.index]?.name ?? null,
+        remaining_seconds: live.remaining,
+        total_remaining_seconds: totalRemainingSeconds,
+        reason: 'user_abort',
+      });
+    }
     setConfirmExit(false);
     setRunning(false);
     setOpen(false);
@@ -2998,22 +3012,38 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         onPrimary={() => setAlarm((a) => ({ ...a, open: false }))}
       />
 
-      {/* Confirmação de saída — padronizada */}
+      {/* Confirmação de saída — hardened quando a ronda está em execução */}
       <ConfirmDialog
         open={confirmExit}
         onOpenChange={setConfirmExit}
-        variant="exit"
-        kicker="Confirmação"
-        title="Encerrar sessão de rondas?"
+        variant={running && live && !live.done ? 'warning' : 'exit'}
+        kicker={running && live && !live.done ? 'Operação em andamento' : 'Confirmação'}
+        title={running && live && !live.done ? 'Abortar ronda em execução?' : 'Encerrar sessão de rondas?'}
         description={
-          running
-            ? 'O cronômetro está ativo. A sessão será interrompida e ficará registrada no histórico.'
-            : 'Os dados desta escala permanecerão salvos no histórico local.'
+          running && live && !live.done ? (
+            <div className="space-y-2">
+              <p className="text-slate-200/95">
+                Encerrar agora <b>compromete a cobertura da equipe {team}</b> e deixa o posto sem responsável designado.
+              </p>
+              <div className="rounded-md border border-destructive/40 bg-destructive/10 px-2.5 py-1.5 text-[12px] text-destructive/95 font-mono uppercase tracking-wider flex items-center gap-2">
+                <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" aria-hidden>
+                  <path d="M12 3 L22 20 H2 Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+                  <path d="M12 10 V14 M12 17 V17.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+                <span>Ação registrada · Abortagem no histórico</span>
+              </div>
+              <p className="text-[11.5px] text-slate-400">
+                Agente ativo: <b className="text-slate-200">{schedule?.rows[live.index]?.name ?? '—'}</b> · restam <b className="text-slate-200 tabular-nums">{fmtHMS(live.remaining)}</b>.
+              </p>
+            </div>
+          ) : (
+            'Os dados desta escala permanecerão salvos no histórico local.'
+          )
         }
-        accent={teamColor}
-        primaryLabel="Continuar"
+        accent={running && live && !live.done ? '#ef4444' : teamColor}
+        primaryLabel={running && live && !live.done ? 'Manter no posto' : 'Continuar'}
         onPrimary={() => setConfirmExit(false)}
-        secondaryLabel="Sim, sair"
+        secondaryLabel={running && live && !live.done ? 'Abortar mesmo assim' : 'Sim, sair'}
         onSecondary={confirmAndClose}
       />
 
