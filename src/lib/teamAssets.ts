@@ -85,13 +85,13 @@ export const teamColors: Record<string, {
     hover: '#3b82f6',
   },
   DELTA: {
-    // Dourado quente — reforçado para contraste
-    primary: '#fcd34d',
-    secondary: '#78350f',
-    glow: 'rgba(252, 211, 77, 0.5)',
-    onPrimary: '#2a1a00',
-    ring: '#fde68a',
-    hover: '#eab308',
+    // Violeta elétrico — distinção máxima frente às demais equipes
+    primary: '#a78bfa',
+    secondary: '#4c1d95',
+    glow: 'rgba(167, 139, 250, 0.5)',
+    onPrimary: '#1a0b3d',
+    ring: '#c4b5fd',
+    hover: '#8b5cf6',
   },
 };
 
