@@ -29,22 +29,15 @@ import objDeltaWebp from '@/assets/teams/delta-radio-v2.webp';
 
 
 
-import bgAlfaAsset from '@/assets/teams/bg-alfa.jpg.asset.json';
-import bgAlfaAvifAsset from '@/assets/teams/bg-alfa.avif.asset.json';
-const bgAlfa = bgAlfaAsset.url;
-const bgAlfaAvif = bgAlfaAvifAsset.url;
-import bgBravoAsset from '@/assets/teams/bg-bravo.jpg.asset.json';
-import bgBravoAvifAsset from '@/assets/teams/bg-bravo.avif.asset.json';
-const bgBravo = bgBravoAsset.url;
-const bgBravoAvif = bgBravoAvifAsset.url;
-import bgCharlieAsset from '@/assets/teams/bg-charlie.jpg.asset.json';
-import bgCharlieAvifAsset from '@/assets/teams/bg-charlie.avif.asset.json';
-const bgCharlie = bgCharlieAsset.url;
-const bgCharlieAvif = bgCharlieAvifAsset.url;
-import bgDeltaAsset from '@/assets/teams/bg-delta.jpg.asset.json';
-import bgDeltaAvifAsset from '@/assets/teams/bg-delta.avif.asset.json';
-const bgDelta = bgDeltaAsset.url;
-const bgDeltaAvif = bgDeltaAvifAsset.url;
+// Pôsteres cinematográficos táticos (background dos cards de equipe)
+import bgAlfa from '@/assets/teams/alfa-poster.jpg';
+import bgAlfaWebp from '@/assets/teams/alfa-poster.webp';
+import bgBravo from '@/assets/teams/bravo-poster.jpg';
+import bgBravoWebp from '@/assets/teams/bravo-poster.webp';
+import bgCharlie from '@/assets/teams/charlie-poster.jpg';
+import bgCharlieWebp from '@/assets/teams/charlie-poster.webp';
+import bgDelta from '@/assets/teams/delta-poster.jpg';
+import bgDeltaWebp from '@/assets/teams/delta-poster.webp';
 
 interface Props {
   onTeamClick: (team: string) => void;
@@ -63,12 +56,12 @@ const TEAMS: {
   bg: string;
   bgAvif: string;
 }[] = [
-  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfaAvif },
-  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravoAvif },
-  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlieAvif },
-  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDeltaAvif },
-
+  { key: 'ALFA',    motto: 'Escudo · Guarda',      op: 'OP-01', role: 'Defensiva',       accent: '43 96% 56%',  obj: objAlfa,    objWebp: objAlfaWebp,    bg: bgAlfa,    bgAvif: bgAlfaWebp },
+  { key: 'BRAVO',   motto: 'Capacete · Investida', op: 'OP-02', role: 'Ofensiva',        accent: '14 82% 58%',  obj: objBravo,   objWebp: objBravoWebp,   bg: bgBravo,   bgAvif: bgBravoWebp },
+  { key: 'CHARLIE', motto: 'Óptica · Vigília',     op: 'OP-03', role: 'Reconhecimento',  accent: '38 96% 60%',  obj: objCharlie, objWebp: objCharlieWebp, bg: bgCharlie, bgAvif: bgCharlieWebp },
+  { key: 'DELTA',   motto: 'Rádio · Comando',      op: 'OP-04', role: 'Resposta Rápida', accent: '45 96% 64%',  obj: objDelta,   objWebp: objDeltaWebp,   bg: bgDelta,   bgAvif: bgDeltaWebp },
 ];
+
 
 
 interface TeamObjectProps {
@@ -157,9 +150,9 @@ function TeamCard({ team: t, idx, isSelected, onSelect, className }: TeamCardPro
       style={{ ['--team-accent' as any]: t.accent }}
     >
       <picture className="pointer-events-none absolute inset-0 z-0 block h-full w-full">
-        <source type="image/avif" srcSet={t.bgAvif} />
-        <source type="image/webp" srcSet={t.bg} />
+        <source type="image/webp" srcSet={t.bgAvif} />
         <img
+
           src={t.bg}
           alt=""
           aria-hidden
