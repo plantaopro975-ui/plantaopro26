@@ -20,9 +20,10 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { MissionLockDialog } from './MissionLockDialog';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
+import { PreNightScheduleDialog } from './PreNightScheduleDialog';
 import { TacticalClock } from './TacticalClock';
 import {
-  isNightShift, getNightWindow, formatAcreClock,
+  isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
   NIGHT_START, NIGHT_END, NIGHT_TZ,
 } from '@/lib/nightShift';
 import { useAuth } from '@/contexts/AuthContext';
