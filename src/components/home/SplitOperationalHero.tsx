@@ -702,8 +702,44 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
             ))}
           </div>
 
+          {/* ============ E + F — Conformidade institucional + Ticker de status ============ */}
+          <div className="hidden sm:flex mt-2 items-stretch gap-3 border-t border-white/8 pt-1.5 select-none">
+            {/* E — selos de conformidade */}
+            <div className="flex items-center gap-3 lg:gap-4 shrink-0">
+              {[
+                { k: 'LGPD', v: '✓', tone: 'emerald' },
+                { k: 'RLS', v: 'ATIVO', tone: 'emerald' },
+                { k: 'ISO 27001', v: 'REF.', tone: 'amber' },
+                { k: 'UPTIME', v: '99.97%', tone: 'emerald' },
+                { k: 'SLA', v: '24/7', tone: 'amber' },
+              ].map((it) => (
+                <span key={it.k} className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                  <span className={cn('h-1 w-1 rounded-full', it.tone === 'emerald' ? 'bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.7)]' : 'bg-amber-400 shadow-[0_0_4px_rgba(251,191,36,0.7)]')} />
+                  <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/50 leading-none">{it.k}</span>
+                  <span className={cn('font-mono text-[9px] font-semibold uppercase tracking-[0.16em] leading-none tabular-nums', it.tone === 'emerald' ? 'text-emerald-300/90' : 'text-amber-300/90')}>{it.v}</span>
+                </span>
+              ))}
+            </div>
+            {/* F — Ticker de status deslizante */}
+            <div className="relative flex-1 min-w-0 overflow-hidden [mask-image:linear-gradient(90deg,transparent_0,#000_6%,#000_94%,transparent_100%)]">
+              <div className="flex items-center gap-6 whitespace-nowrap animate-[pp-ticker_28s_linear_infinite] will-change-transform">
+                {Array.from({ length: 2 }).map((_, dup) => (
+                  <span key={dup} className="flex items-center gap-6 shrink-0">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-emerald-300/85">◉ SISTEMA · OPERACIONAL</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">OP-01 · CONTENÇÃO ATIVA</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">UPLINK · ESTÁVEL</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-200/85 tabular-nums">09 UNIDADES ONLINE</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">RONDA · GEORREFERENCIADA</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">CANAL SEGURO · AES-256</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-200/85">ISE · ACRE · 2026</span>
+                    <span aria-hidden className="h-2 w-px bg-white/15" />
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
 
-          {/* Ribbon HUD removida a pedido do usuário para dar mais espaço aos cards */}
+
 
 
         </div>
