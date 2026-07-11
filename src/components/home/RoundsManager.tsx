@@ -121,70 +121,8 @@ function fmtHMS(seconds: number): string {
   return h > 0 ? `${pad(h)}:${pad(m)}:${pad(ss)}` : `${pad(m)}:${pad(ss)}`;
 }
 
-/**
- * Ampulheta tática em SVG — substitui o emoji ⏳ por um selo profissional
- * com areia animada caindo. Usa `currentColor`, sem dependências externas.
- */
-function HourglassSVG({ className = 'h-3.5 w-3.5', animated = true }: { className?: string; animated?: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 16 20"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-      role="img"
-    >
-      {/* Placas superior e inferior */}
-      <line x1="2" y1="1.5" x2="14" y2="1.5" strokeWidth={1.6} />
-      <line x1="2" y1="18.5" x2="14" y2="18.5" strokeWidth={1.6} />
-      {/* Contorno do bulbo */}
-      <path d="M3 1.5 C 3 6.5, 8 8.5, 8 10 C 8 11.5, 3 13.5, 3 18.5" />
-      <path d="M13 1.5 C 13 6.5, 8 8.5, 8 10 C 8 11.5, 13 13.5, 13 18.5" />
-      {/* Areia superior (diminui) */}
-      <path
-        d="M4.2 3 L11.8 3 C 11.8 6, 8 8, 8 9.6 C 8 8, 4.2 6, 4.2 3 Z"
-        fill="currentColor"
-        opacity="0.85"
-        stroke="none"
-      >
-        {animated && (
-          <animate
-            attributeName="opacity"
-            values="0.9;0.85;0.55;0.3;0.9"
-            dur="3s"
-            repeatCount="indefinite"
-          />
-        )}
-      </path>
-      {/* Areia inferior (acumula) */}
-      <path
-        d="M4.4 17 C 5 14.5, 6.6 13, 8 13 C 9.4 13, 11 14.5, 11.6 17 Z"
-        fill="currentColor"
-        opacity="0.75"
-        stroke="none"
-      >
-        {animated && (
-          <animate
-            attributeName="opacity"
-            values="0.35;0.55;0.8;0.9;0.35"
-            dur="3s"
-            repeatCount="indefinite"
-          />
-        )}
-      </path>
-      {/* Fio de areia caindo */}
-      {animated && (
-        <line x1="8" y1="9.6" x2="8" y2="12.8" strokeWidth={0.8} opacity="0.9">
-          <animate attributeName="opacity" values="0;0.9;0" dur="1.2s" repeatCount="indefinite" />
-        </line>
-      )}
-    </svg>
-  );
-}
+// HourglassSVG foi extraído para um componente padronizado e otimizado.
+// Ver: src/components/home/HourglassSVG.tsx
 
 const TEAM_PRESETS = [
   { key: 'ALFA',    label: TEAM_COLORS.ALFA.label,    color: TEAM_COLORS.ALFA.hex },
