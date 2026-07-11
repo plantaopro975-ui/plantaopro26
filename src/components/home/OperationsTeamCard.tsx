@@ -1,5 +1,5 @@
-import { Shield, Sword, Crosshair, Zap, ArrowRight, Lock } from 'lucide-react';
-import { teamColors } from '@/lib/teamAssets';
+import { ArrowRight, Lock } from 'lucide-react';
+import { teamColors, teamPosters, teamPostersWebp } from '@/lib/teamAssets';
 
 interface OperationsTeamCardProps {
   team: 'ALFA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
