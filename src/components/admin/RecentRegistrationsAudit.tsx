@@ -207,8 +207,8 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
 
   // Solicita permissão de notificação uma vez ao ativar
   const requestNotifPermission = async () => {
-    if (typeof Notification === 'undefined') {
-      toast.error('Este navegador não suporta notificações');
+    if (!areNativeNotificationsAllowed()) {
+      toast.info('Modo "somente in-app" ativo — notificações do navegador estão desativadas nas configurações.');
       return;
     }
     if (Notification.permission === 'granted') return;
