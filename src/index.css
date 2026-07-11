@@ -1813,24 +1813,37 @@ body:hover {
  * não são afetados pelo blur.
  * ============================================================ */
 body.rm-focus-mode > #root {
-  filter: blur(14px) brightness(0.45) saturate(1.15) contrast(0.95);
-  transform: scale(1.02);
-  transform-origin: center;
-  transition: filter 420ms cubic-bezier(0.22, 1, 0.36, 1),
-              transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  filter: blur(10px) brightness(0.55) saturate(1.05);
+  transition: filter 520ms cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   user-select: none;
-  will-change: filter, transform;
+  will-change: filter;
 }
 body:not(.rm-focus-mode) > #root {
-  transition: filter 320ms ease-out, transform 320ms ease-out;
+  transition: filter 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Vinheta radial profissional por cima do conteúdo desfocado */
+body.rm-focus-mode::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.65) 100%),
+    linear-gradient(180deg, rgba(9,11,16,0.25) 0%, rgba(9,11,16,0.15) 100%);
+  opacity: 0;
+  animation: rm-vignette-in 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes rm-vignette-in {
+  to { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   body.rm-focus-mode > #root {
     transition: none;
-    transform: none;
-    filter: blur(8px) brightness(0.5);
+    filter: blur(6px) brightness(0.6);
   }
+  body.rm-focus-mode::before { animation: none; opacity: 1; }
 }
 
 /* Ticker de status do hero — deslizamento horizontal contínuo */
