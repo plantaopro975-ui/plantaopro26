@@ -2307,7 +2307,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
 
         <DialogContent
-          className="w-[min(100vw-0.25rem,54rem)] sm:w-[min(100vw-0.75rem,54rem)] xl:w-[min(100vw-1rem,58rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-card border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden flex flex-col rounded-lg shadow-lg"
+          className="w-[min(100vw-0.25rem,54rem)] sm:w-[min(100vw-0.75rem,54rem)] xl:w-[min(100vw-1rem,58rem)] max-w-none max-h-[calc(100dvh-0.25rem)] sm:max-h-[calc(100dvh-0.75rem)] overflow-hidden bg-card border border-border text-foreground p-0 gap-0 [&>button.absolute]:hidden flex flex-col rounded-lg"
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
@@ -2387,7 +2387,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           >
             <div
               ref={fitInnerRef}
-               className="px-2 sm:px-3 lg:px-4 py-2 sm:py-3"
+               className="px-2 sm:px-3 py-2"
             >
               <div
                 className="mx-auto mb-2 overflow-hidden rounded-md border border-border bg-card"
@@ -2454,14 +2454,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       return (
                         <button key={t.key} type="button" onClick={() => setTeam(t.key)}
                           className={cn(
-                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[11.5px] transition-all',
-                            active ? 'border-transparent shadow-sm' : 'border-border bg-card text-foreground hover:border-border',
+                             'relative rounded-md border px-1.5 py-1.5 font-sans font-semibold uppercase tracking-wide text-[11.5px]',
+                            active ? 'border-transparent' : 'border-border bg-card text-foreground',
                           )}
-                          style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))', boxShadow: `0 0 24px -6px ${t.color}` } : undefined}
+                          style={active ? { backgroundColor: t.color, color: 'hsl(var(--primary-foreground))' } : undefined}
                         >
                           {t.label}
                           <span aria-hidden
-                            className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full transition-opacity', active ? 'opacity-0' : 'opacity-70')}
+                            className={cn('absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full', active ? 'opacity-0' : 'opacity-70')}
                             style={{ backgroundColor: t.color }} />
                         </button>
                       );
@@ -2474,8 +2474,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     {(['split', 'interval'] as Mode[]).map((m) => (
                       <button key={m} type="button" onClick={() => setMode(m)} disabled={configLocked}
                         className={cn(
-                          'rounded-md border px-3 py-2 text-[12.5px] font-mono uppercase tracking-wide transition-all',
-                          mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground',
+                          'rounded-md border px-3 py-1.5 text-[12.5px] font-mono uppercase tracking-wide',
+                          mode === m ? 'border-border bg-primary/15 text-primary' : 'border-border bg-card text-muted-foreground',
                           configLocked && 'opacity-60 cursor-not-allowed',
                         )}>
                         {m === 'split' ? 'Dividir turno' : 'Intervalo fixo'}
@@ -2489,7 +2489,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <div
                     data-testid="night-shift-banner"
                     className={cn(
-                      'rounded-md border px-2.5 py-1.5 text-[12px] transition-colors',
+                      'rounded-md border px-2.5 py-1.5 text-[12px]',
                       overrideActive
                         ? 'border-red-500/40 bg-red-500/5 text-red-200/90'
                         : 'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
@@ -2697,19 +2697,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               <div className="flex items-center justify-center gap-3">
                                 <span
                                   className={cn(
-                                    'font-mono font-light tabular-nums tracking-tight leading-none break-all transition-all',
+                                    'font-mono font-light tabular-nums tracking-tight leading-none break-all',
                                     urgent
                                       ? 'text-2xl sm:text-3xl md:text-4xl font-black'
                                       : 'text-xl sm:text-2xl md:text-3xl',
 
-                                    critical && !silentMode && 'animate-pulse',
                                   )}
                                   style={{
                                     color: urgent
                                       ? 'hsl(var(--destructive))'
                                       : view ? teamColor : 'hsl(var(--muted-foreground))',
-                                    textShadow: urgent ? '0 0 24px hsl(var(--destructive) / 0.7)' : undefined,
                                   }}
+
                                 >
                                   {view && !view.done
                                     ? fmtHMS(view.remaining)
@@ -2720,7 +2719,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               </div>
 
                               {urgent && view && (
-                                <div className="font-mono text-[12.5px] uppercase tracking-[0.35em] font-bold text-destructive animate-fade-in">
+                                <div className="font-mono text-[12.5px] uppercase tracking-[0.35em] font-bold text-destructive">
                                   ⚠ {critical ? 'ALERTA FINAL · ' : 'Contagem final · '}
                                   {String(Math.max(0, Math.ceil(view.remaining))).padStart(2, '0')} segundos
                                 </div>
@@ -2729,8 +2728,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               {/* Nome grande — agente ATIVO agora (live ou preview) */}
                               {activeAgentName && (
                                 <div
-                                  className="font-display font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2 drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
-                                  style={{ color: teamColor, textShadow: `0 0 24px ${teamColor}55` }}
+                                  className="font-display font-black uppercase tracking-tight text-base sm:text-xl md:text-2xl leading-none break-words max-w-full px-2"
+                                  style={{ color: teamColor }}
                                 >
                                   {activeAgentName}
                                 </div>
@@ -2799,8 +2798,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
                                 setStartConfirmOpen(true);
                               }}
-                              className="h-9 px-4 border font-semibold shadow-sm transition-all hover:brightness-110"
-                              style={{ backgroundColor: teamColor, borderColor: `${teamColor}aa`, color: 'hsl(var(--primary-foreground))', boxShadow: `0 12px 26px -16px ${teamColor}` }}
+                              className="h-9 px-4 border font-semibold"
+                              style={{ backgroundColor: teamColor, borderColor: teamColor, color: 'hsl(var(--primary-foreground))' }}
                             >
                               <Play className="h-3.5 w-3.5 mr-1.5" /> Iniciar
                             </Button>
@@ -2901,17 +2900,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           return (
                             <li key={i}
                                 className={cn(
-                                   'relative overflow-hidden grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card px-1.5 py-1.5 transition-all min-w-0',
+                                   'relative grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-2 rounded-md border bg-card px-1.5 py-1 min-w-0',
                                   isCurrent && 'bg-primary/10',
                                   isDone && 'opacity-70',
                                 )}
                                 style={{
-                                  borderColor: isCurrent ? `${teamColor}88` : isDone ? 'hsl(var(--success) / 0.32)' : `${teamColor}20`,
-                                  boxShadow: isCurrent ? `inset 3px 0 0 0 ${teamColor}, 0 0 22px -14px ${teamColor}` : undefined,
+                                  borderColor: isCurrent ? teamColor : isDone ? 'hsl(var(--success) / 0.32)' : 'hsl(var(--border))',
+                                  borderLeftWidth: isCurrent ? 3 : 1,
                                 }}>
-                              {isCurrent && !silentMode && (
-                                <span className="pointer-events-none absolute inset-y-0 left-0 w-1/2 opacity-20 animate-shimmer" style={{ background: `linear-gradient(90deg, transparent, ${teamColor}, transparent)` }} />
-                              )}
                               <span className="font-mono text-[10.5px] tabular-nums" style={{ color: isCurrent ? teamColor : 'hsl(var(--muted-foreground))' }}>{pad(i + 1)}</span>
                               <span className="min-w-0">
                                 <span className={cn(
