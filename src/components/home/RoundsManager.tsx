@@ -1201,7 +1201,7 @@ function validate(input: {
   const s = toMinutes(input.startTime);
   if (s === null) issues.push({ field: 'start', message: 'Horário de início inválido.' });
 
-  if (input.mode === 'split' || input.mode === 'proportional') {
+  if (input.mode === 'split') {
     const e = toMinutes(input.endTime);
     if (e === null) issues.push({ field: 'end', message: 'Horário de término inválido.' });
     if (s !== null && e !== null) {
