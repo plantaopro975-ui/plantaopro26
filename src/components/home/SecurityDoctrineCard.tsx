@@ -92,7 +92,8 @@ export function SecurityDoctrineCard({ color }: { color: string }) {
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
             aria-controls="security-doctrine-details"
-            className="ml-auto inline-flex items-center gap-1 rounded-sm border border-border/50 bg-muted/20 hover:bg-muted/50 hover:border-border transition-colors px-1.5 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+            className="ml-auto inline-flex items-center gap-1 rounded-sm border border-border/50 bg-muted/20 hover:bg-muted/50 hover:border-border transition-colors px-1.5 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+            style={{ ['--tw-ring-color' as string]: color }}
           >
             {expanded ? 'Ocultar' : 'Expandir detalhes'}
             <ChevronDown
