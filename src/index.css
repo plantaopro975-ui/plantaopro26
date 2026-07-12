@@ -2422,6 +2422,60 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   color: var(--rm-ink-soft) !important;
   opacity: 0.95;
 }
+
+/* ============================================================
+ * Fechar (X) do Dialog — sempre discreto, nunca âmbar cheio.
+ * Sobrescreve as regras genéricas de bg-primary/bg-amber quando
+ * o shadcn Dialog aplica classes de highlight ao close button.
+ * ============================================================ */
+.rm-dialog [data-radix-dialog-close],
+.rm-history [data-radix-dialog-close],
+.rm-reminder [data-radix-dialog-close],
+.rm-dialog button.absolute.right-4.top-4,
+.rm-history button.absolute.right-4.top-4,
+.rm-reminder button.absolute.right-4.top-4 {
+  background-color: transparent !important;
+  color: var(--rm-ink-soft) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  border-radius: 6px !important;
+  font-weight: 400 !important;
+}
+.rm-dialog [data-radix-dialog-close]:hover,
+.rm-history [data-radix-dialog-close]:hover,
+.rm-reminder [data-radix-dialog-close]:hover,
+.rm-dialog button.absolute.right-4.top-4:hover,
+.rm-history button.absolute.right-4.top-4:hover,
+.rm-reminder button.absolute.right-4.top-4:hover {
+  background-color: hsl(var(--rm-accent-hsl) / 0.12) !important;
+  color: var(--rm-ink) !important;
+}
+.rm-dialog [data-radix-dialog-close] svg,
+.rm-history [data-radix-dialog-close] svg,
+.rm-reminder [data-radix-dialog-close] svg,
+.rm-dialog button.absolute.right-4.top-4 svg,
+.rm-history button.absolute.right-4.top-4 svg,
+.rm-reminder button.absolute.right-4.top-4 svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* Variante compacta — reduz padding interno do chip e do container */
+.rm-reminder.rm-compact .rm-chip {
+  padding: 0.4rem 0.55rem;
+}
+.rm-reminder.rm-compact .rm-chip .rm-chip__label {
+  font-size: 0.82rem;
+}
+.rm-reminder.rm-compact .rm-chip .rm-chip__hint {
+  font-size: 0.63rem;
+  margin-top: 1px;
+}
+
 .rm-dialog button[class*="bg-primary"]:hover:not(:disabled),
 .rm-dialog button[class*="bg-amber"]:hover:not(:disabled),
 .rm-history button[class*="bg-primary"]:hover:not(:disabled),
