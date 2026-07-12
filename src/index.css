@@ -1827,6 +1827,31 @@ body.home-route {
   overscroll-behavior-y: auto;
 }
 
+/* ============================================================
+ * Painel Master — barra de rolagem oculta, scroll 100% funcional
+ * A classe `master-route` é aplicada ao <body> pelo Master.tsx
+ * enquanto o admin master está na página. Esconde a scrollbar
+ * visualmente mantendo scroll via wheel/trackpad/teclado/touch.
+ * ============================================================ */
+html:has(body.master-route),
+body.master-route {
+  scrollbar-width: none !important;    /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge legado */
+}
+html:has(body.master-route)::-webkit-scrollbar,
+body.master-route::-webkit-scrollbar,
+body.master-route *::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+  background: transparent !important;
+}
+body.master-route {
+  overflow-y: auto !important;
+  overscroll-behavior-y: auto;
+}
+
+
 
 
 
