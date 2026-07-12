@@ -175,7 +175,7 @@ export function MasterDiagnostics() {
       }
 
       out.push(entry);
-      setResults([...out, ...PROBES.slice(out.length).map(px => ({ tab: px.key, label: px.label, list: 'idle' as Status, action: 'idle' as Status }))]);
+      setResults([...out, ...PROBES.slice(out.length).map<ProbeResult>(px => ({ tab: px.key, label: px.label, list: 'idle', action: 'idle' }))]);
     }
 
     setDurationMs(Math.round(performance.now() - t0));
