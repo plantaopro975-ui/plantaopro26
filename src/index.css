@@ -2196,15 +2196,20 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   --rm-ink:        hsl(210 40% 98%);        /* 16.8:1 sobre surface */
   --rm-ink-soft:   hsl(215 20% 82%);        /* 10.2:1 */
   --rm-ink-mute:   hsl(215 15% 68%);        /* 6.1:1 — AA large */
-  --rm-accent:     hsl(38 96% 60%);         /* âmbar — ação primária */
-  --rm-accent-ink: hsl(38 100% 12%);        /* texto sobre âmbar */
-  --rm-accent-2:   hsl(190 92% 62%);        /* ciano — informativo */
-  --rm-success:    hsl(152 68% 58%);        /* esmeralda — sucesso */
-  --rm-danger:     hsl(0 84% 66%);          /* vermelho — crítico */
+  /* --rm-accent pode ser injetado inline pelo container (team color).
+     Fallback: âmbar institucional. */
+  --rm-accent:     hsl(38 96% 60%);
+  --rm-accent-ink: hsl(38 100% 12%);
+  --rm-accent-hsl: 38 96% 60%;
+  --rm-accent-glow: hsl(38 96% 60% / 0.4);
+  --rm-accent-2:   hsl(190 92% 62%);
+  --rm-success:    hsl(152 68% 58%);
+  --rm-danger:     hsl(0 84% 66%);
   --rm-warn:       hsl(38 96% 60%);
   --rm-surface:    hsl(220 30% 8% / 0.72);
   --rm-line:       hsl(215 22% 30% / 0.7);
-  --rm-focus:      hsl(190 92% 62%);        /* anel de foco ciano */
+  --rm-focus:      var(--rm-accent);
+
 
   font-family: 'Inter', 'DM Sans', 'IBM Plex Sans', system-ui, sans-serif;
   font-feature-settings: 'ss01', 'cv01', 'cv11', 'cv02';
