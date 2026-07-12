@@ -256,7 +256,10 @@ export function MasterDiagnostics() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
-              {(results.length ? results : PROBES.map(p => ({ tab: p.key, label: p.label, list: 'idle' as Status, action: 'idle' as Status }))).map((r) => (
+              {(results.length
+                ? results
+                : PROBES.map<ProbeResult>(p => ({ tab: p.key, label: p.label, list: 'idle', action: 'idle' }))
+              ).map((r) => (
                 <tr key={r.tab} className={cn('align-top', r.list === 'fail' && 'bg-red-950/20')}>
                   <td className="py-1.5 pr-2 text-slate-200 font-medium">{r.label}</td>
                   <td className="py-1.5 pr-2"><StatusPill status={r.list} /></td>
