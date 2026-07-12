@@ -180,6 +180,23 @@ export default function Master() {
   const [userPage, setUserPage] = useState(1);
   const USERS_PER_PAGE = 20;
 
+  type LastSyncInfo = {
+    at: string;
+    totalAuthUsers: number;
+    profilesInserted: number;
+    rolesInserted: number;
+    ok: boolean;
+    error?: string;
+  };
+  const [lastSync, setLastSync] = useState<LastSyncInfo | null>(() => {
+    try {
+      const raw = localStorage.getItem('master:lastUsersSync');
+      return raw ? (JSON.parse(raw) as LastSyncInfo) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const filteredUsers = users.filter((u) => {
     const matchSearch = !userSearch.trim() ||
       (u.email || '').toLowerCase().includes(userSearch.trim().toLowerCase());
@@ -204,15 +221,35 @@ export default function Master() {
     setSyncingUsers(true);
     try {
       const result = await adminClient.syncUsers();
+      const info: LastSyncInfo = {
+        at: new Date().toISOString(),
+        totalAuthUsers: result.totalAuthUsers,
+        profilesInserted: result.profilesInserted,
+        rolesInserted: result.rolesInserted,
+        ok: true,
+      };
+      setLastSync(info);
+      try { localStorage.setItem('master:lastUsersSync', JSON.stringify(info)); } catch {}
       toast({
         title: 'Sincronização concluída',
         description: `${result.totalAuthUsers} usuário(s) indexados • ${result.profilesInserted} profile(s) criado(s) • ${result.rolesInserted} role(s) criada(s).`,
       });
+      // Reload dashboard and keep user on the current page.
       await fetchData({ silent: true });
     } catch (e: any) {
+      const info: LastSyncInfo = {
+        at: new Date().toISOString(),
+        totalAuthUsers: 0,
+        profilesInserted: 0,
+        rolesInserted: 0,
+        ok: false,
+        error: e?.message || 'Falha ao sincronizar usuários.',
+      };
+      setLastSync(info);
+      try { localStorage.setItem('master:lastUsersSync', JSON.stringify(info)); } catch {}
       toast({
         title: 'Erro na sincronização',
-        description: e?.message || 'Falha ao sincronizar usuários.',
+        description: info.error,
         variant: 'destructive',
       });
     } finally {
