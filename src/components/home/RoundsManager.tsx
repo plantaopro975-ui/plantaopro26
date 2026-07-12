@@ -3642,8 +3642,26 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <div className="flex items-center gap-2 font-sans text-[12.5px] uppercase tracking-wider text-destructive mb-1">
                       <AlertTriangle className="h-3.5 w-3.5" /> Corrija os itens abaixo
                     </div>
-                    <ul className="grid gap-1 text-xs text-destructive/90 list-disc pl-4 break-words">
-                      {issues.map((iss, k) => <li key={k}>{iss.message}</li>)}
+                    <ul className="grid gap-1.5 text-xs text-destructive/90 list-disc pl-4 break-words">
+                      {issues.map((iss, k) => {
+                        const isNightCross = iss.message.includes('cruza 22:00');
+                        return (
+                          <li key={k}>
+                            {iss.message}
+                            {isNightCross && (
+                              <div className="mt-1.5 ml-[-1rem] list-none">
+                                <button
+                                  type="button"
+                                  onClick={() => setEndTime('21:55')}
+                                  className="inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/20 hover:bg-destructive/30 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-destructive transition-colors"
+                                >
+                                  Corrigir término para 21:55
+                                </button>
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 )}
