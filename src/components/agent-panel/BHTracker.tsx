@@ -481,12 +481,17 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
         setBhFutureMonthsAllowed(Number(agentData.bh_future_months_allowed) || 0);
       }
 
-      // Fetch overtime entries
+      // Fetch overtime entries — limita a 24 meses e explicita colunas para
+      // reduzir payload; agentes com muitos anos retornavam SELECT * ilimitado.
+      const bhCutoff = new Date();
+      bhCutoff.setMonth(bhCutoff.getMonth() - 24);
       const { data: overtimeData, error } = await supabase
         .from('overtime_bank')
-        .select('*')
+        .select('id, hours, operation_type, description, created_at')
         .eq('agent_id', agentId)
-        .order('created_at', { ascending: false });
+        .gte('created_at', bhCutoff.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1000);
 
       if (error) throw error;
 
