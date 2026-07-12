@@ -1517,7 +1517,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const t = templates.find((x) => x.id === id);
     if (!t) return;
     setTeam(t.team);
-    setMode(t.mode);
+    setMode(sanitizeMode(t.mode));
     setStartTime(t.startTime);
     setEndTime(t.endTime);
     setIntervalMin(t.intervalMin);
