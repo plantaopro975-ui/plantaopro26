@@ -46,51 +46,49 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rm-reminder tactical-cards max-w-md">
-        <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <svg width="42" height="42" viewBox="0 0 42 42" aria-hidden="true">
-                <defs>
-                  <linearGradient id="rsgrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.35" />
-                  </linearGradient>
-                </defs>
-                <polygon
-                  points="21,3 37,12 37,30 21,39 5,30 5,12"
-                  fill="url(#rsgrad)"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth="1.4"
-                />
-                <g stroke="hsl(var(--primary-foreground))" strokeWidth="1.6" strokeLinecap="round" fill="none">
-                  <path d="M21 14v8l5 3" />
-                </g>
-              </svg>
-            </div>
-            <div className="flex-1">
-              <DialogTitle className="flex items-center gap-2 text-base">
-                <Settings2 className="h-4 w-4 opacity-80" />
+      <DialogContent className="rm-reminder rm-compact tactical-cards max-w-[380px] p-4 gap-3">
+        <DialogHeader className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <svg width="32" height="32" viewBox="0 0 42 42" aria-hidden="true" className="shrink-0">
+              <defs>
+                <linearGradient id="rsgrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.35" />
+                </linearGradient>
+              </defs>
+              <polygon
+                points="21,3 37,12 37,30 21,39 5,30 5,12"
+                fill="url(#rsgrad)"
+                stroke="hsl(var(--primary))"
+                strokeWidth="1.4"
+              />
+              <g stroke="hsl(var(--primary-foreground))" strokeWidth="1.6" strokeLinecap="round" fill="none">
+                <path d="M21 14v8l5 3" />
+              </g>
+            </svg>
+            <div className="flex-1 min-w-0">
+              <DialogTitle className="flex items-center gap-1.5 text-[15px] leading-tight">
+                <Settings2 className="h-3.5 w-3.5 opacity-80" />
                 Configurações do Lembrete
               </DialogTitle>
-              <DialogDescription className="text-xs">
-                Ajuste o intervalo e ative/desative o aviso automático de rondas.
+              <DialogDescription className="text-[11px] leading-snug mt-0.5">
+                Ajuste o intervalo e ative/desative o aviso automático.
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="mt-2 space-y-4">
+        <div className="space-y-2.5">
           {/* Ativação */}
-          <div className="flex items-center justify-between rounded-md border border-border/60 bg-card/40 px-3 py-2.5">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between rounded-md border border-border/60 bg-card/40 px-2.5 py-2">
+            <div className="flex items-center gap-2 min-w-0">
               {settings.enabled
-                ? <Bell className="h-4 w-4 text-primary" />
-                : <BellOff className="h-4 w-4 text-muted-foreground" />}
-              <div>
-                <Label className="text-sm">Lembrete automático</Label>
-                <p className="text-[11px] text-muted-foreground">
-                  {settings.enabled ? 'Ativo — você será avisado periodicamente.' : 'Desativado — nenhum aviso será emitido.'}
+                ? <Bell className="h-3.5 w-3.5 text-primary shrink-0" />
+                : <BellOff className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+              <div className="min-w-0">
+                <Label className="text-[13px] leading-tight">Lembrete automático</Label>
+                <p className="text-[10.5px] text-muted-foreground leading-snug">
+                  {settings.enabled ? 'Ativo — aviso periódico.' : 'Desativado.'}
                 </p>
               </div>
             </div>
@@ -102,9 +100,9 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
           </div>
 
           {/* Intervalo */}
-          <div className={cn('space-y-2', !settings.enabled && 'opacity-50 pointer-events-none')}>
-            <Label className="text-sm">Intervalo entre lembretes</Label>
-            <div className="grid grid-cols-3 gap-2">
+          <div className={cn('space-y-1.5', !settings.enabled && 'opacity-50 pointer-events-none')}>
+            <Label className="text-[12px] uppercase tracking-wider text-muted-foreground">Intervalo</Label>
+            <div className="grid grid-cols-3 gap-1.5">
               {OPTIONS.map((o) => {
                 const active = settings.intervalMin === o.value;
                 return (
@@ -112,10 +110,7 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
                     key={o.value}
                     type="button"
                     onClick={() => update({ intervalMin: o.value })}
-                    className={cn(
-                      'rm-chip',
-                      active && 'rm-chip--active',
-                    )}
+                    className={cn('rm-chip', active && 'rm-chip--active')}
                     aria-pressed={active}
                     data-active={active ? 'true' : 'false'}
                   >
@@ -125,16 +120,15 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
                 );
               })}
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              O aviso é pausado enquanto uma ronda está ativa ou o gestor está aberto.
+            <p className="text-[10.5px] text-muted-foreground leading-snug">
+              Pausado durante rondas ativas.
             </p>
           </div>
 
-          {/* Modo de exibição — bloqueia notificações nativas do navegador */}
-          <div className="flex items-start justify-between gap-3 rounded-md border border-border/60 bg-card/40 px-3 py-2.5">
-            <div className="flex items-start gap-2 min-w-0">
-              {/* Emblema SVG discreto (escudo tático) */}
-              <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true" className="mt-0.5 shrink-0">
+          {/* Modo de exibição */}
+          <div className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-card/40 px-2.5 py-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <svg width="18" height="18" viewBox="0 0 32 32" aria-hidden="true" className="shrink-0">
                 <defs>
                   <linearGradient id="rs-inapp" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.95" />
@@ -158,11 +152,9 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
                 />
               </svg>
               <div className="min-w-0">
-                <Label className="text-sm">Somente alertas in-app (SVG)</Label>
-                <p className="text-[11px] text-muted-foreground">
-                  {settings.inAppOnly
-                    ? 'Ativo — nenhuma notificação nativa do navegador será exibida.'
-                    : 'Desativado — o app pode usar notificações do navegador em background.'}
+                <Label className="text-[13px] leading-tight">Somente alertas in-app</Label>
+                <p className="text-[10.5px] text-muted-foreground leading-snug">
+                  {settings.inAppOnly ? 'Sem notificações do navegador.' : 'Pode usar notificações nativas.'}
                 </p>
               </div>
             </div>
@@ -174,8 +166,13 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end">
-          <Button variant="secondary" size="sm" onClick={() => onOpenChange(false)}>
+        <div className="mt-1 flex justify-end">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+            className="h-8 px-4 text-[12px] font-medium"
+          >
             Fechar
           </Button>
         </div>
