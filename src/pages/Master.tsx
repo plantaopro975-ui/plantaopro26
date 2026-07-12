@@ -60,11 +60,11 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 const TransferApprovalPanel = lazy(() => import('@/components/agents/TransferApprovalPanel').then(m => ({ default: m.TransferApprovalPanel })));
-const AdminResetPasswordDialog = lazy(() => import('@/components/agents/AdminResetPasswordDialog').then(m => ({ default: m.AdminResetPasswordDialog })));
+
 const EditAgentDialog = lazy(() => import('@/components/admin/EditAgentDialog').then(m => ({ default: m.EditAgentDialog })));
 const EditUnitDialog = lazy(() => import('@/components/admin/EditUnitDialog').then(m => ({ default: m.EditUnitDialog })));
 const DeleteAgentDialog = lazy(() => import('@/components/admin/DeleteAgentDialog').then(m => ({ default: m.DeleteAgentDialog })));
-const LicenseManagementDialog = lazy(() => import('@/components/admin/LicenseManagementDialog').then(m => ({ default: m.LicenseManagementDialog })));
+
 const DeleteUserDialog = lazy(() => import('@/components/admin/DeleteUserDialog').then(m => ({ default: m.DeleteUserDialog })));
 const AgentPasswordManager = lazy(() => import('@/components/admin/AgentPasswordManager').then(m => ({ default: m.AgentPasswordManager })));
 const CredentialsViewer = lazy(() => import('@/components/admin/CredentialsViewer').then(m => ({ default: m.CredentialsViewer })));
