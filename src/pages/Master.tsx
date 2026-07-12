@@ -612,6 +612,7 @@ export default function Master() {
             >
               <RefreshCw className={cn("h-4 w-4", loadingData && "animate-spin")} />
             </Button>
+            <MasterDiagnostics />
             <PanelNav onLogout={handleLogout} />
           </div>
         </div>
