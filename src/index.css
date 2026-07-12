@@ -2333,12 +2333,12 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
 }
 
 /* Primário — segue a cor da equipe (var --rm-accent) */
-.rm-dialog button[class*="bg-primary"],
-.rm-dialog button[class*="bg-amber"],
-.rm-history button[class*="bg-primary"],
-.rm-history button[class*="bg-amber"],
-.rm-reminder button[class*="bg-primary"],
-.rm-reminder button[class*="bg-amber"] {
+.rm-dialog button[class*="bg-primary"]:not([class*="bg-primary/"]),
+.rm-dialog button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]),
+.rm-history button[class*="bg-primary"]:not([class*="bg-primary/"]),
+.rm-history button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]),
+.rm-reminder button[class*="bg-primary"]:not([class*="bg-primary/"]),
+.rm-reminder button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]) {
   background-color: var(--rm-accent) !important;
   color: var(--rm-accent-ink) !important;
   font-weight: 700;
@@ -2346,6 +2346,23 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   box-shadow:
     0 6px 22px -8px hsl(var(--rm-accent-hsl) / 0.55),
     inset 0 1px 0 hsl(0 0% 100% / 0.18);
+}
+/* Descendentes de qualquer superfície com fundo âmbar/primary sólido
+   herdam a tinta escura para garantir contraste WCAG. */
+.rm-dialog [class*="bg-primary"]:not([class*="bg-primary/"]) *,
+.rm-dialog [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
+.rm-dialog [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
+.rm-history [class*="bg-primary"]:not([class*="bg-primary/"]) *,
+.rm-history [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
+.rm-history [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
+.rm-reminder [class*="bg-primary"]:not([class*="bg-primary/"]) *,
+.rm-reminder [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
+.rm-reminder [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
+/* Chip ativo do seletor de intervalo (aria-pressed=true com fundo cheio) */
+.rm-reminder button[aria-pressed="true"][class*="bg-primary"]:not([class*="bg-primary/"]) *,
+.rm-reminder button[aria-pressed="true"][class*="ring-primary"] * {
+  color: var(--rm-accent-ink) !important;
+  opacity: 1 !important;
 }
 .rm-dialog button[class*="bg-primary"]:hover:not(:disabled),
 .rm-dialog button[class*="bg-amber"]:hover:not(:disabled),
