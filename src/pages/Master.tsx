@@ -572,19 +572,19 @@ export default function Master() {
 
   return (
     <Suspense fallback={<PanelSkeleton rows={5} />}>
-    <div className="min-h-dvh p-4 md:p-6 hud-scope hud-page-bg" style={hudBgStyle}>
-      <div className="max-w-7xl mx-auto space-y-6 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
+    <div className="min-h-dvh p-3 md:p-5 hud-scope hud-page-bg" style={hudBgStyle}>
+      <div className="max-w-7xl mx-auto space-y-3 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="relative flex-shrink-0 aspect-square h-12 w-12 flex items-center justify-center">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="relative flex-shrink-0 aspect-square h-10 w-10 flex items-center justify-center">
               <picture>
                 <source type="image/webp" srcSet={iseAcreBadgeWebp} />
                 <img
                   src={iseAcreBadge}
                   alt="Instituto Socioeducativo do Acre"
-                  width={96}
-                  height={96}
+                  width={80}
+                  height={80}
                   loading="eager"
                   decoding="async"
                   className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
@@ -592,9 +592,9 @@ export default function Master() {
               </picture>
             </div>
             <div>
-              <h1 className="font-tactical text-xl font-bold tracking-[0.14em] text-gradient">Painel Master</h1>
-              <p className="text-muted-foreground">
-                Controle Administrativo Total • <span className="text-primary font-medium">{masterSession}</span>
+              <h1 className="font-tactical text-base sm:text-lg font-bold tracking-[0.18em] text-gradient leading-tight">PAINEL MASTER</h1>
+              <p className="text-[11px] sm:text-xs text-muted-foreground leading-tight mt-0.5">
+                Controle Administrativo Total • <span className="text-primary font-mono font-medium">{masterSession}</span>
               </p>
             </div>
           </div>
@@ -617,7 +617,7 @@ export default function Master() {
         </div>
 
         {/* System Stats — cada card abre a aba correspondente (HUD) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-2.5">
           {([
             { key: 'users',      label: 'Usuários',        value: stats.totalUsers,      icon3d: 'team'     as Icon3DName, tint: 'primary',   tab: 'users' },
             { key: 'agents',     label: 'Agentes',         value: stats.totalAgents,     icon3d: 'team'     as Icon3DName, tint: 'emerald',   tab: 'agents' },
@@ -660,14 +660,14 @@ export default function Master() {
                 )}
                 aria-label={`Abrir ${label}`}
               >
-                <CardContent className="p-3 md:p-4 min-h-[66px] md:min-h-[72px] flex items-center">
-                  <div className="flex items-center gap-2.5 md:gap-3 w-full">
-                    <div className={cn('p-2 md:p-2 rounded-lg shrink-0', tintMap[tint])}>
-                      <Icon3D name={icon3d} size={22} />
+                <CardContent className="p-2 md:p-2.5 min-h-[52px] md:min-h-[56px] flex items-center">
+                  <div className="flex items-center gap-2 w-full">
+                    <div className={cn('p-1.5 rounded-md shrink-0', tintMap[tint])}>
+                      <Icon3D name={icon3d} size={18} />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[11px] md:text-xs font-semibold md:font-normal uppercase tracking-tight md:tracking-normal md:normal-case text-muted-foreground truncate">{label}</p>
-                      <p className="text-lg md:text-xl font-black md:font-bold leading-tight">{value}</p>
+                      <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground truncate leading-tight">{label}</p>
+                      <p className="text-base md:text-lg font-mono font-bold leading-tight tabular-nums">{value}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -679,64 +679,64 @@ export default function Master() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6 sm:grid-cols-12">
+          <TabsList className="grid w-full grid-cols-6 sm:[grid-template-columns:repeat(13,minmax(0,1fr))] h-auto p-1 gap-0.5 bg-slate-900/60 border border-slate-800/80 [&>button]:h-8 [&>button]:px-1.5 [&>button]:text-[11px] [&>button]:font-medium [&>button]:tracking-[0.06em] [&>button]:uppercase">
             <TabsTrigger value="approvals" className="relative">
-              <Icon3D name="shield" size={16} className="sm:hidden" />
+              <Icon3D name="shield" size={14} className="sm:hidden" />
               <span className="hidden sm:inline">Aprovações</span>
               {stats.pendingApprovals > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] text-white flex items-center justify-center animate-pulse">
+                <span className="absolute -top-0.5 -right-0.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-amber-500 text-[9px] font-mono text-white flex items-center justify-center animate-pulse">
                   {stats.pendingApprovals}
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="overview" className="gap-1.5">
-              <Icon3D name="building" size={14} className="hidden sm:inline-flex" />
+            <TabsTrigger value="overview" className="gap-1">
+              <Icon3D name="building" size={12} className="hidden sm:inline-flex" />
               Unidades
             </TabsTrigger>
             <TabsTrigger value="access-control" className="relative">
               Acesso
               {agents.filter(a => !a.is_active || (a as any).is_frozen).length > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] text-white flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-amber-500 text-[9px] text-white flex items-center justify-center">
                   !
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="agents" className="gap-1.5">
-              <Icon3D name="team" size={14} className="hidden sm:inline-flex" />
+            <TabsTrigger value="agents" className="gap-1">
+              <Icon3D name="team" size={12} className="hidden sm:inline-flex" />
               Agentes
             </TabsTrigger>
             <TabsTrigger value="credentials">Credenciais</TabsTrigger>
             <TabsTrigger value="password-requests">Senhas</TabsTrigger>
-            <TabsTrigger value="licenses" className="relative gap-1.5">
-              <Icon3D name="clock" size={14} className="hidden sm:inline-flex" />
+            <TabsTrigger value="licenses" className="relative gap-1">
+              <Icon3D name="clock" size={12} className="hidden sm:inline-flex" />
               Licenças
               {stats.expiredLicenses > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center animate-pulse">
+                <span className="absolute -top-0.5 -right-0.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-red-500 text-[9px] font-mono text-white flex items-center justify-center animate-pulse">
                   {stats.expiredLicenses}
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="announcements" className="gap-1.5">
-              <MessageSquare className="h-3.5 w-3.5 hidden sm:inline-flex" />
-              Comunicações
+            <TabsTrigger value="announcements" className="gap-1">
+              <MessageSquare className="h-3 w-3 hidden sm:inline-flex" />
+              Comunic.
             </TabsTrigger>
             <TabsTrigger value="swaps">Permutas</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
-            <TabsTrigger value="audit" className="gap-1.5 relative">
-              <Icon3D name="shield" size={14} className="hidden sm:inline-flex" />
+            <TabsTrigger value="audit" className="gap-1 relative">
+              <Icon3D name="shield" size={12} className="hidden sm:inline-flex" />
               Auditoria
             </TabsTrigger>
           </TabsList>
 
           {/* Pending Approvals Tab */}
-          <TabsContent value="approvals" className="space-y-6 mt-6">
+          <TabsContent value="approvals" className="space-y-3 mt-3">
             <PendingApprovalsManager onApprovalChange={fetchData} />
           </TabsContent>
 
           {/* Audit — Recém-cadastrados + Auditoria de Acessos */}
-          <TabsContent value="audit" className="space-y-6 mt-6">
+          <TabsContent value="audit" className="space-y-3 mt-3">
             <Suspense fallback={<PanelSkeleton rows={4} />}>
               <AgentsConnectionMonitor />
             </Suspense>
@@ -750,7 +750,7 @@ export default function Master() {
 
 
           {/* Overview Tab - Units */}
-          <TabsContent value="overview" className="space-y-6 mt-6">
+          <TabsContent value="overview" className="space-y-3 mt-3">
             {unitsError && (
               <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
                 <strong>Aviso — Unidades:</strong> {unitsError}
@@ -781,7 +781,7 @@ export default function Master() {
           </TabsContent>
 
           {/* Access Control Tab */}
-          <TabsContent value="access-control" className="space-y-4 mt-6">
+          <TabsContent value="access-control" className="space-y-3 mt-3">
             <AgentAccessControl 
               agents={agents.map(a => ({
                 id: a.id,
@@ -799,7 +799,7 @@ export default function Master() {
           </TabsContent>
 
           {/* Agents Tab */}
-          <TabsContent value="agents" className="space-y-4 mt-6">
+          <TabsContent value="agents" className="space-y-3 mt-3">
             {/* Actions Bar */}
             <div className="flex flex-wrap items-center gap-4">
               <div className="relative flex-1 min-w-[200px] max-w-md">
@@ -1054,22 +1054,22 @@ export default function Master() {
           </TabsContent>
 
           {/* Credentials Tab */}
-          <TabsContent value="credentials" className="space-y-4 mt-6">
+          <TabsContent value="credentials" className="space-y-3 mt-3">
             <CredentialsViewer />
           </TabsContent>
 
           {/* Password Requests Tab */}
-          <TabsContent value="password-requests" className="space-y-4 mt-6">
+          <TabsContent value="password-requests" className="space-y-3 mt-3">
             <PasswordRequestsManager />
           </TabsContent>
 
           {/* Licenses & Finance Tab */}
-          <TabsContent value="licenses" className="mt-6">
+          <TabsContent value="licenses" className="mt-3">
             <LicenseFinanceControl />
           </TabsContent>
 
           {/* Logs Tab */}
-          <TabsContent value="logs" className="mt-6">
+          <TabsContent value="logs" className="mt-3">
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1118,12 +1118,12 @@ export default function Master() {
           </TabsContent>
 
           {/* Transfers Tab */}
-          <TabsContent value="transfers" className="mt-6">
+          <TabsContent value="transfers" className="mt-3">
             <TransferApprovalPanel />
           </TabsContent>
 
           {/* Users Tab */}
-          <TabsContent value="users" className="mt-6">
+          <TabsContent value="users" className="mt-3">
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1222,7 +1222,7 @@ export default function Master() {
           </TabsContent>
 
           {/* Comunicações Internas Tab */}
-          <TabsContent value="announcements" className="space-y-6 mt-6">
+          <TabsContent value="announcements" className="space-y-3 mt-3">
             <div className="rounded-lg border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-orange-600/5 p-4">
               <div className="flex items-center gap-3">
                 <MessageSquare className="h-5 w-5 text-amber-400" />
@@ -1238,7 +1238,7 @@ export default function Master() {
           </TabsContent>
 
           {/* Swaps Management Tab */}
-          <TabsContent value="swaps" className="space-y-6 mt-6">
+          <TabsContent value="swaps" className="space-y-3 mt-3">
             <SwapManagementPanel />
           </TabsContent>
         </Tabs>
