@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS idx_overtime_bank_agent_created ON public.overtime_bank (agent_id, created_at DESC);
