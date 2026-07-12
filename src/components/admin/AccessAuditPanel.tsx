@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMasterToken } from '@/lib/masterSession';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +39,33 @@ type AgentStat = {
   active_days: number;
 };
 
+type MasterActionPayload = Record<string, string | number | boolean | null | undefined>;
+
+async function callMasterAdmin<T>(action: string, payload: MasterActionPayload = {}): Promise<T> {
+  const token = getMasterToken();
+  if (!token) throw new Error('Sessão master expirada. Faça login novamente.');
+
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/master-admin`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-master-token': token,
+      'authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+    },
+    body: JSON.stringify({ action, ...payload }),
+  });
+
+  const text = await response.text();
+  const result = text ? JSON.parse(text) : null;
+
+  if (!response.ok || !result?.success) {
+    throw new Error(result?.error || 'Falha ao consultar logs de acesso.');
+  }
+
+  return result.data as T;
+}
+
 export function AccessAuditPanel() {
   const [logs, setLogs] = useState<LogRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,13 +82,21 @@ export function AccessAuditPanel() {
     (async () => {
       setLoading(true);
       try {
+        const token = getMasterToken();
+
+        if (token) {
+          const data = await callMasterAdmin<LogRow[]>('access_logs_list', { limit: 2000 });
+          setLogs(data || []);
+          return;
+        }
+
         const { data, error } = await supabase
           .from('access_logs')
           .select('id, agent_id, action, ip_address, user_agent, created_at, agent:agents(name, team, matricula)')
           .order('created_at', { ascending: false })
           .limit(2000);
         if (error) throw error;
-        setLogs((data as any) || []);
+        setLogs((data as LogRow[]) || []);
       } catch (e) {
         console.error('[AccessAuditPanel] load error', e);
         toast.error('Falha ao carregar logs de acesso');

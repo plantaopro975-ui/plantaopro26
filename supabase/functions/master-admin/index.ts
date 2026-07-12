@@ -264,7 +264,7 @@ serve(async (req) => {
       const limit = Math.min(Number(body?.limit ?? 5000), 20000);
       const { data, error } = await admin
         .from("access_logs")
-        .select("agent_id, action, created_at, ip_address, user_agent")
+        .select("id, agent_id, action, created_at, ip_address, user_agent, agent:agents(name, team, matricula)")
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) return json({ success: false, error: error.message }, 400);
