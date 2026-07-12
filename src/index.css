@@ -2358,25 +2358,69 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
 .rm-reminder [class*="bg-primary"]:not([class*="bg-primary/"]) *,
 .rm-reminder [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
 .rm-reminder [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
-/* Chip ativo do seletor de intervalo — fundo translúcido âmbar + texto claro
-   para contraste WCAG (dark theme). Rótulo em accent, hint em ink-soft. */
-.rm-reminder button[aria-pressed="true"][class*="bg-primary/"] {
+/* ============================================================
+ * CHIP DE INTERVALO (.rm-chip) — Reminder
+ * Classes dedicadas com especificidade suficiente para não serem
+ * substituídas pelas regras genéricas de bg-primary/bg-amber.
+ * Contraste WCAG AA garantido em qualquer cor de equipe.
+ * ============================================================ */
+.rm-reminder .rm-chip {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--rm-line-hsl, 220 15% 25%) / 0.7);
+  background-color: hsl(220 15% 12% / 0.55);
+  color: var(--rm-ink);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 120ms ease;
+  cursor: pointer;
+}
+.rm-reminder .rm-chip .rm-chip__label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--rm-ink) !important;
+}
+.rm-reminder .rm-chip .rm-chip__hint {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.68rem;
+  line-height: 1.25;
+  color: var(--rm-ink-mute) !important;
+}
+.rm-reminder .rm-chip:hover:not(:disabled) {
+  border-color: hsl(var(--rm-accent-hsl) / 0.55);
+  background-color: hsl(var(--rm-accent-hsl) / 0.08);
+  transform: translateY(-1px);
+}
+.rm-reminder .rm-chip:focus-visible {
+  outline: 2px solid var(--rm-focus);
+  outline-offset: 2px;
+}
+.rm-reminder .rm-chip.rm-chip--active,
+.rm-reminder .rm-chip[data-active="true"] {
   background-color: hsl(var(--rm-accent-hsl) / 0.18) !important;
   border-color: var(--rm-accent) !important;
   box-shadow:
     0 0 0 1px hsl(var(--rm-accent-hsl) / 0.45),
-    0 6px 18px -10px hsl(var(--rm-accent-hsl) / 0.55) !important;
+    0 6px 18px -10px hsl(var(--rm-accent-hsl) / 0.55);
 }
-.rm-reminder button[aria-pressed="true"][class*="bg-primary/"] > div:first-child {
+.rm-reminder .rm-chip.rm-chip--active .rm-chip__label,
+.rm-reminder .rm-chip[data-active="true"] .rm-chip__label {
   color: var(--rm-accent) !important;
   font-weight: 700 !important;
 }
-.rm-reminder button[aria-pressed="true"][class*="bg-primary/"] > div:last-child {
+.rm-reminder .rm-chip.rm-chip--active .rm-chip__hint,
+.rm-reminder .rm-chip[data-active="true"] .rm-chip__hint {
   color: var(--rm-ink-soft) !important;
-  opacity: 0.95 !important;
-}
-.rm-reminder button[aria-pressed="false"] > div:first-child {
-  color: var(--rm-ink) !important;
+  opacity: 0.95;
 }
 .rm-dialog button[class*="bg-primary"]:hover:not(:disabled),
 .rm-dialog button[class*="bg-amber"]:hover:not(:disabled),
