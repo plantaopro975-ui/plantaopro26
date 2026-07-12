@@ -19,6 +19,25 @@ import vehicle3d from '@/assets/hero/vehicle-ise-3d.local.png';
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
+
+// ==== PRELOAD IMEDIATO (roda no parse do módulo, antes do primeiro render) ====
+// Injeta <link rel="preload"> assim que o bundle é avaliado, permitindo ao
+// browser baixar viatura + agente em paralelo com o restante do JS/CSS.
+if (typeof document !== 'undefined' && !document.getElementById('hero-preload-vehicle')) {
+  const mk = (id: string, href: string) => {
+    const l = document.createElement('link');
+    l.id = id;
+    l.rel = 'preload';
+    l.as = 'image';
+    l.href = href;
+    l.type = 'image/webp';
+    (l as HTMLLinkElement & { fetchPriority?: string }).fetchPriority = 'high';
+    document.head.appendChild(l);
+  };
+  mk('hero-preload-vehicle', vehicle3dWebp);
+  mk('hero-preload-agent', agent3dWebp);
+}
+
 import objAlfa from '@/assets/teams/alfa-shield-v2.png';
 import objAlfaWebp from '@/assets/teams/alfa-shield-v2.webp';
 import objBravo from '@/assets/teams/bravo-helmet-v2.png';
@@ -707,9 +726,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     alt="Viatura tática ISE"
                     width={1024}
                     height={1024}
+                    loading="eager"
+                    decoding="async"
+                    // @ts-expect-error – fetchpriority é atributo HTML válido não tipado no React 18
+                    fetchpriority="high"
                     className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-[1.04] lg:scale-[1.7] xl:scale-[1.8] 2xl:scale-[1.9] origin-bottom-left"
                     draggable={false}
                   />
+
                   <span
                     aria-hidden
                     className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.7] xl:scale-[1.8] 2xl:scale-[1.9] origin-bottom-left"
@@ -746,9 +770,14 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     alt="Agente Socioeducativo ISE"
                     width={1024}
                     height={1024}
+                    loading="eager"
+                    decoding="async"
+                    // @ts-expect-error – fetchpriority é atributo HTML válido não tipado no React 18
+                    fetchpriority="high"
                     className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.65] xl:scale-[1.75] 2xl:scale-[1.85] origin-bottom sm:origin-bottom"
                     draggable={false}
                   />
+
                 </picture>
 
               </div>
