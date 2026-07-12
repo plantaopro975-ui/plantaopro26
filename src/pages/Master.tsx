@@ -572,19 +572,19 @@ export default function Master() {
 
   return (
     <Suspense fallback={<PanelSkeleton rows={5} />}>
-    <div className="min-h-dvh p-4 md:p-6 hud-scope hud-page-bg" style={hudBgStyle}>
-      <div className="max-w-7xl mx-auto space-y-6 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
+    <div className="min-h-dvh p-3 md:p-5 hud-scope hud-page-bg" style={hudBgStyle}>
+      <div className="max-w-7xl mx-auto space-y-3 animate-fade-in tactical-strip hover-lift rounded-2xl p-1">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="relative flex-shrink-0 aspect-square h-12 w-12 flex items-center justify-center">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="relative flex-shrink-0 aspect-square h-10 w-10 flex items-center justify-center">
               <picture>
                 <source type="image/webp" srcSet={iseAcreBadgeWebp} />
                 <img
                   src={iseAcreBadge}
                   alt="Instituto Socioeducativo do Acre"
-                  width={96}
-                  height={96}
+                  width={80}
+                  height={80}
                   loading="eager"
                   decoding="async"
                   className="max-h-full max-w-full h-full w-full object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
@@ -592,9 +592,9 @@ export default function Master() {
               </picture>
             </div>
             <div>
-              <h1 className="font-tactical text-xl font-bold tracking-[0.14em] text-gradient">Painel Master</h1>
-              <p className="text-muted-foreground">
-                Controle Administrativo Total • <span className="text-primary font-medium">{masterSession}</span>
+              <h1 className="font-tactical text-base sm:text-lg font-bold tracking-[0.18em] text-gradient leading-tight">PAINEL MASTER</h1>
+              <p className="text-[11px] sm:text-xs text-muted-foreground leading-tight mt-0.5">
+                Controle Administrativo Total • <span className="text-primary font-mono font-medium">{masterSession}</span>
               </p>
             </div>
           </div>
