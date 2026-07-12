@@ -89,6 +89,7 @@ import iseAcreBadgeWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
 const iseAcreBadge = iseAcreBadgeAsset.url;
 const iseAcreBadgeWebp = iseAcreBadgeWebpAsset.url;
 import { PanelNav } from '@/components/ui/panel-nav';
+import { MasterDiagnostics } from '@/components/master/MasterDiagnostics';
 import { formatUnitName } from '@/lib/unitNames';
 
 interface UserWithRole {
@@ -612,6 +613,7 @@ export default function Master() {
             >
               <RefreshCw className={cn("h-4 w-4", loadingData && "animate-spin")} />
             </Button>
+            <MasterDiagnostics />
             <PanelNav onLogout={handleLogout} />
           </div>
         </div>
