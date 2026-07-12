@@ -203,6 +203,13 @@ export default function Master() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
 
+  // Oculta a barra de rolagem no Painel Master mantendo scroll 100% funcional
+  // (mouse wheel, trackpad, teclado, touch). CSS aplicado via `body.master-route`.
+  useEffect(() => {
+    document.body.classList.add('master-route');
+    return () => { document.body.classList.remove('master-route'); };
+  }, []);
+
   // Validar token master no mount — se inválido/expirado, limpar sessão e redirecionar
   useEffect(() => {
     if (!masterSession) return;
