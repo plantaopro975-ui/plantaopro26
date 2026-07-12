@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-import { adminClient } from '@/lib/adminClient';
+import { adminClient, AdminClientError } from '@/lib/adminClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
