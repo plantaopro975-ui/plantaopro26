@@ -3053,10 +3053,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
+            ['--rm-accent' as string]: teamColor,
+            ['--rm-accent-ink' as string]: TEAM_COLORS[team]?.onAccent ?? '#0b0f17',
+            ['--rm-accent-hsl' as string]: hexToHslTriple(teamColor),
+            ['--rm-accent-glow' as string]: `${teamColor}66`,
             borderColor: `${teamColor}44`,
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
             willChange: 'transform',
           }}
+
           onEscapeKeyDown={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
