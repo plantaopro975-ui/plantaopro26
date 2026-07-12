@@ -2332,13 +2332,14 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
               border-color 160ms ease, opacity 160ms ease;
 }
 
-/* Primário — segue a cor da equipe (var --rm-accent) */
-.rm-dialog button[class*="bg-primary"]:not([class*="bg-primary/"]),
-.rm-dialog button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]),
-.rm-history button[class*="bg-primary"]:not([class*="bg-primary/"]),
-.rm-history button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]),
-.rm-reminder button[class*="bg-primary"]:not([class*="bg-primary/"]),
-.rm-reminder button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]) {
+/* Primário — segue a cor da equipe (var --rm-accent).
+   Exclui Switch (role=switch) e o botão Fechar (X) para não deformar. */
+.rm-dialog button[class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-dialog button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-history button[class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-history button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-reminder button[class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-reminder button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]):not([role="switch"]):not([data-radix-dialog-close]) {
   background-color: var(--rm-accent) !important;
   color: var(--rm-accent-ink) !important;
   font-weight: 700;
@@ -2348,16 +2349,19 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
     inset 0 1px 0 hsl(0 0% 100% / 0.18);
 }
 /* Descendentes de qualquer superfície com fundo âmbar/primary sólido
-   herdam a tinta escura para garantir contraste WCAG. */
-.rm-dialog [class*="bg-primary"]:not([class*="bg-primary/"]) *,
-.rm-dialog [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
-.rm-dialog [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
-.rm-history [class*="bg-primary"]:not([class*="bg-primary/"]) *,
-.rm-history [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
-.rm-history [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
-.rm-reminder [class*="bg-primary"]:not([class*="bg-primary/"]) *,
-.rm-reminder [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
-.rm-reminder [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
+   herdam a tinta escura — mas não afeta thumbs de Switch. */
+.rm-dialog [class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-dialog [class*="bg-amber-500"]:not([class*="bg-amber-500/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-dialog [class*="bg-amber-400"]:not([class*="bg-amber-400/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-history [class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-history [class*="bg-amber-500"]:not([class*="bg-amber-500/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-history [class*="bg-amber-400"]:not([class*="bg-amber-400/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-reminder [class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-reminder [class*="bg-amber-500"]:not([class*="bg-amber-500/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-reminder [class*="bg-amber-400"]:not([class*="bg-amber-400/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]) {
+  color: var(--rm-accent-ink) !important;
+}
+
 /* ============================================================
  * CHIP DE INTERVALO (.rm-chip) — Reminder
  * Classes dedicadas com especificidade suficiente para não serem
