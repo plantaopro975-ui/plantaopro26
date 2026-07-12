@@ -679,53 +679,53 @@ export default function Master() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6 sm:grid-cols-12">
+          <TabsList className="grid w-full grid-cols-6 sm:grid-cols-13 h-auto p-1 gap-0.5 bg-slate-900/60 border border-slate-800/80 [&>button]:h-8 [&>button]:px-1.5 [&>button]:text-[11px] [&>button]:font-medium [&>button]:tracking-[0.06em] [&>button]:uppercase">
             <TabsTrigger value="approvals" className="relative">
-              <Icon3D name="shield" size={16} className="sm:hidden" />
+              <Icon3D name="shield" size={14} className="sm:hidden" />
               <span className="hidden sm:inline">Aprovações</span>
               {stats.pendingApprovals > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] text-white flex items-center justify-center animate-pulse">
+                <span className="absolute -top-0.5 -right-0.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-amber-500 text-[9px] font-mono text-white flex items-center justify-center animate-pulse">
                   {stats.pendingApprovals}
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="overview" className="gap-1.5">
-              <Icon3D name="building" size={14} className="hidden sm:inline-flex" />
+            <TabsTrigger value="overview" className="gap-1">
+              <Icon3D name="building" size={12} className="hidden sm:inline-flex" />
               Unidades
             </TabsTrigger>
             <TabsTrigger value="access-control" className="relative">
               Acesso
               {agents.filter(a => !a.is_active || (a as any).is_frozen).length > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] text-white flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-amber-500 text-[9px] text-white flex items-center justify-center">
                   !
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="agents" className="gap-1.5">
-              <Icon3D name="team" size={14} className="hidden sm:inline-flex" />
+            <TabsTrigger value="agents" className="gap-1">
+              <Icon3D name="team" size={12} className="hidden sm:inline-flex" />
               Agentes
             </TabsTrigger>
             <TabsTrigger value="credentials">Credenciais</TabsTrigger>
             <TabsTrigger value="password-requests">Senhas</TabsTrigger>
-            <TabsTrigger value="licenses" className="relative gap-1.5">
-              <Icon3D name="clock" size={14} className="hidden sm:inline-flex" />
+            <TabsTrigger value="licenses" className="relative gap-1">
+              <Icon3D name="clock" size={12} className="hidden sm:inline-flex" />
               Licenças
               {stats.expiredLicenses > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center animate-pulse">
+                <span className="absolute -top-0.5 -right-0.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-red-500 text-[9px] font-mono text-white flex items-center justify-center animate-pulse">
                   {stats.expiredLicenses}
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="announcements" className="gap-1.5">
-              <MessageSquare className="h-3.5 w-3.5 hidden sm:inline-flex" />
-              Comunicações
+            <TabsTrigger value="announcements" className="gap-1">
+              <MessageSquare className="h-3 w-3 hidden sm:inline-flex" />
+              Comunic.
             </TabsTrigger>
             <TabsTrigger value="swaps">Permutas</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
-            <TabsTrigger value="audit" className="gap-1.5 relative">
-              <Icon3D name="shield" size={14} className="hidden sm:inline-flex" />
+            <TabsTrigger value="audit" className="gap-1 relative">
+              <Icon3D name="shield" size={12} className="hidden sm:inline-flex" />
               Auditoria
             </TabsTrigger>
           </TabsList>
