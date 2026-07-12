@@ -3311,7 +3311,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   {/* Histórico resumido — equipes das rondas realizadas.
                       Sempre visível (mesmo vazio) para expor botão Limpar e
                       não redimensionar a tela ao aparecer/sumir. */}
-                  <div className="rounded-md border border-border/70 bg-card/60 p-2 min-h-[86px]">
+                  <div className="rounded-md border border-border/70 bg-card/60 p-2">
                     <div className="mb-1 flex items-center justify-between">
                       <button
                         type="button"
