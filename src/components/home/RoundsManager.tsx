@@ -3604,16 +3604,56 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
-                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 22:00 durante o turno noturno'} />
+                      locked={nightEffectivelyLocked || configLocked}
+                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 22:00' : undefined}
+                      lockedHint={
+                        configLocked ? 'Programação ativa — cancele para editar'
+                        : preNightScheduled ? 'Programado automaticamente para 22:00. Apenas a lista de agentes pode ser alterada.'
+                        : 'Fixado às 22:00 durante o turno noturno'
+                      }
+                      onLockedAttempt={() => toast({
+                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
+                        description: preNightScheduled
+                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
+                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                      })}
+                    />
                     <TimeField id="rm-end" label="Término do turno" value={endTime}
                       onChange={setEndTime} invalid={hasError('end')} accent={teamColor}
-                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 06:00 durante o turno noturno'} />
+                      locked={nightEffectivelyLocked || configLocked}
+                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 06:00' : undefined}
+                      lockedHint={
+                        configLocked ? 'Programação ativa — cancele para editar'
+                        : preNightScheduled ? 'Programado automaticamente para 06:00. Apenas a lista de agentes pode ser alterada.'
+                        : 'Fixado às 06:00 durante o turno noturno'
+                      }
+                      onLockedAttempt={() => toast({
+                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
+                        description: preNightScheduled
+                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
+                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                      })}
+                    />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start2" label="Início" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
-                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 22:00 durante o turno noturno'} />
+                      locked={nightEffectivelyLocked || configLocked}
+                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 22:00' : undefined}
+                      lockedHint={
+                        configLocked ? 'Programação ativa — cancele para editar'
+                        : preNightScheduled ? 'Programado automaticamente para 22:00. Apenas a lista de agentes pode ser alterada.'
+                        : 'Fixado às 22:00 durante o turno noturno'
+                      }
+                      onLockedAttempt={() => toast({
+                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
+                        description: preNightScheduled
+                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
+                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                      })}
+                    />
+
 
 
                     <div className="grid gap-1.5">
