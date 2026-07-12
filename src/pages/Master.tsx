@@ -74,8 +74,8 @@ const SwapManagementPanel = lazy(() => import('@/components/admin/SwapManagement
 const LicenseFinanceControl = lazy(() => import('@/components/admin/LicenseFinanceControl').then(m => ({ default: m.LicenseFinanceControl })));
 const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagementCard').then(m => ({ default: m.UnitsManagementCard })));
 const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
-const PendingApprovalsManager = lazy(() => import('@/components/admin/PendingApprovalsManager').then(m => ({ default: m.PendingApprovalsManager })));
-const RecentRegistrationsAudit = lazy(() => import('@/components/admin/RecentRegistrationsAudit').then(m => ({ default: m.RecentRegistrationsAudit })));
+const CadastrosAprovacoesPanel = lazy(() => import('@/components/admin/CadastrosAprovacoesPanel').then(m => ({ default: m.CadastrosAprovacoesPanel })));
+
 const AccessAuditPanel = lazy(() => import('@/components/admin/AccessAuditPanel').then(m => ({ default: m.AccessAuditPanel })));
 const AgentsConnectionMonitor = lazy(() => import('@/components/admin/AgentsConnectionMonitor').then(m => ({ default: m.AgentsConnectionMonitor })));
 import { CopyrightFooter } from '@/components/CopyrightFooter';
