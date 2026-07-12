@@ -3311,7 +3311,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   {/* Histórico resumido — equipes das rondas realizadas.
                       Sempre visível (mesmo vazio) para expor botão Limpar e
                       não redimensionar a tela ao aparecer/sumir. */}
-                  <div className="rounded-md border border-border/70 bg-card/60 p-2 min-h-[86px]">
+                  <div className="rounded-md border border-border/70 bg-card/60 p-2">
                     <div className="mb-1 flex items-center justify-between">
                       <button
                         type="button"
@@ -3379,11 +3379,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       );
                     })()}
 
-                    {teamLog.length === 0 ? (
-                      <div className="flex items-center justify-center h-14 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
-                        Nenhuma ronda registrada
-                      </div>
-                    ) : (
+                    {teamLog.length === 0 ? null : (
+
                       <ul className="tactical-scrollbar grid gap-0.5 max-h-24 overflow-y-auto pr-1">
                         {teamLog.map((e, i) => {
                           const preset = TEAM_PRESETS.find((p) => p.key === e.team);
@@ -3447,35 +3444,34 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 )}
 
                 {mode === 'proportional' && !nightEffectivelyLocked && (
-                  <div className="rounded-md border border-primary/30 bg-primary/5 px-2.5 py-2 space-y-1.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <label htmlFor="rm-cadence" className="text-[11.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
-                        <Timer className="h-3 w-3" /> Cadência-base (min)
-                      </label>
-                      <Input
-                        id="rm-cadence"
-                        type="number"
-                        min={5}
-                        max={240}
-                        step={5}
-                        value={cadenceMin}
-                        disabled={configLocked}
-                        onChange={(e) => setCadenceMin(Math.max(5, Math.min(240, +e.target.value || DEFAULT_CADENCE_MIN)))}
-                        onKeyDown={(e) => e.key === 'e' && e.preventDefault()}
-                        className={cn('w-20 h-8 font-mono tabular-nums text-center bg-background border-border', configLocked && 'opacity-60 cursor-not-allowed')}
-                        autoComplete="off"
-                      />
-                    </div>
-                    <p className="text-[11px] leading-snug text-muted-foreground">
-                      Regra de ouro: <b className="text-foreground">1 ronda a cada {cadenceMin} min</b>. O sistema calcula automaticamente quantas rondas cabem no intervalo e distribui proporcionalmente entre os agentes (mínimo 1 ronda por agente).
-                    </p>
-                    {schedule?.proportional && (
-                      <div className="text-[11px] font-mono tabular-nums text-primary">
-                        {schedule.proportional.totalRounds} ronda{schedule.proportional.totalRounds === 1 ? '' : 's'} totais · {(schedule.total / schedule.proportional.totalRounds).toFixed(1)} min/ronda · {schedule.proportional.roundsPerAgent.toFixed(1)} por agente
-                      </div>
+                  <div className="rounded-md border border-primary/30 bg-primary/5 px-2 py-1.5 flex items-center gap-2 flex-wrap">
+                    <label htmlFor="rm-cadence" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+                      <Timer className="h-3 w-3" /> Cadência (min)
+                    </label>
+                    <Input
+                      id="rm-cadence"
+                      type="number"
+                      min={5}
+                      max={240}
+                      step={5}
+                      value={cadenceMin}
+                      disabled={configLocked}
+                      onChange={(e) => setCadenceMin(Math.max(5, Math.min(240, +e.target.value || DEFAULT_CADENCE_MIN)))}
+                      onKeyDown={(e) => e.key === 'e' && e.preventDefault()}
+                      className={cn('w-16 h-7 font-mono tabular-nums text-center bg-background border-border', configLocked && 'opacity-60 cursor-not-allowed')}
+                      autoComplete="off"
+                      title={`1 ronda a cada ${cadenceMin} min · distribuído automaticamente entre os agentes`}
+                    />
+                    {schedule?.proportional ? (
+                      <span className="ml-auto text-[10.5px] font-mono tabular-nums text-primary">
+                        {schedule.proportional.totalRounds}× · {(schedule.total / schedule.proportional.totalRounds).toFixed(1)}min · {schedule.proportional.roundsPerAgent.toFixed(1)}/agente
+                      </span>
+                    ) : (
+                      <span className="ml-auto text-[10.5px] text-muted-foreground/80">1 ronda / {cadenceMin} min</span>
                     )}
                   </div>
                 )}
+
 
 
                 {/* Times / interval */}
