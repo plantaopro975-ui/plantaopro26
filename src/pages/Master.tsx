@@ -327,9 +327,10 @@ export default function Master() {
   }, [masterSession]);
 
 
-  const fetchData = async () => {
+  const fetchData = async (opts?: { silent?: boolean }) => {
     try {
-      setLoadingData(true);
+      if (!opts?.silent) setLoadingData(true);
+
       setUnitsError(null);
 
       // Chamada consolidada via edge function (service_role) — funciona com sessão master (token)
