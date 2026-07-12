@@ -1114,8 +1114,18 @@ function TimeField({
       <div className={cn(
         'group relative flex items-center gap-1 rounded-md border bg-background pl-1.5 pr-1 h-11 transition-colors min-w-0 overflow-hidden',
         invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
-        locked && 'opacity-70 cursor-not-allowed pointer-events-none select-none',
+        locked && 'opacity-70 cursor-not-allowed',
       )}>
+        {locked && (
+          <button
+            type="button"
+            onClick={() => onLockedAttempt?.()}
+            aria-label={lockedHint || 'Campo bloqueado'}
+            title={lockedHint || 'Bloqueado'}
+            className="absolute inset-0 z-10 cursor-not-allowed bg-transparent"
+          />
+        )}
+
         <svg viewBox="0 0 32 32" className="h-5 w-5 shrink-0" aria-hidden>
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
