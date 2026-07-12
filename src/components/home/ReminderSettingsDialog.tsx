@@ -46,7 +46,7 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rm-reminder rm-compact tactical-cards max-w-[380px] p-4 gap-3">
+      <DialogContent className="rm-reminder rm-compact tactical-cards w-[min(94vw,380px)] max-w-[380px] p-3 sm:p-4 gap-3">
         <DialogHeader className="space-y-1">
           <div className="flex items-center gap-2.5">
             <svg width="32" height="32" viewBox="0 0 42 42" aria-hidden="true" className="shrink-0">

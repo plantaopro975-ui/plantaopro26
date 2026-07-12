@@ -2332,13 +2332,14 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
               border-color 160ms ease, opacity 160ms ease;
 }
 
-/* Primário — segue a cor da equipe (var --rm-accent) */
-.rm-dialog button[class*="bg-primary"]:not([class*="bg-primary/"]),
-.rm-dialog button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]),
-.rm-history button[class*="bg-primary"]:not([class*="bg-primary/"]),
-.rm-history button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]),
-.rm-reminder button[class*="bg-primary"]:not([class*="bg-primary/"]),
-.rm-reminder button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]) {
+/* Primário — segue a cor da equipe (var --rm-accent).
+   Exclui Switch (role=switch) e o botão Fechar (X) para não deformar. */
+.rm-dialog button[class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-dialog button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-history button[class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-history button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-reminder button[class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-reminder button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]):not([role="switch"]):not([data-radix-dialog-close]) {
   background-color: var(--rm-accent) !important;
   color: var(--rm-accent-ink) !important;
   font-weight: 700;
@@ -2348,16 +2349,19 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
     inset 0 1px 0 hsl(0 0% 100% / 0.18);
 }
 /* Descendentes de qualquer superfície com fundo âmbar/primary sólido
-   herdam a tinta escura para garantir contraste WCAG. */
-.rm-dialog [class*="bg-primary"]:not([class*="bg-primary/"]) *,
-.rm-dialog [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
-.rm-dialog [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
-.rm-history [class*="bg-primary"]:not([class*="bg-primary/"]) *,
-.rm-history [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
-.rm-history [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
-.rm-reminder [class*="bg-primary"]:not([class*="bg-primary/"]) *,
-.rm-reminder [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
-.rm-reminder [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
+   herdam a tinta escura — mas não afeta thumbs de Switch. */
+.rm-dialog [class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-dialog [class*="bg-amber-500"]:not([class*="bg-amber-500/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-dialog [class*="bg-amber-400"]:not([class*="bg-amber-400/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-history [class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-history [class*="bg-amber-500"]:not([class*="bg-amber-500/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-history [class*="bg-amber-400"]:not([class*="bg-amber-400/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-reminder [class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-reminder [class*="bg-amber-500"]:not([class*="bg-amber-500/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]),
+.rm-reminder [class*="bg-amber-400"]:not([class*="bg-amber-400/"]):not([role="switch"]) > *:not([data-radix-switch-thumb]) {
+  color: var(--rm-accent-ink) !important;
+}
+
 /* ============================================================
  * CHIP DE INTERVALO (.rm-chip) — Reminder
  * Classes dedicadas com especificidade suficiente para não serem
@@ -2476,28 +2480,105 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   margin-top: 1px;
 }
 
-.rm-dialog button[class*="bg-primary"]:hover:not(:disabled),
-.rm-dialog button[class*="bg-amber"]:hover:not(:disabled),
-.rm-history button[class*="bg-primary"]:hover:not(:disabled),
-.rm-history button[class*="bg-amber"]:hover:not(:disabled),
-.rm-reminder button[class*="bg-primary"]:hover:not(:disabled),
-.rm-reminder button[class*="bg-amber"]:hover:not(:disabled) {
+.rm-dialog button[class*="bg-primary"]:not([role="switch"]):not([data-radix-dialog-close]):hover:not(:disabled),
+.rm-dialog button[class*="bg-amber"]:not([role="switch"]):not([data-radix-dialog-close]):hover:not(:disabled),
+.rm-history button[class*="bg-primary"]:not([role="switch"]):not([data-radix-dialog-close]):hover:not(:disabled),
+.rm-history button[class*="bg-amber"]:not([role="switch"]):not([data-radix-dialog-close]):hover:not(:disabled),
+.rm-reminder button[class*="bg-primary"]:not([role="switch"]):not([data-radix-dialog-close]):hover:not(:disabled),
+.rm-reminder button[class*="bg-amber"]:not([role="switch"]):not([data-radix-dialog-close]):hover:not(:disabled) {
   filter: brightness(1.12);
   box-shadow:
     0 10px 28px -8px hsl(var(--rm-accent-hsl) / 0.7),
     inset 0 1px 0 hsl(0 0% 100% / 0.25);
   transform: translateY(-1px);
 }
-.rm-dialog button[class*="bg-primary"]:active:not(:disabled),
-.rm-dialog button[class*="bg-amber"]:active:not(:disabled),
-.rm-history button[class*="bg-primary"]:active:not(:disabled),
-.rm-history button[class*="bg-amber"]:active:not(:disabled),
-.rm-reminder button[class*="bg-primary"]:active:not(:disabled),
-.rm-reminder button[class*="bg-amber"]:active:not(:disabled) {
+.rm-dialog button[class*="bg-primary"]:not([role="switch"]):not([data-radix-dialog-close]):active:not(:disabled),
+.rm-dialog button[class*="bg-amber"]:not([role="switch"]):not([data-radix-dialog-close]):active:not(:disabled),
+.rm-history button[class*="bg-primary"]:not([role="switch"]):not([data-radix-dialog-close]):active:not(:disabled),
+.rm-history button[class*="bg-amber"]:not([role="switch"]):not([data-radix-dialog-close]):active:not(:disabled),
+.rm-reminder button[class*="bg-primary"]:not([role="switch"]):not([data-radix-dialog-close]):active:not(:disabled),
+.rm-reminder button[class*="bg-amber"]:not([role="switch"]):not([data-radix-dialog-close]):active:not(:disabled) {
   transform: translateY(0);
   box-shadow: inset 0 2px 6px hsl(var(--rm-accent-hsl) / 0.4);
   filter: brightness(0.92);
 }
+
+/* ============================================================
+ * SWITCH (role="switch") — proporção fixa e acabamento discreto
+ * dentro de qualquer painel .rm-*. Segue a cor da equipe quando
+ * ativo, sem herdar sombras/transforms dos botões primários.
+ * ============================================================ */
+.rm-dialog [role="switch"],
+.rm-history [role="switch"],
+.rm-reminder [role="switch"] {
+  width: 40px !important;
+  height: 22px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  border: 1px solid hsl(var(--rm-line-hsl, 220 15% 25%) / 0.9) !important;
+  background-color: hsl(220 15% 18% / 0.8) !important;
+  box-shadow: inset 0 1px 2px hsl(0 0% 0% / 0.35) !important;
+  filter: none !important;
+  transform: none !important;
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
+  transition: background-color 160ms ease, border-color 160ms ease !important;
+}
+.rm-dialog [role="switch"][data-state="checked"],
+.rm-history [role="switch"][data-state="checked"],
+.rm-reminder [role="switch"][data-state="checked"] {
+  background-color: var(--rm-accent) !important;
+  border-color: hsl(var(--rm-accent-hsl) / 0.75) !important;
+  box-shadow:
+    inset 0 1px 2px hsl(0 0% 0% / 0.25),
+    0 0 0 2px hsl(var(--rm-accent-hsl) / 0.18) !important;
+}
+.rm-dialog [role="switch"]:hover:not(:disabled),
+.rm-history [role="switch"]:hover:not(:disabled),
+.rm-reminder [role="switch"]:hover:not(:disabled) {
+  border-color: hsl(var(--rm-accent-hsl) / 0.7) !important;
+  transform: none !important;
+  filter: none !important;
+}
+.rm-dialog [role="switch"]:focus-visible,
+.rm-history [role="switch"]:focus-visible,
+.rm-reminder [role="switch"]:focus-visible {
+  outline: 2px solid var(--rm-focus);
+  outline-offset: 2px;
+}
+.rm-dialog [role="switch"] > span,
+.rm-history [role="switch"] > span,
+.rm-reminder [role="switch"] > span {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 999px !important;
+  background: hsl(0 0% 100%) !important;
+  box-shadow: 0 1px 2px hsl(0 0% 0% / 0.35) !important;
+  color: transparent !important;
+}
+.rm-dialog [role="switch"][data-state="checked"] > span,
+.rm-history [role="switch"][data-state="checked"] > span,
+.rm-reminder [role="switch"][data-state="checked"] > span {
+  transform: translateX(18px) !important;
+}
+.rm-dialog [role="switch"][data-state="unchecked"] > span,
+.rm-history [role="switch"][data-state="unchecked"] > span,
+.rm-reminder [role="switch"][data-state="unchecked"] > span {
+  transform: translateX(2px) !important;
+}
+
+/* Fechar (X) — foco visível para navegação por teclado */
+.rm-dialog [data-radix-dialog-close]:focus-visible,
+.rm-history [data-radix-dialog-close]:focus-visible,
+.rm-reminder [data-radix-dialog-close]:focus-visible,
+.rm-dialog button.absolute.right-4.top-4:focus-visible,
+.rm-history button.absolute.right-4.top-4:focus-visible,
+.rm-reminder button.absolute.right-4.top-4:focus-visible {
+  outline: 2px solid var(--rm-focus) !important;
+  outline-offset: 2px !important;
+}
+
 
 /* Variantes semânticas via classes utilitárias */
 .rm-dialog button[class*="bg-emerald"],
