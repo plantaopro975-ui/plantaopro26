@@ -3581,6 +3581,21 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       </div>
                     )}
                   </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" align="start" className="max-w-xs text-[12px] leading-snug">
+                        <p className="font-semibold mb-1">Turno noturno travado</p>
+                        <p className="text-muted-foreground">
+                          A partir das 18:00 (Acre), o sistema fixa automaticamente o turno em
+                          {' '}<b className="text-foreground">22:00 → 06:00</b>, conforme diretriz operacional.
+                          Os horários ficam bloqueados para garantir integridade da escala e auditoria;
+                          apenas a <b className="text-foreground">quantidade de agentes</b> e o
+                          {' '}<b className="text-foreground">intervalo de rondas</b> podem ser ajustados.
+                          Alterações de horário exigem <b className="text-foreground">override master</b>,
+                          com motivo registrado em <code>night_shift_overrides</code>.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
                 {nightEffectivelyLocked ? (
                   <button
