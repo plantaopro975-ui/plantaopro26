@@ -286,18 +286,50 @@ export function CredentialsViewer() {
               Visualize e gerencie as credenciais de acesso de todos os agentes
             </CardDescription>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={fetchAgents}
-            disabled={loading}
-            className="gap-2 shrink-0"
-            title="Atualizar lista de agentes"
-          >
-            <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
-            {loading ? 'Atualizando...' : 'Atualizar'}
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={exporting || filteredAgents.length === 0}
+                  className="gap-2"
+                  title="Exportar lista filtrada"
+                >
+                  <Download className="h-4 w-4" />
+                  Exportar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-popover border-border">
+                <DropdownMenuItem onClick={exportJSON} className="gap-2 cursor-pointer">
+                  <FileJson className="h-4 w-4" />
+                  JSON ({filteredAgents.length})
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportPDF} className="gap-2 cursor-pointer">
+                  <FileText className="h-4 w-4" />
+                  PDF ({filteredAgents.length})
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchAgents}
+              disabled={loading}
+              className="gap-2"
+              title="Atualizar lista de agentes"
+            >
+              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+              {loading ? 'Atualizando...' : 'Atualizar'}
+            </Button>
+          </div>
         </div>
+        {lastUpdatedAt && (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
+            <Clock className="h-3 w-3" />
+            Última atualização: {format(lastUpdatedAt, "dd/MM/yyyy 'às' HH:mm:ss", { locale: ptBR })}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
