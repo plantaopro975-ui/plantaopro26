@@ -276,8 +276,8 @@ export default function Master() {
         import('@/components/admin/LicenseFinanceControl');
         import('@/components/admin/UnitsManagementCard');
         import('@/components/admin/AgentAccessControl');
-        import('@/components/admin/PendingApprovalsManager');
-        import('@/components/admin/RecentRegistrationsAudit');
+        // PendingApprovalsManager e RecentRegistrationsAudit são carregados via CadastrosAprovacoesPanel
+
       });
 
 
