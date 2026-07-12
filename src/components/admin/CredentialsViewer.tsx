@@ -496,7 +496,7 @@ export function CredentialsViewer() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredAgents.map((agent) => (
+                paginatedAgents.map((agent) => (
                   <TableRow key={agent.id} className="border-border hover:bg-muted/30">
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
