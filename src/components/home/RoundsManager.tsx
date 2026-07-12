@@ -1850,6 +1850,22 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const issues = useMemo(() => [...baseIssues, ...transitionIssues], [baseIssues, transitionIssues]);
   const hasError = (field: string) => issues.some((i) => i.field === field);
 
+  // Diagnóstico: loga quando a lista de validações muda (útil para entender
+  // por que o painel do Cronograma some entre janelas de horário).
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('plantaopro_rounds_debug') === '1') {
+        // eslint-disable-next-line no-console
+        console.log('[RoundsManager][issues]', {
+          count: issues.length,
+          items: issues.map((i) => `${i.field}: ${i.message}`),
+          mode, startTime, endTime, agentsCount: agents.length,
+        });
+      }
+    } catch { /* ignore */ }
+  }, [issues, mode, startTime, endTime, agents.length]);
+
+
   // Estado do cronômetro (hoisted — usado no cálculo do início efetivo abaixo).
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
