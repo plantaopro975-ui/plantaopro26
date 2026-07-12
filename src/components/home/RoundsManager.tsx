@@ -1049,8 +1049,9 @@ function AgentStatusSVG({ status, color, compact = false }: { status: 'active' |
 /* ================= SVG time field ================= */
 
 function TimeField({
-  id, value, onChange, label, invalid, accent, locked, lockedHint,
-}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string; locked?: boolean; lockedHint?: string }) {
+  id, value, onChange, label, invalid, accent, locked, lockedHint, onLockedAttempt, lockedBadgeText,
+}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string; locked?: boolean; lockedHint?: string; onLockedAttempt?: () => void; lockedBadgeText?: string }) {
+
 
   // Buffer LOCAL de digitação — evita que o valor externo (com pad) atropele
   // o usuário enquanto ele digita ("1" → "10" precisa ser possível sem travar).
@@ -1105,15 +1106,26 @@ function TimeField({
             className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10.5px] font-mono uppercase text-amber-300"
           >
             <svg viewBox="0 0 16 16" className="h-2.5 w-2.5"><path d="M4 7V5a4 4 0 118 0v2h1v7H3V7h1zm2 0h4V5a2 2 0 10-4 0v2z" fill="currentColor"/></svg>
-            22:00→06:00
+            {lockedBadgeText || '22:00→06:00'}
           </span>
         )}
+
       </label>
       <div className={cn(
         'group relative flex items-center gap-1 rounded-md border bg-background pl-1.5 pr-1 h-11 transition-colors min-w-0 overflow-hidden',
         invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
-        locked && 'opacity-70 cursor-not-allowed pointer-events-none select-none',
+        locked && 'opacity-70 cursor-not-allowed',
       )}>
+        {locked && (
+          <button
+            type="button"
+            onClick={() => onLockedAttempt?.()}
+            aria-label={lockedHint || 'Campo bloqueado'}
+            title={lockedHint || 'Bloqueado'}
+            className="absolute inset-0 z-10 cursor-not-allowed bg-transparent"
+          />
+        )}
+
         <svg viewBox="0 0 32 32" className="h-5 w-5 shrink-0" aria-hidden>
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
@@ -1622,7 +1634,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const nowServer = () => getServerDate().getTime();
 
   /* ---------- Night shift auto-lock (22:00 → 06:00 Acre) ---------- */
-  const [nightLocked, setNightLocked] = useState<boolean>(() => isNightShift(getServerDate()));
+  const [nightLocked, setNightLocked] = useState<boolean>(() => {
+    const d = getServerDate();
+    return isNightShift(d) || isPreNightWindow(d);
+  });
+  // true quando estamos apenas na PRÉ-noite (18:00-21:59), para exibir mensagens
+  // diferentes ("programado para 22:00" vs. "turno em andamento").
+  const [preNightScheduled, setPreNightScheduled] = useState<boolean>(() => {
+    const d = getServerDate();
+    return isPreNightWindow(d) && !isNightShift(d);
+  });
+
   const [serverClock, setServerClock] = useState<Date>(() => getServerDate());
   const [nightWindow, setNightWindow] = useState(() => getNightWindow(getServerDate()));
 
@@ -1657,8 +1679,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const now = new Date(nowServer());
       setServerClock(now);
       setNightWindow(getNightWindow(now));
-      const night = isNightShift(now);
+      const actualNight = isNightShift(now);
+      const preNight = isPreNightWindow(now);
+      const night = actualNight || preNight;
       setNightLocked(night);
+      setPreNightScheduled(preNight && !actualNight);
       if (night && !overrideActive) {
         setStartTime(NIGHT_START);
         setEndTime(NIGHT_END);
@@ -1668,6 +1693,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         setOverrideActive(false);
       }
     };
+
     // Sync com o servidor apenas na abertura e a cada 60s, para não
     // sobrecarregar a RPC. O relógio continua avançando localmente a cada
     // segundo com o offset em cache, então mesmo que o dispositivo esteja
@@ -3564,30 +3590,92 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </div>
                 )}
                 {nightEffectivelyLocked ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-md border border-border/90 bg-card px-2 py-1.5">
-                      <div className="text-[10.5px] uppercase tracking-wide text-muted-foreground">Início</div>
-                      <div className="font-mono text-sm text-foreground">22:00</div>
+                  <button
+                    type="button"
+                    onClick={() => toast({
+                      title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
+                      description: preNightScheduled
+                        ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
+                        : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                    })}
+                    className="w-full text-left cursor-not-allowed"
+                    aria-label="Horários travados"
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="rounded-md border border-amber-500/40 bg-amber-500/5 px-2 py-1.5">
+                        <div className="text-[10.5px] uppercase tracking-wide text-amber-300/80 flex items-center gap-1">
+                          Início {preNightScheduled && <span className="font-mono text-[8.5px]">· programado</span>}
+                        </div>
+                        <div className="font-mono text-sm text-foreground">22:00</div>
+                      </div>
+                      <div className="rounded-md border border-amber-500/40 bg-amber-500/5 px-2 py-1.5">
+                        <div className="text-[10.5px] uppercase tracking-wide text-amber-300/80 flex items-center gap-1">
+                          Final {preNightScheduled && <span className="font-mono text-[8.5px]">· programado</span>}
+                        </div>
+                        <div className="font-mono text-sm text-foreground">06:00</div>
+                      </div>
                     </div>
-                    <div className="rounded-md border border-border/90 bg-card px-2 py-1.5">
-                      <div className="text-[10.5px] uppercase tracking-wide text-muted-foreground">Final</div>
-                      <div className="font-mono text-sm text-foreground">06:00</div>
-                    </div>
-                  </div>
+                    {preNightScheduled && (
+                      <p className="mt-1 text-[10.5px] leading-snug text-amber-200/80">
+                        🌙 Turno noturno programado automaticamente. Só é possível alterar a <b>quantidade de agentes</b>.
+                      </p>
+                    )}
+                  </button>
+
                 ) : (mode === 'split' || mode === 'proportional') ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
-                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 22:00 durante o turno noturno'} />
+                      locked={nightEffectivelyLocked || configLocked}
+                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 22:00' : undefined}
+                      lockedHint={
+                        configLocked ? 'Programação ativa — cancele para editar'
+                        : preNightScheduled ? 'Programado automaticamente para 22:00. Apenas a lista de agentes pode ser alterada.'
+                        : 'Fixado às 22:00 durante o turno noturno'
+                      }
+                      onLockedAttempt={() => toast({
+                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
+                        description: preNightScheduled
+                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
+                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                      })}
+                    />
                     <TimeField id="rm-end" label="Término do turno" value={endTime}
                       onChange={setEndTime} invalid={hasError('end')} accent={teamColor}
-                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 06:00 durante o turno noturno'} />
+                      locked={nightEffectivelyLocked || configLocked}
+                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 06:00' : undefined}
+                      lockedHint={
+                        configLocked ? 'Programação ativa — cancele para editar'
+                        : preNightScheduled ? 'Programado automaticamente para 06:00. Apenas a lista de agentes pode ser alterada.'
+                        : 'Fixado às 06:00 durante o turno noturno'
+                      }
+                      onLockedAttempt={() => toast({
+                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
+                        description: preNightScheduled
+                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
+                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                      })}
+                    />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start2" label="Início" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
-                      locked={nightEffectivelyLocked || configLocked} lockedHint={configLocked ? 'Programação ativa — cancele para editar' : 'Fixado às 22:00 durante o turno noturno'} />
+                      locked={nightEffectivelyLocked || configLocked}
+                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 22:00' : undefined}
+                      lockedHint={
+                        configLocked ? 'Programação ativa — cancele para editar'
+                        : preNightScheduled ? 'Programado automaticamente para 22:00. Apenas a lista de agentes pode ser alterada.'
+                        : 'Fixado às 22:00 durante o turno noturno'
+                      }
+                      onLockedAttempt={() => toast({
+                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
+                        description: preNightScheduled
+                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
+                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                      })}
+                    />
+
 
 
                     <div className="grid gap-1.5">
