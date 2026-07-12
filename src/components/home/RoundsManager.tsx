@@ -1689,6 +1689,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const night = actualNight || preNight;
       setNightLocked(night);
       setPreNightScheduled(preNight && !actualNight);
+      // Diagnóstico: ative com localStorage.setItem('plantaopro_rounds_debug','1')
+      try {
+        if (localStorage.getItem('plantaopro_rounds_debug') === '1') {
+          // eslint-disable-next-line no-console
+          console.log('[RoundsManager][tick]', {
+            acre: formatAcreClock(now),
+            actualNight, preNight, nightLocked: night,
+            overrideActive, mode, startTime, endTime,
+            agents: agents.length, issues: (typeof issues !== 'undefined' ? issues.length : 'n/a'),
+          });
+        }
+      } catch { /* ignore */ }
       if (night && !overrideActive) {
         setStartTime(NIGHT_START);
         setEndTime(NIGHT_END);
