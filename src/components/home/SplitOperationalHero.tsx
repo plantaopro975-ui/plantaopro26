@@ -19,6 +19,25 @@ import vehicle3d from '@/assets/hero/vehicle-ise-3d.local.png';
 import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
 const agentVehicleScene = agentVehicleSceneAsset.url;
 const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
+
+// ==== PRELOAD IMEDIATO (roda no parse do módulo, antes do primeiro render) ====
+// Injeta <link rel="preload"> assim que o bundle é avaliado, permitindo ao
+// browser baixar viatura + agente em paralelo com o restante do JS/CSS.
+if (typeof document !== 'undefined' && !document.getElementById('hero-preload-vehicle')) {
+  const mk = (id: string, href: string) => {
+    const l = document.createElement('link');
+    l.id = id;
+    l.rel = 'preload';
+    l.as = 'image';
+    l.href = href;
+    l.type = 'image/webp';
+    (l as HTMLLinkElement & { fetchPriority?: string }).fetchPriority = 'high';
+    document.head.appendChild(l);
+  };
+  mk('hero-preload-vehicle', vehicle3dWebp);
+  mk('hero-preload-agent', agent3dWebp);
+}
+
 import objAlfa from '@/assets/teams/alfa-shield-v2.png';
 import objAlfaWebp from '@/assets/teams/alfa-shield-v2.webp';
 import objBravo from '@/assets/teams/bravo-helmet-v2.png';
