@@ -2178,3 +2178,117 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   font-feature-settings: 'tnum', 'ss01';
 }
 
+/* =========================================================
+ * GESTOR DE RONDAS — Upgrade tipográfico + hierarquia de cor
+ * Aplica um sistema de tipografia profissional dentro de
+ * .rm-dialog: família refinada, pesos consistentes, cores
+ * temáticas (ambar/ciano/esmeralda) para destacar ações,
+ * badges e métricas — sem alterar layout/estrutura.
+ * ========================================================= */
+.rm-dialog {
+  --rm-ink:        hsl(210 40% 96%);
+  --rm-ink-soft:   hsl(215 20% 78%);
+  --rm-ink-mute:   hsl(215 15% 62%);
+  --rm-accent:     hsl(38 96% 58%);   /* amber-500 */
+  --rm-accent-2:   hsl(190 92% 55%);  /* cyan */
+  --rm-success:    hsl(152 68% 52%);  /* emerald */
+  --rm-danger:     hsl(0 84% 62%);
+  --rm-surface:    hsl(220 30% 8% / 0.72);
+  --rm-line:       hsl(215 25% 25% / 0.6);
+
+  font-family: 'Inter', 'DM Sans', 'IBM Plex Sans', system-ui, sans-serif;
+  font-feature-settings: 'ss01', 'cv01', 'cv11', 'cv02';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--rm-ink);
+  text-rendering: optimizeLegibility;
+}
+
+.rm-dialog p,
+.rm-dialog span,
+.rm-dialog li,
+.rm-dialog label,
+.rm-dialog div,
+.rm-dialog button,
+.rm-dialog a {
+  letter-spacing: 0.005em;
+}
+
+/* Títulos e cabeçalhos — mais peso, tracking apertado, cor viva */
+.rm-dialog h1,
+.rm-dialog h2,
+.rm-dialog h3,
+.rm-dialog h4,
+.rm-dialog [class*="DialogTitle"],
+.rm-dialog [data-dialog-title] {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--rm-ink);
+}
+.rm-dialog h1 { font-size: clamp(18px, 2.2vw, 22px); line-height: 1.15; }
+.rm-dialog h2 { font-size: clamp(16px, 1.8vw, 19px); line-height: 1.2; }
+.rm-dialog h3 { font-size: clamp(14px, 1.4vw, 16px); line-height: 1.25; }
+
+/* Rótulos institucionais em uppercase — tracking limpo + cor accent */
+.rm-dialog .uppercase,
+.rm-dialog [class*="uppercase"] {
+  letter-spacing: 0.08em !important;
+  font-weight: 600;
+}
+.rm-dialog label,
+.rm-dialog .text-muted-foreground {
+  color: var(--rm-ink-soft) !important;
+}
+.rm-dialog .text-muted-foreground\/70,
+.rm-dialog .text-muted-foreground\/80 {
+  color: var(--rm-ink-mute) !important;
+}
+
+/* Números tabulares — cronômetros e contadores mais nítidos */
+.rm-dialog .font-mono,
+.rm-dialog [class*="tabular-nums"] {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum', 'ss01', 'zero';
+  letter-spacing: 0.01em;
+}
+
+/* Destaque de accents inline (amber/cyan/emerald) — mais saturado */
+.rm-dialog .text-amber-300,
+.rm-dialog .text-amber-400,
+.rm-dialog .text-amber-500 { color: var(--rm-accent) !important; text-shadow: 0 0 24px hsl(38 96% 58% / 0.18); }
+.rm-dialog .text-cyan-300,
+.rm-dialog .text-cyan-400 { color: var(--rm-accent-2) !important; }
+.rm-dialog .text-emerald-300,
+.rm-dialog .text-emerald-400,
+.rm-dialog .text-green-400 { color: var(--rm-success) !important; }
+.rm-dialog .text-red-300,
+.rm-dialog .text-red-400,
+.rm-dialog .text-red-500 { color: var(--rm-danger) !important; }
+
+/* Botões primários — cor sólida e legibilidade máxima */
+.rm-dialog button[class*="bg-primary"],
+.rm-dialog button[class*="bg-amber"] {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 22px -8px hsl(38 96% 58% / 0.55), inset 0 1px 0 hsl(0 0% 100% / 0.15);
+}
+.rm-dialog button {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Badges/pills — micro contraste e borda mais nítida */
+.rm-dialog [class*="rounded-sm"][class*="border"],
+.rm-dialog [class*="rounded-md"][class*="border"] {
+  border-color: var(--rm-line);
+}
+
+/* Divisores institucionais — mais discretos */
+.rm-dialog hr,
+.rm-dialog [class*="border-border"] { border-color: var(--rm-line) !important; }
+
+/* Remove pulsos em texto (mantém em ícones) */
+.rm-dialog :is(h1,h2,h3,h4,p,span,label).animate-pulse { animation: none !important; }
+
