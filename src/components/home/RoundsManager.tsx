@@ -3913,9 +3913,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               <Button
                                 type="button"
                                 size="sm"
-                                disabled={issues.length > 0 || !schedule}
+                                aria-disabled={issues.length > 0 || !schedule}
                                 onClick={() => {
                                   if (issues.length > 0 || !schedule) {
+                                    focusValidationPanel();
                                     toast({
                                       title: 'Corrija os itens em vermelho antes de iniciar.',
                                       description: issues[0]?.message,
