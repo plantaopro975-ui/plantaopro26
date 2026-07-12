@@ -660,14 +660,14 @@ export default function Master() {
                 )}
                 aria-label={`Abrir ${label}`}
               >
-                <CardContent className="p-3 md:p-4 min-h-[66px] md:min-h-[72px] flex items-center">
-                  <div className="flex items-center gap-2.5 md:gap-3 w-full">
-                    <div className={cn('p-2 md:p-2 rounded-lg shrink-0', tintMap[tint])}>
-                      <Icon3D name={icon3d} size={22} />
+                <CardContent className="p-2 md:p-2.5 min-h-[52px] md:min-h-[56px] flex items-center">
+                  <div className="flex items-center gap-2 w-full">
+                    <div className={cn('p-1.5 rounded-md shrink-0', tintMap[tint])}>
+                      <Icon3D name={icon3d} size={18} />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[11px] md:text-xs font-semibold md:font-normal uppercase tracking-tight md:tracking-normal md:normal-case text-muted-foreground truncate">{label}</p>
-                      <p className="text-lg md:text-xl font-black md:font-bold leading-tight">{value}</p>
+                      <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground truncate leading-tight">{label}</p>
+                      <p className="text-base md:text-lg font-mono font-bold leading-tight tabular-nums">{value}</p>
                     </div>
                   </div>
                 </CardContent>
