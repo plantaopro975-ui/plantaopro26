@@ -751,6 +751,8 @@ export default function AgentPanel() {
                         value={value}
                         aria-label={full}
                         title=""
+                        onPointerEnter={() => handleTabPointerEnter(value)}
+                        onFocus={() => handleTabPointerEnter(value)}
                         className={cn(
                           'group flex flex-col items-center justify-center gap-1.5 md:gap-1.5 rounded-lg font-medium border border-slate-600/50 bg-slate-800/60',
                           'px-2 py-3 md:px-2 md:py-2.5 min-h-[76px] sm:min-h-[80px] md:min-h-[58px]',
