@@ -2358,11 +2358,25 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
 .rm-reminder [class*="bg-primary"]:not([class*="bg-primary/"]) *,
 .rm-reminder [class*="bg-amber-500"]:not([class*="bg-amber-500/"]) *,
 .rm-reminder [class*="bg-amber-400"]:not([class*="bg-amber-400/"]) *,
-/* Chip ativo do seletor de intervalo (aria-pressed=true com fundo cheio) */
-.rm-reminder button[aria-pressed="true"][class*="bg-primary"]:not([class*="bg-primary/"]) *,
-.rm-reminder button[aria-pressed="true"][class*="ring-primary"] * {
-  color: var(--rm-accent-ink) !important;
-  opacity: 1 !important;
+/* Chip ativo do seletor de intervalo — fundo translúcido âmbar + texto claro
+   para contraste WCAG (dark theme). Rótulo em accent, hint em ink-soft. */
+.rm-reminder button[aria-pressed="true"][class*="bg-primary/"] {
+  background-color: hsl(var(--rm-accent-hsl) / 0.18) !important;
+  border-color: var(--rm-accent) !important;
+  box-shadow:
+    0 0 0 1px hsl(var(--rm-accent-hsl) / 0.45),
+    0 6px 18px -10px hsl(var(--rm-accent-hsl) / 0.55) !important;
+}
+.rm-reminder button[aria-pressed="true"][class*="bg-primary/"] > div:first-child {
+  color: var(--rm-accent) !important;
+  font-weight: 700 !important;
+}
+.rm-reminder button[aria-pressed="true"][class*="bg-primary/"] > div:last-child {
+  color: var(--rm-ink-soft) !important;
+  opacity: 0.95 !important;
+}
+.rm-reminder button[aria-pressed="false"] > div:first-child {
+  color: var(--rm-ink) !important;
 }
 .rm-dialog button[class*="bg-primary"]:hover:not(:disabled),
 .rm-dialog button[class*="bg-amber"]:hover:not(:disabled),
