@@ -1707,6 +1707,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const nightEffectivelyLocked = nightLocked && !overrideActive;
 
+  // Guard: modo "proportional" foi descontinuado da UI. Se restar salvo em
+  // localStorage/estado antigo, cai automaticamente para "split".
+  useEffect(() => {
+    if ((mode as string) === 'proportional') setMode('split');
+  }, [mode]);
+
+
   // Guard: while locked, revert any external change to start/end
   useEffect(() => {
     if (!nightEffectivelyLocked) return;
@@ -3450,8 +3457,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                 </div>
 
                 {!nightEffectivelyLocked && (
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {(['split', 'interval', 'proportional'] as Mode[]).map((m) => (
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {(['split', 'interval'] as Mode[]).map((m) => (
                       <button key={m} type="button" onClick={() => setMode(m)} disabled={configLocked}
                         className={cn(
                           'rounded-md border px-1.5 py-1.5 text-[10px] sm:text-[11px] font-mono uppercase tracking-tight leading-tight text-center whitespace-nowrap overflow-hidden text-ellipsis',
@@ -3460,14 +3467,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         )}
                         title={
                           m === 'split' ? 'Divide o turno igualmente entre agentes'
-                          : m === 'interval' ? 'Intervalo fixo por agente'
-                          : `Cadência-base: 1 ronda a cada ${cadenceMin} min · distribui automaticamente`
+                          : 'Intervalo fixo por agente'
                         }>
-                        {m === 'split' ? 'Dividir' : m === 'interval' ? 'Intervalo' : 'Proporcional'}
+                        {m === 'split' ? 'Dividir' : 'Intervalo'}
                       </button>
                     ))}
                   </div>
                 )}
+
 
                 {mode === 'proportional' && !nightEffectivelyLocked && (
                   <div className="rounded-md border border-primary/30 bg-primary/5 px-2 py-1.5 flex items-center gap-2 flex-wrap">
