@@ -64,20 +64,16 @@ export function SecurityDoctrineCard({ color }: { color: string }) {
           {rules.map(({ Icon, label, title, body }) => (
             <Tooltip key={label}>
               <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => setExpanded((v) => !v)}
-                  aria-expanded={expanded}
-                  aria-controls="security-doctrine-details"
-                  aria-label={`${title}. ${body} Pressione Enter para ${expanded ? 'ocultar' : 'expandir'} detalhes.`}
-                  className="inline-flex items-center gap-1 rounded-sm border border-border/50 bg-muted/30 hover:bg-muted/60 hover:border-border transition-colors px-1.5 py-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-background"
-                  style={{ ['--tw-ring-color' as string]: color }}
+                <div
+                  role="note"
+                  aria-label={`${title}. ${body}`}
+                  className="inline-flex items-center gap-1 rounded-sm border border-border/50 bg-muted/30 px-1.5 py-0.5 cursor-default select-none"
                 >
                   <Icon className="h-3 w-3 shrink-0" aria-hidden="true" style={{ color }} />
                   <span className="text-[10.5px] font-medium text-foreground/90 whitespace-nowrap">
                     {label}
                   </span>
-                </button>
+                </div>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="max-w-[260px]">
                 <div className="text-[11px] font-semibold mb-0.5" style={{ color }}>{title}</div>
