@@ -262,11 +262,11 @@ export default function Master() {
       // Prefetch dos chunks das abas para tornar a troca instantânea
       requestIdleCallback?.(() => {
         import('@/components/agents/TransferApprovalPanel');
-        import('@/components/agents/AdminResetPasswordDialog');
+        import('@/components/admin/CadastrosAprovacoesPanel');
         import('@/components/admin/EditAgentDialog');
         import('@/components/admin/EditUnitDialog');
         import('@/components/admin/DeleteAgentDialog');
-        import('@/components/admin/LicenseManagementDialog');
+        
         import('@/components/admin/DeleteUserDialog');
         import('@/components/admin/AgentPasswordManager');
         import('@/components/admin/CredentialsViewer');
