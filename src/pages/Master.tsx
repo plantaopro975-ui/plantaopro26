@@ -60,11 +60,11 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 const TransferApprovalPanel = lazy(() => import('@/components/agents/TransferApprovalPanel').then(m => ({ default: m.TransferApprovalPanel })));
-const AdminResetPasswordDialog = lazy(() => import('@/components/agents/AdminResetPasswordDialog').then(m => ({ default: m.AdminResetPasswordDialog })));
+
 const EditAgentDialog = lazy(() => import('@/components/admin/EditAgentDialog').then(m => ({ default: m.EditAgentDialog })));
 const EditUnitDialog = lazy(() => import('@/components/admin/EditUnitDialog').then(m => ({ default: m.EditUnitDialog })));
 const DeleteAgentDialog = lazy(() => import('@/components/admin/DeleteAgentDialog').then(m => ({ default: m.DeleteAgentDialog })));
-const LicenseManagementDialog = lazy(() => import('@/components/admin/LicenseManagementDialog').then(m => ({ default: m.LicenseManagementDialog })));
+
 const DeleteUserDialog = lazy(() => import('@/components/admin/DeleteUserDialog').then(m => ({ default: m.DeleteUserDialog })));
 const AgentPasswordManager = lazy(() => import('@/components/admin/AgentPasswordManager').then(m => ({ default: m.AgentPasswordManager })));
 const CredentialsViewer = lazy(() => import('@/components/admin/CredentialsViewer').then(m => ({ default: m.CredentialsViewer })));
@@ -74,8 +74,8 @@ const SwapManagementPanel = lazy(() => import('@/components/admin/SwapManagement
 const LicenseFinanceControl = lazy(() => import('@/components/admin/LicenseFinanceControl').then(m => ({ default: m.LicenseFinanceControl })));
 const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagementCard').then(m => ({ default: m.UnitsManagementCard })));
 const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
-const PendingApprovalsManager = lazy(() => import('@/components/admin/PendingApprovalsManager').then(m => ({ default: m.PendingApprovalsManager })));
-const RecentRegistrationsAudit = lazy(() => import('@/components/admin/RecentRegistrationsAudit').then(m => ({ default: m.RecentRegistrationsAudit })));
+const CadastrosAprovacoesPanel = lazy(() => import('@/components/admin/CadastrosAprovacoesPanel').then(m => ({ default: m.CadastrosAprovacoesPanel })));
+
 const AccessAuditPanel = lazy(() => import('@/components/admin/AccessAuditPanel').then(m => ({ default: m.AccessAuditPanel })));
 const AgentsConnectionMonitor = lazy(() => import('@/components/admin/AgentsConnectionMonitor').then(m => ({ default: m.AgentsConnectionMonitor })));
 import { CopyrightFooter } from '@/components/CopyrightFooter';
@@ -262,11 +262,11 @@ export default function Master() {
       // Prefetch dos chunks das abas para tornar a troca instantânea
       requestIdleCallback?.(() => {
         import('@/components/agents/TransferApprovalPanel');
-        import('@/components/agents/AdminResetPasswordDialog');
+        import('@/components/admin/CadastrosAprovacoesPanel');
         import('@/components/admin/EditAgentDialog');
         import('@/components/admin/EditUnitDialog');
         import('@/components/admin/DeleteAgentDialog');
-        import('@/components/admin/LicenseManagementDialog');
+        
         import('@/components/admin/DeleteUserDialog');
         import('@/components/admin/AgentPasswordManager');
         import('@/components/admin/CredentialsViewer');
@@ -276,8 +276,8 @@ export default function Master() {
         import('@/components/admin/LicenseFinanceControl');
         import('@/components/admin/UnitsManagementCard');
         import('@/components/admin/AgentAccessControl');
-        import('@/components/admin/PendingApprovalsManager');
-        import('@/components/admin/RecentRegistrationsAudit');
+        // PendingApprovalsManager e RecentRegistrationsAudit são carregados via CadastrosAprovacoesPanel
+
       });
 
 
@@ -452,21 +452,10 @@ export default function Master() {
     }
   };
   
-  // Toggle agent active status
-  const handleToggleAgentStatus = async (agent: Agent) => {
-    try {
-      await adminClient.toggleAgentStatus({ agentId: agent.id, isActive: !agent.is_active });
-      
-      toast({ 
-        title: 'Sucesso', 
-        description: `Agente ${!agent.is_active ? 'ativado' : 'desativado'} com sucesso.` 
-      });
-      fetchData();
-    } catch (error: any) {
-      console.error('Error toggling agent status:', error);
-      toast({ title: 'Erro', description: error.message || 'Não foi possível alterar status.', variant: 'destructive' });
-    }
-  };
+  // Toggle de status agora vive exclusivamente em AgentAccessControl (aba "Acesso"),
+  // que registra access_logs + envia notification. handleToggleAgentStatus foi removido
+  // para eliminar a duplicação e evitar comportamentos inconsistentes.
+
   
   // Expire all sessions for an agent
   const handleExpireSession = async (agent: Agent) => {
@@ -678,7 +667,7 @@ export default function Master() {
           <TabsList className="grid w-full grid-cols-6 sm:[grid-template-columns:repeat(13,minmax(0,1fr))] h-auto p-1 gap-0.5 bg-slate-900/60 border border-slate-800/80 [&>button]:h-8 [&>button]:px-1.5 [&>button]:text-[11px] [&>button]:font-medium [&>button]:tracking-[0.06em] [&>button]:uppercase">
             <TabsTrigger value="approvals" className="relative">
               <Icon3D name="shield" size={14} className="sm:hidden" />
-              <span className="hidden sm:inline">Aprovações</span>
+              <span className="hidden sm:inline">Cadastros</span>
               {stats.pendingApprovals > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-amber-500 text-[9px] font-mono text-white flex items-center justify-center animate-pulse">
                   {stats.pendingApprovals}
@@ -726,12 +715,14 @@ export default function Master() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Pending Approvals Tab */}
+          {/* Cadastros & Aprovações — painel unificado (pendentes + recentes) */}
           <TabsContent value="approvals" className="space-y-3 mt-3">
-            <PendingApprovalsManager onApprovalChange={fetchData} />
+            <Suspense fallback={<PanelSkeleton rows={4} />}>
+              <CadastrosAprovacoesPanel onChange={fetchData} />
+            </Suspense>
           </TabsContent>
 
-          {/* Audit — Recém-cadastrados + Auditoria de Acessos */}
+          {/* Audit — Monitor de conexão + Auditoria de acessos (cadastros movidos para "Aprovações") */}
           <TabsContent value="audit" className="space-y-3 mt-3">
             <Suspense fallback={<PanelSkeleton rows={4} />}>
               <AgentsConnectionMonitor />
@@ -739,10 +730,8 @@ export default function Master() {
             <Suspense fallback={<PanelSkeleton rows={4} />}>
               <AccessAuditPanel />
             </Suspense>
-            <Suspense fallback={<PanelSkeleton rows={4} />}>
-              <RecentRegistrationsAudit daysWindow={30} onChange={fetchData} />
-            </Suspense>
           </TabsContent>
+
 
 
           {/* Overview Tab - Units */}
@@ -1002,19 +991,9 @@ export default function Master() {
                               >
                                 <Icon3DAction name="message" alt="Enviar mensagem" />
                               </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleToggleAgentStatus(agent)}
-                                className={cn(
-                                  agent.is_active 
-                                    ? 'text-red-500 hover:text-red-400 hover:bg-red-500/10' 
-                                    : 'text-green-500 hover:text-green-400 hover:bg-green-500/10'
-                                )}
-                                title={agent.is_active ? 'Desativar' : 'Ativar'}
-                              >
-                              <Icon3DAction name={agent.is_active ? 'lock' : 'unlock'} alt={agent.is_active ? 'Desativar' : 'Ativar'} />
-                              </Button>
+                              {/* Ativar/Desativar centralizado na aba "Acesso" (AgentAccessControl),
+                                  que grava access_logs e envia notificações. Este toggle foi removido
+                                  para evitar duas trilhas de código com efeitos colaterais diferentes. */}
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -1027,12 +1006,9 @@ export default function Master() {
                               >
                                 <Icon3DAction name="edit" alt="Editar" />
                               </Button>
-                              {agent.cpf && (
-                                <AdminResetPasswordDialog 
-                                  agentName={agent.name}
-                                  agentCpf={agent.cpf}
-                                />
-                              )}
+                              {/* Reset de senha unificado no AgentPasswordManager (adminClient.resetPassword).
+                                  O AdminResetPasswordDialog foi removido do projeto. */}
+
                               <DeleteAgentDialog
                                 agentId={agent.id}
                                 agentName={agent.name}

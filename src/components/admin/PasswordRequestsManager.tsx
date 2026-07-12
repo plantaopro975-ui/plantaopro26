@@ -25,7 +25,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Check, X, Clock, Key, Shield, MessageSquare, Loader2, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { AdminResetPasswordDialog } from '@/components/agents/AdminResetPasswordDialog';
+import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { cn } from '@/lib/utils';
 
 interface PasswordRequest {
@@ -326,18 +326,18 @@ export function PasswordRequestsManager() {
                 Defina a nova senha para <strong className="text-white">{selectedRequest.agent.name}</strong>
               </DialogDescription>
             </DialogHeader>
-            <div className="py-4">
-              <AdminResetPasswordDialog
-                agentName={selectedRequest.agent.name}
-                agentCpf={selectedRequest.agent.cpf}
-                trigger={
-                  <Button className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
-                    <Key className="h-4 w-4 mr-2" />
-                    Definir Nova Senha
-                  </Button>
-                }
+            <div className="py-4 flex justify-center">
+              <AgentPasswordManager
+                agent={{
+                  id: selectedRequest.agent_id,
+                  name: selectedRequest.agent.name,
+                  cpf: selectedRequest.agent.cpf,
+                  email: null,
+                }}
+                onSuccess={() => setSelectedRequest(null)}
               />
             </div>
+
             <DialogFooter>
               <Button variant="outline" onClick={() => setSelectedRequest(null)}>
                 Fechar
