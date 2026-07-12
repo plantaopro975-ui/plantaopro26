@@ -132,9 +132,15 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
           'id, name, cpf, matricula, team, phone, email, created_at, is_active, approval_status, license_status, unit:units(id, name, municipality)'
         )
         .gte('created_at', cutoff.toISOString())
+        // Exclui cadastros ainda pendentes — esses vivem exclusivamente na
+        // sub-aba "Pendentes" (fila de decisão). Aqui só entra o que já foi
+        // processado (approved/rejected/null), evitando sobreposição de dados
+        // entre as duas sub-abas de "Cadastros".
+        .neq('approval_status', 'pending')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+
       const list = (data as unknown as RecentAgent[]) || [];
 
       // Detectar novos cadastros desde o último fetch (exceto no primeiro carregamento)
