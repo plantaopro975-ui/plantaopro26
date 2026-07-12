@@ -620,12 +620,14 @@ export default function Index() {
             unit: unitLabel,
           });
         } else {
-          // Tudo OK - mostrar login
-          setShowCpfCheck(false);
+          // Tudo OK - abrir o diálogo de senha ANTES de fechar o de CPF para
+          // evitar o "flash" preto do overlay do Radix entre um dialog e outro.
           setLoginCpf(checkCpf);
           setFoundAgent({ name: existingAgent.name || '', team: existingAgent.team });
           setShowLogin(true);
+          requestAnimationFrame(() => setShowCpfCheck(false));
         }
+
       } else {
         // CPF não cadastrado - redirecionar para registro
         setShowCpfCheck(false);
