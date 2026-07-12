@@ -608,56 +608,58 @@ export function AnnouncementsManager() {
               />
             </div>
 
-            {/* Priority */}
-            <div className="space-y-2">
-              <Label className="text-slate-200">Prioridade</Label>
-              <Select
-                value={formData.priority}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
-              >
-                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  {priorityOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className="text-white hover:bg-slate-700">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${option.color}`} />
-                        {option.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Priority + Target — lado a lado para reduzir altura */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label className="text-slate-200">Prioridade</Label>
+                <Select
+                  value={formData.priority}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
+                >
+                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    {priorityOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value} className="text-white hover:bg-slate-700">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${option.color}`} />
+                          {option.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-slate-200">Destinatário</Label>
+                <Select
+                  value={formData.target_type}
+                  onValueChange={(value) => setFormData(prev => ({
+                    ...prev,
+                    target_type: value,
+                    target_unit_id: '',
+                    target_team: ''
+                  }))}
+                >
+                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    {targetOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value} className="text-white hover:bg-slate-700">
+                        <div className="flex items-center gap-2">
+                          <option.icon className="h-4 w-4 text-slate-400" />
+                          {option.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {/* Target Type */}
-            <div className="space-y-2">
-              <Label className="text-slate-200">Destinatário</Label>
-              <Select
-                value={formData.target_type}
-                onValueChange={(value) => setFormData(prev => ({ 
-                  ...prev, 
-                  target_type: value,
-                  target_unit_id: '',
-                  target_team: ''
-                }))}
-              >
-                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  {targetOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className="text-white hover:bg-slate-700">
-                      <div className="flex items-center gap-2">
-                        <option.icon className="h-4 w-4 text-slate-400" />
-                        {option.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
             {/* Unit Selector */}
             {formData.target_type === 'unit' && (
