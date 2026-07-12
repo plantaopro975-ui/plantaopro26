@@ -1190,6 +1190,23 @@ export default function Master() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
+                {lastSync && (
+                  <div className={`px-4 py-2 border-b border-border text-xs flex flex-wrap items-center gap-x-4 gap-y-1 ${lastSync.ok ? 'bg-emerald-500/5 text-emerald-300' : 'bg-destructive/10 text-destructive'}`}>
+                    <span className="font-semibold uppercase tracking-wider">
+                      {lastSync.ok ? '✓ Última sincronização' : '✗ Última tentativa falhou'}
+                    </span>
+                    <span>{format(new Date(lastSync.at), "dd/MM/yyyy 'às' HH:mm:ss", { locale: ptBR })}</span>
+                    {lastSync.ok ? (
+                      <>
+                        <span>• {lastSync.totalAuthUsers} indexados</span>
+                        <span>• {lastSync.profilesInserted} profile(s) criado(s)</span>
+                        <span>• {lastSync.rolesInserted} role(s) criada(s)</span>
+                      </>
+                    ) : (
+                      <span className="font-mono opacity-90">{lastSync.error}</span>
+                    )}
+                  </div>
+                )}
                 <div className="flex flex-col md:flex-row gap-2 p-4 border-b border-border">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
