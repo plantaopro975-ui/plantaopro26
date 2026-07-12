@@ -1106,9 +1106,10 @@ function TimeField({
             className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10.5px] font-mono uppercase text-amber-300"
           >
             <svg viewBox="0 0 16 16" className="h-2.5 w-2.5"><path d="M4 7V5a4 4 0 118 0v2h1v7H3V7h1zm2 0h4V5a2 2 0 10-4 0v2z" fill="currentColor"/></svg>
-            22:00→06:00
+            {lockedBadgeText || '22:00→06:00'}
           </span>
         )}
+
       </label>
       <div className={cn(
         'group relative flex items-center gap-1 rounded-md border bg-background pl-1.5 pr-1 h-11 transition-colors min-w-0 overflow-hidden',
