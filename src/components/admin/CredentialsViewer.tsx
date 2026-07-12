@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2 } from 'lucide-react';
-import { AdminResetPasswordDialog } from '@/components/agents/AdminResetPasswordDialog';
+import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { cn } from '@/lib/utils';
 
 interface Agent {
@@ -239,12 +239,13 @@ export function CredentialsViewer() {
                     </TableCell>
                     <TableCell className="text-right">
                       {agent.cpf && (
-                        <AdminResetPasswordDialog
-                          agentName={agent.name}
-                          agentCpf={agent.cpf}
+                        <AgentPasswordManager
+                          agent={{ id: agent.id, name: agent.name, cpf: agent.cpf, email: null }}
+                          onSuccess={fetchAgents}
                         />
                       )}
                     </TableCell>
+
                   </TableRow>
                 ))
               )}

@@ -452,21 +452,10 @@ export default function Master() {
     }
   };
   
-  // Toggle agent active status
-  const handleToggleAgentStatus = async (agent: Agent) => {
-    try {
-      await adminClient.toggleAgentStatus({ agentId: agent.id, isActive: !agent.is_active });
-      
-      toast({ 
-        title: 'Sucesso', 
-        description: `Agente ${!agent.is_active ? 'ativado' : 'desativado'} com sucesso.` 
-      });
-      fetchData();
-    } catch (error: any) {
-      console.error('Error toggling agent status:', error);
-      toast({ title: 'Erro', description: error.message || 'Não foi possível alterar status.', variant: 'destructive' });
-    }
-  };
+  // Toggle de status agora vive exclusivamente em AgentAccessControl (aba "Acesso"),
+  // que registra access_logs + envia notification. handleToggleAgentStatus foi removido
+  // para eliminar a duplicação e evitar comportamentos inconsistentes.
+
   
   // Expire all sessions for an agent
   const handleExpireSession = async (agent: Agent) => {
