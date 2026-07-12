@@ -143,23 +143,23 @@ export function BirthDatePicker({ value, onChange, className, disabled }: BirthD
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-start text-left font-normal h-12 bg-slate-900/50 border-slate-600 hover:bg-slate-800/70 hover:border-slate-500",
+            "w-full justify-start text-left font-normal h-12 bg-slate-900/50 border-slate-600 hover:bg-slate-800/70 hover:border-slate-500 px-3 gap-2 min-w-0",
             !value && "text-slate-500",
             className
           )}
         >
-          <Cake className="mr-3 h-5 w-5 text-pink-500" />
+          <Cake className="h-5 w-5 text-pink-500 shrink-0" />
           {value && isValid(value) ? (
-            <div className="flex items-center justify-between w-full">
-              <span className="text-white font-medium">
+            <div className="flex items-center justify-between w-full min-w-0 gap-2">
+              <span className="text-white font-medium truncate text-sm sm:text-base">
                 {format(value, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
               </span>
-              <span className="ml-3 px-2.5 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 text-sm font-bold">
+              <span className="shrink-0 px-2 py-0.5 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 text-xs font-bold">
                 {calculateAge(value)} anos
               </span>
             </div>
           ) : (
-            <span>Selecione sua data de nascimento</span>
+            <span className="truncate text-sm sm:text-base">Selecione a data de nascimento</span>
           )}
         </Button>
       </PopoverTrigger>
