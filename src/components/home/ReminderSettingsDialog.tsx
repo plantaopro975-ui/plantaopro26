@@ -46,7 +46,7 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="tactical-cards max-w-md">
+      <DialogContent className="rm-reminder tactical-cards max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-3">
             <div className="relative">
