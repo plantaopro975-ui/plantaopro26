@@ -15,7 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2 } from 'lucide-react';
+import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2, RefreshCw } from 'lucide-react';
 import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { cn } from '@/lib/utils';
 
