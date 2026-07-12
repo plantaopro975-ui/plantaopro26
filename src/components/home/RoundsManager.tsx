@@ -3648,7 +3648,25 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 {/* Validation panel */}
                 {issues.length > 0 && (
-                  <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+                  <div
+                    ref={validationPanelRef}
+                    tabIndex={-1}
+                    className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 scroll-mt-20 transition-shadow"
+                  >
+                    <style>{`
+                      .rm-validation-flash {
+                        animation: rm-validation-flash 1.2s ease-out;
+                        box-shadow: 0 0 0 3px hsl(var(--destructive) / 0.55), 0 0 24px hsl(var(--destructive) / 0.35);
+                      }
+                      @keyframes rm-validation-flash {
+                        0%, 100% { transform: translateX(0); }
+                        15% { transform: translateX(-6px); }
+                        30% { transform: translateX(6px); }
+                        45% { transform: translateX(-4px); }
+                        60% { transform: translateX(4px); }
+                        75% { transform: translateX(-2px); }
+                      }
+                    `}</style>
                     <div className="flex items-center gap-2 font-sans text-[12.5px] uppercase tracking-wider text-destructive mb-1">
                       <AlertTriangle className="h-3.5 w-3.5" /> Corrija os itens abaixo
                     </div>
@@ -3659,13 +3677,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           <li key={k}>
                             {iss.message}
                             {isNightCross && (
-                              <div className="mt-1.5 ml-[-1rem] list-none">
+                              <div className="mt-1.5 ml-[-1rem] list-none flex flex-wrap gap-1.5">
                                 <button
                                   type="button"
                                   onClick={() => setEndTime('21:55')}
                                   className="inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/20 hover:bg-destructive/30 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-destructive transition-colors"
                                 >
-                                  Corrigir término para 21:55
+                                  Corrigir para 21:55
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setEndTime('21:59')}
+                                  className="inline-flex items-center gap-1 rounded-md border border-destructive/60 bg-destructive/20 hover:bg-destructive/30 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-destructive transition-colors"
+                                >
+                                  Corrigir para 21:59
                                 </button>
                               </div>
                             )}
