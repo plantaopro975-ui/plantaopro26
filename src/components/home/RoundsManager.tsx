@@ -1465,6 +1465,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [rounding, setRounding] = useState<Rounding>('distribute');
   const [agents, setAgents] = useState<string[]>(['Agente 1', 'Agente 2', 'Agente 3']);
 
+  /* Ref para focar/scrollar até o painel de validação vermelho */
+  const validationPanelRef = useRef<HTMLDivElement | null>(null);
+  const focusValidationPanel = () => {
+    const el = validationPanelRef.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('rm-validation-flash');
+    window.setTimeout(() => el.classList.remove('rm-validation-flash'), 1200);
+  };
+
   /* templates */
   const [templates, setTemplates] = useState<Template[]>([]);
   const [tplName, setTplName] = useState('');
