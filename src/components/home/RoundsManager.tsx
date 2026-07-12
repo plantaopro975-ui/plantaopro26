@@ -3492,10 +3492,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 {/* Times / interval */}
                 {nightLocked && (
+                  <TooltipProvider delayDuration={200}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                   <div
                     data-testid="night-shift-banner"
                     className={cn(
-                      'rounded-md border px-2.5 py-1.5 text-[12px]',
+                      'rounded-md border px-2.5 py-1.5 text-[12px] cursor-help',
                       overrideActive
                         ? 'border-red-500/40 bg-red-500/5 text-red-200/90'
                         : 'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
