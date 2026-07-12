@@ -1667,8 +1667,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const now = new Date(nowServer());
       setServerClock(now);
       setNightWindow(getNightWindow(now));
-      const night = isNightShift(now);
+      const actualNight = isNightShift(now);
+      const preNight = isPreNightWindow(now);
+      const night = actualNight || preNight;
       setNightLocked(night);
+      setPreNightScheduled(preNight && !actualNight);
       if (night && !overrideActive) {
         setStartTime(NIGHT_START);
         setEndTime(NIGHT_END);
@@ -1678,6 +1681,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         setOverrideActive(false);
       }
     };
+
     // Sync com o servidor apenas na abertura e a cada 60s, para não
     // sobrecarregar a RPC. O relógio continua avançando localmente a cada
     // segundo com o offset em cache, então mesmo que o dispositivo esteja
