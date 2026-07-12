@@ -679,7 +679,10 @@ export default function Master() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6 sm:grid-cols-13 h-auto p-1 gap-0.5 bg-slate-900/60 border border-slate-800/80 [&>button]:h-8 [&>button]:px-1.5 [&>button]:text-[11px] [&>button]:font-medium [&>button]:tracking-[0.06em] [&>button]:uppercase">
+          <TabsList
+            className="grid w-full grid-cols-6 h-auto p-1 gap-0.5 bg-slate-900/60 border border-slate-800/80 [&>button]:h-8 [&>button]:px-1.5 [&>button]:text-[11px] [&>button]:font-medium [&>button]:tracking-[0.06em] [&>button]:uppercase sm:!grid-cols-none"
+            style={{ ['--sm-cols' as any]: 13 }}
+          >
             <TabsTrigger value="approvals" className="relative">
               <Icon3D name="shield" size={14} className="sm:hidden" />
               <span className="hidden sm:inline">Aprovações</span>
