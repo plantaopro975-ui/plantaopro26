@@ -119,13 +119,14 @@ export function SingleTabGuard({ children }: { children: React.ReactNode }) {
     }
 
     // 3) Decisão após breve janela de resposta.
+    //    IMPORTANTE: só bloqueamos se outra aba responder AO VIVO ("pong")
+    //    pelo BroadcastChannel. O heartbeat do localStorage é apenas dica —
+    //    ele pode ficar "preso" quando a aba é fechada de forma abrupta
+    //    (crash, mobile em background, kill do SO), gerando falsos positivos.
+    void heartbeatOwner;
     decideTimeout = setTimeout(() => {
       if (disposed) return;
-      if (heartbeatOwner) {
-        markBlocked();
-      } else {
-        markOwner();
-      }
+      markOwner();
     }, 500);
 
     // 4) Ao fechar a aba dona, limpa o heartbeat para liberar próxima aba.
