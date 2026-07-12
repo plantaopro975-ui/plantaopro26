@@ -569,7 +569,7 @@ export function AnnouncementsManager() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-slate-900 border-slate-700">
+        <DialogContent className="sm:max-w-[440px] max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700 p-4">
           <DialogHeader>
             <DialogTitle className="text-white flex items-center gap-2">
               <Megaphone className="h-5 w-5 text-amber-400" />
