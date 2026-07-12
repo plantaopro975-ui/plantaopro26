@@ -57,7 +57,16 @@ export function CredentialsViewer() {
     } catch (err: any) {
       const msg = err?.message || 'Não foi possível carregar a lista de agentes.';
       console.error('Error fetching agents:', err);
-      setError(msg);
+      let rawStr: string | undefined;
+      if (err instanceof AdminClientError && err.raw !== undefined) {
+        try {
+          rawStr = typeof err.raw === 'string' ? err.raw : JSON.stringify(err.raw, null, 2);
+        } catch {
+          rawStr = String(err.raw);
+        }
+      }
+      const status = err instanceof AdminClientError ? err.status : undefined;
+      setError({ message: msg, status, raw: rawStr });
       toast({
         title: 'Erro ao carregar agentes',
         description: msg,
