@@ -30,7 +30,8 @@ type AdminAction =
   | 'reject_agent'
   | 'get_pending_agents'
   | 'force_logout'
-  | 'list_dashboard_data';
+  | 'list_dashboard_data'
+  | 'sync_users';
 
 /**
  * Unified admin client that works for both Master (token-based) and Admin (session-based)
