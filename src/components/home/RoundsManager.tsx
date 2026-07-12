@@ -133,7 +133,12 @@ const TEAM_PRESETS = [
 ] as const;
 
 type TeamKey = typeof TEAM_PRESETS[number]['key'];
-type Mode = 'split' | 'interval' | 'proportional';
+type Mode = 'split' | 'interval';
+// Sanitiza qualquer valor legado ('proportional', string desconhecida, null) que
+// possa vir do localStorage, de uma template antiga ou de uma linha antiga em
+// round_sessions. É a fonte única de verdade para hidratação.
+const sanitizeMode = (m: unknown): Mode => (m === 'interval' ? 'interval' : 'split');
+
 
 /** Cadência-base padrão (regra de ouro: 1 ronda a cada X minutos). */
 const DEFAULT_CADENCE_MIN = 30;
@@ -1196,7 +1201,7 @@ function validate(input: {
   const s = toMinutes(input.startTime);
   if (s === null) issues.push({ field: 'start', message: 'Horário de início inválido.' });
 
-  if (input.mode === 'split' || input.mode === 'proportional') {
+  if (input.mode === 'split') {
     const e = toMinutes(input.endTime);
     if (e === null) issues.push({ field: 'end', message: 'Horário de término inválido.' });
     if (s !== null && e !== null) {
@@ -1512,7 +1517,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const t = templates.find((x) => x.id === id);
     if (!t) return;
     setTeam(t.team);
-    setMode(t.mode);
+    setMode(sanitizeMode(t.mode));
     setStartTime(t.startTime);
     setEndTime(t.endTime);
     setIntervalMin(t.intervalMin);
@@ -1827,8 +1832,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         message: 'Transição de turno em andamento (22:00 ou 06:00 ±5 min). Aguarde ~5 min para evitar divisões inconsistentes.',
       });
     }
-    // Split/proporcional cruzando a fronteira do noturno (22:00) durante o dia
-    if (!nightEffectivelyLocked && (mode === 'split' || mode === 'proportional')) {
+    // Split cruzando a fronteira do noturno (22:00) durante o dia
+    if (!nightEffectivelyLocked && mode === 'split') {
+
       const s = toMinutes(startTime);
       const e = toMinutes(endTime);
       if (s !== null && e !== null && s !== e) {
@@ -1900,21 +1906,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const s = effectiveStartMin;
     const startSec = Math.round(s * 60);
 
-    // Total em minutos da janela (para split/proporcional). Interval usa outra base.
+    // Total em minutos da janela (usado apenas por split). Interval usa outra base.
     let windowTotalMin = 0;
-    if (mode === 'split' || mode === 'proportional') {
+    if (mode === 'split') {
       const e = toMinutes(endTime)!;
       let totalMin = e - s;
       if (totalMin <= 0) totalMin += 24 * 60; // suporta virada de meia-noite
       windowTotalMin = totalMin;
     }
 
-    // === MODO PROPORCIONAL ===
-    // Expande agentes em N rondas cíclicas baseado na cadência-base.
-    // Regra: nRondas = round(totalMin / cadenceMin), piso = nAgentes.
-    const effectiveAgents = mode === 'proportional'
-      ? expandProportionalAgents(agents, windowTotalMin, cadenceMin)
-      : agents;
+    const effectiveAgents = agents;
     const n = effectiveAgents.length;
     if (n === 0) return null;
 
@@ -1926,12 +1927,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       totalSec = Math.max(1, Math.round(windowTotalMin * 60));
     }
 
-    // No turno noturno travado, sempre usamos distribuição EXATA em segundos.
-    // Modo proporcional também usa 'exact' para fechar exatamente no endTime.
+    // No turno noturno travado usamos distribuição EXATA em segundos.
     const effRounding: Rounding =
-      mode === 'proportional' ? 'exact'
-      : (nightEffectivelyLocked && mode === 'split') ? 'exact'
-      : rounding;
+      (nightEffectivelyLocked && mode === 'split') ? 'exact' : rounding;
+
 
     const slotsSec: number[] = new Array(n).fill(0);
     if (mode === 'interval') {
@@ -1990,13 +1989,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       startMin: s,
       hasRemainder: hasSeconds,
       effectiveRounding: effRounding,
-      // Metadados do modo proporcional (usados na UI)
-      proportional: mode === 'proportional' ? {
-        cadenceMin,
-        totalRounds: n,
-        agentsCount: agents.length,
-        roundsPerAgent: n / Math.max(1, agents.length),
-      } : null,
+      // Modo proporcional foi descontinuado — mantemos o campo como null
+      // para compatibilidade com consumidores existentes.
+      proportional: null as null,
+
     };
   }, [issues, mode, startTime, endTime, intervalMin, cadenceMin, rounding, agents, effectiveStartMin, nightEffectivelyLocked]);
 
@@ -2546,7 +2542,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       notified_indices?: number[] | null; is_active?: boolean;
     }) => {
       setTeam(data.team as TeamKey);
-      setMode(data.mode as Mode);
+      setMode(sanitizeMode(data.mode));
       setStartTime(data.start_time);
       setEndTime(data.end_time);
       setIntervalMin(data.interval_min);
@@ -3475,35 +3471,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </div>
                 )}
 
+                {/* Modo Proporcional descontinuado — bloco de Cadência removido. */}
 
-                {mode === 'proportional' && !nightEffectivelyLocked && (
-                  <div className="rounded-md border border-primary/30 bg-primary/5 px-2 py-1.5 flex items-center gap-2 flex-wrap">
-                    <label htmlFor="rm-cadence" className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1">
-                      <Timer className="h-3 w-3" /> Cadência (min)
-                    </label>
-                    <Input
-                      id="rm-cadence"
-                      type="number"
-                      min={5}
-                      max={240}
-                      step={5}
-                      value={cadenceMin}
-                      disabled={configLocked}
-                      onChange={(e) => setCadenceMin(Math.max(5, Math.min(240, +e.target.value || DEFAULT_CADENCE_MIN)))}
-                      onKeyDown={(e) => e.key === 'e' && e.preventDefault()}
-                      className={cn('w-16 h-7 font-mono tabular-nums text-center bg-background border-border', configLocked && 'opacity-60 cursor-not-allowed')}
-                      autoComplete="off"
-                      title={`1 ronda a cada ${cadenceMin} min · distribuído automaticamente entre os agentes`}
-                    />
-                    {schedule?.proportional ? (
-                      <span className="ml-auto text-[10.5px] font-mono tabular-nums text-primary">
-                        {schedule.proportional.totalRounds}× · {(schedule.total / schedule.proportional.totalRounds).toFixed(1)}min · {schedule.proportional.roundsPerAgent.toFixed(1)}/agente
-                      </span>
-                    ) : (
-                      <span className="ml-auto text-[10.5px] text-muted-foreground/80">1 ronda / {cadenceMin} min</span>
-                    )}
-                  </div>
-                )}
+
 
 
 
@@ -3629,7 +3599,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     )}
                   </button>
 
-                ) : (mode === 'split' || mode === 'proportional') ? (
+                ) : mode === 'split' ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
