@@ -667,7 +667,7 @@ export default function Master() {
           <TabsList className="grid w-full grid-cols-6 sm:[grid-template-columns:repeat(13,minmax(0,1fr))] h-auto p-1 gap-0.5 bg-slate-900/60 border border-slate-800/80 [&>button]:h-8 [&>button]:px-1.5 [&>button]:text-[11px] [&>button]:font-medium [&>button]:tracking-[0.06em] [&>button]:uppercase">
             <TabsTrigger value="approvals" className="relative">
               <Icon3D name="shield" size={14} className="sm:hidden" />
-              <span className="hidden sm:inline">Aprovações</span>
+              <span className="hidden sm:inline">Cadastros</span>
               {stats.pendingApprovals > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-amber-500 text-[9px] font-mono text-white flex items-center justify-center animate-pulse">
                   {stats.pendingApprovals}
