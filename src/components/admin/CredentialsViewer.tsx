@@ -572,6 +572,30 @@ export function CredentialsViewer() {
             </TableBody>
           </Table>
         </ScrollArea>
+
+        {filteredAgents.length > pageSize && (
+          <div className="flex items-center justify-between gap-2 pt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Anterior
+            </Button>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredAgents.length)} de {filteredAgents.length}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Próxima
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
