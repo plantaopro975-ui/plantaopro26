@@ -1002,19 +1002,9 @@ export default function Master() {
                               >
                                 <Icon3DAction name="message" alt="Enviar mensagem" />
                               </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleToggleAgentStatus(agent)}
-                                className={cn(
-                                  agent.is_active 
-                                    ? 'text-red-500 hover:text-red-400 hover:bg-red-500/10' 
-                                    : 'text-green-500 hover:text-green-400 hover:bg-green-500/10'
-                                )}
-                                title={agent.is_active ? 'Desativar' : 'Ativar'}
-                              >
-                              <Icon3DAction name={agent.is_active ? 'lock' : 'unlock'} alt={agent.is_active ? 'Desativar' : 'Ativar'} />
-                              </Button>
+                              {/* Ativar/Desativar centralizado na aba "Acesso" (AgentAccessControl),
+                                  que grava access_logs e envia notificações. Este toggle foi removido
+                                  para evitar duas trilhas de código com efeitos colaterais diferentes. */}
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -1027,12 +1017,9 @@ export default function Master() {
                               >
                                 <Icon3DAction name="edit" alt="Editar" />
                               </Button>
-                              {agent.cpf && (
-                                <AdminResetPasswordDialog 
-                                  agentName={agent.name}
-                                  agentCpf={agent.cpf}
-                                />
-                              )}
+                              {/* Reset de senha unificado no AgentPasswordManager (adminClient.resetPassword).
+                                  O AdminResetPasswordDialog foi removido do projeto. */}
+
                               <DeleteAgentDialog
                                 agentId={agent.id}
                                 agentName={agent.name}
