@@ -15,7 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2 } from 'lucide-react';
+import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2, RefreshCw } from 'lucide-react';
 import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { cn } from '@/lib/utils';
 
@@ -126,15 +126,30 @@ export function CredentialsViewer() {
   return (
     <Card className="glass glass-border shadow-card">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-500/10 border border-purple-500/40">
-            <Key className="h-5 w-5 text-purple-400" />
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-500/10 border border-purple-500/40">
+                <Key className="h-5 w-5 text-purple-400" />
+              </div>
+              Credenciais dos Agentes
+            </CardTitle>
+            <CardDescription>
+              Visualize e gerencie as credenciais de acesso de todos os agentes
+            </CardDescription>
           </div>
-          Credenciais dos Agentes
-        </CardTitle>
-        <CardDescription>
-          Visualize e gerencie as credenciais de acesso de todos os agentes
-        </CardDescription>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchAgents}
+            disabled={loading}
+            className="gap-2 shrink-0"
+            title="Atualizar lista de agentes"
+          >
+            <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+            {loading ? 'Atualizando...' : 'Atualizar'}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
