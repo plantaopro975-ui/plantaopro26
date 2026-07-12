@@ -32,6 +32,7 @@ export function CredentialsViewer() {
   const { toast } = useToast();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCpfs, setShowCpfs] = useState<Record<string, boolean>>({});
 
@@ -42,6 +43,7 @@ export function CredentialsViewer() {
   const fetchAgents = async () => {
     try {
       setLoading(true);
+      setError(null);
       const dash = await adminClient.listDashboardData();
       const mapped: Agent[] = (dash.agents || []).map((a: any) => ({
         id: a.id,
@@ -52,11 +54,13 @@ export function CredentialsViewer() {
         unit: a.unit ? { name: a.unit.name, municipality: a.unit.municipality } : null,
       }));
       setAgents(mapped);
-    } catch (error: any) {
-      console.error('Error fetching agents:', error);
+    } catch (err: any) {
+      const msg = err?.message || 'Não foi possível carregar a lista de agentes.';
+      console.error('Error fetching agents:', err);
+      setError(msg);
       toast({
         title: 'Erro ao carregar agentes',
-        description: error?.message || 'Não foi possível carregar a lista de agentes.',
+        description: msg,
         variant: 'destructive',
       });
     } finally {
@@ -124,6 +128,20 @@ export function CredentialsViewer() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {error && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="font-semibold mb-1">Falha ao carregar agentes via edge function</div>
+            <div className="font-mono text-xs opacity-90 break-all">{error}</div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={fetchAgents}
+            >
+              Tentar novamente
+            </Button>
+          </div>
+        )}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
