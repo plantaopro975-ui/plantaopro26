@@ -1832,8 +1832,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
         message: 'Transição de turno em andamento (22:00 ou 06:00 ±5 min). Aguarde ~5 min para evitar divisões inconsistentes.',
       });
     }
-    // Split/proporcional cruzando a fronteira do noturno (22:00) durante o dia
-    if (!nightEffectivelyLocked && (mode === 'split' || mode === 'proportional')) {
+    // Split cruzando a fronteira do noturno (22:00) durante o dia
+    if (!nightEffectivelyLocked && mode === 'split') {
+
       const s = toMinutes(startTime);
       const e = toMinutes(endTime);
       if (s !== null && e !== null && s !== e) {
