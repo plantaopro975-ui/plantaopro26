@@ -715,12 +715,14 @@ export default function Master() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Pending Approvals Tab */}
+          {/* Cadastros & Aprovações — painel unificado (pendentes + recentes) */}
           <TabsContent value="approvals" className="space-y-3 mt-3">
-            <PendingApprovalsManager onApprovalChange={fetchData} />
+            <Suspense fallback={<PanelSkeleton rows={4} />}>
+              <CadastrosAprovacoesPanel onChange={fetchData} />
+            </Suspense>
           </TabsContent>
 
-          {/* Audit — Recém-cadastrados + Auditoria de Acessos */}
+          {/* Audit — Monitor de conexão + Auditoria de acessos (cadastros movidos para "Aprovações") */}
           <TabsContent value="audit" className="space-y-3 mt-3">
             <Suspense fallback={<PanelSkeleton rows={4} />}>
               <AgentsConnectionMonitor />
@@ -728,10 +730,8 @@ export default function Master() {
             <Suspense fallback={<PanelSkeleton rows={4} />}>
               <AccessAuditPanel />
             </Suspense>
-            <Suspense fallback={<PanelSkeleton rows={4} />}>
-              <RecentRegistrationsAudit daysWindow={30} onChange={fetchData} />
-            </Suspense>
           </TabsContent>
+
 
 
           {/* Overview Tab - Units */}
