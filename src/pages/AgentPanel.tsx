@@ -189,6 +189,9 @@ export default function AgentPanel() {
 
   // Idle-time prefetch: warm up the heaviest lazy chunks so switching to
   // any tab is instant. Uses requestIdleCallback with a setTimeout fallback.
+  // Also pre-mounts all tabs (hidden) so clicks never trigger a Suspense
+  // fallback — the DOM já está pronto, apenas alterna visibilidade.
+  const ALL_TAB_KEYS = ['equipe', 'plantoes', 'bh', 'folgas', 'agenda', 'permutas', 'rondas', 'chat', 'config'] as const;
   useEffect(() => {
     const preloadNextTabs = () => {
       // Fire and forget — Vite dedupes and browser cache handles re-entry.
@@ -203,7 +206,7 @@ export default function AgentPanel() {
       void import('@/components/agent-panel/BHTracker');
       void import('@/components/agent-panel/BHEvolutionChart');
       void import('@/components/agent-panel/BHHistoryTracker');
-      
+
       void import('@/components/agent-panel/SwapRequestsCard');
       void import('@/components/agent-panel/NotificationsAndAlertsCard');
       void import('@/components/agent-panel/AgentSettingsCard');
@@ -215,16 +218,47 @@ export default function AgentPanel() {
       void import('@/components/DiagnosticReportButton');
       void import('@/components/home/RoundsManager');
     };
+
+    // Mount everything immediately (hidden via `data-[state=inactive]:hidden`)
+    // so any subsequent tab click is instant — no chunk fetch, no fallback.
+    const mountAllTabs = () => {
+      setMountedTabs((current) => {
+        if (ALL_TAB_KEYS.every((k) => current.has(k))) return current;
+        return new Set(ALL_TAB_KEYS);
+      });
+    };
+
     const ric = (window as any).requestIdleCallback as
       | ((cb: () => void, opts?: { timeout: number }) => number)
       | undefined;
     if (ric) {
-      const id = ric(preloadNextTabs, { timeout: 800 });
-      return () => (window as any).cancelIdleCallback?.(id);
+      const id1 = ric(preloadNextTabs, { timeout: 400 });
+      const id2 = ric(mountAllTabs, { timeout: 1200 });
+      return () => {
+        (window as any).cancelIdleCallback?.(id1);
+        (window as any).cancelIdleCallback?.(id2);
+      };
     }
-    const t = window.setTimeout(preloadNextTabs, 250);
-    return () => window.clearTimeout(t);
+    const t1 = window.setTimeout(preloadNextTabs, 120);
+    const t2 = window.setTimeout(mountAllTabs, 400);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
   }, []);
+
+  // Hover/pointerdown prefetch: se o usuário aponta uma aba antes do
+  // idle callback disparar, montamos aquela aba imediatamente para
+  // eliminar qualquer flash de loading.
+  const handleTabPointerEnter = useCallback((value: string) => {
+    setMountedTabs((current) => {
+      if (current.has(value)) return current;
+      const next = new Set(current);
+      next.add(value);
+      return next;
+    });
+  }, []);
+
 
 
   // Shift notifications - checks for upcoming shifts and sends reminders
