@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { RestrictedAccessDialog } from '@/components/auth/RestrictedAccessDialog';
-import { BrasaoSentinela } from '@/components/BrasaoSentinela';
+import plantaoproLogo from '@/assets/brand/plantaopro-logo.png';
 
 import {
   Users,
@@ -70,7 +70,7 @@ export const Sidebar = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>
         <div className="px-5 pt-6 pb-4 border-b border-sidebar-border/60">
           <Link to="/dashboard" className="flex items-center gap-3">
             <div className="relative w-11 h-11 shrink-0 flex items-center justify-center">
-              <BrasaoSentinela size="100%" />
+              <img src={plantaoproLogo} alt="PlantãoPro" className="w-full h-full object-contain" />
             </div>
 
             <div className="min-w-0">
