@@ -4194,6 +4194,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       <TeamConfirmDialog
                         open={teamConfirmOpen}
+                        team={(pendingTeam ?? team) as TeamKey}
                         color={pendingTeam ? getRotatedTeamColor(pendingTeam, colorRotation) : teamColor}
                         teamLabel={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.label ?? pendingTeam) : team}
                         agentCount={agents.filter((a) => a.trim()).length}
@@ -4205,6 +4206,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           setPendingTeam(null);
                         }}
                       />
+
 
                       <PreNightScheduleDialog
                         open={preNightOpen}
