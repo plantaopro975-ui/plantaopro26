@@ -2126,6 +2126,96 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   .rm-dialog { font-weight: 450; }
 }
 
+/* ============================================================
+   Gestor de Rondas — modo noturno de alto contraste.
+   Reforça foco/hover/seleção, aumenta levemente ícones/chips/
+   badges e melhora line-height, sem alterar a largura do modal.
+   ============================================================ */
+.rm-dialog {
+  /* Texto mais legível à noite (mantém tokens semânticos) */
+  color: hsl(0 0% 96%);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+.rm-dialog p,
+.rm-dialog li,
+.rm-dialog label,
+.rm-dialog span:not([class*="font-mono"]) {
+  line-height: 1.5;
+}
+.rm-dialog .text-muted-foreground {
+  color: hsl(0 0% 78%) !important;
+}
+
+/* Ícones lucide/inline SVGs — leve upscale (sem mudar largura do modal) */
+.rm-dialog svg:not([class*="rm-no-scale"]) {
+  transform: scale(1.06);
+  transform-origin: center;
+}
+.rm-dialog [class*="lucide"] {
+  stroke-width: 2.1;
+}
+
+/* Chips e badges — leve upscale + contraste */
+.rm-dialog .rm-chip,
+.rm-dialog [data-slot="badge"],
+.rm-dialog .badge {
+  padding: 0.3rem 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.rm-dialog .rm-chip { min-height: 2.15rem; }
+
+/* ---------- Foco (teclado): anel accent bem visível ---------- */
+.rm-dialog :is(button, [role="button"], a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--rm-accent, hsl(var(--primary))) !important;
+  outline-offset: 2px !important;
+  box-shadow:
+    0 0 0 4px color-mix(in oklab, var(--rm-accent, hsl(var(--primary))) 28%, transparent),
+    0 0 14px 2px var(--rm-accent-glow, transparent) !important;
+  border-radius: 0.4rem;
+  z-index: 1;
+}
+
+/* ---------- Hover: destaque sutil em botões/itens interativos ---------- */
+.rm-dialog button:not(:disabled):hover,
+.rm-dialog [role="button"]:not([aria-disabled="true"]):hover,
+.rm-dialog .rm-chip:not([disabled]):hover {
+  background-color: color-mix(in oklab, var(--rm-accent, hsl(var(--primary))) 14%, transparent);
+  border-color: color-mix(in oklab, var(--rm-accent, hsl(var(--primary))) 55%, transparent) !important;
+  color: hsl(0 0% 100%);
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+/* ---------- Selecionado / Ativo / Pressionado ---------- */
+.rm-dialog [aria-pressed="true"],
+.rm-dialog [aria-selected="true"],
+.rm-dialog [data-state="on"],
+.rm-dialog [data-state="active"],
+.rm-dialog [data-state="checked"],
+.rm-dialog .rm-chip[data-active="true"],
+.rm-dialog .rm-chip--active {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--rm-accent, hsl(var(--primary))) 24%, transparent),
+    color-mix(in oklab, var(--rm-accent, hsl(var(--primary))) 12%, transparent)) !important;
+  border-color: var(--rm-accent, hsl(var(--primary))) !important;
+  color: hsl(0 0% 100%) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--rm-accent, hsl(var(--primary))) 60%, transparent),
+    0 0 12px -2px var(--rm-accent-glow, transparent) !important;
+}
+
+/* Disabled — mantém legível sem virar “fantasma” */
+.rm-dialog :is(button, [role="button"])[disabled],
+.rm-dialog :is(button, [role="button"])[aria-disabled="true"] {
+  opacity: 0.72;
+}
+
+/* Respeita preferências de movimento */
+@media (prefers-reduced-motion: reduce) {
+  .rm-dialog svg:not([class*="rm-no-scale"]) { transform: none; }
+}
+
 /* =========================================================
  * TYPOCLEAR — Tipografia limpa, legível e profissional
  * Aplicada em .home-typo (homepage) e .typoclear (painel do agente
