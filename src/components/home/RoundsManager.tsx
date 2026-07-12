@@ -3590,16 +3590,38 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   </div>
                 )}
                 {nightEffectivelyLocked ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-md border border-border/90 bg-card px-2 py-1.5">
-                      <div className="text-[10.5px] uppercase tracking-wide text-muted-foreground">Início</div>
-                      <div className="font-mono text-sm text-foreground">22:00</div>
+                  <button
+                    type="button"
+                    onClick={() => toast({
+                      title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
+                      description: preNightScheduled
+                        ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
+                        : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                    })}
+                    className="w-full text-left cursor-not-allowed"
+                    aria-label="Horários travados"
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="rounded-md border border-amber-500/40 bg-amber-500/5 px-2 py-1.5">
+                        <div className="text-[10.5px] uppercase tracking-wide text-amber-300/80 flex items-center gap-1">
+                          Início {preNightScheduled && <span className="font-mono text-[8.5px]">· programado</span>}
+                        </div>
+                        <div className="font-mono text-sm text-foreground">22:00</div>
+                      </div>
+                      <div className="rounded-md border border-amber-500/40 bg-amber-500/5 px-2 py-1.5">
+                        <div className="text-[10.5px] uppercase tracking-wide text-amber-300/80 flex items-center gap-1">
+                          Final {preNightScheduled && <span className="font-mono text-[8.5px]">· programado</span>}
+                        </div>
+                        <div className="font-mono text-sm text-foreground">06:00</div>
+                      </div>
                     </div>
-                    <div className="rounded-md border border-border/90 bg-card px-2 py-1.5">
-                      <div className="text-[10.5px] uppercase tracking-wide text-muted-foreground">Final</div>
-                      <div className="font-mono text-sm text-foreground">06:00</div>
-                    </div>
-                  </div>
+                    {preNightScheduled && (
+                      <p className="mt-1 text-[10.5px] leading-snug text-amber-200/80">
+                        🌙 Turno noturno programado automaticamente. Só é possível alterar a <b>quantidade de agentes</b>.
+                      </p>
+                    )}
+                  </button>
+
                 ) : (mode === 'split' || mode === 'proportional') ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
