@@ -88,7 +88,7 @@ export function RoundsHistoryCard({ agentId }: Props) {
       const to = from + PAGE_SIZE - 1;
       const { data, error, count } = await supabase
         .from('activity_logs')
-        .select('id, action, created_at, details, agent_name', { count: 'exact' })
+        .select('id, action, created_at, details, agent_name', { count: 'estimated' })
         .eq('agent_id', agentId)
         .eq('resource_type', 'rounds')
         .order('created_at', { ascending: false })

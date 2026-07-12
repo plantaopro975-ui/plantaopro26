@@ -146,10 +146,17 @@ export function useShiftsCache(agentId: string | null) {
     // Try to fetch from network first
     if (isOnline) {
       try {
+        // Bound the fetch to a useful window (last 90d + next 6 months) and
+        // avoid `SELECT *` to reduce payload/latency on high-tenure agents.
+        const today = new Date();
+        const from = new Date(today); from.setDate(from.getDate() - 90);
+        const to = new Date(today); to.setMonth(to.getMonth() + 6);
         const { data, error } = await supabase
           .from('agent_shifts')
-          .select('*')
+          .select('id, shift_date, start_time, end_time, shift_type, status, notes, compensation_date, is_vacation, completed_at')
           .eq('agent_id', agentId)
+          .gte('shift_date', from.toISOString().slice(0, 10))
+          .lte('shift_date', to.toISOString().slice(0, 10))
           .order('shift_date', { ascending: false });
 
         if (!error && data) {

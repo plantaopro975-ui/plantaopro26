@@ -102,13 +102,31 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
     hasFetched.current = true;
     agentIdRef.current = agentId;
 
+    // Janela de consulta: 90 dias no passado + 6 meses no futuro. Cobre BH
+    // recente e agenda futura sem trazer o histórico inteiro do agente.
+    const SHIFT_COLS = 'id, shift_date, start_time, end_time, shift_type, status, notes, compensation_date, is_vacation, completed_at';
+    const buildShiftRange = () => {
+      const today = new Date();
+      const from = new Date(today);
+      from.setDate(from.getDate() - 90);
+      const to = new Date(today);
+      to.setMonth(to.getMonth() + 6);
+      return {
+        from: from.toISOString().slice(0, 10),
+        to: to.toISOString().slice(0, 10),
+      };
+    };
+
     const fetchShifts = async () => {
       setIsLoading(true);
       try {
+        const range = buildShiftRange();
         const { data, error } = await supabase
           .from('agent_shifts')
-          .select('*')
+          .select(SHIFT_COLS)
           .eq('agent_id', agentId)
+          .gte('shift_date', range.from)
+          .lte('shift_date', range.to)
           .order('shift_date', { ascending: true });
 
         if (!error && data) {
@@ -139,10 +157,15 @@ export function ShiftScheduleCard({ agentId }: ShiftScheduleCardProps) {
 
   const refetchShifts = async () => {
     try {
+      const today = new Date();
+      const from = new Date(today); from.setDate(from.getDate() - 90);
+      const to = new Date(today); to.setMonth(to.getMonth() + 6);
       const { data, error } = await supabase
         .from('agent_shifts')
-        .select('*')
+        .select('id, shift_date, start_time, end_time, shift_type, status, notes, compensation_date, is_vacation, completed_at')
         .eq('agent_id', agentId)
+        .gte('shift_date', from.toISOString().slice(0, 10))
+        .lte('shift_date', to.toISOString().slice(0, 10))
         .order('shift_date', { ascending: true });
 
       if (!error && data) {
