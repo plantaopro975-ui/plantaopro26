@@ -617,7 +617,7 @@ export default function Master() {
         </div>
 
         {/* System Stats — cada card abre a aba correspondente (HUD) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-2.5">
           {([
             { key: 'users',      label: 'Usuários',        value: stats.totalUsers,      icon3d: 'team'     as Icon3DName, tint: 'primary',   tab: 'users' },
             { key: 'agents',     label: 'Agentes',         value: stats.totalAgents,     icon3d: 'team'     as Icon3DName, tint: 'emerald',   tab: 'agents' },
