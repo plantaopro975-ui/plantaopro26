@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { pushDiagEvent } from "@/lib/diagLog";
 import splashAsset from "@/assets/brand/plantaopro-splash.webp.asset.json";
+import logoUrl from "@/assets/brand/plantaopro-logo.png";
 
 /**
  * Splash — v10 "Institucional Cinematográfico".
@@ -86,18 +87,15 @@ export function SplashScreen() {
         willChange: "opacity",
       }}
     >
-      {/* Padrão tático de fundo (grid + brilho radial) — só aparece de forma
-          discreta e cobre TODA a splash, especialmente no mobile portrait
-          onde o object-contain deixaria barras vazias. */}
+      {/* Padrão tático de fundo (grid + brilho radial) */}
       <div
         aria-hidden
         className="sp-splash-bg absolute inset-0 pointer-events-none"
       />
 
-      {/* Imagem institucional.
-          Desktop / landscape: object-cover para preencher toda a viewport.
-          Mobile portrait: object-contain para exibir a arte inteira (wordmark
-          + brasão + agente + viatura) sem cortar nem esmagar. */}
+      {/* Imagem institucional (agente).
+          Desktop: object-cover à direita para deixar espaço à esquerda para
+          a marca. Mobile: object-contain centralizado. */}
       <img
         src={SPLASH_URL}
         alt="PlantãoPro — Controle de Plantão, Escala e Banco de Horas"
@@ -111,62 +109,93 @@ export function SplashScreen() {
         }}
       />
 
-      {/* Camada institucional mobile — wordmark, tagline, brackets, faixa
-          inferior. Fica oculta em telas maiores (onde a arte já preenche). */}
-      <div className="sp-splash-mobile absolute inset-0 pointer-events-none flex flex-col justify-between px-6 pt-[max(env(safe-area-inset-top),1.75rem)] pb-[max(env(safe-area-inset-bottom),2.25rem)]">
-        {/* Topo: kicker institucional (sem repetir o wordmark que já está na arte) */}
-        <div className="flex flex-col items-center gap-2.5" style={{ animation: "spSplashDown 700ms cubic-bezier(0.22,1,0.36,1) both" }}>
-          <div className="flex items-center gap-2.5">
-            <span aria-hidden className="h-px w-10" style={{ background: "linear-gradient(90deg,transparent,#f4c974)" }} />
-            <span className="font-mono text-[10px] tracking-[0.44em] uppercase" style={{ color: "#f4c974" }}>
-              Comando Operacional
-            </span>
-            <span aria-hidden className="h-px w-10" style={{ background: "linear-gradient(-90deg,transparent,#f4c974)" }} />
+      {/* Overlay escuro para dar legibilidade à marca em qualquer tela */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(5,6,10,0.72) 0%, rgba(5,6,10,0.35) 35%, rgba(5,6,10,0.35) 65%, rgba(5,6,10,0.85) 100%)",
+        }}
+      />
+
+      {/* Camada institucional — visível em TODAS as telas.
+          Contém logomarca, wordmark, tagline (topo) e painel de status (base). */}
+      <div className="absolute inset-0 pointer-events-none flex flex-col justify-between px-6 sm:px-10 pt-[max(env(safe-area-inset-top),2rem)] pb-[max(env(safe-area-inset-bottom),2.25rem)] z-[2]">
+        {/* Topo: brasão + wordmark + tagline */}
+        <div
+          className="flex flex-col items-center gap-3"
+          style={{ animation: "spSplashDown 700ms cubic-bezier(0.22,1,0.36,1) both" }}
+        >
+          <div className="flex items-center gap-3 sm:gap-4">
+            <img
+              src={logoUrl}
+              alt=""
+              aria-hidden
+              draggable={false}
+              className="h-14 w-14 sm:h-16 sm:w-16 object-contain drop-shadow-[0_4px_18px_rgba(244,201,116,0.35)]"
+            />
+            <div className="flex flex-col leading-none">
+              <span
+                className="font-serif font-bold text-[22px] sm:text-[30px] tracking-tight text-white"
+                style={{ textShadow: "0 2px 12px rgba(0,0,0,0.6)" }}
+              >
+                Plantão<span style={{ color: "#f4c974" }}>Pro</span>
+              </span>
+              <span className="mt-1 font-mono text-[9px] sm:text-[10px] tracking-[0.38em] uppercase text-white/70">
+                Comando Operacional
+              </span>
+            </div>
           </div>
-          <span className="font-mono text-[10px] tracking-[0.32em] uppercase text-white/55">
-            Controle · Escala · Banco de Horas
-          </span>
+          <div className="flex items-center gap-2.5">
+            <span aria-hidden className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(90deg,transparent,#f4c974)" }} />
+            <span className="font-mono text-[9.5px] sm:text-[10.5px] tracking-[0.32em] uppercase text-white/75">
+              Controle · Escala · Banco de Horas
+            </span>
+            <span aria-hidden className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(-90deg,transparent,#f4c974)" }} />
+          </div>
         </div>
 
-        {/* Rodapé: painel institucional profissional (3 métricas + selo) */}
-        <div className="flex flex-col items-center gap-3" style={{ animation: "spSplashUp 700ms 120ms cubic-bezier(0.22,1,0.36,1) both" }}>
-          {/* Painel de status compacto */}
-          <div className="flex items-stretch divide-x divide-[#f4c974]/20 rounded-sm border border-[#f4c974]/25 bg-black/50 backdrop-blur-md overflow-hidden">
-            <div className="flex flex-col items-center px-3.5 py-1.5">
-              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/45">Sistema</span>
-              <span className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-[#f4c974] font-bold leading-tight">Online</span>
+        {/* Rodapé: painel de status institucional */}
+        <div
+          className="flex flex-col items-center gap-3"
+          style={{ animation: "spSplashUp 700ms 120ms cubic-bezier(0.22,1,0.36,1) both" }}
+        >
+          <div className="flex items-stretch divide-x divide-[#f4c974]/20 rounded-sm border border-[#f4c974]/25 bg-black/55 backdrop-blur-md overflow-hidden">
+            <div className="flex flex-col items-center px-3.5 sm:px-5 py-1.5">
+              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/50">Sistema</span>
+              <span className="font-mono text-[10.5px] sm:text-[11.5px] tracking-[0.22em] uppercase text-[#f4c974] font-bold leading-tight">Online</span>
             </div>
-            <div className="flex flex-col items-center px-3.5 py-1.5">
-              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/45">Setor</span>
-              <span className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-white/90 font-bold leading-tight">ISE · AC</span>
+            <div className="flex flex-col items-center px-3.5 sm:px-5 py-1.5">
+              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/50">Setor</span>
+              <span className="font-mono text-[10.5px] sm:text-[11.5px] tracking-[0.22em] uppercase text-white/90 font-bold leading-tight">ISE · AC</span>
             </div>
-            <div className="flex flex-col items-center px-3.5 py-1.5">
-              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/45">Modo</span>
-              <span className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-white/90 font-bold leading-tight">Tático</span>
+            <div className="flex flex-col items-center px-3.5 sm:px-5 py-1.5">
+              <span className="font-mono text-[8px] tracking-[0.28em] uppercase text-white/50">Modo</span>
+              <span className="font-mono text-[10.5px] sm:text-[11.5px] tracking-[0.22em] uppercase text-white/90 font-bold leading-tight">Tático</span>
             </div>
           </div>
-          {/* Linha de status animada */}
           <div className="flex items-center gap-2">
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping" style={{ background: "#f4c974" }} />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: "#f4c974", boxShadow: "0 0 8px #f4c974" }} />
             </span>
-            <span className="font-mono text-[8.5px] tracking-[0.38em] uppercase text-white/40">
+            <span className="font-mono text-[8.5px] sm:text-[9.5px] tracking-[0.38em] uppercase text-white/50">
               Inicializando módulos operacionais
             </span>
           </div>
         </div>
       </div>
 
-      {/* Brackets táticos nos cantos (mobile only) */}
-      <div aria-hidden className="sp-splash-mobile absolute inset-0 pointer-events-none">
+      {/* Brackets táticos nos cantos (todas as telas) */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none z-[2]">
         <span className="absolute top-3 left-3 h-4 w-4 border-t-2 border-l-2" style={{ borderColor: "#f4c974aa" }} />
         <span className="absolute top-3 right-3 h-4 w-4 border-t-2 border-r-2" style={{ borderColor: "#f4c974aa" }} />
         <span className="absolute bottom-3 left-3 h-4 w-4 border-b-2 border-l-2" style={{ borderColor: "#f4c974aa" }} />
         <span className="absolute bottom-3 right-3 h-4 w-4 border-b-2 border-r-2" style={{ borderColor: "#f4c974aa" }} />
       </div>
 
-      {/* Vinheta sutil para dar profundidade e integrar bordas em telas ultra-wide */}
+      {/* Vinheta sutil para profundidade */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
@@ -175,6 +204,7 @@ export function SplashScreen() {
             "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%)",
         }}
       />
+
 
       {/* Barra de progresso institucional na base */}
       <div
@@ -198,24 +228,22 @@ export function SplashScreen() {
       </div>
 
       <style>{`
-        /* Default (desktop / landscape): preenche toda a viewport, camada mobile oculta */
-        .sp-splash-img { object-fit: cover; object-position: center center; }
-        .sp-splash-mobile { display: none; }
-        .sp-splash-bg { opacity: 0; }
-        /* Mobile portrait: arte central + camadas institucionais ao redor */
-        @media (max-width: 767px) and (orientation: portrait) {
-          .sp-splash-img { object-fit: contain; object-position: center 58%; transform: scale(0.82); }
-          .sp-splash-mobile { display: flex; }
-          .sp-splash-bg {
-            opacity: 1;
-            background:
-              radial-gradient(ellipse 70% 45% at 50% 55%, rgba(244,201,116,0.10) 0%, transparent 70%),
-              linear-gradient(180deg, #0a0c12 0%, #12100a 50%, #050505 100%),
-              repeating-linear-gradient(0deg, transparent 0 24px, rgba(244,201,116,0.035) 24px 25px),
-              repeating-linear-gradient(90deg, transparent 0 24px, rgba(244,201,116,0.035) 24px 25px);
-            animation: spSplashFade 500ms both;
-          }
+        /* Default (desktop / landscape): agente contida à direita, com espaço superior/inferior para a marca */
+        .sp-splash-img { object-fit: contain; object-position: center 60%; }
+        .sp-splash-bg {
+          opacity: 1;
+          background:
+            radial-gradient(ellipse 80% 55% at 50% 50%, rgba(244,201,116,0.10) 0%, transparent 70%),
+            linear-gradient(180deg, #0a0c12 0%, #12100a 50%, #050505 100%),
+            repeating-linear-gradient(0deg, transparent 0 28px, rgba(244,201,116,0.03) 28px 29px),
+            repeating-linear-gradient(90deg, transparent 0 28px, rgba(244,201,116,0.03) 28px 29px);
+          animation: spSplashFade 500ms both;
         }
+        /* Mobile portrait: encolhe a agente para não colidir com a marca no topo */
+        @media (max-width: 767px) and (orientation: portrait) {
+          .sp-splash-img { object-position: center 62%; transform: scale(0.78); }
+        }
+
         @keyframes spSplashIn {
           from { opacity: 0; transform: scale(1.04); filter: blur(4px); }
           to   { opacity: 1; transform: scale(1); filter: blur(0); }
