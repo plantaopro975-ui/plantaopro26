@@ -43,6 +43,7 @@ export function CredentialsViewer() {
   const fetchAgents = async () => {
     try {
       setLoading(true);
+      setError(null);
       const dash = await adminClient.listDashboardData();
       const mapped: Agent[] = (dash.agents || []).map((a: any) => ({
         id: a.id,
@@ -53,11 +54,13 @@ export function CredentialsViewer() {
         unit: a.unit ? { name: a.unit.name, municipality: a.unit.municipality } : null,
       }));
       setAgents(mapped);
-    } catch (error: any) {
-      console.error('Error fetching agents:', error);
+    } catch (err: any) {
+      const msg = err?.message || 'Não foi possível carregar a lista de agentes.';
+      console.error('Error fetching agents:', err);
+      setError(msg);
       toast({
         title: 'Erro ao carregar agentes',
-        description: error?.message || 'Não foi possível carregar a lista de agentes.',
+        description: msg,
         variant: 'destructive',
       });
     } finally {
