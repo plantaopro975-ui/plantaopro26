@@ -113,15 +113,14 @@ export function ReminderSettingsDialog({ open, onOpenChange }: Props) {
                     type="button"
                     onClick={() => update({ intervalMin: o.value })}
                     className={cn(
-                      'rounded-md border px-3 py-2 text-left transition-all',
-                      active
-                        ? 'border-primary bg-primary/15 shadow-sm ring-1 ring-primary/40'
-                        : 'border-border/60 bg-card/40 hover:border-primary/50',
+                      'rm-chip',
+                      active && 'rm-chip--active',
                     )}
                     aria-pressed={active}
+                    data-active={active ? 'true' : 'false'}
                   >
-                    <div className="text-sm font-semibold">{o.label}</div>
-                    <div className="text-[10px] text-muted-foreground">{o.hint}</div>
+                    <span className="rm-chip__label">{o.label}</span>
+                    <span className="rm-chip__hint">{o.hint}</span>
                   </button>
                 );
               })}
