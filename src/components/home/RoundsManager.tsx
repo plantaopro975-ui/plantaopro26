@@ -1049,8 +1049,9 @@ function AgentStatusSVG({ status, color, compact = false }: { status: 'active' |
 /* ================= SVG time field ================= */
 
 function TimeField({
-  id, value, onChange, label, invalid, accent, locked, lockedHint,
-}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string; locked?: boolean; lockedHint?: string }) {
+  id, value, onChange, label, invalid, accent, locked, lockedHint, onLockedAttempt, lockedBadgeText,
+}: { id: string; value: string; onChange: (v: string) => void; label: string; invalid?: boolean; accent: string; locked?: boolean; lockedHint?: string; onLockedAttempt?: () => void; lockedBadgeText?: string }) {
+
 
   // Buffer LOCAL de digitação — evita que o valor externo (com pad) atropele
   // o usuário enquanto ele digita ("1" → "10" precisa ser possível sem travar).
