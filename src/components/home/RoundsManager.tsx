@@ -3379,11 +3379,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       );
                     })()}
 
-                    {teamLog.length === 0 ? (
-                      <div className="flex items-center justify-center h-14 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
-                        Nenhuma ronda registrada
-                      </div>
-                    ) : (
+                    {teamLog.length === 0 ? null : (
+
                       <ul className="tactical-scrollbar grid gap-0.5 max-h-24 overflow-y-auto pr-1">
                         {teamLog.map((e, i) => {
                           const preset = TEAM_PRESETS.find((p) => p.key === e.team);
