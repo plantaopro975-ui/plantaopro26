@@ -75,11 +75,11 @@ async function callAdminBackend<T>(action: AdminAction, payload: Record<string, 
     if (res.status === 401 && masterToken && (json?.error?.toLowerCase?.().includes('sessão master') || json?.error?.toLowerCase?.().includes('sessao master'))) {
       setMasterToken(null);
     }
-    throw new AdminClientError(json?.error || `Falha na operação (${res.status}).`, res.status);
+    throw new AdminClientError(json?.error || `Falha na operação (${res.status}).`, res.status, json ?? text);
   }
 
   if (!json?.success) {
-    throw new AdminClientError(json?.error || 'Operação não concluída.');
+    throw new AdminClientError(json?.error || 'Operação não concluída.', res.status, json ?? text);
   }
 
   return json.data as T;
