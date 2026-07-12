@@ -1140,9 +1140,48 @@ export default function Master() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
-                {users.length === 0 ? (
+                <div className="flex flex-col md:flex-row gap-2 p-4 border-b border-border">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Buscar por e-mail..."
+                      value={userSearch}
+                      onChange={(e) => setUserSearch(e.target.value)}
+                      className="pl-9 bg-input"
+                    />
+                  </div>
+                  <Select value={userRoleFilter} onValueChange={(v) => setUserRoleFilter(v as any)}>
+                    <SelectTrigger className="w-full md:w-48 bg-input">
+                      <SelectValue placeholder="Filtrar por função" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border-border">
+                      <SelectItem value="all">Todas as funções</SelectItem>
+                      <SelectItem value="master">Master</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="user">Usuário</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    onClick={handleSyncUsers}
+                    disabled={syncingUsers}
+                    className="gap-2"
+                    title="Reindexar auth.users com profiles e user_roles"
+                  >
+                    {syncingUsers ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Activity className="h-4 w-4" />
+                    )}
+                    {syncingUsers ? 'Sincronizando...' : 'Sincronizar'}
+                  </Button>
+                </div>
+                <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">
+                  {filteredUsers.length} de {users.length} usuário(s)
+                </div>
+                {filteredUsers.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
-                    Nenhum usuário encontrado
+                    {users.length === 0 ? 'Nenhum usuário encontrado' : 'Nenhum resultado para o filtro atual'}
                   </div>
                 ) : (
                   <Table>
