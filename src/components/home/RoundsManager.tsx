@@ -1906,21 +1906,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const s = effectiveStartMin;
     const startSec = Math.round(s * 60);
 
-    // Total em minutos da janela (para split/proporcional). Interval usa outra base.
+    // Total em minutos da janela (usado apenas por split). Interval usa outra base.
     let windowTotalMin = 0;
-    if (mode === 'split' || mode === 'proportional') {
+    if (mode === 'split') {
       const e = toMinutes(endTime)!;
       let totalMin = e - s;
       if (totalMin <= 0) totalMin += 24 * 60; // suporta virada de meia-noite
       windowTotalMin = totalMin;
     }
 
-    // === MODO PROPORCIONAL ===
-    // Expande agentes em N rondas cíclicas baseado na cadência-base.
-    // Regra: nRondas = round(totalMin / cadenceMin), piso = nAgentes.
-    const effectiveAgents = mode === 'proportional'
-      ? expandProportionalAgents(agents, windowTotalMin, cadenceMin)
-      : agents;
+    const effectiveAgents = agents;
     const n = effectiveAgents.length;
     if (n === 0) return null;
 
@@ -1932,12 +1927,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       totalSec = Math.max(1, Math.round(windowTotalMin * 60));
     }
 
-    // No turno noturno travado, sempre usamos distribuição EXATA em segundos.
-    // Modo proporcional também usa 'exact' para fechar exatamente no endTime.
+    // No turno noturno travado usamos distribuição EXATA em segundos.
     const effRounding: Rounding =
-      mode === 'proportional' ? 'exact'
-      : (nightEffectivelyLocked && mode === 'split') ? 'exact'
-      : rounding;
+      (nightEffectivelyLocked && mode === 'split') ? 'exact' : rounding;
+
 
     const slotsSec: number[] = new Array(n).fill(0);
     if (mode === 'interval') {
