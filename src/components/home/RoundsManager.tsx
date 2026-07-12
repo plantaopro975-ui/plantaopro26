@@ -1816,22 +1816,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
    * reavaliar em tempo real enquanto o modal está aberto. */
   const transitionIssues = useMemo<Issue[]>(() => {
     const list: Issue[] = [];
-    const now = new Date(nowServer());
-    const p = new Intl.DateTimeFormat('en-GB', {
-      timeZone: NIGHT_TZ, hour12: false, hour: '2-digit', minute: '2-digit',
-    }).formatToParts(now);
-    const gh = Number(p.find((x) => x.type === 'hour')?.value ?? '0') % 24;
-    const gm = Number(p.find((x) => x.type === 'minute')?.value ?? '0');
-    const minsNow = gh * 60 + gm;
     const N22 = 22 * 60;
-    const N06 = 6 * 60;
-    const inWindow = (Math.abs(minsNow - N22) <= 5) || (Math.abs(minsNow - N06) <= 5);
-    if (inWindow) {
-      list.push({
-        field: 'start',
-        message: 'Transição de turno em andamento (22:00 ou 06:00 ±5 min). Aguarde ~5 min para evitar divisões inconsistentes.',
-      });
-    }
+
     // Split cruzando a fronteira do noturno (22:00) durante o dia
     if (!nightEffectivelyLocked && mode === 'split') {
 
