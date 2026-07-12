@@ -41,25 +41,22 @@ export function CredentialsViewer() {
 
   const fetchAgents = async () => {
     try {
-      const { data, error } = await supabase
-        .from('agents')
-        .select(`
-          id,
-          name,
-          cpf,
-          team,
-          is_active,
-          unit:units(name, municipality)
-        `)
-        .order('name');
-
-      if (error) throw error;
-      setAgents(data || []);
-    } catch (error) {
+      setLoading(true);
+      const dash = await adminClient.listDashboardData();
+      const mapped: Agent[] = (dash.agents || []).map((a: any) => ({
+        id: a.id,
+        name: a.name,
+        cpf: a.cpf ?? null,
+        team: a.team ?? null,
+        is_active: !!a.is_active,
+        unit: a.unit ? { name: a.unit.name, municipality: a.unit.municipality } : null,
+      }));
+      setAgents(mapped);
+    } catch (error: any) {
       console.error('Error fetching agents:', error);
       toast({
         title: 'Erro ao carregar agentes',
-        description: 'Não foi possível carregar a lista de agentes.',
+        description: error?.message || 'Não foi possível carregar a lista de agentes.',
         variant: 'destructive',
       });
     } finally {
