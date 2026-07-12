@@ -174,6 +174,39 @@ export default function Master() {
   const [unitsError, setUnitsError] = useState<string | null>(null);
   const [agentSearchTerm, setAgentSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
+  const [userSearch, setUserSearch] = useState('');
+  const [userRoleFilter, setUserRoleFilter] = useState<'all' | 'master' | 'admin' | 'user'>('all');
+  const [syncingUsers, setSyncingUsers] = useState(false);
+
+  const filteredUsers = users.filter((u) => {
+    const matchSearch = !userSearch.trim() ||
+      (u.email || '').toLowerCase().includes(userSearch.trim().toLowerCase());
+    const role = u.role || 'user';
+    const matchRole = userRoleFilter === 'all' || role === userRoleFilter;
+    return matchSearch && matchRole;
+  });
+
+  const handleSyncUsers = async () => {
+    if (syncingUsers) return;
+    setSyncingUsers(true);
+    try {
+      const result = await adminClient.syncUsers();
+      toast({
+        title: 'Sincronização concluída',
+        description: `${result.totalAuthUsers} usuário(s) indexados • ${result.profilesInserted} profile(s) criado(s) • ${result.rolesInserted} role(s) criada(s).`,
+      });
+      await fetchData({ silent: true });
+    } catch (e: any) {
+      toast({
+        title: 'Erro na sincronização',
+        description: e?.message || 'Falha ao sincronizar usuários.',
+        variant: 'destructive',
+      });
+    } finally {
+      setSyncingUsers(false);
+    }
+  };
+
   
   // Dialogs state
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
