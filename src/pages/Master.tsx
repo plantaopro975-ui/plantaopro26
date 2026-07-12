@@ -177,6 +177,8 @@ export default function Master() {
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState<'all' | 'master' | 'admin' | 'user'>('all');
   const [syncingUsers, setSyncingUsers] = useState(false);
+  const [userPage, setUserPage] = useState(1);
+  const USERS_PER_PAGE = 20;
 
   const filteredUsers = users.filter((u) => {
     const matchSearch = !userSearch.trim() ||
@@ -185,6 +187,17 @@ export default function Master() {
     const matchRole = userRoleFilter === 'all' || role === userRoleFilter;
     return matchSearch && matchRole;
   });
+
+  const totalUserPages = Math.max(1, Math.ceil(filteredUsers.length / USERS_PER_PAGE));
+  const currentUserPage = Math.min(userPage, totalUserPages);
+  const paginatedUsers = filteredUsers.slice(
+    (currentUserPage - 1) * USERS_PER_PAGE,
+    currentUserPage * USERS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setUserPage(1);
+  }, [userSearch, userRoleFilter]);
 
   const handleSyncUsers = async () => {
     if (syncingUsers) return;
