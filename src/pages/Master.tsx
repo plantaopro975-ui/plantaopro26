@@ -752,7 +752,7 @@ export default function Master() {
                 <strong>Aviso — Unidades:</strong> {unitsError}
                 <button
                   type="button"
-                  onClick={fetchData}
+                  onClick={() => fetchData()}
                   className="ml-3 underline underline-offset-2 hover:text-amber-100"
                 >
                   Tentar novamente
