@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { adminClient, AdminClientError } from '@/lib/adminClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,8 +16,21 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
-import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2, RefreshCw } from 'lucide-react';
+import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2, RefreshCw, Download, FileJson, FileText, Clock } from 'lucide-react';
 import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { cn } from '@/lib/utils';
 
