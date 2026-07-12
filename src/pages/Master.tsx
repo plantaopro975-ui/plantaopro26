@@ -1277,6 +1277,32 @@ export default function Master() {
                     </TableBody>
                   </Table>
                 )}
+                {filteredUsers.length > USERS_PER_PAGE && (
+                  <div className="flex items-center justify-between p-4 border-t border-border">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentUserPage <= 1}
+                      onClick={() => setUserPage((p) => Math.max(1, p - 1))}
+                    >
+                      Anterior
+                    </Button>
+                    <span className="text-xs text-muted-foreground">
+                      {(currentUserPage - 1) * USERS_PER_PAGE + 1}
+                      –
+                      {Math.min(currentUserPage * USERS_PER_PAGE, filteredUsers.length)}
+                      {' '}de {filteredUsers.length}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentUserPage >= totalUserPages}
+                      onClick={() => setUserPage((p) => Math.min(totalUserPages, p + 1))}
+                    >
+                      Próxima
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
