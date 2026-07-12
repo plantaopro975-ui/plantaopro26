@@ -360,26 +360,84 @@ export function CredentialsViewer() {
             </Button>
           </div>
         )}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar por nome, CPF ou equipe..."
-            className="pl-10 bg-slate-800/50 border-slate-700"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="relative lg:col-span-2">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar por nome, CPF, equipe, unidade ou município..."
+              className="pl-10 bg-slate-800/50 border-slate-700"
+            />
+          </div>
+          <Select value={teamFilter} onValueChange={setTeamFilter}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-700">
+              <SelectValue placeholder="Equipe" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              <SelectItem value="all">Todas as equipes</SelectItem>
+              {availableTeams.map(t => (
+                <SelectItem key={t} value={t}>{t}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-700">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              <SelectItem value="all">Todos os status</SelectItem>
+              <SelectItem value="active">Somente ativos</SelectItem>
+              <SelectItem value="inactive">Somente inativos</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={unitFilter} onValueChange={setUnitFilter}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-700 lg:col-span-2">
+              <SelectValue placeholder="Unidade" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              <SelectItem value="all">Todas as unidades</SelectItem>
+              {availableUnits.map(u => (
+                <SelectItem key={u} value={u}>{u}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-700">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              {[10, 25, 50, 100].map(n => (
+                <SelectItem key={n} value={String(n)}>{n} por página</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span>{filteredAgents.length} agentes</span>
+            <span>{filteredAgents.length} de {agents.length} agentes</span>
           </div>
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-green-500" />
             <span>{filteredAgents.filter(a => a.is_active).length} ativos</span>
           </div>
+          {activeFilterCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearAllFilters}
+              className="h-6 px-2 text-xs"
+            >
+              Limpar filtros ({activeFilterCount})
+            </Button>
+          )}
+          <div className="ml-auto text-xs">
+            Página {currentPage} de {totalPages}
+          </div>
         </div>
+
 
         <ScrollArea className="h-[400px] rounded-lg border border-border">
           <Table>
