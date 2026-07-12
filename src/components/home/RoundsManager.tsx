@@ -1622,7 +1622,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const nowServer = () => getServerDate().getTime();
 
   /* ---------- Night shift auto-lock (22:00 → 06:00 Acre) ---------- */
-  const [nightLocked, setNightLocked] = useState<boolean>(() => isNightShift(getServerDate()));
+  const [nightLocked, setNightLocked] = useState<boolean>(() => {
+    const d = getServerDate();
+    return isNightShift(d) || isPreNightWindow(d);
+  });
+  // true quando estamos apenas na PRÉ-noite (18:00-21:59), para exibir mensagens
+  // diferentes ("programado para 22:00" vs. "turno em andamento").
+  const [preNightScheduled, setPreNightScheduled] = useState<boolean>(() => {
+    const d = getServerDate();
+    return isPreNightWindow(d) && !isNightShift(d);
+  });
+
   const [serverClock, setServerClock] = useState<Date>(() => getServerDate());
   const [nightWindow, setNightWindow] = useState(() => getNightWindow(getServerDate()));
 
