@@ -171,20 +171,20 @@ function teamCodename(k: TeamKey): string {
 function Fact({ label, value, color, icon }: { label: string; value: string; color: string; icon?: 'team' | 'agents' }) {
   return (
     <div
-      className="rounded-lg border bg-slate-900/60 py-2 px-2 flex items-center gap-2"
-      style={{ borderColor: `${color}35` }}
+      className="rounded-md border bg-slate-900/60 py-1.5 px-2 flex items-center gap-1.5"
+      style={{ borderColor: `${color}30` }}
     >
       <span
-        className="grid place-items-center h-7 w-7 rounded-md shrink-0"
+        className="grid place-items-center h-6 w-6 rounded shrink-0"
         style={{ background: `${color}18`, border: `1px solid ${color}44`, color }}
         aria-hidden
       >
         {icon === 'team' ? (
-          <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 4 L10 2 L16 4 V10 C16 14 13 16.5 10 18 C7 16.5 4 14 4 10 Z" />
           </svg>
         ) : (
-          <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="7" cy="7.5" r="2.5" />
             <path d="M2.5 16.5 C3.5 13.5 5.5 12 7 12 C8.5 12 10.5 13.5 11.5 16.5" />
             <circle cx="14" cy="8" r="2" />
@@ -193,11 +193,12 @@ function Fact({ label, value, color, icon }: { label: string; value: string; col
         )}
       </span>
       <div className="min-w-0 text-left">
-        <div className="font-mono text-[9px] uppercase tracking-[0.22em] text-slate-500 leading-tight">{label}</div>
-        <div className="text-sm font-bold text-slate-100 truncate leading-tight" title={value}>{value}</div>
+        <div className="font-mono text-[8.5px] uppercase tracking-[0.2em] text-slate-500 leading-none">{label}</div>
+        <div className="text-[12px] font-bold text-slate-100 truncate leading-tight mt-0.5" title={value}>{value}</div>
       </div>
     </div>
   );
 }
+
 
 export default TeamConfirmDialog;
