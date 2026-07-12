@@ -583,7 +583,7 @@ export function AnnouncementsManager() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
+          <div className="space-y-3 py-2">
             {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title" className="text-slate-200">Título *</Label>
