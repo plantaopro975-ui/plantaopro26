@@ -133,7 +133,12 @@ const TEAM_PRESETS = [
 ] as const;
 
 type TeamKey = typeof TEAM_PRESETS[number]['key'];
-type Mode = 'split' | 'interval' | 'proportional';
+type Mode = 'split' | 'interval';
+// Sanitiza qualquer valor legado ('proportional', string desconhecida, null) que
+// possa vir do localStorage, de uma template antiga ou de uma linha antiga em
+// round_sessions. É a fonte única de verdade para hidratação.
+const sanitizeMode = (m: unknown): Mode => (m === 'interval' ? 'interval' : 'split');
+
 
 /** Cadência-base padrão (regra de ouro: 1 ronda a cada X minutos). */
 const DEFAULT_CADENCE_MIN = 30;
