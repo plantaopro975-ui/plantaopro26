@@ -1695,9 +1695,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
           // eslint-disable-next-line no-console
           console.log('[RoundsManager][tick]', {
             acre: formatAcreClock(now),
-            actualNight, preNight, nightLocked: night,
-            overrideActive, mode, startTime, endTime,
-            agents: agents.length, issues: (typeof issues !== 'undefined' ? issues.length : 'n/a'),
+            actualNight, preNight, nightLocked: night, overrideActive,
           });
         }
       } catch { /* ignore */ }
