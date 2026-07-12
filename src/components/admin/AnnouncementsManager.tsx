@@ -604,7 +604,7 @@ export function AnnouncementsManager() {
                 value={formData.content}
                 onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
                 placeholder="Descrição detalhada do aviso (opcional)"
-                className="bg-slate-800 border-slate-700 text-white min-h-[80px]"
+                className="bg-slate-800 border-slate-700 text-white min-h-[60px]"
               />
             </div>
 
