@@ -32,7 +32,7 @@ export function CredentialsViewer() {
   const { toast } = useToast();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; status?: number; raw?: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCpfs, setShowCpfs] = useState<Record<string, boolean>>({});
 
