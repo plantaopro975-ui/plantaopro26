@@ -1189,8 +1189,11 @@ export default function Master() {
                     {syncingUsers ? 'Sincronizando...' : 'Sincronizar'}
                   </Button>
                 </div>
-                <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">
-                  {filteredUsers.length} de {users.length} usuário(s)
+                <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border flex items-center justify-between">
+                  <span>{filteredUsers.length} de {users.length} usuário(s)</span>
+                  {filteredUsers.length > USERS_PER_PAGE && (
+                    <span>Página {currentUserPage} de {totalUserPages}</span>
+                  )}
                 </div>
                 {filteredUsers.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
@@ -1208,7 +1211,7 @@ export default function Master() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredUsers.map((u) => (
+                      {paginatedUsers.map((u) => (
                         <TableRow key={u.id} className="border-border">
                           <TableCell className="font-medium">{u.email}</TableCell>
                           <TableCell>
