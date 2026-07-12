@@ -49,7 +49,14 @@ export function CredentialsViewer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<{ message: string; status?: number; raw?: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [teamFilter, setTeamFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [unitFilter, setUnitFilter] = useState<string>('all');
   const [showCpfs, setShowCpfs] = useState<Record<string, boolean>>({});
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     fetchAgents();
@@ -69,6 +76,7 @@ export function CredentialsViewer() {
         unit: a.unit ? { name: a.unit.name, municipality: a.unit.municipality } : null,
       }));
       setAgents(mapped);
+      setLastUpdatedAt(new Date());
     } catch (err: any) {
       const msg = err?.message || 'Não foi possível carregar a lista de agentes.';
       console.error('Error fetching agents:', err);
@@ -119,17 +127,142 @@ export function CredentialsViewer() {
   };
 
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
+
+  const availableTeams = useMemo(
+    () => Array.from(new Set(agents.map(a => a.team).filter(Boolean))).sort() as string[],
+    [agents]
+  );
+  const availableUnits = useMemo(
+    () => Array.from(new Set(agents.map(a => a.unit?.name).filter(Boolean))).sort() as string[],
+    [agents]
+  );
+
   const filteredAgents = useMemo(() => {
     const term = debouncedSearchTerm.toLowerCase();
     const numbers = debouncedSearchTerm.replace(/\D/g, '');
-    if (!term && !numbers) return agents;
-    return agents.filter(agent =>
-      agent.name.toLowerCase().includes(term) ||
-      (numbers && agent.cpf?.includes(numbers)) ||
-      agent.team?.toLowerCase().includes(term)
-    );
-  }, [agents, debouncedSearchTerm]);
+    return agents.filter(agent => {
+      if (teamFilter !== 'all' && agent.team !== teamFilter) return false;
+      if (unitFilter !== 'all' && agent.unit?.name !== unitFilter) return false;
+      if (statusFilter === 'active' && !agent.is_active) return false;
+      if (statusFilter === 'inactive' && agent.is_active) return false;
+      if (!term && !numbers) return true;
+      return (
+        agent.name.toLowerCase().includes(term) ||
+        (numbers && agent.cpf?.includes(numbers)) ||
+        (agent.team?.toLowerCase().includes(term) ?? false) ||
+        (agent.unit?.name.toLowerCase().includes(term) ?? false) ||
+        (agent.unit?.municipality.toLowerCase().includes(term) ?? false)
+      );
+    });
+  }, [agents, debouncedSearchTerm, teamFilter, statusFilter, unitFilter]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredAgents.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedAgents = useMemo(
+    () => filteredAgents.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+    [filteredAgents, currentPage, pageSize]
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchTerm, teamFilter, statusFilter, unitFilter, pageSize]);
+
+  const clearAllFilters = () => {
+    setSearchTerm('');
+    setTeamFilter('all');
+    setStatusFilter('all');
+    setUnitFilter('all');
+  };
+
+  const activeFilterCount =
+    (searchTerm ? 1 : 0) +
+    (teamFilter !== 'all' ? 1 : 0) +
+    (statusFilter !== 'all' ? 1 : 0) +
+    (unitFilter !== 'all' ? 1 : 0);
+
+  const exportJSON = () => {
+    try {
+      setExporting(true);
+      const payload = {
+        exported_at: new Date().toISOString(),
+        total: filteredAgents.length,
+        filters: {
+          search: searchTerm || null,
+          team: teamFilter,
+          status: statusFilter,
+          unit: unitFilter,
+        },
+        agents: filteredAgents.map(a => ({
+          id: a.id,
+          name: a.name,
+          cpf: a.cpf,
+          team: a.team,
+          is_active: a.is_active,
+          unit_name: a.unit?.name ?? null,
+          unit_municipality: a.unit?.municipality ?? null,
+        })),
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `credenciais-agentes-${format(new Date(), 'yyyyMMdd-HHmmss')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: 'JSON exportado', description: `${filteredAgents.length} agente(s) exportado(s).` });
+    } catch (e: any) {
+      toast({ title: 'Erro na exportação', description: e?.message || 'Falha ao gerar JSON.', variant: 'destructive' });
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const exportPDF = async () => {
+    try {
+      setExporting(true);
+      const { default: jsPDF } = await import('jspdf');
+      const autoTableMod: any = await import('jspdf-autotable');
+      const autoTable = autoTableMod.default || autoTableMod;
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+      const now = new Date();
+
+      doc.setFontSize(14);
+      doc.text('Credenciais dos Agentes', 40, 40);
+      doc.setFontSize(9);
+      doc.setTextColor(120);
+      doc.text(
+        `Gerado em ${format(now, "dd/MM/yyyy 'às' HH:mm:ss", { locale: ptBR })} • ${filteredAgents.length} registro(s)`,
+        40,
+        56
+      );
+
+      autoTable(doc, {
+        startY: 74,
+        head: [['Nome', 'CPF', 'Equipe', 'Unidade', 'Município', 'Status']],
+        body: filteredAgents.map(a => [
+          a.name,
+          a.cpf ? a.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : '---',
+          a.team ?? '---',
+          a.unit?.name ?? '---',
+          a.unit?.municipality ?? '---',
+          a.is_active ? 'Ativo' : 'Inativo',
+        ]),
+        styles: { fontSize: 8, cellPadding: 4 },
+        headStyles: { fillColor: [88, 28, 135], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 243, 255] },
+      });
+
+      doc.save(`credenciais-agentes-${format(now, 'yyyyMMdd-HHmmss')}.pdf`);
+      toast({ title: 'PDF exportado', description: `${filteredAgents.length} agente(s) exportado(s).` });
+    } catch (e: any) {
+      console.error('exportPDF error', e);
+      toast({ title: 'Erro na exportação', description: e?.message || 'Falha ao gerar PDF.', variant: 'destructive' });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const teamColors: Record<string, string> = {
     'ALFA': 'bg-red-500/20 text-red-400 border-red-500/40',
