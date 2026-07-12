@@ -177,6 +177,8 @@ export default function Master() {
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState<'all' | 'master' | 'admin' | 'user'>('all');
   const [syncingUsers, setSyncingUsers] = useState(false);
+  const [userPage, setUserPage] = useState(1);
+  const USERS_PER_PAGE = 20;
 
   const filteredUsers = users.filter((u) => {
     const matchSearch = !userSearch.trim() ||
@@ -185,6 +187,17 @@ export default function Master() {
     const matchRole = userRoleFilter === 'all' || role === userRoleFilter;
     return matchSearch && matchRole;
   });
+
+  const totalUserPages = Math.max(1, Math.ceil(filteredUsers.length / USERS_PER_PAGE));
+  const currentUserPage = Math.min(userPage, totalUserPages);
+  const paginatedUsers = filteredUsers.slice(
+    (currentUserPage - 1) * USERS_PER_PAGE,
+    currentUserPage * USERS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setUserPage(1);
+  }, [userSearch, userRoleFilter]);
 
   const handleSyncUsers = async () => {
     if (syncingUsers) return;
@@ -1176,8 +1189,11 @@ export default function Master() {
                     {syncingUsers ? 'Sincronizando...' : 'Sincronizar'}
                   </Button>
                 </div>
-                <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">
-                  {filteredUsers.length} de {users.length} usuário(s)
+                <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border flex items-center justify-between">
+                  <span>{filteredUsers.length} de {users.length} usuário(s)</span>
+                  {filteredUsers.length > USERS_PER_PAGE && (
+                    <span>Página {currentUserPage} de {totalUserPages}</span>
+                  )}
                 </div>
                 {filteredUsers.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
@@ -1195,7 +1211,7 @@ export default function Master() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredUsers.map((u) => (
+                      {paginatedUsers.map((u) => (
                         <TableRow key={u.id} className="border-border">
                           <TableCell className="font-medium">{u.email}</TableCell>
                           <TableCell>
@@ -1260,6 +1276,32 @@ export default function Master() {
                       ))}
                     </TableBody>
                   </Table>
+                )}
+                {filteredUsers.length > USERS_PER_PAGE && (
+                  <div className="flex items-center justify-between p-4 border-t border-border">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentUserPage <= 1}
+                      onClick={() => setUserPage((p) => Math.max(1, p - 1))}
+                    >
+                      Anterior
+                    </Button>
+                    <span className="text-xs text-muted-foreground">
+                      {(currentUserPage - 1) * USERS_PER_PAGE + 1}
+                      –
+                      {Math.min(currentUserPage * USERS_PER_PAGE, filteredUsers.length)}
+                      {' '}de {filteredUsers.length}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentUserPage >= totalUserPages}
+                      onClick={() => setUserPage((p) => Math.min(totalUserPages, p + 1))}
+                    >
+                      Próxima
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>
