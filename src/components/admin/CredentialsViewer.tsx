@@ -214,18 +214,47 @@ export function CredentialsViewer() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span>Carregando...</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                Array.from({ length: 6 }).map((_, i) => (
+                  <TableRow key={`skeleton-${i}`} className="border-border">
+                    <TableCell colSpan={5} className="py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-2 w-2 rounded-full bg-muted animate-pulse" />
+                        <div className="h-3 w-40 rounded bg-muted animate-pulse" />
+                        <div className="h-3 w-32 rounded bg-muted animate-pulse" />
+                        <div className="h-3 w-16 rounded bg-muted animate-pulse" />
+                        <div className="h-3 w-24 rounded bg-muted animate-pulse ml-auto" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : filteredAgents.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                    Nenhum agente encontrado
+                  <TableCell colSpan={5} className="py-12">
+                    <div className="flex flex-col items-center justify-center gap-3 text-center">
+                      <div className="p-3 rounded-full bg-muted/40 border border-border">
+                        <Users className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-foreground">
+                          {agents.length === 0 ? 'Nenhum agente cadastrado' : 'Nenhum resultado encontrado'}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {agents.length === 0
+                            ? 'Cadastre agentes no painel para visualizar suas credenciais aqui.'
+                            : 'Ajuste os termos da busca ou limpe o filtro para ver todos os agentes.'}
+                        </div>
+                      </div>
+                      {agents.length === 0 ? (
+                        <Button variant="outline" size="sm" onClick={fetchAgents} className="gap-2 mt-1">
+                          <RefreshCw className="h-3.5 w-3.5" />
+                          Atualizar lista
+                        </Button>
+                      ) : searchTerm ? (
+                        <Button variant="ghost" size="sm" onClick={() => setSearchTerm('')} className="mt-1">
+                          Limpar busca
+                        </Button>
+                      ) : null}
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
