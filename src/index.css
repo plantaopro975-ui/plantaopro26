@@ -2196,15 +2196,20 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   --rm-ink:        hsl(210 40% 98%);        /* 16.8:1 sobre surface */
   --rm-ink-soft:   hsl(215 20% 82%);        /* 10.2:1 */
   --rm-ink-mute:   hsl(215 15% 68%);        /* 6.1:1 — AA large */
-  --rm-accent:     hsl(38 96% 60%);         /* âmbar — ação primária */
-  --rm-accent-ink: hsl(38 100% 12%);        /* texto sobre âmbar */
-  --rm-accent-2:   hsl(190 92% 62%);        /* ciano — informativo */
-  --rm-success:    hsl(152 68% 58%);        /* esmeralda — sucesso */
-  --rm-danger:     hsl(0 84% 66%);          /* vermelho — crítico */
+  /* --rm-accent pode ser injetado inline pelo container (team color).
+     Fallback: âmbar institucional. */
+  --rm-accent:     hsl(38 96% 60%);
+  --rm-accent-ink: hsl(38 100% 12%);
+  --rm-accent-hsl: 38 96% 60%;
+  --rm-accent-glow: hsl(38 96% 60% / 0.4);
+  --rm-accent-2:   hsl(190 92% 62%);
+  --rm-success:    hsl(152 68% 58%);
+  --rm-danger:     hsl(0 84% 66%);
   --rm-warn:       hsl(38 96% 60%);
   --rm-surface:    hsl(220 30% 8% / 0.72);
   --rm-line:       hsl(215 22% 30% / 0.7);
-  --rm-focus:      hsl(190 92% 62%);        /* anel de foco ciano */
+  --rm-focus:      var(--rm-accent);
+
 
   font-family: 'Inter', 'DM Sans', 'IBM Plex Sans', system-ui, sans-serif;
   font-feature-settings: 'ss01', 'cv01', 'cv11', 'cv02';
@@ -2287,7 +2292,9 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   letter-spacing: 0.01em;
 }
 
-/* Cores funcionais — accents inline */
+/* Cores funcionais — accents inline.
+   As classes .text-amber-* passam a herdar a cor da equipe (var --rm-accent)
+   para manter o painel harmônico quando o time é trocado. */
 .rm-dialog .text-amber-300, .rm-dialog .text-amber-400, .rm-dialog .text-amber-500,
 .rm-history .text-amber-300, .rm-history .text-amber-400, .rm-history .text-amber-500,
 .rm-reminder .text-amber-300, .rm-reminder .text-amber-400, .rm-reminder .text-amber-500 {
@@ -2307,6 +2314,15 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   color: var(--rm-danger) !important;
 }
 
+/* Backgrounds/bordas âmbar herdando a cor da equipe */
+.rm-dialog [class*="bg-amber-500/10"],
+.rm-dialog [class*="bg-amber-500\\/10"],
+.rm-history [class*="bg-amber-500/10"],
+.rm-reminder [class*="bg-amber-500/10"] { background-color: hsl(var(--rm-accent-hsl) / 0.10) !important; }
+.rm-dialog [class*="border-amber"],
+.rm-history [class*="border-amber"],
+.rm-reminder [class*="border-amber"] { border-color: hsl(var(--rm-accent-hsl) / 0.45) !important; }
+
 /* ============ Botões — estados consistentes ============ */
 .rm-dialog button, .rm-history button, .rm-reminder button {
   font-weight: 600;
@@ -2316,7 +2332,7 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
               border-color 160ms ease, opacity 160ms ease;
 }
 
-/* Primário (âmbar) — ações críticas: Iniciar, Confirmar */
+/* Primário — segue a cor da equipe (var --rm-accent) */
 .rm-dialog button[class*="bg-primary"],
 .rm-dialog button[class*="bg-amber"],
 .rm-history button[class*="bg-primary"],
@@ -2328,7 +2344,7 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
   font-weight: 700;
   letter-spacing: 0.02em;
   box-shadow:
-    0 6px 22px -8px hsl(38 96% 58% / 0.55),
+    0 6px 22px -8px hsl(var(--rm-accent-hsl) / 0.55),
     inset 0 1px 0 hsl(0 0% 100% / 0.18);
 }
 .rm-dialog button[class*="bg-primary"]:hover:not(:disabled),
@@ -2337,9 +2353,9 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
 .rm-history button[class*="bg-amber"]:hover:not(:disabled),
 .rm-reminder button[class*="bg-primary"]:hover:not(:disabled),
 .rm-reminder button[class*="bg-amber"]:hover:not(:disabled) {
-  background-color: hsl(38 100% 66%) !important;
+  filter: brightness(1.12);
   box-shadow:
-    0 10px 28px -8px hsl(38 96% 58% / 0.7),
+    0 10px 28px -8px hsl(var(--rm-accent-hsl) / 0.7),
     inset 0 1px 0 hsl(0 0% 100% / 0.25);
   transform: translateY(-1px);
 }
@@ -2350,8 +2366,8 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
 .rm-reminder button[class*="bg-primary"]:active:not(:disabled),
 .rm-reminder button[class*="bg-amber"]:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: inset 0 2px 6px hsl(38 100% 20% / 0.4);
-  background-color: hsl(38 88% 52%) !important;
+  box-shadow: inset 0 2px 6px hsl(var(--rm-accent-hsl) / 0.4);
+  filter: brightness(0.92);
 }
 
 /* Variantes semânticas via classes utilitárias */
@@ -2378,18 +2394,18 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
 }
 .rm-dialog button[class*="bg-emerald"]:hover:not(:disabled),
 .rm-history button[class*="bg-emerald"]:hover:not(:disabled),
-.rm-reminder button[class*="bg-emerald"]:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.rm-reminder button[class*="bg-emerald"]:hover:not(:disabled),
 .rm-dialog button[class*="bg-cyan"]:hover:not(:disabled),
 .rm-history button[class*="bg-cyan"]:hover:not(:disabled),
-.rm-reminder button[class*="bg-cyan"]:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.rm-reminder button[class*="bg-cyan"]:hover:not(:disabled),
 .rm-dialog button[class*="bg-red"]:hover:not(:disabled),
 .rm-history button[class*="bg-red"]:hover:not(:disabled),
 .rm-reminder button[class*="bg-red"]:hover:not(:disabled),
 .rm-dialog button[class*="bg-destructive"]:hover:not(:disabled),
 .rm-history button[class*="bg-destructive"]:hover:not(:disabled),
-.rm-reminder button[class*="bg-destructive"]:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.rm-reminder button[class*="bg-destructive"]:hover:not(:disabled) { filter: brightness(1.10); transform: translateY(-1px); }
 
-/* Ghost / outline — hover suave âmbar */
+/* Ghost / outline — hover suave na cor da equipe */
 .rm-dialog button[class*="variant-ghost"],
 .rm-dialog button[class*="variant-outline"],
 .rm-history button[class*="variant-ghost"],
@@ -2402,10 +2418,11 @@ body.rm-focus-mode [data-state="open"][class*="fixed inset-0"] {
 .rm-history button[class*="variant-outline"]:hover:not(:disabled),
 .rm-reminder button[class*="variant-ghost"]:hover:not(:disabled),
 .rm-reminder button[class*="variant-outline"]:hover:not(:disabled) {
-  background-color: hsl(38 96% 60% / 0.08) !important;
+  background-color: hsl(var(--rm-accent-hsl) / 0.10) !important;
   color: var(--rm-accent) !important;
-  border-color: hsl(38 96% 60% / 0.4) !important;
+  border-color: hsl(var(--rm-accent-hsl) / 0.45) !important;
 }
+
 
 /* Disabled — visual neutro sem interatividade */
 .rm-dialog button:disabled,

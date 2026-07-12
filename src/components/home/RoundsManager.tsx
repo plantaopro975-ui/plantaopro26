@@ -3053,10 +3053,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
           style={{
             ['--primary' as string]: hexToHslTriple(teamColor),
+            ['--rm-accent' as string]: teamColor,
+            ['--rm-accent-ink' as string]: TEAM_COLORS[team]?.onAccent ?? '#0b0f17',
+            ['--rm-accent-hsl' as string]: hexToHslTriple(teamColor),
+            ['--rm-accent-glow' as string]: `${teamColor}66`,
             borderColor: `${teamColor}44`,
             transform: `translate(calc(-50% + ${drag.x}px), calc(-50% + ${drag.y}px))`,
             willChange: 'transform',
           }}
+
           onEscapeKeyDown={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
@@ -4189,6 +4194,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                       <TeamConfirmDialog
                         open={teamConfirmOpen}
+                        team={(pendingTeam ?? team) as TeamKey}
                         color={pendingTeam ? getRotatedTeamColor(pendingTeam, colorRotation) : teamColor}
                         teamLabel={pendingTeam ? (TEAM_PRESETS.find((p) => p.key === pendingTeam)?.label ?? pendingTeam) : team}
                         agentCount={agents.filter((a) => a.trim()).length}
@@ -4200,6 +4206,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           setPendingTeam(null);
                         }}
                       />
+
 
                       <PreNightScheduleDialog
                         open={preNightOpen}
