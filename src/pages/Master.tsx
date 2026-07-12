@@ -1195,7 +1195,7 @@ export default function Master() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {users.map((u) => (
+                      {filteredUsers.map((u) => (
                         <TableRow key={u.id} className="border-border">
                           <TableCell className="font-medium">{u.email}</TableCell>
                           <TableCell>
