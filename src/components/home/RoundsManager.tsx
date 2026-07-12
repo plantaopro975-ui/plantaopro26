@@ -2542,7 +2542,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       notified_indices?: number[] | null; is_active?: boolean;
     }) => {
       setTeam(data.team as TeamKey);
-      setMode(data.mode as Mode);
+      setMode(sanitizeMode(data.mode));
       setStartTime(data.start_time);
       setEndTime(data.end_time);
       setIntervalMin(data.interval_min);
