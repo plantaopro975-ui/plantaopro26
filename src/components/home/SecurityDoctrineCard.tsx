@@ -67,9 +67,13 @@ export function SecurityDoctrineCard({ color }: { color: string }) {
                 <button
                   type="button"
                   onClick={() => setExpanded((v) => !v)}
-                  className="inline-flex items-center gap-1 rounded-sm border border-border/50 bg-muted/30 hover:bg-muted/60 hover:border-border transition-colors px-1.5 py-0.5"
+                  aria-expanded={expanded}
+                  aria-controls="security-doctrine-details"
+                  aria-label={`${title}. ${body} Pressione Enter para ${expanded ? 'ocultar' : 'expandir'} detalhes.`}
+                  className="inline-flex items-center gap-1 rounded-sm border border-border/50 bg-muted/30 hover:bg-muted/60 hover:border-border transition-colors px-1.5 py-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+                  style={{ ['--tw-ring-color' as string]: color }}
                 >
-                  <Icon className="h-3 w-3 shrink-0" style={{ color }} />
+                  <Icon className="h-3 w-3 shrink-0" aria-hidden="true" style={{ color }} />
                   <span className="text-[10.5px] font-medium text-foreground/90 whitespace-nowrap">
                     {label}
                   </span>
