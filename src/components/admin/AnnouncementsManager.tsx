@@ -569,7 +569,7 @@ export function AnnouncementsManager() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-slate-900 border-slate-700">
+        <DialogContent className="sm:max-w-[440px] max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700 p-4">
           <DialogHeader>
             <DialogTitle className="text-white flex items-center gap-2">
               <Megaphone className="h-5 w-5 text-amber-400" />
@@ -583,7 +583,7 @@ export function AnnouncementsManager() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
+          <div className="space-y-3 py-2">
             {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title" className="text-slate-200">Título *</Label>
@@ -604,60 +604,62 @@ export function AnnouncementsManager() {
                 value={formData.content}
                 onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
                 placeholder="Descrição detalhada do aviso (opcional)"
-                className="bg-slate-800 border-slate-700 text-white min-h-[80px]"
+                className="bg-slate-800 border-slate-700 text-white min-h-[60px]"
               />
             </div>
 
-            {/* Priority */}
-            <div className="space-y-2">
-              <Label className="text-slate-200">Prioridade</Label>
-              <Select
-                value={formData.priority}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
-              >
-                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  {priorityOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className="text-white hover:bg-slate-700">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${option.color}`} />
-                        {option.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Priority + Target — lado a lado para reduzir altura */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label className="text-slate-200">Prioridade</Label>
+                <Select
+                  value={formData.priority}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
+                >
+                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    {priorityOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value} className="text-white hover:bg-slate-700">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${option.color}`} />
+                          {option.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-slate-200">Destinatário</Label>
+                <Select
+                  value={formData.target_type}
+                  onValueChange={(value) => setFormData(prev => ({
+                    ...prev,
+                    target_type: value,
+                    target_unit_id: '',
+                    target_team: ''
+                  }))}
+                >
+                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    {targetOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value} className="text-white hover:bg-slate-700">
+                        <div className="flex items-center gap-2">
+                          <option.icon className="h-4 w-4 text-slate-400" />
+                          {option.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {/* Target Type */}
-            <div className="space-y-2">
-              <Label className="text-slate-200">Destinatário</Label>
-              <Select
-                value={formData.target_type}
-                onValueChange={(value) => setFormData(prev => ({ 
-                  ...prev, 
-                  target_type: value,
-                  target_unit_id: '',
-                  target_team: ''
-                }))}
-              >
-                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  {targetOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className="text-white hover:bg-slate-700">
-                      <div className="flex items-center gap-2">
-                        <option.icon className="h-4 w-4 text-slate-400" />
-                        {option.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
             {/* Unit Selector */}
             {formData.target_type === 'unit' && (
