@@ -5,10 +5,12 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 export class AdminClientError extends Error {
   status?: number;
-  constructor(message: string, status?: number) {
+  raw?: unknown;
+  constructor(message: string, status?: number, raw?: unknown) {
     super(message);
     this.name = 'AdminClientError';
     this.status = status;
+    this.raw = raw;
   }
 }
 
