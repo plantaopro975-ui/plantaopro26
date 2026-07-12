@@ -3758,10 +3758,40 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   {/* ReadyToStartBanner removido a pedido — informação redundante. */}
 
                   {!schedule ? (
-                    <div className="rounded-lg border border-dashed border-border bg-card/95 p-6 text-center text-[13.5px] text-muted-foreground font-sans">
-                      Preencha a configuração para gerar o cronograma.
+                    <div className="grid gap-3">
+                      <div className="rounded-lg border border-dashed border-border bg-card/95 p-4 text-center text-[13px] text-muted-foreground font-sans">
+                        {issues.length > 0
+                          ? 'Existem itens a corrigir — o cronograma será gerado assim que todos forem resolvidos.'
+                          : 'Preencha a configuração para gerar o cronograma.'}
+                      </div>
+                      {/* Iniciar Rondas sempre visível (desabilitado quando há validações). */}
+                      <div className="flex justify-center">
+                        <Button
+                          type="button"
+                          size="sm"
+                          aria-disabled
+                          onClick={() => {
+                            focusValidationPanel();
+                            toast({
+                              title: 'Corrija os itens em vermelho antes de iniciar.',
+                              description: issues[0]?.message ?? 'Preencha a configuração.',
+                              variant: 'destructive',
+                            });
+                          }}
+                          className="h-10 sm:h-9 px-4 sm:px-5 border font-mono font-bold uppercase tracking-[0.16em] text-[12px] sm:text-[11.5px] rounded-sm opacity-50 cursor-not-allowed grayscale"
+                          style={{
+                            backgroundColor: teamColor,
+                            borderColor: teamColor,
+                            color: TEAM_COLORS[team]?.onAccent ?? '#0a0a0a',
+                          }}
+                          title="Corrija os itens em vermelho antes de iniciar"
+                        >
+                          <Play className="h-4 w-4 sm:h-3.5 sm:w-3.5 mr-1.5" /> Iniciar Rondas
+                        </Button>
+                      </div>
                     </div>
                   ) : (
+
                     <div>
 
 
