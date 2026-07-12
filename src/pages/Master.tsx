@@ -89,6 +89,7 @@ import iseAcreBadgeWebpAsset from '@/assets/ise-acre-badge.webp.asset.json';
 const iseAcreBadge = iseAcreBadgeAsset.url;
 const iseAcreBadgeWebp = iseAcreBadgeWebpAsset.url;
 import { PanelNav } from '@/components/ui/panel-nav';
+import { MasterDiagnostics } from '@/components/master/MasterDiagnostics';
 import { formatUnitName } from '@/lib/unitNames';
 
 interface UserWithRole {
