@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { adminClient, AdminClientError } from '@/lib/adminClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,8 +16,21 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
-import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2, RefreshCw } from 'lucide-react';
+import { Search, Eye, EyeOff, Copy, Shield, Users, Key, Building2, RefreshCw, Download, FileJson, FileText, Clock } from 'lucide-react';
 import { AgentPasswordManager } from '@/components/admin/AgentPasswordManager';
 import { cn } from '@/lib/utils';
 
@@ -34,7 +49,14 @@ export function CredentialsViewer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<{ message: string; status?: number; raw?: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [teamFilter, setTeamFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [unitFilter, setUnitFilter] = useState<string>('all');
   const [showCpfs, setShowCpfs] = useState<Record<string, boolean>>({});
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     fetchAgents();
@@ -54,6 +76,7 @@ export function CredentialsViewer() {
         unit: a.unit ? { name: a.unit.name, municipality: a.unit.municipality } : null,
       }));
       setAgents(mapped);
+      setLastUpdatedAt(new Date());
     } catch (err: any) {
       const msg = err?.message || 'Não foi possível carregar a lista de agentes.';
       console.error('Error fetching agents:', err);
@@ -104,17 +127,142 @@ export function CredentialsViewer() {
   };
 
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
+
+  const availableTeams = useMemo(
+    () => Array.from(new Set(agents.map(a => a.team).filter(Boolean))).sort() as string[],
+    [agents]
+  );
+  const availableUnits = useMemo(
+    () => Array.from(new Set(agents.map(a => a.unit?.name).filter(Boolean))).sort() as string[],
+    [agents]
+  );
+
   const filteredAgents = useMemo(() => {
     const term = debouncedSearchTerm.toLowerCase();
     const numbers = debouncedSearchTerm.replace(/\D/g, '');
-    if (!term && !numbers) return agents;
-    return agents.filter(agent =>
-      agent.name.toLowerCase().includes(term) ||
-      (numbers && agent.cpf?.includes(numbers)) ||
-      agent.team?.toLowerCase().includes(term)
-    );
-  }, [agents, debouncedSearchTerm]);
+    return agents.filter(agent => {
+      if (teamFilter !== 'all' && agent.team !== teamFilter) return false;
+      if (unitFilter !== 'all' && agent.unit?.name !== unitFilter) return false;
+      if (statusFilter === 'active' && !agent.is_active) return false;
+      if (statusFilter === 'inactive' && agent.is_active) return false;
+      if (!term && !numbers) return true;
+      return (
+        agent.name.toLowerCase().includes(term) ||
+        (numbers && agent.cpf?.includes(numbers)) ||
+        (agent.team?.toLowerCase().includes(term) ?? false) ||
+        (agent.unit?.name.toLowerCase().includes(term) ?? false) ||
+        (agent.unit?.municipality.toLowerCase().includes(term) ?? false)
+      );
+    });
+  }, [agents, debouncedSearchTerm, teamFilter, statusFilter, unitFilter]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredAgents.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedAgents = useMemo(
+    () => filteredAgents.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+    [filteredAgents, currentPage, pageSize]
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchTerm, teamFilter, statusFilter, unitFilter, pageSize]);
+
+  const clearAllFilters = () => {
+    setSearchTerm('');
+    setTeamFilter('all');
+    setStatusFilter('all');
+    setUnitFilter('all');
+  };
+
+  const activeFilterCount =
+    (searchTerm ? 1 : 0) +
+    (teamFilter !== 'all' ? 1 : 0) +
+    (statusFilter !== 'all' ? 1 : 0) +
+    (unitFilter !== 'all' ? 1 : 0);
+
+  const exportJSON = () => {
+    try {
+      setExporting(true);
+      const payload = {
+        exported_at: new Date().toISOString(),
+        total: filteredAgents.length,
+        filters: {
+          search: searchTerm || null,
+          team: teamFilter,
+          status: statusFilter,
+          unit: unitFilter,
+        },
+        agents: filteredAgents.map(a => ({
+          id: a.id,
+          name: a.name,
+          cpf: a.cpf,
+          team: a.team,
+          is_active: a.is_active,
+          unit_name: a.unit?.name ?? null,
+          unit_municipality: a.unit?.municipality ?? null,
+        })),
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `credenciais-agentes-${format(new Date(), 'yyyyMMdd-HHmmss')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: 'JSON exportado', description: `${filteredAgents.length} agente(s) exportado(s).` });
+    } catch (e: any) {
+      toast({ title: 'Erro na exportação', description: e?.message || 'Falha ao gerar JSON.', variant: 'destructive' });
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const exportPDF = async () => {
+    try {
+      setExporting(true);
+      const { default: jsPDF } = await import('jspdf');
+      const autoTableMod: any = await import('jspdf-autotable');
+      const autoTable = autoTableMod.default || autoTableMod;
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+      const now = new Date();
+
+      doc.setFontSize(14);
+      doc.text('Credenciais dos Agentes', 40, 40);
+      doc.setFontSize(9);
+      doc.setTextColor(120);
+      doc.text(
+        `Gerado em ${format(now, "dd/MM/yyyy 'às' HH:mm:ss", { locale: ptBR })} • ${filteredAgents.length} registro(s)`,
+        40,
+        56
+      );
+
+      autoTable(doc, {
+        startY: 74,
+        head: [['Nome', 'CPF', 'Equipe', 'Unidade', 'Município', 'Status']],
+        body: filteredAgents.map(a => [
+          a.name,
+          a.cpf ? a.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : '---',
+          a.team ?? '---',
+          a.unit?.name ?? '---',
+          a.unit?.municipality ?? '---',
+          a.is_active ? 'Ativo' : 'Inativo',
+        ]),
+        styles: { fontSize: 8, cellPadding: 4 },
+        headStyles: { fillColor: [88, 28, 135], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 243, 255] },
+      });
+
+      doc.save(`credenciais-agentes-${format(now, 'yyyyMMdd-HHmmss')}.pdf`);
+      toast({ title: 'PDF exportado', description: `${filteredAgents.length} agente(s) exportado(s).` });
+    } catch (e: any) {
+      console.error('exportPDF error', e);
+      toast({ title: 'Erro na exportação', description: e?.message || 'Falha ao gerar PDF.', variant: 'destructive' });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const teamColors: Record<string, string> = {
     'ALFA': 'bg-red-500/20 text-red-400 border-red-500/40',
@@ -138,18 +286,50 @@ export function CredentialsViewer() {
               Visualize e gerencie as credenciais de acesso de todos os agentes
             </CardDescription>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={fetchAgents}
-            disabled={loading}
-            className="gap-2 shrink-0"
-            title="Atualizar lista de agentes"
-          >
-            <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
-            {loading ? 'Atualizando...' : 'Atualizar'}
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={exporting || filteredAgents.length === 0}
+                  className="gap-2"
+                  title="Exportar lista filtrada"
+                >
+                  <Download className="h-4 w-4" />
+                  Exportar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-popover border-border">
+                <DropdownMenuItem onClick={exportJSON} className="gap-2 cursor-pointer">
+                  <FileJson className="h-4 w-4" />
+                  JSON ({filteredAgents.length})
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportPDF} className="gap-2 cursor-pointer">
+                  <FileText className="h-4 w-4" />
+                  PDF ({filteredAgents.length})
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchAgents}
+              disabled={loading}
+              className="gap-2"
+              title="Atualizar lista de agentes"
+            >
+              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+              {loading ? 'Atualizando...' : 'Atualizar'}
+            </Button>
+          </div>
         </div>
+        {lastUpdatedAt && (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
+            <Clock className="h-3 w-3" />
+            Última atualização: {format(lastUpdatedAt, "dd/MM/yyyy 'às' HH:mm:ss", { locale: ptBR })}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
@@ -180,26 +360,84 @@ export function CredentialsViewer() {
             </Button>
           </div>
         )}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar por nome, CPF ou equipe..."
-            className="pl-10 bg-slate-800/50 border-slate-700"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="relative lg:col-span-2">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar por nome, CPF, equipe, unidade ou município..."
+              className="pl-10 bg-slate-800/50 border-slate-700"
+            />
+          </div>
+          <Select value={teamFilter} onValueChange={setTeamFilter}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-700">
+              <SelectValue placeholder="Equipe" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              <SelectItem value="all">Todas as equipes</SelectItem>
+              {availableTeams.map(t => (
+                <SelectItem key={t} value={t}>{t}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-700">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              <SelectItem value="all">Todos os status</SelectItem>
+              <SelectItem value="active">Somente ativos</SelectItem>
+              <SelectItem value="inactive">Somente inativos</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={unitFilter} onValueChange={setUnitFilter}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-700 lg:col-span-2">
+              <SelectValue placeholder="Unidade" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              <SelectItem value="all">Todas as unidades</SelectItem>
+              {availableUnits.map(u => (
+                <SelectItem key={u} value={u}>{u}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-700">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              {[10, 25, 50, 100].map(n => (
+                <SelectItem key={n} value={String(n)}>{n} por página</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span>{filteredAgents.length} agentes</span>
+            <span>{filteredAgents.length} de {agents.length} agentes</span>
           </div>
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-green-500" />
             <span>{filteredAgents.filter(a => a.is_active).length} ativos</span>
           </div>
+          {activeFilterCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearAllFilters}
+              className="h-6 px-2 text-xs"
+            >
+              Limpar filtros ({activeFilterCount})
+            </Button>
+          )}
+          <div className="ml-auto text-xs">
+            Página {currentPage} de {totalPages}
+          </div>
         </div>
+
 
         <ScrollArea className="h-[400px] rounded-lg border border-border">
           <Table>
@@ -258,7 +496,7 @@ export function CredentialsViewer() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredAgents.map((agent) => (
+                paginatedAgents.map((agent) => (
                   <TableRow key={agent.id} className="border-border hover:bg-muted/30">
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
@@ -334,6 +572,30 @@ export function CredentialsViewer() {
             </TableBody>
           </Table>
         </ScrollArea>
+
+        {filteredAgents.length > pageSize && (
+          <div className="flex items-center justify-between gap-2 pt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Anterior
+            </Button>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredAgents.length)} de {filteredAgents.length}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Próxima
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
