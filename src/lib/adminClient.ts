@@ -179,6 +179,14 @@ export const adminClient = {
         pendingApprovals: number;
       };
     }>('list_dashboard_data', {}),
+
+  // Sincroniza auth.users → profiles + user_roles
+  syncUsers: () =>
+    callAdminBackend<{
+      totalAuthUsers: number;
+      profilesInserted: number;
+      rolesInserted: number;
+    }>('sync_users', {}),
 };
 
 /**
