@@ -731,12 +731,12 @@ export default function Master() {
           </TabsList>
 
           {/* Pending Approvals Tab */}
-          <TabsContent value="approvals" className="space-y-6 mt-6">
+          <TabsContent value="approvals" className="space-y-3 mt-3">
             <PendingApprovalsManager onApprovalChange={fetchData} />
           </TabsContent>
 
           {/* Audit — Recém-cadastrados + Auditoria de Acessos */}
-          <TabsContent value="audit" className="space-y-6 mt-6">
+          <TabsContent value="audit" className="space-y-3 mt-3">
             <Suspense fallback={<PanelSkeleton rows={4} />}>
               <AgentsConnectionMonitor />
             </Suspense>
@@ -750,7 +750,7 @@ export default function Master() {
 
 
           {/* Overview Tab - Units */}
-          <TabsContent value="overview" className="space-y-6 mt-6">
+          <TabsContent value="overview" className="space-y-3 mt-3">
             {unitsError && (
               <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
                 <strong>Aviso — Unidades:</strong> {unitsError}
@@ -781,7 +781,7 @@ export default function Master() {
           </TabsContent>
 
           {/* Access Control Tab */}
-          <TabsContent value="access-control" className="space-y-4 mt-6">
+          <TabsContent value="access-control" className="space-y-3 mt-3">
             <AgentAccessControl 
               agents={agents.map(a => ({
                 id: a.id,
@@ -799,7 +799,7 @@ export default function Master() {
           </TabsContent>
 
           {/* Agents Tab */}
-          <TabsContent value="agents" className="space-y-4 mt-6">
+          <TabsContent value="agents" className="space-y-3 mt-3">
             {/* Actions Bar */}
             <div className="flex flex-wrap items-center gap-4">
               <div className="relative flex-1 min-w-[200px] max-w-md">
@@ -1054,22 +1054,22 @@ export default function Master() {
           </TabsContent>
 
           {/* Credentials Tab */}
-          <TabsContent value="credentials" className="space-y-4 mt-6">
+          <TabsContent value="credentials" className="space-y-3 mt-3">
             <CredentialsViewer />
           </TabsContent>
 
           {/* Password Requests Tab */}
-          <TabsContent value="password-requests" className="space-y-4 mt-6">
+          <TabsContent value="password-requests" className="space-y-3 mt-3">
             <PasswordRequestsManager />
           </TabsContent>
 
           {/* Licenses & Finance Tab */}
-          <TabsContent value="licenses" className="mt-6">
+          <TabsContent value="licenses" className="mt-3">
             <LicenseFinanceControl />
           </TabsContent>
 
           {/* Logs Tab */}
-          <TabsContent value="logs" className="mt-6">
+          <TabsContent value="logs" className="mt-3">
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1118,12 +1118,12 @@ export default function Master() {
           </TabsContent>
 
           {/* Transfers Tab */}
-          <TabsContent value="transfers" className="mt-6">
+          <TabsContent value="transfers" className="mt-3">
             <TransferApprovalPanel />
           </TabsContent>
 
           {/* Users Tab */}
-          <TabsContent value="users" className="mt-6">
+          <TabsContent value="users" className="mt-3">
             <Card className="glass glass-border shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1222,7 +1222,7 @@ export default function Master() {
           </TabsContent>
 
           {/* Comunicações Internas Tab */}
-          <TabsContent value="announcements" className="space-y-6 mt-6">
+          <TabsContent value="announcements" className="space-y-3 mt-3">
             <div className="rounded-lg border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-orange-600/5 p-4">
               <div className="flex items-center gap-3">
                 <MessageSquare className="h-5 w-5 text-amber-400" />
@@ -1238,7 +1238,7 @@ export default function Master() {
           </TabsContent>
 
           {/* Swaps Management Tab */}
-          <TabsContent value="swaps" className="space-y-6 mt-6">
+          <TabsContent value="swaps" className="space-y-3 mt-3">
             <SwapManagementPanel />
           </TabsContent>
         </Tabs>
