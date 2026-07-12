@@ -710,13 +710,17 @@ serve(async (req) => {
     // Consolida units + agents + users + logs + stats em uma única chamada,
     // usando service_role para bypassar RLS quando o master faz login por token.
     if (action === "list_dashboard_data") {
-      const [unitsRes, agentsRes, profilesRes, rolesRes, logsRes, transfersRes] = await Promise.all([
+      const [unitsRes, agentsRes, profilesRes, rolesRes, logsRes, transfersRes, authUsersRes] = await Promise.all([
         admin.from("units").select("id, name, municipality, director_name, coordinator_name, address, email, phone").order("municipality").order("name"),
         admin.from("agents").select("id, name, cpf, matricula, email, phone, address, team, is_active, unit_id, approval_status, license_status, license_expires_at, license_notes, created_at, unit:units(name, municipality)").order("name"),
         admin.from("profiles").select("user_id, full_name, created_at"),
         admin.from("user_roles").select("user_id, role"),
         admin.from("access_logs").select("id, agent_id, action, created_at, ip_address, user_agent, agent:agents(name)").order("created_at", { ascending: false }).limit(100),
         admin.from("transfer_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        // Fonte autoritativa de "usuários do sistema" — profiles pode estar
+        // vazia (não é populada automaticamente). Usa service_role via GoTrue
+        // Admin API para listar todos os usuários reais de auth.users.
+        admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
       ]);
 
       if (unitsRes.error || agentsRes.error) {
@@ -732,12 +736,23 @@ serve(async (req) => {
 
       const roleMap = new Map<string, string>();
       (rolesRes.data ?? []).forEach((r: any) => roleMap.set(r.user_id, r.role));
-      const users = (profilesRes.data ?? []).map((p: any) => ({
-        id: p.user_id,
-        email: p.full_name || "Usuário",
-        created_at: p.created_at,
-        role: roleMap.get(p.user_id) ?? "user",
-      }));
+      const profileMap = new Map<string, any>();
+      (profilesRes.data ?? []).forEach((p: any) => profileMap.set(p.user_id, p));
+
+      const authUsers = authUsersRes?.data?.users ?? [];
+      if (authUsersRes?.error) {
+        console.error("list_dashboard_data authUsers error", authUsersRes.error);
+      }
+
+      const users = authUsers.map((u: any) => {
+        const prof = profileMap.get(u.id);
+        return {
+          id: u.id,
+          email: u.email || prof?.full_name || "Sem e-mail",
+          created_at: u.created_at ?? prof?.created_at ?? null,
+          role: roleMap.get(u.id) ?? "user",
+        };
+      });
 
       return json({
         success: true,
@@ -758,6 +773,7 @@ serve(async (req) => {
         },
       });
     }
+
 
     return json({ success: false, error: "Ação desconhecida." }, 400);
   } catch (err) {
