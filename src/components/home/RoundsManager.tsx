@@ -3878,8 +3878,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               <Button
                                 type="button"
                                 size="sm"
+                                disabled={issues.length > 0 || !schedule}
                                 onClick={() => {
-                                  if (!schedule) { toast({ title: 'Corrija os erros antes de iniciar.', variant: 'destructive' }); return; }
+                                  if (issues.length > 0 || !schedule) {
+                                    toast({
+                                      title: 'Corrija os itens em vermelho antes de iniciar.',
+                                      description: issues[0]?.message,
+                                      variant: 'destructive',
+                                    });
+                                    return;
+                                  }
                                   // Janela pré-noturna (18:00–21:59 Acre): bloqueia início
                                   // imediato e oferece agendamento para as 22:00.
                                   if (isPreNightWindow(new Date(nowServer())) && !overrideActive) {
@@ -3888,7 +3896,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   }
                                   setStartConfirmOpen(true);
                                 }}
-                                className="rm-play-btn h-10 sm:h-9 px-4 sm:px-5 border font-mono font-bold uppercase tracking-[0.16em] text-[12px] sm:text-[11.5px] rounded-sm transition-transform"
+                                className={cn(
+                                  'rm-play-btn h-10 sm:h-9 px-4 sm:px-5 border font-mono font-bold uppercase tracking-[0.16em] text-[12px] sm:text-[11.5px] rounded-sm transition-transform',
+                                  (issues.length > 0 || !schedule) && 'opacity-50 cursor-not-allowed grayscale',
+                                )}
                                 style={{
                                   backgroundColor: teamColor,
                                   borderColor: teamColor,
@@ -3896,6 +3907,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   boxShadow: `0 0 18px -6px ${teamColor}, 0 0 0 1px ${teamColor}66 inset, 0 1px 0 rgba(255,255,255,0.18) inset`,
                                   textShadow: '0 1px 0 rgba(255,255,255,0.15)',
                                 }}
+                                title={issues.length > 0 ? 'Corrija os itens em vermelho antes de iniciar' : undefined}
                               >
                                 <Play className="rm-play-icon h-4 w-4 sm:h-3.5 sm:w-3.5 mr-1.5" /> Iniciar Rondas
                               </Button>
