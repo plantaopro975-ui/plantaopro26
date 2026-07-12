@@ -15,6 +15,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { areNativeNotificationsAllowed } from '@/lib/reminderSettings';
@@ -3491,10 +3492,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 {/* Times / interval */}
                 {nightLocked && (
+                  <TooltipProvider delayDuration={200}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                   <div
                     data-testid="night-shift-banner"
                     className={cn(
-                      'rounded-md border px-2.5 py-1.5 text-[12px]',
+                      'rounded-md border px-2.5 py-1.5 text-[12px] cursor-help',
                       overrideActive
                         ? 'border-red-500/40 bg-red-500/5 text-red-200/90'
                         : 'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
@@ -3577,6 +3581,21 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       </div>
                     )}
                   </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" align="start" className="max-w-xs text-[12px] leading-snug">
+                        <p className="font-semibold mb-1">Turno noturno travado</p>
+                        <p className="text-muted-foreground">
+                          A partir das 18:00 (Acre), o sistema fixa automaticamente o turno em
+                          {' '}<b className="text-foreground">22:00 → 06:00</b>, conforme diretriz operacional.
+                          Os horários ficam bloqueados para garantir integridade da escala e auditoria;
+                          apenas a <b className="text-foreground">quantidade de agentes</b> e o
+                          {' '}<b className="text-foreground">intervalo de rondas</b> podem ser ajustados.
+                          Alterações de horário exigem <b className="text-foreground">override master</b>,
+                          com motivo registrado em <code>night_shift_overrides</code>.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
                 {nightEffectivelyLocked ? (
                   <button
