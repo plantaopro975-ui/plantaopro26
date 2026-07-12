@@ -228,24 +228,22 @@ export function SplashScreen() {
       </div>
 
       <style>{`
-        /* Default (desktop / landscape): preenche toda a viewport, camada mobile oculta */
-        .sp-splash-img { object-fit: cover; object-position: center center; }
-        .sp-splash-mobile { display: none; }
-        .sp-splash-bg { opacity: 0; }
-        /* Mobile portrait: arte central + camadas institucionais ao redor */
-        @media (max-width: 767px) and (orientation: portrait) {
-          .sp-splash-img { object-fit: contain; object-position: center 58%; transform: scale(0.82); }
-          .sp-splash-mobile { display: flex; }
-          .sp-splash-bg {
-            opacity: 1;
-            background:
-              radial-gradient(ellipse 70% 45% at 50% 55%, rgba(244,201,116,0.10) 0%, transparent 70%),
-              linear-gradient(180deg, #0a0c12 0%, #12100a 50%, #050505 100%),
-              repeating-linear-gradient(0deg, transparent 0 24px, rgba(244,201,116,0.035) 24px 25px),
-              repeating-linear-gradient(90deg, transparent 0 24px, rgba(244,201,116,0.035) 24px 25px);
-            animation: spSplashFade 500ms both;
-          }
+        /* Default (desktop / landscape): agente contida à direita, com espaço superior/inferior para a marca */
+        .sp-splash-img { object-fit: contain; object-position: center 60%; }
+        .sp-splash-bg {
+          opacity: 1;
+          background:
+            radial-gradient(ellipse 80% 55% at 50% 50%, rgba(244,201,116,0.10) 0%, transparent 70%),
+            linear-gradient(180deg, #0a0c12 0%, #12100a 50%, #050505 100%),
+            repeating-linear-gradient(0deg, transparent 0 28px, rgba(244,201,116,0.03) 28px 29px),
+            repeating-linear-gradient(90deg, transparent 0 28px, rgba(244,201,116,0.03) 28px 29px);
+          animation: spSplashFade 500ms both;
         }
+        /* Mobile portrait: encolhe a agente para não colidir com a marca no topo */
+        @media (max-width: 767px) and (orientation: portrait) {
+          .sp-splash-img { object-position: center 62%; transform: scale(0.78); }
+        }
+
         @keyframes spSplashIn {
           from { opacity: 0; transform: scale(1.04); filter: blur(4px); }
           to   { opacity: 1; transform: scale(1); filter: blur(0); }
