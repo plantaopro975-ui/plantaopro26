@@ -1989,13 +1989,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       startMin: s,
       hasRemainder: hasSeconds,
       effectiveRounding: effRounding,
-      // Metadados do modo proporcional (usados na UI)
-      proportional: mode === 'proportional' ? {
-        cadenceMin,
-        totalRounds: n,
-        agentsCount: agents.length,
-        roundsPerAgent: n / Math.max(1, agents.length),
-      } : null,
+      // Modo proporcional foi descontinuado — mantemos o campo como null
+      // para compatibilidade com consumidores existentes.
+      proportional: null as null,
+
     };
   }, [issues, mode, startTime, endTime, intervalMin, cadenceMin, rounding, agents, effectiveStartMin, nightEffectivelyLocked]);
 
