@@ -1707,6 +1707,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const nightEffectivelyLocked = nightLocked && !overrideActive;
 
+  // Guard: modo "proportional" foi descontinuado da UI. Se restar salvo em
+  // localStorage/estado antigo, cai automaticamente para "split".
+  useEffect(() => {
+    if ((mode as string) === 'proportional') setMode('split');
+  }, [mode]);
+
+
   // Guard: while locked, revert any external change to start/end
   useEffect(() => {
     if (!nightEffectivelyLocked) return;
