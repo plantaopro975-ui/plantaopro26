@@ -774,6 +774,53 @@ serve(async (req) => {
       });
     }
 
+    // ===== SYNC USERS =====
+    // Reindex auth.users with profiles + user_roles.
+    if (action === "sync_users") {
+      const authRes = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      if (authRes.error) {
+        return json({ success: false, error: authRes.error.message }, 500);
+      }
+      const authUsers = authRes.data?.users ?? [];
+
+      const [profilesRes, rolesRes] = await Promise.all([
+        admin.from("profiles").select("user_id"),
+        admin.from("user_roles").select("user_id"),
+      ]);
+
+      const existingProfiles = new Set((profilesRes.data ?? []).map((p: any) => p.user_id));
+      const existingRoles = new Set((rolesRes.data ?? []).map((r: any) => r.user_id));
+
+      const profilesToInsert = authUsers
+        .filter((u: any) => !existingProfiles.has(u.id))
+        .map((u: any) => ({ user_id: u.id, full_name: u.user_metadata?.full_name ?? null }));
+      const rolesToInsert = authUsers
+        .filter((u: any) => !existingRoles.has(u.id))
+        .map((u: any) => ({ user_id: u.id, role: "user" }));
+
+      let profilesInserted = 0;
+      let rolesInserted = 0;
+
+      if (profilesToInsert.length > 0) {
+        const { error } = await admin.from("profiles").insert(profilesToInsert);
+        if (error) return json({ success: false, error: `Falha ao inserir profiles: ${error.message}` }, 500);
+        profilesInserted = profilesToInsert.length;
+      }
+      if (rolesToInsert.length > 0) {
+        const { error } = await admin.from("user_roles").insert(rolesToInsert);
+        if (error) return json({ success: false, error: `Falha ao inserir user_roles: ${error.message}` }, 500);
+        rolesInserted = rolesToInsert.length;
+      }
+
+      return json({
+        success: true,
+        data: {
+          totalAuthUsers: authUsers.length,
+          profilesInserted,
+          rolesInserted,
+        },
+      });
+    }
 
     return json({ success: false, error: "Ação desconhecida." }, 400);
   } catch (err) {
