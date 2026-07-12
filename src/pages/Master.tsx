@@ -280,7 +280,18 @@ export default function Master() {
         import('@/components/admin/RecentRegistrationsAudit');
       });
 
-      
+
+      // Debounce para refresh silencioso a partir de eventos realtime — evita
+      // toggles rápidos de loading/skeleton que causavam "redimensionamento"
+      // aparente do painel ao receber múltiplos eventos em sequência.
+      let refreshTimer: number | null = null;
+      const scheduleSilentRefresh = () => {
+        if (refreshTimer) window.clearTimeout(refreshTimer);
+        refreshTimer = window.setTimeout(() => {
+          fetchData({ silent: true });
+        }, 600);
+      };
+
       // Realtime subscription para mudanças em agentes
       const agentsChannel = supabase
         .channel('master-agents-realtime')
@@ -290,27 +301,7 @@ export default function Master() {
           table: 'agents',
         }, (payload) => {
           console.log('[Master] Realtime agents change:', payload.eventType);
-          fetchData(); // Recarrega todos os dados
-          
-          if (payload.eventType === 'UPDATE') {
-            toast({
-              title: '🔄 Atualização detectada',
-              description: 'Dados de agente foram atualizados.',
-              duration: 2000,
-            });
-          } else if (payload.eventType === 'DELETE') {
-            toast({
-              title: '🗑️ Registro removido',
-              description: 'Um agente foi excluído do sistema.',
-              duration: 2000,
-            });
-          } else if (payload.eventType === 'INSERT') {
-            toast({
-              title: '✨ Novo agente',
-              description: 'Um novo agente foi cadastrado.',
-              duration: 2000,
-            });
-          }
+          scheduleSilentRefresh();
         })
         .subscribe();
 
@@ -323,16 +314,18 @@ export default function Master() {
           table: 'transfer_requests',
         }, () => {
           console.log('[Master] Realtime transfer change');
-          fetchData();
+          scheduleSilentRefresh();
         })
         .subscribe();
 
       return () => {
+        if (refreshTimer) window.clearTimeout(refreshTimer);
         supabase.removeChannel(agentsChannel);
         supabase.removeChannel(transfersChannel);
       };
     }
   }, [masterSession]);
+
 
   const fetchData = async () => {
     try {
