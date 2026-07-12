@@ -167,6 +167,19 @@ if ("serviceWorker" in navigator && shouldSkipServiceWorker()) {
           });
         });
 
+        // Auto-update: poll for a new SW every 60s and whenever the tab
+        // regains focus / comes back online. Ensures installed PWAs pick up
+        // new builds without a manual refresh.
+        const triggerUpdate = () => {
+          registration.update().catch(() => {});
+        };
+        setInterval(triggerUpdate, 60_000);
+        window.addEventListener("focus", triggerUpdate);
+        window.addEventListener("online", triggerUpdate);
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") triggerUpdate();
+        });
+
         console.log("Service Worker registered successfully");
       })
       .catch((error) => {
