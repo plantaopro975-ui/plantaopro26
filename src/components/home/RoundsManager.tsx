@@ -4045,6 +4045,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                 }
                               `}</style>
 
+                              <TooltipProvider delayDuration={200}>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
                               <Button
                                 type="button"
                                 size="sm"
@@ -4078,10 +4081,33 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   boxShadow: `0 0 18px -6px ${teamColor}, 0 0 0 1px ${teamColor}66 inset, 0 1px 0 rgba(255,255,255,0.18) inset`,
                                   textShadow: '0 1px 0 rgba(255,255,255,0.15)',
                                 }}
-                                title={issues.length > 0 ? 'Corrija os itens em vermelho antes de iniciar' : undefined}
                               >
                                 <Play className="rm-play-icon h-4 w-4 sm:h-3.5 sm:w-3.5 mr-1.5" /> Iniciar Rondas
                               </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="max-w-xs text-[12px] leading-snug">
+                                    {issues.length > 0 || !schedule ? (
+                                      <>
+                                        <p className="font-semibold mb-1">Início bloqueado</p>
+                                        <p className="text-muted-foreground">
+                                          {nightLocked
+                                            ? <>Turno noturno travado em <b className="text-foreground">22:00 → 06:00</b>. Resolva os itens de validação em vermelho para liberar. Alterar horários exige <b className="text-foreground">override master</b> com motivo registrado em auditoria.</>
+                                            : <>Existem itens pendentes na configuração. Ajuste-os para liberar o início da ronda.</>}
+                                        </p>
+                                      </>
+                                    ) : nightLocked ? (
+                                      <>
+                                        <p className="font-semibold mb-1">Turno noturno 22:00 → 06:00</p>
+                                        <p className="text-muted-foreground">
+                                          Horários travados automaticamente. Para operar fora dessa janela use <b className="text-foreground">Override master</b> no banner âmbar acima e registre o motivo em auditoria.
+                                        </p>
+                                      </>
+                                    ) : (
+                                      <p className="text-muted-foreground">Inicia o cronograma de rondas para toda a equipe.</p>
+                                    )}
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
 
 
                             </div>
