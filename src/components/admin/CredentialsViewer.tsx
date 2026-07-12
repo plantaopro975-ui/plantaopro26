@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-import { adminClient } from '@/lib/adminClient';
+import { adminClient, AdminClientError } from '@/lib/adminClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,7 +32,7 @@ export function CredentialsViewer() {
   const { toast } = useToast();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; status?: number; raw?: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCpfs, setShowCpfs] = useState<Record<string, boolean>>({});
 
@@ -57,7 +57,16 @@ export function CredentialsViewer() {
     } catch (err: any) {
       const msg = err?.message || 'Não foi possível carregar a lista de agentes.';
       console.error('Error fetching agents:', err);
-      setError(msg);
+      let rawStr: string | undefined;
+      if (err instanceof AdminClientError && err.raw !== undefined) {
+        try {
+          rawStr = typeof err.raw === 'string' ? err.raw : JSON.stringify(err.raw, null, 2);
+        } catch {
+          rawStr = String(err.raw);
+        }
+      }
+      const status = err instanceof AdminClientError ? err.status : undefined;
+      setError({ message: msg, status, raw: rawStr });
       toast({
         title: 'Erro ao carregar agentes',
         description: msg,
@@ -129,13 +138,27 @@ export function CredentialsViewer() {
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
-          <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-            <div className="font-semibold mb-1">Falha ao carregar agentes via edge function</div>
-            <div className="font-mono text-xs opacity-90 break-all">{error}</div>
+          <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive space-y-2">
+            <div className="font-semibold">
+              Falha ao carregar agentes via edge function
+              {error.status !== undefined && (
+                <span className="ml-2 font-mono text-xs opacity-70">[HTTP {error.status}]</span>
+              )}
+            </div>
+            <div className="font-mono text-xs opacity-90 break-all">{error.message}</div>
+            {error.raw && (
+              <details className="text-xs">
+                <summary className="cursor-pointer opacity-80 hover:opacity-100">
+                  Ver resposta bruta do edge function `admin-operations`
+                </summary>
+                <pre className="mt-2 max-h-64 overflow-auto rounded bg-black/40 p-2 text-[11px] leading-tight whitespace-pre-wrap break-all">
+{error.raw}
+                </pre>
+              </details>
+            )}
             <Button
               variant="outline"
               size="sm"
-              className="mt-2"
               onClick={fetchAgents}
             >
               Tentar novamente

@@ -5,10 +5,12 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 export class AdminClientError extends Error {
   status?: number;
-  constructor(message: string, status?: number) {
+  raw?: unknown;
+  constructor(message: string, status?: number, raw?: unknown) {
     super(message);
     this.name = 'AdminClientError';
     this.status = status;
+    this.raw = raw;
   }
 }
 
@@ -73,11 +75,11 @@ async function callAdminBackend<T>(action: AdminAction, payload: Record<string, 
     if (res.status === 401 && masterToken && (json?.error?.toLowerCase?.().includes('sessão master') || json?.error?.toLowerCase?.().includes('sessao master'))) {
       setMasterToken(null);
     }
-    throw new AdminClientError(json?.error || `Falha na operação (${res.status}).`, res.status);
+    throw new AdminClientError(json?.error || `Falha na operação (${res.status}).`, res.status, json ?? text);
   }
 
   if (!json?.success) {
-    throw new AdminClientError(json?.error || 'Operação não concluída.');
+    throw new AdminClientError(json?.error || 'Operação não concluída.', res.status, json ?? text);
   }
 
   return json.data as T;
