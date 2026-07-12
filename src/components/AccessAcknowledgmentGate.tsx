@@ -38,6 +38,17 @@ export function AccessAcknowledgmentGate() {
     }
   }, [isExemptRoute]);
 
+  // Bypass: quando o login Master é acionado (triple-click no brasão), o
+  // portal de aceite precisa fechar imediatamente — caso contrário ele fica
+  // por cima (z-[9999]) do dialog Master (z-[60]) e o usuário vê apenas uma
+  // tela preta em vez do formulário instantâneo.
+  useEffect(() => {
+    const bypass = () => setOpen(false);
+    window.addEventListener('open-master-login', bypass);
+    return () => window.removeEventListener('open-master-login', bypass);
+  }, []);
+
+
   const handleAccept = () => {
     if (!accepted) return;
     try {
