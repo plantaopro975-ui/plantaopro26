@@ -31,54 +31,66 @@ export function TeamConfirmDialog({
   return (
     <AlertDialog open={open} onOpenChange={(o) => !o && onCancel()}>
       <AlertDialogContent
-        className="max-w-[420px] p-0 overflow-hidden border rounded-xl"
+        className="w-[min(92vw,340px)] max-w-[340px] p-0 overflow-hidden border rounded-lg gap-0"
         style={
           {
             borderColor: `${color}55`,
             background:
-              `radial-gradient(120% 80% at 50% -10%, ${color}22, transparent 60%),` +
+              `radial-gradient(120% 80% at 50% -20%, ${color}18, transparent 55%),` +
               'linear-gradient(180deg, #0b1220 0%, #050912 100%)',
-            boxShadow: `0 30px 80px -30px ${color}, 0 0 0 1px ${color}22, inset 0 1px 0 rgba(255,255,255,0.04)`,
+            boxShadow: `0 20px 50px -25px ${color}, 0 0 0 1px ${color}22`,
             ['--tcd-accent' as string]: color,
             ['--tcd-ink' as string]: onAccent,
           } as React.CSSProperties
         }
       >
-        {/* ============ HERO ============ */}
-        <TeamHero teamKey={key} color={color} />
-
-        {/* ============ CORPO ============ */}
-        <div className="px-6 pt-4 pb-6 text-center relative">
-          {/* Divisor com marca da equipe */}
-          <div className="flex items-center justify-center gap-2 mb-3" aria-hidden>
-            <span className="h-px flex-1 max-w-[70px]" style={{ background: `linear-gradient(90deg, transparent, ${color}80)` }} />
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.32em]" style={{ color: `${color}` }}>
-              Protocolo · {teamLabel}
-            </span>
-            <span className="h-px flex-1 max-w-[70px]" style={{ background: `linear-gradient(90deg, ${color}80, transparent)` }} />
+        {/* HEADER compacto */}
+        <div
+          className="relative flex items-center gap-2.5 px-3.5 py-2.5 border-b"
+          style={{
+            borderColor: `${color}22`,
+            background: `linear-gradient(180deg, ${color}12, transparent)`,
+          }}
+        >
+          <div
+            className="grid place-items-center h-9 w-9 rounded-md shrink-0"
+            style={{
+              background: `${color}18`,
+              border: `1px solid ${color}55`,
+              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 12px -6px ${color}`,
+            }}
+          >
+            <MiniCrest teamKey={key} color={color} />
           </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-mono text-[8.5px] uppercase tracking-[0.28em] text-slate-500 leading-none">
+              Protocolo · {teamCodename(key)}
+            </div>
+            <div className="mt-0.5 text-[13px] font-semibold tracking-tight text-slate-100 leading-tight truncate">
+              Confirmar equipe <span style={{ color }}>{teamLabel}</span>
+            </div>
+          </div>
+          <span className="h-1.5 w-1.5 rounded-full animate-pulse shrink-0" style={{ background: color }} aria-hidden />
+        </div>
 
-          <h2 className="text-[17px] font-bold tracking-tight text-slate-50 leading-snug">
-            Confirmar composição da equipe{' '}
-            <span style={{ color }}>{teamLabel}</span>?
-          </h2>
-          <p className="mt-2 text-[12.5px] leading-relaxed text-slate-400">
-            Após a confirmação, a equipe fica <b className="text-slate-100">travada</b>{' '}
-            até o encerramento da ronda ou remoção da programação.
+        {/* CORPO */}
+        <div className="px-3.5 pt-3 pb-3.5">
+          <p className="text-[11.5px] leading-snug text-slate-400">
+            Após confirmar, a equipe fica{' '}
+            <b className="text-slate-200">travada</b> até o encerramento da ronda
+            ou remoção da programação.
           </p>
 
-          {/* Grid de fatos */}
-          <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="mt-3 grid grid-cols-2 gap-1.5">
             <Fact icon="team" label="Equipe" value={teamLabel} color={color} />
             <Fact icon="agents" label="Agentes" value={String(agentCount)} color={color} />
           </div>
 
-          {/* Ações */}
-          <div className="mt-5 grid grid-cols-2 gap-2">
+          <div className="mt-3.5 grid grid-cols-2 gap-1.5">
             <button
               type="button"
               onClick={onCancel}
-              className="h-11 rounded-lg border border-slate-700/70 bg-slate-900/60 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-300 hover:text-slate-50 hover:border-slate-500 hover:bg-slate-900 active:translate-y-[1px] transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="h-9 rounded-md border border-slate-700/70 bg-slate-900/60 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300 hover:text-slate-50 hover:border-slate-500 hover:bg-slate-900 active:translate-y-[1px] transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{ outlineColor: color }}
             >
               Cancelar
@@ -86,107 +98,62 @@ export function TeamConfirmDialog({
             <button
               type="button"
               onClick={onConfirm}
-              className="h-11 rounded-lg font-mono text-[11px] font-bold uppercase tracking-[0.18em] transition-all hover:brightness-110 hover:-translate-y-[1px] active:translate-y-0 active:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="h-9 rounded-md font-mono text-[10px] font-bold uppercase tracking-[0.16em] transition-all hover:brightness-110 active:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{
                 background: `linear-gradient(180deg, ${color}, ${color}d0)`,
                 color: onAccent,
-                boxShadow: `0 10px 24px -8px ${color}, inset 0 1px 0 rgba(255,255,255,0.25)`,
+                boxShadow: `0 6px 16px -6px ${color}, inset 0 1px 0 rgba(255,255,255,0.25)`,
                 outlineColor: color,
               }}
             >
               <span className="inline-flex items-center gap-1.5">
-                <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="M4 10.5 L8 14.5 L16 6" />
                 </svg>
                 Confirmar
               </span>
             </button>
           </div>
-
-          <p className="mt-4 font-mono text-[9.5px] tracking-[0.3em] uppercase text-slate-600">
-            Uma equipe · Uma missão
-          </p>
         </div>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
 
-/* ==================================================================
- * Hero por equipe — SVG puro, sem imagens externas.
- * Cada equipe recebe uma cena distinta com metáfora tática:
- *   ALFA    — escudo esmeralda (defesa)
- *   BRAVO   — espada âmbar (ação)
- *   CHARLIE — alvo/radar azul (precisão)
- *   DELTA   — raio dourado (velocidade)
- * ================================================================== */
-function TeamHero({ teamKey, color }: { teamKey: TeamKey; color: string }) {
+/* Mini crest compacto para o header */
+function MiniCrest({ teamKey, color }: { teamKey: TeamKey; color: string }) {
+  const inner = (() => {
+    switch (teamKey) {
+      case 'ALFA':
+        return <path d="M8 12 L11 15 L16 9" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />;
+      case 'BRAVO':
+        return (
+          <g stroke={color} strokeWidth="1.8" strokeLinecap="round">
+            <line x1="8" y1="8" x2="16" y2="16" />
+            <line x1="16" y1="8" x2="8" y2="16" />
+          </g>
+        );
+      case 'CHARLIE':
+        return (
+          <g fill="none" stroke={color} strokeWidth="1.4">
+            <circle cx="12" cy="12" r="4.5" />
+            <circle cx="12" cy="12" r="1.6" fill={color} />
+          </g>
+        );
+      case 'DELTA':
+        return <path d="M13 6 L8 13 H11 L10 18 L15 11 H12 L13 6 Z" fill={color} />;
+      default:
+        return null;
+    }
+  })();
   return (
-    <div
-      className="relative h-[140px] overflow-hidden"
-      style={{
-        background:
-          `radial-gradient(70% 100% at 50% 100%, ${color}30 0%, transparent 70%),` +
-          'linear-gradient(180deg, #060b16, #0b1220)',
-      }}
-    >
-      {/* HUD grid */}
-      <svg
-        viewBox="0 0 400 140"
-        preserveAspectRatio="xMidYMid slice"
-        className="absolute inset-0 h-full w-full"
-        aria-hidden
-      >
-        <defs>
-          <pattern id="tcd-grid" width="24" height="24" patternUnits="userSpaceOnUse">
-            <path d="M24 0H0V24" fill="none" stroke={color} strokeOpacity="0.08" strokeWidth="0.5" />
-          </pattern>
-          <linearGradient id="tcd-fade" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#000" stopOpacity="0" />
-            <stop offset="100%" stopColor="#000" stopOpacity="0.6" />
-          </linearGradient>
-        </defs>
-        <rect width="400" height="140" fill="url(#tcd-grid)" />
-        {/* horizonte */}
-        <line x1="0" y1="105" x2="400" y2="105" stroke={color} strokeOpacity="0.35" strokeWidth="0.6" />
-        <line x1="0" y1="112" x2="400" y2="112" stroke={color} strokeOpacity="0.15" strokeWidth="0.4" />
-        {/* ticks laterais */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <line
-            key={i}
-            x1={i * 20 + 10} y1="105" x2={i * 20 + 10} y2={i % 2 === 0 ? 100 : 102}
-            stroke={color} strokeOpacity="0.35" strokeWidth="0.6"
-          />
-        ))}
-        <rect width="400" height="140" fill="url(#tcd-fade)" />
-      </svg>
-
-      {/* Selo / crest central */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <TeamCrest teamKey={teamKey} color={color} />
-      </div>
-
-      {/* Codinome + faixa superior */}
-      <div className="absolute top-2 left-3 right-3 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.28em]" style={{ color: `${color}dd` }}>
-        <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: color }} />
-          Equipe
-        </span>
-        <span className="text-slate-500">{teamCodename(teamKey)}</span>
-      </div>
-
-      {/* corner brackets */}
-      {[
-        'top-1 left-1 border-t-2 border-l-2',
-        'top-1 right-1 border-t-2 border-r-2',
-        'bottom-1 left-1 border-b-2 border-l-2',
-        'bottom-1 right-1 border-b-2 border-r-2',
-      ].map((c) => (
-        <span key={c} aria-hidden className={`pointer-events-none absolute ${c} h-2.5 w-2.5`} style={{ borderColor: `${color}aa` }} />
-      ))}
-    </div>
+    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+      <path d="M12 2 L20 5 V12 C20 17 16.5 20.5 12 22 C7.5 20.5 4 17 4 12 V5 Z" fill="none" stroke={color} strokeOpacity="0.7" strokeWidth="1.2" />
+      {inner}
+    </svg>
   );
 }
+
 
 function teamCodename(k: TeamKey): string {
   switch (k) {
