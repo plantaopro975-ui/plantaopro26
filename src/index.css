@@ -1274,6 +1274,12 @@ html.tab-hidden *::after {
 .giroflex-flash-red::after {
   background: rgb(239 68 68);
 }
+.giroflex-flash-scene-blue {
+  --giroflex-lens-width: 11.7%;
+}
+.giroflex-flash-scene-red {
+  --giroflex-lens-width: 11.3%;
+}
 /* Padrão wig-wag policial: 3 pulsos rápidos por lado, alternando */
 @keyframes giroflex-strobe-red {
   0%, 4%   { opacity: 0.66; filter: brightness(1.22); box-shadow: 0 0 2px 0.5px rgba(239,68,68,0.42), 0 0 6px 1.5px rgba(239,68,68,0.2); }
