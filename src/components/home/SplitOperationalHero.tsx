@@ -16,9 +16,9 @@ import agent3dWebp from '@/assets/hero/agent-ise-3d.local.webp';
 import agent3d from '@/assets/hero/agent-ise-3d.local.png';
 import vehicle3dWebp from '@/assets/hero/vehicle-ise-3d.local.webp';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.local.png';
-import agentVehicleSceneAsset from '@/assets/hero/agent-vehicle-scene.webp.asset.json';
-const agentVehicleScene = agentVehicleSceneAsset.url;
-const agentVehicleSceneWebp = agentVehicleSceneAsset.url;
+import agentVehicleProAsset from '@/assets/hero/agent-vehicle-pro-scene.png.asset.json';
+const agentVehiclePro = agentVehicleProAsset.url;
+
 
 // ==== PRELOAD IMEDIATO (roda no parse do módulo, antes do primeiro render) ====
 // Injeta <link rel="preload"> assim que o bundle é avaliado, permitindo ao
