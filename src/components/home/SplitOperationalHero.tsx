@@ -702,86 +702,51 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
 
-            {/* Cena: viatura e agente arrastáveis independentemente no desktop */}
+            {/* Cena única profissional: agente + viatura integrados na mesma foto.
+                Substitui os dois recortes anteriores por 1 asset em alta resolução,
+                eliminando problemas de escala relativa, poses duplicadas e bordas serrilhadas. */}
             <div className="contents lg:relative lg:z-50 lg:inline-block">
               <div
-                className="pp-scene-composite relative z-50 inline-flex items-end justify-center gap-1 sm:gap-2 lg:gap-4 leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[460px] xl:h-[540px] 2xl:h-[620px] translate-y-0 md:-translate-x-[16%] lg:-translate-x-[10%] xl:-translate-x-[10%] lg:translate-y-0 xl:translate-y-0 2xl:translate-y-0 pr-0 sm:pr-0 max-w-full"
+                className="pp-scene-composite relative z-50 flex items-end justify-center leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[500px] xl:h-[580px] 2xl:h-[660px] lg:-translate-x-[4%] pr-0 max-w-full"
               >
-                {/* Viatura */}
-                <picture
-                  className="relative block h-full aspect-square leading-[0] translate-y-3 min-[390px]:translate-y-4 sm:translate-y-0"
-                  style={
-                    isDesktop
-                      ? {
-                          transform: `translate3d(${VEH_OFFSET.x}px, ${VEH_OFFSET.y}px, 0) scale(${VEH_SCALE})`,
-                          transformOrigin: 'bottom left',
-                          willChange: 'transform',
-                        }
-                      : undefined
-                  }
-                >
-                  <source type="image/webp" srcSet={vehicle3dWebp} />
+                <picture className="relative block h-full leading-[0]">
                   <img
-                    src={vehicle3d}
-                    alt="Viatura tática ISE"
-                    width={1024}
-                    height={1024}
+                    src={agentVehiclePro}
+                    alt="Agente Socioeducativo ISE ao lado de viatura tática"
+                    width={1920}
+                    height={1200}
                     loading="eager"
                     decoding="async"
                     // @ts-expect-error – fetchpriority é atributo HTML válido não tipado no React 18
                     fetchpriority="high"
-                    className="block h-full w-auto object-contain object-left-bottom sm:object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none scale-[1.04] sm:scale-[1.04] lg:scale-[1.7] xl:scale-[1.8] 2xl:scale-[1.9] origin-bottom-left"
+                    className="block h-full w-auto object-contain object-bottom drop-shadow-[0_18px_28px_rgba(0,0,0,0.75)] select-none"
                     draggable={false}
                   />
 
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 scale-[1.04] sm:scale-[1.04] lg:scale-[1.7] xl:scale-[1.8] 2xl:scale-[1.9] origin-bottom-left"
-                  >
+                  {/* Giroflex piscante posicionado sobre a barra de luzes da viatura na cena */}
+                  <span aria-hidden className="pointer-events-none absolute inset-0">
                     <span
                       aria-hidden
                       className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
-                      style={{ top: '23.9%', left: '47.1%' }}
+                      style={{ top: '18.5%', left: '55.5%' }}
                     />
                     <span
                       aria-hidden
                       className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                      style={{ top: '23.2%', left: '63.4%' }}
+                      style={{ top: '18.5%', left: '68%' }}
                     />
                   </span>
-                </picture>
 
-                {/* Agente */}
-                <picture
-                  className="relative z-50 block h-full leading-[0] flex items-end -ml-2 sm:ml-0"
-                  style={
-                    isDesktop
-                      ? {
-                          transform: `translate3d(${AGT_OFFSET.x}px, ${AGT_OFFSET.y}px, 0) scale(${AGT_SCALE})`,
-                          transformOrigin: 'bottom',
-                          willChange: 'transform',
-                        }
-                      : undefined
-                  }
-                >
-                  <source type="image/webp" srcSet={agent3dWebp} />
-                  <img
-                    src={agent3d}
-                    alt="Agente Socioeducativo ISE"
-                    width={1024}
-                    height={1024}
-                    loading="eager"
-                    decoding="async"
-                    // @ts-expect-error – fetchpriority é atributo HTML válido não tipado no React 18
-                    fetchpriority="high"
-                    className="block h-full max-h-full w-auto object-contain object-bottom drop-shadow-[0_10px_14px_rgba(0,0,0,0.7)] select-none sm:-ml-2 scale-[1.04] sm:scale-[1.04] lg:scale-[1.65] xl:scale-[1.75] 2xl:scale-[1.85] origin-bottom sm:origin-bottom"
-                    draggable={false}
+                  {/* Sombra elíptica de chão unificando a cena */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-x-[8%] bottom-1 h-4 rounded-[50%] blur-lg opacity-70"
+                    style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 70%)' }}
                   />
-
                 </picture>
-
               </div>
             </div>
+
 
             {/* HUD de ajuste removido — posição e escala fixadas em VEH_OFFSET/AGT_OFFSET/VEH_SCALE/AGT_SCALE */}
 
