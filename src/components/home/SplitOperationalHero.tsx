@@ -16,8 +16,9 @@ import agent3dWebp from '@/assets/hero/agent-ise-3d.local.webp';
 import agent3d from '@/assets/hero/agent-ise-3d.local.png';
 import vehicle3dWebp from '@/assets/hero/vehicle-ise-3d.local.webp';
 import vehicle3d from '@/assets/hero/vehicle-ise-3d.local.png';
-import agentVehicleProAsset from '@/assets/hero/agent-vehicle-pro-scene-v2.png.asset.json';
+import agentVehicleProAsset from '@/assets/hero/agent-vehicle-pro-scene-v3.png.asset.json';
 const agentVehiclePro = agentVehicleProAsset.url;
+
 
 
 
@@ -708,7 +709,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 eliminando problemas de escala relativa, poses duplicadas e bordas serrilhadas. */}
             <div className="contents lg:relative lg:z-50 lg:inline-block">
               <div
-                className="pp-scene-composite relative z-50 flex items-end justify-center leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[640px] xl:h-[740px] 2xl:h-[840px] lg:-translate-x-[6%] xl:-translate-x-[8%] pr-0 max-w-full"
+                className="pp-scene-composite relative z-50 flex items-end justify-center leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[780px] xl:h-[880px] 2xl:h-[980px] lg:-translate-x-[8%] xl:-translate-x-[10%] pr-0 max-w-full"
               >
                 <picture className="relative block h-full leading-[0]">
                   <img
@@ -720,9 +721,10 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                     decoding="async"
                     // @ts-expect-error – fetchpriority é atributo HTML válido não tipado no React 18
                     fetchpriority="high"
-                    className="block h-full w-auto max-w-none object-contain object-bottom drop-shadow-[0_20px_32px_rgba(0,0,0,0.8)] select-none lg:scale-[1.08] xl:scale-[1.12] 2xl:scale-[1.15] origin-bottom"
+                    className="block h-full w-auto max-w-none object-contain object-bottom drop-shadow-[0_24px_38px_rgba(0,0,0,0.85)] select-none lg:scale-[1.22] xl:scale-[1.28] 2xl:scale-[1.32] origin-bottom"
                     draggable={false}
                   />
+
 
 
                   {/* Giroflex piscante posicionado sobre a barra de luzes da viatura na cena */}
