@@ -709,7 +709,7 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
                 eliminando problemas de escala relativa, poses duplicadas e bordas serrilhadas. */}
             <div className="contents lg:relative lg:z-50 lg:inline-block">
               <div
-                className="pp-scene-composite relative z-50 flex items-end justify-center leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[900px] xl:h-[1020px] 2xl:h-[1140px] lg:-translate-x-[8%] xl:-translate-x-[10%] lg:translate-y-[8%] xl:translate-y-[9%] 2xl:translate-y-[10%] pr-0 max-w-full overflow-visible"
+                className="pp-scene-composite relative z-50 flex items-end justify-center leading-[0] isolate w-full sm:w-auto h-[184px] min-[390px]:h-[204px] sm:h-[clamp(90px,14vh,220px)] lg:h-[900px] xl:h-[1020px] 2xl:h-[1140px] lg:-translate-x-[8%] xl:-translate-x-[10%] lg:translate-y-[22%] xl:translate-y-[24%] 2xl:translate-y-[26%] pr-0 max-w-full overflow-visible"
               >
                 <picture className="relative block h-full leading-[0] overflow-visible">
                   <img
