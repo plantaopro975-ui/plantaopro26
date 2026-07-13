@@ -728,16 +728,16 @@ export function SplitOperationalHero({ onTeamClick }: Props) {
 
 
                   {/* Giroflex piscante posicionado sobre a barra de luzes da viatura na cena */}
-                  <span aria-hidden className="pointer-events-none absolute inset-0">
+                  <span aria-hidden className="pointer-events-none absolute inset-0 scale-[1.55] xl:scale-[1.65] 2xl:scale-[1.72] origin-bottom">
                     <span
                       aria-hidden
                       className="giroflex-flash giroflex-flash-blue motion-reduce:hidden"
-                      style={{ top: '14.7%', left: '41.2%' }}
+                      style={{ top: '13.98%', left: '40.72%' }}
                     />
                     <span
                       aria-hidden
                       className="giroflex-flash giroflex-flash-red motion-reduce:hidden"
-                      style={{ top: '15.7%', left: '53.7%' }}
+                      style={{ top: '14.92%', left: '53.69%' }}
                     />
                   </span>
 
