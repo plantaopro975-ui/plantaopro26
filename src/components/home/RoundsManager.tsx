@@ -38,6 +38,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { SecurityDoctrineCard } from './SecurityDoctrineCard';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { useLowMotion } from '@/hooks/useLowMotion';
 
 /** Registra ação no histórico de atividades (activity_logs). */
 async function logRoundActivity(
@@ -1688,12 +1689,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* ---- Modal de histórico detalhado ---- */
   const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
 
+  const { lowMotion } = useLowMotion();
+
   /* ---- Efeito de foco: desfoca a homepage por trás enquanto o modal está aberto ---- */
   useEffect(() => {
     if (!open) return;
     document.body.classList.add('rm-focus-mode');
-    return () => { document.body.classList.remove('rm-focus-mode'); };
-  }, [open]);
+    if (lowMotion) document.body.classList.add('rm-low-motion');
+    return () => {
+      document.body.classList.remove('rm-focus-mode');
+      document.body.classList.remove('rm-low-motion');
+    };
+  }, [open, lowMotion]);
 
   /* server clock: fonte única = get_server_now(), avançando por relógio monotônico */
   const sessionIdRef = useRef<string | null>(null);
@@ -2341,11 +2348,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const needsPreview = nightEffectivelyLocked && mode === 'split' && !!schedule;
     const needsSchedule = scheduledFor != null;
     if (!running && !needsPreview && !armed && !needsSchedule) return;
-    // 1000ms é suficiente para HH:MM:SS e reduz drasticamente o custo de
-    // re-renderização em máquinas fracas (metade dos ciclos por segundo).
-    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    // Se o modal está fechado, o único motivo válido para continuar
+    // ticando é disparar o auto-start no horário programado — nesse
+    // caso um tick lento (3s) já basta e economiza CPU.
+    // Quando aberto: 1s em máquinas normais, 2s em dispositivos lentos.
+    const intervalMs = !open
+      ? (needsSchedule ? 3000 : 1000)
+      : (lowMotion ? 2000 : 1000);
+    const id = setInterval(() => setTick((t) => t + 1), intervalMs);
     return () => clearInterval(id);
-  }, [running, nightEffectivelyLocked, mode, schedule, armed, scheduledFor]);
+  }, [running, nightEffectivelyLocked, mode, schedule, armed, scheduledFor, open, lowMotion]);
 
   /* ---------- Auto-start quando bater 22:00 (pré-agendado) ---------- */
   useEffect(() => {
