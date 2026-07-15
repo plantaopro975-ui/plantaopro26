@@ -274,6 +274,17 @@ export function ScheduledRoundsManager() {
                     </div>
                   </div>
                   <div className="flex items-center justify-end gap-1 shrink-0 self-end sm:self-start">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => fireNow(r)}
+                      disabled={firingId === r.id}
+                      className="h-8 gap-1 border-amber-500/50 text-amber-300 hover:bg-amber-500/10"
+                      title="Disparar agora (programação manual)"
+                    >
+                      <Zap className="h-3.5 w-3.5" />
+                      {firingId === r.id ? 'Disparando...' : 'Disparar agora'}
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => toggleEnabled(r)} title={r.is_enabled ? 'Pausar' : 'Ativar'}>
                       {r.is_enabled ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                     </Button>
