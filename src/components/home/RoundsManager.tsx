@@ -1106,12 +1106,12 @@ function TimeField({
         {label}
         {locked && (
           <span
-            title={lockedHint || 'Bloqueado — janela 22:00 → 06:00 (America/Rio_Branco)'}
+            title={lockedHint || 'Configuração bloqueada'}
             data-testid="night-lock-badge"
             className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10.5px] font-mono uppercase text-amber-300"
           >
             <svg viewBox="0 0 16 16" className="h-2.5 w-2.5"><path d="M4 7V5a4 4 0 118 0v2h1v7H3V7h1zm2 0h4V5a2 2 0 10-4 0v2z" fill="currentColor"/></svg>
-            {lockedBadgeText || '22:00→06:00'}
+            {lockedBadgeText || 'BLOQUEADO'}
           </span>
         )}
 
@@ -1950,10 +1950,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
-  const [scheduledFor, setScheduledFor] = useState<number | null>(() => {
-    const s = readTeamLock();
-    return s?.scheduledFor ?? null;
-  });
+  const [scheduledFor, setScheduledFor] = useState<number | null>(null);
 
   /* Persistência local: trava de equipe/agendamento em cache. */
   useEffect(() => {
@@ -2004,7 +2001,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       try {
         const remoteTeam = (row.team as TeamKey) ?? team;
         const remoteConfirmed = !!row.team_confirmed;
-        const remoteScheduled = row.scheduled_for ? new Date(row.scheduled_for).getTime() : null;
+        const remoteScheduled = null;
         setTeam((prev) => (prev !== remoteTeam ? remoteTeam : prev));
         setTeamConfirmed((prev) => (prev !== remoteConfirmed ? remoteConfirmed : prev));
         setScheduledFor((prev) => (prev !== remoteScheduled ? remoteScheduled : prev));
@@ -2232,7 +2229,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
   // do lado esquerdo é travada para preservar o cronograma pactuado.
-  const configLocked = scheduledFor != null;
+  const configLocked = false;
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
   const [summarySaved, setSummarySaved] = useState(false);
@@ -3498,33 +3495,27 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
                       locked={nightEffectivelyLocked || configLocked}
-                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 22:00' : undefined}
+                      lockedBadgeText={undefined}
                       lockedHint={
                         configLocked ? 'Programação ativa — cancele para editar'
-                        : preNightScheduled ? 'Programado automaticamente para 22:00. Apenas a lista de agentes pode ser alterada.'
-                        : 'Fixado às 22:00 durante o turno noturno'
+                        : 'Configuração bloqueada'
                       }
                       onLockedAttempt={() => toast({
-                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
-                        description: preNightScheduled
-                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
-                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                        title: 'Configuração bloqueada',
+                        description: 'Cancele a operação ativa para editar os horários.',
                       })}
                     />
                     <TimeField id="rm-end" label="Término do turno" value={endTime}
                       onChange={setEndTime} invalid={hasError('end')} accent={teamColor}
                       locked={nightEffectivelyLocked || configLocked}
-                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 06:00' : undefined}
+                      lockedBadgeText={undefined}
                       lockedHint={
                         configLocked ? 'Programação ativa — cancele para editar'
-                        : preNightScheduled ? 'Programado automaticamente para 06:00. Apenas a lista de agentes pode ser alterada.'
-                        : 'Fixado às 06:00 durante o turno noturno'
+                        : 'Configuração bloqueada'
                       }
                       onLockedAttempt={() => toast({
-                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
-                        description: preNightScheduled
-                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
-                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                        title: 'Configuração bloqueada',
+                        description: 'Cancele a operação ativa para editar os horários.',
                       })}
                     />
                   </div>
@@ -3533,17 +3524,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <TimeField id="rm-start2" label="Início" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
                       locked={nightEffectivelyLocked || configLocked}
-                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 22:00' : undefined}
+                      lockedBadgeText={undefined}
                       lockedHint={
                         configLocked ? 'Programação ativa — cancele para editar'
-                        : preNightScheduled ? 'Programado automaticamente para 22:00. Apenas a lista de agentes pode ser alterada.'
-                        : 'Fixado às 22:00 durante o turno noturno'
+                        : 'Configuração bloqueada'
                       }
                       onLockedAttempt={() => toast({
-                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
-                        description: preNightScheduled
-                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
-                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                        title: 'Configuração bloqueada',
+                        description: 'Cancele a operação ativa para editar os horários.',
                       })}
                     />
 
@@ -3702,9 +3690,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <TooltipContent side="top" className="max-w-xs text-[12px] leading-snug">
                               <p className="font-semibold mb-1">Início bloqueado</p>
                               <p className="text-muted-foreground">
-                                {nightLocked
-                                  ? <>Turno noturno travado em <b className="text-foreground">22:00 → 06:00</b>. Corrija os itens em vermelho para liberar. Para alterar horários é necessário <b className="text-foreground">override master</b> com motivo auditado.</>
-                                  : <>Existem itens de validação pendentes. Ajuste a configuração ou solicite <b className="text-foreground">override master</b> para prosseguir.</>}
+                                Existem itens de validação pendentes. Ajuste a configuração para prosseguir.
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -3947,16 +3933,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                       <>
                                         <p className="font-semibold mb-1">Início bloqueado</p>
                                         <p className="text-muted-foreground">
-                                          {nightLocked
-                                            ? <>Turno noturno travado em <b className="text-foreground">22:00 → 06:00</b>. Resolva os itens de validação em vermelho para liberar. Alterar horários exige <b className="text-foreground">override master</b> com motivo registrado em auditoria.</>
-                                            : <>Existem itens pendentes na configuração. Ajuste-os para liberar o início da ronda.</>}
+                                          Existem itens pendentes na configuração. Ajuste-os para liberar o início da ronda.
                                         </p>
                                       </>
                                     ) : nightLocked ? (
                                       <>
-                                        <p className="font-semibold mb-1">Turno noturno 22:00 → 06:00</p>
+                                        <p className="font-semibold mb-1">Turno noturno ativo</p>
                                         <p className="text-muted-foreground">
-                                          Horários travados automaticamente. Para operar fora dessa janela use <b className="text-foreground">Override master</b> no banner âmbar acima e registre o motivo em auditoria.
+                                          Horários liberados para ajuste manual antes de iniciar a ronda.
                                         </p>
                                       </>
                                     ) : (
