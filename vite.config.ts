@@ -18,8 +18,10 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     target: "es2018",
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 500,
     modulePreload: { polyfill: false },
+    cssCodeSplit: true,
+    reportCompressedSize: false,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -40,14 +42,14 @@ export default defineConfig(({ mode }) => ({
           "vendor-icons": ["lucide-react"],
           "vendor-date": ["date-fns"],
           "vendor-pdf": ["jspdf", "jspdf-autotable", "html2canvas"],
-          charts: ["recharts"],
+          "vendor-recharts": ["recharts"],
         },
       },
     },
   },
   optimizeDeps: {
-    include: ["recharts"],
-    // three.js e afins foram removidos — não pré-otimizar libs órfãs
-    exclude: ["three", "@react-three/fiber", "@react-three/drei"],
+    // Lazy-loaded charts should not be pre-bundled — smaller dev boot.
+    exclude: ["three", "@react-three/fiber", "@react-three/drei", "recharts", "jspdf", "html2canvas"],
   },
+
 }));
