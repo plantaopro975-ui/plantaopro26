@@ -285,6 +285,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showEditConfirm, setShowEditConfirm] = useState(false);
   const [editHours, setEditHours] = useState('');
+  const [editPeriod, setEditPeriod] = useState<string>('day');
   const [isEditing, setIsEditing] = useState(false);
 
   // Delete confirmation state
