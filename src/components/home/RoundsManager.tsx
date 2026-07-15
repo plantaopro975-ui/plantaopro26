@@ -3461,13 +3461,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <button
                     type="button"
                     onClick={() => toast({
-                      title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
-                      description: preNightScheduled
-                        ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
-                        : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                      title: 'Configuração indisponível',
+                      description: 'Os horários noturnos estão liberados; atualize a configuração ativa para editar.',
                     })}
                     className="w-full text-left cursor-not-allowed"
-                    aria-label="Horários travados"
+                    aria-label="Configuração indisponível"
                   >
                     <div className="grid grid-cols-2 gap-2">
                       <div className="rounded-md border border-amber-500/40 bg-amber-500/5 px-2 py-1.5">
