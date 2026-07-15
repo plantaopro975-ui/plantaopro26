@@ -753,11 +753,16 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
     try {
       setIsEditing(true);
-      
-      // Update the description to reflect new hours
+
+      // Rebuild description preserving the BH date, but applying the new period label and hours
+      const shiftOption = DEFAULT_SHIFT_OPTIONS.find(p => p.value === editPeriod);
+      const periodLabel = shiftOption?.label || '';
       let newDescription = editingEntry.description;
-      if (newDescription) {
-        // Replace the hours in the description
+      const dateMatch = newDescription?.match(/BH - (\d{2}\/\d{2}\/\d{4})/);
+      if (dateMatch) {
+        newDescription = `BH - ${dateMatch[1]} | ${periodLabel} (${newHours}h)`;
+      } else if (newDescription) {
+        // Fallback: swap hours only
         newDescription = newDescription.replace(/\([\d.]+h\)/, `(${newHours}h)`);
       }
 
@@ -771,7 +776,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
 
       if (error) throw error;
 
-      toast.success(`Horas atualizadas para ${newHours}h`);
+      toast.success(`Registro atualizado: ${periodLabel} • ${newHours}h`);
       setShowEditConfirm(false);
       setShowEditDialog(false);
       setEditingEntry(null);
@@ -787,6 +792,14 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
   const handleEditEntry = (entry: OvertimeEntry) => {
     setEditingEntry(entry);
     setEditHours(entry.hours.toString());
+    // Infer current period from description label; fallback by hours
+    const desc = entry.description || '';
+    let inferred: string = 'day';
+    if (/Noturno/i.test(desc)) inferred = 'night';
+    else if (/Dia Inteiro/i.test(desc)) inferred = 'full';
+    else if (/Diurno/i.test(desc)) inferred = 'day';
+    else if (Number(entry.hours) >= 24) inferred = 'full';
+    setEditPeriod(inferred);
     setShowEditDialog(true);
   };
 
