@@ -2341,7 +2341,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const needsPreview = nightEffectivelyLocked && mode === 'split' && !!schedule;
     const needsSchedule = scheduledFor != null;
     if (!running && !needsPreview && !armed && !needsSchedule) return;
-    const id = setInterval(() => setTick((t) => t + 1), 500);
+    // 1000ms é suficiente para HH:MM:SS e reduz drasticamente o custo de
+    // re-renderização em máquinas fracas (metade dos ciclos por segundo).
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(id);
   }, [running, nightEffectivelyLocked, mode, schedule, armed, scheduledFor]);
 
