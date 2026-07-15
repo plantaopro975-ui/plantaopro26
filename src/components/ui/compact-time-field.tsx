@@ -39,6 +39,16 @@ export function CompactTimeField({
 
   const st = Math.max(1, Math.min(30, step));
 
+  // Opções rápidas de minutos (granularidade = step, default 5).
+  const minuteOptions = React.useMemo(() => {
+    const out: number[] = [];
+    for (let i = 0; i < 60; i += st) out.push(i);
+    return out;
+  }, [st]);
+
+  // Opções de horas (00–23) para dropdown rápido.
+  const hourOptions = React.useMemo(() => Array.from({ length: 24 }, (_, i) => i), []);
+
   return (
     <div
       id={id}
@@ -54,9 +64,11 @@ export function CompactTimeField({
         label="Hora"
         value={h}
         max={23}
+        options={hourOptions}
         onInc={() => emit(h + 1, m)}
         onDec={() => emit(h - 1, m)}
         onType={(n) => emit(n, m)}
+        onPick={(n) => emit(n, m)}
         disabled={disabled}
       />
       <span aria-hidden className="text-amber-400 font-mono font-bold text-lg leading-none pb-0.5">
@@ -66,9 +78,11 @@ export function CompactTimeField({
         label="Minuto"
         value={m}
         max={59}
+        options={minuteOptions}
         onInc={() => emit(h, m + st)}
         onDec={() => emit(h, m - st)}
         onType={(n) => emit(h, n)}
+        onPick={(n) => emit(h, n)}
         disabled={disabled}
       />
     </div>
