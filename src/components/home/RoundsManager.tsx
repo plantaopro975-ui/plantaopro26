@@ -1183,7 +1183,7 @@ function TimeField({
               <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" sideOffset={4} className="w-20 p-1 max-h-56 overflow-y-auto">
+          <PopoverContent align="start" sideOffset={4} className="z-[200] w-20 p-1 max-h-56 overflow-y-auto bg-popover border border-border shadow-lg">
             <div className="grid grid-cols-1 gap-0.5">
               {Array.from({ length: 24 }, (_, i) => i).map((n) => {
                 const selected = n === curHNum;
