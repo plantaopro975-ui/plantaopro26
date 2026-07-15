@@ -170,6 +170,39 @@ export function ScheduledRoundsManager() {
     load();
   };
 
+  const [firingId, setFiringId] = useState<string | null>(null);
+  const fireNow = async (r: ScheduledRound) => {
+    if (!confirm(`Disparar agora "${r.name}" manualmente? Uma ronda será criada imediatamente para os agentes-alvo.`)) return;
+    setFiringId(r.id);
+    try {
+      // Marca como vencido para permitir disparo imediato mesmo se estava pausado
+      const { error: upErr } = await supabase
+        .from('scheduled_rounds')
+        .update({ next_trigger_at: new Date().toISOString(), is_enabled: true })
+        .eq('id', r.id);
+      if (upErr) throw upErr;
+
+      // Invoca a Edge Function que processa agendamentos vencidos
+      const { data, error: fnErr } = await supabase.functions.invoke('trigger-scheduled-rounds', {
+        body: { manual: true, id: r.id },
+      });
+      if (fnErr) throw fnErr;
+
+      const triggered = (data as any)?.triggered ?? 0;
+      toast({
+        title: 'Disparo manual executado',
+        description: triggered > 0
+          ? `Ronda criada para ${triggered} agente(s).`
+          : 'Nenhum agente elegível encontrado no momento.',
+      });
+      load();
+    } catch (e: any) {
+      toast({ title: 'Falha ao disparar', description: e?.message || String(e), variant: 'destructive' });
+    } finally {
+      setFiringId(null);
+    }
+  };
+
   const addTime = () => {
     if (!/^\d{2}:\d{2}$/.test(newTime)) return;
     const cur = editing.recur_times || [];
