@@ -2033,7 +2033,7 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
           <DialogHeader>
             <DialogTitle className="text-white">Editar Registro de BH</DialogTitle>
             <DialogDescription className="text-slate-400">
-              Altere a quantidade de horas deste registro.
+              Altere o turno realizado e/ou a quantidade de horas deste registro.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 pt-4">
@@ -2045,9 +2045,38 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
                     {format(new Date(editingEntry.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
                   </p>
                 </div>
-                
+
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Nova quantidade de horas</Label>
+                  <Label className="text-slate-300">Turno realizado</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {DEFAULT_SHIFT_OPTIONS.map((opt) => {
+                      const Icon = opt.icon;
+                      const active = editPeriod === opt.value;
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => {
+                            setEditPeriod(opt.value);
+                            setEditHours(String(opt.hours));
+                          }}
+                          className={`p-3 rounded-lg border transition-all flex flex-col items-center gap-1 ${
+                            active
+                              ? 'bg-amber-500/15 border-amber-500/60 text-amber-300'
+                              : 'bg-slate-700/40 border-slate-600/50 text-slate-300 hover:bg-slate-700/60'
+                          }`}
+                        >
+                          <Icon className={`h-5 w-5 ${active ? 'text-amber-400' : opt.color}`} />
+                          <span className="text-xs font-semibold">{opt.label}</span>
+                          <span className="text-[10px] text-slate-400">{opt.startTime}–{opt.endTime}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-slate-300">Quantidade de horas</Label>
                   <div className="flex justify-center pt-2">
                     <NumberStepper
                       value={parseFloat(editHours) || 0.5}
@@ -2080,12 +2109,18 @@ export function BHTracker({ agentId, compact = false, isAdmin = false }: BHTrack
             </Button>
             <Button
               onClick={handleRequestEdit}
-              disabled={isEditing || parseFloat(editHours) === editingEntry?.hours}
+              disabled={
+                isEditing ||
+                (parseFloat(editHours) === editingEntry?.hours &&
+                  // also allow save when only the period changed
+                  new RegExp(DEFAULT_SHIFT_OPTIONS.find(o => o.value === editPeriod)?.label || '', 'i').test(editingEntry?.description || ''))
+              }
               className="bg-blue-500 hover:bg-blue-600 text-white"
             >
               Revisar Alteração
             </Button>
           </DialogFooter>
+
         </DialogContent>
       </Dialog>
 
