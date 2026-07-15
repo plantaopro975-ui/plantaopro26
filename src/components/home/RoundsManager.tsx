@@ -3859,7 +3859,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   style={{
                                     color: urgent
                                       ? 'hsl(var(--destructive))'
-                                      : view ? teamColor : 'hsl(var(--muted-foreground))',
+                                      : (view || scheduledPending) ? teamColor : 'hsl(var(--muted-foreground))',
                                   }}
 
                                 >
