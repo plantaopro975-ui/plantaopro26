@@ -38,6 +38,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { SecurityDoctrineCard } from './SecurityDoctrineCard';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { useLowMotion } from '@/hooks/useLowMotion';
 
 /** Registra ação no histórico de atividades (activity_logs). */
 async function logRoundActivity(
