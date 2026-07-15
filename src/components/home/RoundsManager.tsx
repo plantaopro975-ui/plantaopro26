@@ -37,6 +37,7 @@ import {
 } from '@/lib/nightShift';
 import { useAuth } from '@/contexts/AuthContext';
 import { SecurityDoctrineCard } from './SecurityDoctrineCard';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 
 /** Registra ação no histórico de atividades (activity_logs). */
 async function logRoundActivity(
