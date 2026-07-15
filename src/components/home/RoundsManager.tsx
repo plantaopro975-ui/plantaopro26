@@ -2755,7 +2755,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     }
   };
 
-  const pauseTimer = () => setRunning(false);
+  const pauseTimer = () => {
+    // Congela snapshot do slot atual para exibir "tempo restante do próximo evento"
+    if (live && !live.done && schedule) {
+      pauseSnapshotRef.current = {
+        slotRemainingSec: Math.max(0, live.remaining),
+        activeName: schedule.rows[live.index]?.name,
+        nextName: schedule.rows[live.index + 1]?.name,
+      };
+    }
+    setIsPaused(true);
+    setRunning(false);
+  };
 
   /* Programação antecipada removida — sem armRoundForStart / disarmRound. */
 
