@@ -1235,9 +1235,6 @@ function TimeField({
             </button>
           </PopoverTrigger>
           <PopoverContent align="start" sideOffset={4} className="z-[200] w-24 p-1 max-h-56 overflow-y-auto bg-popover border border-border shadow-lg">
-            <div className="mb-0.5 px-1.5 pt-0.5 text-[9px] font-mono uppercase tracking-wider text-muted-foreground/70">
-              min · passo 5
-            </div>
             <div className="grid grid-cols-2 gap-0.5">
               {Array.from({ length: 12 }, (_, i) => i * 5).map((n) => {
                 const selected = n === nearestM5;
