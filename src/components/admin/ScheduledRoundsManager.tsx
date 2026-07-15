@@ -11,7 +11,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
-import { Calendar as CalendarIcon, Plus, Trash2, Pencil, Clock, Repeat, Timer, Play, Pause } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Trash2, Pencil, Clock, Repeat, Timer, Play, Pause, Zap } from 'lucide-react';
 
 type Mode = 'once' | 'recurring' | 'interval';
 
@@ -170,6 +170,39 @@ export function ScheduledRoundsManager() {
     load();
   };
 
+  const [firingId, setFiringId] = useState<string | null>(null);
+  const fireNow = async (r: ScheduledRound) => {
+    if (!confirm(`Disparar agora "${r.name}" manualmente? Uma ronda será criada imediatamente para os agentes-alvo.`)) return;
+    setFiringId(r.id);
+    try {
+      // Marca como vencido para permitir disparo imediato mesmo se estava pausado
+      const { error: upErr } = await supabase
+        .from('scheduled_rounds')
+        .update({ next_trigger_at: new Date().toISOString(), is_enabled: true })
+        .eq('id', r.id);
+      if (upErr) throw upErr;
+
+      // Invoca a Edge Function que processa agendamentos vencidos
+      const { data, error: fnErr } = await supabase.functions.invoke('trigger-scheduled-rounds', {
+        body: { manual: true, id: r.id },
+      });
+      if (fnErr) throw fnErr;
+
+      const triggered = (data as any)?.triggered ?? 0;
+      toast({
+        title: 'Disparo manual executado',
+        description: triggered > 0
+          ? `Ronda criada para ${triggered} agente(s).`
+          : 'Nenhum agente elegível encontrado no momento.',
+      });
+      load();
+    } catch (e: any) {
+      toast({ title: 'Falha ao disparar', description: e?.message || String(e), variant: 'destructive' });
+    } finally {
+      setFiringId(null);
+    }
+  };
+
   const addTime = () => {
     if (!/^\d{2}:\d{2}$/.test(newTime)) return;
     const cur = editing.recur_times || [];
@@ -201,7 +234,7 @@ export function ScheduledRoundsManager() {
             Agendamento de Rondas
           </CardTitle>
           <CardDescription>
-            Programe o disparo automático de rondas por unidade e equipe. O encerramento exige confirmação do agente.
+            Programe o disparo automático de rondas por unidade e equipe — ou use <strong className="text-amber-300">Disparar agora</strong> para acionar manualmente sem esperar o agendamento.
           </CardDescription>
         </div>
         <Button onClick={openNew} className="bg-amber-600 hover:bg-amber-700 text-slate-950 font-semibold">
@@ -241,6 +274,17 @@ export function ScheduledRoundsManager() {
                     </div>
                   </div>
                   <div className="flex items-center justify-end gap-1 shrink-0 self-end sm:self-start">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => fireNow(r)}
+                      disabled={firingId === r.id}
+                      className="h-8 gap-1 border-amber-500/50 text-amber-300 hover:bg-amber-500/10"
+                      title="Disparar agora (programação manual)"
+                    >
+                      <Zap className="h-3.5 w-3.5" />
+                      {firingId === r.id ? 'Disparando...' : 'Disparar agora'}
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => toggleEnabled(r)} title={r.is_enabled ? 'Pausar' : 'Ativar'}>
                       {r.is_enabled ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                     </Button>
