@@ -116,10 +116,6 @@ const formSchema = z
   .refine((v) => v.kind === 'vacation' || v.kind === '24h' || v.start_time !== v.end_time, {
     message: 'Início e fim não podem ser iguais',
     path: ['end_time'],
-  })
-  .refine((v) => v.kind !== 'night' || shiftCrossesDay(v.kind, v.start_time, v.end_time), {
-    message: 'Plantão noturno deve terminar no dia seguinte. Use 19:00 → 07:00 ou outro intervalo que atravesse a meia-noite.',
-    path: ['end_time'],
   });
 
 export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId, onSaved }: ShiftEditDialogProps) {
