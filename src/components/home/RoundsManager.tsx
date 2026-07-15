@@ -3247,9 +3247,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   const hh = Math.floor(remSec / 3600).toString().padStart(2, '0');
                   const mm = Math.floor((remSec % 3600) / 60).toString().padStart(2, '0');
                   const ss = (remSec % 60).toString().padStart(2, '0');
-                  const targetLabel = new Intl.DateTimeFormat('pt-BR', {
-                    timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
-                  }).format(new Date(scheduledFor));
+                  const _t = new Date(scheduledFor);
+                  const targetLabel = `${pad(_t.getHours())}:${pad(_t.getMinutes())}`;
                   return (
                     <div
                       role="status"
