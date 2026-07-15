@@ -3490,13 +3490,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 {/* Times / interval */}
                 {nightLocked && (
-                  <TooltipProvider delayDuration={200}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
                   <div
                     data-testid="night-shift-banner"
                     className={cn(
-                      'rounded-md border px-2.5 py-1.5 text-[12px] cursor-help',
+                      'rounded-md border px-2.5 py-1.5 text-[12px]',
                       'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
                     )}
                   >
@@ -3529,21 +3526,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               </b>
                             </span>
                           )}
-
                         </div>
                       </div>
                     </div>
                   </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" align="start" className="max-w-xs text-[12px] leading-snug">
-                        <p className="font-semibold mb-1">Turno noturno ativo</p>
-                        <p className="text-muted-foreground">
-                          Os horários estão liberados para edição manual. Ajuste início, término,
-                          quantidade de agentes e intervalo conforme a necessidade operacional.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 )}
                 {nightEffectivelyLocked ? (
                   <button
