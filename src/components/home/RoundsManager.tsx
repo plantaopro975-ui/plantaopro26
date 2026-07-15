@@ -1183,7 +1183,7 @@ function TimeField({
               <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" sideOffset={4} className="w-20 p-1 max-h-56 overflow-y-auto">
+          <PopoverContent align="start" sideOffset={4} className="z-[200] w-20 p-1 max-h-56 overflow-y-auto bg-popover border border-border shadow-lg">
             <div className="grid grid-cols-1 gap-0.5">
               {Array.from({ length: 24 }, (_, i) => i).map((n) => {
                 const selected = n === curHNum;
@@ -1234,7 +1234,7 @@ function TimeField({
               <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" sideOffset={4} className="w-24 p-1 max-h-56 overflow-y-auto">
+          <PopoverContent align="start" sideOffset={4} className="z-[200] w-24 p-1 max-h-56 overflow-y-auto bg-popover border border-border shadow-lg">
             <div className="mb-0.5 px-1.5 pt-0.5 text-[9px] font-mono uppercase tracking-wider text-muted-foreground/70">
               min · passo 5
             </div>
@@ -3490,13 +3490,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
                 {/* Times / interval */}
                 {nightLocked && (
-                  <TooltipProvider delayDuration={200}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
                   <div
                     data-testid="night-shift-banner"
                     className={cn(
-                      'rounded-md border px-2.5 py-1.5 text-[12px] cursor-help',
+                      'rounded-md border px-2.5 py-1.5 text-[12px]',
                       'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
                     )}
                   >
@@ -3529,21 +3526,10 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               </b>
                             </span>
                           )}
-
                         </div>
                       </div>
                     </div>
                   </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" align="start" className="max-w-xs text-[12px] leading-snug">
-                        <p className="font-semibold mb-1">Turno noturno ativo</p>
-                        <p className="text-muted-foreground">
-                          Os horários estão liberados para edição manual. Ajuste início, término,
-                          quantidade de agentes e intervalo conforme a necessidade operacional.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 )}
                 {nightEffectivelyLocked ? (
                   <button
@@ -3653,7 +3639,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className={cn('tactical-scrollbar flex flex-col gap-0.5 max-h-[280px] overflow-y-auto overflow-x-hidden pr-1 rounded-md min-w-0 scroll-smooth overscroll-contain', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
+                  <div className={cn('tactical-scrollbar flex flex-col gap-0.5 max-h-[min(45dvh,420px)] overflow-y-auto overflow-x-hidden pr-1 rounded-md min-w-0 scroll-smooth overscroll-contain', hasError('agents') && 'ring-1 ring-destructive/40 p-1')}>
                     {agents.map((a, i) => (
                       <div key={i} className="flex items-center gap-1 min-w-0 h-[26px] shrink-0">
                         <span className="w-4 sm:w-5 shrink-0 text-center font-mono text-[10px] sm:text-[10.5px] font-semibold text-muted-foreground tabular-nums leading-[26px]">{pad(i + 1)}</span>
