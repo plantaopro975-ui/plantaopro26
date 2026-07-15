@@ -11,7 +11,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
-import { Calendar as CalendarIcon, Plus, Trash2, Pencil, Clock, Repeat, Timer, Play, Pause } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Trash2, Pencil, Clock, Repeat, Timer, Play, Pause, Zap } from 'lucide-react';
 
 type Mode = 'once' | 'recurring' | 'interval';
 
