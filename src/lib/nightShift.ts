@@ -10,7 +10,7 @@ export const NIGHT_START = '22:00' as const;
 export const NIGHT_END = '06:00' as const;
 export const NIGHT_TZ = 'America/Rio_Branco' as const;
 
-/** Hora (Acre) a partir da qual só é permitido AGENDAR a ronda para as 22:00. */
+/** Hora (Acre) em que começa o período de preparação pré-noturna. */
 export const PRE_NIGHT_START_HOUR = 18;
 /** Hora (Acre) em que o turno noturno efetivamente começa. */
 export const NIGHT_START_HOUR = 22;
@@ -36,8 +36,7 @@ export function isNightShift(date: Date = new Date()): boolean {
 
 /**
  * True quando o horário está na janela de PRÉ-noite (18:00–21:59 Acre).
- * Nesse intervalo o operador só pode AGENDAR o início para as 22:00,
- * não iniciar imediatamente.
+ * Usado apenas como informação operacional; não bloqueia edição de horários.
  */
 export function isPreNightWindow(date: Date = new Date()): boolean {
   const h = getAcreHour(date);
@@ -107,14 +106,10 @@ export function formatAcreClock(date: Date): string {
 
 
 /**
- * Applies the night shift lock rule to a candidate start/end pair.
+ * Legacy compatibility helper.
  *
- * Returns the values that MUST be persisted:
- * - When the server clock is inside the night window AND no master override
- *   is active → forces `22:00 / 06:00` and marks `locked = true`.
- * - When override is active (master only) → returns the input unchanged but
- *   flags `auditRequired = true`.
- * - Outside the night window → returns the input unchanged.
+ * Night shift hours are now fully manual. The helper intentionally preserves
+ * the operator's selected values and never forces 22:00 → 06:00.
  */
 export function applyNightShiftLock(input: {
   now: Date;
@@ -122,18 +117,6 @@ export function applyNightShiftLock(input: {
   endTime: string;
   masterOverride?: boolean;
 }): { startTime: string; endTime: string; locked: boolean; auditRequired: boolean } {
-  const night = isNightShift(input.now);
-  if (!night) {
-    return { startTime: input.startTime, endTime: input.endTime, locked: false, auditRequired: false };
-  }
-  if (input.masterOverride) {
-    return {
-      startTime: input.startTime,
-      endTime: input.endTime,
-      locked: false,
-      auditRequired: input.startTime !== NIGHT_START || input.endTime !== NIGHT_END,
-    };
-  }
-  return { startTime: NIGHT_START, endTime: NIGHT_END, locked: true, auditRequired: false };
+  return { startTime: input.startTime, endTime: input.endTime, locked: false, auditRequired: false };
 }
 

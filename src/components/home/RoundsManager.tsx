@@ -23,7 +23,6 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { MissionLockDialog } from './MissionLockDialog';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
-import { PreNightScheduleDialog } from './PreNightScheduleDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { RoundHistoryDialog } from './RoundHistoryDialog';
 import { ReminderSettingsDialog } from './ReminderSettingsDialog';
@@ -33,8 +32,8 @@ import { TacticalClock } from './TacticalClock';
 import { TeamGlyph } from './TeamGlyph';
 import { getServerDate, getServerOffsetMs, syncServerTime } from '@/hooks/useServerTime';
 import {
-  isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
-  NIGHT_START, NIGHT_END, NIGHT_TZ,
+  isNightShift, getNightWindow, formatAcreClock,
+  NIGHT_TZ,
 } from '@/lib/nightShift';
 import { useAuth } from '@/contexts/AuthContext';
 import { SecurityDoctrineCard } from './SecurityDoctrineCard';
@@ -1107,12 +1106,12 @@ function TimeField({
         {label}
         {locked && (
           <span
-            title={lockedHint || 'Bloqueado — janela 22:00 → 06:00 (America/Rio_Branco)'}
+            title={lockedHint || 'Configuração bloqueada'}
             data-testid="night-lock-badge"
             className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10.5px] font-mono uppercase text-amber-300"
           >
             <svg viewBox="0 0 16 16" className="h-2.5 w-2.5"><path d="M4 7V5a4 4 0 118 0v2h1v7H3V7h1zm2 0h4V5a2 2 0 10-4 0v2z" fill="currentColor"/></svg>
-            {lockedBadgeText || '22:00→06:00'}
+            {lockedBadgeText || 'BLOQUEADO'}
           </span>
         )}
 
@@ -1639,43 +1638,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const nowServer = () => getServerDate().getTime();
 
-  /* ---------- Night shift auto-lock (22:00 → 06:00 Acre) ---------- */
+  /* ---------- Night shift status (manual hours enabled) ---------- */
   const [nightLocked, setNightLocked] = useState<boolean>(() => {
     const d = getServerDate();
-    return isNightShift(d) || isPreNightWindow(d);
+    return isNightShift(d);
   });
-  // true quando estamos apenas na PRÉ-noite (18:00-21:59), para exibir mensagens
-  // diferentes ("programado para 22:00" vs. "turno em andamento").
   const [preNightScheduled, setPreNightScheduled] = useState<boolean>(() => {
-    const d = getServerDate();
-    return isPreNightWindow(d) && !isNightShift(d);
+    return false;
   });
 
   const [serverClock, setServerClock] = useState<Date>(() => getServerDate());
   const [nightWindow, setNightWindow] = useState(() => getNightWindow(getServerDate()));
-
-  // Master override state
-  const [isMaster, setIsMaster] = useState(false);
-  const [overrideActive, setOverrideActive] = useState(false);
-  const [overrideReason, setOverrideReason] = useState('');
-  const [overridePromptOpen, setOverridePromptOpen] = useState(false);
-
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const { data } = await supabase.auth.getUser();
-        const uid = data?.user?.id;
-        if (!uid || cancelled) return;
-        const { data: roles } = await supabase
-          .from('user_roles').select('role').eq('user_id', uid);
-        if (cancelled) return;
-        setIsMaster(!!roles?.some((r) => r.role === 'master'));
-      } catch { /* ignore */ }
-    })();
-    return () => { cancelled = true; };
-  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -1686,28 +1659,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       setServerClock(now);
       setNightWindow(getNightWindow(now));
       const actualNight = isNightShift(now);
-      const preNight = isPreNightWindow(now);
-      const night = actualNight || preNight;
+      const preNight = false;
+      const night = actualNight;
       setNightLocked(night);
-      setPreNightScheduled(preNight && !actualNight);
+      setPreNightScheduled(false);
       // Diagnóstico: ative com localStorage.setItem('plantaopro_rounds_debug','1')
       try {
         if (localStorage.getItem('plantaopro_rounds_debug') === '1') {
           // eslint-disable-next-line no-console
           console.log('[RoundsManager][tick]', {
             acre: formatAcreClock(now),
-            actualNight, preNight, nightLocked: night, overrideActive,
+            actualNight, preNight, nightLocked: night,
           });
         }
       } catch { /* ignore */ }
-      if (night && !overrideActive) {
-        setStartTime(NIGHT_START);
-        setEndTime(NIGHT_END);
-      }
-      if (!night) {
-        // Leaving window automatically clears override
-        setOverrideActive(false);
-      }
     };
 
     // Sync com o servidor apenas na abertura e a cada 60s, para não
@@ -1719,9 +1684,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const tickIv = setInterval(tick, 1000);
     return () => { cancelled = true; clearInterval(syncIv); clearInterval(tickIv); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, overrideActive]);
+  }, [open]);
 
-  const nightEffectivelyLocked = nightLocked && !overrideActive;
+  const nightEffectivelyLocked = false;
 
   // Guard: modo "proportional" foi descontinuado da UI. Se restar salvo em
   // localStorage/estado antigo, cai automaticamente para "split".
@@ -1729,22 +1694,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     if ((mode as string) === 'proportional') setMode('split');
   }, [mode]);
 
-
-  // Guard: while locked, revert any external change to start/end
-  useEffect(() => {
-    if (!nightEffectivelyLocked) return;
-    if (startTime !== NIGHT_START) setStartTime(NIGHT_START);
-    if (endTime !== NIGHT_END) setEndTime(NIGHT_END);
-  }, [nightEffectivelyLocked, startTime, endTime]);
-
   /* ---------- Auto-ancorar início no horário ATUAL ao abrir (turno diurno) ----------
    * Regra de negócio: sempre que o operador abre o Gestor de Rondas para criar
    * ou dividir uma ronda durante o dia, o "Início do turno" passa a refletir
    * o horário atual do servidor (arredondado a 5 min), para que as divisões
    * sejam calculadas a partir do momento em que ele está — e não de um valor
-   * fixo (07:00) que já ficou no passado. No turno noturno o bloqueio 22:00→06:00
-   * continua prevalecendo. Só aplicamos UMA vez por abertura do modal para não
-   * brigar com edições manuais posteriores do operador.
+   * fixo (07:00) que já ficou no passado. Só aplicamos UMA vez por abertura do
+   * modal para não brigar com edições manuais posteriores do operador.
    */
   const autoAnchoredRef = useRef(false);
   useEffect(() => {
@@ -1769,27 +1725,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     setStartTime(`${h}:${m}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, nightEffectivelyLocked]);
-
-  const activateOverride = () => {
-    const reason = overrideReason.trim();
-    if (reason.length < 5) {
-      toast({ title: 'Motivo obrigatório', description: 'Informe ao menos 5 caracteres.', variant: 'destructive' });
-      return;
-    }
-    if (!isMaster) {
-      toast({ title: 'Apenas o master pode fazer override.', variant: 'destructive' });
-      return;
-    }
-    setOverrideActive(true);
-    setOverridePromptOpen(false);
-    toast({ title: 'Override master ativado', description: 'Auditoria será registrada ao iniciar a ronda.' });
-  };
-
-
-
-
-
-
 
   const addAgent = () => {
     setAgents((a) => [...a, `Agente ${a.length + 1}`]);
@@ -1901,8 +1836,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const frozenStartMinRef = useRef<number | null>(null);
   const effectiveStartMin = useMemo<number | null>(() => {
     if (mode === 'split' && nightEffectivelyLocked) {
-      // Âncora fixa em 22:00, independentemente de quando o operador iniciar.
-      return toMinutes(NIGHT_START);
+      return toMinutes(startTime);
     }
     if (mode === 'split' && running && frozenStartMinRef.current != null) {
       return frozenStartMinRef.current;
@@ -2015,12 +1949,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [lockOpen, setLockOpen] = useState(false);
 
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
-  const [preNightOpen, setPreNightOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
-  const [scheduledFor, setScheduledFor] = useState<number | null>(() => {
-    const s = readTeamLock();
-    return s?.scheduledFor ?? null;
-  });
+  const [scheduledFor, setScheduledFor] = useState<number | null>(null);
 
   /* Persistência local: trava de equipe/agendamento em cache. */
   useEffect(() => {
@@ -2071,7 +2001,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       try {
         const remoteTeam = (row.team as TeamKey) ?? team;
         const remoteConfirmed = !!row.team_confirmed;
-        const remoteScheduled = row.scheduled_for ? new Date(row.scheduled_for).getTime() : null;
+        const remoteScheduled = null;
         setTeam((prev) => (prev !== remoteTeam ? remoteTeam : prev));
         setTeamConfirmed((prev) => (prev !== remoteConfirmed ? remoteConfirmed : prev));
         setScheduledFor((prev) => (prev !== remoteScheduled ? remoteScheduled : prev));
@@ -2299,7 +2229,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   // Enquanto uma ronda está agendada (pré-noturno → 22:00), a configuração
   // do lado esquerdo é travada para preservar o cronograma pactuado.
-  const configLocked = scheduledFor != null;
+  const configLocked = false;
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryData, setSummaryData] = useState<{ totalSec: number; completed: number } | null>(null);
   const [summarySaved, setSummarySaved] = useState(false);
@@ -2676,48 +2606,23 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       const uid = userData?.user?.id;
       if (uid) {
         const rows = schedule.rows.map((r) => ({ name: r.name, duration: r.duration }));
-        // Atomic path when master override is active (trigger reads reason via GUC).
-        if (overrideActive && nightLocked) {
-          const { data, error } = await supabase.rpc('insert_round_session_override' as any, {
-            p_reason: overrideReason.trim(),
-            p_team: team,
-            p_mode: mode,
-            p_start_time: startTime,
-            p_end_time: endTime,
-            p_interval_min: intervalMin,
-            p_rows: rows,
-            p_server_started_at: new Date(anchorMs).toISOString(),
-          });
-          if (error) throw error;
-          if (typeof data === 'string') sessionIdRef.current = data;
-        } else {
-          await supabase.from('round_sessions')
-            .update({ is_active: false, ended_at: getServerDate().toISOString() })
-            .eq('user_id', uid).eq('is_active', true);
-          const { data, error } = await supabase.from('round_sessions').insert({
-            user_id: uid,
-            team, mode, start_time: startTime, end_time: endTime,
-            interval_min: intervalMin,
-            rows,
-            server_started_at: new Date(anchorMs).toISOString(),
-            is_active: true,
-          }).select('id').maybeSingle();
-          if (error) throw error;
-          if (data?.id) sessionIdRef.current = data.id;
-        }
+        await supabase.from('round_sessions')
+          .update({ is_active: false, ended_at: getServerDate().toISOString() })
+          .eq('user_id', uid).eq('is_active', true);
+        const { data, error } = await supabase.from('round_sessions').insert({
+          user_id: uid,
+          team, mode, start_time: startTime, end_time: endTime,
+          interval_min: intervalMin,
+          rows,
+          server_started_at: new Date(anchorMs).toISOString(),
+          is_active: true,
+        }).select('id').maybeSingle();
+        if (error) throw error;
+        if (data?.id) sessionIdRef.current = data.id;
       }
     } catch (e: any) {
       const msg = String(e?.message ?? '');
       const code = (e as { code?: string })?.code ?? '';
-      if (msg.includes('NIGHT_SHIFT_LOCK')) {
-        toast({
-          title: 'Bloqueio de turno noturno',
-          description: 'O servidor rejeitou horários fora de 22:00→06:00. Ative o override master se autorizado.',
-          variant: 'destructive',
-        });
-        setRunning(false);
-        return;
-      }
       // Idempotência de servidor: se já existe uma sessão ativa para este
       // user_id + server_started_at, o índice único bloqueia o duplicado.
       // Silenciamos o erro e mantemos a sessão anterior — nada é duplicado.
@@ -3504,9 +3409,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     data-testid="night-shift-banner"
                     className={cn(
                       'rounded-md border px-2.5 py-1.5 text-[12px] cursor-help',
-                      overrideActive
-                        ? 'border-red-500/40 bg-red-500/5 text-red-200/90'
-                        : 'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
+                      'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -3540,63 +3443,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           )}
 
                         </div>
-
-
-
-                        {overrideActive && (
-                          <div className="mt-1 text-[12px]">
-                            Motivo registrado: <i>"{overrideReason.trim()}"</i>. Cada gravação será auditada em <code>night_shift_overrides</code>.
-                          </div>
-                        )}
                       </div>
-                      {isMaster && !overrideActive && (
-                        <button
-                          type="button"
-                          onClick={() => setOverridePromptOpen(true)}
-                          className="shrink-0 rounded border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-[11.5px] font-mono uppercase tracking-wide text-amber-200 hover:bg-amber-500/20"
-                          data-testid="night-override-btn"
-                        >
-                          Override master
-                        </button>
-                      )}
-                      {overrideActive && (
-                        <button
-                          type="button"
-                          onClick={() => { setOverrideActive(false); setOverrideReason(''); toast({ title: 'Override desativado' }); }}
-                          className="shrink-0 rounded border border-red-500/50 bg-red-500/10 px-2 py-1 text-[11.5px] font-mono uppercase tracking-wide text-red-200 hover:bg-red-500/20"
-                        >
-                          Encerrar override
-                        </button>
-                      )}
                     </div>
-                    {overridePromptOpen && (
-                      <div className="mt-2 flex flex-col sm:flex-row gap-2 items-stretch">
-                        <Input
-                          value={overrideReason}
-                          onChange={(e) => setOverrideReason(e.target.value)}
-                          placeholder="Motivo (mín. 5 caracteres) — será registrado em auditoria"
-                          className="bg-background border-border h-9 text-xs"
-                          maxLength={280}
-                          autoComplete="off"
-                        />
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" onClick={() => setOverridePromptOpen(false)} className="h-9">Cancelar</Button>
-                          <Button size="sm" onClick={activateOverride} className="h-9 bg-amber-600 hover:bg-amber-700 text-slate-950">Confirmar</Button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" align="start" className="max-w-xs text-[12px] leading-snug">
-                        <p className="font-semibold mb-1">Turno noturno travado</p>
+                        <p className="font-semibold mb-1">Turno noturno ativo</p>
                         <p className="text-muted-foreground">
-                          A partir das 18:00 (Acre), o sistema fixa automaticamente o turno em
-                          {' '}<b className="text-foreground">22:00 → 06:00</b>, conforme diretriz operacional.
-                          Os horários ficam bloqueados para garantir integridade da escala e auditoria;
-                          apenas a <b className="text-foreground">quantidade de agentes</b> e o
-                          {' '}<b className="text-foreground">intervalo de rondas</b> podem ser ajustados.
-                          Alterações de horário exigem <b className="text-foreground">override master</b>,
-                          com motivo registrado em <code>night_shift_overrides</code>.
+                          Os horários estão liberados para edição manual. Ajuste início, término,
+                          quantidade de agentes e intervalo conforme a necessidade operacional.
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -3606,13 +3461,11 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   <button
                     type="button"
                     onClick={() => toast({
-                      title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
-                      description: preNightScheduled
-                        ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
-                        : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                      title: 'Configuração indisponível',
+                      description: 'Os horários noturnos estão liberados; atualize a configuração ativa para editar.',
                     })}
                     className="w-full text-left cursor-not-allowed"
-                    aria-label="Horários travados"
+                    aria-label="Configuração indisponível"
                   >
                     <div className="grid grid-cols-2 gap-2">
                       <div className="rounded-md border border-amber-500/40 bg-amber-500/5 px-2 py-1.5">
@@ -3640,33 +3493,27 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <TimeField id="rm-start" label="Início do turno" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
                       locked={nightEffectivelyLocked || configLocked}
-                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 22:00' : undefined}
+                      lockedBadgeText={undefined}
                       lockedHint={
                         configLocked ? 'Programação ativa — cancele para editar'
-                        : preNightScheduled ? 'Programado automaticamente para 22:00. Apenas a lista de agentes pode ser alterada.'
-                        : 'Fixado às 22:00 durante o turno noturno'
+                        : 'Configuração bloqueada'
                       }
                       onLockedAttempt={() => toast({
-                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
-                        description: preNightScheduled
-                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
-                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                        title: 'Configuração bloqueada',
+                        description: 'Cancele a operação ativa para editar os horários.',
                       })}
                     />
                     <TimeField id="rm-end" label="Término do turno" value={endTime}
                       onChange={setEndTime} invalid={hasError('end')} accent={teamColor}
                       locked={nightEffectivelyLocked || configLocked}
-                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 06:00' : undefined}
+                      lockedBadgeText={undefined}
                       lockedHint={
                         configLocked ? 'Programação ativa — cancele para editar'
-                        : preNightScheduled ? 'Programado automaticamente para 06:00. Apenas a lista de agentes pode ser alterada.'
-                        : 'Fixado às 06:00 durante o turno noturno'
+                        : 'Configuração bloqueada'
                       }
                       onLockedAttempt={() => toast({
-                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
-                        description: preNightScheduled
-                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
-                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                        title: 'Configuração bloqueada',
+                        description: 'Cancele a operação ativa para editar os horários.',
                       })}
                     />
                   </div>
@@ -3675,17 +3522,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     <TimeField id="rm-start2" label="Início" value={startTime}
                       onChange={setStartTime} invalid={hasError('start')} accent={teamColor}
                       locked={nightEffectivelyLocked || configLocked}
-                      lockedBadgeText={preNightScheduled ? 'PROGRAMADO 22:00' : undefined}
+                      lockedBadgeText={undefined}
                       lockedHint={
                         configLocked ? 'Programação ativa — cancele para editar'
-                        : preNightScheduled ? 'Programado automaticamente para 22:00. Apenas a lista de agentes pode ser alterada.'
-                        : 'Fixado às 22:00 durante o turno noturno'
+                        : 'Configuração bloqueada'
                       }
                       onLockedAttempt={() => toast({
-                        title: preNightScheduled ? '🌙 Turno noturno já programado' : '🔒 Horário travado',
-                        description: preNightScheduled
-                          ? 'A partir das 18:00 o sistema fixa 22:00→06:00 automaticamente. Apenas a quantidade de agentes pode ser ajustada.'
-                          : 'Início e término são fixos (22:00→06:00) durante o turno noturno.',
+                        title: 'Configuração bloqueada',
+                        description: 'Cancele a operação ativa para editar os horários.',
                       })}
                     />
 
@@ -3844,9 +3688,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             <TooltipContent side="top" className="max-w-xs text-[12px] leading-snug">
                               <p className="font-semibold mb-1">Início bloqueado</p>
                               <p className="text-muted-foreground">
-                                {nightLocked
-                                  ? <>Turno noturno travado em <b className="text-foreground">22:00 → 06:00</b>. Corrija os itens em vermelho para liberar. Para alterar horários é necessário <b className="text-foreground">override master</b> com motivo auditado.</>
-                                  : <>Existem itens de validação pendentes. Ajuste a configuração ou solicite <b className="text-foreground">override master</b> para prosseguir.</>}
+                                Existem itens de validação pendentes. Ajuste a configuração para prosseguir.
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -4067,12 +3909,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                     });
                                     return;
                                   }
-                                  // Janela pré-noturna (18:00–21:59 Acre): bloqueia início
-                                  // imediato e oferece agendamento para as 22:00.
-                                  if (isPreNightWindow(new Date(nowServer())) && !overrideActive) {
-                                    setPreNightOpen(true);
-                                    return;
-                                  }
                                   setStartConfirmOpen(true);
                                 }}
                                 className={cn(
@@ -4095,16 +3931,14 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                       <>
                                         <p className="font-semibold mb-1">Início bloqueado</p>
                                         <p className="text-muted-foreground">
-                                          {nightLocked
-                                            ? <>Turno noturno travado em <b className="text-foreground">22:00 → 06:00</b>. Resolva os itens de validação em vermelho para liberar. Alterar horários exige <b className="text-foreground">override master</b> com motivo registrado em auditoria.</>
-                                            : <>Existem itens pendentes na configuração. Ajuste-os para liberar o início da ronda.</>}
+                                          Existem itens pendentes na configuração. Ajuste-os para liberar o início da ronda.
                                         </p>
                                       </>
                                     ) : nightLocked ? (
                                       <>
-                                        <p className="font-semibold mb-1">Turno noturno 22:00 → 06:00</p>
+                                        <p className="font-semibold mb-1">Turno noturno ativo</p>
                                         <p className="text-muted-foreground">
-                                          Horários travados automaticamente. Para operar fora dessa janela use <b className="text-foreground">Override master</b> no banner âmbar acima e registre o motivo em auditoria.
+                                          Horários liberados para ajuste manual antes de iniciar a ronda.
                                         </p>
                                       </>
                                     ) : (
@@ -4205,29 +4039,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           setTeamConfirmOpen(false);
                           setPendingTeam(null);
                         }}
-                      />
-
-
-                      <PreNightScheduleDialog
-                        open={preNightOpen}
-                        onCancel={() => setPreNightOpen(false)}
-                        onSchedule={(targetMs) => {
-                          setPreNightOpen(false);
-                          // Alinha a configuração do lado esquerdo à janela
-                          // noturna pactuada (22:00 → 06:00) e trava edição.
-                          setMode('split');
-                          setStartTime(NIGHT_START);
-                          setEndTime(NIGHT_END);
-                          setScheduledFor(targetMs);
-                          const label = new Intl.DateTimeFormat('pt-BR', {
-                            timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
-                          }).format(new Date(targetMs));
-                          toast({ title: `Ronda agendada para ${label}.`, description: 'Configuração travada até 22:00 · início automático.' });
-                        }}
-                        color={teamColor}
-                        teamName={team}
-                        agentCount={schedule.rows.length}
-                        nowMs={nowServer()}
                       />
 
                       <RoundSummaryDialog

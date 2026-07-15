@@ -84,7 +84,7 @@ describe('nightShift helpers (server-time aware)', () => {
   });
 });
 
-describe('applyNightShiftLock — field locking contract', () => {
+describe('applyNightShiftLock — manual night shift contract', () => {
   it('does NOT touch values outside the night window', () => {
     const r = applyNightShiftLock({
       now: atAcre(2026, 7, 7, 14, 0),
@@ -94,15 +94,15 @@ describe('applyNightShiftLock — field locking contract', () => {
     expect(r).toEqual({ startTime: '07:00', endTime: '19:00', locked: false, auditRequired: false });
   });
 
-  it('FORCES,? 22:00/06:00 and marks locked=true inside the night window (no override)', () => {
+  it('preserves custom values inside the night window', () => {
     const r = applyNightShiftLock({
       now: atAcre(2026, 7, 7, 23, 45),
       startTime: '07:00',       // agent tried to inject a day-shift start
       endTime: '19:00',
     });
-    expect(r.locked).toBe(true);
-    expect(r.startTime).toBe(NIGHT_START);
-    expect(r.endTime).toBe(NIGHT_END);
+    expect(r.locked).toBe(false);
+    expect(r.startTime).toBe('07:00');
+    expect(r.endTime).toBe('19:00');
     expect(r.auditRequired).toBe(false);
   });
 
@@ -111,7 +111,7 @@ describe('applyNightShiftLock — field locking contract', () => {
       now: atAcre(2026, 7, 8, 5, 59),
       startTime: '05:00', endTime: '13:00',
     });
-    expect(insideLastMinute.locked).toBe(true);
+    expect(insideLastMinute.locked).toBe(false);
 
     const releasedAtSix = applyNightShiftLock({
       now: atAcre(2026, 7, 8, 6, 0),
@@ -121,7 +121,7 @@ describe('applyNightShiftLock — field locking contract', () => {
     expect(releasedAtSix.startTime).toBe('05:00');
   });
 
-  it('with masterOverride=true keeps custom values but flags auditRequired', () => {
+  it('with masterOverride=true keeps custom values without requiring audit', () => {
     const r = applyNightShiftLock({
       now: atAcre(2026, 7, 7, 23, 0),
       startTime: '20:00', endTime: '04:00',
@@ -130,7 +130,7 @@ describe('applyNightShiftLock — field locking contract', () => {
     expect(r.locked).toBe(false);
     expect(r.startTime).toBe('20:00');
     expect(r.endTime).toBe('04:00');
-    expect(r.auditRequired).toBe(true);
+    expect(r.auditRequired).toBe(false);
   });
 
   it('with masterOverride=true AND standard values → no audit required', () => {

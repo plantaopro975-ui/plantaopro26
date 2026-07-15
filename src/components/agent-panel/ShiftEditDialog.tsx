@@ -214,12 +214,7 @@ export function ShiftEditDialog({ open, onOpenChange, shiftDate, shift, agentId,
       }, 50);
     } catch (e: any) {
 
-      const msg = e?.message || 'Falha ao salvar plantão';
-      if (msg.includes('NIGHT_SHIFT_LOCK')) {
-        toast.error('Horário noturno bloqueado: use 22:00 → 06:00 durante a janela noturna.');
-      } else {
-        toast.error(msg);
-      }
+      toast.error(e?.message || 'Falha ao salvar plantão');
     } finally {
       setSaving(false);
     }
