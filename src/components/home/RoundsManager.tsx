@@ -2044,6 +2044,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
   const [scheduledFor, setScheduledFor] = useState<number | null>(null);
+  // Momento (ms) em que a programação foi armada — usado para desenhar a
+  // barra de progresso do "PRÉ-INÍCIO" (proporção de espera consumida).
+  const scheduledArmedAtRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (scheduledFor == null) { scheduledArmedAtRef.current = null; return; }
+    if (scheduledArmedAtRef.current == null) scheduledArmedAtRef.current = getServerDate().getTime();
+  }, [scheduledFor]);
 
   /* Persistência local: trava de equipe/agendamento em cache. */
   useEffect(() => {
@@ -3968,12 +3975,116 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               )}
 
 
-                              {view && !view.done && 'slotSec' in view && view.slotSec > 0 && (
-                                <div className="h-1 w-40 sm:w-64 overflow-hidden rounded-full bg-border/60">
-                                  <div className="h-full transition-all"
-                                       style={{ width: `${slotProgress * 100}%`, backgroundColor: urgent ? 'hsl(var(--destructive))' : teamColor }} />
-                                </div>
-                              )}
+                              {/* ============ Relógio + horário de início ============ */}
+                              {(() => {
+                                const nowD = new Date(nowServer());
+                                const nowLabel = `${pad(nowD.getHours())}:${pad(nowD.getMinutes())}:${pad(nowD.getSeconds())}`;
+                                let startLabel: string | null = null;
+                                let startCaption = 'Início';
+                                if (scheduledPending && scheduledFor != null) {
+                                  const d = new Date(scheduledFor);
+                                  startLabel = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                                  startCaption = 'Início programado';
+                                } else if ((phaseState.phase === 'running' || phaseState.phase === 'paused' || phaseState.phase === 'done') && startedAtRef.current != null) {
+                                  const d = new Date(startedAtRef.current);
+                                  startLabel = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                                  startCaption = 'Iniciado às';
+                                } else if (schedule?.rows[0]?.from) {
+                                  startLabel = schedule.rows[0].from;
+                                  startCaption = 'Primeiro slot';
+                                }
+                                return (
+                                  <div
+                                    className="flex flex-wrap items-center justify-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground"
+                                    data-testid="rounds-clock-row"
+                                  >
+                                    <span className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-card/60 px-2 py-0.5">
+                                      <span className="opacity-70">Agora</span>
+                                      <b className="tabular-nums text-foreground" data-testid="rounds-now">{nowLabel}</b>
+                                    </span>
+                                    {startLabel && (
+                                      <span
+                                        className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5"
+                                        style={{ borderColor: `${teamColor}55`, color: teamColor, background: `${teamColor}0d` }}
+                                        data-testid="rounds-start-label"
+                                      >
+                                        <span className="opacity-80">{startCaption}</span>
+                                        <b className="tabular-nums">{startLabel}</b>
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              })()}
+
+                              {/* ============ Barra de progresso do slot atual ============ */}
+                              {(() => {
+                                if (phaseState.phase === 'running' || phaseState.phase === 'paused') {
+                                  const slotSec = phaseState.phase === 'paused'
+                                    ? (live && !live.done && 'slotSec' in live ? live.slotSec : (pauseSnap?.slotRemainingSec ?? 0))
+                                    : (view && !view.done && 'slotSec' in view ? view.slotSec : 0);
+                                  const remaining = phaseState.phase === 'paused'
+                                    ? (pauseSnap?.slotRemainingSec ?? 0)
+                                    : (view && !view.done ? view.remaining : 0);
+                                  if (slotSec <= 0) return null;
+                                  const elapsed = Math.max(0, slotSec - remaining);
+                                  const pct = Math.min(100, (elapsed / slotSec) * 100);
+                                  const barColor = phaseState.phase === 'paused'
+                                    ? 'hsl(200 90% 55%)'
+                                    : (urgent ? 'hsl(var(--destructive))' : teamColor);
+                                  return (
+                                    <div className="w-full max-w-xs flex flex-col items-center gap-1">
+                                      <div
+                                        className="h-1.5 w-full overflow-hidden rounded-full bg-border/60"
+                                        role="progressbar"
+                                        aria-valuemin={0}
+                                        aria-valuemax={100}
+                                        aria-valuenow={Math.round(pct)}
+                                        data-testid="rounds-slot-progress"
+                                        data-phase={phaseState.phase}
+                                      >
+                                        <div
+                                          className={cn('h-full', phaseState.phase === 'paused' ? '' : 'transition-all')}
+                                          style={{ width: `${pct}%`, backgroundColor: barColor }}
+                                        />
+                                      </div>
+                                      <div className="flex w-full justify-between font-mono text-[10px] tabular-nums text-muted-foreground">
+                                        <span>▲ {fmtHMS(elapsed)}</span>
+                                        <span>{Math.round(pct)}%</span>
+                                        <span>▼ {fmtHMS(remaining)}</span>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                if (scheduledPending && scheduledFor != null && scheduledArmedAtRef.current != null) {
+                                  const totalWait = Math.max(1000, scheduledFor - scheduledArmedAtRef.current);
+                                  const consumed = Math.max(0, Math.min(totalWait, nowServer() - scheduledArmedAtRef.current));
+                                  const pct = (consumed / totalWait) * 100;
+                                  return (
+                                    <div className="w-full max-w-xs flex flex-col items-center gap-1">
+                                      <div
+                                        className="h-1.5 w-full overflow-hidden rounded-full bg-border/60"
+                                        role="progressbar"
+                                        aria-valuemin={0}
+                                        aria-valuemax={100}
+                                        aria-valuenow={Math.round(pct)}
+                                        data-testid="rounds-slot-progress"
+                                        data-phase="before_start"
+                                      >
+                                        <div
+                                          className="h-full transition-all"
+                                          style={{ width: `${pct}%`, backgroundColor: 'hsl(45 95% 55%)' }}
+                                        />
+                                      </div>
+                                      <div className="flex w-full justify-between font-mono text-[10px] tabular-nums text-muted-foreground">
+                                        <span>▲ {fmtHMS(Math.floor(consumed / 1000))}</span>
+                                        <span>{Math.round(pct)}%</span>
+                                        <span>▼ {fmtHMS(secToStart ?? 0)}</span>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              })()}
 
                               {/* Contadores enxutos — sem duplicação */}
                               {schedule && (
