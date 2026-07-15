@@ -2338,6 +2338,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   }, [silentMode]);
   const startedAtRef = useRef<number | null>(null);
   const firedRef = useRef<Set<number>>(new Set());
+  // Estado real de pausa (preserva startedAt para retomar snapshot)
+  const [isPaused, setIsPaused] = useState(false);
+  const pauseSnapshotRef = useRef<{ slotRemainingSec: number; activeName?: string; nextName?: string } | null>(null);
   const [alarm, setAlarm] = useState<{ open: boolean; index: number; name: string }>({
     open: false, index: -1, name: '',
   });
