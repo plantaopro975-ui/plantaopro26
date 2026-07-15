@@ -2348,11 +2348,16 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const needsPreview = nightEffectivelyLocked && mode === 'split' && !!schedule;
     const needsSchedule = scheduledFor != null;
     if (!running && !needsPreview && !armed && !needsSchedule) return;
-    // 1000ms é suficiente para HH:MM:SS e reduz drasticamente o custo de
-    // re-renderização em máquinas fracas (metade dos ciclos por segundo).
-    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    // Se o modal está fechado, o único motivo válido para continuar
+    // ticando é disparar o auto-start no horário programado — nesse
+    // caso um tick lento (3s) já basta e economiza CPU.
+    // Quando aberto: 1s em máquinas normais, 2s em dispositivos lentos.
+    const intervalMs = !open
+      ? (needsSchedule ? 3000 : 1000)
+      : (lowMotion ? 2000 : 1000);
+    const id = setInterval(() => setTick((t) => t + 1), intervalMs);
     return () => clearInterval(id);
-  }, [running, nightEffectivelyLocked, mode, schedule, armed, scheduledFor]);
+  }, [running, nightEffectivelyLocked, mode, schedule, armed, scheduledFor, open, lowMotion]);
 
   /* ---------- Auto-start quando bater 22:00 (pré-agendado) ---------- */
   useEffect(() => {
