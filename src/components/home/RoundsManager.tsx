@@ -1118,14 +1118,14 @@ function TimeField({
   const nearestM5 = Math.min(55, Math.round(curMNum / 5) * 5);
 
   return (
-    <div className="grid gap-1.5">
-      <label htmlFor={`${id}-h`} className="text-[12.5px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+    <div className="grid gap-1">
+      <label htmlFor={`${id}-h`} className="text-[11px] font-sans uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
         {label}
         {locked && (
           <span
             title={lockedHint || 'Configuração bloqueada'}
             data-testid="night-lock-badge"
-            className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10.5px] font-mono uppercase text-amber-300"
+            className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-1 py-0.5 text-[9.5px] font-mono uppercase text-amber-300"
           >
             <svg viewBox="0 0 16 16" className="h-2.5 w-2.5"><path d="M4 7V5a4 4 0 118 0v2h1v7H3V7h1zm2 0h4V5a2 2 0 10-4 0v2z" fill="currentColor"/></svg>
             {lockedBadgeText || 'BLOQUEADO'}
@@ -1134,7 +1134,7 @@ function TimeField({
 
       </label>
       <div className={cn(
-        'group relative flex items-center gap-1 rounded-md border bg-background pl-1.5 pr-1 h-11 transition-colors min-w-0 overflow-hidden',
+        'group relative flex items-center gap-0.5 rounded-md border bg-background pl-1.5 pr-1 h-8 transition-colors min-w-0 overflow-hidden',
         invalid ? 'border-destructive/70' : 'border-border focus-within:border-primary/70',
         locked && 'opacity-70 cursor-not-allowed',
       )}>
@@ -1148,7 +1148,7 @@ function TimeField({
           />
         )}
 
-        <svg viewBox="0 0 32 32" className="h-5 w-5 shrink-0" aria-hidden>
+        <svg viewBox="0 0 32 32" className="h-3.5 w-3.5 shrink-0" aria-hidden>
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.4" strokeWidth="1.2" />
           <circle cx="16" cy="16" r="13" fill="none" stroke={accent} strokeOpacity="0.9" strokeWidth="1.4"
                   strokeDasharray="4 3" strokeLinecap="round" />
@@ -1167,7 +1167,7 @@ function TimeField({
           onFocus={(e) => { setHFocused(true); e.currentTarget.select(); }}
           onBlur={() => { setHFocused(false); commit(hLocal, mLocal); }}
           onKeyDown={onHKey}
-          className="w-7 shrink-0 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
+          className="w-6 shrink-0 bg-transparent text-center font-mono text-[13px] font-light tabular-nums text-foreground outline-none"
           aria-label={`${label} horas`}
           autoComplete="off"
           disabled={locked}
@@ -1178,12 +1178,12 @@ function TimeField({
               type="button"
               disabled={locked}
               aria-label={`Escolher ${label} horas`}
-              className="h-7 w-6 shrink-0 flex items-center justify-center rounded-md border border-border/60 bg-card/60 text-primary/80 hover:text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-5 w-4 shrink-0 flex items-center justify-center rounded-sm border border-border/50 bg-card/50 text-primary/80 hover:text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <svg viewBox="0 0 12 12" className="h-3.5 w-3.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" sideOffset={6} className="w-24 p-1 max-h-64 overflow-y-auto">
+          <PopoverContent align="start" sideOffset={4} className="w-20 p-1 max-h-56 overflow-y-auto">
             <div className="grid grid-cols-1 gap-0.5">
               {Array.from({ length: 24 }, (_, i) => i).map((n) => {
                 const selected = n === curHNum;
@@ -1193,7 +1193,7 @@ function TimeField({
                     type="button"
                     onClick={() => pickH(n)}
                     className={cn(
-                      'w-full rounded px-2 py-1.5 text-sm font-mono tabular-nums text-center transition-colors',
+                      'w-full rounded px-1.5 py-1 text-[12px] font-mono tabular-nums text-center transition-colors',
                       selected
                         ? 'bg-primary/20 text-primary font-medium ring-1 ring-primary/40'
                         : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
@@ -1207,7 +1207,7 @@ function TimeField({
           </PopoverContent>
         </Popover>
 
-        <span className="font-mono text-base text-muted-foreground/70 select-none px-0.5 shrink-0">:</span>
+        <span className="font-mono text-[13px] text-muted-foreground/70 select-none shrink-0">:</span>
 
         {/* MINUTO */}
         <input
@@ -1218,7 +1218,7 @@ function TimeField({
           onFocus={(e) => { setMFocused(true); e.currentTarget.select(); }}
           onBlur={() => { setMFocused(false); commit(hLocal, mLocal); }}
           onKeyDown={onMKey}
-          className="w-7 shrink-0 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
+          className="w-6 shrink-0 bg-transparent text-center font-mono text-[13px] font-light tabular-nums text-foreground outline-none"
           aria-label={`${label} minutos`}
           autoComplete="off"
           disabled={locked}
@@ -1229,13 +1229,13 @@ function TimeField({
               type="button"
               disabled={locked}
               aria-label={`Escolher ${label} minutos`}
-              className="h-7 w-6 shrink-0 flex items-center justify-center rounded-md border border-border/60 bg-card/60 text-primary/80 hover:text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-5 w-4 shrink-0 flex items-center justify-center rounded-sm border border-border/50 bg-card/50 text-primary/80 hover:text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <svg viewBox="0 0 12 12" className="h-3.5 w-3.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" sideOffset={6} className="w-24 p-1 max-h-64 overflow-y-auto">
-            <div className="mb-1 px-2 pt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70">
+          <PopoverContent align="start" sideOffset={4} className="w-24 p-1 max-h-56 overflow-y-auto">
+            <div className="mb-0.5 px-1.5 pt-0.5 text-[9px] font-mono uppercase tracking-wider text-muted-foreground/70">
               min · passo 5
             </div>
             <div className="grid grid-cols-2 gap-0.5">
@@ -1247,7 +1247,7 @@ function TimeField({
                     type="button"
                     onClick={() => pickM(n)}
                     className={cn(
-                      'rounded px-2 py-1.5 text-sm font-mono tabular-nums text-center transition-colors',
+                      'rounded px-1.5 py-1 text-[12px] font-mono tabular-nums text-center transition-colors',
                       selected
                         ? 'bg-primary/20 text-primary font-medium ring-1 ring-primary/40'
                         : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
@@ -1263,14 +1263,15 @@ function TimeField({
 
         <div className="flex flex-col shrink-0 ml-auto">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min" disabled={locked}
-            className="h-[20px] w-4 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground disabled:opacity-40">
-            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            className="h-[14px] w-3.5 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground disabled:opacity-40">
+            <svg viewBox="0 0 12 12" className="h-2 w-2"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min" disabled={locked}
-            className="h-[20px] w-4 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground disabled:opacity-40">
-            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            className="h-[14px] w-3.5 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground disabled:opacity-40">
+            <svg viewBox="0 0 12 12" className="h-2 w-2"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
+
 
       </div>
 
