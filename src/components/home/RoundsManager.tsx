@@ -3863,11 +3863,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   }}
 
                                 >
-                                  {view && !view.done
-                                    ? fmtHMS(view.remaining)
-                                    : view?.done
-                                      ? '00:00:00'
-                                      : fmtHMS(schedule.rows[0].duration * 60)}
+                                  {scheduledPending
+                                    ? fmtHMS(secToStart!)
+                                    : view && !view.done
+                                      ? fmtHMS(view.remaining)
+                                      : view?.done
+                                        ? '00:00:00'
+                                        : fmtHMS(schedule.rows[0].duration * 60)}
                                 </span>
                               </div>
 
