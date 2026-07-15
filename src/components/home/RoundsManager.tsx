@@ -3815,17 +3815,28 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         </svg>
 
                         {(() => {
+                          // Se há início programado e ainda não chegou o horário,
+                          // NÃO conta tempo de agente algum — apenas o contra-regressivo
+                          // até o início do primeiro agente.
+                          const secToStart = scheduledFor != null && !running
+                            ? Math.max(0, Math.ceil((scheduledFor - nowServer()) / 1000))
+                            : null;
+                          const scheduledPending = secToStart != null && secToStart > 0;
                           // "view" unifica live (rodando) e preview (turno noturno, antes de Iniciar)
-                          const view = live ?? preview;
-                          const isPreview = !live && !!preview;
+                          const view = scheduledPending ? null : (live ?? preview);
+                          const isPreview = !scheduledPending && !live && !!preview;
+                          const scheduledTargetLabel = scheduledPending
+                            ? (() => { const d = new Date(scheduledFor!); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; })()
+                            : null;
                           const statusLabel =
+                            scheduledPending ? `Início programado ${scheduledTargetLabel} — falta` :
                             running && live && !live.done ? 'Restante do agente em ronda' :
                             running && live?.done ? 'Concluído' :
                             isPreview && view?.done ? 'Turno encerrado (06:00)' :
                             isPreview ? 'Prévia · agente atual' :
                             'Aguardando início';
-                          const urgent = view && !view.done && view.remaining <= 10;
-                          const critical = view && !view.done && view.remaining <= 5;
+                          const urgent = !scheduledPending && view && !view.done && view.remaining <= 10;
+                          const critical = !scheduledPending && view && !view.done && view.remaining <= 5;
                           const slotProgress = view && !view.done && 'slotSec' in view && view.slotSec > 0
                             ? 1 - view.remaining / view.slotSec : 0;
                           const activeAgentName = view && !view.done ? schedule.rows[view.index]?.name : undefined;
@@ -3848,15 +3859,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   style={{
                                     color: urgent
                                       ? 'hsl(var(--destructive))'
-                                      : view ? teamColor : 'hsl(var(--muted-foreground))',
+                                      : (view || scheduledPending) ? teamColor : 'hsl(var(--muted-foreground))',
                                   }}
 
                                 >
-                                  {view && !view.done
-                                    ? fmtHMS(view.remaining)
-                                    : view?.done
-                                      ? '00:00:00'
-                                      : fmtHMS(schedule.rows[0].duration * 60)}
+                                  {scheduledPending
+                                    ? fmtHMS(secToStart!)
+                                    : view && !view.done
+                                      ? fmtHMS(view.remaining)
+                                      : view?.done
+                                        ? '00:00:00'
+                                        : fmtHMS(schedule.rows[0].duration * 60)}
                                 </span>
                               </div>
 
