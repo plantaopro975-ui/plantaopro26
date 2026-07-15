@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useRoundsStats } from '@/hooks/useRoundsStats';
 
-import { RoundsManager } from './RoundsManager';
+import { RoundsManagerLazy as RoundsManager } from './RoundsManagerLazy';
 import { TacticalClock } from './TacticalClock';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
