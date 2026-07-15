@@ -234,7 +234,7 @@ export function ScheduledRoundsManager() {
             Agendamento de Rondas
           </CardTitle>
           <CardDescription>
-            Programe o disparo automático de rondas por unidade e equipe. O encerramento exige confirmação do agente.
+            Programe o disparo automático de rondas por unidade e equipe — ou use <strong className="text-amber-300">Disparar agora</strong> para acionar manualmente sem esperar o agendamento.
           </CardDescription>
         </div>
         <Button onClick={openNew} className="bg-amber-600 hover:bg-amber-700 text-slate-950 font-semibold">
