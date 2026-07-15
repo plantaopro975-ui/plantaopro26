@@ -3917,19 +3917,27 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   style={{
                                     color: urgent
                                       ? 'hsl(var(--destructive))'
-                                      : (view || scheduledPending) ? teamColor : 'hsl(var(--muted-foreground))',
+                                      : (view || scheduledPending || isPausedPhase) ? teamColor : 'hsl(var(--muted-foreground))',
                                   }}
-
+                                  data-testid="rounds-primary-timer"
                                 >
                                   {scheduledPending
                                     ? fmtHMS(secToStart!)
-                                    : view && !view.done
-                                      ? fmtHMS(view.remaining)
-                                      : view?.done
-                                        ? '00:00:00'
-                                        : fmtHMS(schedule.rows[0].duration * 60)}
+                                    : isPausedPhase
+                                      ? fmtHMS(pauseSnap?.slotRemainingSec ?? 0)
+                                      : view && !view.done
+                                        ? fmtHMS(view.remaining)
+                                        : view?.done
+                                          ? '00:00:00'
+                                          : fmtHMS(schedule.rows[0].duration * 60)}
                                 </span>
                               </div>
+
+                              {isPausedPhase && pauseSnap?.nextName && (
+                                <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-sky-200/90">
+                                  Próximo evento: <b className="text-sky-100">{pauseSnap.nextName}</b>
+                                </div>
+                              )}
 
                               {urgent && view && (
                                 <div className="font-mono text-[12.5px] uppercase tracking-[0.35em] font-bold text-destructive">
