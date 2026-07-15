@@ -1139,19 +1139,39 @@ function TimeField({
           <line x1="16" y1="16" x2="22" y2="16"  stroke={accent} strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
           <circle cx="16" cy="16" r="1.2" fill={accent} />
         </svg>
-        <input
-          id={`${id}-h`}
-          inputMode="numeric"
-          maxLength={2}
-          value={hLocal}
-          onChange={(e) => setHLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
-          onFocus={(e) => { setHFocused(true); e.currentTarget.select(); }}
-          onBlur={() => { setHFocused(false); commit(hLocal, mLocal); }}
-          onKeyDown={onHKey}
-          className="w-7 shrink-0 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
-          aria-label={`${label} horas`}
-          autoComplete="off"
-        />
+        <div className="relative shrink-0">
+          <input
+            id={`${id}-h`}
+            inputMode="numeric"
+            maxLength={2}
+            value={hLocal}
+            onChange={(e) => setHLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
+            onFocus={(e) => { setHFocused(true); e.currentTarget.select(); }}
+            onBlur={() => { setHFocused(false); commit(hLocal, mLocal); }}
+            onKeyDown={onHKey}
+            className="w-7 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
+            aria-label={`${label} horas`}
+            autoComplete="off"
+            disabled={locked}
+          />
+          {/* Dropdown nativo sobreposto — abre picker do SO para escolher a hora rapidamente. */}
+          <select
+            aria-label={`Selecionar ${label} horas`}
+            value={String(parseInt(hLocal || extH || '0', 10) || 0)}
+            onChange={(e) => {
+              const nv = parseInt(e.target.value, 10) || 0;
+              setHLocal(pad(nv));
+              commit(String(nv), mLocal || extM || '0');
+            }}
+            disabled={locked}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            tabIndex={-1}
+          >
+            {Array.from({ length: 24 }, (_, i) => (
+              <option key={i} value={i}>{pad(i)}h</option>
+            ))}
+          </select>
+        </div>
         <div className="flex flex-col shrink-0">
           <button type="button" onClick={() => bump('h', 1)} aria-label="Mais 1 hora"
             className="h-[20px] w-4 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
@@ -1163,18 +1183,42 @@ function TimeField({
           </button>
         </div>
         <span className="font-mono text-base text-muted-foreground/70 select-none px-0.5 shrink-0">:</span>
-        <input
-          inputMode="numeric"
-          maxLength={2}
-          value={mLocal}
-          onChange={(e) => setMLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
-          onFocus={(e) => { setMFocused(true); e.currentTarget.select(); }}
-          onBlur={() => { setMFocused(false); commit(hLocal, mLocal); }}
-          onKeyDown={onMKey}
-          className="w-7 shrink-0 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
-          aria-label={`${label} minutos`}
-          autoComplete="off"
-        />
+        <div className="relative shrink-0">
+          <input
+            inputMode="numeric"
+            maxLength={2}
+            value={mLocal}
+            onChange={(e) => setMLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
+            onFocus={(e) => { setMFocused(true); e.currentTarget.select(); }}
+            onBlur={() => { setMFocused(false); commit(hLocal, mLocal); }}
+            onKeyDown={onMKey}
+            className="w-7 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
+            aria-label={`${label} minutos`}
+            autoComplete="off"
+            disabled={locked}
+          />
+          {/* Dropdown nativo sobreposto — permite escolher minutos em passos de 5 (00, 05, 10, ..., 55). */}
+          <select
+            aria-label={`Selecionar ${label} minutos`}
+            value={(() => {
+              const cur = parseInt(mLocal || extM || '0', 10) || 0;
+              // arredonda para o múltiplo de 5 mais próximo dentro das opções
+              return String(Math.min(55, Math.round(cur / 5) * 5));
+            })()}
+            onChange={(e) => {
+              const nv = parseInt(e.target.value, 10) || 0;
+              setMLocal(pad(nv));
+              commit(hLocal || extH || '0', String(nv));
+            }}
+            disabled={locked}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            tabIndex={-1}
+          >
+            {Array.from({ length: 12 }, (_, i) => i * 5).map((n) => (
+              <option key={n} value={n}>{pad(n)}min</option>
+            ))}
+          </select>
+        </div>
         <div className="flex flex-col shrink-0 ml-auto">
           <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
             className="h-[20px] w-4 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
@@ -1185,6 +1229,7 @@ function TimeField({
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
+
       </div>
 
     </div>
