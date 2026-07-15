@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { computeRoundsState } from '@/lib/roundsState';
 import {
   Users, Plus, Trash2, Copy, FileDown, Timer,
   Play, Pause, RotateCcw, Radio, ChevronRight, AlertTriangle,
