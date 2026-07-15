@@ -1689,12 +1689,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   /* ---- Modal de histórico detalhado ---- */
   const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
 
+  const { lowMotion } = useLowMotion();
+
   /* ---- Efeito de foco: desfoca a homepage por trás enquanto o modal está aberto ---- */
   useEffect(() => {
     if (!open) return;
     document.body.classList.add('rm-focus-mode');
-    return () => { document.body.classList.remove('rm-focus-mode'); };
-  }, [open]);
+    if (lowMotion) document.body.classList.add('rm-low-motion');
+    return () => {
+      document.body.classList.remove('rm-focus-mode');
+      document.body.classList.remove('rm-low-motion');
+    };
+  }, [open, lowMotion]);
 
   /* server clock: fonte única = get_server_now(), avançando por relógio monotônico */
   const sessionIdRef = useRef<string | null>(null);
