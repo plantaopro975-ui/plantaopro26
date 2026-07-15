@@ -2678,6 +2678,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setRunning(true);
+    setIsPaused(false);
+    pauseSnapshotRef.current = null;
     // Log resumido (cache local) — equipe + data da ronda realizada
     try { appendTeamLog(team); } catch { /* ignore */ }
     // Rodízio profissional de cores — próxima ronda usará paleta diferente.
