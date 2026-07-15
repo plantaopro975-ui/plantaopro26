@@ -4081,7 +4081,29 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <StartLockConfirmDialog
                         open={startConfirmOpen}
                         onCancel={() => setStartConfirmOpen(false)}
-                        onConfirm={() => { setStartConfirmOpen(false); startTimer(); }}
+        onConfirm={() => {
+          setStartConfirmOpen(false);
+          // Se o operador programou um horário futuro para o início do
+          // primeiro turno, NÃO começamos a contagem agora. Agendamos e
+          // deixamos o efeito de auto-start disparar exatamente no horário.
+          const mins = toMinutes(startTime);
+          if (mins != null) {
+            const nowMs = nowServer();
+            const target = new Date(nowMs);
+            target.setHours(Math.floor(mins / 60), mins % 60, 0, 0);
+            const targetMs = target.getTime();
+            // Tolerância de 30s: cliques feitos "em cima da hora" iniciam já.
+            if (targetMs - nowMs > 30_000) {
+              setScheduledFor(targetMs);
+              toast({
+                title: 'Ronda programada',
+                description: `Início automático às ${startTime}. A contagem só começa nesse horário.`,
+              });
+              return;
+            }
+          }
+          startTimer();
+        }}
                         color={teamColor}
                         teamName={team}
                         agentCount={schedule.rows.length}
