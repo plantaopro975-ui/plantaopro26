@@ -2338,6 +2338,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   }, [silentMode]);
   const startedAtRef = useRef<number | null>(null);
   const firedRef = useRef<Set<number>>(new Set());
+  // Estado real de pausa (preserva startedAt para retomar snapshot)
+  const [isPaused, setIsPaused] = useState(false);
+  const pauseSnapshotRef = useRef<{ slotRemainingSec: number; activeName?: string; nextName?: string } | null>(null);
   const [alarm, setAlarm] = useState<{ open: boolean; index: number; name: string }>({
     open: false, index: -1, name: '',
   });
@@ -2675,6 +2678,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     firedRef.current = new Set();
     notifiedRef.current = new Set();
     setRunning(true);
+    setIsPaused(false);
+    pauseSnapshotRef.current = null;
     // Log resumido (cache local) — equipe + data da ronda realizada
     try { appendTeamLog(team); } catch { /* ignore */ }
     // Rodízio profissional de cores — próxima ronda usará paleta diferente.
@@ -2750,7 +2755,18 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     }
   };
 
-  const pauseTimer = () => setRunning(false);
+  const pauseTimer = () => {
+    // Congela snapshot do slot atual para exibir "tempo restante do próximo evento"
+    if (live && !live.done && schedule) {
+      pauseSnapshotRef.current = {
+        slotRemainingSec: Math.max(0, live.remaining),
+        activeName: schedule.rows[live.index]?.name,
+        nextName: schedule.rows[live.index + 1]?.name,
+      };
+    }
+    setIsPaused(true);
+    setRunning(false);
+  };
 
   /* Programação antecipada removida — sem armRoundForStart / disarmRound. */
 
@@ -2759,6 +2775,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const resetTimer = () => {
     setRunning(false);
+    setIsPaused(false);
+    pauseSnapshotRef.current = null;
     startedAtRef.current = null;
     firedRef.current = new Set();
     notifiedRef.current = new Set();
@@ -3822,39 +3840,67 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                             hasSchedule: !!schedule,
                             totalSec: schedule?.totalSec ?? 0,
                             scheduledStartMs: scheduledFor,
-                            startedAtMs: running ? startedAtRef.current : null,
-                            paused: false,
+                            startedAtMs: (running || isPaused) ? startedAtRef.current : null,
+                            paused: isPaused,
                             nowMs: nowServer(),
                           });
                           const scheduledPending = phaseState.phase === 'before_start';
+                          const isPausedPhase = phaseState.phase === 'paused';
                           const secToStart = phaseState.secondsUntilStart;
                           // "view" unifica live (rodando) e preview (turno noturno, antes de Iniciar)
-                          const view = scheduledPending ? null : (live ?? preview);
-                          const isPreview = !scheduledPending && !live && !!preview;
+                          const view = (scheduledPending || isPausedPhase) ? null : (live ?? preview);
+                          const isPreview = !scheduledPending && !isPausedPhase && !live && !!preview;
                           const scheduledTargetLabel = scheduledPending && scheduledFor != null
                             ? (() => { const d = new Date(scheduledFor); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; })()
                             : null;
+                          const pauseSnap = isPausedPhase ? pauseSnapshotRef.current : null;
                           const statusLabel =
                             scheduledPending ? `Início programado ${scheduledTargetLabel} — falta` :
+                            isPausedPhase ? 'Pausado — restante do slot atual' :
                             phaseState.phase === 'running' && live && !live.done ? 'Restante do agente em ronda' :
                             phaseState.phase === 'done' ? 'Concluído' :
                             isPreview && view?.done ? 'Turno encerrado (06:00)' :
                             isPreview ? 'Prévia · agente atual' :
                             'Aguardando início';
-                          const urgent = !scheduledPending && view && !view.done && view.remaining <= 10;
-                          const critical = !scheduledPending && view && !view.done && view.remaining <= 5;
+                          const urgent = !scheduledPending && !isPausedPhase && view && !view.done && view.remaining <= 10;
+                          const critical = !scheduledPending && !isPausedPhase && view && !view.done && view.remaining <= 5;
                           const slotProgress = view && !view.done && 'slotSec' in view && view.slotSec > 0
                             ? 1 - view.remaining / view.slotSec : 0;
-                          const activeAgentName = view && !view.done ? schedule.rows[view.index]?.name : undefined;
+                          const activeAgentName = view && !view.done ? schedule.rows[view.index]?.name : (pauseSnap?.activeName);
+
+                          // ==== Badge visual de fase ====
+                          const phaseMeta: Record<typeof phaseState.phase, { label: string; color: string; dot: string }> = {
+                            idle:         { label: 'AGUARDANDO',   color: 'text-muted-foreground border-border/60 bg-muted/20', dot: 'bg-muted-foreground' },
+                            before_start: { label: 'PRÉ-INÍCIO',   color: 'text-amber-200 border-amber-500/50 bg-amber-500/10', dot: 'bg-amber-400 animate-pulse' },
+                            running:      { label: 'EM RONDA',     color: 'text-emerald-200 border-emerald-500/50 bg-emerald-500/10', dot: 'bg-emerald-400 animate-pulse' },
+                            paused:       { label: 'PAUSADO',      color: 'text-sky-200 border-sky-500/50 bg-sky-500/10', dot: 'bg-sky-400' },
+                            done:         { label: 'CONCLUÍDO',    color: 'text-primary border-primary/60 bg-primary/10', dot: 'bg-primary' },
+                          };
+                          const meta = phaseMeta[phaseState.phase];
+
                           return (
                             <>
-                              <span
-                                className="relative font-sans text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground"
-                                data-testid="rounds-status-label"
-                                data-phase={phaseState.phase}
-                              >
-                                {statusLabel}
-                              </span>
+                              <div className="flex items-center justify-center gap-2 flex-wrap">
+                                <span
+                                  data-testid="rounds-phase-badge"
+                                  data-phase={phaseState.phase}
+                                  className={cn(
+                                    'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em]',
+                                    meta.color,
+                                  )}
+                                >
+                                  <span className={cn('h-1.5 w-1.5 rounded-full', meta.dot)} aria-hidden />
+                                  {meta.label}
+                                </span>
+                                <span
+                                  className="relative font-sans text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground"
+                                  data-testid="rounds-status-label"
+                                  data-phase={phaseState.phase}
+                                >
+                                  {statusLabel}
+                                </span>
+                              </div>
+
 
 
 
@@ -3871,19 +3917,27 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                   style={{
                                     color: urgent
                                       ? 'hsl(var(--destructive))'
-                                      : (view || scheduledPending) ? teamColor : 'hsl(var(--muted-foreground))',
+                                      : (view || scheduledPending || isPausedPhase) ? teamColor : 'hsl(var(--muted-foreground))',
                                   }}
-
+                                  data-testid="rounds-primary-timer"
                                 >
                                   {scheduledPending
                                     ? fmtHMS(secToStart!)
-                                    : view && !view.done
-                                      ? fmtHMS(view.remaining)
-                                      : view?.done
-                                        ? '00:00:00'
-                                        : fmtHMS(schedule.rows[0].duration * 60)}
+                                    : isPausedPhase
+                                      ? fmtHMS(pauseSnap?.slotRemainingSec ?? 0)
+                                      : view && !view.done
+                                        ? fmtHMS(view.remaining)
+                                        : view?.done
+                                          ? '00:00:00'
+                                          : fmtHMS(schedule.rows[0].duration * 60)}
                                 </span>
                               </div>
+
+                              {isPausedPhase && pauseSnap?.nextName && (
+                                <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-sky-200/90">
+                                  Próximo evento: <b className="text-sky-100">{pauseSnap.nextName}</b>
+                                </div>
+                              )}
 
                               {urgent && view && (
                                 <div className="font-mono text-[12.5px] uppercase tracking-[0.35em] font-bold text-destructive">
