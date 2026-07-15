@@ -159,7 +159,13 @@ export function ScheduledRoundsManager() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm('Excluir este agendamento?')) return;
+    const ok = await confirm({
+      title: 'Excluir agendamento?',
+      description: 'Esta ação não pode ser desfeita.',
+      confirmText: 'Excluir',
+      destructive: true,
+    });
+    if (!ok) return;
     const { error } = await supabase.from('scheduled_rounds').delete().eq('id', id);
     if (error) { toast({ title: 'Erro', description: error.message, variant: 'destructive' }); return; }
     toast({ title: 'Agendamento removido' });
@@ -174,7 +180,15 @@ export function ScheduledRoundsManager() {
 
   const [firingId, setFiringId] = useState<string | null>(null);
   const fireNow = async (r: ScheduledRound) => {
-    if (!confirm(`Disparar agora "${r.name}" manualmente? Uma ronda será criada imediatamente para os agentes-alvo.`)) return;
+    const ok = await confirm({
+      title: '⚡ Disparar ronda agora?',
+      description: `Uma ronda "${r.name}" será criada IMEDIATAMENTE para os agentes da equipe ${r.team}${r.team === 'ALL' ? '' : ''} e disparará notificações. Confirme para acionar manualmente.`,
+      confirmText: 'Sim, disparar agora',
+      cancelText: 'Cancelar',
+      destructive: true,
+      requireText: 'DISPARAR',
+    });
+    if (!ok) return;
     setFiringId(r.id);
     try {
       // Marca como vencido para permitir disparo imediato mesmo se estava pausado
