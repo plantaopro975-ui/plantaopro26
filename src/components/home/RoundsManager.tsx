@@ -37,6 +37,7 @@ import {
 } from '@/lib/nightShift';
 import { useAuth } from '@/contexts/AuthContext';
 import { SecurityDoctrineCard } from './SecurityDoctrineCard';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 
 /** Registra ação no histórico de atividades (activity_logs). */
 async function logRoundActivity(
@@ -1067,6 +1068,8 @@ function TimeField({
   const [mLocal, setMLocal] = useState(extM);
   const [hFocused, setHFocused] = useState(false);
   const [mFocused, setMFocused] = useState(false);
+  const [hOpen, setHOpen] = useState(false);
+  const [mOpen, setMOpen] = useState(false);
 
   useEffect(() => { if (!hFocused) setHLocal(extH); }, [extH, hFocused]);
   useEffect(() => { if (!mFocused) setMLocal(extM); }, [extM, mFocused]);
@@ -1089,6 +1092,16 @@ function TimeField({
       commit(String(curH), String(nv));
     }
   };
+  const pickH = (nv: number) => {
+    setHLocal(pad(nv));
+    commit(String(nv), mLocal || extM || '0');
+    setHOpen(false);
+  };
+  const pickM = (nv: number) => {
+    setMLocal(pad(nv));
+    commit(hLocal || extH || '0', String(nv));
+    setMOpen(false);
+  };
   const onHKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowUp') { e.preventDefault(); bump('h', 1); }
     else if (e.key === 'ArrowDown') { e.preventDefault(); bump('h', -1); }
@@ -1099,6 +1112,10 @@ function TimeField({
     else if (e.key === 'ArrowDown') { e.preventDefault(); bump('m', -1); }
     else if (e.key === 'Enter') { commit(hLocal, mLocal); (e.currentTarget as HTMLInputElement).blur(); }
   };
+
+  const curHNum = parseInt(hLocal || extH || '0', 10) || 0;
+  const curMNum = parseInt(mLocal || extM || '0', 10) || 0;
+  const nearestM5 = Math.min(55, Math.round(curMNum / 5) * 5);
 
   return (
     <div className="grid gap-1.5">
@@ -1139,93 +1156,118 @@ function TimeField({
           <line x1="16" y1="16" x2="22" y2="16"  stroke={accent} strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
           <circle cx="16" cy="16" r="1.2" fill={accent} />
         </svg>
-        <div className="relative shrink-0">
-          <input
-            id={`${id}-h`}
-            inputMode="numeric"
-            maxLength={2}
-            value={hLocal}
-            onChange={(e) => setHLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
-            onFocus={(e) => { setHFocused(true); e.currentTarget.select(); }}
-            onBlur={() => { setHFocused(false); commit(hLocal, mLocal); }}
-            onKeyDown={onHKey}
-            className="w-7 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
-            aria-label={`${label} horas`}
-            autoComplete="off"
-            disabled={locked}
-          />
-          {/* Dropdown nativo sobreposto — abre picker do SO para escolher a hora rapidamente. */}
-          <select
-            aria-label={`Selecionar ${label} horas`}
-            value={String(parseInt(hLocal || extH || '0', 10) || 0)}
-            onChange={(e) => {
-              const nv = parseInt(e.target.value, 10) || 0;
-              setHLocal(pad(nv));
-              commit(String(nv), mLocal || extM || '0');
-            }}
-            disabled={locked}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-            tabIndex={-1}
-          >
-            {Array.from({ length: 24 }, (_, i) => (
-              <option key={i} value={i}>{pad(i)}h</option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col shrink-0">
-          <button type="button" onClick={() => bump('h', 1)} aria-label="Mais 1 hora"
-            className="h-[20px] w-4 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
-            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-          <button type="button" onClick={() => bump('h', -1)} aria-label="Menos 1 hora"
-            className="h-[20px] w-4 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground">
-            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-        </div>
+
+        {/* HORA */}
+        <input
+          id={`${id}-h`}
+          inputMode="numeric"
+          maxLength={2}
+          value={hLocal}
+          onChange={(e) => setHLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onFocus={(e) => { setHFocused(true); e.currentTarget.select(); }}
+          onBlur={() => { setHFocused(false); commit(hLocal, mLocal); }}
+          onKeyDown={onHKey}
+          className="w-7 shrink-0 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} horas`}
+          autoComplete="off"
+          disabled={locked}
+        />
+        <Popover open={hOpen} onOpenChange={setHOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              disabled={locked}
+              aria-label={`Escolher ${label} horas`}
+              className="h-7 w-4 shrink-0 flex items-center justify-center rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg viewBox="0 0 12 12" className="h-3 w-3"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent align="start" sideOffset={6} className="w-24 p-1 max-h-64 overflow-y-auto">
+            <div className="grid grid-cols-1 gap-0.5">
+              {Array.from({ length: 24 }, (_, i) => i).map((n) => {
+                const selected = n === curHNum;
+                return (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => pickH(n)}
+                    className={cn(
+                      'w-full rounded px-2 py-1.5 text-sm font-mono tabular-nums text-center transition-colors',
+                      selected
+                        ? 'bg-primary/20 text-primary font-medium ring-1 ring-primary/40'
+                        : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
+                    )}
+                  >
+                    {pad(n)}h
+                  </button>
+                );
+              })}
+            </div>
+          </PopoverContent>
+        </Popover>
+
         <span className="font-mono text-base text-muted-foreground/70 select-none px-0.5 shrink-0">:</span>
-        <div className="relative shrink-0">
-          <input
-            inputMode="numeric"
-            maxLength={2}
-            value={mLocal}
-            onChange={(e) => setMLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
-            onFocus={(e) => { setMFocused(true); e.currentTarget.select(); }}
-            onBlur={() => { setMFocused(false); commit(hLocal, mLocal); }}
-            onKeyDown={onMKey}
-            className="w-7 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
-            aria-label={`${label} minutos`}
-            autoComplete="off"
-            disabled={locked}
-          />
-          {/* Dropdown nativo sobreposto — permite escolher minutos em passos de 5 (00, 05, 10, ..., 55). */}
-          <select
-            aria-label={`Selecionar ${label} minutos`}
-            value={(() => {
-              const cur = parseInt(mLocal || extM || '0', 10) || 0;
-              // arredonda para o múltiplo de 5 mais próximo dentro das opções
-              return String(Math.min(55, Math.round(cur / 5) * 5));
-            })()}
-            onChange={(e) => {
-              const nv = parseInt(e.target.value, 10) || 0;
-              setMLocal(pad(nv));
-              commit(hLocal || extH || '0', String(nv));
-            }}
-            disabled={locked}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-            tabIndex={-1}
-          >
-            {Array.from({ length: 12 }, (_, i) => i * 5).map((n) => (
-              <option key={n} value={n}>{pad(n)}min</option>
-            ))}
-          </select>
-        </div>
+
+        {/* MINUTO */}
+        <input
+          inputMode="numeric"
+          maxLength={2}
+          value={mLocal}
+          onChange={(e) => setMLocal(e.target.value.replace(/\D/g, '').slice(0, 2))}
+          onFocus={(e) => { setMFocused(true); e.currentTarget.select(); }}
+          onBlur={() => { setMFocused(false); commit(hLocal, mLocal); }}
+          onKeyDown={onMKey}
+          className="w-7 shrink-0 bg-transparent text-center font-mono text-base font-light tabular-nums text-foreground outline-none"
+          aria-label={`${label} minutos`}
+          autoComplete="off"
+          disabled={locked}
+        />
+        <Popover open={mOpen} onOpenChange={setMOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              disabled={locked}
+              aria-label={`Escolher ${label} minutos`}
+              className="h-7 w-4 shrink-0 flex items-center justify-center rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg viewBox="0 0 12 12" className="h-3 w-3"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent align="start" sideOffset={6} className="w-24 p-1 max-h-64 overflow-y-auto">
+            <div className="mb-1 px-2 pt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70">
+              min · passo 5
+            </div>
+            <div className="grid grid-cols-2 gap-0.5">
+              {Array.from({ length: 12 }, (_, i) => i * 5).map((n) => {
+                const selected = n === nearestM5;
+                return (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => pickM(n)}
+                    className={cn(
+                      'rounded px-2 py-1.5 text-sm font-mono tabular-nums text-center transition-colors',
+                      selected
+                        ? 'bg-primary/20 text-primary font-medium ring-1 ring-primary/40'
+                        : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
+                    )}
+                  >
+                    {pad(n)}
+                  </button>
+                );
+              })}
+            </div>
+          </PopoverContent>
+        </Popover>
+
         <div className="flex flex-col shrink-0 ml-auto">
-          <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min"
-            className="h-[20px] w-4 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground">
+          <button type="button" onClick={() => bump('m', 1)} aria-label="Mais 1 min" disabled={locked}
+            className="h-[20px] w-4 flex items-center justify-center rounded-t hover:bg-muted/60 text-muted-foreground hover:text-foreground disabled:opacity-40">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 8 L6 3 L10 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
-          <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min"
-            className="h-[20px] w-4 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground">
+          <button type="button" onClick={() => bump('m', -1)} aria-label="Menos 1 min" disabled={locked}
+            className="h-[20px] w-4 flex items-center justify-center rounded-b hover:bg-muted/60 text-muted-foreground hover:text-foreground disabled:opacity-40">
             <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
