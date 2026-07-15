@@ -3412,9 +3412,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                     data-testid="night-shift-banner"
                     className={cn(
                       'rounded-md border px-2.5 py-1.5 text-[12px] cursor-help',
-                      overrideActive
-                        ? 'border-red-500/40 bg-red-500/5 text-red-200/90'
-                        : 'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
+                      'border-amber-500/30 bg-amber-500/5 text-amber-200/90',
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -3448,63 +3446,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           )}
 
                         </div>
-
-
-
-                        {overrideActive && (
-                          <div className="mt-1 text-[12px]">
-                            Motivo registrado: <i>"{overrideReason.trim()}"</i>. Cada gravação será auditada em <code>night_shift_overrides</code>.
-                          </div>
-                        )}
                       </div>
-                      {isMaster && !overrideActive && (
-                        <button
-                          type="button"
-                          onClick={() => setOverridePromptOpen(true)}
-                          className="shrink-0 rounded border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-[11.5px] font-mono uppercase tracking-wide text-amber-200 hover:bg-amber-500/20"
-                          data-testid="night-override-btn"
-                        >
-                          Override master
-                        </button>
-                      )}
-                      {overrideActive && (
-                        <button
-                          type="button"
-                          onClick={() => { setOverrideActive(false); setOverrideReason(''); toast({ title: 'Override desativado' }); }}
-                          className="shrink-0 rounded border border-red-500/50 bg-red-500/10 px-2 py-1 text-[11.5px] font-mono uppercase tracking-wide text-red-200 hover:bg-red-500/20"
-                        >
-                          Encerrar override
-                        </button>
-                      )}
                     </div>
-                    {overridePromptOpen && (
-                      <div className="mt-2 flex flex-col sm:flex-row gap-2 items-stretch">
-                        <Input
-                          value={overrideReason}
-                          onChange={(e) => setOverrideReason(e.target.value)}
-                          placeholder="Motivo (mín. 5 caracteres) — será registrado em auditoria"
-                          className="bg-background border-border h-9 text-xs"
-                          maxLength={280}
-                          autoComplete="off"
-                        />
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" onClick={() => setOverridePromptOpen(false)} className="h-9">Cancelar</Button>
-                          <Button size="sm" onClick={activateOverride} className="h-9 bg-amber-600 hover:bg-amber-700 text-slate-950">Confirmar</Button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" align="start" className="max-w-xs text-[12px] leading-snug">
-                        <p className="font-semibold mb-1">Turno noturno travado</p>
+                        <p className="font-semibold mb-1">Turno noturno ativo</p>
                         <p className="text-muted-foreground">
-                          A partir das 18:00 (Acre), o sistema fixa automaticamente o turno em
-                          {' '}<b className="text-foreground">22:00 → 06:00</b>, conforme diretriz operacional.
-                          Os horários ficam bloqueados para garantir integridade da escala e auditoria;
-                          apenas a <b className="text-foreground">quantidade de agentes</b> e o
-                          {' '}<b className="text-foreground">intervalo de rondas</b> podem ser ajustados.
-                          Alterações de horário exigem <b className="text-foreground">override master</b>,
-                          com motivo registrado em <code>night_shift_overrides</code>.
+                          Os horários estão liberados para edição manual. Ajuste início, término,
+                          quantidade de agentes e intervalo conforme a necessidade operacional.
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -3975,12 +3925,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                                     });
                                     return;
                                   }
-                                  // Janela pré-noturna (18:00–21:59 Acre): bloqueia início
-                                  // imediato e oferece agendamento para as 22:00.
-                                  if (isPreNightWindow(new Date(nowServer())) && !overrideActive) {
-                                    setPreNightOpen(true);
-                                    return;
-                                  }
                                   setStartConfirmOpen(true);
                                 }}
                                 className={cn(
@@ -4113,29 +4057,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           setTeamConfirmOpen(false);
                           setPendingTeam(null);
                         }}
-                      />
-
-
-                      <PreNightScheduleDialog
-                        open={preNightOpen}
-                        onCancel={() => setPreNightOpen(false)}
-                        onSchedule={(targetMs) => {
-                          setPreNightOpen(false);
-                          // Alinha a configuração do lado esquerdo à janela
-                          // noturna pactuada (22:00 → 06:00) e trava edição.
-                          setMode('split');
-                          setStartTime(NIGHT_START);
-                          setEndTime(NIGHT_END);
-                          setScheduledFor(targetMs);
-                          const label = new Intl.DateTimeFormat('pt-BR', {
-                            timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
-                          }).format(new Date(targetMs));
-                          toast({ title: `Ronda agendada para ${label}.`, description: 'Configuração travada até 22:00 · início automático.' });
-                        }}
-                        color={teamColor}
-                        teamName={team}
-                        agentCount={schedule.rows.length}
-                        nowMs={nowServer()}
                       />
 
                       <RoundSummaryDialog
