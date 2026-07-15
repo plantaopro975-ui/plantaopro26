@@ -2341,7 +2341,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const needsPreview = nightEffectivelyLocked && mode === 'split' && !!schedule;
     const needsSchedule = scheduledFor != null;
     if (!running && !needsPreview && !armed && !needsSchedule) return;
-    const id = setInterval(() => setTick((t) => t + 1), 500);
+    // 1000ms é suficiente para HH:MM:SS e reduz drasticamente o custo de
+    // re-renderização em máquinas fracas (metade dos ciclos por segundo).
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(id);
   }, [running, nightEffectivelyLocked, mode, schedule, armed, scheduledFor]);
 
@@ -3245,9 +3247,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                   const hh = Math.floor(remSec / 3600).toString().padStart(2, '0');
                   const mm = Math.floor((remSec % 3600) / 60).toString().padStart(2, '0');
                   const ss = (remSec % 60).toString().padStart(2, '0');
-                  const targetLabel = new Intl.DateTimeFormat('pt-BR', {
-                    timeZone: NIGHT_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
-                  }).format(new Date(scheduledFor));
+                  const _t = new Date(scheduledFor);
+                  const targetLabel = `${pad(_t.getHours())}:${pad(_t.getMinutes())}`;
                   return (
                     <div
                       role="status"
@@ -3932,7 +3933,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               >
                                 <CalendarClock className="h-3.5 w-3.5" style={{ color: teamColor }} />
                                 <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-300">
-                                  Agendada 22:00 · inicia em&nbsp;
+                                  Agendada {(() => { const d = new Date(scheduledFor); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; })()} · inicia em&nbsp;
                                   <b className="tabular-nums text-slate-100">{hh}:{mm}:{ss}</b>
                                 </span>
                                 <button
@@ -4079,7 +4080,29 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       <StartLockConfirmDialog
                         open={startConfirmOpen}
                         onCancel={() => setStartConfirmOpen(false)}
-                        onConfirm={() => { setStartConfirmOpen(false); startTimer(); }}
+        onConfirm={() => {
+          setStartConfirmOpen(false);
+          // Se o operador programou um horário futuro para o início do
+          // primeiro turno, NÃO começamos a contagem agora. Agendamos e
+          // deixamos o efeito de auto-start disparar exatamente no horário.
+          const mins = toMinutes(startTime);
+          if (mins != null) {
+            const nowMs = nowServer();
+            const target = new Date(nowMs);
+            target.setHours(Math.floor(mins / 60), mins % 60, 0, 0);
+            const targetMs = target.getTime();
+            // Tolerância de 30s: cliques feitos "em cima da hora" iniciam já.
+            if (targetMs - nowMs > 30_000) {
+              setScheduledFor(targetMs);
+              toast({
+                title: 'Ronda programada',
+                description: `Início automático às ${startTime}. A contagem só começa nesse horário.`,
+              });
+              return;
+            }
+          }
+          startTimer();
+        }}
                         color={teamColor}
                         teamName={team}
                         agentCount={schedule.rows.length}
