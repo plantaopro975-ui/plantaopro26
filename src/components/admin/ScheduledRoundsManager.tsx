@@ -79,6 +79,7 @@ export function ScheduledRoundsManager() {
   const [openForm, setOpenForm] = useState(false);
   const [editing, setEditing] = useState<Partial<ScheduledRound>>(emptyForm());
   const [newTime, setNewTime] = useState('08:00');
+  const confirm = useConfirm();
 
   const load = async () => {
     setLoading(true);
