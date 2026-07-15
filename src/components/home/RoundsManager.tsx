@@ -23,7 +23,6 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { MissionLockDialog } from './MissionLockDialog';
 import { RoundSummaryDialog } from './RoundSummaryDialog';
 import { StartLockConfirmDialog } from './StartLockConfirmDialog';
-import { PreNightScheduleDialog } from './PreNightScheduleDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { RoundHistoryDialog } from './RoundHistoryDialog';
 import { ReminderSettingsDialog } from './ReminderSettingsDialog';
@@ -33,8 +32,8 @@ import { TacticalClock } from './TacticalClock';
 import { TeamGlyph } from './TeamGlyph';
 import { getServerDate, getServerOffsetMs, syncServerTime } from '@/hooks/useServerTime';
 import {
-  isNightShift, isPreNightWindow, getNightWindow, getNext22Ms, formatAcreClock,
-  NIGHT_START, NIGHT_END, NIGHT_TZ,
+  isNightShift, getNightWindow, formatAcreClock,
+  NIGHT_TZ,
 } from '@/lib/nightShift';
 import { useAuth } from '@/contexts/AuthContext';
 import { SecurityDoctrineCard } from './SecurityDoctrineCard';
@@ -1639,43 +1638,17 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   };
   const nowServer = () => getServerDate().getTime();
 
-  /* ---------- Night shift auto-lock (22:00 → 06:00 Acre) ---------- */
+  /* ---------- Night shift status (manual hours enabled) ---------- */
   const [nightLocked, setNightLocked] = useState<boolean>(() => {
     const d = getServerDate();
-    return isNightShift(d) || isPreNightWindow(d);
+    return isNightShift(d);
   });
-  // true quando estamos apenas na PRÉ-noite (18:00-21:59), para exibir mensagens
-  // diferentes ("programado para 22:00" vs. "turno em andamento").
   const [preNightScheduled, setPreNightScheduled] = useState<boolean>(() => {
-    const d = getServerDate();
-    return isPreNightWindow(d) && !isNightShift(d);
+    return false;
   });
 
   const [serverClock, setServerClock] = useState<Date>(() => getServerDate());
   const [nightWindow, setNightWindow] = useState(() => getNightWindow(getServerDate()));
-
-  // Master override state
-  const [isMaster, setIsMaster] = useState(false);
-  const [overrideActive, setOverrideActive] = useState(false);
-  const [overrideReason, setOverrideReason] = useState('');
-  const [overridePromptOpen, setOverridePromptOpen] = useState(false);
-
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const { data } = await supabase.auth.getUser();
-        const uid = data?.user?.id;
-        if (!uid || cancelled) return;
-        const { data: roles } = await supabase
-          .from('user_roles').select('role').eq('user_id', uid);
-        if (cancelled) return;
-        setIsMaster(!!roles?.some((r) => r.role === 'master'));
-      } catch { /* ignore */ }
-    })();
-    return () => { cancelled = true; };
-  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -1686,28 +1659,20 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
       setServerClock(now);
       setNightWindow(getNightWindow(now));
       const actualNight = isNightShift(now);
-      const preNight = isPreNightWindow(now);
-      const night = actualNight || preNight;
+      const preNight = false;
+      const night = actualNight;
       setNightLocked(night);
-      setPreNightScheduled(preNight && !actualNight);
+      setPreNightScheduled(false);
       // Diagnóstico: ative com localStorage.setItem('plantaopro_rounds_debug','1')
       try {
         if (localStorage.getItem('plantaopro_rounds_debug') === '1') {
           // eslint-disable-next-line no-console
           console.log('[RoundsManager][tick]', {
             acre: formatAcreClock(now),
-            actualNight, preNight, nightLocked: night, overrideActive,
+            actualNight, preNight, nightLocked: night,
           });
         }
       } catch { /* ignore */ }
-      if (night && !overrideActive) {
-        setStartTime(NIGHT_START);
-        setEndTime(NIGHT_END);
-      }
-      if (!night) {
-        // Leaving window automatically clears override
-        setOverrideActive(false);
-      }
     };
 
     // Sync com o servidor apenas na abertura e a cada 60s, para não
@@ -1719,9 +1684,9 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     const tickIv = setInterval(tick, 1000);
     return () => { cancelled = true; clearInterval(syncIv); clearInterval(tickIv); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, overrideActive]);
+  }, [open]);
 
-  const nightEffectivelyLocked = nightLocked && !overrideActive;
+  const nightEffectivelyLocked = false;
 
   // Guard: modo "proportional" foi descontinuado da UI. Se restar salvo em
   // localStorage/estado antigo, cai automaticamente para "split".
@@ -1729,22 +1694,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     if ((mode as string) === 'proportional') setMode('split');
   }, [mode]);
 
-
-  // Guard: while locked, revert any external change to start/end
-  useEffect(() => {
-    if (!nightEffectivelyLocked) return;
-    if (startTime !== NIGHT_START) setStartTime(NIGHT_START);
-    if (endTime !== NIGHT_END) setEndTime(NIGHT_END);
-  }, [nightEffectivelyLocked, startTime, endTime]);
-
   /* ---------- Auto-ancorar início no horário ATUAL ao abrir (turno diurno) ----------
    * Regra de negócio: sempre que o operador abre o Gestor de Rondas para criar
    * ou dividir uma ronda durante o dia, o "Início do turno" passa a refletir
    * o horário atual do servidor (arredondado a 5 min), para que as divisões
    * sejam calculadas a partir do momento em que ele está — e não de um valor
-   * fixo (07:00) que já ficou no passado. No turno noturno o bloqueio 22:00→06:00
-   * continua prevalecendo. Só aplicamos UMA vez por abertura do modal para não
-   * brigar com edições manuais posteriores do operador.
+   * fixo (07:00) que já ficou no passado. Só aplicamos UMA vez por abertura do
+   * modal para não brigar com edições manuais posteriores do operador.
    */
   const autoAnchoredRef = useRef(false);
   useEffect(() => {
@@ -1769,27 +1725,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
     setStartTime(`${h}:${m}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, nightEffectivelyLocked]);
-
-  const activateOverride = () => {
-    const reason = overrideReason.trim();
-    if (reason.length < 5) {
-      toast({ title: 'Motivo obrigatório', description: 'Informe ao menos 5 caracteres.', variant: 'destructive' });
-      return;
-    }
-    if (!isMaster) {
-      toast({ title: 'Apenas o master pode fazer override.', variant: 'destructive' });
-      return;
-    }
-    setOverrideActive(true);
-    setOverridePromptOpen(false);
-    toast({ title: 'Override master ativado', description: 'Auditoria será registrada ao iniciar a ronda.' });
-  };
-
-
-
-
-
-
 
   const addAgent = () => {
     setAgents((a) => [...a, `Agente ${a.length + 1}`]);
