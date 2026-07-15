@@ -1836,8 +1836,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const frozenStartMinRef = useRef<number | null>(null);
   const effectiveStartMin = useMemo<number | null>(() => {
     if (mode === 'split' && nightEffectivelyLocked) {
-      // Âncora fixa em 22:00, independentemente de quando o operador iniciar.
-      return toMinutes(NIGHT_START);
+      return toMinutes(startTime);
     }
     if (mode === 'split' && running && frozenStartMinRef.current != null) {
       return frozenStartMinRef.current;
@@ -1950,7 +1949,6 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [lockOpen, setLockOpen] = useState(false);
 
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
-  const [preNightOpen, setPreNightOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
   const [scheduledFor, setScheduledFor] = useState<number | null>(() => {
     const s = readTeamLock();
