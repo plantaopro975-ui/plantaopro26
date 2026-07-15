@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { RestrictedAccessDialog } from '@/components/auth/RestrictedAccessDialog';
-import plantaoproLogo from '@/assets/brand/plantaopro-logo.png';
+import plantaoproLogo_ptr from '@/assets/brand/plantaopro-logo.png.asset.json';
+const plantaoproLogo = (plantaoproLogo_ptr as {url:string}).url;
 
 import {
   Users,

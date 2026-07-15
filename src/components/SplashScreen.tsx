@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { pushDiagEvent } from "@/lib/diagLog";
 import splashAsset from "@/assets/brand/plantaopro-splash.webp.asset.json";
-import logoUrl from "@/assets/brand/plantaopro-logo.png";
+import logoUrl_ptr from "@/assets/brand/plantaopro-logo.png.asset.json";
+const logoUrl = (logoUrl_ptr as {url:string}).url;
 
 /**
  * Splash — v10 "Institucional Cinematográfico".

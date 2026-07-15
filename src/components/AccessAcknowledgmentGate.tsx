@@ -3,7 +3,8 @@ import { useLocation } from "react-router-dom";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import heroImage from "@/assets/access-gate-hero.jpg";
+import heroImage_ptr from "@/assets/access-gate-hero.jpg.asset.json";
+const heroImage = (heroImage_ptr as {url:string}).url;
 import { MadeInFeijoBadge } from "@/components/MadeInFeijoBadge";
 
 const ACK_KEY = "plantaopro_access_acknowledged_v1";

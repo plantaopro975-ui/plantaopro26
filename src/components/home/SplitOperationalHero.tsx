@@ -13,9 +13,11 @@ import { useVisitorPresence } from '@/hooks/useVisitorPresence';
 
 
 import agent3dWebp from '@/assets/hero/agent-ise-3d.local.webp';
-import agent3d from '@/assets/hero/agent-ise-3d.local.png';
+import agent3d_ptr from '@/assets/hero/agent-ise-3d.local.png.asset.json';
+const agent3d = (agent3d_ptr as {url:string}).url;
 import vehicle3dWebp from '@/assets/hero/vehicle-ise-3d.local.webp';
-import vehicle3d from '@/assets/hero/vehicle-ise-3d.local.png';
+import vehicle3d_ptr from '@/assets/hero/vehicle-ise-3d.local.png.asset.json';
+const vehicle3d = (vehicle3d_ptr as {url:string}).url;
 import agentVehicleProAsset from '@/assets/hero/agent-vehicle-pro-scene-v5.png.asset.json';
 const agentVehiclePro = agentVehicleProAsset.url;
 
@@ -40,22 +42,30 @@ if (typeof document !== 'undefined' && !document.getElementById('hero-preload-ve
   mk('hero-preload-agent', agent3dWebp);
 }
 
-import objAlfa from '@/assets/teams/alfa-shield-v2.png';
+import objAlfa_ptr from '@/assets/teams/alfa-shield-v2.png.asset.json';
+const objAlfa = (objAlfa_ptr as {url:string}).url;
 import objAlfaWebp from '@/assets/teams/alfa-shield-v2.webp';
-import objBravo from '@/assets/teams/bravo-helmet-v2.png';
+import objBravo_ptr from '@/assets/teams/bravo-helmet-v2.png.asset.json';
+const objBravo = (objBravo_ptr as {url:string}).url;
 import objBravoWebp from '@/assets/teams/bravo-helmet-v2.webp';
-import objCharlie from '@/assets/teams/charlie-optics-v2.png';
+import objCharlie_ptr from '@/assets/teams/charlie-optics-v2.png.asset.json';
+const objCharlie = (objCharlie_ptr as {url:string}).url;
 import objCharlieWebp from '@/assets/teams/charlie-optics-v2.webp';
-import objDelta from '@/assets/teams/delta-radio-v2.png';
+import objDelta_ptr from '@/assets/teams/delta-radio-v2.png.asset.json';
+const objDelta = (objDelta_ptr as {url:string}).url;
 import objDeltaWebp from '@/assets/teams/delta-radio-v2.webp';
 
 
 
 // Pôsteres cinematográficos táticos (background dos cards de equipe)
-import bgAlfa from '@/assets/teams/alfa-poster.jpg';
-import bgBravo from '@/assets/teams/bravo-poster.jpg';
-import bgCharlie from '@/assets/teams/charlie-poster.jpg';
-import bgDelta from '@/assets/teams/delta-poster.jpg';
+import bgAlfa_ptr from '@/assets/teams/alfa-poster.jpg.asset.json';
+const bgAlfa = (bgAlfa_ptr as {url:string}).url;
+import bgBravo_ptr from '@/assets/teams/bravo-poster.jpg.asset.json';
+const bgBravo = (bgBravo_ptr as {url:string}).url;
+import bgCharlie_ptr from '@/assets/teams/charlie-poster.jpg.asset.json';
+const bgCharlie = (bgCharlie_ptr as {url:string}).url;
+import bgDelta_ptr from '@/assets/teams/delta-poster.jpg.asset.json';
+const bgDelta = (bgDelta_ptr as {url:string}).url;
 
 // Retratos táticos de equipe — exibidos APENAS na versão mobile (<768px).
 // Servidos como <picture> com variantes WebP + JPEG em dois tamanhos

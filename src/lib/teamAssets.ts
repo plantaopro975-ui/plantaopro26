@@ -1,8 +1,12 @@
 // Team image assets
-import alfaPoster from '@/assets/teams/alfa-poster.jpg';
-import bravoPoster from '@/assets/teams/bravo-poster.jpg';
-import charliePoster from '@/assets/teams/charlie-poster.jpg';
-import deltaPoster from '@/assets/teams/delta-poster.jpg';
+import alfaPoster_ptr from '@/assets/teams/alfa-poster.jpg.asset.json';
+const alfaPoster = (alfaPoster_ptr as {url:string}).url;
+import bravoPoster_ptr from '@/assets/teams/bravo-poster.jpg.asset.json';
+const bravoPoster = (bravoPoster_ptr as {url:string}).url;
+import charliePoster_ptr from '@/assets/teams/charlie-poster.jpg.asset.json';
+const charliePoster = (charliePoster_ptr as {url:string}).url;
+import deltaPoster_ptr from '@/assets/teams/delta-poster.jpg.asset.json';
+const deltaPoster = (deltaPoster_ptr as {url:string}).url;
 const alfaPosterWebp = alfaPoster;
 const bravoPosterWebp = bravoPoster;
 const charliePosterWebp = charliePoster;
@@ -20,7 +24,8 @@ const panelsBg = panelsBgAsset.url;
 import homeBackgroundAsset from '@/assets/home-background.png.asset.json';
 const homeBackground = homeBackgroundAsset.url;
 import homeBackgroundWebp from '@/assets/home-background.webp';
-import loginBackground from '@/assets/login-background.jpg';
+import loginBackground_ptr from '@/assets/login-background.jpg.asset.json';
+const loginBackground = (loginBackground_ptr as {url:string}).url;
 import loginBackgroundWebp from '@/assets/login-background.webp';
 
 export const teamPosters: Record<string, string> = {

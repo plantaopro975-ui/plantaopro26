@@ -12,7 +12,7 @@ import { useAlarmNotifications } from '@/hooks/useAlarmNotifications';
 import { useShiftLifecycleNotifications } from '@/hooks/useShiftLifecycleNotifications';
 import { useTrackAgentPresence } from '@/hooks/useOnlineAgents';
 
-import { TeamMembersCard } from '@/components/agent-panel/TeamMembersCard';
+const TeamMembersCard = lazy(() => import('@/components/agent-panel/TeamMembersCard').then(m => ({ default: m.TeamMembersCard })));
 import { OnDutyOverlay } from '@/components/agent-panel/OnDutyOverlay';
 const ShiftOperationsCenter = lazy(() => import('@/components/agent-panel/ShiftOperationsCenter').then(m => ({ default: m.ShiftOperationsCenter })));
 const ShiftBriefingCard = lazy(() => import('@/components/agent-panel/ShiftBriefingCard').then(m => ({ default: m.ShiftBriefingCard })));

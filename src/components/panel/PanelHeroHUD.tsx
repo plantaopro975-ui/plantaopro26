@@ -1,9 +1,14 @@
 import { ReactNode } from 'react';
-import heroCommand from '@/assets/hud-hero-command.jpg';
-import heroUnits from '@/assets/hud-hero-units.jpg';
-import icon3dShield from '@/assets/icon3d-shield.png';
-import icon3dBuilding from '@/assets/icon3d-building.png';
-import icon3dTeam from '@/assets/icon3d-team.png';
+import heroCommand_ptr from '@/assets/hud-hero-command.jpg.asset.json';
+const heroCommand = (heroCommand_ptr as {url:string}).url;
+import heroUnits_ptr from '@/assets/hud-hero-units.jpg.asset.json';
+const heroUnits = (heroUnits_ptr as {url:string}).url;
+import icon3dShield_ptr from '@/assets/icon3d-shield.png.asset.json';
+const icon3dShield = (icon3dShield_ptr as {url:string}).url;
+import icon3dBuilding_ptr from '@/assets/icon3d-building.png.asset.json';
+const icon3dBuilding = (icon3dBuilding_ptr as {url:string}).url;
+import icon3dTeam_ptr from '@/assets/icon3d-team.png.asset.json';
+const icon3dTeam = (icon3dTeam_ptr as {url:string}).url;
 
 type Variant = 'command' | 'units';
 type IconKey = 'shield' | 'building' | 'team';
