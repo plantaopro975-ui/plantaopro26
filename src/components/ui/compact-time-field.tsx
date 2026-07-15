@@ -115,17 +115,21 @@ function Segment({
   label,
   value,
   max,
+  options,
   onInc,
   onDec,
   onType,
+  onPick,
   disabled,
 }: {
   label: string;
   value: number;
   max: number;
+  options: number[];
   onInc: () => void;
   onDec: () => void;
   onType: (n: number) => void;
+  onPick: (n: number) => void;
   disabled?: boolean;
 }) {
   const [buf, setBuf] = React.useState<string>(String(value).padStart(2, "0"));
@@ -158,28 +162,45 @@ function Segment({
       >
         <Chevron dir="up" />
       </button>
-      <input
-        aria-label={label}
-        inputMode="numeric"
-        pattern="[0-9]*"
-        maxLength={2}
-        value={buf}
-        onChange={(e) => setBuf(e.target.value.replace(/\D/g, "").slice(0, 2))}
-        onBlur={(e) => commit(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowUp") {
-            e.preventDefault();
-            onInc();
-          } else if (e.key === "ArrowDown") {
-            e.preventDefault();
-            onDec();
-          } else if (e.key === "Enter") {
-            (e.target as HTMLInputElement).blur();
-          }
-        }}
-        disabled={disabled}
-        className="w-9 bg-transparent text-slate-100 font-mono tabular-nums text-lg font-semibold text-center focus:outline-none focus:ring-2 focus:ring-amber-400/60 rounded"
-      />
+      <div className="relative">
+        <input
+          aria-label={label}
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={2}
+          value={buf}
+          onChange={(e) => setBuf(e.target.value.replace(/\D/g, "").slice(0, 2))}
+          onBlur={(e) => commit(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              onInc();
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              onDec();
+            } else if (e.key === "Enter") {
+              (e.target as HTMLInputElement).blur();
+            }
+          }}
+          disabled={disabled}
+          className="w-9 bg-transparent text-slate-100 font-mono tabular-nums text-lg font-semibold text-center focus:outline-none focus:ring-2 focus:ring-amber-400/60 rounded"
+        />
+        {/* Dropdown nativo sobreposto — abre lista de opções rápidas ao tocar/clicar.
+            Fica invisível mas cobre o input para permitir seleção pelo picker do SO. */}
+        <select
+          aria-label={`Selecionar ${label}`}
+          value={String(options.includes(value) ? value : options[0] ?? 0)}
+          onChange={(e) => onPick(parseInt(e.target.value, 10))}
+          disabled={disabled}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+        >
+          {options.map((n) => (
+            <option key={n} value={n}>
+              {String(n).padStart(2, "0")}
+            </option>
+          ))}
+        </select>
+      </div>
       <button
         type="button"
         aria-label={`Diminuir ${label}`}
