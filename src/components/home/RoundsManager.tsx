@@ -1178,9 +1178,9 @@ function TimeField({
               type="button"
               disabled={locked}
               aria-label={`Escolher ${label} horas`}
-              className="h-7 w-4 shrink-0 flex items-center justify-center rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-7 w-6 shrink-0 flex items-center justify-center rounded-md border border-border/60 bg-card/60 text-primary/80 hover:text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <svg viewBox="0 0 12 12" className="h-3 w-3"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg viewBox="0 0 12 12" className="h-3.5 w-3.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </PopoverTrigger>
           <PopoverContent align="start" sideOffset={6} className="w-24 p-1 max-h-64 overflow-y-auto">
@@ -1229,9 +1229,9 @@ function TimeField({
               type="button"
               disabled={locked}
               aria-label={`Escolher ${label} minutos`}
-              className="h-7 w-4 shrink-0 flex items-center justify-center rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-7 w-6 shrink-0 flex items-center justify-center rounded-md border border-border/60 bg-card/60 text-primary/80 hover:text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <svg viewBox="0 0 12 12" className="h-3 w-3"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg viewBox="0 0 12 12" className="h-3.5 w-3.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </PopoverTrigger>
           <PopoverContent align="start" sideOffset={6} className="w-24 p-1 max-h-64 overflow-y-auto">

@@ -36,11 +36,14 @@ export function RoundsManagerLazy({ customTrigger }: Props) {
   const handleTriggerClick = useCallback(() => {
     if (!mounted) {
       setMounted(true);
-      // Após o chunk carregar e o RoundsManager montar, ele lê o evento e abre.
-      // Usamos micro-delay para garantir que o listener foi registrado.
-      setTimeout(() => {
-        window.dispatchEvent(new Event('rounds:open'));
-      }, 50);
+      // Dispatch várias vezes para garantir que o listener do RoundsManager
+      // (registrado num useEffect após montagem assíncrona via Suspense)
+      // receba o evento — evita necessidade de "clicar 2x".
+      [80, 200, 400, 800, 1400].forEach((ms) => {
+        setTimeout(() => window.dispatchEvent(new Event('rounds:open')), ms);
+      });
+    } else {
+      window.dispatchEvent(new Event('rounds:open'));
     }
   }, [mounted]);
 
