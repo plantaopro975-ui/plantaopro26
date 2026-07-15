@@ -1234,7 +1234,7 @@ function TimeField({
               <svg viewBox="0 0 12 12" className="h-2.5 w-2.5"><path d="M2 4 L6 9 L10 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" sideOffset={4} className="w-24 p-1 max-h-56 overflow-y-auto">
+          <PopoverContent align="start" sideOffset={4} className="z-[200] w-24 p-1 max-h-56 overflow-y-auto bg-popover border border-border shadow-lg">
             <div className="mb-0.5 px-1.5 pt-0.5 text-[9px] font-mono uppercase tracking-wider text-muted-foreground/70">
               min · passo 5
             </div>
