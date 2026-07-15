@@ -2775,6 +2775,8 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
 
   const resetTimer = () => {
     setRunning(false);
+    setIsPaused(false);
+    pauseSnapshotRef.current = null;
     startedAtRef.current = null;
     firedRef.current = new Set();
     notifiedRef.current = new Set();
