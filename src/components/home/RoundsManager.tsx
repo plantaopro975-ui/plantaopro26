@@ -3815,23 +3815,28 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                         </svg>
 
                         {(() => {
-                          // Se há início programado e ainda não chegou o horário,
-                          // NÃO conta tempo de agente algum — apenas o contra-regressivo
-                          // até o início do primeiro agente.
-                          const secToStart = scheduledFor != null && !running
-                            ? Math.max(0, Math.ceil((scheduledFor - nowServer()) / 1000))
-                            : null;
-                          const scheduledPending = secToStart != null && secToStart > 0;
+                          // Estado explícito (idle | before_start | running | paused | done).
+                          // Regra dura: `before_start` NUNCA exibe contador de agente.
+                          const phaseState = computeRoundsState({
+                            hasSchedule: !!schedule,
+                            totalSec: schedule?.totalSec ?? 0,
+                            scheduledStartMs: scheduledFor,
+                            startedAtMs: running ? startedAtRef.current : null,
+                            paused: false,
+                            nowMs: nowServer(),
+                          });
+                          const scheduledPending = phaseState.phase === 'before_start';
+                          const secToStart = phaseState.secondsUntilStart;
                           // "view" unifica live (rodando) e preview (turno noturno, antes de Iniciar)
                           const view = scheduledPending ? null : (live ?? preview);
                           const isPreview = !scheduledPending && !live && !!preview;
-                          const scheduledTargetLabel = scheduledPending
-                            ? (() => { const d = new Date(scheduledFor!); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; })()
+                          const scheduledTargetLabel = scheduledPending && scheduledFor != null
+                            ? (() => { const d = new Date(scheduledFor); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; })()
                             : null;
                           const statusLabel =
                             scheduledPending ? `Início programado ${scheduledTargetLabel} — falta` :
-                            running && live && !live.done ? 'Restante do agente em ronda' :
-                            running && live?.done ? 'Concluído' :
+                            phaseState.phase === 'running' && live && !live.done ? 'Restante do agente em ronda' :
+                            phaseState.phase === 'done' ? 'Concluído' :
                             isPreview && view?.done ? 'Turno encerrado (06:00)' :
                             isPreview ? 'Prévia · agente atual' :
                             'Aguardando início';
@@ -3842,9 +3847,15 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                           const activeAgentName = view && !view.done ? schedule.rows[view.index]?.name : undefined;
                           return (
                             <>
-                              <span className="relative font-sans text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground">
+                              <span
+                                className="relative font-sans text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground"
+                                data-testid="rounds-status-label"
+                                data-phase={phaseState.phase}
+                              >
                                 {statusLabel}
                               </span>
+
+
 
 
                               <div className="flex items-center justify-center gap-3">
