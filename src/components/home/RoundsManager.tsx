@@ -3933,7 +3933,7 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                               >
                                 <CalendarClock className="h-3.5 w-3.5" style={{ color: teamColor }} />
                                 <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-300">
-                                  Agendada 22:00 · inicia em&nbsp;
+                                  Agendada {(() => { const d = new Date(scheduledFor); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; })()} · inicia em&nbsp;
                                   <b className="tabular-nums text-slate-100">{hh}:{mm}:{ss}</b>
                                 </span>
                                 <button
