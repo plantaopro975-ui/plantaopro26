@@ -39,6 +39,16 @@ export function CompactTimeField({
 
   const st = Math.max(1, Math.min(30, step));
 
+  // Opções rápidas de minutos (granularidade = step, default 5).
+  const minuteOptions = React.useMemo(() => {
+    const out: number[] = [];
+    for (let i = 0; i < 60; i += st) out.push(i);
+    return out;
+  }, [st]);
+
+  // Opções de horas (00–23) para dropdown rápido.
+  const hourOptions = React.useMemo(() => Array.from({ length: 24 }, (_, i) => i), []);
+
   return (
     <div
       id={id}
@@ -54,9 +64,11 @@ export function CompactTimeField({
         label="Hora"
         value={h}
         max={23}
+        options={hourOptions}
         onInc={() => emit(h + 1, m)}
         onDec={() => emit(h - 1, m)}
         onType={(n) => emit(n, m)}
+        onPick={(n) => emit(n, m)}
         disabled={disabled}
       />
       <span aria-hidden className="text-amber-400 font-mono font-bold text-lg leading-none pb-0.5">
@@ -66,9 +78,11 @@ export function CompactTimeField({
         label="Minuto"
         value={m}
         max={59}
+        options={minuteOptions}
         onInc={() => emit(h, m + st)}
         onDec={() => emit(h, m - st)}
         onType={(n) => emit(h, n)}
+        onPick={(n) => emit(h, n)}
         disabled={disabled}
       />
     </div>
@@ -101,17 +115,21 @@ function Segment({
   label,
   value,
   max,
+  options,
   onInc,
   onDec,
   onType,
+  onPick,
   disabled,
 }: {
   label: string;
   value: number;
   max: number;
+  options: number[];
   onInc: () => void;
   onDec: () => void;
   onType: (n: number) => void;
+  onPick: (n: number) => void;
   disabled?: boolean;
 }) {
   const [buf, setBuf] = React.useState<string>(String(value).padStart(2, "0"));
@@ -144,28 +162,45 @@ function Segment({
       >
         <Chevron dir="up" />
       </button>
-      <input
-        aria-label={label}
-        inputMode="numeric"
-        pattern="[0-9]*"
-        maxLength={2}
-        value={buf}
-        onChange={(e) => setBuf(e.target.value.replace(/\D/g, "").slice(0, 2))}
-        onBlur={(e) => commit(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowUp") {
-            e.preventDefault();
-            onInc();
-          } else if (e.key === "ArrowDown") {
-            e.preventDefault();
-            onDec();
-          } else if (e.key === "Enter") {
-            (e.target as HTMLInputElement).blur();
-          }
-        }}
-        disabled={disabled}
-        className="w-9 bg-transparent text-slate-100 font-mono tabular-nums text-lg font-semibold text-center focus:outline-none focus:ring-2 focus:ring-amber-400/60 rounded"
-      />
+      <div className="relative">
+        <input
+          aria-label={label}
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={2}
+          value={buf}
+          onChange={(e) => setBuf(e.target.value.replace(/\D/g, "").slice(0, 2))}
+          onBlur={(e) => commit(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              onInc();
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              onDec();
+            } else if (e.key === "Enter") {
+              (e.target as HTMLInputElement).blur();
+            }
+          }}
+          disabled={disabled}
+          className="w-9 bg-transparent text-slate-100 font-mono tabular-nums text-lg font-semibold text-center focus:outline-none focus:ring-2 focus:ring-amber-400/60 rounded"
+        />
+        {/* Dropdown nativo sobreposto — abre lista de opções rápidas ao tocar/clicar.
+            Fica invisível mas cobre o input para permitir seleção pelo picker do SO. */}
+        <select
+          aria-label={`Selecionar ${label}`}
+          value={String(options.includes(value) ? value : options[0] ?? 0)}
+          onChange={(e) => onPick(parseInt(e.target.value, 10))}
+          disabled={disabled}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+        >
+          {options.map((n) => (
+            <option key={n} value={n}>
+              {String(n).padStart(2, "0")}
+            </option>
+          ))}
+        </select>
+      </div>
       <button
         type="button"
         aria-label={`Diminuir ${label}`}
