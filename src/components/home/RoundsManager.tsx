@@ -2044,6 +2044,13 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
   const [startConfirmOpen, setStartConfirmOpen] = useState(false);
   /** Timestamp-alvo (ms UTC) para início automático às 22:00. Null = sem agendamento. */
   const [scheduledFor, setScheduledFor] = useState<number | null>(null);
+  // Momento (ms) em que a programação foi armada — usado para desenhar a
+  // barra de progresso do "PRÉ-INÍCIO" (proporção de espera consumida).
+  const scheduledArmedAtRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (scheduledFor == null) { scheduledArmedAtRef.current = null; return; }
+    if (scheduledArmedAtRef.current == null) scheduledArmedAtRef.current = getServerDate().getTime();
+  }, [scheduledFor]);
 
   /* Persistência local: trava de equipe/agendamento em cache. */
   useEffect(() => {
