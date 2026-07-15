@@ -3,7 +3,7 @@ import { Radio, ShieldCheck, Activity, Radar, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { teamEmblems } from '@/lib/teamAssets';
 import { OperationalStatusRibbon } from './OperationalStatusRibbon';
-import { RoundsManager } from './RoundsManager';
+import { RoundsManagerLazy as RoundsManager } from './RoundsManagerLazy';
 import { useOperationalMetrics } from '@/hooks/useOperationalMetrics';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
 import { useVisitorPresence } from '@/hooks/useVisitorPresence';
