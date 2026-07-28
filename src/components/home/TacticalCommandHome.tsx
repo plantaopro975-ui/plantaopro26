@@ -325,6 +325,13 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
         </footer>
 
       </div>
+
+      <TeamDetailsDialog
+        team={activeTeam}
+        open={!!activeTeam}
+        onOpenChange={(o) => { if (!o) setActiveTeam(null); }}
+        onSelect={onTeamClick}
+      />
     </div>
   );
 }
