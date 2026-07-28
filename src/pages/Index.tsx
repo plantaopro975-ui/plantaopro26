@@ -1510,49 +1510,7 @@ export default function Index() {
         })()}
       </header>
 
-      {/* Divisor entre painel operacional e seção institucional */}
-      <SectionDivider />
-
-      {/* Seção institucional cinematográfica — abaixo dos cards operacionais.
-          Usa a arte oficial (agente + viatura) como background fullscreen. */}
-      <CinematicBrandHero
-        onScrollToLogin={() => {
-          const target = document.getElementById('teams-section');
-          if (!target) return;
-
-          // Descobre o container real que rola (o wrapper .home-typo é o
-          // scroller principal; se não estiver rolando, cai para window).
-          const findScroller = (el: HTMLElement | null): HTMLElement | Window => {
-            let node: HTMLElement | null = el?.parentElement ?? null;
-            while (node && node !== document.body) {
-              const style = getComputedStyle(node);
-              const oy = style.overflowY;
-              if ((oy === 'auto' || oy === 'scroll') && node.scrollHeight > node.clientHeight) {
-                return node;
-              }
-              node = node.parentElement;
-            }
-            return window;
-          };
-
-          const scroller = findScroller(target);
-          const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          const behavior: ScrollBehavior = prefersReduced ? 'auto' : 'smooth';
-
-          if (scroller === window) {
-            const top = target.getBoundingClientRect().top + window.scrollY - 24;
-            window.scrollTo({ top: Math.max(0, top), behavior });
-          } else {
-            const el = scroller as HTMLElement;
-            const top = target.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - 24;
-            el.scrollTo({ top: Math.max(0, top), behavior });
-          }
-
-          // Foco acessível no destino sem "pular" o scroll suave.
-          target.setAttribute('tabindex', '-1');
-          setTimeout(() => target.focus({ preventScroll: true }), 350);
-        }}
-      />
+      {/* Página única — seção institucional cinematográfica removida (design v3 Timeline Operacional). */}
 
       {/* Selo do desenvolvedor foi movido para a barra do rodapé */}
 
