@@ -1388,9 +1388,9 @@ export default function Index() {
         className="home-typo min-h-full flex flex-col bg-background relative overflow-x-clip max-sm:overflow-x-hidden home-compact max-sm:overflow-y-auto"
         style={{
           fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
-          ['--home-gap' as any]: 'clamp(2px, 0.35vh, 8px)',
-          ['--home-pad-x' as any]: 'clamp(2px, 0.6vw, 16px)',
-          ['--home-pad-y' as any]: 'clamp(0px, 0.2vh, 6px)',
+          ['--home-gap' as any]: 'clamp(8px, 1.1vh, 20px)',
+          ['--home-pad-x' as any]: 'clamp(12px, 1.6vw, 28px)',
+          ['--home-pad-y' as any]: 'clamp(6px, 0.8vh, 16px)',
         }}
       >
         {/* Sober command-room background — SVG only, no posters */}
