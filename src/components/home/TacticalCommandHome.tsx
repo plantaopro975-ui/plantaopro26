@@ -25,14 +25,16 @@ const TEAMS: Array<{
   key: TeamKey;
   label: string;
   role: string;
-  accent: string; // tailwind color token base
+  accent: string;
   borderVar: string;
   textVar: string;
+  hero: string;
+  glowRgb: string; // for accent shadow
 }> = [
-  { key: 'alfa',    label: 'ALFA',    role: 'CONTENÇÃO',    accent: 'emerald', borderVar: 'border-emerald-500',     textVar: 'text-emerald-400' },
-  { key: 'bravo',   label: 'BRAVO',   role: 'INTERVENÇÃO',  accent: 'orange',  borderVar: 'border-orange-500',      textVar: 'text-orange-400' },
-  { key: 'charlie', label: 'CHARLIE', role: 'VIGILÂNCIA',   accent: 'sky',     borderVar: 'border-sky-500',         textVar: 'text-sky-400' },
-  { key: 'delta',   label: 'DELTA',   role: 'COMANDO',      accent: 'amber',   borderVar: 'border-[hsl(var(--primary))]', textVar: 'text-[hsl(var(--primary))]' },
+  { key: 'alfa',    label: 'ALFA',    role: 'CONTENÇÃO',    accent: 'emerald', borderVar: 'border-emerald-500',           textVar: 'text-emerald-400',                 hero: heroAlfa,    glowRgb: '16,185,129' },
+  { key: 'bravo',   label: 'BRAVO',   role: 'INTERVENÇÃO',  accent: 'orange',  borderVar: 'border-orange-500',            textVar: 'text-orange-400',                  hero: heroBravo,   glowRgb: '249,115,22' },
+  { key: 'charlie', label: 'CHARLIE', role: 'VIGILÂNCIA',   accent: 'sky',     borderVar: 'border-sky-500',               textVar: 'text-sky-400',                     hero: heroCharlie, glowRgb: '14,165,233' },
+  { key: 'delta',   label: 'DELTA',   role: 'COMANDO',      accent: 'amber',   borderVar: 'border-[hsl(var(--primary))]', textVar: 'text-[hsl(var(--primary))]',       hero: heroDelta,   glowRgb: '245,158,11' },
 ];
 
 function useLiveClock(): string {
