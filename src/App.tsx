@@ -19,7 +19,7 @@ import { ConfirmProvider } from "@/components/ui/confirm-provider";
 import { SingleDeviceGuard } from "@/components/SingleDeviceGuard";
 import { SingleTabGuard } from "@/components/SingleTabGuard";
 import { SplashScreen } from "@/components/SplashScreen";
-import { AccessAcknowledgmentGate } from "@/components/AccessAcknowledgmentGate";
+
 import { PanelSkeleton } from "@/components/ui/panel-skeleton";
 import { InactivityGuard } from "@/components/InactivityGuard";
 import { ImageProtection } from "@/components/ImageProtection";
@@ -118,7 +118,6 @@ const App = () => (
           <ServiceWorkerUpdateBanner />
           <BrowserRouter>
             <RouteAwareSplashScreen />
-            <AccessAcknowledgmentGate />
             <AuthProvider>
               <ConfirmProvider>
               <GlobalNavigationHandler>
