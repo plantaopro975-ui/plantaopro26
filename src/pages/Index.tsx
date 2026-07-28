@@ -1450,25 +1450,16 @@ export default function Index() {
             </div>
           );
           const blocks: Record<HomeCardId, { node: JSX.Element; grow?: boolean } | null> = {
-            rounds: {
-              node: wrap(
-                <div className="animate-fade-in hidden sm:block">
-                  <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
-                    <RoundsCommandBar />
-                  </DraggableHomeCard>
-                </div>,
-              ),
-            },
+            rounds: null,
             hero: {
               grow: true,
               node: (
                 <div
                   id="teams-section"
                   className="w-full max-w-[1600px] mx-auto sm:h-full lg:h-auto scroll-mt-6"
-                  style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
                 >
                   <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full lg:h-auto">
-                    <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
+                    <TacticalCommandHome onTeamClick={(team) => handleTeamClick(team)} />
                   </DraggableHomeCard>
                 </div>
               ),
