@@ -3186,3 +3186,125 @@ body.home-route .card-touch:focus-visible {
   }
 }
 /* FASE 2 END */
+
+/* ============================================================
+ * FASE 3 — Painel do Agente · Polimento tático premium
+ * Escopo restrito a `.agent-panel-inner` e descendentes.
+ * Zero mudança funcional / JSX — apenas hierarquia visual,
+ * densidade, elevação, foco, transições de aba e microestados.
+ * ============================================================ */
+
+/* Ritmo vertical mais confortável entre blocos do painel */
+.agent-panel-inner {
+  scroll-behavior: smooth;
+}
+.agent-panel-inner > * + * {
+  /* respeita space-y-* do Tailwind mas garante mínimo tátil */
+  margin-top: max(var(--tw-space-y-reverse, 0) * 0px, 0px);
+}
+
+/* Cards genéricos internos do painel: elevação sutil + hover */
+.agent-panel-inner [class*="rounded-2xl"],
+.agent-panel-inner [class*="rounded-xl"] {
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .agent-panel-inner [class*="bg-slate-9"][class*="rounded-2xl"]:hover,
+  .agent-panel-inner [class*="bg-zinc-9"][class*="rounded-2xl"]:hover,
+  .agent-panel-inner [class*="bg-card"][class*="rounded-2xl"]:hover {
+    box-shadow:
+      0 10px 28px -18px rgba(0, 0, 0, 0.55),
+      0 0 0 1px hsl(var(--primary) / 0.14);
+  }
+}
+
+/* Foco tático visível e consistente em todos os interativos */
+.agent-panel-inner button:focus-visible,
+.agent-panel-inner [role="tab"]:focus-visible,
+.agent-panel-inner a:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px hsl(var(--background)),
+    0 0 0 4px hsl(var(--primary) / 0.7);
+  border-radius: 10px;
+}
+
+/* TabsList: sombra interna refinada + transição suave nos triggers */
+.agent-panel-inner [role="tablist"] {
+  box-shadow:
+    inset 0 1px 0 hsl(210 25% 100% / 0.04),
+    inset 0 -1px 0 hsl(0 0% 0% / 0.35),
+    0 4px 14px -10px rgba(0, 0, 0, 0.5);
+}
+.agent-panel-inner [role="tab"] {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.agent-panel-inner [role="tab"]:active {
+  transform: scale(0.97);
+}
+.agent-panel-inner [role="tab"][data-state="active"] {
+  box-shadow:
+    inset 0 0 0 1px hsl(0 0% 100% / 0.14),
+    0 6px 16px -10px rgba(0, 0, 0, 0.6);
+}
+
+/* Transição de conteúdo entre abas (fade curto ao ativar) */
+.agent-panel-inner [role="tabpanel"][data-state="active"] {
+  animation: agentPanelFade 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes agentPanelFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Inputs / selects / textareas: borda tática coesa + foco âmbar */
+.agent-panel-inner input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.agent-panel-inner select,
+.agent-panel-inner textarea {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+.agent-panel-inner input:focus-visible,
+.agent-panel-inner select:focus-visible,
+.agent-panel-inner textarea:focus-visible {
+  outline: none;
+  border-color: hsl(var(--primary) / 0.65);
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.22);
+}
+
+/* Chips / badges do painel — feedback tátil consistente */
+.agent-panel-inner [class*="rounded-full"][class*="border"],
+.agent-panel-inner [class*="rounded-md"][class*="border"] {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+/* Neutraliza polimento sob prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .agent-panel-inner [role="tabpanel"][data-state="active"] {
+    animation: none !important;
+  }
+  .agent-panel-inner [class*="rounded-2xl"],
+  .agent-panel-inner [class*="rounded-xl"],
+  .agent-panel-inner [role="tab"],
+  .agent-panel-inner input,
+  .agent-panel-inner select,
+  .agent-panel-inner textarea {
+    transition: none !important;
+  }
+  .agent-panel-inner [role="tab"]:active {
+    transform: none !important;
+  }
+}
+/* FASE 3 END */
