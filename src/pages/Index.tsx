@@ -69,6 +69,7 @@ import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
 import { CinematicBrandHero } from '@/components/home/CinematicBrandHero';
 import { SectionDivider } from '@/components/home/SectionDivider';
+import { TacticalCommandHome } from '@/components/home/TacticalCommandHome';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
 import { useHomeCardOrder, type HomeCardId } from '@/hooks/useHomeCardOrder';
@@ -1449,25 +1450,16 @@ export default function Index() {
             </div>
           );
           const blocks: Record<HomeCardId, { node: JSX.Element; grow?: boolean } | null> = {
-            rounds: {
-              node: wrap(
-                <div className="animate-fade-in hidden sm:block">
-                  <DraggableHomeCard id="rounds" onDropCard={moveHomeCard}>
-                    <RoundsCommandBar />
-                  </DraggableHomeCard>
-                </div>,
-              ),
-            },
+            rounds: null,
             hero: {
               grow: true,
               node: (
                 <div
                   id="teams-section"
                   className="w-full max-w-[1600px] mx-auto sm:h-full lg:h-auto scroll-mt-6"
-                  style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
                 >
                   <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full lg:h-auto">
-                    <SplitOperationalHero onTeamClick={(team) => handleTeamClick(team)} />
+                    <TacticalCommandHome onTeamClick={(team) => handleTeamClick(team)} />
                   </DraggableHomeCard>
                 </div>
               ),
@@ -1518,49 +1510,7 @@ export default function Index() {
         })()}
       </header>
 
-      {/* Divisor entre painel operacional e seção institucional */}
-      <SectionDivider />
-
-      {/* Seção institucional cinematográfica — abaixo dos cards operacionais.
-          Usa a arte oficial (agente + viatura) como background fullscreen. */}
-      <CinematicBrandHero
-        onScrollToLogin={() => {
-          const target = document.getElementById('teams-section');
-          if (!target) return;
-
-          // Descobre o container real que rola (o wrapper .home-typo é o
-          // scroller principal; se não estiver rolando, cai para window).
-          const findScroller = (el: HTMLElement | null): HTMLElement | Window => {
-            let node: HTMLElement | null = el?.parentElement ?? null;
-            while (node && node !== document.body) {
-              const style = getComputedStyle(node);
-              const oy = style.overflowY;
-              if ((oy === 'auto' || oy === 'scroll') && node.scrollHeight > node.clientHeight) {
-                return node;
-              }
-              node = node.parentElement;
-            }
-            return window;
-          };
-
-          const scroller = findScroller(target);
-          const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          const behavior: ScrollBehavior = prefersReduced ? 'auto' : 'smooth';
-
-          if (scroller === window) {
-            const top = target.getBoundingClientRect().top + window.scrollY - 24;
-            window.scrollTo({ top: Math.max(0, top), behavior });
-          } else {
-            const el = scroller as HTMLElement;
-            const top = target.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - 24;
-            el.scrollTo({ top: Math.max(0, top), behavior });
-          }
-
-          // Foco acessível no destino sem "pular" o scroll suave.
-          target.setAttribute('tabindex', '-1');
-          setTimeout(() => target.focus({ preventScroll: true }), 350);
-        }}
-      />
+      {/* Página única — seção institucional cinematográfica removida (design v3 Timeline Operacional). */}
 
       {/* Selo do desenvolvedor foi movido para a barra do rodapé */}
 
