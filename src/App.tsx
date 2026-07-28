@@ -118,7 +118,6 @@ const App = () => (
           <ServiceWorkerUpdateBanner />
           <BrowserRouter>
             <RouteAwareSplashScreen />
-            <AccessAcknowledgmentGate />
             <AuthProvider>
               <ConfirmProvider>
               <GlobalNavigationHandler>
