@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import agentVehicleProAsset from '@/assets/hero/agent-vehicle-pro-scene-v5.png.asset.json';
+import heroAlfa from '@/assets/heroes/team-alfa-contencao.jpg';
+import heroBravo from '@/assets/heroes/team-bravo-intervencao.jpg';
+import heroCharlie from '@/assets/heroes/team-charlie-vigilancia.jpg';
+import heroDelta from '@/assets/heroes/team-delta-comando.jpg';
 
 /**
  * TacticalCommandHome — Nova homepage única "Timeline Operacional"
