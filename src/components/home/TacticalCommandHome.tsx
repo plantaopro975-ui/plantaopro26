@@ -1,41 +1,35 @@
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import agentVehicleProAsset from '@/assets/hero/agent-vehicle-pro-scene-v5.png.asset.json';
-import heroAlfa from '@/assets/heroes/team-alfa-contencao.jpg';
-import heroBravo from '@/assets/heroes/team-bravo-intervencao.jpg';
-import heroCharlie from '@/assets/heroes/team-charlie-vigilancia.jpg';
-import heroDelta from '@/assets/heroes/team-delta-comando.jpg';
+import heroAlfa from '@/assets/heroes/team-alfa-contencao.jpg.asset.json';
+import heroBravo from '@/assets/heroes/team-bravo-intervencao.jpg.asset.json';
+import heroCharlie from '@/assets/heroes/team-charlie-vigilancia.jpg.asset.json';
+import heroDelta from '@/assets/heroes/team-delta-comando.jpg.asset.json';
+import TeamDetailsDialog, { type TeamDetail, type TeamKey } from './TeamDetailsDialog';
 
 /**
- * TacticalCommandHome — Nova homepage única "Timeline Operacional"
- * (Design direction v3, aprovada pelo usuário).
- *
- * Escopo puramente visual/estrutural: dispara `onTeamClick(team)` como
- * a interface anterior (SplitOperationalHero) — nenhuma lógica de auth
- * ou de rondas é reimplementada aqui. Data dinâmica (relógio) local.
+ * TacticalCommandHome — Homepage "Timeline Operacional".
+ * Cards de equipe exibem hero de equipamentos táticos realistas (sem pessoas).
+ * Clique abre modal de detalhes com status/turno/ações rápidas.
  */
-
-type TeamKey = 'alfa' | 'bravo' | 'charlie' | 'delta';
 
 interface Props {
   onTeamClick: (team: TeamKey) => void;
 }
 
-const TEAMS: Array<{
-  key: TeamKey;
-  label: string;
-  role: string;
-  accent: string;
-  borderVar: string;
-  textVar: string;
-  hero: string;
-  glowRgb: string; // for accent shadow
-}> = [
-  { key: 'alfa',    label: 'ALFA',    role: 'CONTENÇÃO',    accent: 'emerald', borderVar: 'border-emerald-500',           textVar: 'text-emerald-400',                 hero: heroAlfa,    glowRgb: '16,185,129' },
-  { key: 'bravo',   label: 'BRAVO',   role: 'INTERVENÇÃO',  accent: 'orange',  borderVar: 'border-orange-500',            textVar: 'text-orange-400',                  hero: heroBravo,   glowRgb: '249,115,22' },
-  { key: 'charlie', label: 'CHARLIE', role: 'VIGILÂNCIA',   accent: 'sky',     borderVar: 'border-sky-500',               textVar: 'text-sky-400',                     hero: heroCharlie, glowRgb: '14,165,233' },
-  { key: 'delta',   label: 'DELTA',   role: 'COMANDO',      accent: 'amber',   borderVar: 'border-[hsl(var(--primary))]', textVar: 'text-[hsl(var(--primary))]',       hero: heroDelta,   glowRgb: '245,158,11' },
+const TEAMS: TeamDetail[] = [
+  { key: 'alfa',    label: 'ALFA',    role: 'CONTENÇÃO',   hero: heroAlfa.url,    glowRgb: '16,185,129', status: 'ativo',    agents: 32, shift: '19h → 07h', jurisdiction: 'Rio Branco • Sede', nextRound: '03:30' },
+  { key: 'bravo',   label: 'BRAVO',   role: 'INTERVENÇÃO', hero: heroBravo.url,   glowRgb: '249,115,22', status: 'ativo',    agents: 28, shift: '07h → 19h', jurisdiction: 'Rio Branco • Sede', nextRound: '04:00' },
+  { key: 'charlie', label: 'CHARLIE', role: 'VIGILÂNCIA',  hero: heroCharlie.url, glowRgb: '14,165,233', status: 'ativo',    agents: 24, shift: '19h → 07h', jurisdiction: 'Perímetro Externo', nextRound: '04:15' },
+  { key: 'delta',   label: 'DELTA',   role: 'COMANDO',     hero: heroDelta.url,   glowRgb: '245,158,11', status: 'ativo',    agents: 12, shift: '24h',       jurisdiction: 'Centro de Operações', nextRound: '—' },
 ];
+
+const BORDER_BY_TEAM: Record<TeamKey, string> = {
+  alfa: 'border-emerald-500',
+  bravo: 'border-orange-500',
+  charlie: 'border-sky-500',
+  delta: 'border-[hsl(var(--primary))]',
+};
 
 function useLiveClock(): string {
   const [now, setNow] = useState<Date>(() => new Date());
