@@ -3308,3 +3308,157 @@ body.home-route .card-touch:focus-visible {
   }
 }
 /* FASE 3 END */
+
+/* ============================================================
+   FASE 4 — Painel Admin Polish (scoped to .admin-panel-inner)
+   CSS-only; no logic/JSX changes.
+   ============================================================ */
+.admin-panel-inner {
+  --admin-radius: 12px;
+  --admin-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Tab panel fade+slide */
+.admin-panel-inner [role="tabpanel"] {
+  animation: adminTabFade 260ms var(--admin-ease) both;
+}
+@keyframes adminTabFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* TabsList: subtle inset + segmented feel */
+.admin-panel-inner [role="tablist"] {
+  background: linear-gradient(180deg, hsl(var(--muted) / 0.35), hsl(var(--muted) / 0.15));
+  border: 1px solid hsl(var(--border) / 0.6);
+  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.03), inset 0 -1px 0 hsl(0 0% 0% / 0.25);
+  border-radius: var(--admin-radius);
+}
+.admin-panel-inner [role="tab"] {
+  transition: background-color 180ms var(--admin-ease),
+              color 180ms var(--admin-ease),
+              transform 160ms var(--admin-ease);
+}
+.admin-panel-inner [role="tab"]:hover:not([data-state="active"]) {
+  background: hsl(var(--muted) / 0.4);
+}
+.admin-panel-inner [role="tab"][data-state="active"] {
+  box-shadow: 0 1px 0 hsl(var(--primary) / 0.55) inset,
+              0 -2px 0 hsl(var(--primary)) inset;
+}
+
+/* Cards elevation on hover — tactical */
+.admin-panel-inner .card,
+.admin-panel-inner [data-slot="card"] {
+  border-radius: var(--admin-radius);
+  transition: transform 220ms var(--admin-ease),
+              box-shadow 220ms var(--admin-ease),
+              border-color 220ms var(--admin-ease);
+}
+.admin-panel-inner .card:hover,
+.admin-panel-inner [data-slot="card"]:hover {
+  transform: translateY(-1px);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 10px 28px -18px hsl(var(--primary) / 0.5),
+              0 2px 0 hsl(0 0% 100% / 0.02) inset;
+}
+
+/* Section headers within admin cards */
+.admin-panel-inner [data-slot="card-header"] {
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* Tables — denser, readable, hover row highlight */
+.admin-panel-inner table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+.admin-panel-inner thead th {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--muted) / 0.25);
+  border-bottom: 1px solid hsl(var(--border) / 0.6);
+  padding: 10px 12px;
+  text-align: left;
+}
+.admin-panel-inner tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid hsl(var(--border) / 0.35);
+  font-size: 13.5px;
+}
+.admin-panel-inner tbody tr {
+  transition: background-color 160ms var(--admin-ease);
+}
+.admin-panel-inner tbody tr:hover {
+  background: hsl(var(--primary) / 0.06);
+}
+
+/* Buttons — unified micro-feedback */
+.admin-panel-inner button:not([disabled]) {
+  transition: transform 140ms var(--admin-ease),
+              box-shadow 180ms var(--admin-ease),
+              background-color 180ms var(--admin-ease),
+              border-color 180ms var(--admin-ease);
+}
+.admin-panel-inner button:not([disabled]):active {
+  transform: translateY(1px) scale(0.985);
+}
+
+/* Focus rings — tactical amber, consistent */
+.admin-panel-inner :is(button, a, [role="tab"], input, select, textarea, [role="combobox"]):focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Inputs / selects density + transitions */
+.admin-panel-inner :is(input, select, textarea) {
+  transition: border-color 160ms var(--admin-ease),
+              box-shadow 160ms var(--admin-ease),
+              background-color 160ms var(--admin-ease);
+}
+.admin-panel-inner :is(input, select, textarea):hover:not(:disabled):not(:focus) {
+  border-color: hsl(var(--border));
+}
+
+/* Badges consistency */
+.admin-panel-inner .badge,
+.admin-panel-inner [data-slot="badge"] {
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+/* Dialogs opened from admin — spacing polish (scoped via inner triggers stay global) */
+.admin-panel-inner [data-slot="dialog-content"],
+.admin-panel-inner [role="dialog"] {
+  border-radius: var(--admin-radius);
+}
+
+/* Scrollbars inside admin — slimmer */
+.admin-panel-inner ::-webkit-scrollbar { width: 10px; height: 10px; }
+.admin-panel-inner ::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.25);
+  border-radius: 999px;
+}
+.admin-panel-inner ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.45);
+}
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  .admin-panel-inner [role="tabpanel"] { animation: none !important; }
+  .admin-panel-inner *,
+  .admin-panel-inner *::before,
+  .admin-panel-inner *::after {
+    transition-duration: 0.001ms !important;
+  }
+  .admin-panel-inner .card:hover,
+  .admin-panel-inner [data-slot="card"]:hover {
+    transform: none !important;
+  }
+  .admin-panel-inner button:active { transform: none !important; }
+}
+/* FASE 4 END */
