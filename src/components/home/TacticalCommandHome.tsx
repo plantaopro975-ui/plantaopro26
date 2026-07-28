@@ -1,41 +1,35 @@
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import agentVehicleProAsset from '@/assets/hero/agent-vehicle-pro-scene-v5.png.asset.json';
-import heroAlfa from '@/assets/heroes/team-alfa-contencao.jpg';
-import heroBravo from '@/assets/heroes/team-bravo-intervencao.jpg';
-import heroCharlie from '@/assets/heroes/team-charlie-vigilancia.jpg';
-import heroDelta from '@/assets/heroes/team-delta-comando.jpg';
+import heroAlfa from '@/assets/heroes/team-alfa-contencao.jpg.asset.json';
+import heroBravo from '@/assets/heroes/team-bravo-intervencao.jpg.asset.json';
+import heroCharlie from '@/assets/heroes/team-charlie-vigilancia.jpg.asset.json';
+import heroDelta from '@/assets/heroes/team-delta-comando.jpg.asset.json';
+import TeamDetailsDialog, { type TeamDetail, type TeamKey } from './TeamDetailsDialog';
 
 /**
- * TacticalCommandHome — Nova homepage única "Timeline Operacional"
- * (Design direction v3, aprovada pelo usuário).
- *
- * Escopo puramente visual/estrutural: dispara `onTeamClick(team)` como
- * a interface anterior (SplitOperationalHero) — nenhuma lógica de auth
- * ou de rondas é reimplementada aqui. Data dinâmica (relógio) local.
+ * TacticalCommandHome — Homepage "Timeline Operacional".
+ * Cards de equipe exibem hero de equipamentos táticos realistas (sem pessoas).
+ * Clique abre modal de detalhes com status/turno/ações rápidas.
  */
-
-type TeamKey = 'alfa' | 'bravo' | 'charlie' | 'delta';
 
 interface Props {
   onTeamClick: (team: TeamKey) => void;
 }
 
-const TEAMS: Array<{
-  key: TeamKey;
-  label: string;
-  role: string;
-  accent: string;
-  borderVar: string;
-  textVar: string;
-  hero: string;
-  glowRgb: string; // for accent shadow
-}> = [
-  { key: 'alfa',    label: 'ALFA',    role: 'CONTENÇÃO',    accent: 'emerald', borderVar: 'border-emerald-500',           textVar: 'text-emerald-400',                 hero: heroAlfa,    glowRgb: '16,185,129' },
-  { key: 'bravo',   label: 'BRAVO',   role: 'INTERVENÇÃO',  accent: 'orange',  borderVar: 'border-orange-500',            textVar: 'text-orange-400',                  hero: heroBravo,   glowRgb: '249,115,22' },
-  { key: 'charlie', label: 'CHARLIE', role: 'VIGILÂNCIA',   accent: 'sky',     borderVar: 'border-sky-500',               textVar: 'text-sky-400',                     hero: heroCharlie, glowRgb: '14,165,233' },
-  { key: 'delta',   label: 'DELTA',   role: 'COMANDO',      accent: 'amber',   borderVar: 'border-[hsl(var(--primary))]', textVar: 'text-[hsl(var(--primary))]',       hero: heroDelta,   glowRgb: '245,158,11' },
+const TEAMS: TeamDetail[] = [
+  { key: 'alfa',    label: 'ALFA',    role: 'CONTENÇÃO',   hero: heroAlfa.url,    glowRgb: '16,185,129', status: 'ativo',    agents: 32, shift: '19h → 07h', jurisdiction: 'Rio Branco • Sede', nextRound: '03:30' },
+  { key: 'bravo',   label: 'BRAVO',   role: 'INTERVENÇÃO', hero: heroBravo.url,   glowRgb: '249,115,22', status: 'ativo',    agents: 28, shift: '07h → 19h', jurisdiction: 'Rio Branco • Sede', nextRound: '04:00' },
+  { key: 'charlie', label: 'CHARLIE', role: 'VIGILÂNCIA',  hero: heroCharlie.url, glowRgb: '14,165,233', status: 'ativo',    agents: 24, shift: '19h → 07h', jurisdiction: 'Perímetro Externo', nextRound: '04:15' },
+  { key: 'delta',   label: 'DELTA',   role: 'COMANDO',     hero: heroDelta.url,   glowRgb: '245,158,11', status: 'ativo',    agents: 12, shift: '24h',       jurisdiction: 'Centro de Operações', nextRound: '—' },
 ];
+
+const BORDER_BY_TEAM: Record<TeamKey, string> = {
+  alfa: 'border-emerald-500',
+  bravo: 'border-orange-500',
+  charlie: 'border-sky-500',
+  delta: 'border-[hsl(var(--primary))]',
+};
 
 function useLiveClock(): string {
   const [now, setNow] = useState<Date>(() => new Date());
@@ -50,6 +44,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
   const clock = useLiveClock();
   const heroUrl = (agentVehicleProAsset as { url?: string }).url ?? '';
   const [interval, setInterval] = useState<15 | 30 | 60>(30);
+  const [activeTeam, setActiveTeam] = useState<TeamDetail | null>(null);
 
   const bento = useMemo(
     () => 'rounded-lg border border-[#1f1f2e] bg-[#141420]',
@@ -173,53 +168,54 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             </div>
           </aside>
 
-          {/* SELETOR DE EQUIPES — heróis realistas */}
-          <div className="col-span-12 lg:col-span-4 grid grid-cols-2 gap-3">
+          {/* SELETOR DE EQUIPES — heróis de equipamento realista */}
+          <div className="col-span-12 lg:col-span-4 grid grid-cols-2 gap-2.5 sm:gap-3">
             {TEAMS.map((t) => (
               <button
                 key={t.key}
                 type="button"
-                onClick={() => onTeamClick(t.key)}
+                onClick={() => setActiveTeam(t)}
+                aria-label={`Ver detalhes da equipe ${t.label}`}
                 className={cn(
                   'tch-team-card group relative overflow-hidden rounded-lg border border-[#1f1f2e] border-l-4 text-left',
-                  'min-h-[190px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))]',
-                  t.borderVar,
+                  'min-h-[168px] sm:min-h-[190px] touch-manipulation active:scale-[0.99]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))]',
+                  BORDER_BY_TEAM[t.key],
                 )}
-                style={{ ['--team-glow' as string]: t.glowRgb }}
               >
-                {/* Hero photo */}
                 <img
                   src={t.hero}
-                  alt={`Agente equipe ${t.label}`}
+                  alt={`Equipamento equipe ${t.label}`}
                   loading="lazy"
+                  decoding="async"
                   width={768}
                   height={1024}
-                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105"
+                  sizes="(min-width: 1024px) 200px, (min-width: 640px) 45vw, 45vw"
+                  className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                 />
-                {/* Vertical gradient for legibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/70 to-transparent" />
-                {/* Accent side glow */}
+                {/* Overlay: mais denso embaixo para garantir contraste do texto */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/55 to-[#0a0a0f]/10" />
+                {/* Glow lateral com a cor da equipe (não some a foto) */}
                 <div
-                  className="absolute inset-y-0 left-0 w-1/2 opacity-40 mix-blend-screen pointer-events-none"
-                  style={{ background: `radial-gradient(ellipse at left center, rgba(${t.glowRgb},0.35), transparent 70%)` }}
+                  className="absolute inset-y-0 left-0 w-2/3 opacity-35 mix-blend-screen pointer-events-none"
+                  style={{ background: `radial-gradient(ellipse at left center, rgba(${t.glowRgb},0.55), transparent 70%)` }}
                 />
-                {/* Content */}
-                <div className="relative z-10 h-full flex flex-col justify-end p-3">
+                <div className="relative z-10 h-full flex flex-col justify-end p-2.5 sm:p-3">
                   <span className="text-[9px] text-slate-300/80 font-bold uppercase tracking-widest">Equipe</span>
                   <h4
-                    className="text-2xl font-bold text-white leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                    className="text-xl sm:text-2xl font-bold text-white leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]"
                     style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                   >
                     {t.label}
                   </h4>
-                  <p className={cn('text-[10px] mt-1 font-bold uppercase tracking-wider drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]', t.textVar)}>
+                  <p
+                    className="text-[10px] mt-1 font-bold uppercase tracking-wider drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]"
+                    style={{ color: `rgb(${t.glowRgb})` }}
+                  >
                     {t.role}
                   </p>
                 </div>
-                {/* Status pill */}
-                <span
-                  className="absolute top-2 right-2 z-10 flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm border border-white/10"
-                >
+                <span className="absolute top-2 right-2 z-10 flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm border border-white/10">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   <span className="text-[8px] font-bold text-slate-200 uppercase tracking-wider">Ativo</span>
                 </span>
@@ -329,6 +325,13 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
         </footer>
 
       </div>
+
+      <TeamDetailsDialog
+        team={activeTeam}
+        open={!!activeTeam}
+        onOpenChange={(o) => { if (!o) setActiveTeam(null); }}
+        onSelect={onTeamClick}
+      />
     </div>
   );
 }
