@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import agentVehicleProAsset from '@/assets/hero/agent-vehicle-pro-scene-v5.png.asset.json';
+import heroAlfa from '@/assets/heroes/team-alfa-contencao.jpg';
+import heroBravo from '@/assets/heroes/team-bravo-intervencao.jpg';
+import heroCharlie from '@/assets/heroes/team-charlie-vigilancia.jpg';
+import heroDelta from '@/assets/heroes/team-delta-comando.jpg';
 
 /**
  * TacticalCommandHome — Nova homepage única "Timeline Operacional"
@@ -21,14 +25,16 @@ const TEAMS: Array<{
   key: TeamKey;
   label: string;
   role: string;
-  accent: string; // tailwind color token base
+  accent: string;
   borderVar: string;
   textVar: string;
+  hero: string;
+  glowRgb: string; // for accent shadow
 }> = [
-  { key: 'alfa',    label: 'ALFA',    role: 'CONTENÇÃO',    accent: 'emerald', borderVar: 'border-emerald-500',     textVar: 'text-emerald-400' },
-  { key: 'bravo',   label: 'BRAVO',   role: 'INTERVENÇÃO',  accent: 'orange',  borderVar: 'border-orange-500',      textVar: 'text-orange-400' },
-  { key: 'charlie', label: 'CHARLIE', role: 'VIGILÂNCIA',   accent: 'sky',     borderVar: 'border-sky-500',         textVar: 'text-sky-400' },
-  { key: 'delta',   label: 'DELTA',   role: 'COMANDO',      accent: 'amber',   borderVar: 'border-[hsl(var(--primary))]', textVar: 'text-[hsl(var(--primary))]' },
+  { key: 'alfa',    label: 'ALFA',    role: 'CONTENÇÃO',    accent: 'emerald', borderVar: 'border-emerald-500',           textVar: 'text-emerald-400',                 hero: heroAlfa,    glowRgb: '16,185,129' },
+  { key: 'bravo',   label: 'BRAVO',   role: 'INTERVENÇÃO',  accent: 'orange',  borderVar: 'border-orange-500',            textVar: 'text-orange-400',                  hero: heroBravo,   glowRgb: '249,115,22' },
+  { key: 'charlie', label: 'CHARLIE', role: 'VIGILÂNCIA',   accent: 'sky',     borderVar: 'border-sky-500',               textVar: 'text-sky-400',                     hero: heroCharlie, glowRgb: '14,165,233' },
+  { key: 'delta',   label: 'DELTA',   role: 'COMANDO',      accent: 'amber',   borderVar: 'border-[hsl(var(--primary))]', textVar: 'text-[hsl(var(--primary))]',       hero: heroDelta,   glowRgb: '245,158,11' },
 ];
 
 function useLiveClock(): string {
@@ -167,7 +173,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             </div>
           </aside>
 
-          {/* SELETOR DE EQUIPES */}
+          {/* SELETOR DE EQUIPES — heróis realistas */}
           <div className="col-span-12 lg:col-span-4 grid grid-cols-2 gap-3">
             {TEAMS.map((t) => (
               <button
@@ -175,16 +181,48 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                 type="button"
                 onClick={() => onTeamClick(t.key)}
                 className={cn(
-                  'text-left bg-[#141420] border border-[#1f1f2e] rounded-r-lg p-4 border-l-4 transition-colors group',
-                  'hover:bg-[#1a1a2b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))]',
+                  'tch-team-card group relative overflow-hidden rounded-lg border border-[#1f1f2e] border-l-4 text-left',
+                  'min-h-[190px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))]',
                   t.borderVar,
                 )}
+                style={{ ['--team-glow' as string]: t.glowRgb }}
               >
-                <span className="text-[10px] text-slate-500 font-bold uppercase">Equipe</span>
-                <h4 className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                  {t.label}
-                </h4>
-                <p className={cn('text-[10px] mt-1 font-bold uppercase tracking-wider', t.textVar)}>{t.role}</p>
+                {/* Hero photo */}
+                <img
+                  src={t.hero}
+                  alt={`Agente equipe ${t.label}`}
+                  loading="lazy"
+                  width={768}
+                  height={1024}
+                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105"
+                />
+                {/* Vertical gradient for legibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/70 to-transparent" />
+                {/* Accent side glow */}
+                <div
+                  className="absolute inset-y-0 left-0 w-1/2 opacity-40 mix-blend-screen pointer-events-none"
+                  style={{ background: `radial-gradient(ellipse at left center, rgba(${t.glowRgb},0.35), transparent 70%)` }}
+                />
+                {/* Content */}
+                <div className="relative z-10 h-full flex flex-col justify-end p-3">
+                  <span className="text-[9px] text-slate-300/80 font-bold uppercase tracking-widest">Equipe</span>
+                  <h4
+                    className="text-2xl font-bold text-white leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
+                    {t.label}
+                  </h4>
+                  <p className={cn('text-[10px] mt-1 font-bold uppercase tracking-wider drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]', t.textVar)}>
+                    {t.role}
+                  </p>
+                </div>
+                {/* Status pill */}
+                <span
+                  className="absolute top-2 right-2 z-10 flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm border border-white/10"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[8px] font-bold text-slate-200 uppercase tracking-wider">Ativo</span>
+                </span>
               </button>
             ))}
           </div>
