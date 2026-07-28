@@ -44,6 +44,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
   const clock = useLiveClock();
   const heroUrl = (agentVehicleProAsset as { url?: string }).url ?? '';
   const [interval, setInterval] = useState<15 | 30 | 60>(30);
+  const [activeTeam, setActiveTeam] = useState<TeamDetail | null>(null);
 
   const bento = useMemo(
     () => 'rounded-lg border border-[#1f1f2e] bg-[#141420]',
