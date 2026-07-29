@@ -386,22 +386,34 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
           <div className="space-y-4 md:space-y-5 flex-1 min-h-0 flex flex-col">
             <div>
               <div className="flex justify-between text-[10px] uppercase mb-1.5 font-bold tracking-widest">
-                <span className="text-slate-400">Eficiência SLA</span>
-                <span className="text-[#c9a84c] tabular-nums">98.4%</span>
+                <span className="text-slate-400">Efetivo em atividade</span>
+                <span className="text-[#c9a84c] tabular-nums">
+                  {ops.agentsTotal > 0 ? Math.round((ops.agentsActive / ops.agentsTotal) * 100) : 0}%
+                </span>
               </div>
               <div className="h-2 bg-black w-full rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#c9a84c] to-[#f0d78c] w-[98.4%]" />
+                <div
+                  className="h-full bg-gradient-to-r from-[#c9a84c] to-[#f0d78c] transition-all"
+                  style={{ width: `${ops.agentsTotal > 0 ? Math.round((ops.agentsActive / ops.agentsTotal) * 100) : 0}%` }}
+                />
+              </div>
+              <div className="mt-1 text-[9.5px] uppercase tracking-widest text-slate-500">
+                {ops.agentsActive} de {ops.agentsTotal} agentes ativos
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-black/40 p-2.5 rounded border border-white/5">
-                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Latência</span>
-                <span className="text-lg font-bold text-emerald-300 tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>14ms</span>
+                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Unidades</span>
+                <span className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>
+                  {String(ops.units).padStart(2, '0')}
+                </span>
               </div>
               <div className="bg-black/40 p-2.5 rounded border border-white/5">
-                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Versão</span>
-                <span className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>v3.4.1</span>
+                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Agentes</span>
+                <span className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>
+                  {String(ops.agentsTotal).padStart(2, '0')}
+                </span>
               </div>
             </div>
 
@@ -421,16 +433,18 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             </div>
 
             <div className="flex-1 min-h-0 bg-black/20 p-4 border border-dashed border-white/10 rounded flex flex-col justify-center items-center gap-2 text-center">
-              <div className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Câmeras ativas</div>
+              <div className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Cobertura operacional</div>
               <div className="text-4xl font-light text-white leading-none" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                124<span className="text-sm text-[#c9a84c] ml-1">/128</span>
+                {ops.agentsActive}
+                <span className="text-sm text-[#c9a84c] ml-1">/{ops.agentsTotal}</span>
               </div>
               <div className="text-[9.5px] uppercase tracking-widest text-emerald-400/80 font-bold flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Fluxo estável
+                {ops.units} unidades sincronizadas
               </div>
             </div>
           </div>
+
         </section>
 
         {/* GESTOR DE RONDAS — col-span-12 row-span-3, timeline horizontal */}
