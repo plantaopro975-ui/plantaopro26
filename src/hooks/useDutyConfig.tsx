@@ -50,7 +50,7 @@ export function useDutyConfig() {
     const { error } = await supabase
       .from('system_settings')
       .upsert(
-        { key: KEY, value: next as unknown as Record<string, unknown>, updated_by: userRes.user?.id ?? null, updated_at: new Date().toISOString() },
+        { key: KEY, value: next as never, updated_by: userRes.user?.id ?? null, updated_at: new Date().toISOString() },
         { onConflict: 'key' },
       );
     if (!error) setConfig(next);
