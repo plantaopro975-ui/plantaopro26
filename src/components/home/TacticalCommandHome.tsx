@@ -131,7 +131,46 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
   const [editing, setEditing] = useState<{ mode: 'new' | 'edit'; round: Round } | null>(null);
   const [cancelId, setCancelId] = useState<string | null>(null);
 
+  // Contagens reais vindas do banco (agregadas, sem PII)
+  const [teamCounts, setTeamCounts] = useState<Record<TeamKey, { total: number; active: number }>>({
+    alfa:    { total: 0, active: 0 },
+    bravo:   { total: 0, active: 0 },
+    charlie: { total: 0, active: 0 },
+    delta:   { total: 0, active: 0 },
+  });
+  const [ops, setOps] = useState<{ units: number; agentsTotal: number; agentsActive: number }>({
+    units: 0, agentsTotal: 0, agentsActive: 0,
+  });
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const [tc, oc] = await Promise.all([
+        supabase.rpc('get_public_team_counts'),
+        supabase.rpc('get_public_operational_counts'),
+      ]);
+      if (!alive) return;
+      if (tc.data && Array.isArray(tc.data)) {
+        const next: Record<TeamKey, { total: number; active: number }> = {
+          alfa: { total: 0, active: 0 }, bravo: { total: 0, active: 0 },
+          charlie: { total: 0, active: 0 }, delta: { total: 0, active: 0 },
+        };
+        for (const row of tc.data as Array<{ team: string; total: number; active: number }>) {
+          const k = row.team?.toLowerCase() as TeamKey;
+          if (k in next) next[k] = { total: row.total ?? 0, active: row.active ?? 0 };
+        }
+        setTeamCounts(next);
+      }
+      if (oc.data && Array.isArray(oc.data) && oc.data[0]) {
+        const row = oc.data[0] as { units_count: number; agents_total: number; agents_active: number };
+        setOps({ units: row.units_count ?? 0, agentsTotal: row.agents_total ?? 0, agentsActive: row.agents_active ?? 0 });
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
   const userTeamKey = ((agent?.team ?? '').toString().trim().toLowerCase()) as TeamKey | '';
+
 
   const bento = 'relative rounded-xl border border-[#1a1a26] bg-gradient-to-b from-[#111119] to-[#0c0c13] shadow-[0_8px_32px_-16px_rgba(0,0,0,0.9)]';
 
