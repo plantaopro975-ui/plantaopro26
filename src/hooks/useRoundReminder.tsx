@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { getReminderSettings, subscribeReminderSettings, bindReminderUser, type ReminderSettings } from '@/lib/reminderSettings';
 import { supabase } from '@/integrations/supabase/client';
+import { getServerDate, syncServerTime } from '@/hooks/useServerTime';
+
+/** Hora atual em ms segundo o servidor (Acre). Não confia no relógio local. */
+const nowMs = () => getServerDate().getTime();
+
 
 /**
  * Hook global de lembrete de rondas.
