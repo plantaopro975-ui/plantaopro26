@@ -253,7 +253,104 @@ export function DutyRotationConfig() {
               </p>
             </div>
 
+            {/* ============ FORÇAR TROCA DE PLANTÃO (OVERRIDE) ============ */}
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 space-y-3">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <div className="flex items-center gap-2 text-amber-300 text-sm font-semibold">
+                    <Zap className="h-4 w-4" /> Forçar troca de plantão agora
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1 max-w-lg">
+                    Substitui imediatamente a equipe em serviço. A troca vale a partir de agora
+                    e a rotação continua normalmente a partir da equipe escolhida.
+                    <span className="block mt-1">
+                      Equipe atual: <strong className="text-foreground">{TEAM_LABEL[currentDuty.team]}</strong>
+                    </span>
+                  </p>
+                </div>
+                {config.override && (
+                  <Button variant="ghost" size="sm" onClick={clearOverride}>
+                    Limpar selo
+                  </Button>
+                )}
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-[200px,1fr,auto] md:items-end">
+                <div>
+                  <Label className="text-[10px] uppercase text-muted-foreground">Nova equipe</Label>
+                  <Select value={overrideTeam} onValueChange={(v) => setOverrideTeam(v as TeamKey)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(['alfa','bravo','charlie','delta'] as TeamKey[]).map(k => (
+                        <SelectItem key={k} value={k} disabled={k === currentDuty.team}>
+                          {TEAM_LABEL[k]}{k === currentDuty.team ? ' (atual)' : ''}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-[10px] uppercase text-muted-foreground">Motivo (registrado)</Label>
+                  <Input
+                    value={overrideReason}
+                    onChange={(e) => setOverrideReason(e.target.value)}
+                    placeholder="Ex.: afastamento emergencial da equipe DELTA por ocorrência…"
+                    maxLength={280}
+                  />
+                </div>
+                <Button
+                  variant="default"
+                  className="bg-amber-500 hover:bg-amber-600 text-black"
+                  onClick={() => setOverrideOpen(true)}
+                  disabled={overrideTeam === currentDuty.team || overrideReason.trim().length < 5}
+                >
+                  <Zap className="h-4 w-4 mr-1" /> Trocar agora
+                </Button>
+              </div>
+
+              {config.override && (
+                <div className="text-[11px] rounded-md border border-white/10 bg-black/30 px-3 py-2 space-y-0.5">
+                  <div>
+                    <span className="text-muted-foreground">Último override:</span>{' '}
+                    <strong>{TEAM_LABEL[config.override.team]}</strong>
+                    {config.override.previous_team && (
+                      <> (antes: {TEAM_LABEL[config.override.previous_team]})</>
+                    )}
+                    {' '}em {new Date(config.override.set_at).toLocaleString('pt-BR')}
+                  </div>
+                  <div className="text-muted-foreground">
+                    Por: <span className="text-foreground">{config.override.set_by_name ?? '—'}</span>
+                  </div>
+                  <div className="text-muted-foreground">
+                    Motivo: <span className="text-foreground">{config.override.reason}</span>
+                  </div>
+                </div>
+              )}
+
+              {history.length > 0 && (
+                <details className="text-xs">
+                  <summary className="cursor-pointer inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
+                    <History className="h-3.5 w-3.5" /> Histórico de trocas forçadas ({history.length})
+                  </summary>
+                  <ul className="mt-2 space-y-1 max-h-52 overflow-auto pr-1">
+                    {history.map((h, i) => (
+                      <li key={`${h.set_at}-${i}`} className="rounded border border-white/10 bg-black/30 px-2 py-1.5">
+                        <div>
+                          <strong>{TEAM_LABEL[h.team]}</strong>
+                          {h.previous_team && <> (antes: {TEAM_LABEL[h.previous_team]})</>}
+                          {' — '}{new Date(h.set_at).toLocaleString('pt-BR')}
+                        </div>
+                        <div className="text-muted-foreground">Por: {h.set_by_name ?? '—'}</div>
+                        <div className="text-muted-foreground">Motivo: {h.reason}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+            </div>
+
             <div className="flex justify-end gap-2 border-t border-white/10 pt-3">
+
               <Button variant="outline" onClick={onReset}>
                 <RotateCcw className="h-4 w-4 mr-1" /> Restaurar padrão
               </Button>
