@@ -1,4 +1,6 @@
 import { parseISO } from 'date-fns';
+import { getServerDate } from '@/hooks/useServerTime';
+
 
 export interface ShiftLike {
   shift_date: string;
@@ -31,7 +33,7 @@ export function getShiftBounds(shift: ShiftLike): { start: Date; end: Date } {
   return { start, end };
 }
 
-export function isShiftActive(shift: ShiftLike, now: Date = new Date()): boolean {
+export function isShiftActive(shift: ShiftLike, now: Date = getServerDate()): boolean {
   const { start, end } = getShiftBounds(shift);
   const t = now.getTime();
   return t >= start.getTime() && t < end.getTime();

@@ -3,6 +3,8 @@ import { Shield, Radio, Eye, Command, Activity, MapPin, Users, Clock, ChevronRig
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
+import { useServerClockParts } from '@/hooks/useServerTime';
+
 import commandScene from '@/assets/hero/command-scene-v6.jpg.asset.json';
 import heroAlfa from '@/assets/heroes/team-alfa-v2.jpg.asset.json';
 import heroBravo from '@/assets/heroes/team-bravo-v2.jpg.asset.json';
@@ -98,32 +100,21 @@ const DEFAULT_ROUNDS: Round[] = [
 ];
 
 /**
- * Relógio ao vivo baseado em America/Rio_Branco (UTC-5), NÃO no fuso do dispositivo.
- * Garante que todas as telas exibam a hora oficial do Acre.
+ * Relógio ao vivo baseado em America/Rio_Branco (UTC-5) E na hora do
+ * servidor (não confia no relógio do dispositivo). Fonte única de verdade
+ * para todos os cálculos de ronda desta tela.
  */
 const ACRE_TZ = 'America/Rio_Branco';
-function acreParts(d: Date): { hour: number; minute: number; second: number } {
-  const parts = new Intl.DateTimeFormat('pt-BR', {
-    timeZone: ACRE_TZ,
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  }).formatToParts(d);
-  const get = (t: string) => Number(parts.find(p => p.type === t)?.value ?? '0');
-  return { hour: get('hour'), minute: get('minute'), second: get('second') };
-}
 
 function useLiveClock(): { time: string; date: string; nowMin: number } {
-  const [now, setNow] = useState<Date>(() => new Date());
-  useEffect(() => {
-    const t = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(t);
-  }, []);
-  const { hour, minute, second } = acreParts(now);
-  const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}`;
+  const { hours, minutes, seconds, date: now } = useServerClockParts(ACRE_TZ, 1000);
+  const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   const date = new Intl.DateTimeFormat('pt-BR', {
     timeZone: ACRE_TZ, weekday: 'short', day: '2-digit', month: 'short',
   }).format(now);
-  return { time, date, nowMin: hour * 60 + minute };
+  return { time, date, nowMin: hours * 60 + minutes };
 }
+
 
 
 export function TacticalCommandHome({ onTeamClick }: Props) {
