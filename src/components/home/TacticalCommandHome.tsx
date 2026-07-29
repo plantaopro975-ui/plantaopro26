@@ -118,28 +118,11 @@ function useLiveClock(): { time: string; date: string; nowMin: number } {
 }
 
 
-/**
- * Escala de equipes por dia (ciclo 4 dias).
- * Âncora: 29/07/2026 (America/Rio_Branco) = DELTA de plantão.
- * A partir disso, cada dia local avança 1 posição na ordem ALFA→BRAVO→CHARLIE→DELTA.
- */
-const DUTY_ORDER: TeamKey[] = ['alfa', 'bravo', 'charlie', 'delta'];
-const DUTY_ANCHOR_YMD = '2026-07-29';
-const DUTY_ANCHOR_INDEX = 3; // delta
+import { useDutyConfig } from '@/hooks/useDutyConfig';
+import { getOnDutyTeam, msUntilNextHandover, getDutyTeamForYmd } from '@/lib/dutyRotation';
+import { Link } from 'react-router-dom';
+import { CalendarDays } from 'lucide-react';
 
-function ymdInAcre(d: Date): string {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: ACRE_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
-  }).format(d); // YYYY-MM-DD
-}
-
-function getOnDutyTeamKey(d: Date = getServerDate()): TeamKey {
-  const today = new Date(ymdInAcre(d) + 'T12:00:00Z').getTime();
-  const anchor = new Date(DUTY_ANCHOR_YMD + 'T12:00:00Z').getTime();
-  const diffDays = Math.round((today - anchor) / 86400000);
-  const idx = ((DUTY_ANCHOR_INDEX + diffDays) % 4 + 4) % 4;
-  return DUTY_ORDER[idx];
-}
 
 
 
@@ -152,8 +135,37 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
   const [activeTeam, setActiveTeam] = useState<TeamDetail | null>(null);
   const [running, setRunning] = useState<boolean>(true);
   const [rounds, setRounds] = useState<Round[]>(DEFAULT_ROUNDS);
-  // Equipe de plantão do dia (recalcula a cada minuto para virar automaticamente à meia-noite)
-  const onDutyKey = useMemo(() => getOnDutyTeamKey(), [nowMin]);
+  const { config: dutyConfig } = useDutyConfig();
+  // Equipe de plantão do dia (recalcula a cada minuto para virar automaticamente às 07:00)
+  const { team: onDutyKey, ymd: onDutyYmd } = useMemo(
+    () => getOnDutyTeam(dutyConfig),
+    [dutyConfig, nowMin],
+  );
+  const tomorrowTeam = useMemo(() => {
+    const t = new Date(getServerDate().getTime() + 24 * 3600 * 1000);
+    const nextYmd = new Intl.DateTimeFormat('en-CA', { timeZone: ACRE_TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(t);
+    return getDutyTeamForYmd(dutyConfig, nextYmd);
+  }, [dutyConfig, nowMin]);
+
+  // Handover notifications: 5 min antes + na hora exata
+  const notifiedRef = useMemo(() => ({ pre: '', at: '' }), []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const ms = msUntilNextHandover(dutyConfig);
+      const stampKey = onDutyYmd;
+      if (ms <= 5 * 60 * 1000 && ms > 4 * 60 * 1000 && notifiedRef.pre !== stampKey) {
+        notifiedRef.pre = stampKey;
+        const nextT = tomorrowTeam.toUpperCase();
+        toast.info(`Troca de plantão em 5 min`, { description: `${nextT} assumirá às ${String(dutyConfig.handover_hour).padStart(2, '0')}:00.` });
+      }
+      if (ms <= 30 * 1000 && notifiedRef.at !== stampKey) {
+        notifiedRef.at = stampKey;
+        toast.success(`Plantão assumido`, { description: `${tomorrowTeam.toUpperCase()} agora está de serviço.` });
+      }
+    }, 20_000);
+    return () => clearInterval(timer);
+  }, [dutyConfig, tomorrowTeam, onDutyYmd, notifiedRef]);
+
 
   // Dialog CRUD state
   const [editing, setEditing] = useState<{ mode: 'new' | 'edit'; round: Round } | null>(null);
@@ -318,6 +330,14 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             </div>
             <div className="text-[9px] uppercase text-slate-500 tracking-widest mt-0.5">{date}</div>
           </div>
+          <Link
+            to="/escala"
+            className="hidden sm:inline-flex items-center gap-1.5 bg-black/40 hover:bg-black/60 px-3 py-1.5 rounded-sm border border-white/5 hover:border-[#c9a84c]/40 transition-colors"
+            title="Ver calendário de plantões"
+          >
+            <CalendarDays className="w-3.5 h-3.5 text-[#c9a84c]" />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-white">Escala</span>
+          </Link>
           <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-sm border border-white/5">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
             <span className="text-[10px] md:text-xs uppercase tracking-widest font-bold text-white">Sistema Online</span>
@@ -508,9 +528,13 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
 
                   {/* Duty roster row */}
                   <div className="mt-3 grid grid-cols-3 gap-2">
-                    <div className="bg-black/40 border border-white/5 px-2 py-1.5 rounded-sm">
+                    <div className={cn('bg-black/40 border px-2 py-1.5 rounded-sm', isOnDuty ? 'border-[color:var(--accent)]/40' : 'border-white/5')}>
                       <div className="text-[8.5px] uppercase tracking-widest text-white/40 font-semibold">Turno</div>
-                      <div className="font-mono text-[10.5px] text-white/85 mt-0.5 truncate">{t.shift}</div>
+                      <div className="font-mono text-[10.5px] text-white/85 mt-0.5 truncate">
+                        {isOnDuty
+                          ? `${dutyConfig.teams[t.key]?.start ?? '07:00'} → ${dutyConfig.teams[t.key]?.end ?? '07:00'}`
+                          : t.shift}
+                      </div>
                     </div>
                     <div className="bg-black/40 border border-white/5 px-2 py-1.5 rounded-sm">
                       <div className="text-[8.5px] uppercase tracking-widest text-white/40 font-semibold">Setor</div>
@@ -521,6 +545,17 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                       <div className="font-mono text-[10.5px] mt-0.5" style={{ color: `rgb(${t.glowRgb})` }}>{t.nextRound}</div>
                     </div>
                   </div>
+
+                  {isOnDuty && dutyConfig.teams[t.key]?.notes && (
+                    <div className="mt-2 rounded-sm border border-[color:var(--accent)]/30 bg-black/45 px-2 py-1.5">
+                      <div className="text-[8.5px] uppercase tracking-widest font-semibold" style={{ color: `rgb(${t.glowRgb})` }}>
+                        Observações do plantão
+                      </div>
+                      <div className="text-[10.5px] text-white/85 mt-0.5 line-clamp-2">
+                        {dutyConfig.teams[t.key]?.notes}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Reflective safety chevrons — like patrol vehicle rear */}
