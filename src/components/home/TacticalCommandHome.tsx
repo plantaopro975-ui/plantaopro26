@@ -338,36 +338,63 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                   </span>
                 </div>
 
+                {/* Ambient photo backdrop — real security imagery */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  aria-hidden
+                  style={{
+                    backgroundImage: `url(${t.hero})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: isStandby ? 0.18 : 0.32,
+                    filter: 'grayscale(0.25) contrast(1.05)',
+                    maskImage: 'linear-gradient(180deg, black 0%, black 55%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 55%, transparent 100%)',
+                  }}
+                />
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  aria-hidden
+                  style={{
+                    background: `linear-gradient(180deg, rgba(11,11,13,0.55) 0%, rgba(11,11,13,0.75) 55%, rgba(11,11,13,0.95) 100%), radial-gradient(120% 80% at 100% 0%, rgba(${t.glowRgb},0.18), transparent 55%)`,
+                  }}
+                />
+
                 {/* Body */}
                 <div className="relative p-3 md:p-4 pb-14">
                   <div className="flex items-start gap-3">
-                    {/* POLICE BADGE — octagonal shoulder patch */}
+                    {/* Team photo emblem — real image in tactical frame */}
                     <div className="relative shrink-0 w-16 h-16 md:w-[72px] md:h-[72px]">
-                      <svg viewBox="0 0 80 80" className="w-full h-full drop-shadow-[0_3px_6px_rgba(0,0,0,0.6)]">
-                        <defs>
-                          <linearGradient id={`patch-${t.key}`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0" stopColor="#2a2a2e" />
-                            <stop offset="1" stopColor="#0a0a0c" />
-                          </linearGradient>
-                          <linearGradient id={`patchring-${t.key}`} x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0" stopColor={`rgb(${t.glowRgb})`} stopOpacity="0.95" />
-                            <stop offset="1" stopColor={`rgb(${t.glowRgb})`} stopOpacity="0.35" />
-                          </linearGradient>
-                        </defs>
-                        {/* Octagonal patch outline */}
-                        <polygon points="24,4 56,4 76,24 76,56 56,76 24,76 4,56 4,24" fill={`url(#patch-${t.key})`} stroke={`url(#patchring-${t.key})`} strokeWidth="1.6" />
-                        <polygon points="26,10 54,10 70,26 70,54 54,70 26,70 10,54 10,26" fill="none" stroke={`rgb(${t.glowRgb})`} strokeOpacity="0.3" strokeWidth="0.6" />
-                        {/* 5-point police star */}
-                        <path d="M40 22 L44.2 34.4 L57 34.4 L46.6 42.1 L50.7 54.6 L40 46.9 L29.3 54.6 L33.4 42.1 L23 34.4 L35.8 34.4 Z" fill={`rgb(${t.glowRgb})`} fillOpacity="0.18" stroke={`rgb(${t.glowRgb})`} strokeWidth="1.1" strokeLinejoin="round" />
-                        {/* Center dot */}
-                        <circle cx="40" cy="41" r="2.4" fill={`rgb(${t.glowRgb})`} />
-                        {/* Bottom scroll banner */}
-                        <rect x="14" y="60" width="52" height="7" fill="#000" fillOpacity="0.55" stroke={`rgb(${t.glowRgb})`} strokeOpacity="0.5" strokeWidth="0.5" />
-                        <text x="40" y="65.5" textAnchor="middle" fontSize="5.2" fontFamily="JetBrains Mono, monospace" fill={`rgb(${t.glowRgb})`} letterSpacing="1.5">{t.label}</text>
-                      </svg>
+                      <div
+                        className="absolute inset-0 overflow-hidden border transition-all duration-300 group-hover:scale-[1.03]"
+                        style={{
+                          clipPath: 'polygon(20% 0, 80% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 80%, 0 20%)',
+                          borderColor: `rgba(${t.glowRgb},0.55)`,
+                          boxShadow: `0 6px 18px -6px rgba(${t.glowRgb},0.7), inset 0 0 0 1px rgba(255,255,255,0.05)`,
+                        }}
+                      >
+                        <img
+                          src={t.hero}
+                          alt={`Equipe ${t.label}`}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                          style={{ filter: isStandby ? 'grayscale(0.6) brightness(0.7)' : 'contrast(1.05) saturate(1.05)' }}
+                        />
+                        <div
+                          className="absolute inset-0"
+                          style={{ background: `linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.85) 100%)` }}
+                        />
+                        <div
+                          className="absolute inset-x-0 bottom-0 text-center font-mono text-[8px] md:text-[9px] tracking-[0.22em] py-0.5"
+                          style={{ color: `rgb(${t.glowRgb})`, background: 'rgba(0,0,0,0.55)' }}
+                        >
+                          {t.label}
+                        </div>
+                      </div>
                       {!isStandby && (
                         <span
-                          className="absolute -top-1 -right-1 w-3 h-3 rounded-full border border-black"
+                          className="absolute -top-1 -right-1 w-3 h-3 rounded-full border border-black animate-pulse"
                           style={{ background: `rgb(${t.glowRgb})`, boxShadow: `0 0 10px rgb(${t.glowRgb})` }}
                         />
                       )}
