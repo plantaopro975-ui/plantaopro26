@@ -27,7 +27,15 @@ export function DutyRotationConfig() {
   const [draft, setDraft] = useState<DutyScheduleConfig>(config);
   const [saving, setSaving] = useState(false);
 
+  // Override state
+  const [overrideTeam, setOverrideTeam] = useState<TeamKey>('alfa');
+  const [overrideReason, setOverrideReason] = useState('');
+  const [overrideOpen, setOverrideOpen] = useState(false);
+  const [overriding, setOverriding] = useState(false);
+
   useEffect(() => { setDraft(config); }, [config]);
+
+  const currentDuty = useMemo(() => getOnDutyTeam(config), [config]);
 
   const move = (idx: number, dir: -1 | 1) => {
     const next = [...draft.order];
@@ -47,7 +55,78 @@ export function DutyRotationConfig() {
 
   const onReset = () => setDraft(DEFAULT_DUTY_CONFIG);
 
+  const applyOverride = async () => {
+    const reason = overrideReason.trim();
+    if (reason.length < 5) {
+      toast.error('Motivo obrigatório', { description: 'Descreva o motivo da troca (mín. 5 caracteres).' });
+      return;
+    }
+    setOverriding(true);
+    try {
+      const { data: userRes } = await supabase.auth.getUser();
+      const uid = userRes.user?.id ?? null;
+      const uname = (userRes.user?.user_metadata as any)?.full_name
+        || userRes.user?.email || 'Master';
+
+      const todayYmd = getOperationalYmd(new Date(), config.handover_hour);
+      const previous = currentDuty.team;
+      const record: DutyOverrideRecord = {
+        team: overrideTeam,
+        effective_from_ymd: todayYmd,
+        reason,
+        set_by_id: uid,
+        set_by_name: String(uname),
+        set_at: new Date().toISOString(),
+        previous_team: previous,
+      };
+
+      const next: DutyScheduleConfig = {
+        ...config,
+        anchor_ymd: todayYmd,
+        anchor_team: overrideTeam,
+        override: record,
+        override_history: [record, ...(config.override_history ?? [])].slice(0, 50),
+      };
+
+      const { error } = await save(next);
+      if (error) throw error;
+
+      // Best-effort audit log
+      try {
+        await supabase.from('activity_logs').insert({
+          agent_id: uid,
+          agent_name: String(uname),
+          action: 'update',
+          resource_type: 'settings',
+          resource_id: 'duty_schedule.override',
+          details: record as any,
+          user_agent: navigator.userAgent.slice(0, 200),
+        });
+      } catch { /* ignore */ }
+
+      toast.success('Plantão trocado', {
+        description: `${TEAM_LABEL[overrideTeam]} assume a partir de agora.`,
+      });
+      setOverrideOpen(false);
+      setOverrideReason('');
+    } catch (err: any) {
+      toast.error('Falha ao trocar plantão', { description: err?.message ?? 'Erro desconhecido.' });
+    } finally {
+      setOverriding(false);
+    }
+  };
+
+  const clearOverride = async () => {
+    const next: DutyScheduleConfig = { ...config, override: null };
+    const { error } = await save(next);
+    if (error) toast.error('Falha ao limpar', { description: error.message });
+    else toast.success('Registro de override limpo', {
+      description: 'A escala continua a partir do último ajuste, sem o selo de override.',
+    });
+  };
+
   const preview = getUpcomingSchedule(draft, draft.anchor_ymd, 8);
+  const history = config.override_history ?? [];
 
   return (
     <Card className="tactical-card">
