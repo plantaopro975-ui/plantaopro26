@@ -313,8 +313,8 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                 <button
                   key={t.key}
                   type="button"
-                  onClick={() => setActiveTeam(t)}
-                  aria-label={`Ver detalhes da equipe ${t.label}`}
+                  onClick={() => onTeamClick(t.key)}
+                  aria-label={`Entrar na equipe ${t.label}`}
                   className={cn(
                     'tch2-team group relative overflow-hidden rounded-xl border text-left',
                     'border-[#1a1a26] hover:border-[hsl(var(--primary))]/60',
