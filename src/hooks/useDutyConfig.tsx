@@ -15,6 +15,8 @@ function normalize(raw: unknown): DutyScheduleConfig {
     anchor_team: (r.anchor_team as TeamKey) || DEFAULT_DUTY_CONFIG.anchor_team,
     handover_hour: typeof r.handover_hour === 'number' ? r.handover_hour : 7,
     teams: { ...DEFAULT_DUTY_CONFIG.teams, ...(r.teams || {}) } as DutyScheduleConfig['teams'],
+    override: r.override ?? null,
+    override_history: Array.isArray(r.override_history) ? r.override_history : [],
   };
 }
 
