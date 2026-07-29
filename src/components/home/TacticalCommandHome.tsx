@@ -199,7 +199,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
 
   return (
     <div className="tch2-root w-full text-slate-200 font-['DM_Sans'] bg-[#07070b]">
-      <div className="w-full max-w-[1440px] mx-auto px-3 md:px-5 pt-2 pb-2 lg:h-[calc(100dvh-64px)] lg:overflow-hidden lg:flex lg:flex-col">
+      <div className="w-full max-w-[1440px] mx-auto px-3 md:px-5 pt-2 pb-2 h-[100dvh] lg:h-[calc(100dvh-64px)] overflow-hidden flex flex-col">
 
         {/* HEADER — Command bar profissional */}
         <header className="relative flex items-center justify-between gap-3 h-11 sm:h-12 px-2 sm:px-3 rounded-md bg-gradient-to-r from-[#0b0b12] via-[#0d0d16] to-[#0b0b12] border border-[#1a1a26] shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02)_inset]">
@@ -251,7 +251,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
         </header>
 
         {/* MAIN GRID */}
-        <main className="mt-3 grid grid-cols-12 gap-2.5 md:gap-3 lg:flex-1 lg:min-h-0">
+        <main className="mt-3 grid grid-cols-12 gap-2.5 md:gap-3 flex-1 min-h-0 overflow-y-auto lg:overflow-hidden">
 
           {/* === HERO === */}
           <section className={cn(bento, 'col-span-12 lg:col-span-7 overflow-hidden h-[180px] sm:h-[220px] lg:h-auto lg:min-h-0')}>
