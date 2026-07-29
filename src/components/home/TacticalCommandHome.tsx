@@ -118,6 +118,32 @@ function useLiveClock(): { time: string; date: string; nowMin: number } {
 }
 
 
+/**
+ * Escala de equipes por dia (ciclo 4 dias).
+ * Âncora: 29/07/2026 (America/Rio_Branco) = DELTA de plantão.
+ * A partir disso, cada dia local avança 1 posição na ordem ALFA→BRAVO→CHARLIE→DELTA.
+ */
+const DUTY_ORDER: TeamKey[] = ['alfa', 'bravo', 'charlie', 'delta'];
+const DUTY_ANCHOR_YMD = '2026-07-29';
+const DUTY_ANCHOR_INDEX = 3; // delta
+
+function ymdInAcre(d: Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: ACRE_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(d); // YYYY-MM-DD
+}
+
+function getOnDutyTeamKey(d: Date = getServerDate()): TeamKey {
+  const today = new Date(ymdInAcre(d) + 'T12:00:00Z').getTime();
+  const anchor = new Date(DUTY_ANCHOR_YMD + 'T12:00:00Z').getTime();
+  const diffDays = Math.round((today - anchor) / 86400000);
+  const idx = ((DUTY_ANCHOR_INDEX + diffDays) % 4 + 4) % 4;
+  return DUTY_ORDER[idx];
+}
+
+
+
+
 
 export function TacticalCommandHome({ onTeamClick }: Props) {
   const { time, date, nowMin } = useLiveClock();
