@@ -1389,9 +1389,10 @@ export default function Index() {
         className="home-typo min-h-full flex flex-col bg-background relative overflow-x-clip max-sm:overflow-x-hidden home-compact max-sm:overflow-y-auto"
         style={{
           fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
-          ['--home-gap' as any]: 'clamp(2px, 0.35vh, 8px)',
-          ['--home-pad-x' as any]: 'clamp(2px, 0.6vw, 16px)',
-          ['--home-pad-y' as any]: 'clamp(0px, 0.2vh, 6px)',
+          // Grid de espaçamento 8px: valores discretos 8 / 16 / 24 px
+          ['--home-gap' as any]: 'clamp(8px, 1.2vh, 16px)',
+          ['--home-pad-x' as any]: 'clamp(8px, 1.5vw, 24px)',
+          ['--home-pad-y' as any]: 'clamp(8px, 0.8vh, 16px)',
         }}
       >
         {/* Sober command-room background — SVG only, no posters */}
@@ -1409,7 +1410,7 @@ export default function Index() {
               else if (isAdmin) navigate('/admin');
               else navigate('/agent-panel');
             }}
-            className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
+            className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
             style={{ fontSize: 'clamp(9px, 0.6vw + 0.4rem, 12px)' }}
           >
             <User className="h-3 w-3" />
@@ -1422,7 +1423,7 @@ export default function Index() {
       <header className="relative z-20 flex min-h-0 flex-1 lg:flex-none flex-col overflow-visible">
         {user && (
           <div
-            className="w-full max-w-6xl mx-auto pt-2"
+            className="w-full max-w-6xl mx-auto pt-4"
             style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
           >
             <button
@@ -1576,7 +1577,7 @@ export default function Index() {
       </div>
 
       {/* Rodapé institucional profissional — oculto no mobile */}
-      <footer className="relative z-30 mt-2 w-full hidden sm:block">
+      <footer className="relative z-30 mt-4 w-full hidden sm:block">
         <CopyrightFooter
           compact
           leftSlot={
