@@ -350,10 +350,12 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                       )}
                       style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                     >
-                      {String(t.agents).padStart(2, '0')}
+                      {String(teamCounts[t.key]?.active ?? 0).padStart(2, '0')}
+                      <span className="text-xs md:text-sm text-white/40 font-normal">/{String(teamCounts[t.key]?.total ?? 0).padStart(2, '0')}</span>
                     </div>
-                    <div className="text-[9px] md:text-[10px] uppercase opacity-50 mt-0.5">Agentes</div>
+                    <div className="text-[9px] md:text-[10px] uppercase opacity-50 mt-0.5">Ativos / Total</div>
                   </div>
+
                 </div>
 
                 <div className="w-full bg-black/50 h-1 rounded-sm overflow-hidden">
