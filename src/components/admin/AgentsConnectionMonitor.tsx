@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { getMasterToken } from '@/lib/masterSession';
 import { useOnlineAgents } from '@/hooks/useOnlineAgents';
@@ -234,7 +233,7 @@ export function AgentsConnectionMonitor() {
       // Dangling login? If agent is not currently online and last event too old → expired
       if (openLoginAt) {
         const isOnline = online.has(agentId);
-        const ageMin = (getServerDate().getTime() - new Date(openLoginAt).getTime()) / 60000;
+        const ageMin = (Date.now() - new Date(openLoginAt).getTime()) / 60000;
         if (!isOnline && ageMin > SESSION_TIMEOUT_MIN) {
           events.push({
             agent_id: agentId, agent_name: name, type: 'expired', at: openLoginAt,
@@ -323,7 +322,7 @@ export function AgentsConnectionMonitor() {
     setExporting(true);
     try {
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      const now = getServerDate();
+      const now = new Date();
       doc.setFontSize(16); doc.setFont('helvetica', 'bold');
       doc.text('Relatório de Conexões e Registros de Agentes', 14, 14);
       doc.setFontSize(9); doc.setFont('helvetica', 'normal');

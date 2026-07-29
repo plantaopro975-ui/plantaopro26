@@ -42,7 +42,6 @@ const Master = lazy(() => import("./pages/Master"));
 const Install = lazy(() => import("./pages/Install"));
 const About = lazy(() => import("./pages/About"));
 const Agenda = lazy(() => import("./pages/Agenda"));
-const EscalaCalendar = lazy(() => import("./pages/EscalaCalendar"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Diretorio = lazy(() => import("./pages/Diretorio"));
@@ -202,7 +201,6 @@ const App = () => (
                       <Route path="/install" element={<Install />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/agenda" element={<Agenda />} />
-                      <Route path="/escala" element={<EscalaCalendar />} />
                       <Route
                         path="/diretorio"
                         element={

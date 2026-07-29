@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { getMasterToken } from '@/lib/masterSession';
 
@@ -211,7 +210,7 @@ export function AnnouncementsManager() {
         target_unit_id: formData.target_type === 'unit' ? formData.target_unit_id || null : null,
         target_team: formData.target_type === 'team' ? formData.target_team || null : null,
         is_active: formData.is_active,
-        starts_at: formData.starts_at ? new Date(formData.starts_at).toISOString() : getServerDate().toISOString(),
+        starts_at: formData.starts_at ? new Date(formData.starts_at).toISOString() : new Date().toISOString(),
         expires_at: formData.expires_at ? new Date(formData.expires_at).toISOString() : null,
       };
 
@@ -339,7 +338,7 @@ export function AnnouncementsManager() {
   }
 
   // Derived stats & filtered list
-  const now = getServerDate();
+  const now = new Date();
   const stats = {
     total: announcements.length,
     active: announcements.filter(a => a.is_active && new Date(a.starts_at) <= now && (!a.expires_at || new Date(a.expires_at) > now)).length,
@@ -466,8 +465,8 @@ export function AnnouncementsManager() {
             filteredAnnouncements.map((announcement) => {
               const priorityConfig = getPriorityConfig(announcement.priority);
               const PriorityIcon = priorityConfig.icon;
-              const isExpired = announcement.expires_at && new Date(announcement.expires_at) < getServerDate();
-              const hasStarted = new Date(announcement.starts_at) <= getServerDate();
+              const isExpired = announcement.expires_at && new Date(announcement.expires_at) < new Date();
+              const hasStarted = new Date(announcement.starts_at) <= new Date();
 
               return (
                 <Card 

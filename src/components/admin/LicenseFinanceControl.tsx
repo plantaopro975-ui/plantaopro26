@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -135,7 +134,7 @@ export function LicenseFinanceControl() {
 
   // Calculate summary
   const summary: FinanceSummary = useMemo(() => {
-    const now = getServerDate();
+    const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     
     const totalReceived = payments.reduce((sum, p) => sum + p.amount, 0);
@@ -165,7 +164,7 @@ export function LicenseFinanceControl() {
 
   // Filter expiring soon (next 30 days)
   const expiringAgents = useMemo(() => {
-    const now = getServerDate();
+    const now = new Date();
     return agents.filter(a => {
       if (!a.license_expires_at || isLicenseExpired(a.license_expires_at)) return false;
       const expiryDate = parseISO(a.license_expires_at);
@@ -231,9 +230,9 @@ export function LicenseFinanceControl() {
       // Update license expiry
       const currentExpiry = selectedAgent.license_expires_at 
         ? parseISO(selectedAgent.license_expires_at)
-        : getServerDate();
+        : new Date();
       
-      const baseDate = isLicenseExpired(selectedAgent.license_expires_at) ? getServerDate() : currentExpiry;
+      const baseDate = isLicenseExpired(selectedAgent.license_expires_at) ? new Date() : currentExpiry;
       const newExpiry = addMonths(baseDate, months);
 
       const { error: updateError } = await supabase
@@ -295,7 +294,7 @@ export function LicenseFinanceControl() {
   const getDaysUntilExpiry = (expiresAt: string | null): number | null => {
     if (!expiresAt) return null;
     const expiryDate = parseISO(expiresAt);
-    return differenceInDays(expiryDate, getServerDate());
+    return differenceInDays(expiryDate, new Date());
   };
 
   const getExpiryBadge = (expiresAt: string | null) => {

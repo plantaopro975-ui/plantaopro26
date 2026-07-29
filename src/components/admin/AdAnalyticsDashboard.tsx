@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -64,7 +63,7 @@ export function AdAnalyticsDashboard() {
   const fetchAnalytics = async () => {
     setIsLoading(true);
     try {
-      const startDate = subDays(getServerDate(), parseInt(dateRange));
+      const startDate = subDays(new Date(), parseInt(dateRange));
       
       // Fetch all ad views with ad info
       const { data: viewsData, error: viewsError } = await supabase
@@ -160,7 +159,7 @@ export function AdAnalyticsDashboard() {
       // Fill in missing dates
       const dailyArray: DailyStats[] = [];
       for (let i = parseInt(dateRange) - 1; i >= 0; i--) {
-        const date = format(subDays(getServerDate(), i), 'yyyy-MM-dd');
+        const date = format(subDays(new Date(), i), 'yyyy-MM-dd');
         dailyArray.push(dateMap.get(date) || { date, views: 0, clicks: 0, conversions: 0 });
       }
 

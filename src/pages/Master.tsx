@@ -1,5 +1,4 @@
 import { useEffect, useState, lazy, Suspense } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import hudPageBg_ptr from '@/assets/hero-tactical-ops.jpg.asset.json';
 const hudPageBg = (hudPageBg_ptr as {url:string}).url;
@@ -75,7 +74,6 @@ const AnnouncementsManager = lazy(() => import('@/components/admin/Announcements
 const SwapManagementPanel = lazy(() => import('@/components/admin/SwapManagementPanel').then(m => ({ default: m.SwapManagementPanel })));
 const LicenseFinanceControl = lazy(() => import('@/components/admin/LicenseFinanceControl').then(m => ({ default: m.LicenseFinanceControl })));
 const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagementCard').then(m => ({ default: m.UnitsManagementCard })));
-const DutyRotationConfigLazy = lazy(() => import('@/components/master/DutyRotationConfig').then(m => ({ default: m.DutyRotationConfig })));
 const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
 const CadastrosAprovacoesPanel = lazy(() => import('@/components/admin/CadastrosAprovacoesPanel').then(m => ({ default: m.CadastrosAprovacoesPanel })));
 
@@ -225,7 +223,7 @@ export default function Master() {
     try {
       const result = await adminClient.syncUsers();
       const info: LastSyncInfo = {
-        at: getServerDate().toISOString(),
+        at: new Date().toISOString(),
         totalAuthUsers: result.totalAuthUsers,
         profilesInserted: result.profilesInserted,
         rolesInserted: result.rolesInserted,
@@ -241,7 +239,7 @@ export default function Master() {
       await fetchData({ silent: true });
     } catch (e: any) {
       const info: LastSyncInfo = {
-        at: getServerDate().toISOString(),
+        at: new Date().toISOString(),
         totalAuthUsers: 0,
         profilesInserted: 0,
         rolesInserted: 0,
@@ -590,7 +588,7 @@ export default function Master() {
     try {
       const expiredAgents = agents.filter(a => {
         if (!a.license_expires_at) return false;
-        return new Date(a.license_expires_at) < getServerDate();
+        return new Date(a.license_expires_at) < new Date();
       });
       
       if (expiredAgents.length === 0) {
@@ -598,7 +596,7 @@ export default function Master() {
         return;
       }
       
-      const newExpiry = new Date(getServerDate().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const newExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       
       for (const agent of expiredAgents) {
         await supabase
@@ -750,7 +748,7 @@ export default function Master() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6 sm:[grid-template-columns:repeat(14,minmax(0,1fr))] h-auto p-1 gap-0.5 bg-slate-900/60 border border-slate-800/80 [&>button]:h-8 [&>button]:px-1.5 [&>button]:text-[11px] [&>button]:font-medium [&>button]:tracking-[0.06em] [&>button]:uppercase">
+          <TabsList className="grid w-full grid-cols-6 sm:[grid-template-columns:repeat(13,minmax(0,1fr))] h-auto p-1 gap-0.5 bg-slate-900/60 border border-slate-800/80 [&>button]:h-8 [&>button]:px-1.5 [&>button]:text-[11px] [&>button]:font-medium [&>button]:tracking-[0.06em] [&>button]:uppercase">
             <TabsTrigger value="approvals" className="relative">
               <Icon3D name="shield" size={14} className="sm:hidden" />
               <span className="hidden sm:inline">Cadastros</span>
@@ -795,18 +793,11 @@ export default function Master() {
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
-            <TabsTrigger value="duty">Escala</TabsTrigger>
             <TabsTrigger value="audit" className="gap-1 relative">
               <Icon3D name="shield" size={12} className="hidden sm:inline-flex" />
               Auditoria
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="duty" className="space-y-3 mt-3">
-            <Suspense fallback={<PanelSkeleton rows={4} />}>
-              <DutyRotationConfigLazy />
-            </Suspense>
-          </TabsContent>
 
           {/* Cadastros & Aprovações — painel unificado (pendentes + recentes) */}
           <TabsContent value="approvals" className="space-y-3 mt-3">
@@ -1398,7 +1389,7 @@ export default function Master() {
           <p className="text-xs text-muted-foreground">
             Desenvolvido por <span className="text-primary font-semibold">FRANC D'NIS</span>
           </p>
-          <p className="text-[10px] text-muted-foreground/60 mt-0.5">Feijó, Acre • © {getServerDate().getFullYear()} PlantãoPro</p>
+          <p className="text-[10px] text-muted-foreground/60 mt-0.5">Feijó, Acre • © {new Date().getFullYear()} PlantãoPro</p>
         </div>
       </div>
 

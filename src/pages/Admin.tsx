@@ -18,7 +18,6 @@ const SystemOverviewCard = lazy(() => import('@/components/dashboard/SystemOverv
 const AdvertisementsManager = lazy(() => import('@/components/admin/AdvertisementsManager').then(m => ({ default: m.AdvertisementsManager })));
 const DynamicScreensManager = lazy(() => import('@/components/admin/DynamicScreensManager').then(m => ({ default: m.DynamicScreensManager })));
 const ScheduledRoundsManager = lazy(() => import('@/components/admin/ScheduledRoundsManager').then(m => ({ default: m.ScheduledRoundsManager })));
-const RoundsQueuePlanner = lazy(() => import('@/components/admin/RoundsQueuePlanner').then(m => ({ default: m.RoundsQueuePlanner })));
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -225,7 +224,7 @@ export default function Admin() {
         <div className="flex-1 flex flex-col overflow-hidden">
           
           <main className="flex-1 overflow-y-auto">
-            <div className="admin-panel-inner p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto tactical-strip hover-lift rounded-2xl">
+            <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto tactical-strip hover-lift rounded-2xl">
               {/* Header Section */}
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -467,10 +466,7 @@ export default function Admin() {
                   </TabsContent>
                 )}
 
-                <TabsContent value="rondas" className="mt-4 space-y-4">
-                  <Suspense fallback={<PanelSkeleton />}>
-                    <RoundsQueuePlanner />
-                  </Suspense>
+                <TabsContent value="rondas" className="mt-4">
                   <Suspense fallback={<PanelSkeleton />}>
                     <ScheduledRoundsManager />
                   </Suspense>

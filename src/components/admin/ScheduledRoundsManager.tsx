@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -195,7 +194,7 @@ export function ScheduledRoundsManager() {
       // Marca como vencido para permitir disparo imediato mesmo se estava pausado
       const { error: upErr } = await supabase
         .from('scheduled_rounds')
-        .update({ next_trigger_at: getServerDate().toISOString(), is_enabled: true })
+        .update({ next_trigger_at: new Date().toISOString(), is_enabled: true })
         .eq('id', r.id);
       if (upErr) throw upErr;
 

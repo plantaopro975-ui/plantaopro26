@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -130,7 +129,7 @@ export function SwapManagementPanel({ onDataChange }: SwapManagementPanelProps) 
         .from('shift_swaps')
         .update({
           status,
-          updated_at: getServerDate().toISOString(),
+          updated_at: new Date().toISOString(),
         })
         .eq('id', swapId);
 
@@ -178,7 +177,7 @@ export function SwapManagementPanel({ onDataChange }: SwapManagementPanelProps) 
   const exportAllSwaps = async () => {
     setIsExporting(true);
     try {
-      const now = getServerDate();
+      const now = new Date();
       const content = `
 RELATÓRIO DE PERMUTAS DE PLANTÃO
 ================================

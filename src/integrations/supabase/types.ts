@@ -2432,14 +2432,6 @@ export type Database = {
           units_count: number
         }[]
       }
-      get_public_team_counts: {
-        Args: never
-        Returns: {
-          active: number
-          team: string
-          total: number
-        }[]
-      }
       get_server_now: { Args: never; Returns: string }
       has_admin_permission: {
         Args: { _permission: string; _user_id: string }

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -106,7 +105,7 @@ export function AdminTransferDialog({
         .update({
           unit_id: targetUnitId,
           team: targetTeam,
-          updated_at: getServerDate().toISOString(),
+          updated_at: new Date().toISOString(),
         })
         .eq('id', agent.id);
 
@@ -124,7 +123,7 @@ export function AdminTransferDialog({
         to_team: targetTeam,
         reason: notes || `Transferência direta pelo administrador`,
         status: 'approved',
-        reviewed_at: getServerDate().toISOString(),
+        reviewed_at: new Date().toISOString(),
       });
 
       toast.success(

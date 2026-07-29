@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -118,7 +117,7 @@ export function LicenseActivationCodeManager() {
       setCreating(true);
 
       const expiresAt = hasExpiry 
-        ? new Date(getServerDate().getTime() + expiryDays * 24 * 60 * 60 * 1000).toISOString()
+        ? new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000).toISOString()
         : null;
 
       const { error } = await supabase

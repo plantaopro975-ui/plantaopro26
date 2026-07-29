@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getServerDate } from '@/hooks/useServerTime';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
@@ -77,7 +76,7 @@ export function CredentialsViewer() {
         unit: a.unit ? { name: a.unit.name, municipality: a.unit.municipality } : null,
       }));
       setAgents(mapped);
-      setLastUpdatedAt(getServerDate());
+      setLastUpdatedAt(new Date());
     } catch (err: any) {
       const msg = err?.message || 'Não foi possível carregar a lista de agentes.';
       console.error('Error fetching agents:', err);
@@ -185,7 +184,7 @@ export function CredentialsViewer() {
     try {
       setExporting(true);
       const payload = {
-        exported_at: getServerDate().toISOString(),
+        exported_at: new Date().toISOString(),
         total: filteredAgents.length,
         filters: {
           search: searchTerm || null,
@@ -207,7 +206,7 @@ export function CredentialsViewer() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `credenciais-agentes-${format(getServerDate(), 'yyyyMMdd-HHmmss')}.json`;
+      a.download = `credenciais-agentes-${format(new Date(), 'yyyyMMdd-HHmmss')}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -227,7 +226,7 @@ export function CredentialsViewer() {
       const autoTableMod: any = await import('jspdf-autotable');
       const autoTable = autoTableMod.default || autoTableMod;
       const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
-      const now = getServerDate();
+      const now = new Date();
 
       doc.setFontSize(14);
       doc.text('Credenciais dos Agentes', 40, 40);
