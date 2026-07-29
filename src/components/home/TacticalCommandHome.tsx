@@ -251,7 +251,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
         </header>
 
         {/* MAIN GRID */}
-        <main className="mt-3 grid grid-cols-12 gap-2.5 md:gap-3 flex-1 min-h-0 overflow-y-auto lg:overflow-hidden">
+        <main className="mt-3 grid grid-cols-12 gap-2.5 md:gap-3 flex-1 min-h-0 overflow-hidden">
 
           {/* === HERO === */}
           <section className={cn(bento, 'col-span-12 lg:col-span-7 overflow-hidden h-[180px] sm:h-[220px] lg:h-auto lg:min-h-0')}>
@@ -425,7 +425,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
           </div>
 
           {/* === GESTOR DE RONDAS (CRUD) === */}
-          <section className={cn(bento, 'col-span-12 p-3 sm:p-4 lg:min-h-0 lg:overflow-hidden')}>
+          <section className={cn(bento, 'col-span-12 p-3 sm:p-4 min-h-0 overflow-y-auto')}>
             <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-3 mb-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
