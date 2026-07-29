@@ -303,9 +303,8 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
         {/* TEAMS 2x2 — col-span-8 row-span-3 */}
         <section className="col-span-12 lg:col-span-8 row-span-3 grid grid-cols-2 gap-3 md:gap-4 min-h-0">
           {TEAMS.map((t) => {
-            const st = statusLabel(t);
             const isMine = userTeamKey === t.key;
-            const Icon = TEAM_ICON[t.key];
+            void statusLabel; void TEAM_ICON;
             const active = teamCounts[t.key]?.active ?? 0;
             const total = teamCounts[t.key]?.total ?? 0;
             const isStandby = t.status === 'stand-by';
