@@ -117,7 +117,8 @@ export default function Index() {
   const themeAssets = getThemeAssets(theme, resolvedTheme);
   const { isAvailable: isBiometricAvailable, isEnrolled: isBiometricEnrolled, enrolledCpf, enrollBiometric, authenticateBiometric } = useBiometricAuth();
   const { saveCredential, updateLastLogin } = useSavedCredentialsSync();
-  const { order: homeCardOrder, move: moveHomeCard } = useHomeCardOrder();
+  // Homepage em modo cockpit: renderiza uma única área 100% da janela.
+  // Rodapés, divisores e cards externos ficam fora desta rota para não gerar scroll.
 
 
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
@@ -1393,12 +1394,12 @@ export default function Index() {
     <Suspense fallback={null}>
     <>
       <div
-        className="home-typo min-h-full flex flex-col bg-background relative overflow-x-clip max-sm:overflow-x-hidden home-compact max-sm:overflow-y-auto"
+        className="home-typo h-[100dvh] max-h-[100dvh] min-h-0 flex flex-col bg-background relative overflow-hidden home-compact"
         style={{
           fontSize: 'clamp(11px, 0.72vw + 0.55rem, 14px)',
-          ['--home-gap' as any]: 'clamp(8px, 1.1vh, 20px)',
-          ['--home-pad-x' as any]: 'clamp(12px, 1.6vw, 28px)',
-          ['--home-pad-y' as any]: 'clamp(6px, 0.8vh, 16px)',
+          ['--home-gap' as any]: 'clamp(6px, 0.9vh, 14px)',
+          ['--home-pad-x' as any]: 'clamp(0px, 0.4vw, 8px)',
+          ['--home-pad-y' as any]: 'clamp(0px, 0.4vh, 8px)',
         }}
       >
         {/* Sober command-room background — SVG only, no posters */}
@@ -1424,173 +1425,13 @@ export default function Index() {
           </button>
         )}
 
-
-      {/* Header is rendered by AppShell layout */}
-      <header className="relative z-20 flex min-h-0 flex-1 lg:flex-none flex-col overflow-visible">
-        {user && (
-          <div
-            className="w-full max-w-6xl mx-auto pt-2"
-            style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
-          >
-            <button
-              type="button"
-              onClick={() => {
-                if (isMaster) navigate('/master');
-                else if (isAdmin) navigate('/admin');
-                else navigate('/agent-panel');
-              }}
-              className="inline-flex items-center gap-2 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:bg-primary/20 hover:border-primary/60 transition"
-            >
-              <User className="h-3.5 w-3.5" />
-              Voltar para o Meu Painel
-            </button>
-          </div>
-        )}
-        {(() => {
-          const savedCount = getSavedCredentials().length;
-          const wrap = (child: JSX.Element, extra = '') => (
-            <div
-              className={cn('w-full max-w-6xl mx-auto', extra)}
-              style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
-            >
-              {child}
-            </div>
-          );
-          const blocks: Record<HomeCardId, { node: JSX.Element; grow?: boolean } | null> = {
-            rounds: null,
-            hero: {
-              grow: true,
-              node: (
-                <div
-                  id="teams-section"
-                  className="w-full max-w-[1600px] mx-auto sm:h-full lg:h-auto scroll-mt-6"
-                >
-                  <DraggableHomeCard id="hero" onDropCard={moveHomeCard} className="block sm:h-full lg:h-auto">
-                    <TacticalCommandHome onTeamClick={(team) => handleTeamClick(team)} />
-                  </DraggableHomeCard>
-                </div>
-              ),
-            },
-            banner: {
-              node: wrap(
-                <DraggableHomeCard id="banner" onDropCard={moveHomeCard}>
-                  <HomeAgentInfoBanner />
-                </DraggableHomeCard>,
-              ),
-            },
-            quick: savedCount > 0
-              ? {
-                  node: wrap(
-                    <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-                      <DraggableHomeCard id="quick" onDropCard={moveHomeCard}>
-                        <QuickAccessPanel
-                          onQuickLogin={handleQuickLogin}
-                          onSelectCredential={handleQuickLoginSelect}
-                          isLoading={!!quickLoginLoadingCpf}
-                          loadingCpf={quickLoginLoadingCpf || undefined}
-                        />
-                      </DraggableHomeCard>
-                    </div>,
-                  ),
-                }
-              : null,
-          };
-          return (
-            <div
-              className="flex min-h-0 flex-1 flex-col"
-              style={{ gap: 'var(--home-gap)', paddingTop: 'var(--home-pad-y)', paddingBottom: 'var(--home-pad-y)' }}
-            >
-              {homeCardOrder.map((id) => {
-                const b = blocks[id];
-                if (!b) return null;
-                return (
-                  <div
-                    key={id}
-                    className={b.grow ? 'min-h-0 shrink-0 overflow-visible sm:flex-1 lg:flex-none' : 'shrink-0 overflow-hidden'}
-                  >
-                    {b.node}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })()}
-      </header>
-
-      {/* Página única — seção institucional cinematográfica removida (design v3 Timeline Operacional). */}
-
-      {/* Selo do desenvolvedor foi movido para a barra do rodapé */}
-
-
-      {/* Divisor entre seção institucional e rodapé */}
-      <SectionDivider />
-
-      {/* Mobile-only beta notice */}
-      <div className="hidden sm:block">
-
-        <BetaNoticeFooter />
-      </div>
-
-      {/* Rodapé institucional profissional — oculto no mobile */}
-      <footer className="relative z-30 mt-2 w-full hidden sm:block">
-        <CopyrightFooter
-          compact
-          leftSlot={
-            <span className="inline-flex items-center gap-1.5 text-[9px] font-mono tracking-[0.24em] uppercase text-muted-foreground/70">
-              <ShieldCheck className="h-3 w-3 text-amber-500/80" strokeWidth={2.2} />
-              <span>ISE · Acre</span>
-              <span className="text-muted-foreground/30">/</span>
-              <span>Sistema Operacional</span>
-            </span>
-          }
-          rightSlot={
-            <>
-              <span className="text-muted-foreground/40">·</span>
-              <span className="inline-flex items-center gap-1 text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                </span>
-                <span>Online</span>
-              </span>
-              
-              <span className="text-muted-foreground/40">·</span>
-              <button
-                type="button"
-                onClick={() => setShowMasterLogin(true)}
-                aria-label="Acesso Administrador Master"
-                className="inline-flex items-center gap-1 rounded-sm px-1 py-0.5 text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/70 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
-              >
-                <Lock className="h-3 w-3" strokeWidth={2.2} />
-                <span>Master</span>
-              </button>
-            </>
-          }
-        />
-      </footer>
-
-      {/* Mobile-only ultra-thin footer strip (fixo, não empurra viatura/boneco) */}
-      <div className="sm:hidden fixed bottom-0 inset-x-0 z-20 h-8 flex items-center justify-center gap-2.5 bg-gradient-to-r from-background/85 via-background/95 to-background/85 backdrop-blur-md border-t border-amber-500/20 pointer-events-auto shadow-[0_-4px_16px_-8px_rgba(0,0,0,0.4)]">
-        <ShieldCheck className="h-3 w-3 text-amber-500/90" strokeWidth={2.4} />
-        <span className="text-[10.5px] font-mono tracking-[0.22em] uppercase text-amber-400/95 font-bold">PlantãoPro</span>
-        <span className="text-muted-foreground/40 text-[10.5px]">·</span>
-        <span className="inline-flex items-center gap-1 text-[9.5px] font-mono tracking-[0.18em] uppercase text-muted-foreground/80">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-          </span>
-          <span>Online</span>
-        </span>
-        <span className="text-muted-foreground/40 text-[10.5px]">·</span>
-        <button
-          type="button"
-          onClick={() => setShowMasterLogin(true)}
-          aria-label="Acesso Administrador Master"
-          className="inline-flex items-center gap-1 text-[10px] font-mono tracking-[0.18em] uppercase text-muted-foreground/80 hover:text-amber-400 transition-colors"
+        <main
+          id="teams-section"
+          className="relative z-20 min-h-0 flex-1 overflow-hidden"
+          style={{ padding: 'var(--home-pad-y) var(--home-pad-x)' }}
         >
-          <Lock className="h-3 w-3" strokeWidth={2.2} />
-          <span>Master</span>
-        </button>
+          <TacticalCommandHome onTeamClick={(team) => handleTeamClick(team)} />
+        </main>
       </div>
 
 
@@ -2197,7 +2038,6 @@ export default function Index() {
         onClose={() => setPendingApprovalDialog({ open: false })}
         agentName={pendingApprovalDialog.agentName}
       />
-      </div>
       <RoundReminderDialog
         open={roundReminder.open}
         onDismiss={roundReminder.dismiss}
