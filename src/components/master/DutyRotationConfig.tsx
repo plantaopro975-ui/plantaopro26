@@ -361,6 +361,42 @@ export function DutyRotationConfig() {
           </>
         )}
       </CardContent>
+
+      <AlertDialog open={overrideOpen} onOpenChange={setOverrideOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar troca imediata de plantão</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-2 text-sm">
+                <div>
+                  Você vai substituir a equipe em serviço agora:
+                  <div className="mt-2 rounded-md border border-white/10 bg-black/40 px-3 py-2">
+                    <strong>{TEAM_LABEL[currentDuty.team]}</strong> → <strong className="text-amber-300">{TEAM_LABEL[overrideTeam]}</strong>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Motivo:</span> {overrideReason}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  A ação será registrada com data, hora e usuário responsável, e a rotação continuará
+                  normalmente a partir de {TEAM_LABEL[overrideTeam]}.
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={overriding}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); applyOverride(); }}
+              disabled={overriding}
+              className="bg-amber-500 hover:bg-amber-600 text-black"
+            >
+              {overriding ? 'Aplicando…' : 'Confirmar troca'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
+
