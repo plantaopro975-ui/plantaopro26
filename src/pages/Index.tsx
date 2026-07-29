@@ -1410,7 +1410,7 @@ export default function Index() {
               else if (isAdmin) navigate('/admin');
               else navigate('/agent-panel');
             }}
-            className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
+            className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 font-bold uppercase tracking-widest text-primary-foreground shadow-lg ring-1 ring-primary/50 hover:brightness-110 active:scale-95 transition"
             style={{ fontSize: 'clamp(9px, 0.6vw + 0.4rem, 12px)' }}
           >
             <User className="h-3 w-3" />
