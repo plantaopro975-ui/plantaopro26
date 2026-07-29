@@ -520,9 +520,13 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
 
                   {/* Duty roster row */}
                   <div className="mt-3 grid grid-cols-3 gap-2">
-                    <div className="bg-black/40 border border-white/5 px-2 py-1.5 rounded-sm">
+                    <div className={cn('bg-black/40 border px-2 py-1.5 rounded-sm', isOnDuty ? 'border-[color:var(--accent)]/40' : 'border-white/5')}>
                       <div className="text-[8.5px] uppercase tracking-widest text-white/40 font-semibold">Turno</div>
-                      <div className="font-mono text-[10.5px] text-white/85 mt-0.5 truncate">{t.shift}</div>
+                      <div className="font-mono text-[10.5px] text-white/85 mt-0.5 truncate">
+                        {isOnDuty
+                          ? `${dutyConfig.teams[t.key]?.start ?? '07:00'} → ${dutyConfig.teams[t.key]?.end ?? '07:00'}`
+                          : t.shift}
+                      </div>
                     </div>
                     <div className="bg-black/40 border border-white/5 px-2 py-1.5 rounded-sm">
                       <div className="text-[8.5px] uppercase tracking-widest text-white/40 font-semibold">Setor</div>
@@ -533,6 +537,17 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                       <div className="font-mono text-[10.5px] mt-0.5" style={{ color: `rgb(${t.glowRgb})` }}>{t.nextRound}</div>
                     </div>
                   </div>
+
+                  {isOnDuty && dutyConfig.teams[t.key]?.notes && (
+                    <div className="mt-2 rounded-sm border border-[color:var(--accent)]/30 bg-black/45 px-2 py-1.5">
+                      <div className="text-[8.5px] uppercase tracking-widest font-semibold" style={{ color: `rgb(${t.glowRgb})` }}>
+                        Observações do plantão
+                      </div>
+                      <div className="text-[10.5px] text-white/85 mt-0.5 line-clamp-2">
+                        {dutyConfig.teams[t.key]?.notes}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Reflective safety chevrons — like patrol vehicle rear */}
