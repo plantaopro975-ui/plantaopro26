@@ -2038,7 +2038,6 @@ export default function Index() {
         onClose={() => setPendingApprovalDialog({ open: false })}
         agentName={pendingApprovalDialog.agentName}
       />
-      </div>
       <RoundReminderDialog
         open={roundReminder.open}
         onDismiss={roundReminder.dismiss}
