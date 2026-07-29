@@ -886,16 +886,23 @@ export default function Index() {
     
     const errors: Record<string, string> = {};
     const cleanCpf = loginCpf.replace(/\D/g, '');
-    
-    if (!cleanCpf || cleanCpf.length !== 11) {
-      errors.cpf = 'CPF inválido';
+
+    if (!cleanCpf) {
+      errors.cpf = 'Informe seu CPF';
+    } else if (cleanCpf.length !== 11) {
+      errors.cpf = 'CPF deve ter 11 dígitos';
+    } else if (!validateCPF(cleanCpf)) {
+      errors.cpf = 'CPF inválido — verifique os dígitos';
     }
-    if (!loginPassword || loginPassword.length < 6) {
+    if (!loginPassword) {
+      errors.password = 'Informe sua senha';
+    } else if (loginPassword.length < 6) {
       errors.password = 'Senha deve ter pelo menos 6 caracteres';
     }
-    
+
     setLoginErrors(errors);
     if (Object.keys(errors).length > 0) return;
+
     
     setIsSubmitting(true);
     
