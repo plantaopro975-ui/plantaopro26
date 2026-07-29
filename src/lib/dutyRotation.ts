@@ -16,12 +16,24 @@ export interface TeamScheduleEntry {
   notes?: string;
 }
 
+export interface DutyOverrideRecord {
+  team: TeamKey;
+  effective_from_ymd: string; // YYYY-MM-DD (operational)
+  reason: string;
+  set_by_name?: string | null;
+  set_by_id?: string | null;
+  set_at: string; // ISO timestamp
+  previous_team?: TeamKey | null;
+}
+
 export interface DutyScheduleConfig {
   order: TeamKey[];
   anchor_ymd: string;   // YYYY-MM-DD
   anchor_team: TeamKey;
   handover_hour: number; // 0..23 (default 7)
   teams: Record<TeamKey, TeamScheduleEntry>;
+  override?: DutyOverrideRecord | null;
+  override_history?: DutyOverrideRecord[];
 }
 
 export const DEFAULT_DUTY_CONFIG: DutyScheduleConfig = {
