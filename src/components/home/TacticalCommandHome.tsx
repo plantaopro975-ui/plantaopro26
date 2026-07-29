@@ -199,45 +199,53 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
 
   return (
     <div className="tch2-root w-full text-slate-200 font-['DM_Sans'] bg-[#07070b]">
-      <div className="w-full max-w-[1440px] mx-auto px-3 md:px-4 pt-3 pb-4 lg:h-[calc(100vh-64px)] lg:overflow-hidden lg:flex lg:flex-col">
+      <div className="w-full max-w-[1440px] mx-auto px-3 md:px-5 pt-2 pb-2 lg:h-[calc(100dvh-64px)] lg:overflow-hidden lg:flex lg:flex-col">
 
-        {/* HEADER — Mission ID compacto */}
-        <header className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#141420] shrink-0">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-[hsl(var(--primary))] to-amber-600 flex items-center justify-center rounded-md shrink-0 shadow-[0_0_18px_hsl(var(--primary)/0.4)]">
-              <Shield className="w-4 h-4 text-black" strokeWidth={2.6} />
+        {/* HEADER — Command bar profissional */}
+        <header className="relative flex items-center justify-between gap-3 h-11 sm:h-12 px-2 sm:px-3 rounded-md bg-gradient-to-r from-[#0b0b12] via-[#0d0d16] to-[#0b0b12] border border-[#1a1a26] shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02)_inset]">
+          {/* accent bar */}
+          <span aria-hidden className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] rounded-r bg-[hsl(var(--primary))] shadow-[0_0_10px_hsl(var(--primary)/0.7)]" />
+
+          <div className="flex items-center gap-2.5 min-w-0 pl-1.5">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[hsl(var(--primary))] to-amber-700 flex items-center justify-center rounded-md shrink-0 ring-1 ring-black/40">
+              <Shield className="w-3.5 h-3.5 text-black" strokeWidth={2.8} />
             </div>
-            <div className="min-w-0">
-              <h1 className="text-[11.5px] sm:text-[13px] font-bold tracking-[0.16em] text-white leading-tight truncate" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                CENTRO DE COMANDO
+            <div className="min-w-0 leading-tight">
+              <h1 className="text-[11px] sm:text-[12.5px] font-bold tracking-[0.2em] text-white truncate" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                CENTRO&nbsp;DE&nbsp;COMANDO
               </h1>
-              <p className="text-[8.5px] sm:text-[9px] text-[hsl(var(--primary))]/90 font-bold uppercase tracking-[0.24em] leading-tight">
-                ISE • Acre
+              <p className="text-[8px] sm:text-[8.5px] text-slate-500 font-semibold uppercase tracking-[0.28em]">
+                ISE&nbsp;•&nbsp;Acre&nbsp;<span className="text-[hsl(var(--primary))]/70">/</span>&nbsp;Sede
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {agent?.team && (
-              <div className="hidden sm:flex flex-col items-end leading-tight">
-                <span className="text-[8.5px] text-slate-500 uppercase font-bold tracking-widest">Sua equipe</span>
-                <span className="text-[11px] font-bold text-[hsl(var(--primary))] tracking-[0.18em]">
+              <div className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded border border-[#1f1f2e] bg-[#0a0a11]">
+                <span className="w-1 h-1 rounded-full bg-[hsl(var(--primary))] shadow-[0_0_6px_hsl(var(--primary))]" />
+                <span className="text-[8.5px] text-slate-500 uppercase font-bold tracking-widest">Equipe</span>
+                <span className="text-[10.5px] font-bold text-[hsl(var(--primary))] tracking-[0.18em] tabular-nums">
                   {agent.team.toString().toUpperCase()}
                 </span>
               </div>
             )}
-            <div className="text-right leading-tight">
-              <p className="text-[8px] sm:text-[8.5px] text-slate-500 uppercase tracking-widest truncate max-w-[110px]">{date}</p>
-              <p className="text-[15px] sm:text-[17px] md:text-[19px] font-bold text-white tabular-nums leading-none" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+
+            <div className="hidden sm:block w-px h-6 bg-[#1f1f2e]" />
+
+            <div className="flex items-baseline gap-1.5 sm:gap-2 leading-none">
+              <span className="text-[14px] sm:text-[16px] md:text-[18px] font-bold text-white tabular-nums" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 {time}
-              </p>
+              </span>
+              <span className="hidden sm:inline text-[8.5px] text-slate-500 uppercase tracking-widest truncate max-w-[120px]">{date}</span>
             </div>
-            <div className="hidden md:inline-flex items-center gap-1.5 bg-[#0f0f18] px-2 py-1 rounded-md border border-[#1f1f2e]">
+
+            <div className="hidden md:inline-flex items-center gap-1.5 bg-emerald-500/[0.06] px-2 py-1 rounded border border-emerald-500/25">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-70" />
                 <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.9)]" />
               </span>
-              <span className="text-[9.5px] font-bold text-slate-300 tracking-widest">ONLINE</span>
+              <span className="text-[9px] font-bold text-emerald-300 tracking-[0.2em]">ONLINE</span>
             </div>
           </div>
         </header>
@@ -631,6 +639,25 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             </div>
           </section>
         </main>
+
+        {/* FOOTER — Status bar operacional */}
+        <footer className="mt-2 h-8 shrink-0 flex items-center justify-between gap-3 px-2.5 rounded-md border border-[#1a1a26] bg-[#08080d] text-[9.5px] font-semibold tracking-widest uppercase text-slate-500">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.9)]" />
+              <span className="text-emerald-300/90">Sistema Operacional</span>
+            </span>
+            <span className="hidden sm:inline w-px h-3 bg-[#1f1f2e]" />
+            <span className="hidden sm:inline text-slate-500">v3 · Tactical</span>
+            <span className="hidden md:inline w-px h-3 bg-[#1f1f2e]" />
+            <span className="hidden md:inline text-slate-500 tabular-nums">Latência&nbsp;<span className="text-slate-300">42ms</span></span>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="hidden md:inline text-slate-500 tabular-nums">UTC&nbsp;-05:00&nbsp;<span className="text-slate-300">Acre</span></span>
+            <span className="hidden sm:inline w-px h-3 bg-[#1f1f2e]" />
+            <span className="text-slate-500">PlantãoPro&nbsp;<span className="text-[hsl(var(--primary))]/90">© 2026</span></span>
+          </div>
+        </footer>
       </div>
 
       <TeamDetailsDialog
