@@ -97,18 +97,34 @@ const DEFAULT_ROUNDS: Round[] = [
   { id: 'r4', startMin: 45,  endMin: 60,  agent: '' },
 ];
 
+/**
+ * Relógio ao vivo baseado em America/Rio_Branco (UTC-5), NÃO no fuso do dispositivo.
+ * Garante que todas as telas exibam a hora oficial do Acre.
+ */
+const ACRE_TZ = 'America/Rio_Branco';
+function acreParts(d: Date): { hour: number; minute: number; second: number } {
+  const parts = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: ACRE_TZ,
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  }).formatToParts(d);
+  const get = (t: string) => Number(parts.find(p => p.type === t)?.value ?? '0');
+  return { hour: get('hour'), minute: get('minute'), second: get('second') };
+}
+
 function useLiveClock(): { time: string; date: string; nowMin: number } {
   const [now, setNow] = useState<Date>(() => new Date());
   useEffect(() => {
     const t = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(t);
   }, []);
-  return {
-    time: now.toLocaleTimeString('pt-BR', { hour12: false }),
-    date: now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' }),
-    nowMin: now.getHours() * 60 + now.getMinutes(),
-  };
+  const { hour, minute, second } = acreParts(now);
+  const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}`;
+  const date = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: ACRE_TZ, weekday: 'short', day: '2-digit', month: 'short',
+  }).format(now);
+  return { time, date, nowMin: hour * 60 + minute };
 }
+
 
 export function TacticalCommandHome({ onTeamClick }: Props) {
   const { time, date, nowMin } = useLiveClock();
