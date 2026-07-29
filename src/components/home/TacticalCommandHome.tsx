@@ -480,7 +480,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             {/* Grid: cards de ronda + timeline */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
               <div className="lg:col-span-8">
-                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2">
                   {sortedRounds.map((r) => {
                     const isActive = r.id === activeRoundId;
                     const isPast = !isActive && r.endMin > r.startMin ? nowMin >= r.endMin : false;
