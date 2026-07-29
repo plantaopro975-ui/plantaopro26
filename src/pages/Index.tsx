@@ -1423,7 +1423,7 @@ export default function Index() {
       <header className="relative z-20 flex min-h-0 flex-1 lg:flex-none flex-col overflow-visible">
         {user && (
           <div
-            className="w-full max-w-6xl mx-auto pt-2"
+            className="w-full max-w-6xl mx-auto pt-4"
             style={{ paddingLeft: 'var(--home-pad-x)', paddingRight: 'var(--home-pad-x)' }}
           >
             <button
