@@ -18,6 +18,7 @@ const SystemOverviewCard = lazy(() => import('@/components/dashboard/SystemOverv
 const AdvertisementsManager = lazy(() => import('@/components/admin/AdvertisementsManager').then(m => ({ default: m.AdvertisementsManager })));
 const DynamicScreensManager = lazy(() => import('@/components/admin/DynamicScreensManager').then(m => ({ default: m.DynamicScreensManager })));
 const ScheduledRoundsManager = lazy(() => import('@/components/admin/ScheduledRoundsManager').then(m => ({ default: m.ScheduledRoundsManager })));
+const RoundsQueuePlanner = lazy(() => import('@/components/admin/RoundsQueuePlanner').then(m => ({ default: m.RoundsQueuePlanner })));
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -466,7 +467,10 @@ export default function Admin() {
                   </TabsContent>
                 )}
 
-                <TabsContent value="rondas" className="mt-4">
+                <TabsContent value="rondas" className="mt-4 space-y-4">
+                  <Suspense fallback={<PanelSkeleton />}>
+                    <RoundsQueuePlanner />
+                  </Suspense>
                   <Suspense fallback={<PanelSkeleton />}>
                     <ScheduledRoundsManager />
                   </Suspense>
