@@ -75,6 +75,7 @@ const AnnouncementsManager = lazy(() => import('@/components/admin/Announcements
 const SwapManagementPanel = lazy(() => import('@/components/admin/SwapManagementPanel').then(m => ({ default: m.SwapManagementPanel })));
 const LicenseFinanceControl = lazy(() => import('@/components/admin/LicenseFinanceControl').then(m => ({ default: m.LicenseFinanceControl })));
 const UnitsManagementCard = lazy(() => import('@/components/admin/UnitsManagementCard').then(m => ({ default: m.UnitsManagementCard })));
+const DutyRotationConfigLazy = lazy(() => import('@/components/master/DutyRotationConfig').then(m => ({ default: m.DutyRotationConfig })));
 const AgentAccessControl = lazy(() => import('@/components/admin/AgentAccessControl').then(m => ({ default: m.AgentAccessControl })));
 const CadastrosAprovacoesPanel = lazy(() => import('@/components/admin/CadastrosAprovacoesPanel').then(m => ({ default: m.CadastrosAprovacoesPanel })));
 
@@ -794,11 +795,18 @@ export default function Master() {
             <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="transfers">Transfer.</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="duty">Escala</TabsTrigger>
             <TabsTrigger value="audit" className="gap-1 relative">
               <Icon3D name="shield" size={12} className="hidden sm:inline-flex" />
               Auditoria
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="duty" className="space-y-3 mt-3">
+            <Suspense fallback={<PanelSkeleton rows={4} />}>
+              <DutyRotationConfigLazy />
+            </Suspense>
+          </TabsContent>
 
           {/* Cadastros & Aprovações — painel unificado (pendentes + recentes) */}
           <TabsContent value="approvals" className="space-y-3 mt-3">
