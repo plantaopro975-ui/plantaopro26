@@ -425,7 +425,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
           </div>
 
           {/* === GESTOR DE RONDAS (CRUD) === */}
-          <section className={cn(bento, 'col-span-12 p-3 sm:p-4 lg:min-h-0 lg:overflow-hidden')}>
+          <section className={cn(bento, 'col-span-12 p-3 sm:p-4 min-h-0 overflow-y-auto')}>
             <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-3 mb-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
