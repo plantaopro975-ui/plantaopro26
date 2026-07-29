@@ -306,70 +306,135 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             const st = statusLabel(t);
             const isMine = userTeamKey === t.key;
             const Icon = TEAM_ICON[t.key];
+            const active = teamCounts[t.key]?.active ?? 0;
+            const total = teamCounts[t.key]?.total ?? 0;
+            const isStandby = t.status === 'stand-by';
             return (
               <button
                 key={t.key}
                 type="button"
                 onClick={() => onTeamClick(t.key)}
                 aria-label={`Entrar na equipe ${t.label}`}
-                className="group text-left bg-[#1a1a1a] p-3 md:p-4 border border-white/5 hover:border-[#c9a84c]/40 transition-colors relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a84c] rounded-sm"
+                className="tac-card group text-left relative overflow-hidden rounded-sm bg-gradient-to-br from-[#141414] to-[#0a0a0a] border border-white/5 p-3 md:p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent)] hover:shadow-[0_10px_40px_-10px_var(--accent-glow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]"
+                style={{
+                  ['--accent' as never]: `rgb(${t.glowRgb})`,
+                  ['--accent-glow' as never]: `rgba(${t.glowRgb},0.45)`,
+                }}
               >
-                <div
-                  className="absolute top-0 right-0 w-16 h-16 rotate-45 translate-x-8 -translate-y-8 opacity-70 transition-opacity group-hover:opacity-100"
-                  style={{ backgroundColor: `rgba(${t.glowRgb}, 0.12)` }}
-                  aria-hidden
-                />
-                <div className="flex justify-between items-start mb-3 md:mb-4 relative">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Icon className="w-3.5 h-3.5" style={{ color: `rgb(${t.glowRgb})` }} strokeWidth={2.4} />
+                {/* Corner brackets */}
+                <span className="tac-corner tac-corner--tl" aria-hidden />
+                <span className="tac-corner tac-corner--tr" aria-hidden />
+                <span className="tac-corner tac-corner--bl" aria-hidden />
+                <span className="tac-corner tac-corner--br" aria-hidden />
+
+                {/* Grid + scanline (hover) */}
+                <div className="tac-grid" aria-hidden />
+                <div className="tac-scan" aria-hidden />
+
+                {/* Chevron stripes background */}
+                <svg className="absolute inset-0 w-full h-full opacity-[0.05] group-hover:opacity-[0.12] transition-opacity" aria-hidden>
+                  <defs>
+                    <pattern id={`chev-${t.key}`} x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                      <rect width="7" height="14" fill="currentColor" style={{ color: `rgb(${t.glowRgb})` }} />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill={`url(#chev-${t.key})`} />
+                </svg>
+
+                {/* HEADER: shield emblem + label */}
+                <div className="relative flex items-start gap-3">
+                  {/* Shield emblem */}
+                  <div className="tac-shield shrink-0" aria-hidden>
+                    <svg viewBox="0 0 48 56" className="w-11 h-[52px] md:w-12 md:h-14">
+                      <defs>
+                        <linearGradient id={`sh-${t.key}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0" stopColor={`rgb(${t.glowRgb})`} stopOpacity="0.35" />
+                          <stop offset="1" stopColor={`rgb(${t.glowRgb})`} stopOpacity="0.05" />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        d="M24 2 L44 8 V26 C44 40 34 50 24 54 C14 50 4 40 4 26 V8 Z"
+                        fill={`url(#sh-${t.key})`}
+                        stroke={`rgb(${t.glowRgb})`}
+                        strokeWidth="1.2"
+                        strokeOpacity="0.9"
+                      />
+                      <path d="M8 20 L24 26 L40 20" stroke={`rgb(${t.glowRgb})`} strokeWidth="0.8" strokeOpacity="0.5" fill="none" />
+                      <path d="M8 30 L24 36 L40 30" stroke={`rgb(${t.glowRgb})`} strokeWidth="0.8" strokeOpacity="0.35" fill="none" />
+                    </svg>
+                    <div className="tac-shield-icon">
+                      <Icon className="w-4 h-4 md:w-[18px] md:h-[18px]" style={{ color: `rgb(${t.glowRgb})` }} strokeWidth={2.4} />
+                    </div>
+                    {/* radar ping */}
+                    {!isStandby && <span className="tac-ping" style={{ ['--accent' as never]: `rgba(${t.glowRgb},0.6)` }} aria-hidden />}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span
                         className={cn(
-                          'text-xl md:text-2xl font-bold block leading-none tracking-tight',
-                          t.status === 'stand-by' ? 'text-white/50' : 'text-white',
+                          'text-xl md:text-2xl font-bold leading-none tracking-tight',
+                          isStandby ? 'text-white/50' : 'text-white',
                         )}
                         style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                       >
                         {t.label}
                       </span>
                       {isMine && (
-                        <span className="ml-1 px-1 py-0.5 text-[8px] font-bold uppercase tracking-widest bg-[#c9a84c] text-black rounded-sm">
+                        <span className="px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest bg-[#c9a84c] text-black rounded-sm">
                           Sua
                         </span>
                       )}
                     </div>
-                    <span className={cn('text-[9.5px] md:text-[10px] uppercase font-bold tracking-widest mt-1 block', st.color)}>
+                    <span className="text-[9px] md:text-[10px] uppercase font-semibold tracking-[0.18em] text-white/40 mt-0.5 block">
+                      {t.role}
+                    </span>
+                    <span className={cn('text-[9.5px] md:text-[10px] uppercase font-bold tracking-widest mt-1 inline-flex items-center gap-1', st.color)}>
+                      <span className={cn('w-1.5 h-1.5 rounded-full', st.bar, !isStandby && 'animate-pulse')} />
                       {st.label}
                     </span>
                   </div>
+
+                  {/* Counter */}
                   <div className="text-right shrink-0">
                     <div
                       className={cn(
                         'text-2xl md:text-3xl font-bold tabular-nums leading-none',
-                        t.status === 'stand-by' ? 'text-white/40' : 'text-white',
+                        isStandby ? 'text-white/40' : 'text-white',
                       )}
                       style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                     >
-                      {String(teamCounts[t.key]?.active ?? 0).padStart(2, '0')}
-                      <span className="text-xs md:text-sm text-white/40 font-normal">/{String(teamCounts[t.key]?.total ?? 0).padStart(2, '0')}</span>
+                      {String(active).padStart(2, '0')}
+                      <span className="text-xs md:text-sm text-white/30 font-normal">/{String(total).padStart(2, '0')}</span>
                     </div>
-                    <div className="text-[9px] md:text-[10px] uppercase opacity-50 mt-0.5">Ativos / Total</div>
+                    <div className="text-[8.5px] md:text-[9px] uppercase opacity-50 mt-0.5 tracking-widest">Efetivo</div>
                   </div>
-
                 </div>
 
-                <div className="w-full bg-black/50 h-1 rounded-sm overflow-hidden">
-                  <div className={cn('h-full transition-all', st.bar)} style={{ width: st.barPct }} />
+                {/* Capacity bar */}
+                <div className="mt-3 relative">
+                  <div className="flex justify-between text-[8.5px] uppercase tracking-widest text-white/40 mb-1">
+                    <span>Prontidão</span>
+                    <span className="tabular-nums" style={{ color: `rgb(${t.glowRgb})` }}>{st.barPct}</span>
+                  </div>
+                  <div className="w-full bg-black/60 h-1 rounded-sm overflow-hidden ring-1 ring-white/5">
+                    <div
+                      className="h-full transition-[width] duration-700"
+                      style={{ width: st.barPct, background: `linear-gradient(90deg, rgb(${t.glowRgb}), rgba(${t.glowRgb},0.4))` }}
+                    />
+                  </div>
                 </div>
 
-                <div className="mt-3 md:mt-4 flex items-center justify-between text-[9.5px] md:text-[10px] text-slate-400">
-                  <span className="inline-flex items-center gap-1.5 uppercase tracking-widest">
+                {/* Footer: ID plate */}
+                <div className="mt-3 flex items-center justify-between text-[9.5px] md:text-[10px] pt-2 border-t border-white/5">
+                  <span className="inline-flex items-center gap-1.5 uppercase tracking-widest text-slate-400">
                     <Clock className="w-3 h-3 opacity-60" />
                     <span className="font-mono">{t.shift}</span>
                   </span>
-                  <span className="inline-flex items-center gap-1 uppercase tracking-widest text-slate-500 group-hover:text-[#c9a84c] transition-colors">
-                    Próxima {t.nextRound}
-                    <ChevronRight className="w-3 h-3" />
+                  <span className="inline-flex items-center gap-1 uppercase tracking-widest font-semibold text-slate-500 group-hover:text-[color:var(--accent)] transition-colors">
+                    <Radio className="w-3 h-3" />
+                    <span>Próx. {t.nextRound}</span>
+                    <ChevronRight className="w-3 h-3 -mr-0.5 transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
               </button>
