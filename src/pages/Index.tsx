@@ -1032,7 +1032,7 @@ export default function Index() {
         title: `Acesso liberado, ${(foundAgent?.name || '').split(' ')[0] || 'Agente'}`,
         description: 'Autenticação confirmada. Boa jornada e proteja-se sempre.',
       });
-      navigate('/agent-panel', { replace: true });
+      navigate(selectedTeam ? `/agent-panel?team=${encodeURIComponent(selectedTeam)}` : '/agent-panel', { replace: true });
     }
     
     setIsSubmitting(false);
