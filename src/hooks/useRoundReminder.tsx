@@ -37,7 +37,7 @@ export function useRoundReminder(options?: { paused?: boolean }) {
   };
 
   useEffect(() => {
-    if (getLastAt() === 0) setLastAt(Date.now());
+    if (getLastAt() === 0) setLastAt(nowMs());
   }, []);
 
   // Reage a mudanças nas preferências (mesma aba ou outra aba).
@@ -74,7 +74,7 @@ export function useRoundReminder(options?: { paused?: boolean }) {
     const check = () => {
       if (openRef.current) return;
       const last = getLastAt();
-      const elapsed = Date.now() - last;
+      const elapsed = nowMs() - last;
       if (elapsed >= settings.intervalMin * 60_000) {
         setOpen(true);
       }
@@ -89,7 +89,7 @@ export function useRoundReminder(options?: { paused?: boolean }) {
     };
   }, [settings.intervalMin, settings.enabled, paused]);
 
-  const dismiss = () => { setLastAt(Date.now()); setOpen(false); };
+  const dismiss = () => { setLastAt(nowMs()); setOpen(false); };
   const acknowledge = () => dismiss();
 
   return { open, dismiss, acknowledge, settings };
