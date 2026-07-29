@@ -197,468 +197,408 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
     }
   };
 
+  const statusLabel = (t: TeamDetail): { label: string; color: string; bar: string; barPct: string } => {
+    if (t.status === 'stand-by') {
+      return { label: 'Em reserva', color: 'text-red-400', bar: 'bg-red-500', barPct: '20%' };
+    }
+    // Diferencia por role para colorir sem alterar identidade
+    switch (t.key) {
+      case 'alfa':    return { label: 'Operação ativa', color: 'text-emerald-400', bar: 'bg-emerald-500', barPct: '85%' };
+      case 'bravo':   return { label: 'Intervenção',    color: 'text-blue-400',    bar: 'bg-blue-400',    barPct: '70%' };
+      case 'charlie': return { label: 'Vigilância',     color: 'text-sky-400',     bar: 'bg-sky-400',     barPct: '60%' };
+      default:        return { label: 'Comando',        color: 'text-[#c9a84c]',   bar: 'bg-[#c9a84c]',   barPct: '90%' };
+    }
+  };
+
   return (
-    <div className="tch2-root w-full text-slate-200 font-['DM_Sans'] bg-[#07070b]">
-      <div className="w-full max-w-[1440px] mx-auto px-3 md:px-5 pt-2 pb-2 h-[100dvh] lg:h-[calc(100dvh-64px)] overflow-hidden flex flex-col">
-
-        {/* HEADER — Command bar profissional */}
-        <header className="relative flex items-center justify-between gap-3 h-11 sm:h-12 px-2 sm:px-3 rounded-md bg-gradient-to-r from-[#0b0b12] via-[#0d0d16] to-[#0b0b12] border border-[#1a1a26] shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02)_inset]">
-          {/* accent bar */}
-          <span aria-hidden className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] rounded-r bg-[hsl(var(--primary))] shadow-[0_0_10px_hsl(var(--primary)/0.7)]" />
-
-          <div className="flex items-center gap-2.5 min-w-0 pl-1.5">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[hsl(var(--primary))] to-amber-700 flex items-center justify-center rounded-md shrink-0 ring-1 ring-black/40">
-              <Shield className="w-3.5 h-3.5 text-black" strokeWidth={2.8} />
-            </div>
-            <div className="min-w-0 leading-tight">
-              <h1 className="text-[11px] sm:text-[12.5px] font-bold tracking-[0.2em] text-white truncate" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                CENTRO&nbsp;DE&nbsp;COMANDO
-              </h1>
-              <p className="text-[8px] sm:text-[8.5px] text-slate-500 font-semibold uppercase tracking-[0.28em]">
-                ISE&nbsp;•&nbsp;Acre&nbsp;<span className="text-[hsl(var(--primary))]/70">/</span>&nbsp;Sede
-              </p>
-            </div>
+    <div
+      className="w-full h-[100dvh] bg-[#0d0d0d] text-[#f0d78c] font-['DM_Sans'] overflow-hidden flex flex-col p-3 md:p-4 gap-3 md:gap-4 selection:bg-[#c9a84c] selection:text-[#0d0d0d]"
+      style={{ ['--hud-gold' as never]: '#c9a84c' }}
+    >
+      {/* HEADER — Command bar */}
+      <header className="shrink-0 flex items-center justify-between bg-[#1a1a1a] border-l-4 border-[#c9a84c] px-4 md:px-6 py-2.5 md:py-3 shadow-2xl rounded-r-md">
+        <div className="flex items-center gap-4 md:gap-8 min-w-0">
+          <div className="flex flex-col min-w-0">
+            <span
+              className="text-xl md:text-2xl font-bold tracking-tighter uppercase text-[#c9a84c] leading-none"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              Plantão<span className="text-white">Pro</span>
+            </span>
+            <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] opacity-50 mt-0.5">
+              Centro de Comando Socioeducativo
+            </span>
           </div>
-
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {agent?.team && (
-              <div className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded border border-[#1f1f2e] bg-[#0a0a11]">
-                <span className="w-1 h-1 rounded-full bg-[hsl(var(--primary))] shadow-[0_0_6px_hsl(var(--primary))]" />
-                <span className="text-[8.5px] text-slate-500 uppercase font-bold tracking-widest">Equipe</span>
-                <span className="text-[10.5px] font-bold text-[hsl(var(--primary))] tracking-[0.18em] tabular-nums">
-                  {agent.team.toString().toUpperCase()}
-                </span>
-              </div>
-            )}
-
-            <div className="hidden sm:block w-px h-6 bg-[#1f1f2e]" />
-
-            <div className="flex items-baseline gap-1.5 sm:gap-2 leading-none">
-              <span className="text-[14px] sm:text-[16px] md:text-[18px] font-bold text-white tabular-nums" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                {time}
-              </span>
-              <span className="hidden sm:inline text-[8.5px] text-slate-500 uppercase tracking-widest truncate max-w-[120px]">{date}</span>
-            </div>
-
-            <div className="hidden md:inline-flex items-center gap-1.5 bg-emerald-500/[0.06] px-2 py-1 rounded border border-emerald-500/25">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-70" />
-                <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.9)]" />
-              </span>
-              <span className="text-[9px] font-bold text-emerald-300 tracking-[0.2em]">ONLINE</span>
-            </div>
+          <div className="hidden md:block h-8 w-px bg-white/10" />
+          <div className="hidden md:flex flex-col">
+            <span className="text-[10px] uppercase opacity-50 font-bold tracking-widest">Unidade Operacional</span>
+            <span className="text-sm font-medium text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              ISE • ACRE / SEDE
+            </span>
           </div>
-        </header>
+        </div>
 
-        {/* MAIN GRID */}
-        <main className="mt-3 grid grid-cols-12 gap-2.5 md:gap-3 flex-1 min-h-0 overflow-hidden">
-
-          {/* === HERO === */}
-          <section className={cn(bento, 'col-span-12 lg:col-span-7 overflow-hidden h-[180px] sm:h-[220px] lg:h-auto lg:min-h-0')}>
-            <img
-              src={commandScene.url}
-              alt="Agente socioeducativo em viatura oficial"
-              className="absolute inset-0 w-full h-full object-cover object-center"
-              width={1600}
-              height={912}
-              loading="eager"
-              decoding="async"
-            />
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#07070b] via-[#07070b]/60 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#07070b]/90" />
-
-            {/* giroflex */}
-            <div className="absolute top-[16%] left-[19%] w-[9%] h-[3.5%] rounded-full opacity-0 tch2-flash tch2-flash-blue pointer-events-none" aria-hidden />
-            <div className="absolute top-[16%] left-[34%] w-[9%] h-[3.5%] rounded-full opacity-0 tch2-flash tch2-flash-red pointer-events-none" aria-hidden />
-            <div className="absolute inset-0 opacity-[0.06] pointer-events-none tch2-scan" aria-hidden />
-
-            <span className="absolute top-2 left-2 w-3.5 h-3.5 border-l-2 border-t-2 border-[hsl(var(--primary))]/70" />
-            <span className="absolute top-2 right-2 w-3.5 h-3.5 border-r-2 border-t-2 border-[hsl(var(--primary))]/70" />
-            <span className="absolute bottom-2 left-2 w-3.5 h-3.5 border-l-2 border-b-2 border-[hsl(var(--primary))]/70" />
-            <span className="absolute bottom-2 right-2 w-3.5 h-3.5 border-r-2 border-b-2 border-[hsl(var(--primary))]/70" />
-
-            <div className="absolute top-2 right-2 flex flex-col gap-1 z-10">
-              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm border border-red-500/40 rounded px-1.5 py-0.5">
-                <span className="w-1 h-1 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-[8.5px] font-bold text-red-300 tracking-widest uppercase">Alta Vigilância</span>
-              </div>
-              <div className="hidden sm:flex items-center gap-1 bg-black/60 backdrop-blur-sm border border-emerald-500/30 rounded px-1.5 py-0.5">
-                <Activity className="w-2.5 h-2.5 text-emerald-400" strokeWidth={3} />
-                <span className="text-[8.5px] font-bold text-emerald-300 tracking-widest tabular-nums">SLA 99.8%</span>
-              </div>
+        <div className="flex items-center gap-4 md:gap-8">
+          <div className="text-right">
+            <div className="text-[9px] md:text-[10px] uppercase opacity-50 tracking-widest">America/Rio_Branco</div>
+            <div
+              className="text-lg md:text-xl font-bold text-white tabular-nums leading-none mt-0.5"
+              style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}
+            >
+              {time} <span className="text-[10px] md:text-xs font-normal text-[#c9a84c]">AMT</span>
             </div>
+            <div className="text-[9px] uppercase text-slate-500 tracking-widest mt-0.5">{date}</div>
+          </div>
+          <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-sm border border-white/5">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+            <span className="text-[10px] md:text-xs uppercase tracking-widest font-bold text-white">Sistema Online</span>
+          </div>
+        </div>
+      </header>
 
-            <div className="absolute inset-x-0 bottom-0 z-10 p-3 sm:p-4 md:p-5">
-              <span className="inline-flex items-center gap-1.5 text-[8.5px] sm:text-[9px] font-bold text-[hsl(var(--primary))] uppercase tracking-[0.24em] mb-1">
-                <span className="w-5 h-px bg-[hsl(var(--primary))]" />
-                Operação em curso
-              </span>
-              <h2
-                className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-[1.05] tracking-tight uppercase"
-                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+      {/* MAIN GRID — Bento */}
+      <main className="flex-1 grid grid-cols-12 grid-rows-6 gap-3 md:gap-4 min-h-0 overflow-hidden">
+
+        {/* TEAMS 2x2 — col-span-8 row-span-3 */}
+        <section className="col-span-12 lg:col-span-8 row-span-3 grid grid-cols-2 gap-3 md:gap-4 min-h-0">
+          {TEAMS.map((t) => {
+            const st = statusLabel(t);
+            const isMine = userTeamKey === t.key;
+            const Icon = TEAM_ICON[t.key];
+            return (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => onTeamClick(t.key)}
+                aria-label={`Entrar na equipe ${t.label}`}
+                className="group text-left bg-[#1a1a1a] p-3 md:p-4 border border-white/5 hover:border-[#c9a84c]/40 transition-colors relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a84c] rounded-sm"
               >
-                Monitoramento <span className="text-[hsl(var(--primary))]">tático</span><br className="hidden md:block"/>
-                <span className="md:hidden"> </span>em tempo real
-              </h2>
-              <div className="hidden sm:flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2 sm:mt-3">
-                <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[10.5px] text-slate-300">
-                  <MapPin className="w-3 h-3 text-[hsl(var(--primary))]" />
-                  <span className="font-bold uppercase tracking-wider">Rio Branco • Sede</span>
-                </span>
-                <span className="w-px h-3 bg-slate-700" />
-                <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[10.5px] text-slate-300">
-                  <Users className="w-3 h-3 text-[hsl(var(--primary))]" />
-                  <span className="font-bold tabular-nums">96 agentes</span>
-                </span>
-                <span className="w-px h-3 bg-slate-700" />
-                <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[10.5px] text-slate-300">
-                  <Clock className="w-3 h-3 text-[hsl(var(--primary))]" />
-                  <span className="font-bold uppercase tracking-wider">4 equipes</span>
-                </span>
-              </div>
-            </div>
-          </section>
-
-          {/* === EQUIPES === */}
-          <div className="col-span-12 lg:col-span-5 grid grid-cols-2 gap-2 md:gap-2.5 lg:grid-rows-2">
-            {TEAMS.map((t) => {
-              const Icon = TEAM_ICON[t.key];
-              const isMine = userTeamKey === t.key;
-              return (
-                <button
-                  key={t.key}
-                  type="button"
-                  onClick={() => onTeamClick(t.key)}
-                  aria-label={`Entrar na equipe ${t.label}`}
-                  className={cn(
-                    'tch2-team group relative overflow-hidden rounded-xl border text-left',
-                    'border-[#1a1a26] hover:border-[hsl(var(--primary))]/60',
-                    'transition-all duration-300 hover:-translate-y-0.5',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))]',
-                    'h-[110px] sm:h-[130px] lg:h-auto lg:min-h-0',
-                  )}
-                  style={{ ['--glow' as never]: t.glowRgb }}
-                >
-                  <img
-                    src={t.hero}
-                    alt=""
-                    aria-hidden
-                    loading="lazy"
-                    decoding="async"
-                    width={912}
-                    height={1200}
-                    sizes="(min-width: 1024px) 280px, 45vw"
-                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#07070b] via-[#07070b]/70 to-[#07070b]/10" />
-                  <div
-                    className="absolute inset-y-0 right-0 w-1/2 opacity-60 mix-blend-screen pointer-events-none"
-                    style={{ background: `radial-gradient(ellipse at right center, rgba(${t.glowRgb},0.5), transparent 70%)` }}
-                  />
-                  <span
-                    className="absolute left-0 top-0 bottom-0 w-[3px] shadow-[0_0_12px_rgba(var(--glow),0.6)]"
-                    style={{ backgroundColor: `rgb(${t.glowRgb})` }}
-                  />
-
-                  <div className="absolute top-1.5 left-1.5 right-1.5 z-10 flex items-center justify-between gap-1">
-                    <span className="inline-flex items-center gap-1 bg-black/60 backdrop-blur-sm border border-white/10 rounded-sm px-1.5 py-0.5">
-                      <span className={cn(
-                        'w-1 h-1 rounded-full',
-                        t.status === 'ativo' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400',
-                      )} />
-                      <span className="text-[7.5px] sm:text-[8px] font-bold text-slate-100 uppercase tracking-widest">
-                        {t.status === 'ativo' ? 'Ativo' : 'Standby'}
-                      </span>
-                    </span>
-                    {isMine && (
+                <div
+                  className="absolute top-0 right-0 w-16 h-16 rotate-45 translate-x-8 -translate-y-8 opacity-70 transition-opacity group-hover:opacity-100"
+                  style={{ backgroundColor: `rgba(${t.glowRgb}, 0.12)` }}
+                  aria-hidden
+                />
+                <div className="flex justify-between items-start mb-3 md:mb-4 relative">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Icon className="w-3.5 h-3.5" style={{ color: `rgb(${t.glowRgb})` }} strokeWidth={2.4} />
                       <span
-                        className="inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 border font-bold text-[7.5px] sm:text-[8px] uppercase tracking-widest"
-                        style={{
-                          borderColor: `rgba(${t.glowRgb},0.5)`,
-                          backgroundColor: `rgba(${t.glowRgb},0.18)`,
-                          color: `rgb(${t.glowRgb})`,
-                        }}
+                        className={cn(
+                          'text-xl md:text-2xl font-bold block leading-none tracking-tight',
+                          t.status === 'stand-by' ? 'text-white/50' : 'text-white',
+                        )}
+                        style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                       >
-                        Sua
+                        {t.label}
                       </span>
-                    )}
-                  </div>
-
-                  <div className="relative z-10 h-full flex flex-col justify-end p-2 sm:p-3">
-                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
-                      <div
-                        className="w-6 h-6 sm:w-7 sm:h-7 rounded-md flex items-center justify-center border backdrop-blur-sm shrink-0"
-                        style={{
-                          borderColor: `rgba(${t.glowRgb},0.6)`,
-                          backgroundColor: `rgba(${t.glowRgb},0.14)`,
-                        }}
-                      >
-                        <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: `rgb(${t.glowRgb})` }} strokeWidth={2.4} />
-                      </div>
-                      <div className="min-w-0">
-                        <h4
-                          className="text-[15px] sm:text-lg font-bold text-white leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] truncate"
-                          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                        >
-                          {t.label}
-                        </h4>
-                        <p className="text-[8px] sm:text-[9px] mt-0.5 font-bold uppercase tracking-widest truncate" style={{ color: `rgb(${t.glowRgb})` }}>
-                          {t.role}
-                        </p>
-                      </div>
+                      {isMine && (
+                        <span className="ml-1 px-1 py-0.5 text-[8px] font-bold uppercase tracking-widest bg-[#c9a84c] text-black rounded-sm">
+                          Sua
+                        </span>
+                      )}
                     </div>
-
-                    <div className="flex items-center justify-between text-[9px] sm:text-[9.5px] text-slate-300 mt-0.5">
-                      <span className="inline-flex items-center gap-1 truncate">
-                        <Users className="w-2.5 h-2.5 opacity-70 shrink-0" />
-                        <span className="font-bold tabular-nums">{t.agents}</span>
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-slate-400 font-mono text-[9px] truncate">
-                        {t.shift}
-                        <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 shrink-0" style={{ color: `rgb(${t.glowRgb})` }} />
-                      </span>
+                    <span className={cn('text-[9.5px] md:text-[10px] uppercase font-bold tracking-widest mt-1 block', st.color)}>
+                      {st.label}
+                    </span>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div
+                      className={cn(
+                        'text-2xl md:text-3xl font-bold tabular-nums leading-none',
+                        t.status === 'stand-by' ? 'text-white/40' : 'text-white',
+                      )}
+                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                    >
+                      {String(t.agents).padStart(2, '0')}
                     </div>
+                    <div className="text-[9px] md:text-[10px] uppercase opacity-50 mt-0.5">Agentes</div>
                   </div>
-                </button>
-              );
-            })}
-          </div>
+                </div>
 
-          {/* === GESTOR DE RONDAS (CRUD) === */}
-          <section className={cn(bento, 'col-span-12 p-3 sm:p-4 min-h-0 overflow-y-auto')}>
-            <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-3 mb-3">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <div className="w-6 h-6 rounded-md bg-[hsl(var(--primary))]/15 border border-[hsl(var(--primary))]/40 flex items-center justify-center shrink-0">
-                    <Radio className="w-3.5 h-3.5 text-[hsl(var(--primary))]" strokeWidth={2.4} />
-                  </div>
-                  <h3 className="text-[14px] sm:text-[15px] font-bold text-white leading-none tracking-wide" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    GESTOR DE RONDAS
-                  </h3>
-                  <span className="inline-flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/40 rounded-sm px-1.5 py-0.5">
-                    <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[8.5px] font-bold text-emerald-300 uppercase tracking-widest">Ao vivo</span>
+                <div className="w-full bg-black/50 h-1 rounded-sm overflow-hidden">
+                  <div className={cn('h-full transition-all', st.bar)} style={{ width: st.barPct }} />
+                </div>
+
+                <div className="mt-3 md:mt-4 flex items-center justify-between text-[9.5px] md:text-[10px] text-slate-400">
+                  <span className="inline-flex items-center gap-1.5 uppercase tracking-widest">
+                    <Clock className="w-3 h-3 opacity-60" />
+                    <span className="font-mono">{t.shift}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 uppercase tracking-widest text-slate-500 group-hover:text-[#c9a84c] transition-colors">
+                    Próxima {t.nextRound}
+                    <ChevronRight className="w-3 h-3" />
                   </span>
                 </div>
-                <p className="text-[10px] sm:text-[10.5px] text-slate-500 mt-1">
-                  Crie, edite e cancele rondas • validação de conflitos em tempo real
-                </p>
-              </div>
+              </button>
+            );
+          })}
+        </section>
 
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="inline-flex bg-[#0a0a0f] border border-[#1f1f2e] rounded-md p-0.5">
-                  {[15, 30, 60].map((m) => {
-                    const active = interval === m;
-                    return (
-                      <button
-                        key={m}
-                        type="button"
-                        onClick={() => setIntervalMin(m as 15 | 30 | 60)}
-                        className={cn(
-                          'px-2 sm:px-2.5 py-1 text-[10px] font-bold rounded uppercase tracking-widest transition-all',
-                          active
-                            ? 'bg-[hsl(var(--primary))] text-black shadow-[0_2px_10px_hsl(var(--primary)/0.4)]'
-                            : 'text-slate-400 hover:text-slate-100',
-                        )}
-                        aria-pressed={active}
-                      >
-                        {m}m
-                      </button>
-                    );
-                  })}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setRunning((v) => !v)}
-                  aria-label={running ? 'Pausar rondas' : 'Retomar rondas'}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-[10px] font-bold uppercase tracking-widest transition-colors',
-                    running
-                      ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/20'
-                      : 'bg-amber-500/10 border-amber-500/40 text-amber-300 hover:bg-amber-500/20',
-                  )}
-                >
-                  {running ? <Pause className="w-3 h-3" strokeWidth={2.6} /> : <Play className="w-3 h-3" strokeWidth={2.6} />}
-                  {running ? 'Em curso' : 'Pausado'}
-                </button>
-                <button
-                  type="button"
-                  onClick={openNew}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-[hsl(var(--primary))]/50 bg-[hsl(var(--primary))]/15 text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/25 text-[10px] font-bold uppercase tracking-widest transition-colors"
-                >
-                  <Plus className="w-3 h-3" strokeWidth={2.6} />
-                  Nova ronda
-                </button>
+        {/* TELEMETRIA — col-span-4 row-span-3 */}
+        <section className="col-span-12 lg:col-span-4 row-span-3 bg-[#1a1a1a] border border-[#c9a84c]/20 p-4 md:p-5 flex flex-col rounded-sm min-h-0">
+          <h3 className="text-[12px] font-bold tracking-[0.2em] uppercase mb-4 md:mb-5 flex items-center gap-2 text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+            <span className="w-1 h-4 bg-[#c9a84c]" />
+            Telemetria do Sistema
+          </h3>
+          <div className="space-y-4 md:space-y-5 flex-1 min-h-0 flex flex-col">
+            <div>
+              <div className="flex justify-between text-[10px] uppercase mb-1.5 font-bold tracking-widest">
+                <span className="text-slate-400">Eficiência SLA</span>
+                <span className="text-[#c9a84c] tabular-nums">98.4%</span>
+              </div>
+              <div className="h-2 bg-black w-full rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-[#c9a84c] to-[#f0d78c] w-[98.4%]" />
               </div>
             </div>
 
-            {/* Grid: cards de ronda + timeline */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-              <div className="lg:col-span-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2">
-                  {sortedRounds.map((r) => {
-                    const isActive = r.id === activeRoundId;
-                    const isPast = !isActive && r.endMin > r.startMin ? nowMin >= r.endMin : false;
-                    return (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-black/40 p-2.5 rounded border border-white/5">
+                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Latência</span>
+                <span className="text-lg font-bold text-emerald-300 tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>14ms</span>
+              </div>
+              <div className="bg-black/40 p-2.5 rounded border border-white/5">
+                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Versão</span>
+                <span className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>v3.4.1</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-black/40 p-2.5 rounded border border-white/5">
+                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Rondas hoje</span>
+                <span className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>
+                  {String(sortedRounds.length).padStart(2, '0')}
+                </span>
+              </div>
+              <div className="bg-black/40 p-2.5 rounded border border-white/5">
+                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Estado</span>
+                <span className={cn('text-sm font-bold uppercase tracking-widest', running ? 'text-emerald-300' : 'text-amber-300')}>
+                  {running ? 'Ativo' : 'Pausado'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex-1 min-h-0 bg-black/20 p-4 border border-dashed border-white/10 rounded flex flex-col justify-center items-center gap-2 text-center">
+              <div className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Câmeras ativas</div>
+              <div className="text-4xl font-light text-white leading-none" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                124<span className="text-sm text-[#c9a84c] ml-1">/128</span>
+              </div>
+              <div className="text-[9.5px] uppercase tracking-widest text-emerald-400/80 font-bold flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Fluxo estável
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* GESTOR DE RONDAS — col-span-12 row-span-3, timeline horizontal */}
+        <section className="col-span-12 row-span-3 bg-[#1a1a1a] border border-white/5 flex flex-col overflow-hidden rounded-sm min-h-0">
+          <div className="p-3 md:p-4 border-b border-white/5 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-3">
+              <h3 className="text-base md:text-lg font-bold tracking-tight uppercase text-white leading-none" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Gestor de Rondas
+              </h3>
+              <div className="px-2 py-0.5 bg-[#c9a84c] text-[#0d0d0d] text-[10px] font-bold rounded tracking-widest flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-black/70 animate-pulse" />
+                LIVE
+              </div>
+              <div className="hidden md:inline-flex bg-black/40 border border-white/10 rounded p-0.5">
+                {[15, 30, 60].map((m) => {
+                  const active = interval === m;
+                  return (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setIntervalMin(m as 15 | 30 | 60)}
+                      className={cn(
+                        'px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-widest transition-all',
+                        active ? 'bg-[#c9a84c] text-black' : 'text-slate-400 hover:text-white',
+                      )}
+                      aria-pressed={active}
+                    >
+                      {m}m
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setRunning((v) => !v)}
+                className={cn(
+                  'inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest px-3 py-1 border font-bold transition-colors rounded',
+                  running
+                    ? 'border-emerald-500/40 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20'
+                    : 'border-amber-500/40 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20',
+                )}
+              >
+                {running ? <Pause className="w-3 h-3" strokeWidth={2.6} /> : <Play className="w-3 h-3" strokeWidth={2.6} />}
+                {running ? 'Em curso' : 'Pausado'}
+              </button>
+              <button
+                type="button"
+                onClick={openNew}
+                className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest px-3 py-1 bg-[#c9a84c] text-[#0d0d0d] font-bold hover:bg-[#f0d78c] transition-colors rounded"
+              >
+                <Plus className="w-3 h-3" strokeWidth={2.8} />
+                Nova ronda
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 flex overflow-hidden min-h-0">
+            {/* Lateral Time Bar */}
+            <div className="w-14 md:w-16 bg-black/40 flex flex-col items-center py-2 border-r border-white/5 shrink-0">
+              <div className="text-[9px] font-bold opacity-30 py-2 tracking-widest" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>HORA</div>
+              <div className="flex-1 flex flex-col justify-between py-2 text-white/50">
+                {['00h', '06h', '12h', '18h'].map((h) => (
+                  <span key={h} className="text-[10px] font-bold tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>{h}</span>
+                ))}
+              </div>
+              <div className="text-[8.5px] opacity-40 py-1 tracking-widest">AMT</div>
+            </div>
+
+            {/* Slot columns horizontais */}
+            <div className="flex-1 overflow-x-auto overflow-y-hidden">
+              <div className="h-full grid grid-flow-col auto-cols-[minmax(150px,1fr)]">
+                {sortedRounds.map((r) => {
+                  const isActive = r.id === activeRoundId;
+                  const isPast = !isActive && r.endMin > r.startMin ? nowMin >= r.endMin : false;
+                  const label = isActive ? 'EXECUTANDO' : isPast ? 'CONCLUÍDA' : 'PROGRAMADA';
+                  return (
+                    <div
+                      key={r.id}
+                      className={cn(
+                        'border-r border-white/5 flex flex-col min-w-0',
+                        isActive && 'bg-[#c9a84c]/5 ring-1 ring-inset ring-[#c9a84c]/25',
+                      )}
+                    >
                       <div
-                        key={r.id}
                         className={cn(
-                          'group relative overflow-hidden rounded-lg border p-2.5 min-h-[92px] transition-all',
-                          isActive && 'border-[hsl(var(--primary))]/60 bg-gradient-to-br from-[hsl(var(--primary)/0.14)] to-[hsl(var(--primary)/0.04)] shadow-[0_0_24px_-8px_hsl(var(--primary)/0.6)]',
-                          isPast && 'border-emerald-500/30 bg-emerald-500/[0.04]',
-                          !isActive && !isPast && 'border-[#1f1f2e] bg-[#0a0a0f] hover:border-[hsl(var(--primary))]/30',
+                          'p-2 text-center text-[10px] border-b font-bold tracking-widest tabular-nums',
+                          isActive
+                            ? 'bg-[#c9a84c]/20 border-[#c9a84c]/30 text-[#c9a84c]'
+                            : isPast
+                            ? 'bg-emerald-500/5 border-white/5 text-emerald-300/80'
+                            : 'bg-white/[0.03] border-white/5 text-white/60',
                         )}
+                        style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}
                       >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[8.5px] font-bold uppercase text-slate-500 tracking-widest">
-                            {minutesToHHMM(r.startMin)} → {minutesToHHMM(r.endMin)}
-                          </span>
-                          {isActive ? (
-                            <span className="inline-flex items-center gap-1">
-                              <span className="w-1 h-1 rounded-full bg-[hsl(var(--primary))] animate-pulse" />
-                              <span className="text-[8px] font-bold text-[hsl(var(--primary))] uppercase tracking-widest">Agora</span>
-                            </span>
-                          ) : isPast ? (
-                            <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-widest">OK</span>
-                          ) : (
-                            <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Programada</span>
-                          )}
-                        </div>
-                        <p
-                          className={cn(
-                            'text-[13px] font-bold leading-tight truncate',
-                            isActive ? 'text-white' : isPast ? 'text-emerald-100' : 'text-slate-100',
-                          )}
-                          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                          title={r.agent || 'Disponível'}
-                        >
-                          {r.agent || 'Disponível'}
-                        </p>
-                        {r.note && (
-                          <p className="text-[9.5px] text-slate-500 mt-0.5 truncate" title={r.note}>{r.note}</p>
-                        )}
-
-                        {/* actions */}
-                        <div className="mt-2 flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => openEdit(r)}
-                            className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-slate-400 hover:text-[hsl(var(--primary))] px-1.5 py-0.5 rounded border border-transparent hover:border-[hsl(var(--primary))]/30 transition-colors"
-                            aria-label={`Editar ronda ${minutesToHHMM(r.startMin)}`}
-                          >
-                            <Pencil className="w-2.5 h-2.5" strokeWidth={2.6} />
-                            Editar
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setCancelId(r.id)}
-                            className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-slate-400 hover:text-red-300 px-1.5 py-0.5 rounded border border-transparent hover:border-red-500/40 transition-colors"
-                            aria-label={`Cancelar ronda ${minutesToHHMM(r.startMin)}`}
-                          >
-                            <Trash2 className="w-2.5 h-2.5" strokeWidth={2.6} />
-                            Cancelar
-                          </button>
-                        </div>
-
-                        {isActive && (
-                          <span
-                            className="absolute bottom-0 left-0 h-[2px] bg-[hsl(var(--primary))] shadow-[0_0_8px_hsl(var(--primary))] tch2-progress"
-                            aria-hidden
-                          />
-                        )}
+                        {minutesToHHMM(r.startMin)} → {minutesToHHMM(r.endMin)}
                       </div>
-                    );
-                  })}
-
-                  {sortedRounds.length === 0 && (
-                    <div className="col-span-full text-center py-6 border border-dashed border-[#1f1f2e] rounded-lg">
-                      <p className="text-[11px] text-slate-500">Nenhuma ronda programada.</p>
-                      <button
-                        type="button"
-                        onClick={openNew}
-                        className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--primary))] hover:underline"
-                      >
-                        <Plus className="w-3 h-3" strokeWidth={2.6} />
-                        Criar a primeira ronda
-                      </button>
+                      <div className="flex-1 p-2 flex flex-col gap-2 min-h-0">
+                        <div
+                          className={cn(
+                            'flex-1 min-h-0 p-2.5 text-[10px] flex flex-col justify-between rounded-sm border transition-colors',
+                            isActive
+                              ? 'bg-[#c9a84c] text-black border-[#c9a84c] shadow-[0_0_20px_rgba(201,168,76,0.35)]'
+                              : isPast
+                              ? 'bg-emerald-500/10 border-l-2 border-l-emerald-500 border-emerald-500/20 text-emerald-100'
+                              : 'bg-black/40 border-white/10 text-white/80 hover:border-[#c9a84c]/40',
+                          )}
+                        >
+                          <div>
+                            <div
+                              className={cn('text-[13px] font-bold leading-tight truncate', isActive ? 'text-black' : 'text-white')}
+                              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                              title={r.agent || 'Disponível'}
+                            >
+                              {r.agent || 'Disponível'}
+                            </div>
+                            {r.note && (
+                              <div className={cn('text-[9.5px] mt-0.5 truncate', isActive ? 'text-black/70' : 'text-slate-400')} title={r.note}>
+                                {r.note}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <span
+                              className={cn(
+                                'text-[8.5px] font-bold uppercase tracking-widest',
+                                isActive ? 'text-black/80 animate-pulse' : isPast ? 'text-emerald-300' : 'text-slate-500',
+                              )}
+                            >
+                              {label}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); openEdit(r); }}
+                                className={cn(
+                                  'p-1 rounded-sm border transition-colors',
+                                  isActive
+                                    ? 'border-black/30 text-black hover:bg-black/10'
+                                    : 'border-white/10 text-slate-400 hover:text-[#c9a84c] hover:border-[#c9a84c]/40',
+                                )}
+                                aria-label={`Editar ronda ${minutesToHHMM(r.startMin)}`}
+                              >
+                                <Pencil className="w-2.5 h-2.5" strokeWidth={2.6} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setCancelId(r.id); }}
+                                className={cn(
+                                  'p-1 rounded-sm border transition-colors',
+                                  isActive
+                                    ? 'border-black/30 text-black hover:bg-red-500/20'
+                                    : 'border-white/10 text-slate-400 hover:text-red-300 hover:border-red-500/40',
+                                )}
+                                aria-label={`Cancelar ronda ${minutesToHHMM(r.startMin)}`}
+                              >
+                                <Trash2 className="w-2.5 h-2.5" strokeWidth={2.6} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
+                  );
+                })}
 
-              {/* Timeline lateral */}
-              <div className="lg:col-span-4">
-                <div className="rounded-lg border border-[#1f1f2e] bg-[#0a0a0f] p-3 h-full">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500">Timeline • hoje</span>
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-[hsl(var(--primary))] tabular-nums">
-                      {sortedRounds.length} {sortedRounds.length === 1 ? 'ronda' : 'rondas'}
-                    </span>
+                {/* Slot livre — add */}
+                <div className="border-r border-white/5 flex flex-col min-w-0">
+                  <div className="p-2 text-center text-[10px] bg-white/[0.03] border-b border-white/5 font-bold text-white/40 tracking-widest">
+                    LIVRE
                   </div>
-                  <div className="relative pl-3 max-h-[160px] overflow-y-auto pr-1">
-                    <div className="absolute left-0 top-1 bottom-1 w-px bg-[#1f1f2e]" />
-                    <ul className="space-y-1.5">
-                      {sortedRounds.map((r) => {
-                        const isActive = r.id === activeRoundId;
-                        const isPast = !isActive && r.endMin > r.startMin ? nowMin >= r.endMin : false;
-                        return (
-                          <li key={r.id} className="relative flex items-center gap-2">
-                            <span
-                              className={cn(
-                                'absolute -left-[13px] w-2 h-2 rounded-full border-2 bg-[#0a0a0f]',
-                                isActive
-                                  ? 'border-[hsl(var(--primary))] shadow-[0_0_8px_hsl(var(--primary))]'
-                                  : isPast
-                                  ? 'border-emerald-400'
-                                  : 'border-[#1f1f2e]',
-                              )}
-                            />
-                            <span
-                              className={cn(
-                                'text-[10px] font-mono tabular-nums w-[68px]',
-                                isActive ? 'text-[hsl(var(--primary))]' : isPast ? 'text-emerald-300' : 'text-slate-500',
-                              )}
-                            >
-                              {minutesToHHMM(r.startMin)}–{minutesToHHMM(r.endMin)}
-                            </span>
-                            <span
-                              className={cn(
-                                'text-[10.5px] truncate flex-1',
-                                isActive ? 'text-white font-bold' : isPast ? 'text-slate-300' : 'text-slate-500',
-                              )}
-                            >
-                              {r.agent || (isActive ? 'Ronda em curso' : isPast ? 'Concluída' : 'Sem agente')}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                  <div className="flex-1 p-2">
+                    <button
+                      type="button"
+                      onClick={openNew}
+                      className="w-full h-full min-h-[80px] border border-dashed border-white/15 hover:border-[#c9a84c]/50 hover:bg-[#c9a84c]/5 rounded-sm flex flex-col items-center justify-center gap-1 text-white/40 hover:text-[#c9a84c] transition-colors"
+                    >
+                      <Plus className="w-4 h-4" strokeWidth={2.4} />
+                      <span className="text-[9.5px] font-bold uppercase tracking-widest">Adicionar slot</span>
+                    </button>
                   </div>
                 </div>
+
+                {sortedRounds.length === 0 && (
+                  <div className="border-r border-white/5 flex flex-col items-center justify-center gap-2 p-4 text-center col-span-2">
+                    <p className="text-[11px] text-slate-500">Nenhuma ronda programada.</p>
+                  </div>
+                )}
               </div>
             </div>
-          </section>
-        </main>
+          </div>
+        </section>
+      </main>
 
-        {/* FOOTER — Status bar operacional */}
-        <footer className="mt-2 h-8 shrink-0 flex items-center justify-between gap-3 px-2.5 rounded-md border border-[#1a1a26] bg-[#08080d] text-[9.5px] font-semibold tracking-widest uppercase text-slate-500">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.9)]" />
-              <span className="text-emerald-300/90">Sistema Operacional</span>
-            </span>
-            <span className="hidden sm:inline w-px h-3 bg-[#1f1f2e]" />
-            <span className="hidden sm:inline text-slate-500">v3 · Tactical</span>
-            <span className="hidden md:inline w-px h-3 bg-[#1f1f2e]" />
-            <span className="hidden md:inline text-slate-500 tabular-nums">Latência&nbsp;<span className="text-slate-300">42ms</span></span>
-          </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="hidden md:inline text-slate-500 tabular-nums">UTC&nbsp;-05:00&nbsp;<span className="text-slate-300">Acre</span></span>
-            <span className="hidden sm:inline w-px h-3 bg-[#1f1f2e]" />
-            <span className="text-slate-500">PlantãoPro&nbsp;<span className="text-[hsl(var(--primary))]/90">© 2026</span></span>
-          </div>
-        </footer>
-      </div>
+      {/* FOOTER — status bar */}
+      <footer className="shrink-0 h-6 flex items-center justify-between px-2 text-[9px] uppercase tracking-[0.28em] font-bold opacity-50">
+        <div className="flex gap-4 md:gap-6 min-w-0">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-[#c9a84c]" />
+            PlantãoPro Tactical Suite
+          </span>
+          <span className="hidden sm:inline text-slate-500">CRPT AES-256</span>
+          <span className="hidden md:inline text-slate-500">Node: RBO-01</span>
+        </div>
+        <div className="flex gap-4 md:gap-6">
+          <span className="hidden sm:inline">SLA 99.98%</span>
+          <span className="hidden md:inline">UTC −05:00 Acre</span>
+          <span className="text-[#c9a84c]/80">© 2026</span>
+        </div>
+      </footer>
 
       <TeamDetailsDialog
         team={activeTeam}
@@ -696,6 +636,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
     </div>
   );
 }
+
 
 /* ================= dialog de criar/editar ================= */
 
