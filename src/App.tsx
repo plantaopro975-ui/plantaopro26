@@ -202,6 +202,7 @@ const App = () => (
                       <Route path="/install" element={<Install />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/agenda" element={<Agenda />} />
+                      <Route path="/escala" element={<EscalaCalendar />} />
                       <Route
                         path="/diretorio"
                         element={
