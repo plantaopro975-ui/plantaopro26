@@ -467,7 +467,10 @@ export default function Admin() {
                   </TabsContent>
                 )}
 
-                <TabsContent value="rondas" className="mt-4">
+                <TabsContent value="rondas" className="mt-4 space-y-4">
+                  <Suspense fallback={<PanelSkeleton />}>
+                    <RoundsQueuePlanner />
+                  </Suspense>
                   <Suspense fallback={<PanelSkeleton />}>
                     <ScheduledRoundsManager />
                   </Suspense>
