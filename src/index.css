@@ -3531,3 +3531,63 @@ body.home-route .card-touch:focus-visible {
   .tch2-flash-blue, .tch2-flash-red, .tch2-progress { animation: none; }
   .tch2-flash-blue, .tch2-flash-red { opacity: 0.5; }
 }
+
+/* ============ Tactical team cards ============ */
+.tac-card { isolation: isolate; }
+.tac-card .tac-corner {
+  position: absolute; width: 10px; height: 10px; pointer-events: none;
+  border-color: var(--accent, #c9a84c); opacity: 0.35;
+  transition: opacity .3s, width .3s, height .3s;
+}
+.tac-card:hover .tac-corner { opacity: 0.9; width: 14px; height: 14px; }
+.tac-corner--tl { top: 4px; left: 4px; border-top: 1.5px solid; border-left: 1.5px solid; }
+.tac-corner--tr { top: 4px; right: 4px; border-top: 1.5px solid; border-right: 1.5px solid; }
+.tac-corner--bl { bottom: 4px; left: 4px; border-bottom: 1.5px solid; border-left: 1.5px solid; }
+.tac-corner--br { bottom: 4px; right: 4px; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+
+.tac-card .tac-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  opacity: 0.5; transition: opacity .3s;
+}
+.tac-card:hover .tac-grid { opacity: 1; }
+
+.tac-card .tac-scan {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  opacity: 0;
+}
+.tac-card:hover .tac-scan { opacity: 1; }
+.tac-card .tac-scan::before {
+  content: ""; position: absolute; left: -20%; right: -20%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent, #c9a84c), transparent);
+  filter: blur(1px);
+  animation: tac-scan-move 2.4s linear infinite;
+}
+@keyframes tac-scan-move {
+  0% { top: -2px; } 100% { top: 102%; }
+}
+
+.tac-shield { position: relative; display: grid; place-items: center; }
+.tac-shield .tac-shield-icon {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  padding-bottom: 6px; transition: transform .3s;
+}
+.tac-card:hover .tac-shield-icon { transform: scale(1.08); }
+.tac-shield .tac-ping {
+  position: absolute; inset: -6px; border-radius: 50%;
+  border: 1.5px solid var(--accent, rgba(201,168,76,0.6));
+  opacity: 0; animation: tac-ping 2.2s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes tac-ping {
+  0% { transform: scale(0.6); opacity: 0.7; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tac-card .tac-scan::before, .tac-shield .tac-ping { animation: none; }
+}
