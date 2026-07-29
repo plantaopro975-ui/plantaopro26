@@ -27,6 +27,7 @@ import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { RoundHistoryDialog } from './RoundHistoryDialog';
 import { ReminderSettingsDialog } from './ReminderSettingsDialog';
+import { RoundsHero } from './RoundsHero';
 import { HourglassSVG } from './HourglassSVG';
 import { getRotatedTeamColor, bumpColorRotation, TEAM_COLORS } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
