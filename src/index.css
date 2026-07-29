@@ -3495,3 +3495,39 @@ body.home-route .card-touch:focus-visible {
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
 }
+
+/* TacticalCommandHome v2 — flashes, scanlines, progress */
+@keyframes tch2-flash-blue {
+  0%, 45%, 100% { opacity: 0; background: radial-gradient(ellipse at center, rgba(59,130,246,0) 0%, transparent 60%); }
+  10%, 20% { opacity: 1; background: radial-gradient(ellipse at center, rgba(96,165,250,0.95) 0%, rgba(59,130,246,0.4) 40%, transparent 70%); box-shadow: 0 0 24px 8px rgba(59,130,246,0.55); }
+}
+@keyframes tch2-flash-red {
+  0%, 45%, 100% { opacity: 0; background: radial-gradient(ellipse at center, rgba(239,68,68,0) 0%, transparent 60%); }
+  60%, 70% { opacity: 1; background: radial-gradient(ellipse at center, rgba(248,113,113,0.95) 0%, rgba(239,68,68,0.4) 40%, transparent 70%); box-shadow: 0 0 24px 8px rgba(239,68,68,0.55); }
+}
+.tch2-flash-blue { animation: tch2-flash-blue 1.1s infinite; }
+.tch2-flash-red  { animation: tch2-flash-red  1.1s infinite; }
+
+.tch2-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.06) 0px,
+    rgba(255,255,255,0.06) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+@keyframes tch2-progress {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}
+.tch2-progress {
+  width: 65%;
+  animation: tch2-progress 60s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tch2-flash-blue, .tch2-flash-red, .tch2-progress { animation: none; }
+  .tch2-flash-blue, .tch2-flash-red { opacity: 0.5; }
+}
