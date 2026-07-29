@@ -3,7 +3,7 @@ import { Shield, Radio, Eye, Command, Activity, MapPin, Users, Clock, ChevronRig
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
-import { useServerClockParts } from '@/hooks/useServerTime';
+import { useServerClockParts, getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 
 
