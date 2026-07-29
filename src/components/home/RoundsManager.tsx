@@ -27,6 +27,7 @@ import { StartLockConfirmDialog } from './StartLockConfirmDialog';
 import { TeamConfirmDialog } from './TeamConfirmDialog';
 import { RoundHistoryDialog } from './RoundHistoryDialog';
 import { ReminderSettingsDialog } from './ReminderSettingsDialog';
+import { RoundsHero } from './RoundsHero';
 import { HourglassSVG } from './HourglassSVG';
 import { getRotatedTeamColor, bumpColorRotation, TEAM_COLORS } from '@/lib/teamColors';
 import { TacticalClock } from './TacticalClock';
@@ -3223,6 +3224,34 @@ export function RoundsManager({ customTrigger }: { customTrigger?: React.ReactNo
                       </span>
                     )}
                   </span>
+                </div>
+
+                {/* Hero sofisticado — SVG com progresso, agente atual e próximo */}
+                <div className="border-t px-2.5 sm:px-3 py-2" style={{ borderColor: `${teamColor}33` }}>
+                  <RoundsHero
+                    phase={
+                      !schedule ? 'idle'
+                      : (scheduledFor != null && startedAtRef.current == null) ? 'scheduled'
+                      : isPaused ? 'paused'
+                      : (live && !live.done) ? 'running'
+                      : (live && live.done) ? 'done'
+                      : 'idle'
+                    }
+                    teamColor={teamColor}
+                    currentAgent={schedule?.rows[live?.index ?? currentView?.index ?? -1]?.name}
+                    nextAgent={nextAgentName || undefined}
+                    slotSec={live?.slotSec ?? 0}
+                    slotRemaining={live?.remaining ?? 0}
+                    totalSec={schedule?.totalSec ?? 0}
+                    totalRemaining={totalRemainingSeconds}
+                    rowsCount={schedule?.rows.length ?? 0}
+                    currentIndex={live?.index ?? currentView?.index ?? -1}
+                    secondsUntilStart={
+                      scheduledFor != null
+                        ? Math.max(0, Math.ceil((scheduledFor - nowServer()) / 1000))
+                        : null
+                    }
+                  />
                 </div>
 
                 {/* Readout tático estático — sóbrio, sem animação */}
