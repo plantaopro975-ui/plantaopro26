@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,9 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { supabase } from '@/integrations/supabase/client';
 import { useDutyConfig } from '@/hooks/useDutyConfig';
-import { DEFAULT_DUTY_CONFIG, getDutyTeamForYmd, getUpcomingSchedule, type DutyScheduleConfig, type TeamKey } from '@/lib/dutyRotation';
-import { ArrowUp, ArrowDown, RotateCcw, Save, CalendarClock } from 'lucide-react';
+import {
+  DEFAULT_DUTY_CONFIG, getDutyTeamForYmd, getOnDutyTeam, getOperationalYmd,
+  getUpcomingSchedule, type DutyOverrideRecord, type DutyScheduleConfig, type TeamKey,
+} from '@/lib/dutyRotation';
+import { ArrowUp, ArrowDown, RotateCcw, Save, CalendarClock, Zap, History } from 'lucide-react';
 
 const TEAM_LABEL: Record<TeamKey, string> = {
   alfa: 'ALFA', bravo: 'BRAVO', charlie: 'CHARLIE', delta: 'DELTA',
