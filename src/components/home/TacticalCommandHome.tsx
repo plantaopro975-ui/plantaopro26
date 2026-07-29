@@ -3,7 +3,7 @@ import { Shield, Radio, Eye, Command, Activity, MapPin, Users, Clock, ChevronRig
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
-import { useServerClockParts } from '@/hooks/useServerTime';
+import { useServerClockParts, getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 
 
@@ -118,6 +118,32 @@ function useLiveClock(): { time: string; date: string; nowMin: number } {
 }
 
 
+/**
+ * Escala de equipes por dia (ciclo 4 dias).
+ * Âncora: 29/07/2026 (America/Rio_Branco) = DELTA de plantão.
+ * A partir disso, cada dia local avança 1 posição na ordem ALFA→BRAVO→CHARLIE→DELTA.
+ */
+const DUTY_ORDER: TeamKey[] = ['alfa', 'bravo', 'charlie', 'delta'];
+const DUTY_ANCHOR_YMD = '2026-07-29';
+const DUTY_ANCHOR_INDEX = 3; // delta
+
+function ymdInAcre(d: Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: ACRE_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(d); // YYYY-MM-DD
+}
+
+function getOnDutyTeamKey(d: Date = getServerDate()): TeamKey {
+  const today = new Date(ymdInAcre(d) + 'T12:00:00Z').getTime();
+  const anchor = new Date(DUTY_ANCHOR_YMD + 'T12:00:00Z').getTime();
+  const diffDays = Math.round((today - anchor) / 86400000);
+  const idx = ((DUTY_ANCHOR_INDEX + diffDays) % 4 + 4) % 4;
+  return DUTY_ORDER[idx];
+}
+
+
+
+
 
 export function TacticalCommandHome({ onTeamClick }: Props) {
   const { time, date, nowMin } = useLiveClock();
@@ -126,6 +152,8 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
   const [activeTeam, setActiveTeam] = useState<TeamDetail | null>(null);
   const [running, setRunning] = useState<boolean>(true);
   const [rounds, setRounds] = useState<Round[]>(DEFAULT_ROUNDS);
+  // Equipe de plantão do dia (recalcula a cada minuto para virar automaticamente à meia-noite)
+  const onDutyKey = useMemo(() => getOnDutyTeamKey(), [nowMin]);
 
   // Dialog CRUD state
   const [editing, setEditing] = useState<{ mode: 'new' | 'edit'; round: Round } | null>(null);
@@ -304,10 +332,11 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
         <section className="col-span-12 lg:col-span-8 row-span-3 grid grid-cols-2 gap-3 md:gap-4 min-h-0">
           {TEAMS.map((t) => {
             const isMine = userTeamKey === t.key;
+            const isOnDuty = onDutyKey === t.key;
             void statusLabel; void TEAM_ICON;
             const active = teamCounts[t.key]?.active ?? 0;
             const total = teamCounts[t.key]?.total ?? 0;
-            const isStandby = t.status === 'stand-by';
+            const isStandby = t.status === 'stand-by' && !isOnDuty;
             const teamCode = String(t.key).toUpperCase().slice(0, 2) + '-' + (['01','02','03','04'][['alfa','bravo','charlie','delta'].indexOf(t.key)] || '00');
             const radioCh = { alfa: '01.140', bravo: '02.220', charlie: '03.340', delta: '04.460' }[t.key];
             return (
@@ -315,14 +344,34 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                 key={t.key}
                 type="button"
                 onClick={() => onTeamClick(t.key)}
-                aria-label={`Entrar na equipe ${t.label}`}
-                className="duty-card group text-left relative overflow-hidden bg-[#0b0b0d] border border-white/5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent)] hover:shadow-[0_18px_50px_-18px_var(--accent-glow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]"
+                aria-label={`Entrar na equipe ${t.label}${isOnDuty ? ' — em serviço hoje' : ''}`}
+                className={cn(
+                  'duty-card group text-left relative overflow-hidden bg-[#0b0b0d] border transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]',
+                  isOnDuty
+                    ? 'border-[color:var(--accent)] shadow-[0_0_0_1px_var(--accent),0_22px_60px_-20px_var(--accent-glow)] ring-1 ring-[color:var(--accent)]/40'
+                    : 'border-white/5 hover:border-[color:var(--accent)] hover:shadow-[0_18px_50px_-18px_var(--accent-glow)]',
+                )}
                 style={{
                   ['--accent' as never]: `rgb(${t.glowRgb})`,
                   ['--accent-glow' as never]: `rgba(${t.glowRgb},0.55)`,
                   clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))',
                 }}
               >
+                {/* Faixa DE PLANTÃO HOJE */}
+                {isOnDuty && (
+                  <div
+                    className="absolute top-2 right-2 z-20 flex items-center gap-1.5 px-2 py-0.5 rounded-sm font-mono text-[9px] tracking-[0.22em] font-bold uppercase animate-pulse"
+                    style={{
+                      background: `rgb(${t.glowRgb})`,
+                      color: '#0b0b0d',
+                      boxShadow: `0 0 14px rgba(${t.glowRgb},0.75)`,
+                    }}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-black/70" />
+                    De Plantão Hoje
+                  </div>
+                )}
+
                 {/* Top identification strip — like patrol vehicle placard */}
                 <div className="relative flex items-center justify-between px-3 h-6 bg-black/70 border-b border-white/10">
                   <div className="flex items-center gap-1.5">
@@ -332,11 +381,12 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                   <span className="font-mono text-[9px] tracking-[0.2em] text-white/40">
                     CH {radioCh}
                   </span>
-                  <span className={cn('flex items-center gap-1 font-mono text-[9px] tracking-[0.2em]', isStandby ? 'text-amber-400/80' : 'text-emerald-400')}>
-                    <span className={cn('w-1.5 h-1.5 rounded-full', isStandby ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse')} />
-                    {isStandby ? 'STANDBY' : '10-8'}
+                  <span className={cn('flex items-center gap-1 font-mono text-[9px] tracking-[0.2em]', isOnDuty ? 'text-emerald-300' : isStandby ? 'text-amber-400/80' : 'text-emerald-400')}>
+                    <span className={cn('w-1.5 h-1.5 rounded-full', isOnDuty ? 'bg-emerald-300 animate-pulse' : isStandby ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse')} />
+                    {isOnDuty ? 'EM SERVIÇO' : isStandby ? 'STANDBY' : '10-8'}
                   </span>
                 </div>
+
 
                 {/* Ambient photo backdrop — real security imagery */}
                 <div
