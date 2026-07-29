@@ -152,6 +152,8 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
   const [activeTeam, setActiveTeam] = useState<TeamDetail | null>(null);
   const [running, setRunning] = useState<boolean>(true);
   const [rounds, setRounds] = useState<Round[]>(DEFAULT_ROUNDS);
+  // Equipe de plantão do dia (recalcula a cada minuto para virar automaticamente à meia-noite)
+  const onDutyKey = useMemo(() => getOnDutyTeamKey(), [nowMin]);
 
   // Dialog CRUD state
   const [editing, setEditing] = useState<{ mode: 'new' | 'edit'; round: Round } | null>(null);
