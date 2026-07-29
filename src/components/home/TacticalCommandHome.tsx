@@ -4,6 +4,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useServerClockParts } from '@/hooks/useServerTime';
+import { supabase } from '@/integrations/supabase/client';
+
 
 import commandScene from '@/assets/hero/command-scene-v6.jpg.asset.json';
 import heroAlfa from '@/assets/heroes/team-alfa-v2.jpg.asset.json';
