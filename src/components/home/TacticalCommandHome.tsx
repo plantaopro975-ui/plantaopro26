@@ -4,6 +4,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAgentProfile } from '@/hooks/useAgentProfile';
 import { useServerClockParts } from '@/hooks/useServerTime';
+import { supabase } from '@/integrations/supabase/client';
+
 
 import commandScene from '@/assets/hero/command-scene-v6.jpg.asset.json';
 import heroAlfa from '@/assets/heroes/team-alfa-v2.jpg.asset.json';
@@ -129,7 +131,46 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
   const [editing, setEditing] = useState<{ mode: 'new' | 'edit'; round: Round } | null>(null);
   const [cancelId, setCancelId] = useState<string | null>(null);
 
+  // Contagens reais vindas do banco (agregadas, sem PII)
+  const [teamCounts, setTeamCounts] = useState<Record<TeamKey, { total: number; active: number }>>({
+    alfa:    { total: 0, active: 0 },
+    bravo:   { total: 0, active: 0 },
+    charlie: { total: 0, active: 0 },
+    delta:   { total: 0, active: 0 },
+  });
+  const [ops, setOps] = useState<{ units: number; agentsTotal: number; agentsActive: number }>({
+    units: 0, agentsTotal: 0, agentsActive: 0,
+  });
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const [tc, oc] = await Promise.all([
+        supabase.rpc('get_public_team_counts'),
+        supabase.rpc('get_public_operational_counts'),
+      ]);
+      if (!alive) return;
+      if (tc.data && Array.isArray(tc.data)) {
+        const next: Record<TeamKey, { total: number; active: number }> = {
+          alfa: { total: 0, active: 0 }, bravo: { total: 0, active: 0 },
+          charlie: { total: 0, active: 0 }, delta: { total: 0, active: 0 },
+        };
+        for (const row of tc.data as Array<{ team: string; total: number; active: number }>) {
+          const k = row.team?.toLowerCase() as TeamKey;
+          if (k in next) next[k] = { total: row.total ?? 0, active: row.active ?? 0 };
+        }
+        setTeamCounts(next);
+      }
+      if (oc.data && Array.isArray(oc.data) && oc.data[0]) {
+        const row = oc.data[0] as { units_count: number; agents_total: number; agents_active: number };
+        setOps({ units: row.units_count ?? 0, agentsTotal: row.agents_total ?? 0, agentsActive: row.agents_active ?? 0 });
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
   const userTeamKey = ((agent?.team ?? '').toString().trim().toLowerCase()) as TeamKey | '';
+
 
   const bento = 'relative rounded-xl border border-[#1a1a26] bg-gradient-to-b from-[#111119] to-[#0c0c13] shadow-[0_8px_32px_-16px_rgba(0,0,0,0.9)]';
 
@@ -309,10 +350,12 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
                       )}
                       style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                     >
-                      {String(t.agents).padStart(2, '0')}
+                      {String(teamCounts[t.key]?.active ?? 0).padStart(2, '0')}
+                      <span className="text-xs md:text-sm text-white/40 font-normal">/{String(teamCounts[t.key]?.total ?? 0).padStart(2, '0')}</span>
                     </div>
-                    <div className="text-[9px] md:text-[10px] uppercase opacity-50 mt-0.5">Agentes</div>
+                    <div className="text-[9px] md:text-[10px] uppercase opacity-50 mt-0.5">Ativos / Total</div>
                   </div>
+
                 </div>
 
                 <div className="w-full bg-black/50 h-1 rounded-sm overflow-hidden">
@@ -343,22 +386,34 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
           <div className="space-y-4 md:space-y-5 flex-1 min-h-0 flex flex-col">
             <div>
               <div className="flex justify-between text-[10px] uppercase mb-1.5 font-bold tracking-widest">
-                <span className="text-slate-400">Eficiência SLA</span>
-                <span className="text-[#c9a84c] tabular-nums">98.4%</span>
+                <span className="text-slate-400">Efetivo em atividade</span>
+                <span className="text-[#c9a84c] tabular-nums">
+                  {ops.agentsTotal > 0 ? Math.round((ops.agentsActive / ops.agentsTotal) * 100) : 0}%
+                </span>
               </div>
               <div className="h-2 bg-black w-full rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#c9a84c] to-[#f0d78c] w-[98.4%]" />
+                <div
+                  className="h-full bg-gradient-to-r from-[#c9a84c] to-[#f0d78c] transition-all"
+                  style={{ width: `${ops.agentsTotal > 0 ? Math.round((ops.agentsActive / ops.agentsTotal) * 100) : 0}%` }}
+                />
+              </div>
+              <div className="mt-1 text-[9.5px] uppercase tracking-widest text-slate-500">
+                {ops.agentsActive} de {ops.agentsTotal} agentes ativos
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-black/40 p-2.5 rounded border border-white/5">
-                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Latência</span>
-                <span className="text-lg font-bold text-emerald-300 tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>14ms</span>
+                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Unidades</span>
+                <span className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>
+                  {String(ops.units).padStart(2, '0')}
+                </span>
               </div>
               <div className="bg-black/40 p-2.5 rounded border border-white/5">
-                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Versão</span>
-                <span className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>v3.4.1</span>
+                <span className="text-[9.5px] uppercase opacity-50 block tracking-widest font-bold">Agentes</span>
+                <span className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace' }}>
+                  {String(ops.agentsTotal).padStart(2, '0')}
+                </span>
               </div>
             </div>
 
@@ -378,16 +433,18 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             </div>
 
             <div className="flex-1 min-h-0 bg-black/20 p-4 border border-dashed border-white/10 rounded flex flex-col justify-center items-center gap-2 text-center">
-              <div className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Câmeras ativas</div>
+              <div className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Cobertura operacional</div>
               <div className="text-4xl font-light text-white leading-none" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                124<span className="text-sm text-[#c9a84c] ml-1">/128</span>
+                {ops.agentsActive}
+                <span className="text-sm text-[#c9a84c] ml-1">/{ops.agentsTotal}</span>
               </div>
               <div className="text-[9.5px] uppercase tracking-widest text-emerald-400/80 font-bold flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Fluxo estável
+                {ops.units} unidades sincronizadas
               </div>
             </div>
           </div>
+
         </section>
 
         {/* GESTOR DE RONDAS — col-span-12 row-span-3, timeline horizontal */}
