@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -99,7 +100,7 @@ export function OfflineLicenseCacheManager() {
         unitId: agent.unit_id,
         licenseStatus: agent.license_status || 'active',
         licenseExpiresAt: agent.license_expires_at,
-        cachedAt: new Date().toISOString(),
+        cachedAt: getServerDate().toISOString(),
       }));
 
       updateLicenses(offlineLicenses);
@@ -140,7 +141,7 @@ export function OfflineLicenseCacheManager() {
     const data = {
       licenses,
       lastSync,
-      exportedAt: new Date().toISOString(),
+      exportedAt: getServerDate().toISOString(),
       version: 1,
     };
 
@@ -148,7 +149,7 @@ export function OfflineLicenseCacheManager() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `plantaopro-licenses-${format(new Date(), 'yyyy-MM-dd')}.json`;
+    a.download = `plantaopro-licenses-${format(getServerDate(), 'yyyy-MM-dd')}.json`;
     a.click();
     URL.revokeObjectURL(url);
 

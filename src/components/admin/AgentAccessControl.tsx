@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getServerDate } from '@/hooks/useServerTime';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -87,7 +88,7 @@ export function AgentAccessControl({ agents, onRefresh }: AgentAccessControlProp
 
   const isLicenseExpired = (agent: Agent) => {
     if (!agent.license_expires_at) return false;
-    return new Date(agent.license_expires_at) < new Date();
+    return new Date(agent.license_expires_at) < getServerDate();
   };
 
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
@@ -165,7 +166,7 @@ export function AgentAccessControl({ agents, onRefresh }: AgentAccessControlProp
         .from('agents')
         .update({ 
           is_frozen: freeze,
-          frozen_at: freeze ? new Date().toISOString() : null,
+          frozen_at: freeze ? getServerDate().toISOString() : null,
           license_status: freeze ? 'frozen' : 'active'
         })
         .eq('id', agent.id);

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { adminClient } from '@/lib/adminClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -103,9 +104,9 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
   // Notificação sino/push
   const [lastSeen, setLastSeen] = useState<string>(() => {
     try {
-      return localStorage.getItem(LAST_SEEN_KEY) || new Date().toISOString();
+      return localStorage.getItem(LAST_SEEN_KEY) || getServerDate().toISOString();
     } catch {
-      return new Date().toISOString();
+      return getServerDate().toISOString();
     }
   });
   const [notifEnabled, setNotifEnabled] = useState<boolean>(() => {
@@ -123,7 +124,7 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
   const fetchAgents = async () => {
     setLoading(true);
     try {
-      const cutoff = new Date();
+      const cutoff = getServerDate();
       cutoff.setDate(cutoff.getDate() - daysWindow);
 
       const { data, error } = await supabase
@@ -243,7 +244,7 @@ export function RecentRegistrationsAudit({ daysWindow = 30, onChange }: Props) {
   };
 
   const markAllSeen = () => {
-    const now = new Date().toISOString();
+    const now = getServerDate().toISOString();
     setLastSeen(now);
     try { localStorage.setItem(LAST_SEEN_KEY, now); } catch { /* */ }
     toast.success('Marcado como visto', { icon: <Check className="w-5 h-5" /> });

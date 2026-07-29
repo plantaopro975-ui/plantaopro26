@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getServerDate } from '@/hooks/useServerTime';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -141,7 +142,7 @@ export function AgentBHManagement({ onDataChange }: Props) {
       setBhEntries(entriesWithNames);
 
       // Calculate summaries
-      const today = new Date();
+      const today = getServerDate();
       const currentMonth = today.getMonth();
       const currentYear = today.getFullYear();
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { getMasterToken } from '@/lib/masterSession';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -205,7 +206,7 @@ export function AccessAuditPanel() {
     try {
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
-      const now = new Date();
+      const now = getServerDate();
 
       // Header
       doc.setFillColor(15, 23, 42); // slate-900
