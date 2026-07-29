@@ -60,14 +60,15 @@ import { BetaNoticeFooter } from '@/components/BetaNoticeFooter';
 import { CopyrightFooter } from '@/components/CopyrightFooter';
 import { MadeInFeijoBadge } from '@/components/MadeInFeijoBadge';
 
-import { RoundReminderDialog } from '@/components/home/RoundReminderDialog';
+const RoundReminderDialog = lazy(() => import('@/components/home/RoundReminderDialog').then(m => ({ default: m.RoundReminderDialog })));
 import { useRoundReminder } from '@/hooks/useRoundReminder';
 
 import { DeveloperSignature } from '@/components/DeveloperSignature';
 import { MaskedCpfInput } from '@/components/auth/MaskedCpfInput';
 
 import { SplitOperationalHero } from '@/components/home/SplitOperationalHero';
-import { CinematicBrandHero } from '@/components/home/CinematicBrandHero';
+const CinematicBrandHero = lazy(() => import('@/components/home/CinematicBrandHero').then(m => ({ default: m.CinematicBrandHero })));
+
 import { SectionDivider } from '@/components/home/SectionDivider';
 const RoundsCommandBar = lazy(() => import('@/components/home/RoundsCommandBar').then(m => ({ default: m.RoundsCommandBar })));
 import { DraggableHomeCard } from '@/components/home/DraggableHomeCard';
