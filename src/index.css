@@ -1751,6 +1751,44 @@ img, svg, picture, video {
   font-feature-settings: 'tnum', 'ss01';
 }
 
+/* --- TypeClear refinement for the homepage -------------------------------
+ * Consistent tabular numerals on all numeric UI, tighter tracking on the
+ * hero and section titles, and a modest opsz correction on small caps
+ * (mono labels). Keeps the tactical identity while removing the "many
+ * fonts" feeling. */
+.home-typo {
+  font-feature-settings: 'ss01', 'cv01', 'cv11';
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+.home-typo .tabular-nums,
+.home-typo [class*="tabular-"],
+.home-typo time,
+.home-typo .font-mono {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.home-typo h1, .home-typo h2 {
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+.home-typo h3, .home-typo h4 {
+  letter-spacing: -0.012em;
+  line-height: 1.15;
+}
+.home-typo .font-serif,
+.home-typo [class*="Libre Baskerville"] {
+  letter-spacing: -0.01em;
+}
+/* Uppercase mono labels: slightly reduced tracking on very small sizes so
+ * they read as labels, not as decoration. */
+.home-typo .font-mono.uppercase,
+.home-typo .uppercase.font-mono {
+  font-feature-settings: 'tnum', 'ss01', 'cpsp';
+}
+
+
 
 
 /* Utility: hide scrollbar while preserving scroll capability */
