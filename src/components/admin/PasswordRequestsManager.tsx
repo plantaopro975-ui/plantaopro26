@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getServerDate } from '@/hooks/useServerTime';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -104,7 +105,7 @@ export function PasswordRequestsManager() {
         .update({
           status: 'approved',
           reviewed_by: 'Administrador',
-          reviewed_at: new Date().toISOString(),
+          reviewed_at: getServerDate().toISOString(),
           admin_notes: 'Senha resetada pelo administrador',
         })
         .eq('id', request.id);
@@ -139,7 +140,7 @@ export function PasswordRequestsManager() {
         .update({
           status: 'rejected',
           reviewed_by: 'Administrador',
-          reviewed_at: new Date().toISOString(),
+          reviewed_at: getServerDate().toISOString(),
           admin_notes: adminNotes || 'Solicitação rejeitada',
         })
         .eq('id', selectedRequest.id);

@@ -1,4 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react';
+import { getServerDate } from '@/hooks/useServerTime';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import hudPageBg_ptr from '@/assets/hero-tactical-ops.jpg.asset.json';
 const hudPageBg = (hudPageBg_ptr as {url:string}).url;
@@ -223,7 +224,7 @@ export default function Master() {
     try {
       const result = await adminClient.syncUsers();
       const info: LastSyncInfo = {
-        at: new Date().toISOString(),
+        at: getServerDate().toISOString(),
         totalAuthUsers: result.totalAuthUsers,
         profilesInserted: result.profilesInserted,
         rolesInserted: result.rolesInserted,
@@ -239,7 +240,7 @@ export default function Master() {
       await fetchData({ silent: true });
     } catch (e: any) {
       const info: LastSyncInfo = {
-        at: new Date().toISOString(),
+        at: getServerDate().toISOString(),
         totalAuthUsers: 0,
         profilesInserted: 0,
         rolesInserted: 0,
@@ -588,7 +589,7 @@ export default function Master() {
     try {
       const expiredAgents = agents.filter(a => {
         if (!a.license_expires_at) return false;
-        return new Date(a.license_expires_at) < new Date();
+        return new Date(a.license_expires_at) < getServerDate();
       });
       
       if (expiredAgents.length === 0) {
@@ -596,7 +597,7 @@ export default function Master() {
         return;
       }
       
-      const newExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const newExpiry = new Date(getServerDate().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       
       for (const agent of expiredAgents) {
         await supabase
@@ -1389,7 +1390,7 @@ export default function Master() {
           <p className="text-xs text-muted-foreground">
             Desenvolvido por <span className="text-primary font-semibold">FRANC D'NIS</span>
           </p>
-          <p className="text-[10px] text-muted-foreground/60 mt-0.5">Feijó, Acre • © {new Date().getFullYear()} PlantãoPro</p>
+          <p className="text-[10px] text-muted-foreground/60 mt-0.5">Feijó, Acre • © {getServerDate().getFullYear()} PlantãoPro</p>
         </div>
       </div>
 
