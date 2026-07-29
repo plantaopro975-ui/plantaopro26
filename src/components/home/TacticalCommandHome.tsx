@@ -251,7 +251,7 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
         </header>
 
         {/* MAIN GRID */}
-        <main className="mt-3 grid grid-cols-12 gap-2.5 md:gap-3 flex-1 min-h-0 overflow-y-auto lg:overflow-hidden">
+        <main className="mt-3 grid grid-cols-12 gap-2.5 md:gap-3 flex-1 min-h-0 overflow-hidden">
 
           {/* === HERO === */}
           <section className={cn(bento, 'col-span-12 lg:col-span-7 overflow-hidden h-[180px] sm:h-[220px] lg:h-auto lg:min-h-0')}>
