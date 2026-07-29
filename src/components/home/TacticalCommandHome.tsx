@@ -330,6 +330,14 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             </div>
             <div className="text-[9px] uppercase text-slate-500 tracking-widest mt-0.5">{date}</div>
           </div>
+          <Link
+            to="/escala"
+            className="hidden sm:inline-flex items-center gap-1.5 bg-black/40 hover:bg-black/60 px-3 py-1.5 rounded-sm border border-white/5 hover:border-[#c9a84c]/40 transition-colors"
+            title="Ver calendário de plantões"
+          >
+            <CalendarDays className="w-3.5 h-3.5 text-[#c9a84c]" />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-white">Escala</span>
+          </Link>
           <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-sm border border-white/5">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
             <span className="text-[10px] md:text-xs uppercase tracking-widest font-bold text-white">Sistema Online</span>
