@@ -135,8 +135,37 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
   const [activeTeam, setActiveTeam] = useState<TeamDetail | null>(null);
   const [running, setRunning] = useState<boolean>(true);
   const [rounds, setRounds] = useState<Round[]>(DEFAULT_ROUNDS);
-  // Equipe de plantão do dia (recalcula a cada minuto para virar automaticamente à meia-noite)
-  const onDutyKey = useMemo(() => getOnDutyTeamKey(), [nowMin]);
+  const { config: dutyConfig } = useDutyConfig();
+  // Equipe de plantão do dia (recalcula a cada minuto para virar automaticamente às 07:00)
+  const { team: onDutyKey, ymd: onDutyYmd } = useMemo(
+    () => getOnDutyTeam(dutyConfig),
+    [dutyConfig, nowMin],
+  );
+  const tomorrowTeam = useMemo(() => {
+    const t = new Date(getServerDate().getTime() + 24 * 3600 * 1000);
+    const nextYmd = new Intl.DateTimeFormat('en-CA', { timeZone: ACRE_TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(t);
+    return getDutyTeamForYmd(dutyConfig, nextYmd);
+  }, [dutyConfig, nowMin]);
+
+  // Handover notifications: 5 min antes + na hora exata
+  const notifiedRef = useMemo(() => ({ pre: '', at: '' }), []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const ms = msUntilNextHandover(dutyConfig);
+      const stampKey = onDutyYmd;
+      if (ms <= 5 * 60 * 1000 && ms > 4 * 60 * 1000 && notifiedRef.pre !== stampKey) {
+        notifiedRef.pre = stampKey;
+        const nextT = tomorrowTeam.toUpperCase();
+        toast.info(`Troca de plantão em 5 min`, { description: `${nextT} assumirá às ${String(dutyConfig.handover_hour).padStart(2, '0')}:00.` });
+      }
+      if (ms <= 30 * 1000 && notifiedRef.at !== stampKey) {
+        notifiedRef.at = stampKey;
+        toast.success(`Plantão assumido`, { description: `${tomorrowTeam.toUpperCase()} agora está de serviço.` });
+      }
+    }, 20_000);
+    return () => clearInterval(timer);
+  }, [dutyConfig, tomorrowTeam, onDutyYmd, notifiedRef]);
+
 
   // Dialog CRUD state
   const [editing, setEditing] = useState<{ mode: 'new' | 'edit'; round: Round } | null>(null);
