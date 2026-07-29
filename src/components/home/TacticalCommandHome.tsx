@@ -639,6 +639,25 @@ export function TacticalCommandHome({ onTeamClick }: Props) {
             </div>
           </section>
         </main>
+
+        {/* FOOTER — Status bar operacional */}
+        <footer className="mt-2 h-8 shrink-0 flex items-center justify-between gap-3 px-2.5 rounded-md border border-[#1a1a26] bg-[#08080d] text-[9.5px] font-semibold tracking-widest uppercase text-slate-500">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.9)]" />
+              <span className="text-emerald-300/90">Sistema Operacional</span>
+            </span>
+            <span className="hidden sm:inline w-px h-3 bg-[#1f1f2e]" />
+            <span className="hidden sm:inline text-slate-500">v3 · Tactical</span>
+            <span className="hidden md:inline w-px h-3 bg-[#1f1f2e]" />
+            <span className="hidden md:inline text-slate-500 tabular-nums">Latência&nbsp;<span className="text-slate-300">42ms</span></span>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="hidden md:inline text-slate-500 tabular-nums">UTC&nbsp;-05:00&nbsp;<span className="text-slate-300">Acre</span></span>
+            <span className="hidden sm:inline w-px h-3 bg-[#1f1f2e]" />
+            <span className="text-slate-500">PlantãoPro&nbsp;<span className="text-[hsl(var(--primary))]/90">© 2026</span></span>
+          </div>
+        </footer>
       </div>
 
       <TeamDetailsDialog
