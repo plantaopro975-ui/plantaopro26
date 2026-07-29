@@ -3591,3 +3591,212 @@ body.home-route .card-touch:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .tac-card .tac-scan::before, .tac-shield .tac-ping { animation: none; }
 }
+
+/* =========================================================
+ * GESTOR DE RONDAS — Camada COCKPIT PRO v1
+ * Redesign visual (sem tocar em lógica): eleva o modal para
+ * um look de cockpit tático moderno com grade de fundo sutil,
+ * cartões de vidro, timers com anel em gradiente, botões
+ * refinados e microinterações discretas. Escopo total: .rm-dialog
+ * ========================================================= */
+.rm-dialog {
+  position: relative;
+  background:
+    radial-gradient(1200px 480px at 15% -10%, hsl(var(--rm-accent-hsl) / 0.10), transparent 60%),
+    radial-gradient(900px 400px at 110% 0%, hsl(190 92% 62% / 0.06), transparent 55%),
+    linear-gradient(180deg, hsl(220 30% 7% / 0.96), hsl(220 30% 5% / 0.98)) !important;
+  border: 1px solid hsl(var(--rm-accent-hsl) / 0.22) !important;
+  box-shadow:
+    0 30px 80px -20px hsl(220 40% 2% / 0.75),
+    0 0 0 1px hsl(0 0% 100% / 0.02) inset,
+    0 1px 0 hsl(var(--rm-accent-hsl) / 0.25) inset !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+}
+/* Grade técnica de fundo (ultra sutil) */
+.rm-dialog::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(hsl(0 0% 100% / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(0 0% 100% / 0.025) 1px, transparent 1px);
+  background-size: 28px 28px, 28px 28px;
+  mask-image: linear-gradient(180deg, black 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+/* Barra de cor da equipe no topo */
+.rm-dialog::after {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    hsl(var(--rm-accent-hsl) / 0.9) 20%,
+    hsl(var(--rm-accent-hsl) / 0.9) 80%,
+    transparent 100%);
+  box-shadow: 0 0 18px hsl(var(--rm-accent-hsl) / 0.55);
+  z-index: 1; pointer-events: none;
+}
+.rm-dialog > * { position: relative; z-index: 2; }
+
+/* Cartões internos (borda + card) — vidro discreto */
+.rm-dialog [class*="rounded-md"][class*="border"],
+.rm-dialog [class*="rounded-lg"][class*="border"],
+.rm-dialog [class*="rounded-xl"][class*="border"] {
+  background: linear-gradient(180deg,
+    hsl(220 30% 12% / 0.55),
+    hsl(220 30% 8% / 0.55)) !important;
+  border-color: hsl(215 22% 30% / 0.55) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.rm-dialog [class*="bg-card"] {
+  background: linear-gradient(180deg,
+    hsl(220 30% 12% / 0.72),
+    hsl(220 30% 8% / 0.72)) !important;
+}
+
+/* Título do modal com kicker de cor da equipe */
+.rm-dialog [data-dialog-title] {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+}
+.rm-dialog [data-dialog-title]::before {
+  content: ""; width: 6px; height: 22px; border-radius: 2px;
+  background: linear-gradient(180deg,
+    hsl(var(--rm-accent-hsl) / 1),
+    hsl(var(--rm-accent-hsl) / 0.4));
+  box-shadow: 0 0 10px hsl(var(--rm-accent-hsl) / 0.6);
+}
+
+/* Timer/monospace grande — realce sutil */
+.rm-dialog .font-mono[class*="text-2xl"],
+.rm-dialog .font-mono[class*="text-3xl"],
+.rm-dialog .font-mono[class*="text-4xl"],
+.rm-dialog [class*="tabular-nums"][class*="text-2xl"],
+.rm-dialog [class*="tabular-nums"][class*="text-3xl"],
+.rm-dialog [class*="tabular-nums"][class*="text-4xl"] {
+  color: var(--rm-ink) !important;
+  text-shadow:
+    0 0 24px hsl(var(--rm-accent-hsl) / 0.35),
+    0 1px 0 hsl(0 0% 0% / 0.6);
+  font-weight: 300 !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Botões primários — acabamento premium */
+.rm-dialog button[class*="bg-primary"]:not([class*="bg-primary/"]):not([role="switch"]):not([data-radix-dialog-close]),
+.rm-dialog button[class*="bg-amber"]:not([class*="bg-amber-500/"]):not([class*="bg-amber-400/"]):not([class*="bg-amber-300/"]):not([role="switch"]):not([data-radix-dialog-close]) {
+  background: linear-gradient(180deg,
+    hsl(var(--rm-accent-hsl) / 1),
+    hsl(var(--rm-accent-hsl) / 0.85)) !important;
+  border: 1px solid hsl(var(--rm-accent-hsl) / 0.8) !important;
+  box-shadow:
+    0 8px 24px -10px hsl(var(--rm-accent-hsl) / 0.7),
+    inset 0 1px 0 hsl(0 0% 100% / 0.25),
+    inset 0 -1px 0 hsl(0 0% 0% / 0.2) !important;
+}
+.rm-dialog button[class*="bg-primary"]:hover:not([disabled]),
+.rm-dialog button[class*="bg-amber"]:hover:not([disabled]) {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+/* Botões secundários/ghost — contorno metálico */
+.rm-dialog button[class*="variant-outline"],
+.rm-dialog button[class*="border-border"],
+.rm-dialog button.tactical-btn,
+.rm-dialog [data-variant="outline"] {
+  background: linear-gradient(180deg,
+    hsl(220 30% 14% / 0.75),
+    hsl(220 30% 10% / 0.75)) !important;
+  border: 1px solid hsl(215 22% 35% / 0.7) !important;
+  color: var(--rm-ink) !important;
+}
+.rm-dialog button:not([disabled]):hover {
+  border-color: hsl(var(--rm-accent-hsl) / 0.55) !important;
+}
+
+/* Chips e badges — refinamento */
+.rm-dialog .rm-chip,
+.rm-dialog [data-slot="badge"],
+.rm-dialog .badge {
+  border-radius: 8px !important;
+  border: 1px solid hsl(215 22% 30% / 0.7) !important;
+  background: hsl(220 30% 10% / 0.7) !important;
+  padding: 0.35rem 0.7rem !important;
+  transition: all 160ms ease;
+}
+.rm-dialog .rm-chip[data-active="true"],
+.rm-dialog .rm-chip--active {
+  background: linear-gradient(180deg,
+    hsl(var(--rm-accent-hsl) / 0.18),
+    hsl(var(--rm-accent-hsl) / 0.10)) !important;
+  border-color: hsl(var(--rm-accent-hsl) / 0.6) !important;
+  color: var(--rm-ink) !important;
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--rm-accent-hsl) / 0.25),
+    0 4px 14px -6px hsl(var(--rm-accent-hsl) / 0.45);
+}
+
+/* Inputs — foco e superfície */
+.rm-dialog input,
+.rm-dialog textarea,
+.rm-dialog select {
+  background: hsl(220 30% 8% / 0.85) !important;
+  border: 1px solid hsl(215 22% 28% / 0.75) !important;
+  border-radius: 8px !important;
+  color: var(--rm-ink) !important;
+  transition: border-color 160ms, box-shadow 160ms;
+}
+.rm-dialog input:focus,
+.rm-dialog textarea:focus,
+.rm-dialog select:focus {
+  border-color: hsl(var(--rm-accent-hsl) / 0.9) !important;
+  box-shadow: 0 0 0 3px hsl(var(--rm-accent-hsl) / 0.2) !important;
+  outline: none !important;
+}
+
+/* Barra de rolagem discreta dentro do modal */
+.rm-dialog ::-webkit-scrollbar { width: 8px; height: 8px; }
+.rm-dialog ::-webkit-scrollbar-thumb {
+  background: hsl(var(--rm-accent-hsl) / 0.35);
+  border-radius: 8px;
+}
+.rm-dialog ::-webkit-scrollbar-track { background: transparent; }
+
+/* Separadores refinados */
+.rm-dialog hr,
+.rm-dialog [class*="border-t"],
+.rm-dialog [class*="border-b"] {
+  border-color: hsl(215 22% 30% / 0.5) !important;
+}
+
+/* Botão fechar (X) — mais visível e refinado */
+.rm-dialog [data-radix-dialog-close] {
+  background: hsl(220 30% 10% / 0.9) !important;
+  border: 1px solid hsl(215 22% 32% / 0.7) !important;
+  border-radius: 8px !important;
+  width: 32px; height: 32px;
+  transition: all 160ms;
+}
+.rm-dialog [data-radix-dialog-close]:hover {
+  border-color: hsl(var(--rm-accent-hsl) / 0.7) !important;
+  color: var(--rm-accent) !important;
+  background: hsl(var(--rm-accent-hsl) / 0.08) !important;
+}
+
+/* Microanimação de entrada dos cartões */
+@keyframes rm-fade-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rm-dialog [class*="rounded-md"][class*="border"],
+.rm-dialog [class*="rounded-lg"][class*="border"] {
+  animation: rm-fade-up 280ms ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rm-dialog [class*="rounded-md"][class*="border"],
+  .rm-dialog [class*="rounded-lg"][class*="border"] { animation: none; }
+  .rm-dialog button:hover { transform: none !important; }
+}
